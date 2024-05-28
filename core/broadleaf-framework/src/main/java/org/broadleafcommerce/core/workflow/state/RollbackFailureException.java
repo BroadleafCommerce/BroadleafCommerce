@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,6 +21,7 @@ import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 
+import java.io.Serial;
 import java.util.Map;
 
 /**
@@ -33,6 +34,7 @@ import java.util.Map;
  */
 public class RollbackFailureException extends WorkflowException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Activity<? extends ProcessContext<?>> activity;
@@ -46,7 +48,7 @@ public class RollbackFailureException extends WorkflowException {
     public RollbackFailureException(Throwable cause) {
         super(cause);
     }
-    
+
     public RollbackFailureException(Throwable rollbackFailureCause, Throwable originalWorkflowException) {
         super(rollbackFailureCause);
         this.originalWorkflowException = originalWorkflowException;
@@ -83,12 +85,13 @@ public class RollbackFailureException extends WorkflowException {
     public void setStateItems(Map<String, Object> stateItems) {
         this.stateItems = stateItems;
     }
-    
-    public void setOriginalWorkflowException(Throwable originalWorkflowException) {
-        this.originalWorkflowException = originalWorkflowException;
-    }
-    
+
     public Throwable getOriginalWorkflowException() {
         return originalWorkflowException;
     }
+
+    public void setOriginalWorkflowException(Throwable originalWorkflowException) {
+        this.originalWorkflowException = originalWorkflowException;
+    }
+
 }

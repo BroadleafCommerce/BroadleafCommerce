@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,7 +22,7 @@ import java.io.Serializable;
 /**
  * Represents a category that describes a Countries subdivision.
  * e.g. "State", "Province", "Region", "District", "Territory" etc...
- *
+ * <p>
  * {@link http://www.iso.org/iso/country_codes.htm}
  * {@link http://en.wikipedia.org/wiki/ISO_3166-2}
  *
@@ -30,12 +30,12 @@ import java.io.Serializable;
  */
 public interface CountrySubdivisionCategory extends Serializable {
 
-    public void setId(Long id);
+    Long getId();
 
-    public Long getId();
+    void setId(Long id);
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
 }

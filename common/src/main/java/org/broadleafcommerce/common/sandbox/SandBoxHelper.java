@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,8 +29,8 @@ import jakarta.persistence.EntityManager;
  * innocuous, with more interesting sandbox related functionality being provided
  * in the commercial enterprise module.
  *
- * @see org.broadleafcommerce.common.sandbox.DefaultSandBoxHelper
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.common.sandbox.DefaultSandBoxHelper
  */
 public interface SandBoxHelper {
 
@@ -39,7 +39,7 @@ public interface SandBoxHelper {
      * sandbox versions of those ids, if available. This is useful for some queries that
      * require search values for both the original id and the sandbox id.
      *
-     * @param type the type of the entity in question
+     * @param type        the type of the entity in question
      * @param originalIds one or more ids values for which sandbox versions should be included
      * @return the merged id list
      */
@@ -61,7 +61,7 @@ public interface SandBoxHelper {
      * in that have a sandbox counterpart are included.
      *
      * @param type the type of the entity in question
-     * @param ids list of ids to check
+     * @param ids  list of ids to check
      * @return the map of sandbox to original ids
      */
     BiMap<Long, Long> getSandBoxToOriginalMap(Class<?> type, Long... ids);
@@ -71,7 +71,7 @@ public interface SandBoxHelper {
      * if no sandbox version is available.
      *
      * @param linkedObjectType the type of the entity in question
-     * @param requestedParent the id to check
+     * @param requestedParent  the id to check
      * @return the sandbox version, or null
      */
     Long getSandBoxVersionId(Class<?> linkedObjectType, Long requestedParent);
@@ -119,7 +119,7 @@ public interface SandBoxHelper {
      * is not a sandbox record, or if it's a sandbox add.
      *
      * @param type the type of the entity in question
-     * @param id the id to check
+     * @param id   the id to check
      * @return the original id for the requested sandbox id
      */
     OriginalIdResponse getOriginalId(Class<?> type, Long id);
@@ -170,7 +170,7 @@ public interface SandBoxHelper {
      * While the example given was for catalog hierarchies, this method also supports PROFILE hierarchies for CMS data
      *
      * @param type the class name of the entity type to get the clone for
-     * @param id a primary key anywhere in the hiearchy of overrides
+     * @param id   a primary key anywhere in the hiearchy of overrides
      * @return the topmost production id in a multitenant hierarchy
      */
     Long getTopmostProductionOriginalId(Class<?> type, Long id);
@@ -211,13 +211,12 @@ public interface SandBoxHelper {
      * as deleted should be included in any results from queries or lazy collection
      * retrievals.
      *
-     * @param runnable the block of code for which this setting should be in effect
+     * @param runnable       the block of code for which this setting should be in effect
      * @param includeDeleted whether or not to include deleted sandbox items
      */
     void optionallyIncludeDeletedItemsInQueriesAndCollections(Runnable runnable, boolean includeDeleted);
 
     /**
-     *
      * @param em
      * @param startFieldValue
      * @return
@@ -234,7 +233,7 @@ public interface SandBoxHelper {
      */
     <T> T getTopMostOriginalRecord(T record);
 
-    public class OriginalIdResponse {
+    class OriginalIdResponse {
 
         private boolean recordFound = false;
         private Long originalId;
@@ -255,4 +254,5 @@ public interface SandBoxHelper {
             this.originalId = originalId;
         }
     }
+
 }

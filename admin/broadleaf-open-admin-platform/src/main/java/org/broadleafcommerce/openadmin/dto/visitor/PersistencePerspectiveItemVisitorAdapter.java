@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,7 +22,6 @@ import org.broadleafcommerce.openadmin.dto.ForeignKey;
 import org.broadleafcommerce.openadmin.dto.MapStructure;
 import org.broadleafcommerce.openadmin.dto.ParentRecordStructure;
 import org.broadleafcommerce.openadmin.dto.SimpleValueMapStructure;
-
 
 public class PersistencePerspectiveItemVisitorAdapter implements PersistencePerspectiveItemVisitor {
 
@@ -50,4 +49,5 @@ public class PersistencePerspectiveItemVisitorAdapter implements PersistencePers
     public void visit(ParentRecordStructure parentRecordStructure) {
         //do nothing
     }
+
 }

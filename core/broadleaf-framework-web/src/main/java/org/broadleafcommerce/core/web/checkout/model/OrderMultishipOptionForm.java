@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.checkout.model;
 
 import org.broadleafcommerce.core.order.service.call.OrderMultishipOptionDTO;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,15 +27,15 @@ import java.util.List;
  * This form is used to bind multiship options in a way that doesn't require
  * the actual objects to be instantiated -- we handle that at the controller
  * level.
- * 
- * @see OrderMultishipOptionDTO
- * 
+ *
  * @author Andre Azzolini (apazzolini)
+ * @see OrderMultishipOptionDTO
  */
 public class OrderMultishipOptionForm implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5989681894142759293L;
-    
+
     protected List<OrderMultishipOptionDTO> options;
 
     public List<OrderMultishipOptionDTO> getOptions() {
@@ -44,5 +45,5 @@ public class OrderMultishipOptionForm implements Serializable {
     public void setOptions(List<OrderMultishipOptionDTO> options) {
         this.options = options;
     }
-    
+
 }

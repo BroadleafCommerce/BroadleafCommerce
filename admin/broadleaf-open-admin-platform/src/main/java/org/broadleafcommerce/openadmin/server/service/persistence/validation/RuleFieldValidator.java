@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -49,10 +49,10 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
 
     @Resource(name = "blRuleFieldExtractionUtility")
     protected RuleFieldExtractionUtility ruleFieldExtractionUtility;
-    
+
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
-    
+
     @Override
     public PropertyValidationResult validate(PopulateValueRequest populateValueRequest, Serializable instance) {
         if (canHandleValidation(populateValueRequest)) {
@@ -60,43 +60,48 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
             EntityManager em = populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager();
             if (SupportedFieldType.RULE_SIMPLE.equals(populateValueRequest.getMetadata().getFieldType()) ||
                     SupportedFieldType.RULE_SIMPLE_TIME.equals(populateValueRequest.getMetadata().getFieldType())) {
-                
+
                 //AntiSamy HTML encodes the rule JSON - pass the unHTMLEncoded version
                 DataWrapper dw = ruleFieldExtractionUtility.convertJsonToDataWrapper(populateValueRequest.getProperty().getUnHtmlEncodedValue());
                 if (dw != null && StringUtils.isNotEmpty(dw.getError())) {
-                    if("Invalid Rule".equals(dw.getError())){
+                    if ("Invalid Rule".equals(dw.getError())) {
                         return new PropertyValidationResult(false, dw.getError());
                     }
                     return new PropertyValidationResult(false, "Could not serialize JSON from rule builder: " + dw.getError());
                 }
                 if (dw == null || StringUtils.isEmpty(dw.getError())) {
                     try {
-                        String mvel = ruleFieldExtractionUtility.convertSimpleMatchRuleJsonToMvel(translator, RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier()),
-                                populateValueRequest.getMetadata().getRuleIdentifier(), dw);
+                        String mvel = ruleFieldExtractionUtility.convertSimpleMatchRuleJsonToMvel(
+                                translator,
+                                RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier()),
+                                populateValueRequest.getMetadata().getRuleIdentifier(),
+                                dw
+                        );
                     } catch (MVELTranslationException e) {
                         return new PropertyValidationResult(false, getMvelParsingErrorMesage(dw, e));
                     }
                 }
             }
-            
+
             if (SupportedFieldType.RULE_WITH_QUANTITY.equals(populateValueRequest.getMetadata().getFieldType())) {
                 Collection<QuantityBasedRule> existingRules;
                 try {
-                    existingRules = (Collection<QuantityBasedRule>) populateValueRequest.getFieldManager().getFieldValue
-                            (instance, populateValueRequest.getProperty().getName());
+                    existingRules = (Collection<QuantityBasedRule>) populateValueRequest.getFieldManager().getFieldValue(
+                            instance, populateValueRequest.getProperty().getName()
+                    );
                 } catch (FieldNotAvailableException e) {
                     return new PropertyValidationResult(false, "Could not access rule field on Java object to set values");
                 } catch (IllegalAccessException e) {
                     return new PropertyValidationResult(false, "Could not access rule field on Java object to set values");
                 }
-                
+
                 String entityKey = RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier());
                 String jsonPropertyValue = populateValueRequest.getProperty().getUnHtmlEncodedValue();
                 String fieldService = populateValueRequest.getMetadata().getRuleIdentifier();
                 if (!StringUtils.isEmpty(jsonPropertyValue)) {
                     DataWrapper dw = ruleFieldExtractionUtility.convertJsonToDataWrapper(jsonPropertyValue);
                     if (dw != null && StringUtils.isNotEmpty(dw.getError())) {
-                        if("Invalid Rule".equals(dw.getError())){
+                        if ("Invalid Rule".equals(dw.getError())) {
                             return new PropertyValidationResult(false, dw.getError());
                         }
                         return new PropertyValidationResult(false, "Could not serialize JSON from rule builder: " + dw.getError());
@@ -106,14 +111,20 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                             if (dto.getPk() != null) {
                                 boolean foundIdToUpdate = false;
                                 for (QuantityBasedRule quantityBasedRule : existingRules) {
-                                    Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(quantityBasedRule.getClass(), dto.getPk());
+                                    Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(
+                                            quantityBasedRule.getClass(),
+                                            dto.getPk()
+                                    );
                                     if (sandBoxVersionId == null) {
                                         sandBoxVersionId = dto.getPk();
                                     }
-                                    if (sandBoxVersionId.equals(quantityBasedRule.getId()) || sandBoxHelper.isRelatedToParentCatalogIds(quantityBasedRule, dto.getPk())) {
+                                    if (sandBoxVersionId.equals(quantityBasedRule.getId())
+                                            || sandBoxHelper.isRelatedToParentCatalogIds(quantityBasedRule, dto.getPk())) {
                                         foundIdToUpdate = true;
                                         try {
-                                            String mvel = ruleFieldExtractionUtility.convertDTOToMvelString(translator, entityKey, dto, fieldService);
+                                            String mvel = ruleFieldExtractionUtility.convertDTOToMvelString(
+                                                    translator, entityKey, dto, fieldService
+                                            );
                                         } catch (MVELTranslationException e) {
                                             return new PropertyValidationResult(false, getMvelParsingErrorMesage(dw, e));
                                         }
@@ -137,7 +148,7 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
         }
         return new PropertyValidationResult(true);
     }
-    
+
     protected String getMvelParsingErrorMesage(DataWrapper dw, MVELTranslationException e) {
         StringBuilder errorMessage = new StringBuilder();
         errorMessage.append("Problem translating rule builder, error code ");
@@ -146,15 +157,16 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
         errorMessage.append(e.getMessage());
         return errorMessage.toString();
     }
-    
+
     protected boolean canHandleValidation(PopulateValueRequest populateValueRequest) {
-        return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
-                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE ||
-                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE_TIME;
+        return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY
+                || populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE
+                || populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.RULE_SIMPLE_TIME;
     }
 
     @Override
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE - 1000;
     }
+
 }

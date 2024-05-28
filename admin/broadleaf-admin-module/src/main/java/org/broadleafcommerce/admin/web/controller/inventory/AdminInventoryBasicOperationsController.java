@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -53,11 +53,16 @@ public class AdminInventoryBasicOperationsController extends AdminBasicOperation
     protected CatalogService catalogService;
 
     @RequestMapping(value = "/{collectionField:.*}/select", method = RequestMethod.GET)
-    public String showSelectCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-                                           @PathVariable Map<String, String> pathVars,
-                                           @PathVariable String collectionField, @RequestParam(required = false) String requestingEntityId,
-                                           @RequestParam(required = false) boolean dynamicField,
-                                           @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+    public String showSelectCollectionItem(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable String collectionField,
+            @RequestParam(required = false) String requestingEntityId,
+            @RequestParam(required = false) boolean dynamicField,
+            @RequestParam MultiValueMap<String, String> requestParams
+    ) throws Exception {
         String view = super.showSelectCollectionItem(
                 request, response, model, pathVars, "com.broadleafcommerce.inventory.advanced.domain.InventoryImpl",
                 collectionField, requestingEntityId, dynamicField, requestParams
@@ -98,7 +103,9 @@ public class AdminInventoryBasicOperationsController extends AdminBasicOperation
                 if (sectionCrumb.getSectionIdentifier().equals("inventory")) {
                     FulfillmentType fulfillmentType = getDefaultFulfillmentType(sectionCrumb);
                     if (fulfillmentType != null) {
-                        FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria("fulfillmentType", fulfillmentType.getType());
+                        FilterAndSortCriteria fasCriteria = new FilterAndSortCriteria(
+                                "fulfillmentType", fulfillmentType.getType()
+                        );
                         ppr.addFilterAndSortCriteria(fasCriteria);
                     }
                 }
@@ -106,9 +113,10 @@ public class AdminInventoryBasicOperationsController extends AdminBasicOperation
         }
     }
 
-    private FulfillmentType getDefaultFulfillmentType(SectionCrumb sectionCrumb) {
+    protected FulfillmentType getDefaultFulfillmentType(SectionCrumb sectionCrumb) {
         String sectionId = sectionCrumb.getSectionId();
         Sku sku = catalogService.findSkuById(Long.valueOf(sectionId));
         return sku.getFulfillmentType();
     }
+
 }

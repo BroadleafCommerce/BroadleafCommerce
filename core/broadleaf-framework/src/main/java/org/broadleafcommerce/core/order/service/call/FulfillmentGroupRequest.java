@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,7 +31,7 @@ public class FulfillmentGroupRequest {
     protected Address address;
     protected Order order;
     protected Phone phone;
-    
+
     /**
      * Both of these fields uses are superceded by the FulfillmentOption paradigm
      */
@@ -39,10 +39,10 @@ public class FulfillmentGroupRequest {
     protected String method;
     @Deprecated
     protected String service;
-    
+
     protected FulfillmentOption option;
-    
-    protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
+
+    protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<>();
 
     protected FulfillmentType fulfillmentType;
 
@@ -69,11 +69,11 @@ public class FulfillmentGroupRequest {
     public void setPhone(Phone phone) {
         this.phone = phone;
     }
-    
+
     public FulfillmentOption getOption() {
         return option;
     }
-    
+
     public void setOption(FulfillmentOption option) {
         this.option = option;
     }
@@ -96,6 +96,7 @@ public class FulfillmentGroupRequest {
 
     /**
      * Deprecated in favor of {@link #getOption()}
+     *
      * @see {@link FulfillmentOption}
      */
     @Deprecated
@@ -105,8 +106,9 @@ public class FulfillmentGroupRequest {
 
     /**
      * Deprecated in favor of {@link #setOption(FulfillmentOption)}
+     *
      * @see {@link FulfillmentOption}
-     */    
+     */
     @Deprecated
     public void setMethod(String method) {
         this.method = method;
@@ -114,6 +116,7 @@ public class FulfillmentGroupRequest {
 
     /**
      * Deprecated in favor of {@link #getOption()}
+     *
      * @see {@link FulfillmentOption}
      */
     @Deprecated
@@ -123,8 +126,9 @@ public class FulfillmentGroupRequest {
 
     /**
      * Deprecated in favor of {@link #setOption(FulfillmentOption)}
+     *
      * @see {@link FulfillmentOption}
-     */    
+     */
     @Deprecated
     public void setService(String service) {
         this.service = service;

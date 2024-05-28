@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,6 +18,7 @@
 package org.broadleafcommerce.core.search.domain;
 
 import com.google.common.base.Strings;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +30,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -57,10 +59,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Where;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -79,7 +81,7 @@ import java.util.List;
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3000),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.FRIENDLYNAME, overrideValue = "IndexFieldTypeImpl_indexField"),
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "NOT_REQUIRED" )
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE, overrideValue = "NOT_REQUIRED")
         }),
         @AdminPresentationMergeOverride(name = "fieldType.indexField.searchable", mergeEntries = {
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
@@ -91,27 +93,30 @@ import java.util.List;
 })
 public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEntity, SearchFacetAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "SearchFacetId")
     @GenericGenerator(
-        name="SearchFacetId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="SearchFacetImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.SearchFacetImpl")
-        }
+            name = "SearchFacetId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SearchFacetImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.search.domain.SearchFacetImpl")
+            }
     )
     @Column(name = "SEARCH_FACET_ID")
-    @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = GroupName.General, visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = GroupName.General,
+            visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "SearchFacetImpl_name", group = GroupName.General,
-            groupOrder = 2, order = 2, prominent = true, translatable = true, gridOrder = 1000, requiredOverride = RequiredOverride.REQUIRED)
+            groupOrder = 2, order = 2, prominent = true, translatable = true, gridOrder = 1000,
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
-    
+
     @Column(name = "LABEL")
     @AdminPresentation(friendlyName = "SearchFacetImpl_label", order = 3, group = GroupName.General,
             prominent = true, translatable = true, gridOrder = 2000)
@@ -124,7 +129,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     @AdminPresentationToOneLookup(lookupDisplayProperty = "indexField.field.friendlyName")
     protected IndexFieldType fieldType;
 
-    @Column(name =  "SHOW_ON_SEARCH")
+    @Column(name = "SHOW_ON_SEARCH")
     @AdminPresentation(friendlyName = "SearchFacetImpl_showOnSearch", order = 2000,
             group = GroupName.Options, prominent = false,
             tooltip = "SearchFacetImpl_showOnSearchTooltip")
@@ -137,7 +142,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
             tooltip = "SearchFacetImpl_useFacetRangesTooltip",
             defaultValue = "false")
     protected Boolean useFacetRanges = false;
-    
+
     @Column(name = "SEARCH_DISPLAY_PRIORITY")
     @AdminPresentation(friendlyName = "SearchFacetImpl_searchPriority",
             order = 6000,
@@ -145,32 +150,32 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
             tooltip = "SearchFacetImpl_searchPriorityTooltip",
             visibility = VisibilityEnum.GRID_HIDDEN)
     protected Integer searchDisplayPriority = 1;
-    
+
     @Column(name = "MULTISELECT")
     @AdminPresentation(friendlyName = "SearchFacetImpl_multiselect", order = 5000,
             group = GroupName.Options,
             tooltip = "SearchFacetImpl_multiselectTooltip",
-         defaultValue = "false")
+            defaultValue = "false")
     protected Boolean canMultiselect = true;
-    
+
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
     @Where(clause = "(ARCHIVED != 'Y' OR ARCHIVED IS NULL)")
     @AdminPresentationCollection(addType = AddMethodType.PERSIST,
             friendlyName = "newRangeTitle",
             group = GroupName.Ranges)
-    protected List<SearchFacetRange> searchFacetRanges  = new ArrayList<SearchFacetRange>();
-    
+    protected List<SearchFacetRange> searchFacetRanges = new ArrayList<SearchFacetRange>();
+
     @OneToMany(mappedBy = "searchFacet", targetEntity = RequiredFacetImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
     @AdminPresentationAdornedTargetCollection(targetObjectProperty = "requiredFacet", friendlyName = "requiredFacetTitle",
-            gridVisibleFields = { "name", "label", "fieldType.indexField.field.friendlyName" },
+            gridVisibleFields = {"name", "label", "fieldType.indexField.field.friendlyName"},
             group = GroupName.Dependent,
             tabOrder = 4000)
     protected List<RequiredFacet> requiredFacets = new ArrayList<RequiredFacet>();
-    
+
     @Column(name = "REQUIRES_ALL_DEPENDENT")
     @AdminPresentation(friendlyName = "SearchFacetImpl_requiresAllDependentFacets",
             order = 7000,
@@ -188,22 +193,22 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public IndexFieldType getFieldType() {
         return fieldType;
     }
-    
+
     @Override
     public void setFieldType(IndexFieldType fieldType) {
         this.fieldType = fieldType;
     }
-    
+
     @Override
     public Field getField() {
         return getFieldType().getIndexField().getField();
     }
-    
+
     @Override
     public String getFacetFieldType() {
         return getFieldType().getFieldType().getType();
@@ -252,7 +257,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     public void setSearchDisplayPriority(Integer searchDisplayPriority) {
         this.searchDisplayPriority = searchDisplayPriority;
     }
-    
+
     @Override
     public Boolean getCanMultiselect() {
         return canMultiselect;
@@ -304,7 +309,9 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     }
 
     @Override
-    public <G extends SearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends SearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -315,12 +322,12 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
         cloned.setRequiresAllDependentFacets(requiresAllDependentFacets);
         cloned.setShowOnSearch(showOnSearch);
         cloned.setFieldType(fieldType.createOrRetrieveCopyInstance(context).getClone());
-        for(RequiredFacet entry : requiredFacets){
+        for (RequiredFacet entry : requiredFacets) {
             RequiredFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getRequiredFacets().add(clonedEntry);
         }
         cloned.setSearchDisplayPriority(searchDisplayPriority);
-        for(SearchFacetRange entry : searchFacetRanges){
+        for (SearchFacetRange entry : searchFacetRanges) {
             SearchFacetRange clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getSearchFacetRanges().add(clonedEntry);
         }
@@ -333,23 +340,24 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             SearchFacetImpl other = (SearchFacetImpl) obj;
             return new EqualsBuilder()
-                .append(id, other.id)
-                .append(fieldType, other.fieldType)
-                .build();
+                    .append(id, other.id)
+                    .append(fieldType, other.fieldType)
+                    .build();
         }
         return false;
     }
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder(1, 31)
-            .append(id)
-            .append(fieldType)
-            .toHashCode();
+                .append(id)
+                .append(fieldType)
+                .toHashCode();
     }
 
     @Override
     public String getMainEntityName() {
         return getLabel();
     }
+
 }

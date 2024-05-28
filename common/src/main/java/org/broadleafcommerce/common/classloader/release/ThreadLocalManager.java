@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,8 +41,9 @@ public class ThreadLocalManager {
             return manager;
         }
     };
-
-    protected Map<Long, ThreadLocal> threadLocals = new LinkedHashMap<Long, ThreadLocal>();
+    private static final Object threadLock = new Object();
+    private static Long count = 0L;
+    protected Map<Long, ThreadLocal> threadLocals = new LinkedHashMap<>();
     protected RuntimeException marker = null;
 
     public static void addThreadLocal(ThreadLocal threadLocal) {
@@ -109,9 +110,6 @@ public class ThreadLocalManager {
         THREAD_LOCAL_MANAGER.get().threadLocals.remove(removePosition);
     }
 
-    private static Long count = 0L;
-    private static final Object threadLock = new Object();
-
     @Override
     public String toString() {
         if (!threadLocals.isEmpty() && marker != null) {
@@ -119,4 +117,5 @@ public class ThreadLocalManager {
         }
         return super.toString();
     }
+
 }

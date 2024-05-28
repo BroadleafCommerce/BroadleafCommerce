@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,14 +23,13 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 
 /**
  * This class holds information about an entity.
- * 
- * It is populated by a call to {@link EntityInformationService}.    The out-of-box implementation 
+ * <p>
+ * It is populated by a call to {@link EntityInformationService}.    The out-of-box implementation
  * is a placeholder service.
- * 
+ * <p>
  * The enterprise-workflow and multi-tenant modules add functionality to properly populate the dto.
- *    
- * @author bpolster
  *
+ * @author bpolster
  */
 public class EntityInformationDto {
 
@@ -41,11 +40,10 @@ public class EntityInformationDto {
     private Boolean isOwnerToCatalogRelationshipActive;
 
     /**
-     * For entities that implement {@link ProfileEntity}, returns the value of the profile with which 
+     * For entities that implement {@link ProfileEntity}, returns the value of the profile with which
      * the entity is associated.    Otherwise, returns null.
-     * 
+     *
      * @return the profileId
-     * 
      */
     public Long getProfileId() {
         return profileId;
@@ -62,9 +60,9 @@ public class EntityInformationDto {
     }
 
     /**
-     * For entities that implement {@link DirectCopyTransformTypes.MULTITENANT_CATALOG}, returns the id of the catalog 
+     * For entities that implement {@link DirectCopyTransformTypes.MULTITENANT_CATALOG}, returns the id of the catalog
      * with which the entity is associated.    Otherwise, returns null.
-     * 
+     *
      * @return the catalogId
      */
     public Long getCatalogId() {
@@ -84,6 +82,7 @@ public class EntityInformationDto {
     /**
      * Return the site that owns this record.     If not in a MultiTenant scenario or if the entity is not
      * setup for MultiTenant, this method will return null.
+     *
      * @return the siteId
      */
     public Long getOwningSiteId() {
@@ -92,7 +91,8 @@ public class EntityInformationDto {
 
     /**
      * Sets the siteId that owns this record.
-     * @param siteId the siteId to set
+     *
+     * @param owningSiteId the siteId to set
      */
     public void setOwningSiteId(Long owningSiteId) {
         this.owningSiteId = owningSiteId;
@@ -100,6 +100,7 @@ public class EntityInformationDto {
 
     /**
      * Returns true if this dto represents a profile entity
+     *
      * @return
      */
     public boolean isProfileEntity() {
@@ -108,6 +109,7 @@ public class EntityInformationDto {
 
     /**
      * Returns true if this dto represents a catalog entity
+     *
      * @return
      */
     public boolean isCatalogEntity() {
@@ -149,4 +151,5 @@ public class EntityInformationDto {
     public void setOwnerToCatalogRelationshipActive(Boolean ownerToCatalogRelationshipActive) {
         isOwnerToCatalogRelationshipActive = ownerToCatalogRelationshipActive;
     }
+
 }

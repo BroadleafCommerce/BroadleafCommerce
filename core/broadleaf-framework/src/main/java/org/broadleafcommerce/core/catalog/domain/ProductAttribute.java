@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,28 +27,28 @@ public interface ProductAttribute extends ValueAssignable<String>, MultiTenantCl
 
     /**
      * Gets the id.
-     * 
+     *
      * @return the id
      */
     Long getId();
 
     /**
      * Sets the id.
-     * 
+     *
      * @param id the new id
      */
     void setId(Long id);
 
     /**
      * Gets the product.
-     * 
+     *
      * @return the product
      */
     Product getProduct();
 
     /**
      * Sets the product.
-     * 
+     *
      * @param product the new product
      */
     void setProduct(Product product);

@@ -10,17 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.breadcrumbs;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTO;
 import org.broadleafcommerce.common.breadcrumbs.dto.BreadcrumbDTOType;
 import org.broadleafcommerce.common.breadcrumbs.service.BreadcrumbHandlerDefaultPriorities;
@@ -43,8 +40,6 @@ import jakarta.annotation.Resource;
 @Service("blCategoryBreadcrumbServiceExtensionHandler")
 public class CategoryBreadcrumbServiceExtensionHandler extends AbstractBreadcrumbServiceExtensionHandler {
 
-    private static final Log LOG = LogFactory.getLog(CategoryBreadcrumbServiceExtensionHandler.class);
-
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -58,8 +53,11 @@ public class CategoryBreadcrumbServiceExtensionHandler extends AbstractBreadcrum
         }
     }
 
-    public ExtensionResultStatusType modifyBreadcrumbList(String url, Map<String, String[]> params,
-            ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
+    public ExtensionResultStatusType modifyBreadcrumbList(
+            String url,
+            Map<String, String[]> params,
+            ExtensionResultHolder<List<BreadcrumbDTO>> holder
+    ) {
 
         // ProductBreadcrumb Handler strips off the productId and last fragment  
         String testUrl = (String) holder.getContextMap().get(BreadcrumbServiceExtensionManager.CONTEXT_PARAM_STRIPPED_URL);
@@ -104,16 +102,20 @@ public class CategoryBreadcrumbServiceExtensionHandler extends AbstractBreadcrum
     }
 
     /**
-     * Add the parent crumb for the passed in category.    
+     * Add the parent crumb for the passed in category.
      * Recursively call to find all parents.
-     * 
+     *
      * @param parentCrumbs
      * @param category
      * @param url
      * @param params
      */
-    protected void addParentCrumbs(List<BreadcrumbDTO> parentCrumbs, Category category, String url,
-            Map<String, String[]> params) {
+    protected void addParentCrumbs(
+            List<BreadcrumbDTO> parentCrumbs,
+            Category category,
+            String url,
+            Map<String, String[]> params
+    ) {
 
         Category parentCategory = category.getParentCategory();
         if (parentCategory != null && !parentCrumbs.contains(parentCategory)) { // prevent recursion
@@ -124,10 +126,10 @@ public class CategoryBreadcrumbServiceExtensionHandler extends AbstractBreadcrum
     }
 
     /**
-     * Hook for overrides, some implementations may want to build a crumb related to category filtering. 
-     * 
+     * Hook for overrides, some implementations may want to build a crumb related to category filtering.
+     * <p>
      * Out of box does nothing here.
-     * 
+     *
      * @param category
      * @param url
      * @param params
@@ -141,8 +143,11 @@ public class CategoryBreadcrumbServiceExtensionHandler extends AbstractBreadcrum
         return category.getName();
     }
 
-    protected Category determineFirstCategory(String testUrl, Map<String, String[]> params,
-            ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
+    protected Category determineFirstCategory(
+            String testUrl,
+            Map<String, String[]> params,
+            ExtensionResultHolder<List<BreadcrumbDTO>> holder
+    ) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         Category returnCategory = null;
 
@@ -165,14 +170,17 @@ public class CategoryBreadcrumbServiceExtensionHandler extends AbstractBreadcrum
     /**
      * This is an efficient test that checks to see if the requestURI matches the product URI.
      * This works well for sites whose category urls prefix their product urls.
-     * 
+     *
      * @param brc
      * @param testUrl
      * @param params
      * @return
      */
-    protected Category getMatchingCategoryFromProduct(BroadleafRequestContext brc, String testUrl,
-            Map<String, String[]> params) {
+    protected Category getMatchingCategoryFromProduct(
+            BroadleafRequestContext brc,
+            String testUrl,
+            Map<String, String[]> params
+    ) {
         if (brc != null) {
             Product product = (Product) brc.getRequestAttribute("currentProduct"); // see ProductHandlerMapping
             if (product != null) {
@@ -189,19 +197,21 @@ public class CategoryBreadcrumbServiceExtensionHandler extends AbstractBreadcrum
 
     /**
      * This indicates that we are on a category page
+     *
      * @param brc
      * @param testUrl
      * @param params
      * @return
      */
-    protected Category getCategoryFromCategoryAttribute(BroadleafRequestContext brc, String testUrl,
-            Map<String, String[]> params) {
+    protected Category getCategoryFromCategoryAttribute(
+            BroadleafRequestContext brc,
+            String testUrl,
+            Map<String, String[]> params
+    ) {
         return (Category) brc.getRequestAttribute("category");
     }
 
-    protected Category getCategoryFromUrl(BroadleafRequestContext brc, String requestUrl,
-            Map<String, String[]> params) {
-
+    protected Category getCategoryFromUrl(BroadleafRequestContext brc, String requestUrl, Map<String, String[]> params) {
         return catalogService.findCategoryByURI(requestUrl);
     }
 
@@ -209,4 +219,5 @@ public class CategoryBreadcrumbServiceExtensionHandler extends AbstractBreadcrum
     public int getDefaultPriority() {
         return BreadcrumbHandlerDefaultPriorities.CATEGORY_CRUMB;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,26 +38,26 @@ import jakarta.servlet.ServletException;
  * <p>
  * Bootstraps a Spring Boot application using a ServletContextListener rather than the default of using a ServletContextInitializer.
  * The use case here is when you absolutely have to use a web.xml and cannot rely on classpath scanning for a ServletContextInitializer
- * 
+ *
  * <p>
  * This is designed to work in conjunction with the {@link BroadleafBootServletContextInitializer} (although not requried) which serves
  * as a drop-in replacement for {@link SpringBootServletInitializer}.
- * 
+ *
  * <p>
  * Given an application that looks like this:
- * 
+ *
  * <pre>
  * package com.mycompany
- * 
+ *
  * {@literal @}SpringBootApplication
  * public class MyApplication extends BroadleafBootServletContextInitializer {
- * 
+ *
  * }
  * </pre>
- * 
+ *
  * <p>
  * A web.xml should contain the following listener configuration:
- * 
+ *
  * <pre>
  * {@code
  * <context-param>
@@ -69,16 +69,16 @@ import jakarta.servlet.ServletException;
  * </listener>
  * }
  * </pre>
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  * @see BroadleafBootServletContextInitializer
  */
 public class SpringBootBootstrappingServletContextListener implements ServletContextListener {
 
     public static final String APPLICATION_CLASS = "listenerContextInitializerClass";
-    
+
     protected ContextLoaderListener delegateListener;
-    
+
     @Override
     public void contextInitialized(ServletContextEvent event) {
         try {
@@ -86,8 +86,10 @@ public class SpringBootBootstrappingServletContextListener implements ServletCon
             Class<WebApplicationInitializer> initializerClass = getInitializerClass(servletContext);
             WebApplicationInitializer initializer = createInitializer(initializerClass);
             initializer.onStartup(servletContext);
-            
-            WebApplicationContext rootContext = (WebApplicationContext) servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+
+            WebApplicationContext rootContext = (WebApplicationContext) servletContext.getAttribute(
+                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE
+            );
             if (rootContext != null) {
                 delegateListener = new ContextLoaderListener(rootContext) {
                     @Override
@@ -100,14 +102,14 @@ public class SpringBootBootstrappingServletContextListener implements ServletCon
             throw new RuntimeException(e);
         }
     }
-    
+
     @Override
     public void contextDestroyed(ServletContextEvent event) {
         if (delegateListener != null) {
             delegateListener.contextDestroyed(event);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     protected Class<WebApplicationInitializer> getInitializerClass(ServletContext ctx) throws ClassNotFoundException, LinkageError {
         String clazz = ctx.getInitParameter(APPLICATION_CLASS);
@@ -118,10 +120,10 @@ public class SpringBootBootstrappingServletContextListener implements ServletCon
         if (!WebApplicationInitializer.class.isAssignableFrom(initializerClass)) {
             throw new IllegalStateException(String.format("The %s context-param must be an instance of ServletContextInitializer. Consider extending from %s", APPLICATION_CLASS, BroadleafBootServletContextInitializer.class.getName()));
         }
-        
+
         return (Class<WebApplicationInitializer>) initializerClass;
     }
-    
+
     protected WebApplicationInitializer createInitializer(final Class<WebApplicationInitializer> initializerClass) throws PrivilegedActionException {
         if (System.getSecurityManager() != null) {
             return AccessController.doPrivileged(new PrivilegedAction<WebApplicationInitializer>() {
@@ -134,5 +136,5 @@ public class SpringBootBootstrappingServletContextListener implements ServletCon
             return BeanUtils.instantiate(initializerClass);
         }
     }
-    
+
 }

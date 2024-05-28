@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,28 +26,30 @@ import java.util.List;
 import java.util.Map;
 
 public interface PromotableOrder extends Serializable {
-    
+
     /**
      * Sets the order subTotal to the sum of item total prices without
-     * adjustments.     
+     * adjustments.
      */
     void setOrderSubTotalToPriceWithoutAdjustments();
 
     /**
      * Sets the order subTotal to the sum of item total prices without
-     * adjustments.     
+     * adjustments.
      */
     void setOrderSubTotalToPriceWithAdjustments();
 
     /**
      * Returns all OrderItems for the order wrapped with PromotableOrderItem
+     *
      * @return
      */
     List<PromotableOrderItem> getAllOrderItems();
 
     /**
-     * Returns all OrderItems that can receive discounts.  Sorts the results by SalePrice or RetailPrice 
+     * Returns all OrderItems that can receive discounts.  Sorts the results by SalePrice or RetailPrice
      * depending upon the passed in variable.
+     *
      * @param sortBySalePrice
      * @return
      */
@@ -55,21 +57,22 @@ public interface PromotableOrder extends Serializable {
 
     /**
      * Returns all OrderItems that can receive discounts.
-     * @param applyDiscountToSalePrice
+     *
      * @return
      */
     List<PromotableOrderItem> getDiscountableOrderItems();
 
     /**
-     * Returns the fulfillmentGroups associated with the order after converting them to 
+     * Returns the fulfillmentGroups associated with the order after converting them to
      * promotableFulfillmentGroups.
-     * 
+     *
      * @return
      */
     List<PromotableFulfillmentGroup> getFulfillmentGroups();
 
     /**
      * Returns true if this promotableOrder has any order adjustments.
+     *
      * @return
      */
     boolean isHasOrderAdjustments();
@@ -77,6 +80,7 @@ public interface PromotableOrder extends Serializable {
     /**
      * Returns the list of orderAdjustments being proposed for the order.
      * This will be converted to actual order adjustments on completion of the offer processing.
+     *
      * @return
      */
     List<PromotableOrderAdjustment> getCandidateOrderAdjustments();
@@ -84,7 +88,7 @@ public interface PromotableOrder extends Serializable {
     /**
      * Adds the adjustment to the order's adjustment list and discounts the
      * order's adjustment price by the value of the adjustment.
-     * 
+     *
      * @param orderAdjustment
      */
     void addCandidateOrderAdjustment(PromotableOrderAdjustment orderAdjustment);
@@ -97,19 +101,19 @@ public interface PromotableOrder extends Serializable {
 
     /**
      * Removes all order adjustments from the order and resets the adjustment
-     * price. 
+     * price.
      */
     void removeAllCandidateOrderOfferAdjustments();
 
     /**
      * Removes all adjustments from the order's order items and resets the
-     * adjustment price for each item. 
+     * adjustment price for each item.
      */
     void removeAllCandidateItemOfferAdjustments();
 
     /**
      * Removes all adjustments from the order's fulfillment items and resets the
-     * adjustment price for each item. 
+     * adjustment price for each item.
      */
     void removeAllCandidateFulfillmentOfferAdjustments();
 
@@ -125,10 +129,11 @@ public interface PromotableOrder extends Serializable {
 
     /**
      * Returns true if a totalitarian offer has been applied.   A totalitarian offer is
-     * an offer that does not allow any other offers to be used at the same time.   As 
+     * an offer that does not allow any other offers to be used at the same time.   As
      * opposed to a "non-combinable" offer which can't be used with other offers of the
      * same type but can be used with other offers of a different type (e.g. a non-combinable order offer
-     * can be used with a non-combinable item offer).         
+     * can be used with a non-combinable item offer).
+     *
      * @return
      */
     boolean isTotalitarianOfferApplied();
@@ -148,13 +153,14 @@ public interface PromotableOrder extends Serializable {
     Money calculateItemAdjustmentTotal();
 
     /**
-     * Returns all of the price detail items for this order.   
+     * Returns all of the price detail items for this order.
+     *
      * @return
      */
     List<PromotableOrderItemPriceDetail> getAllPromotableOrderItemPriceDetails();
 
     /**
-     * Returns true if this order can apply another order promotion. 
+     * Returns true if this order can apply another order promotion.
      * Returns false if a totalitarian or not-combinable offer has already been applied
      * Returns false if the passed in order is not-combinable or totalitarian and this order already has adjustments
      */
@@ -162,24 +168,28 @@ public interface PromotableOrder extends Serializable {
 
     /**
      * Returns the {@link BroadleafCurrency} for the current order.
+     *
      * @return
      */
     BroadleafCurrency getOrderCurrency();
 
     /**
      * Sets the total fulfillmentCharges the order.
+     *
      * @param totalFulfillmentCharges
      */
     void setTotalFufillmentCharges(Money totalFulfillmentCharges);
 
     /**
      * Returns the price of the order without adjustments.
+     *
      * @return
      */
     Money calculateSubtotalWithoutAdjustments();
 
     /**
      * Returns the price of the order with adjustments.
+     *
      * @return
      */
     Money calculateSubtotalWithAdjustments();
@@ -187,18 +197,20 @@ public interface PromotableOrder extends Serializable {
     /**
      * Returns true if this order was created in a way that existing order and item adjustments
      * were copied over to this item.
+     *
      * @return
      */
     boolean isIncludeOrderAndItemAdjustments();
 
-    public boolean isTotalitarianOrderOfferApplied();
+    boolean isTotalitarianOrderOfferApplied();
 
-    public boolean isTotalitarianItemOfferApplied();
+    boolean isTotalitarianItemOfferApplied();
 
-    public boolean isTotalitarianFgOfferApplied();
+    boolean isTotalitarianFgOfferApplied();
 
     /**
      * Map available to implementations to store data needed for custom logic.
      */
     Map<String, Object> getExtraDataMap();
+
 }

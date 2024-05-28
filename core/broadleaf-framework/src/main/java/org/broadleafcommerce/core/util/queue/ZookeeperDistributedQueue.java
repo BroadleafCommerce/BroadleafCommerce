@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -54,35 +54,31 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Represents a {@link Queue} that is distributed (used by multiple JVMs or nodes) and managed by Zookeeper.  This queue uses distributed locks, also backed by Zookeeper.
- * 
- * Please note that while this works quite well in certain circumstances, it is not recommended for high volume or high capacity queues, 
- * nor for large queue messages.  It's a relatively slow queue.  Zookeeper allows you to create queues that can be used in a distributed way, but large queues can cause performance problems 
- * in Zookeeper, and Zookeeper has a 1MB transport limit, so messages have to be smaller than that.  Incidentally, initial performance tests showed queue operations (put / take) taking 
+ * <p>
+ * Please note that while this works quite well in certain circumstances, it is not recommended for high volume or high capacity queues,
+ * nor for large queue messages.  It's a relatively slow queue.  Zookeeper allows you to create queues that can be used in a distributed way, but large queues can cause performance problems
+ * in Zookeeper, and Zookeeper has a 1MB transport limit, so messages have to be smaller than that.  Incidentally, initial performance tests showed queue operations (put / take) taking
  * approximately 25-30 milliseconds, or about 30-40 queue operations per second with a small payload (about 15 bytes).
- * 
- * This Queue works quite well for smaller, lower capacity / throughput queues where you need to read/write in a distributed way. 
+ * <p>
+ * This Queue works quite well for smaller, lower capacity / throughput queues where you need to read/write in a distributed way.
  * Try to limit the size of this queue to around 500 elements or fewer. Otherwise, consider a different queue implementation.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 public class ZookeeperDistributedQueue<T extends Serializable> implements DistributedBlockingQueue<T> {
-    
-    private static final Log LOG = LogFactory.getLog(ZookeeperDistributedQueue.class);
-    
+
     /**
-     * This is the base folder that all queues will be written to in Solr.  The constructors require a lock path, which will be appended 
+     * This is the base folder that all queues will be written to in Solr.  The constructors require a lock path, which will be appended
      * to this path.
      */
     public static final String DEFAULT_BASE_FOLDER = "/broadleaf/app/distributed-queues";
     public static final String QUEUE_ENTRY_FOLDER = "/elements";
     public static final String QUEUE_LOCKS_FOLDER = "/locks";
     public static final String QUEUE_CONFIGS_FOLDER = "/configs";
-    
     public static final int DEFAULT_MAX_QUEUE_SIZE = 500;
-    
+    private static final Log LOG = LogFactory.getLog(ZookeeperDistributedQueue.class);
     private static final String QUEUE_ENTRY_NAME = "dz-queue-entry";
-    
+
     protected final Object QUEUE_MONITOR = new Object();
     private final String queueFolderPath;
     private final ZooKeeper zk;
@@ -91,26 +87,26 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     private final DistributedLock queueAccessLock;
     private final DistributedLock configLock;
     private int capacity;
-    
+
     /**
-     * Constructs a folder structure in Zookeeper for managing a queue and queue state..  The argument, queuePath, should start with a forward slash ('/') and should not 
+     * Constructs a folder structure in Zookeeper for managing a queue and queue state..  The argument, queuePath, should start with a forward slash ('/') and should not
      * end with a slash.  This argument should not contain whitespaces or other special characters.
-     * 
+     * <p>
      * The default max queue size will be 500.
-     * 
+     *
      * @param queuePath
      * @param zk
      */
     public ZookeeperDistributedQueue(String queuePath, ZooKeeper zk) {
         this(queuePath, zk, DEFAULT_MAX_QUEUE_SIZE, true, null);
     }
-    
+
     /**
-     * Constructs a folder structure in Zookeeper for managing a queue and queue state..  The argument, queuePath, should start with a forward slash ('/') and should not 
+     * Constructs a folder structure in Zookeeper for managing a queue and queue state..  The argument, queuePath, should start with a forward slash ('/') and should not
      * end with a slash.  This argument should not contain whitespaces or other special characters.
-     * 
+     * <p>
      * The default max queue size will be 500.
-     * 
+     *
      * @param queuePath
      * @param zk
      * @param maxQueueSize
@@ -118,15 +114,14 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     public ZookeeperDistributedQueue(String queuePath, ZooKeeper zk, int maxQueueSize) {
         this(queuePath, zk, maxQueueSize, true, null);
     }
-    
+
     /**
-     * Constructs a folder structure in Zookeeper for managing a queue and queue state..  The argument, queuePath, should start with a forward slash ('/') and should not 
-     * end with a slash.  This argument should be alpha-numeric, not contain whitespaces or other special characters, and can contain forward slashes ('/') to delineate folders. 
+     * Constructs a folder structure in Zookeeper for managing a queue and queue state..  The argument, queuePath, should start with a forward slash ('/') and should not
+     * end with a slash.  This argument should be alpha-numeric, not contain whitespaces or other special characters, and can contain forward slashes ('/') to delineate folders.
      * If useDefaultBasePath is true, then /broadleaf/app/distributed-queues will be prepended to the queuePath.  Otherwise, the queuePath will be used as it is provided.
-     * 
+     * <p>
      * The argument, maxQueueSize, will be a hint.  If another thread creates the queue structure in Zookeeper, then it will persist the maxQueueSize.
-     * 
-     * 
+     *
      * @param queuePath
      * @param zk
      * @param maxQueueSize
@@ -138,14 +133,14 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         Assert.notNull(queuePath, "The queuePath cannot be null and must be a Unix-style path (e.g. '/solr-index/command-queue').");
         Assert.hasText(queuePath.trim(), "The queuePath must not be empty and should not contain white spaces.");
         Assert.isTrue(maxQueueSize > 0, "maxQueueSize must be greater than 0.");
-        
+
         this.zk = zk;
         if (acls == null || acls.isEmpty()) {
             this.acls = ZooDefs.Ids.OPEN_ACL_UNSAFE;
         } else {
             this.acls = acls;
         }
-        
+
         if (useDefaultBasePath) {
             if (queuePath.trim().startsWith("/")) {
                 this.queueFolderPath = DEFAULT_BASE_FOLDER + queuePath.trim();
@@ -159,26 +154,26 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 this.queueFolderPath = '/' + queuePath.trim();
             }
         }
-        
+
         intializeQueueFolders();
-        
+
         this.queueAccessLock = initializeQueueAccessLock();
         this.configLock = initializeConfigLock();
-        
+
         Assert.notNull(this.queueAccessLock, "The queue access lock cannot be null.");
         Assert.notNull(this.configLock, "The config lock cannot be null.");
-        
+
         this.requestedMaxQueueCapacity = maxQueueSize;
         seMaxCapacity(this.requestedMaxQueueCapacity);
-        
+
         if (this.requestedMaxQueueCapacity > DEFAULT_MAX_QUEUE_SIZE) {
             LOG.error("Zookeeper queues can cause performance problems, especially when their maximum queue size is greater than 500. "
                     + "Anything over 1000 is considered unsupported. Please consider reducing the maximum capacity of this queue.");
         }
-        
+
         determineMaxCapacity();
     }
-    
+
     @Override
     public T remove() {
         try {
@@ -187,11 +182,12 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             if (itr.hasNext()) {
                 return itr.next().getValue();
             }
-            
+
             throw new DistributedQueueException("The queue was empty.");
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new DistributedQueueException("Thread was interrupdated removing an entry from the Zookeeper queue: " + getQueueFolderPath(), e);
+            throw new DistributedQueueException("Thread was interrupdated removing an entry from the Zookeeper queue: "
+                    + getQueueFolderPath(), e);
         }
     }
 
@@ -227,7 +223,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             if (entries.hasNext()) {
                 return entries.next().getValue();
             }
-            
+
             return null;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -249,13 +245,14 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                         return stat.getNumChildren();
                     }
                 });
-                
+
             } finally {
                 lock.unlock();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new DistributedQueueException("Thread was interrupted while trying to determine queue size for distributed Zookeeper queue, " + getQueueFolderPath(), e);
+            throw new DistributedQueueException("Thread was interrupted while trying to determine queue size for distributed Zookeeper queue, "
+                    + getQueueFolderPath(), e);
         }
     }
 
@@ -265,7 +262,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             return size() == 0;
         }
     }
-    
+
     @Override
     public Iterator<T> iterator() {
         throw new UnsupportedOperationException("This method is not supported by default.");
@@ -292,15 +289,16 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 if (!elements.isEmpty()) {
                     return elements.values().containsAll(c);
                 }
-                
+
                 return false;
-                
+
             } finally {
                 lock.unlock();
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new DistributedQueueException("The thread was interrupted while trying to determine if elements are contained in the Zookeeper queue, " + getQueueFolderPath(), e);
+            throw new DistributedQueueException("The thread was interrupted while trying to determine if elements are contained in the Zookeeper queue, "
+                    + getQueueFolderPath(), e);
         }
     }
 
@@ -315,7 +313,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
         } catch (InterruptedException e) {
             return false;
         }
-        
+
     }
 
     @Override
@@ -346,7 +344,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                         return null;
                     }
                 });
-                
+
             } finally {
                 lock.unlock();
             }
@@ -405,24 +403,24 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     }
 
     @Override
-    public T take() throws InterruptedException { 
+    public T take() throws InterruptedException {
         Map<String, T> elements = readQueueInternal(1, true, -1L);
-        Iterator<Map.Entry<String,T>> itr = elements.entrySet().iterator();
+        Iterator<Map.Entry<String, T>> itr = elements.entrySet().iterator();
         if (itr.hasNext()) {
             return itr.next().getValue();
         }
-        
+
         return null;
     }
 
     @Override
     public T poll(long timeout, TimeUnit unit) throws InterruptedException {
         Map<String, T> elements = readQueueInternal(1, true, unit.toMillis(timeout));
-        Iterator<Map.Entry<String,T>> itr = elements.entrySet().iterator();
+        Iterator<Map.Entry<String, T>> itr = elements.entrySet().iterator();
         if (itr.hasNext()) {
             return itr.next().getValue();
         }
-        
+
         return null;
     }
 
@@ -452,14 +450,16 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                             executeOperation(new GenericOperation<Void>() {
                                 @Override
                                 public Void execute() throws Exception {
-                                    getZookeeperClient().delete(getQueueEntryFolder() + '/' + entry.getKey(), 0);
+                                    getZookeeperClient().delete(
+                                            getQueueEntryFolder() + '/' + entry.getKey(), 0
+                                    );
                                     return null;
                                 }
                             });
-                            
+
                             return true;
                         }
-                        
+
                     }
                 }
                 return false;
@@ -491,7 +491,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
     @Override
     public int drainTo(Collection<? super T> c, int maxElements) {
         try {
-            Map<String,T> entries = readQueueInternal(maxElements, true, 0L);
+            Map<String, T> entries = readQueueInternal(maxElements, true, 0L);
             c.addAll(entries.values());
             return entries.size();
         } catch (InterruptedException e) {
@@ -499,12 +499,12 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             return 0;
         }
     }
-    
+
     protected int writeToQueue(List<? extends T> entries, final long timeout) throws InterruptedException {
         if (entries == null || entries.isEmpty()) {
             return 0;
         }
-        
+
         int entryCount = 0;
         long waitTime = timeout;
         synchronized (QUEUE_MONITOR) {
@@ -521,11 +521,11 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                     waitTime -= (end - start);
                 } else {
                     locked = lock.tryLock();
-                    if (! locked) {
+                    if (!locked) {
                         return entryCount;
                     }
                 }
-                
+
                 if (locked) {
                     try {
                         int remainingCapacity = remainingCapacity();
@@ -538,19 +538,25 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                         @Override
                                         public Void execute() throws Exception {
                                             byte[] data = serialize(entry);
-                                            ZookeeperUtil.makePath(getQueueEntryFolder() + '/' + getQueueEntryName(), data, getZookeeperClient(), CreateMode.PERSISTENT_SEQUENTIAL, getAcls());
+                                            ZookeeperUtil.makePath(
+                                                    getQueueEntryFolder() + '/' + getQueueEntryName(),
+                                                    data,
+                                                    getZookeeperClient(),
+                                                    CreateMode.PERSISTENT_SEQUENTIAL,
+                                                    getAcls()
+                                            );
                                             return null;
                                         }
                                     });
                                     remainingCapacity--;
                                     entryCount++;
                                     itr.remove();
-                                    
+
                                 } else {
                                     break;
                                 }
                             }
-                            
+
                             if (entries.isEmpty()) {
                                 return entryCount;
                             } else {
@@ -558,11 +564,11 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                 waitTime = timeout;
                                 continue;
                             }
-                            
+
                         } else {
                             lock.unlock();
                             locked = false;
-                            
+
                             if (timeout < 0L) {
                                 //Wait forever
                                 QUEUE_MONITOR.wait();
@@ -574,7 +580,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                 waitTime -= (end - start);  //Keep track of how long we waited.
                             } else {
                                 return entryCount;
-                            }   
+                            }
                         }
                     } finally {
                         if (locked) {
@@ -582,12 +588,12 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                         }
                     }
                 } else if (timeout >= 0L && waitTime <= 0L) {
-                    return entryCount;  
+                    return entryCount;
                 }
             }
         }
     }
-    
+
     protected Map<String, T> readQueueInternal(final int qty, final boolean remove, final long timeout) throws InterruptedException {
         final Map<String, T> out = new LinkedHashMap<>();
         long waitTime = timeout;
@@ -609,7 +615,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                         return out;
                     }
                 }
-                
+
                 if (locked) {
                     try {
                         List<String> entryNames = executeOperation(new GenericOperation<List<String>>() {
@@ -622,63 +628,71 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                                             QUEUE_MONITOR.notifyAll();
                                         }
                                     }
-                                    
+
                                 });
                             }
                         });
-                        
-                        if (entryNames != null && ! entryNames.isEmpty()) {
+
+                        if (entryNames != null && !entryNames.isEmpty()) {
                             Collections.sort(entryNames);
-                            
+
                             int count = 0;
                             for (final String entryName : entryNames) {
                                 try {
                                     T entry = executeOperation(new GenericOperation<T>() {
                                         @Override
                                         public T execute() throws Exception {
-                                            byte[] data = getZookeeperClient().getData(getQueueEntryFolder() + '/' + entryName, null, null);
-                                            
+                                            byte[] data = getZookeeperClient().getData(
+                                                    getQueueEntryFolder() + '/' + entryName,
+                                                    null,
+                                                    null
+                                            );
+
                                             @SuppressWarnings("unchecked")
-                                            T deserialized = (T)deserialize(data);
-                                            
+                                            T deserialized = (T) deserialize(data);
+
                                             if (remove) {
-                                                getZookeeperClient().delete(getQueueEntryFolder() + '/' + entryName, 0);
+                                                getZookeeperClient().delete(
+                                                        getQueueEntryFolder() + '/' + entryName,
+                                                        0
+                                                );
                                             }
-                                            
+
                                             return deserialized;
                                         }
                                     });
-                                    
+
                                     if (entry != null) {
                                         count++;
                                         out.put(entryName, entry);
                                     }
-                                    
+
                                     if (count >= qty) {
                                         break;
                                     }
-                                    
+
                                 } catch (Exception e) {
                                     //This may have been removed by another thread, so just continue.
-                                    if (e.getCause() != null && KeeperException.NoNodeException.class.isAssignableFrom(e.getCause().getClass())) {
+                                    if (e.getCause() != null
+                                            && KeeperException.NoNodeException.class.isAssignableFrom(e.getCause().getClass())) {
                                         continue;
                                     } else if (RuntimeException.class.isAssignableFrom(e.getClass())) {
-                                        throw (RuntimeException)e;
+                                        throw (RuntimeException) e;
                                     } else if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                                         Thread.currentThread().interrupt();
-                                        throw (InterruptedException)e;
+                                        throw (InterruptedException) e;
                                     } else {
                                         throw new DistributedQueueException("An unexpected error occured executing a retryable operation for distributed Zookeeper queue, " + getQueueFolderPath(), e);
                                     }
                                 }
                             }
-                            
+
                             return out;
                         } else {
                             //Unlock here so that we're not holding the lock while we wait...
                             lock.unlock();
                             locked = false;
-                            
+
                             if (timeout < 0L) {
                                 //Wait forever
                                 QUEUE_MONITOR.wait();
@@ -698,12 +712,12 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                         }
                     }
                 } else if (timeout >= 0L && waitTime <= 0L) {
-                    return out;  
+                    return out;
                 }
             }
         }
     }
-    
+
     /**
      * Creates the appropriate folder(s) in Zookeeper if they don't already exist.
      */
@@ -713,43 +727,51 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                 @Override
                 public Void execute() throws Exception {
                     //Folder to hold the queue structure...
-                    ZookeeperUtil.makePath(getQueueFolderPath(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls());
+                    ZookeeperUtil.makePath(
+                            getQueueFolderPath(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls()
+                    );
                     return null;
                 }
             });
-            
+
             executeOperation(new GenericOperation<Void>() {
                 @Override
                 public Void execute() throws Exception {
                     //Folder to hold the queue elements...
-                    ZookeeperUtil.makePath(getQueueEntryFolder(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls());
+                    ZookeeperUtil.makePath(
+                            getQueueEntryFolder(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls()
+                    );
                     return null;
                 }
             });
-            
+
             executeOperation(new GenericOperation<Void>() {
                 @Override
                 public Void execute() throws Exception {
                     //Folder to hold the locks...
-                    ZookeeperUtil.makePath(getLocksFolder(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls());
+                    ZookeeperUtil.makePath(
+                            getLocksFolder(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls()
+                    );
                     return null;
                 }
             });
-            
+
             executeOperation(new GenericOperation<Void>() {
                 @Override
                 public Void execute() throws Exception {
                     //Folder to hold the queue state...
-                    ZookeeperUtil.makePath(getConfigsFolder(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls());
+                    ZookeeperUtil.makePath(
+                            getConfigsFolder(), null, getZookeeperClient(), CreateMode.PERSISTENT, getAcls()
+                    );
                     return null;
                 }
             });
         } catch (InterruptedException e) {
-            throw new DistributedLockException("SolrZkClient encountered an error trying to create the persistent path, " 
+            throw new DistributedLockException("SolrZkClient encountered an error trying to create the persistent path, "
                     + getQueueFolderPath() + " in Zookeeper.", e);
         }
     }
-    
+
     protected synchronized void determineMaxCapacity() {
         final DistributedLock lock = getConfigLock();
         try {
@@ -760,24 +782,31 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                     public Void execute() throws Exception {
                         if (getZookeeperClient().exists(getConfigsFolder() + "/maxCapacity", false) == null) {
                             final int size = getRequestedMaxQueueSize();
-                            ZookeeperUtil.makePath(getConfigsFolder() + "/maxCapacity", serialize(size), getZookeeperClient(), CreateMode.EPHEMERAL, getAcls());
+                            ZookeeperUtil.makePath(
+                                    getConfigsFolder() + "/maxCapacity",
+                                    serialize(size),
+                                    getZookeeperClient(),
+                                    CreateMode.EPHEMERAL,
+                                    getAcls()
+                            );
                             seMaxCapacity(size);
                         } else {
-                            final Integer size = (Integer)deserialize(getZookeeperClient().getData(getConfigsFolder() + "/maxCapacity", new Watcher() {
-                                @Override
-                                public void process(WatchedEvent event) {
-                                    //This happens in a callback on another thread, allowing us to avoid an infinite recursive loop.
-                                    try {
-                                        determineMaxCapacity();
-                                    } catch (Exception e) {
-                                        LOG.error("An error occured in a callback to determine the max queue size.", e);
-                                        if (InterruptedException.class.isAssignableFrom(e.getClass())) {
-                                            Thread.currentThread().interrupt();
+                            final Integer size = (Integer) deserialize(
+                                    getZookeeperClient().getData(getConfigsFolder() + "/maxCapacity", new Watcher() {
+                                        @Override
+                                        public void process(WatchedEvent event) {
+                                            //This happens in a callback on another thread, allowing us to avoid an infinite recursive loop.
+                                            try {
+                                                determineMaxCapacity();
+                                            } catch (Exception e) {
+                                                LOG.error("An error occured in a callback to determine the max queue size.", e);
+                                                if (InterruptedException.class.isAssignableFrom(e.getClass())) {
+                                                    Thread.currentThread().interrupt();
+                                                }
+                                            }
                                         }
-                                    }
-                                }
-                                
-                            }, null));
+
+                                    }, null));
                             seMaxCapacity(size);
                         }
                         return null;
@@ -791,9 +820,10 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             throw new DistributedQueueException("An error occured trying to initialize the queue size.", e);
         }
     }
-    
+
     /**
      * Mechanism to convert a byte array to an object.  Default implementation uses {@link ObjectInputStream}.
+     *
      * @param bytes
      * @return
      */
@@ -815,7 +845,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                     }
                 }
             }
-            
+
             try {
                 bais.close();
             } catch (IOException e) {
@@ -825,9 +855,10 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             }
         }
     }
-    
+
     /**
      * Mechanism to convert an object to a byte array.  Default implementation uses {@link ObjectOutputStream}.
+     *
      * @param obj
      * @return
      */
@@ -854,7 +885,7 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
                     }
                 }
             }
-            
+
             try {
                 baos.close();
             } catch (IOException e) {
@@ -864,86 +895,102 @@ public class ZookeeperDistributedQueue<T extends Serializable> implements Distri
             }
         }
     }
-    
+
     protected DistributedLock initializeQueueAccessLock() {
-        return new ReentrantDistributedZookeeperLock(getZookeeperClient(), getLocksFolder() + "/access", "queueAccessLock", false, getAcls());
+        return new ReentrantDistributedZookeeperLock(
+                getZookeeperClient(),
+                getLocksFolder() + "/access",
+                "queueAccessLock",
+                false,
+                getAcls()
+        );
     }
-    
+
     protected DistributedLock initializeConfigLock() {
-        return new ReentrantDistributedZookeeperLock(getZookeeperClient(), getLocksFolder() + "/config", "configLock", false, getAcls());
+        return new ReentrantDistributedZookeeperLock(
+                getZookeeperClient(),
+                getLocksFolder() + "/config",
+                "configLock",
+                false,
+                getAcls()
+        );
     }
-    
+
     protected int getRequestedMaxQueueSize() {
         return requestedMaxQueueCapacity;
     }
-    
+
     public String getQueueFolderPath() {
         return queueFolderPath;
     }
-    
+
     protected String getLocksFolder() {
         return getQueueFolderPath() + QUEUE_LOCKS_FOLDER;
     }
-    
+
     protected String getConfigsFolder() {
         return getQueueFolderPath() + QUEUE_CONFIGS_FOLDER;
     }
-    
+
     protected String getQueueEntryFolder() {
         return getQueueFolderPath() + QUEUE_ENTRY_FOLDER;
     }
-    
+
     protected int geMaxCapacity() {
         synchronized (QUEUE_MONITOR) {
             return capacity;
         }
     }
-    
+
     protected void seMaxCapacity(int size) {
         synchronized (QUEUE_MONITOR) {
             this.capacity = size;
         }
     }
-    
+
     protected DistributedLock getQueueAccessLock() {
         return queueAccessLock;
     }
-    
+
     protected DistributedLock getConfigLock() {
         return configLock;
     }
-    
+
     protected String getQueueEntryName() {
         return QUEUE_ENTRY_NAME;
     }
-    
+
     protected ZooKeeper getZookeeperClient() {
         return zk;
     }
-    
+
     protected List<ACL> getAcls() {
         return acls;
     }
-    
+
     /**
      * Allows us to execute retry-able operations.
-     * 
+     *
      * @param operation
      * @return
      * @throws InterruptedException
      */
     protected <R> R executeOperation(GenericOperation<R> operation) throws InterruptedException {
         try {
-            return GenericOperationUtil.executeRetryableOperation(operation, 5, 100L, true, null);
+            return GenericOperationUtil.executeRetryableOperation(
+                    operation, 5, 100L, true, null
+            );
         } catch (Exception e) {
             if (InterruptedException.class.isAssignableFrom(e.getClass())) {
                 Thread.currentThread().interrupt();
-                throw (InterruptedException)e;
+                throw (InterruptedException) e;
             } else if (RuntimeException.class.isAssignableFrom(e.getClass())) {
-                throw (RuntimeException)e;
+                throw (RuntimeException) e;
             } else {
-                throw new DistributedQueueException("An unexpected error occured executing a retryable operation for distributed Zookeeper queue, " + getQueueFolderPath(), e);
+                throw new DistributedQueueException("An unexpected error occured executing a retryable operation for distributed Zookeeper queue, "
+                        + getQueueFolderPath(), e);
             }
         }
     }
+
 }

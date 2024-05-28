@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,7 +27,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class UrlUtil {
 
     protected static final String VALID_SCHEME_CHARS =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+.-";
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+.-";
 
     protected static Pattern redirectPattern = Pattern.compile("^\\/admin.*|\\/login.*$");
 
@@ -71,20 +71,23 @@ public class UrlUtil {
 
     /**
      * Returns validated URL. Validation is done by
-     * @see org.owasp.esapi.Validator#isValidRedirectLocation(String, String, boolean),
-     * which only works on relative URLs.
-     *
-     * Throws an IOExcption if isValidRedirectLocation is false.
      *
      * @param url
      * @param request
      * @throws IOException
+     * @see org.owasp.esapi.Validator#isValidRedirectLocation(String, String, boolean),
+     * which only works on relative URLs.
+     * <p>
+     * Throws an IOExcption if isValidRedirectLocation is false.
      */
     public static void validateUrl(String url, HttpServletRequest request) throws IOException {
         String serverName = request.getServerName();
         String port = ":" + request.getServerPort();
         String scheme = request.getScheme() + "://";
-        String relativeUrl = url.replace(scheme, "").replace(serverName, "").replace(port, "");
+        String relativeUrl = url
+                .replace(scheme, "")
+                .replace(serverName, "")
+                .replace(port, "");
 
         if (!"/".equals(relativeUrl) && !redirectPattern.matcher(relativeUrl).matches()) {
             throw new IOException("Redirect failed");
@@ -100,24 +103,20 @@ public class UrlUtil {
      */
     public static boolean isAbsoluteUrl(String url) {
         // a null URL is not absolute, by our definition
-        if (url == null)
-        {
+        if (url == null) {
             return false;
         }
 
         // do a fast, simple check first
         int colonPos;
-        if ((colonPos = url.indexOf(':')) == -1)
-        {
+        if ((colonPos = url.indexOf(':')) == -1) {
             return false;
         }
 
         // if we DO have a colon, make sure that every character
         // leading up to it is a valid scheme character
-        for (int i = 0; i < colonPos; i++)
-        {
-            if (VALID_SCHEME_CHARS.indexOf(url.charAt(i)) == -1)
-            {
+        for (int i = 0; i < colonPos; i++) {
+            if (VALID_SCHEME_CHARS.indexOf(url.charAt(i)) == -1) {
                 return false;
             }
         }

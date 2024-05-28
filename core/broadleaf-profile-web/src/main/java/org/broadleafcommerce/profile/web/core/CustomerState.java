@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,15 +34,15 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 @Component("blCustomerState")
 public class CustomerState {
-    
+
     public static Customer getCustomer(HttpServletRequest request) {
         return (Customer) BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer(request);
     }
-    
+
     public static Customer getCustomer(WebRequest request) {
         return (Customer) BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer(request);
     }
-    
+
     public static Customer getCustomer() {
         if (BroadleafRequestContext.getBroadleafRequestContext() == null
                 || BroadleafRequestContext.getBroadleafRequestContext().getWebRequest() == null) {
@@ -50,7 +50,7 @@ public class CustomerState {
         }
         return (Customer) BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().getCustomer();
     }
-    
+
     public static void setCustomer(Customer customer) {
         BroadleafRequestCustomerResolverImpl.getRequestCustomerResolver().setCustomer(customer);
     }

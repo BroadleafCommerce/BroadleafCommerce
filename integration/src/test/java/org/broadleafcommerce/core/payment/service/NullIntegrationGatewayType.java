@@ -28,5 +28,4 @@ public class NullIntegrationGatewayType extends PaymentGatewayType {
     public static final PaymentGatewayType NULL_INTEGRATION_GATEWAY  = new PaymentGatewayType("NULL_INTEGRATION_GATEWAY", "Null Payment Gateway Implementation");
     public static final PaymentGatewayType NULL_INTEGRATION_HOSTED_GATEWAY  = new PaymentGatewayType("NULL_INTEGRATION_HOSTED_GATEWAY", "Null Hosted Payment Gateway Implementation");
 
-
 }

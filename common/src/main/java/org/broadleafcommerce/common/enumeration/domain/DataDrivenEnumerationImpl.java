@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,6 +33,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,12 +57,12 @@ import jakarta.persistence.Table;
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
         friendlyName = "DataDrivenEnumerationImpl_friendyName")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -79,13 +80,11 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     protected Long id;
 
     @Column(name = "ENUM_KEY")
-    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Key", order = 1, gridOrder = 1,
-            prominent = true)
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Key", order = 1, gridOrder = 1, prominent = true)
     protected String key;
 
     @Column(name = "MODIFIABLE")
-    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Modifiable", order = 2,
-            gridOrder = 2, prominent = true)
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationImpl_Modifiable", order = 2, gridOrder = 2, prominent = true)
     protected Boolean modifiable = false;
 
     @OneToMany(mappedBy = "type", targetEntity = DataDrivenEnumerationValueImpl.class,
@@ -93,8 +92,7 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blDataDrivenEnumeration")
     @AdminPresentationCollection(addType = AddMethodType.PERSIST,
             friendlyName = "DataDrivenEnumerationImpl_Enum_Values", order = 3)
-    protected List<DataDrivenEnumerationValue> enumValues =
-            new ArrayList<DataDrivenEnumerationValue>();
+    protected List<DataDrivenEnumerationValue> enumValues = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -156,8 +154,8 @@ public class DataDrivenEnumerationImpl implements DataDrivenEnumeration {
 
     @Override
     public <G extends DataDrivenEnumeration> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context)
-            throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

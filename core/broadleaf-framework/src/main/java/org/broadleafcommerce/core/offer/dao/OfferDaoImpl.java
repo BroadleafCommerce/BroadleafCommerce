@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -53,10 +53,10 @@ import jakarta.persistence.criteria.Root;
 @Repository("blOfferDao")
 public class OfferDaoImpl implements OfferDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Value("${query.dateResolution.offer:10000}")
@@ -96,7 +96,9 @@ public class OfferDaoImpl implements OfferDao {
 
     @Override
     public CandidateFulfillmentGroupOffer createCandidateFulfillmentGroupOffer() {
-        return ((CandidateFulfillmentGroupOffer) entityConfiguration.createEntityInstance(CandidateFulfillmentGroupOffer.class.getName()));
+        return ((CandidateFulfillmentGroupOffer) entityConfiguration.createEntityInstance(
+                CandidateFulfillmentGroupOffer.class.getName()
+        ));
     }
 
     @Override
@@ -106,7 +108,9 @@ public class OfferDaoImpl implements OfferDao {
 
     @Override
     public OrderItemPriceDetailAdjustment createOrderItemPriceDetailAdjustment() {
-        return ((OrderItemPriceDetailAdjustment) entityConfiguration.createEntityInstance(OrderItemPriceDetailAdjustment.class.getName()));
+        return ((OrderItemPriceDetailAdjustment) entityConfiguration.createEntityInstance(
+                OrderItemPriceDetailAdjustment.class.getName()
+        ));
     }
 
     @Override
@@ -116,7 +120,9 @@ public class OfferDaoImpl implements OfferDao {
 
     @Override
     public FulfillmentGroupAdjustment createFulfillmentGroupAdjustment() {
-        return ((FulfillmentGroupAdjustment) entityConfiguration.createEntityInstance(FulfillmentGroupAdjustment.class.getName()));
+        return ((FulfillmentGroupAdjustment) entityConfiguration.createEntityInstance(
+                FulfillmentGroupAdjustment.class.getName()
+        ));
     }
 
     @Override
@@ -128,7 +134,10 @@ public class OfferDaoImpl implements OfferDao {
     @Override
     public void delete(OfferInfo offerInfo) {
         if (!em.contains(offerInfo)) {
-            offerInfo = (OfferInfo) em.find(entityConfiguration.lookupEntityClass(OfferInfo.class.getName()), offerInfo.getId());
+            offerInfo = (OfferInfo) em.find(
+                    entityConfiguration.lookupEntityClass(OfferInfo.class.getName()),
+                    offerInfo.getId()
+            );
         }
         em.remove(offerInfo);
     }
@@ -206,4 +215,5 @@ public class OfferDaoImpl implements OfferDao {
     public void setCurrentDateResolution(Long currentDateResolution) {
         this.currentDateResolution = currentDateResolution;
     }
+
 }

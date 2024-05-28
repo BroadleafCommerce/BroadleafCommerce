@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -79,7 +79,7 @@ public class SystemSupportLoggerAdapter extends AbstractSupportLoggerAdapter imp
      * Generate a SUPPORT level log message with an accompanying Throwable
      *
      * @param message the log message
-     * @param t the exception to accompany the log message - will result in a stack track in the log
+     * @param t       the exception to accompany the log message - will result in a stack track in the log
      */
     @Override
     public void support(String message, Throwable t) {
@@ -91,7 +91,7 @@ public class SystemSupportLoggerAdapter extends AbstractSupportLoggerAdapter imp
      * in the message.
      *
      * @param lifeCycleEvent The module life cycle type for this log message
-     * @param message the log message
+     * @param message        the log message
      */
     @Override
     public void lifecycle(LifeCycleEvent lifeCycleEvent, String message) {
@@ -207,8 +207,8 @@ public class SystemSupportLoggerAdapter extends AbstractSupportLoggerAdapter imp
 
         // Append date-time if so configured
         if (getShowDateTime() && getDateFormatter() != null) {
-                buf.append(getFormattedDate());
-                buf.append(' ');
+            buf.append(getFormattedDate());
+            buf.append(' ');
         }
 
         // Append current thread name if so configured
@@ -227,7 +227,6 @@ public class SystemSupportLoggerAdapter extends AbstractSupportLoggerAdapter imp
         buf.append(message);
 
         write(buf, t);
-
     }
 
     protected void write(StringBuffer buf, Throwable t) {
@@ -286,4 +285,5 @@ public class SystemSupportLoggerAdapter extends AbstractSupportLoggerAdapter imp
     public void setName(String name) {
         this.name = name;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,27 +19,24 @@ package org.broadleafcommerce.core.catalog.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of product types.
- * 
+ *
  * @author jfischer
  */
 public class ProductType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, ProductType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, ProductType> TYPES = new LinkedHashMap<String, ProductType>();
-
-    public static final ProductType PRODUCT  = new ProductType("org.broadleafcommerce.core.catalog.domain.Product", "Normal Product");
-    public static final ProductType BUNDLE  = new ProductType("org.broadleafcommerce.core.catalog.domain.ProductBundle", "Product Bundle");
-
-    public static ProductType getInstance(final String type) {
-        return TYPES.get(type);
-    }
+    public static final ProductType PRODUCT = new ProductType("org.broadleafcommerce.core.catalog.domain.Product", "Normal Product");
+    public static final ProductType BUNDLE = new ProductType("org.broadleafcommerce.core.catalog.domain.ProductBundle", "Product Bundle");
 
     private String type;
     private String friendlyType;
@@ -53,19 +50,23 @@ public class ProductType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static ProductType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -92,4 +93,5 @@ public class ProductType implements Serializable, BroadleafEnumerationType {
             return false;
         return true;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -134,60 +134,48 @@ import jakarta.persistence.EntityManager;
  * @author Jeff Fischer
  */
 @Component("blTransactionLifecycleMonitor")
-public class TransactionLifecycleMonitor implements BroadleafApplicationListener<TransactionLifecycleEvent>, ApplicationContextAware, SmartLifecycle, SqlStatementLoggable {
+public class TransactionLifecycleMonitor implements BroadleafApplicationListener<TransactionLifecycleEvent>,
+        ApplicationContextAware, SmartLifecycle, SqlStatementLoggable {
 
     private static SupportLogger logger = SupportLogManager.getLogger("TransactionLogging", TransactionLifecycleMonitor.class);
     private static ApplicationContext context = null;
     private static TransactionLifecycleMonitor instance = null;
-
-    public static TransactionLifecycleMonitor getInstance() {
-        return instance;
-    }
-
     @Autowired(required = false)
     protected List<LifecycleAwareJpaTransactionManager> transactionManagers = null;
-
     @Autowired(required = false)
     protected List<TransactionInfoCustomModifier> modifiers = null;
-
     //10 minutes
     @Value("${log.transaction.lifecycle.logging.threshold.millis:600000}")
     protected long loggingThreshold = 600000L;
-
     //5 minutes
     @Value("${log.transaction.lifecycle.stuck.threshold.millis:300000}")
     protected long stuckThreshold = 300000L;
-
     //30 seconds
     @Value("${log.transaction.lifecycle.logging.polling.resolution.millis:30000}")
     protected long loggingPollingResolution = 30000L;
-
     //5 minutes
     @Value("${log.transaction.lifecycle.reporting.lag.threshold.millis:300000}")
     protected long loggingReportingLagThreshold = 300000L;
-
     @Value("${log.transaction.lifecycle.info.count.max:5000}")
     protected int countMax = 5000;
-
     @Value("${log.transaction.lifecycle.use.compression:true}")
     protected boolean useCompression = true;
-
     @Value("${log.transaction.lifecycle.abbreviate.statements:true}")
     protected boolean abbreviateStatements = true;
-
     @Value("${log.transaction.lifecycle.abbreviate.statements.length:200}")
     protected int abbreviateStatementsLength = 200;
-
     @Value("${log.transaction.lifecycle.decompress.statement:false}")
     protected boolean decompressStatementForLog = false;
-
     @Value("${log.transaction.lifecycle.query.list.max.size:100}")
     protected int maxQueryListSize = 100;
-
     protected Map<Integer, TransactionInfo> infos = new ConcurrentHashMap<>();
     protected boolean isStarted = false;
     protected boolean enabled = false;
     protected Timer timer = new Timer("TransactionLifecycleMonitorThread", true);
+
+    public static TransactionLifecycleMonitor getInstance() {
+        return instance;
+    }
 
     @PostConstruct
     public synchronized void init() {
@@ -239,8 +227,8 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                 for (Map.Entry<Integer, TransactionInfo> entry : infos.entrySet()) {
                     TransactionInfo info = entry.getValue();
                     logger.support(String.format("TRANSACTIONMONITOR(5) - This transaction was detected as in-progress at the time " +
-                        "of shutdown. The TransactionInfo has been alive for %s milliseconds. Logging TransactionInfo: \n%s",
-                        currentTime - info.getStartTime(), info.toString()));
+                                    "of shutdown. The TransactionInfo has been alive for %s milliseconds. Logging TransactionInfo: \n%s",
+                            currentTime - info.getStartTime(), info.toString()));
                 }
             }
         }
@@ -398,11 +386,11 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
             try {
                 info.setFaultStateDetected(true);
                 logger.support(String.format("TRANSACTIONMONITOR(1) - The thread associated with the tested TransactionInfo is not " +
-                    "considered stuck, but the TransactionInfo has been alive for %s milliseconds and a SQL " +
-                    "statement has not been reported against the tracked EntityManager in %s milliseconds. " +
-                    "This could indicate the thread has moved on and the transaction was not properly finalized. " +
-                    "Logging TransactionInfo: \n%s",
-                    currentTime - info.getStartTime(), currentTime - info.getLastLogTime(), info.toString()));
+                                "considered stuck, but the TransactionInfo has been alive for %s milliseconds and a SQL " +
+                                "statement has not been reported against the tracked EntityManager in %s milliseconds. " +
+                                "This could indicate the thread has moved on and the transaction was not properly finalized. " +
+                                "Logging TransactionInfo: \n%s",
+                        currentTime - info.getStartTime(), currentTime - info.getLastLogTime(), info.toString()));
             } finally {
                 infosToRemove.add(key);
                 removed = true;
@@ -411,7 +399,13 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
         return removed;
     }
 
-    protected boolean detectExpiry(List<Integer> infosToRemove, Integer key, long currentTime, TransactionInfo info, StackTraceElement[] elements) {
+    protected boolean detectExpiry(
+            List<Integer> infosToRemove,
+            Integer key,
+            long currentTime,
+            TransactionInfo info,
+            StackTraceElement[] elements
+    ) {
         boolean removed = false;
         boolean isExpired = currentTime - info.getStartTime() >= loggingThreshold;
         if (isExpired) {
@@ -431,19 +425,19 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                             currentStack = sb.toString();
                         }
                         logger.support(String.format("TRANSACTIONMONITOR(4) - The thread associated with the tested TransactionInfo may be " +
-                            "stuck. The TransactionInfo has been alive for %s milliseconds and the associated thread stack " +
-                            "has not changed in %s milliseconds. Logging TransactionInfo and current stack: \n%s currentStack=\'%s\'",
-                            currentTime - info.getStartTime(), currentTime - info.getStuckThreadStartTime(), info.toString(), currentStack));
+                                        "stuck. The TransactionInfo has been alive for %s milliseconds and the associated thread stack " +
+                                        "has not changed in %s milliseconds. Logging TransactionInfo and current stack: \n%s currentStack=\'%s\'",
+                                currentTime - info.getStartTime(), currentTime - info.getStuckThreadStartTime(), info.toString(), currentStack));
                     } finally {
                         infosToRemove.add(key);
                         removed = true;
                     }
                 }
             } else {
-                if (!info.getFaultStateDetected()){
+                if (!info.getFaultStateDetected()) {
                     logger.support(String.format("TRANSACTIONMONITOR(2) - The thread associated with the tested TransactionInfo is not " +
-                        "considered stuck yet, but the TransactionInfo has been alive for %s milliseconds. " +
-                        "This could indicate a overly long transaction time. Logging TransactionInfo: \n%s",
+                                    "considered stuck yet, but the TransactionInfo has been alive for %s milliseconds. " +
+                                    "This could indicate a overly long transaction time. Logging TransactionInfo: \n%s",
                             currentTime - info.getStartTime(), info.toString()));
                 }
             }
@@ -491,8 +485,8 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
                         //An exception took place during finalization. Log our info to support for review.
                         StringWriter sw = new StringWriter();
                         finalizationException.printStackTrace(new PrintWriter(sw));
-                        logger.support(String.format("TRANSACTIONMONITOR(3) - Exception during "+finalizationType+" finalization. Logging " +
-                            "TransactionInfo and finalization exception: \n%s finalizationStack=\'%s\'", info.toString(), sw.toString()));
+                        logger.support(String.format("TRANSACTIONMONITOR(3) - Exception during " + finalizationType + " finalization. Logging " +
+                                "TransactionInfo and finalization exception: \n%s finalizationStack=\'%s\'", info.toString(), sw.toString()));
                     }
                 } finally {
                     infos.remove(hashcode);
@@ -520,7 +514,9 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
         if (transactionManagers != null) {
             for (LifecycleAwareJpaTransactionManager transactionManager : transactionManagers) {
                 if (transactionManager.isEnabled()) {
-                    EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.getResource(transactionManager.getEntityManagerFactory());
+                    EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.getResource(
+                            transactionManager.getEntityManagerFactory()
+                    );
                     if (emHolder != null && emHolder.isOpen() && emHolder.isSynchronizedWithTransaction()) {
                         response = infos.get(emHolder.getEntityManager().hashCode());
                         if (response != null) {

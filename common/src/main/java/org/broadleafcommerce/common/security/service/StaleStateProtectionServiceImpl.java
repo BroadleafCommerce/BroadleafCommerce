@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,8 +40,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
- * @see StaleStateProtectionService
  * @author jfischer
+ * @see StaleStateProtectionService
  */
 @Service("blStaleStateProtectionService")
 public class StaleStateProtectionServiceImpl implements StaleStateProtectionService {
@@ -70,7 +70,7 @@ public class StaleStateProtectionServiceImpl implements StaleStateProtectionServ
     }
 
     @Override
-    public String getStateVersionToken(){
+    public String getStateVersionToken() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
             HttpSession session = request.getSession();
@@ -154,4 +154,5 @@ public class StaleStateProtectionServiceImpl implements StaleStateProtectionServ
     public String getStateVersionTokenParameter() {
         return STATEVERSIONTOKENPARAMETER;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,11 +44,10 @@ import jakarta.annotation.Resource;
 @Component("blUpSaleProductCustomPersistenceHandler")
 public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(UpSaleProductCustomPersistenceHandler.class);
     protected static final String PRODUCT_ID = "product.id";
     protected static final String RELATED_SALE_PRODUCT_ID = "relatedSaleProduct.id";
     protected static final String PRODUCTS_SEPARATOR = " -> ";
-
+    private static final Log LOG = LogFactory.getLog(UpSaleProductCustomPersistenceHandler.class);
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -96,8 +95,7 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
         }
     }
 
-    protected void validateDuplicateChild(final Entity entity, final Product relatedProduct, final Product product)
-            throws ValidationException {
+    protected void validateDuplicateChild(final Entity entity, final Product relatedProduct, final Product product) throws ValidationException {
         final List<Long> childProductIds = product.getUpSaleProducts().stream()
                 .map(upSaleProduct -> upSaleProduct.getRelatedProduct().getId())
                 .collect(Collectors.toList());
@@ -107,16 +105,23 @@ public class UpSaleProductCustomPersistenceHandler extends ClassCustomPersistenc
         }
     }
 
-    protected void validateRecursiveRelationship(final Entity entity, final Product relatedProduct,
-                                                 final Product product) throws ValidationException {
+    protected void validateRecursiveRelationship(
+            final Entity entity,
+            final Product relatedProduct,
+            final Product product
+    ) throws ValidationException {
         final StringBuilder productLinks = new StringBuilder();
         this.addProductLink(productLinks, product.getName());
         this.addProductLink(productLinks, relatedProduct.getName());
         this.validateUpSaleProducts(entity, relatedProduct, product.getId(), productLinks);
     }
 
-    protected void validateUpSaleProducts(final Entity entity, final Product product, final Long id,
-                                          final StringBuilder productLinks) throws ValidationException {
+    protected void validateUpSaleProducts(
+            final Entity entity,
+            final Product product,
+            final Long id,
+            final StringBuilder productLinks
+    ) throws ValidationException {
         if (product != null) {
             for (RelatedProduct upSaleProduct : product.getUpSaleProducts()) {
                 final Product relatedProduct = upSaleProduct.getRelatedProduct();

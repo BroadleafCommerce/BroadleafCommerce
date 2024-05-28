@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,6 +27,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -40,6 +41,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.lang.reflect.Method;
 
 /**
@@ -49,37 +51,40 @@ import java.lang.reflect.Method;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_ORDER_ITEM_ATTRIBUTE",
+@Table(name = "BLC_ORDER_ITEM_ATTRIBUTE",
         uniqueConstraints = @UniqueConstraint(name = "ATTR_NAME_ORDER_ITEM_ID", columnNames = {"NAME", "ORDER_ITEM_ID"}))
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(friendlyName = "OrderItemAttributeImpl_baseProductAttribute")
 public class OrderItemAttributeImpl implements OrderItemAttribute {
 
     public static final Log LOG = LogFactory.getLog(OrderItemAttributeImpl.class);
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    @GeneratedValue(generator= "OrderItemAttributeId")
+    @GeneratedValue(generator = "OrderItemAttributeId")
     @GenericGenerator(
-        name="OrderItemAttributeId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="OrderItemAttributeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.OrderItemAttributeImpl")
-        }
+            name = "OrderItemAttributeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OrderItemAttributeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.OrderItemAttributeImpl")
+            }
     )
     @Column(name = "ORDER_ITEM_ATTRIBUTE_ID")
     protected Long id;
-    
-    @Column(name = "NAME", nullable=false)
+
+    @Column(name = "NAME", nullable = false)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String name;
 
-    @Column(name = "VALUE", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemAttributeImpl_Attribute_Value", order=2, group = "OrderItemAttributeImpl_Description", prominent=true)
+    @Column(name = "VALUE", nullable = false)
+    @AdminPresentation(friendlyName = "OrderItemAttributeImpl_Attribute_Value", order = 2,
+            group = "OrderItemAttributeImpl_Description", prominent = true)
     protected String value;
-    
-    @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)
+
+    @ManyToOne(targetEntity = OrderItemImpl.class, optional = false)
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 
@@ -130,7 +135,8 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
 
     public void checkCloneable(OrderItemAttribute itemAttribute) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = itemAttribute.getClass().getMethod("clone");
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !itemAttribute.getClass().getName().startsWith("org.broadleafcommerce")) {
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
+                && !itemAttribute.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
         }
@@ -145,8 +151,9 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
             try {
                 checkCloneable(itemAttribute);
             } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + itemAttribute.getClass().getName(), e);
-            }            
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: "
+                        + itemAttribute.getClass().getName(), e);
+            }
             itemAttribute.setName(name);
             itemAttribute.setOrderItem(orderItem);
             itemAttribute.setValue(value);
@@ -156,7 +163,6 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
 
         return itemAttribute;
     }
-
 
     @Override
     public int hashCode() {
@@ -171,16 +177,18 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
             return false;
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
-        
+
         if (value == null) {
             return false;
         }
-        
+
         return value.equals(((OrderItemAttribute) obj).getValue());
     }
 
     @Override
-    public <G extends OrderItemAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OrderItemAttribute> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -190,6 +198,7 @@ public class OrderItemAttributeImpl implements OrderItemAttribute {
         cloned.setValue(value);
         // dont clone
         cloned.setOrderItem(orderItem);
-        return  createResponse;
+        return createResponse;
     }
+
 }

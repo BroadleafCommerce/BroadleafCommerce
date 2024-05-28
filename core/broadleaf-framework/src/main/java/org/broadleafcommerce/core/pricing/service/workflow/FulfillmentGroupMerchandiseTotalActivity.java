@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,7 +32,7 @@ import java.math.BigDecimal;
 /**
  * Called during the pricing workflow to set the merchandise total for each FulfillmentGroup
  * in an Order. This activity should come before any activity dealing with pricing FulfillmentGroups
- * 
+ *
  * @author Phillip Verheyden
  * @see {@link FulfillmentGroup#setMerchandiseTotal(Money)}, {@link FulfillmentGroup#getMerchandiseTotal()}
  */
@@ -40,18 +40,21 @@ import java.math.BigDecimal;
 public class FulfillmentGroupMerchandiseTotalActivity extends BaseActivity<ProcessContext<Order>> {
 
     public static final int ORDER = 4000;
-    
+
     public FulfillmentGroupMerchandiseTotalActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
 
-        for(FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            Money merchandiseTotal = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, fulfillmentGroup.getOrder().getCurrency());
-            for(FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            Money merchandiseTotal = BroadleafCurrencyUtils.getMoney(
+                    BigDecimal.ZERO,
+                    fulfillmentGroup.getOrder().getCurrency()
+            );
+            for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 OrderItem item = fulfillmentGroupItem.getOrderItem();
                 merchandiseTotal = merchandiseTotal.add(item.getTotalPrice());
             }

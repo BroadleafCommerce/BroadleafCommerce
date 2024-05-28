@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -82,7 +82,8 @@ public class RelatedProductsVariableExpression implements BroadleafVariableExpre
         List<? extends PromotableProduct> relatedProducts = relatedProductsService.findRelatedProducts(relatedProductDTO);
         return buildProductList(relatedProducts);
     }
-    public boolean isFeaturedProduct(Long productId){
+
+    public boolean isFeaturedProduct(Long productId) {
         return relatedProductsService.isFeaturedProduct(productId);
     }
 
@@ -95,4 +96,5 @@ public class RelatedProductsVariableExpression implements BroadleafVariableExpre
         }
         return productList;
     }
+
 }

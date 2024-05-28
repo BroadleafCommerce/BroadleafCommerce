@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,9 +20,7 @@ package org.broadleafcommerce.admin.server.service;
 import java.util.Map;
 
 /**
- * 
  * @author Phillip Verheyden
- *
  */
 public interface AdminCatalogService {
 
@@ -36,7 +34,7 @@ public interface AdminCatalogService {
      * @deprecated use {@link #generateSkus(Long)}
      */
     @Deprecated
-    public Integer generateSkusFromProduct(Long productId);
+    Integer generateSkusFromProduct(Long productId);
 
     /**
      * Create new Skus based on a product's ProductOptions by permutation and add them to existing ones.
@@ -50,14 +48,14 @@ public interface AdminCatalogService {
      * This will create a new product along with a new Sku for the defaultSku, along with new
      * Skus for all of the additional Skus. This is achieved by simply detaching the entities
      * from the persistent session, resetting the primary keys and then saving the entity.
-     * 
+     * <p>
      * Note: Media for the product is not saved separately, meaning if you make a change to the
      * original product's media items (the one specified by <b>productId</b>) it will change the
      * cloned product's media and vice-versa.
-     * 
+     *
      * @param productId
      * @return
      */
-    public Boolean cloneProduct(Long productId);
+    Boolean cloneProduct(Long productId);
 
 }

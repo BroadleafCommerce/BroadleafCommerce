@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.web.resource.resolver;
-
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,42 +41,45 @@ import java.util.regex.Pattern;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * A {@link ResourceResolver} that replaces the //BLC-SERVLET-CONTEXT and //BLC-SITE-BASEURL" 
+ * A {@link ResourceResolver} that replaces the //BLC-SERVLET-CONTEXT and //BLC-SITE-BASEURL"
  * tokens before serving the BLC.js file.
- * 
+ * <p>
  * Works in conjunction with {@link BLCJSUrlPathResolver}
- * 
- * @since 4.0
- * 
+ *
  * @author Reggie Cole
  * @author Brian Polster
+ * @since 4.0
  * @since Broadleaf 4.0
  */
 @Component("blBLCJSResolver")
 public class BLCJSResourceResolver extends AbstractResourceResolver implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(BLCJSResourceResolver.class);
-
-    private static final String BLC_JS_NAME = "BLC.js";
     protected static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-
+    protected static final Pattern pattern = Pattern.compile(
+            "(\\S*)BLC((\\S{0})|([-]{1,2}[0-9]+)|([-]{1,2}[0-9]+(-[0-9]+)+)).js"
+    );
+    private static final String BLC_JS_NAME = "BLC.js";
     @jakarta.annotation.Resource(name = "blBaseUrlResolver")
     BaseUrlResolver urlResolver;
-
     private int order = BroadleafResourceResolverOrder.BLC_JS_RESOURCE_RESOLVER;
 
-    protected static final Pattern pattern = Pattern.compile("(\\S*)BLC((\\S{0})|([-]{1,2}[0-9]+)|([-]{1,2}[0-9]+(-[0-9]+)+)).js");
-
-
     @Override
-    protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
-            ResourceResolverChain chain) {
+    protected String resolveUrlPathInternal(
+            String resourceUrlPath,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         return chain.resolveUrlPath(resourceUrlPath, locations);
     }
-    
+
     @Override
-    protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
-            List<? extends Resource> locations, ResourceResolverChain chain) {
+    protected Resource resolveResourceInternal(
+            HttpServletRequest request,
+            String requestPath,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         if (requestPath != null && requestPath.contains("BLC")) {
             Matcher matcher = pattern.matcher(requestPath);
             if (matcher.find()) {
@@ -102,21 +104,22 @@ public class BLCJSResourceResolver extends AbstractResourceResolver implements O
     protected Resource convertResource(Resource origResource, String resourceFileName) throws IOException {
         byte[] bytes = FileCopyUtils.copyToByteArray(origResource.getInputStream());
         String content = new String(bytes, DEFAULT_CHARSET);
-        
+
         String newContent = content;
-        if (! StringUtils.isEmpty(content)) {
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        if (!StringUtils.isEmpty(content)) {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                    .getRequest();
             newContent = newContent.replace("//BLC-SERVLET-CONTEXT", request.getContextPath());
 
             String siteBaseUrl = urlResolver.getSiteBaseUrl();
-            if (! StringUtils.isEmpty(siteBaseUrl)) {
+            if (!StringUtils.isEmpty(siteBaseUrl)) {
                 newContent = newContent.replace("//BLC-SITE-BASEURL", siteBaseUrl);
             }
         }
-        
+
         return new GeneratedResource(newContent.getBytes(), resourceFileName);
     }
-    
+
     protected String addVersion(String requestPath, String version) {
         String baseFilename = StringUtils.stripFilenameExtension(requestPath);
         String extension = StringUtils.getFilenameExtension(requestPath);
@@ -131,4 +134,5 @@ public class BLCJSResourceResolver extends AbstractResourceResolver implements O
     public void setOrder(int order) {
         this.order = order;
     }
+
 }

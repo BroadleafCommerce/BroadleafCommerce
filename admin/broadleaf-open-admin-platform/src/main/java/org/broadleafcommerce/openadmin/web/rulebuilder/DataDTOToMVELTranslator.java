@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -70,8 +70,13 @@ public class DataDTOToMVELTranslator {
         return response;
     }
 
-    protected void buildMVEL(DataDTO dataDTO, StringBuffer sb, String entityKey, String groupOperator,
-                             RuleBuilderFieldService fieldService) throws MVELTranslationException {
+    protected void buildMVEL(
+            DataDTO dataDTO,
+            StringBuffer sb,
+            String entityKey,
+            String groupOperator,
+            RuleBuilderFieldService fieldService
+    ) throws MVELTranslationException {
         BLCOperator operator = null;
         if (dataDTO instanceof ExpressionDTO) {
             operator = BLCOperator.valueOf(((ExpressionDTO) dataDTO).getOperator());
@@ -81,7 +86,7 @@ public class DataDTOToMVELTranslator {
         ArrayList<DataDTO> groups = dataDTO.getRules();
         if (sb.length() != 0 && sb.charAt(sb.length() - 1) != '(' && groupOperator != null) {
             BLCOperator groupOp = BLCOperator.valueOf(groupOperator);
-            switch(groupOp) {
+            switch (groupOp) {
                 default:
                     sb.append("&&");
                     break;
@@ -90,7 +95,7 @@ public class DataDTOToMVELTranslator {
             }
         }
         if (dataDTO instanceof ExpressionDTO) {
-            buildExpression((ExpressionDTO)dataDTO, sb, entityKey, operator, fieldService);
+            buildExpression((ExpressionDTO) dataDTO, sb, entityKey, operator, fieldService);
         } else {
             boolean includeTopLevelParenthesis = false;
             if (sb.length() != 0 || BLCOperator.NOT.equals(operator) || (sb.length() == 0 && groupOperator != null)) {
@@ -107,9 +112,13 @@ public class DataDTOToMVELTranslator {
         }
     }
 
-    protected void buildExpression(ExpressionDTO expressionDTO, StringBuffer sb, String entityKey,
-            BLCOperator operator, RuleBuilderFieldService fieldService)
-            throws MVELTranslationException {
+    protected void buildExpression(
+            ExpressionDTO expressionDTO,
+            StringBuffer sb,
+            String entityKey,
+            BLCOperator operator,
+            RuleBuilderFieldService fieldService
+    ) throws MVELTranslationException {
         String field = expressionDTO.getId();
         String overrideEntityKey = fieldService.getOverrideFieldEntityKey(field);
         if (overrideEntityKey != null) {
@@ -121,14 +130,15 @@ public class DataDTOToMVELTranslator {
         Object[] value;
 
         if (type == null) {
-            throw new MVELTranslationException(MVELTranslationException.SPECIFIED_FIELD_NOT_FOUND, "The DataDTO is not compatible with the RuleBuilderFieldService " +
-                    "associated with the current rules builder. Unable to find the field " +
-                    "specified: ("+field+")");
+            throw new MVELTranslationException(MVELTranslationException.SPECIFIED_FIELD_NOT_FOUND,
+                    "The DataDTO is not compatible with the RuleBuilderFieldService " +
+                            "associated with the current rules builder. Unable to find the field " +
+                            "specified: (" + field + ")");
         }
 
         value = extractBasicValues(expressionDTO.getValue());
 
-        switch(operator) {
+        switch (operator) {
             case CONTAINS: {
                 buildExpression(sb, entityKey, field, value, type, secondaryType, CONTAINS_OPERATOR,
                         true, false, false, false, false);
@@ -276,32 +286,32 @@ public class DataDTOToMVELTranslator {
                 buildExpression(sb, entityKey, field, value, type, secondaryType, SIZE_GREATER_THAN_OPERATOR, false, false, false, false, true);
                 break;
             }
-            case COUNT_GREATER_OR_EQUAL:{
+            case COUNT_GREATER_OR_EQUAL: {
                 buildExpression(sb, entityKey, field, value, type, secondaryType, SIZE_GREATER_THAN_EQUALS_OPERATOR, false, false, false, false, true);
                 break;
             }
-            case COUNT_LESS_THAN:{
+            case COUNT_LESS_THAN: {
                 buildExpression(sb, entityKey, field, value, type, secondaryType, SIZE_LESS_THAN_OPERATOR, false, false, false, false, true);
                 break;
             }
-            case COUNT_LESS_OR_EQUAL:{
+            case COUNT_LESS_OR_EQUAL: {
                 buildExpression(sb, entityKey, field, value, type, secondaryType, SIZE_LESS_THAN_EQUALS_OPERATOR, false, false, false, false, true);
                 break;
             }
-            case COUNT_EQUALS:{
+            case COUNT_EQUALS: {
                 buildExpression(sb, entityKey, field, value, type, secondaryType, SIZE_EQUALS_OPERATOR, false, false, false, false, true);
                 break;
             }
-            case COLLECTION_IN:{
+            case COLLECTION_IN: {
                 buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, SIZE_GREATER_THAN_OPERATOR + ZERO_OPERATOR, false, false, false, false, true);
                 break;
             }
-            case COLLECTION_NOT_IN:{
+            case COLLECTION_NOT_IN: {
                 buildCollectionExpression(sb, entityKey, field, value, type, secondaryType, SIZE_EQUALS_OPERATOR + ZERO_OPERATOR, false, false, false, false, true);
                 break;
             }
             case BETWEEN: {
-                if (value != null && value.length==2) {
+                if (value != null && value.length == 2) {
                     sb.append("(");
                     buildExpression(sb, entityKey, field, new Object[]{value[0]}, type, secondaryType, GREATER_THAN_OPERATOR,
                             false, false, false, false, true);
@@ -313,7 +323,7 @@ public class DataDTOToMVELTranslator {
                 break;
             }
             case BETWEEN_INCLUSIVE: {
-                if (value != null && value.length==2) {
+                if (value != null && value.length == 2) {
                     sb.append("(");
                     buildExpression(sb, entityKey, field, new Object[]{value[0]}, type, secondaryType, GREATER_THAN_EQUALS_OPERATOR,
                             false, false, false, false, true);
@@ -331,7 +341,7 @@ public class DataDTOToMVELTranslator {
                 } catch (Exception e) {
                     throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE, "Cannot format value for the field (" +
                             field + ") based on field type. The type of field is Integer, " +
-                            "and you entered: (" + value[0] +")");
+                            "and you entered: (" + value[0] + ")");
                 }
                 sb.append("(");
                 buildExpression(sb, entityKey, field, new Object[]{"MvelHelper.subtractFromCurrentTime(" + value[0] + ")"}, type, SupportedFieldType.WITHIN_DAYS, GREATER_THAN_OPERATOR,
@@ -352,7 +362,7 @@ public class DataDTOToMVELTranslator {
         String stringValue = value.toString().trim();
         Object[] response = new Object[]{};
         if (isProjection(value)) {
-            List<String> temp = new ArrayList<String>();
+            List<String> temp = new ArrayList<>();
             int initial = 1;
             //assume this is a multi-value phrase
             boolean eof = false;
@@ -364,7 +374,7 @@ public class DataDTOToMVELTranslator {
                 }
                 String processedValue = stringValue.substring(initial, end);
 
-                 int miltyQuoteNum = 4;
+                int miltyQuoteNum = 4;
                 if (stringValue.contains(",") && StringUtils.countMatches(processedValue, "\"") >= miltyQuoteNum) {
                     processedValue = escapeInternalMiltyQuotes(processedValue);
                 } else {
@@ -383,9 +393,9 @@ public class DataDTOToMVELTranslator {
     protected String escapeInternalQuotes(String processedValue) {
         String regex = "(?<!^)(?<!^\\s)\"(?!\\s$)(?!$)";
         int singleQuoteNum = 3;
-        if (StringUtils.countMatches(processedValue, "\"")>= singleQuoteNum){
-            String cutQuote = processedValue.substring(1, processedValue.length() - 1).replaceAll("\"","\\\\u0022");
-            processedValue= "\""+cutQuote+ "\"";
+        if (StringUtils.countMatches(processedValue, "\"") >= singleQuoteNum) {
+            String cutQuote = processedValue.substring(1, processedValue.length() - 1).replaceAll("\"", "\\\\u0022");
+            processedValue = "\"" + cutQuote + "\"";
 
         }
 
@@ -402,26 +412,46 @@ public class DataDTOToMVELTranslator {
         return stringValue.startsWith("[") && stringValue.endsWith("]");
     }
 
-    protected void buildCollectionExpression(StringBuffer sb, String entityKey, String field, Object[] value,
-            SupportedFieldType type, SupportedFieldType secondaryType, String operator,
-            boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase,
-            boolean isNegation, boolean ignoreQuotes) throws MVELTranslationException {
+    protected void buildCollectionExpression(
+            StringBuffer sb,
+            String entityKey,
+            String field,
+            Object[] value,
+            SupportedFieldType type,
+            SupportedFieldType secondaryType,
+            String operator,
+            boolean includeParenthesis,
+            boolean isFieldComparison,
+            boolean ignoreCase,
+            boolean isNegation,
+            boolean ignoreQuotes
+    ) throws MVELTranslationException {
         sb.append(COLLECTION_OPERATOR);
         sb.append("(");
         sb.append(formatField(entityKey, type, field, ignoreCase));
         sb.append(",");
         sb.append("[");
-        sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison,
-                ignoreCase, ignoreQuotes));
+        sb.append(
+                formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes)
+        );
         sb.append("])");
         sb.append(operator);
     }
 
-    protected void buildExpression(StringBuffer sb, String entityKey, String field, Object[] value,
-                                   SupportedFieldType type, SupportedFieldType secondaryType, String operator,
-                                   boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase,
-                                   boolean isNegation, boolean ignoreQuotes)
-            throws MVELTranslationException {
+    protected void buildExpression(
+            StringBuffer sb,
+            String entityKey,
+            String field,
+            Object[] value,
+            SupportedFieldType type,
+            SupportedFieldType secondaryType,
+            String operator,
+            boolean includeParenthesis,
+            boolean isFieldComparison,
+            boolean ignoreCase,
+            boolean isNegation,
+            boolean ignoreQuotes
+    ) throws MVELTranslationException {
 
         if (operator.equals(EQUALS_OPERATOR) && !isFieldComparison && value.length > 1) {
             sb.append("(");
@@ -435,8 +465,9 @@ public class DataDTOToMVELTranslator {
                 sb.append(".intValue()");
             }
             sb.append(")");
-        } else if (CONTAINS_OPERATOR.equals(operator) || STARTS_WITH_OPERATOR.equals(operator) || ENDS_WITH_OPERATOR.equals(operator)) {
-            if(isNegation) {
+        } else if (CONTAINS_OPERATOR.equals(operator) || STARTS_WITH_OPERATOR.equals(operator)
+                || ENDS_WITH_OPERATOR.equals(operator)) {
+            if (isNegation) {
                 sb.append("!");
             }
             sb.append(operator);
@@ -447,7 +478,7 @@ public class DataDTOToMVELTranslator {
             sb.append(")");
         } else {
             boolean addParenthesis = false;
-            if(sb.length()>0 && sb.charAt(sb.length()-1)!='('){
+            if (sb.length() > 0 && sb.charAt(sb.length() - 1) != '(') {
                 addParenthesis = true;
                 sb.append("(");
             }
@@ -459,7 +490,7 @@ public class DataDTOToMVELTranslator {
             }
             sb.append(formatValue(field, entityKey, type, secondaryType, value,
                     isFieldComparison, ignoreCase, ignoreQuotes));
-            if(addParenthesis){
+            if (addParenthesis) {
                 sb.append(")");
             }
             if (includeParenthesis) {
@@ -469,26 +500,25 @@ public class DataDTOToMVELTranslator {
     }
 
     protected String buildFieldName(String entityKey, String fieldName) {
-        String response = "?"+entityKey + "." + fieldName;
+        String response = "?" + entityKey + "." + fieldName;
         response = response.replaceAll("\\.", ".?");
         return response;
     }
 
-    protected String formatField(String entityKey, SupportedFieldType type, String field,
-                                 boolean ignoreCase) {
+    protected String formatField(String entityKey, SupportedFieldType type, String field, boolean ignoreCase) {
         StringBuilder response = new StringBuilder();
         String convertedField = field;
         boolean isMapField = false;
         if (convertedField.contains(FieldManager.MAPFIELDSEPARATOR)) {
             //This must be a map field, convert the field name to syntax MVEL can understand for map access
             convertedField = convertedField.substring(0, convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR))
-                + "[\"" + convertedField.substring(convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR) +
-                FieldManager.MAPFIELDSEPARATOR.length(), convertedField.length()) + "\"]";
+                    + "[\"" + convertedField.substring(convertedField.indexOf(FieldManager.MAPFIELDSEPARATOR) +
+                    FieldManager.MAPFIELDSEPARATOR.length(), convertedField.length()) + "\"]";
 
             isMapField = true;
         }
         if (isMapField) {
-            switch(type) {
+            switch (type) {
                 case BOOLEAN:
                     response.append("MvelHelper.convertField(\"BOOLEAN\",");
                     response.append(buildFieldName(entityKey, convertedField));
@@ -527,7 +557,7 @@ public class DataDTOToMVELTranslator {
                     throw new UnsupportedOperationException(type.toString() + " is not supported for map fields in the rule builder.");
             }
         } else {
-            switch(type) {
+            switch (type) {
                 case BROADLEAF_ENUMERATION:
                     response.append(buildFieldName(entityKey, convertedField));
                     response.append(".getType()");
@@ -553,13 +583,19 @@ public class DataDTOToMVELTranslator {
         return response.toString();
     }
 
-    protected String formatValue(String fieldName, String entityKey, SupportedFieldType type,
-                                 SupportedFieldType secondaryType, Object[] value,
-                                 boolean isFieldComparison, boolean ignoreCase,
-                                 boolean ignoreQuotes) throws MVELTranslationException {
+    protected String formatValue(
+            String fieldName,
+            String entityKey,
+            SupportedFieldType type,
+            SupportedFieldType secondaryType,
+            Object[] value,
+            boolean isFieldComparison,
+            boolean ignoreCase,
+            boolean ignoreQuotes
+    ) throws MVELTranslationException {
         StringBuilder response = new StringBuilder();
         if (isFieldComparison) {
-            switch(type) {
+            switch (type) {
                 case MONEY:
                     response.append(entityKey);
                     response.append(".");
@@ -584,7 +620,7 @@ public class DataDTOToMVELTranslator {
                     break;
             }
         } else {
-            for (int j=0;j<value.length;j++){
+            for (int j = 0; j < value.length; j++) {
                 if (StringUtils.isBlank(value[j].toString())) {
                     break;
                 }
@@ -592,7 +628,7 @@ public class DataDTOToMVELTranslator {
                 String parsableVal = value[j].toString();
                 parsableVal = parsableVal.replaceAll("^\"|\"$", "");
 
-                switch(type) {
+                switch (type) {
                     case BOOLEAN:
                         response.append(value[j]);
                         break;
@@ -600,9 +636,10 @@ public class DataDTOToMVELTranslator {
                         try {
                             Double.parseDouble(parsableVal);
                         } catch (Exception e) {
-                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DECIMAL_VALUE, "Cannot format value for the field ("
-                                    + fieldName + ") based on field type. The type of field is Decimal, " +
-                                    "and you entered: (" + parsableVal +")");
+                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DECIMAL_VALUE,
+                                    "Cannot format value for the field ("
+                                            + fieldName + ") based on field type. The type of field is Decimal, " +
+                                            "and you entered: (" + parsableVal + ")");
                         }
                         response.append(parsableVal);
                         break;
@@ -626,9 +663,10 @@ public class DataDTOToMVELTranslator {
                             try {
                                 Integer.parseInt(parsableVal);
                             } catch (Exception e) {
-                                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE, "Cannot format value for the field (" +
-                                        fieldName + ") based on field type. The type of field is Integer, " +
-                                        "and you entered: (" + value[j] +")");
+                                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE,
+                                        "Cannot format value for the field (" +
+                                                fieldName + ") based on field type. The type of field is Integer, " +
+                                                "and you entered: (" + value[j] + ")");
                             }
                             response.append(value[j]);
                         }
@@ -637,9 +675,10 @@ public class DataDTOToMVELTranslator {
                         try {
                             Integer.parseInt(parsableVal);
                         } catch (Exception e) {
-                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE, "Cannot format value for the field (" +
-                                    fieldName + ") based on field type. The type of field is Integer, " +
-                                    "and you entered: (" + parsableVal +")");
+                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_INTEGER_VALUE,
+                                    "Cannot format value for the field (" +
+                                            fieldName + ") based on field type. The type of field is Integer, " +
+                                            "and you entered: (" + parsableVal + ")");
                         }
                         response.append(parsableVal);
                         break;
@@ -647,9 +686,10 @@ public class DataDTOToMVELTranslator {
                         try {
                             Double.parseDouble(parsableVal);
                         } catch (Exception e) {
-                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DECIMAL_VALUE, "Cannot format value for the field (" +
-                                    fieldName + ") based on field type. The type of field is Money, " +
-                                    "and you entered: (" + parsableVal +")");
+                            throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DECIMAL_VALUE,
+                                    "Cannot format value for the field (" +
+                                            fieldName + ") based on field type. The type of field is Money, " +
+                                            "and you entered: (" + parsableVal + ")");
                         }
                         response.append(parsableVal);
                         break;
@@ -664,9 +704,10 @@ public class DataDTOToMVELTranslator {
                             try {
                                 temp = RuleBuilderFormatUtil.parseDate(parsableVal);
                             } catch (ParseException e) {
-                                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE, "Cannot format value for the field (" +
-                                        fieldName + ") based on field type. The type of field is Date, " +
-                                        "and you entered: (" + parsableVal + "). Dates must be in the format MM/dd/yyyy HH:mm.");
+                                throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_DATE_VALUE,
+                                        "Cannot format value for the field (" +
+                                                fieldName + ") based on field type. The type of field is Date, " +
+                                                "and you entered: (" + parsableVal + "). Dates must be in the format MM/dd/yyyy HH:mm.");
                             }
                             String convertedDate = FormatUtil.getTimeZoneFormat().format(temp);
                             response.append("MvelHelper.convertField(\"DATE\",\"");
@@ -677,8 +718,10 @@ public class DataDTOToMVELTranslator {
                     default:
                         String stringVersionState = String.valueOf(value[j]);
                         String stringVersionStateTrimmed = String.valueOf(value[j]).trim();
-                        boolean alreadyHasQuotesTrimmed = stringVersionStateTrimmed.startsWith("\"") && stringVersionStateTrimmed.endsWith("\"");
-                        boolean alreadyHasQuotes = stringVersionState.startsWith("\"") && stringVersionStateTrimmed.endsWith("\"");
+                        boolean alreadyHasQuotesTrimmed = stringVersionStateTrimmed.startsWith("\"")
+                                && stringVersionStateTrimmed.endsWith("\"");
+                        boolean alreadyHasQuotes = stringVersionState.startsWith("\"")
+                                && stringVersionStateTrimmed.endsWith("\"");
 
                         if (alreadyHasQuotes || alreadyHasQuotesTrimmed) {
                             int openQuoteIndex = stringVersionState.indexOf("\"") + 1;
@@ -687,7 +730,9 @@ public class DataDTOToMVELTranslator {
                             int paddingRightLength = stringVersionState.length() - closeQuoteIndex;
                             //don't forget to pad left and/or right according to original string, this will make string exactly the same
                             //probably trimming is ok business logic, but padding will make unit tests happy and green :)
-                            stringVersionState = String.format("%" + openQuoteIndex + "s", "\"") + substring.replace("\"", "\\\"") + String.format("%-" + paddingRightLength + "s", "\"");
+                            stringVersionState = String.format("%" + openQuoteIndex + "s", "\"")
+                                    + substring.replace("\"", "\\\"")
+                                    + String.format("%-" + paddingRightLength + "s", "\"");
                         } else {
                             stringVersionState = stringVersionState.replace("\"", "\\\"");
                         }
@@ -713,6 +758,5 @@ public class DataDTOToMVELTranslator {
         }
         return response.toString();
     }
-
 
 }

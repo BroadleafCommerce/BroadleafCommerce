@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,12 +47,11 @@ import jakarta.annotation.Resource;
 @Component("blChildCategoriesCustomPersistenceHandler")
 public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(ChildCategoriesCustomPersistenceHandler.class);
     protected static final String ALL_CHILD_CATEGORY_XREFS = "allChildCategoryXrefs";
     protected static final String CATEGORY_ID = "category.id";
     protected static final String SUB_CATEGORY_ID = "subCategory.id";
     protected static final String CATEGORY_SEPARATOR = " -> ";
-
+    private static final Log LOG = LogFactory.getLog(ChildCategoriesCustomPersistenceHandler.class);
     @Resource(name = "blCategoryDao")
     protected CategoryDao categoryDao;
 
@@ -130,8 +129,12 @@ public class ChildCategoriesCustomPersistenceHandler extends CustomPersistenceHa
         }
     }
 
-    protected void validateChildCategories(final Entity entity, final Category category, final Long id,
-                                           final StringBuilder categoryLinks) throws ValidationException {
+    protected void validateChildCategories(
+            final Entity entity,
+            final Category category,
+            final Long id,
+            final StringBuilder categoryLinks
+    ) throws ValidationException {
         if (category != null) {
             for (CategoryXref categoryXref : category.getChildCategoryXrefs()) {
                 final Category subCategory = categoryXref.getSubCategory();

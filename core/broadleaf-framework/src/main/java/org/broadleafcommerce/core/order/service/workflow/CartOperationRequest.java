@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,27 +33,27 @@ import java.util.List;
 /**
  * This class represents the basic context necessary for the execution
  * of a particular order process workflow operation.
- * 
+ *
  * @author apazzolini
  */
 public class CartOperationRequest {
 
     protected OrderItemRequestDTO itemRequest;
-    
+
     protected Order order;
-    
+
     protected boolean priceOrder;
-    
+
     // Set during the course of the workflow for use in subsequent workflow steps
     protected OrderItem orderItem;
-    
+
     // Set during the course of the workflow for use in subsequent workflow steps
     protected Integer orderItemQuantityDelta;
-    
+
     protected List<Long[]> multishipOptionsToDelete = new ArrayList<Long[]>();
     protected List<FulfillmentGroupItem> fgisToDelete = new ArrayList<FulfillmentGroupItem>();
     protected List<OrderItem> oisToDelete = new ArrayList<OrderItem>();
-    
+
     public CartOperationRequest(Order order, OrderItemRequestDTO itemRequest, boolean priceOrder) {
         setOrder(order);
         sortAllDescendantChildItems(itemRequest);
@@ -79,7 +79,7 @@ public class CartOperationRequest {
             sortAllDescendantChildItems(childOrderItem);
         }
     }
-    
+
     public OrderItemRequestDTO getItemRequest() {
         return itemRequest;
     }
@@ -133,11 +133,11 @@ public class CartOperationRequest {
     public void setOrderItemQuantityDelta(Integer orderItemQuantityDelta) {
         this.orderItemQuantityDelta = orderItemQuantityDelta;
     }
-    
+
     public List<Long[]> getMultishipOptionsToDelete() {
         return multishipOptionsToDelete;
     }
-    
+
     public void setMultishipOptionsToDelete(List<Long[]> multishipOptionsToDelete) {
         this.multishipOptionsToDelete = multishipOptionsToDelete;
     }
@@ -153,9 +153,9 @@ public class CartOperationRequest {
     public List<OrderItem> getOisToDelete() {
         return oisToDelete;
     }
-    
+
     public void setOisToDelete(List<OrderItem> oisToDelete) {
         this.oisToDelete = oisToDelete;
     }
-    
+
 }

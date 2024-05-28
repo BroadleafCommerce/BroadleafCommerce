@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,27 +38,27 @@ import jakarta.annotation.Resource;
 
 @Service("blRelatedProductsService")
 /*
- * Service that provides method for finding a product's related products.   
+ * Service that provides method for finding a product's related products.
  */
 public class RelatedProductsServiceImpl implements RelatedProductsService {
-    
-    @Resource(name="blCategoryDao")
+
+    @Resource(name = "blCategoryDao")
     protected CategoryDao categoryDao;
 
-    @Resource(name="blProductDao")
+    @Resource(name = "blProductDao")
     protected ProductDao productDao;
 
     @Resource(name = "blFeaturedProductDao")
     protected FeaturedProductDao featuredProductDao;
-    
-    @Resource(name="blCatalogService")
+
+    @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
     @Override
     public List<? extends PromotableProduct> findRelatedProducts(RelatedProductDTO relatedProductDTO) {
         Product product = lookupProduct(relatedProductDTO);
-        Category category = lookupCategory(relatedProductDTO);      
-        
+        Category category = lookupCategory(relatedProductDTO);
+
         if (RelatedProductTypeEnum.FEATURED.equals(relatedProductDTO.getType())) {
             return buildFeaturedProductsList(product, category, relatedProductDTO);
         } else if (RelatedProductTypeEnum.CROSS_SALE.equals(relatedProductDTO.getType())) {
@@ -67,28 +67,33 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
             return buildUpSaleProductsList(product, category, relatedProductDTO);
         } else {
             throw new IllegalArgumentException("RelatedProductType " + relatedProductDTO.getType() + " not supported.");
-        }       
+        }
     }
 
     @Override
-    public boolean isFeaturedProduct(Long productId){
+    public boolean isFeaturedProduct(Long productId) {
         return featuredProductDao.isFeaturedProduct(productId);
     }
-    
+
     /**
      * Returns the featured products for the past in product/category
+     *
      * @param product
      * @param category
      * @param relatedProductDTO
      * @return
      */
-    protected List<? extends PromotableProduct> buildFeaturedProductsList(Product product, Category category, RelatedProductDTO relatedProductDTO) {
+    protected List<? extends PromotableProduct> buildFeaturedProductsList(
+            Product product,
+            Category category,
+            RelatedProductDTO relatedProductDTO
+    ) {
         List<FeaturedProduct> returnFeaturedProducts = null;
-        
+
         if (product != null) {
             category = product.getDefaultCategory();
         }
-        
+
         if (category != null) {
             if (relatedProductDTO.isCumulativeResults()) {
                 returnFeaturedProducts = category.getCumulativeFeaturedProducts();
@@ -96,20 +101,22 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
                 returnFeaturedProducts = category.getFeaturedProducts();
             }
         }
-        
+
         removeCurrentProductFromReturnList(product, returnFeaturedProducts);
-        returnFeaturedProducts = (List<FeaturedProduct>)removeDuplicatesFromList(returnFeaturedProducts);
-        
+        returnFeaturedProducts = (List<FeaturedProduct>) removeDuplicatesFromList(returnFeaturedProducts);
+
         return resizeList(returnFeaturedProducts, relatedProductDTO.getQuantity());
     }
-    
-    private List<? extends PromotableProduct> removeDuplicatesFromList(List <? extends PromotableProduct> returnPromotableProducts) {
-        Set<PromotableProduct> productSet = new LinkedHashSet<PromotableProduct>();
-        Set<Product> relatedProductSet = new LinkedHashSet<Product>();
+
+    private List<? extends PromotableProduct> removeDuplicatesFromList(
+            List<? extends PromotableProduct> returnPromotableProducts
+    ) {
+        Set<PromotableProduct> productSet = new LinkedHashSet<>();
+        Set<Product> relatedProductSet = new LinkedHashSet<>();
 
         if (returnPromotableProducts != null) {
-            for(PromotableProduct p : returnPromotableProducts) {
-                if (!relatedProductSet.contains(p.getRelatedProduct())){
+            for (PromotableProduct p : returnPromotableProducts) {
+                if (!relatedProductSet.contains(p.getRelatedProduct())) {
                     productSet.add(p);
                     relatedProductSet.add(p.getRelatedProduct());
                 }
@@ -123,29 +130,36 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
 
     }
 
-     private void removeCurrentProductFromReturnList(Product product,
-            List<? extends PromotableProduct> returnPromotableProducts) {
+    protected void removeCurrentProductFromReturnList(
+            Product product,
+            List<? extends PromotableProduct> returnPromotableProducts
+    ) {
         if (product != null && returnPromotableProducts != null) {
             Iterator<? extends PromotableProduct> productIterator = returnPromotableProducts.iterator();
             while (productIterator.hasNext()) {
                 PromotableProduct promotableProduct = productIterator.next();
                 if (product.getId().equals(promotableProduct.getRelatedProduct().getId())) {
                     productIterator.remove();
-                }               
-            }           
+                }
+            }
         }
     }
-    
+
     /**
      * Returns the upSale products for the past in product/category
+     *
      * @param product
      * @param category
      * @param relatedProductDTO
      * @return
      */
-    protected List<? extends PromotableProduct> buildUpSaleProductsList(Product product, Category category, RelatedProductDTO relatedProductDTO) {
+    protected List<? extends PromotableProduct> buildUpSaleProductsList(
+            Product product,
+            Category category,
+            RelatedProductDTO relatedProductDTO
+    ) {
         List<? extends PromotableProduct> returnUpSaleProducts = null;
-        
+
         if (product != null) {
             if (relatedProductDTO.isCumulativeResults()) {
                 returnUpSaleProducts = product.getCumulativeUpSaleProducts();
@@ -165,17 +179,22 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
 
         return resizeList(returnUpSaleProducts, relatedProductDTO.getQuantity());
     }
-    
+
     /**
      * Returns the crossSale products for the past in product/category
+     *
      * @param product
      * @param category
      * @param relatedProductDTO
      * @return
      */
-    protected List<? extends PromotableProduct> buildCrossSaleProductsList(Product product, Category category, RelatedProductDTO relatedProductDTO) {
+    protected List<? extends PromotableProduct> buildCrossSaleProductsList(
+            Product product,
+            Category category,
+            RelatedProductDTO relatedProductDTO
+    ) {
         List<? extends PromotableProduct> crossSaleProducts = null;
-        
+
         if (product != null) {
             if (relatedProductDTO.isCumulativeResults()) {
                 crossSaleProducts = product.getCumulativeCrossSaleProducts();
@@ -192,14 +211,14 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
 
         removeCurrentProductFromReturnList(product, crossSaleProducts);
         crossSaleProducts = removeDuplicatesFromList(crossSaleProducts);
-        
+
         return resizeList(crossSaleProducts, relatedProductDTO.getQuantity());
-    }   
-    
+    }
+
     /**
      * Resizes the list to match the passed in quantity.   If the quantity is greater than the size of the list or null,
      * the originalList is returned.
-     * 
+     *
      * @param originalList
      * @param qty
      * @return
@@ -211,7 +230,7 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
             return originalList;
         }
     }
-    
+
     protected Product lookupProduct(RelatedProductDTO relatedProductDTO) {
         if (relatedProductDTO.getProductId() != null) {
             return productDao.readProductById(relatedProductDTO.getProductId());
@@ -219,7 +238,7 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
             return null;
         }
     }
-    
+
     protected Category lookupCategory(RelatedProductDTO relatedProductDTO) {
         if (relatedProductDTO.getCategoryId() != null) {
             return categoryDao.readCategoryById(relatedProductDTO.getCategoryId());
@@ -227,4 +246,5 @@ public class RelatedProductsServiceImpl implements RelatedProductsService {
             return null;
         }
     }
+
 }

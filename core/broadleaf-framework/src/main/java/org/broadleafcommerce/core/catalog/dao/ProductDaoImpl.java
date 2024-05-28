@@ -197,7 +197,11 @@ public class ProductDaoImpl implements ProductDao {
         return readFilteredActiveProductsByQueryInternal(query, currentDate, searchCriteria);
     }
 
-    protected List<Product> readFilteredActiveProductsByQueryInternal(String query, Date currentDate, SearchCriteria searchCriteria) {
+    protected List<Product> readFilteredActiveProductsByQueryInternal(
+            String query,
+            Date currentDate,
+            SearchCriteria searchCriteria
+    ) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
@@ -212,7 +216,7 @@ public class ProductDaoImpl implements ProductDao {
         criteria.select(product);
 
         // We only want results that match the search query
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         if (query != null) {
             String lq = query.toLowerCase();
             restrictions.add(
@@ -246,13 +250,19 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     @Deprecated(forRemoval = true)
-    public List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate,
-                                                              SearchCriteria searchCriteria) {
+    public List<Product> readFilteredActiveProductsByCategory(
+            Long categoryId,
+            Date currentDate,
+            SearchCriteria searchCriteria
+    ) {
         return readFilteredActiveProductsByCategoryInternal(categoryId, currentDate, searchCriteria);
     }
 
-    protected List<Product> readFilteredActiveProductsByCategoryInternal(Long categoryId, Date currentDate,
-                                                                         SearchCriteria searchCriteria) {
+    protected List<Product> readFilteredActiveProductsByCategoryInternal(
+            Long categoryId,
+            Date currentDate,
+            SearchCriteria searchCriteria
+    ) {
         // Set up the criteria query that specifies we want to return Products
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Product> criteria = builder.createQuery(Product.class);
@@ -269,7 +279,7 @@ public class ProductDaoImpl implements ProductDao {
         criteria.select(product);
 
         // We only want results from the determine category
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(category.get("id").in(sandBoxHelper.mergeCloneIds(CategoryImpl.class, categoryId)));
 
         attachSearchCriteria(searchCriteria, product, sku, restrictions);
@@ -288,8 +298,12 @@ public class ProductDaoImpl implements ProductDao {
         return typedQuery.getResultList();
     }
 
-    protected void attachActiveRestriction(Date currentDate, Path<? extends Product> product,
-                                           Path<? extends Sku> sku, List<Predicate> restrictions) {
+    protected void attachActiveRestriction(
+            Date currentDate,
+            Path<? extends Product> product,
+            Path<? extends Sku> sku,
+            List<Predicate> restrictions
+    ) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
 
         // Add the product archived status flag restriction
@@ -304,12 +318,16 @@ public class ProductDaoImpl implements ProductDao {
                 builder.greaterThan(sku.get("activeEndDate").as(Date.class), currentDate)));
     }
 
-    protected void attachOrderBy(SearchCriteria searchCriteria,
-                                 From<?, ? extends Product> product, Path<? extends Sku> sku, CriteriaQuery<?> criteria) {
+    protected void attachOrderBy(
+            SearchCriteria searchCriteria,
+            From<?, ? extends Product> product,
+            Path<? extends Sku> sku,
+            CriteriaQuery<?> criteria
+    ) {
         if (StringUtils.isNotBlank(searchCriteria.getSortQuery())) {
             CriteriaBuilder builder = em.getCriteriaBuilder();
 
-            List<Order> sorts = new ArrayList<Order>();
+            List<Order> sorts = new ArrayList<>();
 
             String sortQueries = searchCriteria.getSortQuery();
             for (String sortQuery : sortQueries.split(",")) {
@@ -344,15 +362,19 @@ public class ProductDaoImpl implements ProductDao {
         }
     }
 
-    protected void attachSearchCriteria(SearchCriteria searchCriteria,
-                                        From<?, ? extends Product> product, From<?, ? extends Sku> sku, List<Predicate> restrictions) {
+    protected void attachSearchCriteria(
+            SearchCriteria searchCriteria,
+            From<?, ? extends Product> product,
+            From<?, ? extends Sku> sku,
+            List<Predicate> restrictions
+    ) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
 
         // Build out the filter criteria from the users request
         for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
             String key = entry.getKey();
-            List<String> eqValues = new ArrayList<String>();
-            List<String[]> rangeValues = new ArrayList<String[]>();
+            List<String> eqValues = new ArrayList<>();
+            List<String[]> rangeValues = new ArrayList<>();
 
             // Determine which path is the appropriate one to use
             Path<?> pathToUse;
@@ -398,7 +420,7 @@ public class ProductDaoImpl implements ProductDao {
             // If we have any range restrictions, we need to build those too. Ranges are also "or"ed together,
             // such that specifying range[0:5] and range[10:null] for the same field would match items
             // that were valued between 0 and 5 OR over 10 for that field
-            List<Predicate> rangeRestrictions = new ArrayList<Predicate>();
+            List<Predicate> rangeRestrictions = new ArrayList<>();
             for (String[] range : rangeValues) {
                 BigDecimal min = new BigDecimal(range[0]);
                 BigDecimal max = null;
@@ -516,7 +538,9 @@ public class ProductDaoImpl implements ProductDao {
         query = em.createNamedQuery("BC_READ_PRODUCTS_BY_OUTGOING_URL");
         query.setParameter("url", uri);
         query.setParameter("urlKey", urlKey);
-        query.setParameter("currentDate", DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution()));
+        query.setParameter("currentDate", DateUtil.getCurrentDateAfterFactoringInDateResolution(
+                cachedDate, getCurrentDateResolution()
+        ));
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Catalog");
 
@@ -580,7 +604,7 @@ public class ProductDaoImpl implements ProductDao {
         criteria.select(product.<Long>get("id"));
 
         // Ensure the product is currently active
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         if (lastId != null) {
             restrictions.add(cb.gt(product.get("id").as(Long.class), lastId));
         }
@@ -667,7 +691,7 @@ public class ProductDaoImpl implements ProductDao {
         criteria.select(builder.count(product));
 
         // Ensure the product is currently active
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         attachActiveRestriction(currentDate, product, sku, restrictions);
 
         // Add the restrictions to the criteria query
@@ -700,7 +724,7 @@ public class ProductDaoImpl implements ProductDao {
         criteria.select(product);
 
         // Ensure the product is currently active
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         attachActiveRestriction(currentDate, product, sku, restrictions);
         if (lastId != null) {
             restrictions.add(builder.gt(product.get("id").as(Long.class), lastId));

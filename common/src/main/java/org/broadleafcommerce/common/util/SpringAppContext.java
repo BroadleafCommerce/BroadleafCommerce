@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,19 +28,19 @@ import org.springframework.context.ApplicationContextAware;
  * resort, as it is unlikely this class is ever needed unless an
  * instance of ApplicationContext is required in a custom class
  * instantiated by third-party code.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class SpringAppContext implements ApplicationContextAware {
-    
+
     private static ApplicationContext appContext;
+
+    public static ApplicationContext getApplicationContext() {
+        return appContext;
+    }
 
     public void setApplicationContext(ApplicationContext appContext) throws BeansException {
         this.appContext = appContext;
     }
 
-    public static ApplicationContext getApplicationContext() {
-        return appContext;
-    }
 }

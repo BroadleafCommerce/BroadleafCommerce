@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,11 +22,12 @@ import org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePrice;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
 
     protected BundleOrderItem bundleOrderItem;
-    
-    protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
+
+    protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<>();
 
     public DiscreteOrderItemRequest() {
         super();
@@ -44,7 +45,6 @@ public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
         setRetailPriceOverride(request.getRetailPriceOverride());
     }
 
-
     @Override
     public DiscreteOrderItemRequest clone() {
         DiscreteOrderItemRequest returnRequest = new DiscreteOrderItemRequest();
@@ -56,7 +56,7 @@ public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
     public BundleOrderItem getBundleOrderItem() {
         return bundleOrderItem;
     }
-    
+
     public void setBundleOrderItem(BundleOrderItem bundleOrderItem) {
         this.bundleOrderItem = bundleOrderItem;
     }
@@ -65,8 +65,8 @@ public class DiscreteOrderItemRequest extends AbstractOrderItemRequest {
         return discreteOrderItemFeePrices;
     }
 
-    public void setDiscreteOrderItemFeePrices(
-            List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
+    public void setDiscreteOrderItemFeePrices(List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices) {
         this.discreteOrderItemFeePrices = discreteOrderItemFeePrices;
     }
+
 }

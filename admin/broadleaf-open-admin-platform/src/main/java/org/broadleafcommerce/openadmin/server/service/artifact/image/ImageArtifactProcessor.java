@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -60,7 +60,7 @@ import jakarta.annotation.Resource;
 @Service("blImageArtifactProcessor")
 public class ImageArtifactProcessor implements ArtifactProcessor {
 
-    @Resource(name="blImageEffectsManager")
+    @Resource(name = "blImageEffectsManager")
     protected EffectsManager effectsManager;
 
     protected String[] supportedUploadTypes = {"gif", "jpg", "jpeg", "png", "bmp", "wbmp"};
@@ -115,8 +115,10 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
                 image = stripAlpha(image);
             }
 
-            for (Operation operation : operations){
-                image = effectsManager.renderEffect(operation.getName(), operation.getFactor(), operation.getParameters(), image, formatName);
+            for (Operation operation : operations) {
+                image = effectsManager.renderEffect(
+                        operation.getName(), operation.getFactor(), operation.getParameters(), image, formatName
+                );
             }
 
             if (formatName.toLowerCase().equals("gif")) {
@@ -166,8 +168,8 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
      * Given an input stream on a media file, recompress the file according to best practice optimization standards.
      *
      * @param artifactStream The media input stream
-     * @param filterFormats A list of formats to reduce the scope of influence. When specified, only media matching the
-     *                      included formats will be processed. Can be null to cause all formats to be processed.
+     * @param filterFormats  A list of formats to reduce the scope of influence. When specified, only media matching the
+     *                       included formats will be processed. Can be null to cause all formats to be processed.
      * @return
      * @throws Exception
      */
@@ -235,17 +237,17 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
         MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(bos);
         writer.setOutput(output);
 
-        IIOImage iomage = new IIOImage(image, null,null);
+        IIOImage iomage = new IIOImage(image, null, null);
         writer.write(null, iomage, iwp);
         bos.flush();
 
         return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
     }
 
-    protected BufferedImage stripAlpha(BufferedImage image){
-        BufferedImage raw_image=image;
+    protected BufferedImage stripAlpha(BufferedImage image) {
+        BufferedImage raw_image = image;
         image = new BufferedImage(raw_image.getWidth(), raw_image.getHeight(), BufferedImage.TYPE_INT_RGB);
-        ColorConvertOp xformOp=new ColorConvertOp(null);
+        ColorConvertOp xformOp = new ColorConvertOp(null);
         xformOp.filter(raw_image, image);
 
         return image;
@@ -266,4 +268,5 @@ public class ImageArtifactProcessor implements ArtifactProcessor {
     public void setCompressionQuality(float compressionQuality) {
         this.compressionQuality = compressionQuality;
     }
+
 }

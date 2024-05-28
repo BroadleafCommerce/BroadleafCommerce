@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,30 +33,30 @@ import org.springframework.stereotype.Component;
  * a shipping method which may affect the order total. Since the Hosted Order payment
  * is unconfirmed, we need to adjust the amount on this order payment before
  * we complete checkout and confirm the payment with PayPal again.
- *
+ * <p>
  * Another scenario this handles is if there is an unconfirmed Credit Card applied to the order.
  * This can happen if the implementation is PCI-Compliant and the Credit Card number is sent to Broadleaf
  * and will make a server to server call to the configured Payment Gateway.
- *
+ * <p>
  * For this default implementation,
  * This algorithm will add up all the active applied payments to the order that are not of type
  * 'UNCONFIRMED' AND (payment type 'THIRD_PARTY_ACCOUNT' OR 'CREDIT_CARD')
  * The order.getTotal() minus all the applied payments that are NOT Unconfirmed and of a Third Party account
  * will then be set as the new amount that should be processed by the Third Party Account.
- *
+ * <p>
  * Third Party Account Example:
  * 1) Initial Checkout Step
  * Order - Total = $30
  * - Order Payment (PayPal Express Checkout) - [Unconfirmed] $10
  * - Gift Card - [Unconfirmed] $10
  * - Customer Credit - [Unconfirmed] $10
- *
+ * <p>
  * 2) Shipping Method picked and changes the order total
  * Order - Total = $35
  * - Order Payment (PayPal Express Checkout) - [Unconfirmed] $10
  * - Gift Card - [Unconfirmed] $10
  * - Customer Credit - [Unconfirmed] $10
- *
+ * <p>
  * 3) Adjust Order Payment Activity ($35 - ($10 + $10)) = $15
  * Order - Total = $35
  * - Order Payment (PayPal Express Checkout) - [Unconfirmed] $15
@@ -67,9 +67,9 @@ import org.springframework.stereotype.Component;
  */
 @Component("blAdjustOrderPaymentsActivity")
 public class AdjustOrderPaymentsActivity extends BaseActivity<ProcessContext<Order>> {
-    
+
     public static final int ORDER = 9000;
-    
+
     public AdjustOrderPaymentsActivity() {
         setOrder(ORDER);
     }
@@ -82,7 +82,7 @@ public class AdjustOrderPaymentsActivity extends BaseActivity<ProcessContext<Ord
         Money appliedPaymentsWithoutThirdPartyOrCC = Money.ZERO;
         for (OrderPayment payment : order.getPayments()) {
             if (payment.isActive()) {
-                if (!payment.isConfirmed() && payment.isFinalPayment())  {
+                if (!payment.isConfirmed() && payment.isFinalPayment()) {
                     unconfirmedThirdPartyOrCreditCard = payment;
                 } else if (payment.getAmount() != null) {
                     appliedPaymentsWithoutThirdPartyOrCC = appliedPaymentsWithoutThirdPartyOrCC.add(payment.getAmount());

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,15 +30,15 @@ import jakarta.servlet.http.HttpServletRequest;
  * @author bpolster
  */
 public interface BroadleafThemeResolver {
-    
-    public static final String BRC_THEME_CHANGE_STATUS = "themeChangeStatus";
-    
+
+    String BRC_THEME_CHANGE_STATUS = "themeChangeStatus";
+
     /**
-     * 
      * @deprecated Use {@link #resolveTheme(WebRequest)} instead
      */
     @Deprecated
-    public Theme resolveTheme(HttpServletRequest request, Site site);
-    
-    public Theme resolveTheme(WebRequest request);
+    Theme resolveTheme(HttpServletRequest request, Site site);
+
+    Theme resolveTheme(WebRequest request);
+
 }

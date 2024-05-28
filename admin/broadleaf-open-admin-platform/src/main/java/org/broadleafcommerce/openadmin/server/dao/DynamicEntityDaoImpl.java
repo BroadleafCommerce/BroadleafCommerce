@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -103,22 +103,18 @@ import jakarta.persistence.criteria.Root;
 @Scope("prototype")
 public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContextAware {
 
-    private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
-
     protected static final Map<String, Map<String, FieldMetadata>> METADATA_CACHE = new LRUMap<>(1000);
-
     /**
      * Lifetime cache for the existence of DynamicEntityDaoImpl that just stores how many properties we have cached in METADATA_CACHE over the lifetime
      * of the application. This should survive evictions from METADATA_CACHE because it is for the purpose of diagnosing when we store different property
      * counts in METADATA_CACHE as a result of cache eviction
      */
     protected static final Map<String, Integer> METADATA_CACHE_SIZES = new HashMap<>();
-
+    private static final Log LOG = LogFactory.getLog(DynamicEntityDaoImpl.class);
     /*
      * This is the same as POLYMORPHIC_ENTITY_CACHE, except that it does not contain classes that are abstract or have been marked for exclusion
      * from polymorphism
      */
-
     protected EntityManager standardEntityManager;
 
     @Resource(name = "blMetadata")
@@ -250,8 +246,13 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     @Override
-    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, boolean includeUnqualifiedPolymorphicEntities) {
-        return dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(ceilingClass, includeUnqualifiedPolymorphicEntities, useCache());
+    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(
+            Class<?> ceilingClass,
+            boolean includeUnqualifiedPolymorphicEntities
+    ) {
+        return dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(
+                ceilingClass, includeUnqualifiedPolymorphicEntities, useCache()
+        );
     }
 
     @Override
@@ -332,7 +333,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         }
 
         if (instance instanceof Status) {
-            restrictions.add(builder.or(builder.isNull(root.get("archiveStatus").get("archived")), builder.equal(root.get("archiveStatus").get("archived"), 'N')));
+            restrictions.add(builder.or(builder.isNull(root.get("archiveStatus").get("archived")),
+                    builder.equal(root.get("archiveStatus").get("archived"), 'N')));
         }
 
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
@@ -462,7 +464,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            Map<String, FieldMetadata> attributesMap = metadata.getFieldMetadataForTargetClass(null, targetClass, this, "");
+            Map<String, FieldMetadata> attributesMap = metadata.getFieldMetadataForTargetClass(
+                    null, targetClass, this, ""
+            );
             for (String property : attributesMap.keySet()) {
                 FieldMetadata presentationAttribute = attributesMap.get(property);
                 if (!presentationAttribute.getExcluded()) {
@@ -471,11 +475,16 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         boolean handled = false;
                         for (FieldMetadataProvider provider : fieldMetadataProviders) {
                             MetadataProviderResponse response = provider.addMetadataFromFieldType(
-                                    new AddMetadataFromFieldTypeRequest(field, targetClass, null, new ForeignKey[]{},
+                                    new AddMetadataFromFieldTypeRequest(
+                                            field, targetClass, null, new ForeignKey[]{},
                                             MergedPropertyType.PRIMARY, null, null, "",
-                                            property, null, false, 0, attributesMap, presentationAttribute,
-                                            ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(), field.getType(), this),
-                                    mergedProperties);
+                                            property, null, false, 0,
+                                            attributesMap, presentationAttribute,
+                                            ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(),
+                                            field.getType(), this
+                                    ),
+                                    mergedProperties
+                            );
                             if (MetadataProviderResponse.NOT_HANDLED != response) {
                                 handled = true;
                             }
@@ -487,10 +496,15 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                             //this provider is not included in the provider list on purpose - it is designed to handle basic
                             //AdminPresentation fields, and those fields not admin presentation annotated at all
                             defaultFieldMetadataProvider.addMetadataFromFieldType(
-                                    new AddMetadataFromFieldTypeRequest(field, targetClass, null, new ForeignKey[]{},
-                                            MergedPropertyType.PRIMARY, null, null, "", property,
-                                            null, false, 0, attributesMap, presentationAttribute, ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(),
-                                            field.getType(), this), mergedProperties);
+                                    new AddMetadataFromFieldTypeRequest(
+                                            field, targetClass, null, new ForeignKey[]{},
+                                            MergedPropertyType.PRIMARY, null, null, "",
+                                            property, null, false, 0,
+                                            attributesMap, presentationAttribute,
+                                            ((BasicFieldMetadata) presentationAttribute).getExplicitFieldType(),
+                                            field.getType(), this),
+                                    mergedProperties
+                            );
                         }
                     }
                 }
@@ -542,7 +556,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                 includeFields,
                 excludeFields,
                 configurationKey,
-                new ArrayList<Class<?>>(),
+                new ArrayList<>(),
                 prefix,
                 false,
                 "");
@@ -633,14 +647,26 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             }
         };
 
-        Map<String, FieldMetadata> mergedProperties = metadata.overrideMetadata(entities, propertyBuilder, prefix, isParentExcluded, ceilingEntityFullyQualifiedClassname, configurationKey, this);
+        Map<String, FieldMetadata> mergedProperties = metadata.overrideMetadata(
+                entities,
+                propertyBuilder,
+                prefix,
+                isParentExcluded,
+                ceilingEntityFullyQualifiedClassname,
+                configurationKey,
+                this
+        );
         applyIncludesAndExcludes(includeFields, excludeFields, prefix, isParentExcluded, mergedProperties);
         applyForeignKeyPrecedence(foreignField, additionalForeignFields, mergedProperties);
 
         return mergedProperties;
     }
 
-    protected void applyForeignKeyPrecedence(ForeignKey foreignField, ForeignKey[] additionalForeignFields, Map<String, FieldMetadata> mergedProperties) {
+    protected void applyForeignKeyPrecedence(
+            ForeignKey foreignField,
+            ForeignKey[] additionalForeignFields,
+            Map<String, FieldMetadata> mergedProperties
+    ) {
         for (String key : mergedProperties.keySet()) {
             boolean isForeign = false;
             if (foreignField != null) {
@@ -661,7 +687,13 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         }
     }
 
-    protected void applyIncludesAndExcludes(String[] includeFields, String[] excludeFields, String prefix, Boolean isParentExcluded, Map<String, FieldMetadata> mergedProperties) {
+    protected void applyIncludesAndExcludes(
+            String[] includeFields,
+            String[] excludeFields,
+            String prefix,
+            Boolean isParentExcluded,
+            Map<String, FieldMetadata> mergedProperties
+    ) {
         //check includes
         if (!ArrayUtils.isEmpty(includeFields)) {
             for (String include : includeFields) {
@@ -709,7 +741,17 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         return buffer.toString();
     }
 
-    protected String getCacheKey(String ceilingEntityFullyQualifiedClassname, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType, Boolean populateManyToOneFields, Class<?> clazz, String configurationKey, Boolean isParentExcluded) {
+    protected String getCacheKey(
+            String ceilingEntityFullyQualifiedClassname,
+            ForeignKey foreignField,
+            String[] additionalNonPersistentProperties,
+            ForeignKey[] additionalForeignFields,
+            MergedPropertyType mergedPropertyType,
+            Boolean populateManyToOneFields,
+            Class<?> clazz,
+            String configurationKey,
+            Boolean isParentExcluded
+    ) {
         StringBuilder sb = new StringBuilder(150);
         sb.append(ceilingEntityFullyQualifiedClassname);
         sb.append(clazz.hashCode());
@@ -762,9 +804,14 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             List<Class<?>> parentClasses,
             String prefix,
             Boolean isParentExcluded,
-            String parentPrefix) {
+            String parentPrefix
+    ) {
         for (Class<?> clazz : entities) {
-            String cacheKey = getCacheKey(ceilingEntityFullyQualifiedClassname, foreignField, additionalNonPersistentProperties, additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz, configurationKey, isParentExcluded);
+            String cacheKey = getCacheKey(
+                    ceilingEntityFullyQualifiedClassname, foreignField, additionalNonPersistentProperties,
+                    additionalForeignFields, mergedPropertyType, populateManyToOneFields, clazz, configurationKey,
+                    isParentExcluded
+            );
 
             Map<String, FieldMetadata> cacheData = null;
             synchronized (DynamicDaoHelperImpl.LOCK_OBJECT) {
@@ -807,7 +854,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     METADATA_CACHE.put(cacheKey, props);
 
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Added " + props.size() + " to the metadata cache with key " + cacheKey + " for the class " + ceilingEntityFullyQualifiedClassname);
+                        LOG.trace("Added " + props.size() + " to the metadata cache with key " + cacheKey
+                                + " for the class " + ceilingEntityFullyQualifiedClassname);
                     }
 
                     if (validateMetadataCacheSizes) {
@@ -816,7 +864,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         if (previousSize == null) {
                             METADATA_CACHE_SIZES.put(cacheKey, currentSize);
                         } else if (!currentSize.equals(previousSize)) {
-                            String msg = "Attempted to store " + currentSize + " properties in the cache for the key " + cacheKey + " but we had previously stored " + previousSize + " properties";
+                            String msg = "Attempted to store " + currentSize + " properties in the cache for the key "
+                                    + cacheKey + " but we had previously stored " + previousSize + " properties";
                             LOG.error(msg);
                             throw new RuntimeException(msg);
                         }
@@ -825,20 +874,24 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     cacheData = props;
                 } else {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Read " + cacheData.size() + " from the metada cache with key " + cacheKey + " for the class " + ceilingEntityFullyQualifiedClassname);
+                        LOG.trace("Read " + cacheData.size() + " from the metada cache with key " + cacheKey
+                                + " for the class " + ceilingEntityFullyQualifiedClassname);
                     }
                     for (FieldMetadata value : cacheData.values()) {
                         //in case of MT different sites can potentially have different data driven enums, as we don't take into account
                         //site during cache key calculation(have metadata per-site is overkill) we want to refresh data driven enums
-                        if(value instanceof BasicFieldMetadata && StringUtils.isNotEmpty(((BasicFieldMetadata)value).getOptionListEntity())){
+                        if (value instanceof BasicFieldMetadata
+                                && StringUtils.isNotEmpty(((BasicFieldMetadata) value).getOptionListEntity())) {
                             basicFieldMetadataProvider.refreshDataDrivenEnumMetadata((BasicFieldMetadata) value);
                         }
                         //that's for the case when metadata cache is enabled(cache.entity.dao.metadata.ttl=-1) and you cache metadata for en locale
                         //then switch to FR that has comma as decimal separator
                         if (value instanceof BasicFieldMetadata) {
                             BasicFieldMetadata v = (BasicFieldMetadata) value;
-                            if (SupportedFieldType.DECIMAL.equals(v.getSecondaryType()) || SupportedFieldType.INTEGER.equals(v.getSecondaryType())
-                                    || SupportedFieldType.INTEGER.equals(v.getFieldType()) || SupportedFieldType.DECIMAL.equals(v.getFieldType())) {
+                            if (SupportedFieldType.DECIMAL.equals(v.getSecondaryType())
+                                    || SupportedFieldType.INTEGER.equals(v.getSecondaryType())
+                                    || SupportedFieldType.INTEGER.equals(v.getFieldType())
+                                    || SupportedFieldType.DECIMAL.equals(v.getFieldType())) {
                                 refreshDecimalDefaultValue(v);
                             }
                         }
@@ -855,11 +908,17 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     public void refreshDecimalDefaultValue(BasicFieldMetadata value) {
-        DecimalFormat instance = (DecimalFormat) NumberFormat.getInstance(BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale());
-        if(StringUtils.isNotEmpty(value.getDefaultValue()) && value.getDefaultValue().contains(".") && instance.getDecimalFormatSymbols().getDecimalSeparator()!='.'){
-            value.setDefaultValue(value.getDefaultValue().replace('.', instance.getDecimalFormatSymbols().getDecimalSeparator()));
-        }else if(StringUtils.isNotEmpty(value.getDefaultValue()) && value.getDefaultValue().contains(",") && instance.getDecimalFormatSymbols().getDecimalSeparator()!=','){
-            value.setDefaultValue(value.getDefaultValue().replace(',', instance.getDecimalFormatSymbols().getDecimalSeparator()));
+        DecimalFormat instance = (DecimalFormat) NumberFormat.getInstance(
+                BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale()
+        );
+        if (StringUtils.isNotEmpty(value.getDefaultValue()) && value.getDefaultValue().contains(".")
+                && instance.getDecimalFormatSymbols().getDecimalSeparator() != '.') {
+            value.setDefaultValue(value.getDefaultValue()
+                    .replace('.', instance.getDecimalFormatSymbols().getDecimalSeparator()));
+        } else if (StringUtils.isNotEmpty(value.getDefaultValue()) && value.getDefaultValue().contains(",")
+                && instance.getDecimalFormatSymbols().getDecimalSeparator() != ',') {
+            value.setDefaultValue(value.getDefaultValue()
+                    .replace(',', instance.getDecimalFormatSymbols().getDecimalSeparator()));
         }
 
     }
@@ -896,35 +955,66 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         if (String.class.isAssignableFrom(targetClass)) {
             presentationAttribute.setExplicitFieldType(SupportedFieldType.STRING);
             presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
-            fields.put(propertyName, metadata.getFieldMetadata("", propertyName, null, SupportedFieldType.STRING, null, parentClass, presentationAttribute, mergedPropertyType, this));
+            fields.put(
+                    propertyName,
+                    metadata.getFieldMetadata(
+                            "", propertyName, null, SupportedFieldType.STRING, null,
+                            parentClass, presentationAttribute, mergedPropertyType, this
+                    )
+            );
         } else if (Boolean.class.isAssignableFrom(targetClass)) {
             presentationAttribute.setExplicitFieldType(SupportedFieldType.BOOLEAN);
             presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
-            fields.put(propertyName, metadata.getFieldMetadata("", propertyName, null, SupportedFieldType.BOOLEAN, null, parentClass, presentationAttribute, mergedPropertyType, this));
+            fields.put(
+                    propertyName,
+                    metadata.getFieldMetadata(
+                            "", propertyName, null, SupportedFieldType.BOOLEAN, null,
+                            parentClass, presentationAttribute, mergedPropertyType, this
+                    )
+            );
         } else if (Date.class.isAssignableFrom(targetClass)) {
             presentationAttribute.setExplicitFieldType(SupportedFieldType.DATE);
             presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
-            fields.put(propertyName, metadata.getFieldMetadata("", propertyName, null, SupportedFieldType.DATE, null, parentClass, presentationAttribute, mergedPropertyType, this));
+            fields.put(
+                    propertyName,
+                    metadata.getFieldMetadata(
+                            "", propertyName, null, SupportedFieldType.DATE, null,
+                            parentClass, presentationAttribute, mergedPropertyType, this
+                    )
+            );
         } else if (Money.class.isAssignableFrom(targetClass)) {
             presentationAttribute.setExplicitFieldType(SupportedFieldType.MONEY);
             presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
-            fields.put(propertyName, metadata.getFieldMetadata("", propertyName, null, SupportedFieldType.MONEY, null, parentClass, presentationAttribute, mergedPropertyType, this));
+            fields.put(
+                    propertyName,
+                    metadata.getFieldMetadata(
+                            "", propertyName, null, SupportedFieldType.MONEY, null,
+                            parentClass, presentationAttribute, mergedPropertyType, this
+                    )
+            );
         } else if (
-                Byte.class.isAssignableFrom(targetClass) ||
-                        Integer.class.isAssignableFrom(targetClass) ||
-                        Long.class.isAssignableFrom(targetClass) ||
-                        Short.class.isAssignableFrom(targetClass)
-                ) {
+                Byte.class.isAssignableFrom(targetClass) || Integer.class.isAssignableFrom(targetClass)
+                        || Long.class.isAssignableFrom(targetClass) || Short.class.isAssignableFrom(targetClass)
+        ) {
             presentationAttribute.setExplicitFieldType(SupportedFieldType.INTEGER);
             presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
-            fields.put(propertyName, metadata.getFieldMetadata("", propertyName, null, SupportedFieldType.INTEGER, null, parentClass, presentationAttribute, mergedPropertyType, this));
-        } else if (
-                Double.class.isAssignableFrom(targetClass) ||
-                        BigDecimal.class.isAssignableFrom(targetClass)
-                ) {
+            fields.put(
+                    propertyName,
+                    metadata.getFieldMetadata(
+                            "", propertyName, null, SupportedFieldType.INTEGER, null,
+                            parentClass, presentationAttribute, mergedPropertyType, this
+                    )
+            );
+        } else if (Double.class.isAssignableFrom(targetClass) || BigDecimal.class.isAssignableFrom(targetClass)) {
             presentationAttribute.setExplicitFieldType(SupportedFieldType.DECIMAL);
             presentationAttribute.setVisibility(VisibilityEnum.VISIBLE_ALL);
-            fields.put(propertyName, metadata.getFieldMetadata("", propertyName, null, SupportedFieldType.DECIMAL, null, parentClass, presentationAttribute, mergedPropertyType, this));
+            fields.put(
+                    propertyName,
+                    metadata.getFieldMetadata(
+                            "", propertyName, null, SupportedFieldType.DECIMAL, null,
+                            parentClass, presentationAttribute, mergedPropertyType, this
+                    )
+            );
         }
         ((BasicFieldMetadata) fields.get(propertyName)).setLength(255);
         ((BasicFieldMetadata) fields.get(propertyName)).setForeignKeyCollection(false);
@@ -990,7 +1080,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             String prefix,
             Boolean isParentExcluded,
             String parentPrefix) {
-        Map<String, FieldMetadata> presentationAttributes = metadata.getFieldMetadataForTargetClass(null, targetClass, this, "");
+        Map<String, FieldMetadata> presentationAttributes = metadata.getFieldMetadataForTargetClass(
+                null, targetClass, this, ""
+        );
         if (isParentExcluded) {
             for (String key : presentationAttributes.keySet()) {
                 LOG.debug("getPropertiesForEntityClass:Excluding " + key + " because parent is excluded.");
@@ -1054,7 +1146,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     //get final property if this is a dot delimited property
                     int finalDotPos = additionalNonPersistentProperty.lastIndexOf('.');
                     if (finalDotPos >= 0) {
-                        myAdditionalNonPersistentProperty = myAdditionalNonPersistentProperty.substring(finalDotPos + 1, myAdditionalNonPersistentProperty.length());
+                        myAdditionalNonPersistentProperty = myAdditionalNonPersistentProperty.substring(
+                                finalDotPos + 1, myAdditionalNonPersistentProperty.length()
+                        );
                     }
                     //check all the polymorphic types on this target class to see if the end property exists
                     Field testField = null;
@@ -1075,7 +1169,10 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     }
                     //if the property exists, add it to the metadata for this class
                     if (testField != null || testMethod != null) {
-                        fields.put(additionalNonPersistentProperty, metadata.getFieldMetadata(prefix, additionalNonPersistentProperty, propertyList, SupportedFieldType.STRING, null, targetClass, presentationAttribute, mergedPropertyType, this));
+                        fields.put(additionalNonPersistentProperty, metadata.getFieldMetadata(
+                                prefix, additionalNonPersistentProperty, propertyList, SupportedFieldType.STRING,
+                                null, targetClass, presentationAttribute, mergedPropertyType, this
+                        ));
                     }
                 }
             }
@@ -1111,7 +1208,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             @Override
             public int compare(String o1, String o2) {
                 //check for property name equality and for map field properties
-                if (o1.equals(o2) || o1.startsWith(o2 + FieldManager.MAPFIELDSEPARATOR) || o2.startsWith(o1 + FieldManager.MAPFIELDSEPARATOR)) {
+                if (o1.equals(o2) || o1.startsWith(o2 + FieldManager.MAPFIELDSEPARATOR)
+                        || o2.startsWith(o1 + FieldManager.MAPFIELDSEPARATOR)) {
                     return 0;
                 }
                 return o1.compareTo(o2);
@@ -1123,7 +1221,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         for (String propertyName : propertyNames) {
             final Type type = propertyTypes.get(j);
             boolean isPropertyForeignKey = testForeignProperty(foreignField, prefix, propertyName);
-            int additionalForeignKeyIndexPosition = findAdditionalForeignKeyIndex(additionalForeignFields, prefix, propertyName);
+            int additionalForeignKeyIndexPosition = findAdditionalForeignKeyIndex(
+                    additionalForeignFields, prefix, propertyName
+            );
             j++;
             Field myField = getFieldManager().getField(targetClass, propertyName);
             if (myField == null) {
@@ -1135,7 +1235,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                             isPropertyForeignKey ||
                             additionalForeignKeyIndexPosition >= 0 ||
                             Collections.binarySearch(presentationKeyList, propertyName, propertyComparator) >= 0
-                    ) {
+            ) {
                 if (myField != null) {
                     boolean handled = false;
                     for (FieldMetadataProvider provider : fieldMetadataProviders) {
@@ -1144,10 +1244,13 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                             setExcludedBasedOnShowIfProperty(presentationAttribute);
                         }
                         MetadataProviderResponse response = provider.addMetadataFromFieldType(
-                                new AddMetadataFromFieldTypeRequest(myField, targetClass, foreignField, additionalForeignFields,
-                                        mergedPropertyType, componentProperties, idProperty, prefix,
-                                        propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition,
-                                        presentationAttributes, presentationAttribute, null, type.getReturnedClass(), this), fields);
+                                new AddMetadataFromFieldTypeRequest(
+                                        myField, targetClass, foreignField, additionalForeignFields, mergedPropertyType,
+                                        componentProperties, idProperty, prefix, propertyName, type, isPropertyForeignKey,
+                                        additionalForeignKeyIndexPosition, presentationAttributes, presentationAttribute,
+                                        null, type.getReturnedClass(), this),
+                                fields
+                        );
                         if (MetadataProviderResponse.NOT_HANDLED != response) {
                             handled = true;
                         }
@@ -1160,7 +1263,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                                 additionalNonPersistentProperties, mergedPropertyType, presentationAttributes,
                                 componentProperties, fields, idProperty, populateManyToOneFields, includeFields,
                                 excludeFields, configurationKey, ceilingEntityFullyQualifiedClassname, parentClasses,
-                                prefix, isParentExcluded, propertyName, type, isPropertyForeignKey, additionalForeignKeyIndexPosition, isComponentPrefix, parentPrefix);
+                                prefix, isParentExcluded, propertyName, type, isPropertyForeignKey,
+                                additionalForeignKeyIndexPosition, isComponentPrefix, parentPrefix);
                     }
                 }
             }
@@ -1170,7 +1274,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     public Boolean testPropertyInclusion(FieldMetadata presentationAttribute) {
         setExcludedBasedOnShowIfProperty(presentationAttribute);
 
-        return !(presentationAttribute != null && ((presentationAttribute.getExcluded() != null && presentationAttribute.getExcluded()) || (presentationAttribute.getChildrenExcluded() != null && presentationAttribute.getChildrenExcluded())));
+        return !(presentationAttribute != null && ((presentationAttribute.getExcluded() != null
+                && presentationAttribute.getExcluded()) || (presentationAttribute.getChildrenExcluded() != null
+                && presentationAttribute.getChildrenExcluded())));
 
     }
 
@@ -1185,25 +1291,43 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         }
     }
 
-    protected Boolean testPropertyRecursion(String prefix, List<Class<?>> parentClasses, String propertyName, Class<?> targetClass,
-                                            String ceilingEntityFullyQualifiedClassname, Boolean isComponentPrefix, String parentPrefix) {
+    protected Boolean testPropertyRecursion(
+            String prefix,
+            List<Class<?>> parentClasses,
+            String propertyName, Class<?> targetClass,
+            String ceilingEntityFullyQualifiedClassname,
+            Boolean isComponentPrefix,
+            String parentPrefix
+    ) {
 
-        Boolean standardRecursionDetected = testStandardPropertyRecursion(prefix, parentClasses, propertyName, targetClass,
-                ceilingEntityFullyQualifiedClassname, isComponentPrefix);
+        Boolean standardRecursionDetected = testStandardPropertyRecursion(
+                prefix, parentClasses, propertyName, targetClass, ceilingEntityFullyQualifiedClassname, isComponentPrefix
+        );
 
-        Boolean multiLevelEmbeddableRecursionDetected = testMultiLevelEmbeddableRecursion(prefix, isComponentPrefix,
-                parentPrefix, propertyName);
+        Boolean multiLevelEmbeddableRecursionDetected = testMultiLevelEmbeddableRecursion(
+                prefix, isComponentPrefix, parentPrefix, propertyName
+        );
 
         return standardRecursionDetected || multiLevelEmbeddableRecursionDetected;
     }
 
-    protected Boolean testMultiLevelEmbeddableRecursion(String prefix, Boolean isComponentPrefix, String parentPrefix, String propertyName) {
+    protected Boolean testMultiLevelEmbeddableRecursion(
+            String prefix,
+            Boolean isComponentPrefix,
+            String parentPrefix,
+            String propertyName
+    ) {
         return isComponentPrefix && parentPrefix.contains("." + prefix + propertyName);
     }
 
-    protected Boolean testStandardPropertyRecursion(String prefix, List<Class<?>> parentClasses, String
-            propertyName, Class<?> targetClass, String ceilingEntityFullyQualifiedClassname, Boolean
-                                                            isComponentPrefix) {
+    protected Boolean testStandardPropertyRecursion(
+            String prefix,
+            List<Class<?>> parentClasses,
+            String propertyName,
+            Class<?> targetClass,
+            String ceilingEntityFullyQualifiedClassname,
+            Boolean isComponentPrefix
+    ) {
         Boolean response = false;
         //don't want to shun a self-referencing property in an @Embeddable
         boolean shouldTest = !StringUtils.isEmpty(prefix) && (!isComponentPrefix || prefix.split("\\.").length > 1);
@@ -1281,7 +1405,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             boolean propertyForeignKey,
             int additionalForeignKeyIndexPosition,
             Boolean isComponentPrefix,
-            String parentPrefix) {
+            String parentPrefix
+    ) {
         FieldMetadata presentationAttribute = presentationAttributes.get(propertyName);
         Boolean amIExcluded = isParentExcluded || !testPropertyInclusion(presentationAttribute);
         Boolean includeField = !testPropertyRecursion(prefix, parentClasses, propertyName, targetClass,
@@ -1314,19 +1439,16 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                         parentClasses,
                         amIExcluded,
                         prefix,
-                        parentPrefix);
+                        parentPrefix
+                );
                 break checkProp;
             }
             /*
              * Currently we do not support ManyToOne fields whose class type is the same
              * as the target type, since this forms an infinite loop and will cause a stack overflow.
              */
-            if (
-                    type.isEntityType() &&
-                            !returnedClass.isAssignableFrom(targetClass) &&
-                            populateManyToOneFields &&
-                            includeField
-                    ) {
+            if (type.isEntityType() && !returnedClass.isAssignableFrom(targetClass) && populateManyToOneFields
+                    && includeField) {
                 buildEntityProperties(
                         fields,
                         foreignField,
@@ -1354,7 +1476,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
                     new AddMetadataFromFieldTypeRequest(field, targetClass, foreignField, additionalForeignFields,
                             mergedPropertyType, componentProperties, idProperty, prefix, propertyName, type,
                             propertyForeignKey, additionalForeignKeyIndexPosition, presentationAttributes,
-                            presentationAttribute, explicitType, returnedClass, this), fields);
+                            presentationAttribute, explicitType, returnedClass, this),
+                    fields
+            );
         }
     }
 
@@ -1369,12 +1493,15 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     protected int findAdditionalForeignKeyIndex(ForeignKey[] additionalForeignFields, String prefix, String propertyName) {
         int additionalForeignKeyIndexPosition = -1;
         if (additionalForeignFields != null) {
-            additionalForeignKeyIndexPosition = Arrays.binarySearch(additionalForeignFields, new ForeignKey(prefix + propertyName, null, null), new Comparator<ForeignKey>() {
-                @Override
-                public int compare(ForeignKey o1, ForeignKey o2) {
-                    return o1.getManyToField().compareTo(o2.getManyToField());
-                }
-            });
+            additionalForeignKeyIndexPosition = Arrays.binarySearch(
+                    additionalForeignFields,
+                    new ForeignKey(prefix + propertyName, null, null),
+                    new Comparator<ForeignKey>() {
+                        @Override
+                        public int compare(ForeignKey o1, ForeignKey o2) {
+                            return o1.getManyToField().compareTo(o2.getManyToField());
+                        }
+                    });
         }
         return additionalForeignKeyIndexPosition;
     }
@@ -1395,7 +1522,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             List<Class<?>> parentClasses,
             String prefix,
             Boolean isParentExcluded,
-            String parentPrefix) {
+            String parentPrefix
+    ) {
         Class<?>[] polymorphicEntities = getAllPolymorphicEntitiesFromCeiling(returnedClass);
         List<Class<?>> clonedParentClasses = new ArrayList<>();
 
@@ -1437,7 +1565,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             convertedFields.put(propertyName + '.' + key, fieldMetadata);
 
             if (fieldMetadata instanceof BasicFieldMetadata) {
-                for (Map.Entry<String, List<Map<String, String>>> validationConfigurations : ((BasicFieldMetadata) fieldMetadata).getValidationConfigurations().entrySet()) {
+                for (Map.Entry<String, List<Map<String, String>>> validationConfigurations
+                        : ((BasicFieldMetadata) fieldMetadata).getValidationConfigurations().entrySet()) {
                     Class<?> validatorImpl = null;
 
                     try {
@@ -1487,7 +1616,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
      * owningSite.embeddableMultitenantSite.adminUsers.
      */
     protected void setOriginatingFieldForForeignKey(String propertyName, String key, FieldMetadata fieldMetadata) {
-        ForeignKey foreignKey = (ForeignKey) ((BasicCollectionMetadata) fieldMetadata).getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+        ForeignKey foreignKey = (ForeignKey) ((BasicCollectionMetadata) fieldMetadata).getPersistencePerspective()
+                .getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
         foreignKey.setOriginatingField(propertyName + '.' + key);
     }
 
@@ -1510,7 +1640,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             List<Class<?>> parentClasses,
             Boolean isParentExcluded,
             String prefix,
-            String parentPrefix) {
+            String parentPrefix
+    ) {
         String[] componentProperties = ((ComponentType) type).getPropertyNames();
         List<String> componentPropertyNames = Arrays.asList(componentProperties);
         Type[] componentTypes = ((ComponentType) type).getSubtypes();
@@ -1525,7 +1656,9 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             tempPrefix = prefix.substring(pos + 1, prefixLength);
         }
 
-        Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldMetadataForTargetClass(targetClass, returnedClass, this, tempPrefix + propertyName + ".");
+        Map<String, FieldMetadata> componentPresentationAttributes = metadata.getFieldMetadataForTargetClass(
+                targetClass, returnedClass, this, tempPrefix + propertyName + "."
+        );
 
         if (isParentExcluded) {
             for (String key : componentPresentationAttributes.keySet()) {
@@ -1610,7 +1743,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             //keep in mind that getStandardEntityManager() can return null, this is in general OK,
             // we re-init fieldManager in setStandardEntityManager method
             fieldManager = new FieldManager(entityConfiguration, getStandardEntityManager());
-        } else if (cleanFieldManager){
+        } else if (cleanFieldManager) {
             fieldManager.clearMiddleFields();
         }
         return fieldManager;

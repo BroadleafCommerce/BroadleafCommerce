@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.cms.web.processor;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
@@ -38,24 +37,30 @@ public interface ContentProcessorExtensionHandler extends ExtensionHandler {
      *
      * @return - ExtensionResultStatusType
      */
-    public ExtensionResultStatusType addAdditionalFieldsToModel(String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context);
+    ExtensionResultStatusType addAdditionalFieldsToModel(
+            String tagName, Map<String, String> tagAttributes, Map<String, Object> newModelVars, BroadleafTemplateContext context
+    );
 
     /**
      * Provides a hook point for an extension of content processor to optionally add in deep links
      * for a content item based on its extension fields
+     *
      * @param links
-     * @param arguments
-     * @param element
+     * @param tagName
+     * @param tagAttributes
+     * @param context
      * @return ExtensionResultStatusType
      */
-    public ExtensionResultStatusType addExtensionFieldDeepLink(List<DeepLink> links, String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context);
+    ExtensionResultStatusType addExtensionFieldDeepLink(
+            List<DeepLink> links, String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context
+    );
 
     /**
      * Provides a hook point to allow extension handlers to modify the generated deep links.
-     * 
+     *
      * @param links
      * @return ExtensionResultStatusType
      */
-    public ExtensionResultStatusType postProcessDeepLinks(List<DeepLink> links);
+    ExtensionResultStatusType postProcessDeepLinks(List<DeepLink> links);
 
 }

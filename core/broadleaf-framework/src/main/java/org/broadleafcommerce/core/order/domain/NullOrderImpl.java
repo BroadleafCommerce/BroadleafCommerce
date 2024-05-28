@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,6 +35,7 @@ import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -42,14 +43,15 @@ import java.util.Map;
 
 /**
  * NullOrderImpl is a class that represents an unmodifiable, empty order. This class is used as the default order
- * for a customer. It is a shared class between customers, and serves as a placeholder order until an item 
+ * for a customer. It is a shared class between customers, and serves as a placeholder order until an item
  * is initially added to cart, at which point a real Order gets created. This prevents creating individual orders
  * for customers that are just browsing the site.
- * 
+ *
  * @author apazzolini
  */
 public class NullOrderImpl implements Order {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -103,13 +105,13 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
-    public Money getTotalAfterAppliedPayments() {
-        return null;
+    public void setTotal(Money orderTotal) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 
     @Override
-    public void setTotal(Money orderTotal) {
-        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
+    public Money getTotalAfterAppliedPayments() {
+        return null;
     }
 
     @Override
@@ -154,17 +156,17 @@ public class NullOrderImpl implements Order {
 
     @Override
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups) {
-        throw new UnsupportedOperationException("NullOrder does not support any modification operations."); 
-    }
-
-    @Override
-    public void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers) {
         throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 
     @Override
     public List<CandidateOrderOffer> getCandidateOrderOffers() {
         return null;
+    }
+
+    @Override
+    public void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers) {
+        throw new UnsupportedOperationException("NullOrder does not support any modification operations.");
     }
 
     @Override
@@ -430,4 +432,5 @@ public class NullOrderImpl implements Order {
     public Boolean hasValidationErrors() {
         return false;
     }
+
 }

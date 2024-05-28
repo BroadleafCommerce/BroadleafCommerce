@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.dto;
 
 import org.broadleafcommerce.common.money.Money;
@@ -92,7 +91,7 @@ public class PaymentResponseDTO {
      * The Order ID that this transaction is associated with
      */
     protected String orderId;
-    
+
     /**
      * If this was a Transaction request, it will be the amount that was sent back from the gateway
      */
@@ -102,16 +101,16 @@ public class PaymentResponseDTO {
      * If this is a Tokenization request, this will hold the token sent back from the gateway
      */
     protected String paymentToken;
-    
+
     /**
      * Whether or not the transaction on the gateway was successful. This should be provided by the gateway alone.
      */
     protected boolean successful = true;
-    
+
     /**
      * Whether or not this response was tampered with. This used to verify that the response that was received on the
      * endpoint (which is intended to only be invoked from the payment gateway) actually came from the gateway and was not
-     * otherwise maliciously invoked by a 3rd-party. 
+     * otherwise maliciously invoked by a 3rd-party.
      */
     protected boolean valid = true;
 
@@ -132,7 +131,7 @@ public class PaymentResponseDTO {
      * {@link #responseMap}.
      */
     protected String rawResponse;
-    
+
     /**
      * A more convenient representation of {@link #rawResponse} to hold the response from the gateway.
      */
@@ -141,39 +140,39 @@ public class PaymentResponseDTO {
     public PaymentResponseDTO(PaymentType paymentType, PaymentGatewayType gatewayType) {
         this.paymentType = paymentType;
         this.paymentGatewayType = gatewayType;
-        this.giftCards = new ArrayList<GiftCardDTO<PaymentResponseDTO>>();
-        this.customerCredits = new ArrayList<CustomerCreditDTO<PaymentResponseDTO>>();
-        this.responseMap = new HashMap<String, String>();
+        this.giftCards = new ArrayList<>();
+        this.customerCredits = new ArrayList<>();
+        this.responseMap = new HashMap<>();
     }
 
     public GatewayCustomerDTO<PaymentResponseDTO> customer() {
-        customer = new GatewayCustomerDTO<PaymentResponseDTO>(this);
+        customer = new GatewayCustomerDTO<>(this);
         return customer;
     }
 
     public CreditCardDTO<PaymentResponseDTO> creditCard() {
-        creditCard = new CreditCardDTO<PaymentResponseDTO>(this);
+        creditCard = new CreditCardDTO<>(this);
         return creditCard;
     }
 
     public AddressDTO<PaymentResponseDTO> shipTo() {
-        shipTo = new AddressDTO<PaymentResponseDTO>(this);
+        shipTo = new AddressDTO<>(this);
         return shipTo;
     }
 
     public AddressDTO<PaymentResponseDTO> billTo() {
-        billTo = new AddressDTO<PaymentResponseDTO>(this);
+        billTo = new AddressDTO<>(this);
         return billTo;
     }
 
     public GiftCardDTO<PaymentResponseDTO> giftCard() {
-        GiftCardDTO<PaymentResponseDTO> giftCardDTO = new GiftCardDTO<PaymentResponseDTO>(this);
+        GiftCardDTO<PaymentResponseDTO> giftCardDTO = new GiftCardDTO<>(this);
         giftCards.add(giftCardDTO);
         return giftCardDTO;
     }
 
     public CustomerCreditDTO<PaymentResponseDTO> customerCredit() {
-        CustomerCreditDTO<PaymentResponseDTO> customerCreditDTO = new CustomerCreditDTO<PaymentResponseDTO>(this);
+        CustomerCreditDTO<PaymentResponseDTO> customerCreditDTO = new CustomerCreditDTO<>(this);
         customerCredits.add(customerCreditDTO);
         return customerCreditDTO;
     }
@@ -290,4 +289,5 @@ public class PaymentResponseDTO {
     public Map<String, String> getResponseMap() {
         return responseMap;
     }
+
 }

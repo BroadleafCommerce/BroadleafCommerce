@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,14 +32,14 @@ import java.util.Map;
 
 /**
  * Convenience methods for interacting with {@link PromotionMessage}s
- * 
+ *
  * @author Chris Kittrell (ckittrell)
  */
 public class BLCPromotionMessageUtils {
-    
+
     /**
      * Given a list of {@link PromotionMessage}s, gather their message properties.
-     * 
+     *
      * @param promotionMessages
      * @return messages
      */
@@ -102,8 +102,10 @@ public class BLCPromotionMessageUtils {
      * @param type
      * @return messages
      */
-    public static List<String> gatherMessagesByPlacementType(Map<String, List<PromotionMessageDTO>> promotionMessageMap,
-            PromotionMessagePlacementType type) {
+    public static List<String> gatherMessagesByPlacementType(
+            Map<String, List<PromotionMessageDTO>> promotionMessageMap,
+            PromotionMessagePlacementType type
+    ) {
         List<PromotionMessageDTO> promotionMessageDTOs = promotionMessageMap.get(type.getType());
 
         if (promotionMessageDTOs == null) {
@@ -127,8 +129,10 @@ public class BLCPromotionMessageUtils {
      * @param placementTypes
      * @return a list of filtered message DTOs
      */
-    public static List<PromotionMessageDTO> filterPromotionMessageDTOsByTypes(Map<String, List<PromotionMessageDTO>> promotionMessages,
-            List<String> placementTypes) {
+    public static List<PromotionMessageDTO> filterPromotionMessageDTOsByTypes(
+            Map<String, List<PromotionMessageDTO>> promotionMessages,
+            List<String> placementTypes
+    ) {
         List<PromotionMessageDTO> filteredPromotionMessages = new ArrayList<>();
 
         for (String type : promotionMessages.keySet()) {
@@ -138,4 +142,5 @@ public class BLCPromotionMessageUtils {
         }
         return filteredPromotionMessages;
     }
+
 }

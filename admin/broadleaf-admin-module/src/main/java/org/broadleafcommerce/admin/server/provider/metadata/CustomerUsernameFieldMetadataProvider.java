@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -53,12 +53,15 @@ public class CustomerUsernameFieldMetadataProvider extends AbstractFieldMetadata
         return FieldMetadataProvider.BASIC;
     }
 
-    private boolean canHandleRequest(LateStageAddMetadataRequest addMetadataRequest) {
+    protected boolean canHandleRequest(LateStageAddMetadataRequest addMetadataRequest) {
         return Customer.class.isAssignableFrom(addMetadataRequest.getTargetClass());
     }
 
     @Override
-    public MetadataProviderResponse lateStageAddMetadata(LateStageAddMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse lateStageAddMetadata(
+            LateStageAddMetadataRequest addMetadataRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         if (!canHandleRequest(addMetadataRequest)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
@@ -76,27 +79,42 @@ public class CustomerUsernameFieldMetadataProvider extends AbstractFieldMetadata
     }
 
     @Override
-    public MetadataProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse addMetadataFromFieldType(
+            AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public MetadataProviderResponse addMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse addMetadata(
+            AddFieldMetadataRequest addMetadataRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public MetadataProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse overrideViaAnnotation(
+            OverrideViaAnnotationRequest overrideViaAnnotationRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public MetadataProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse overrideViaXml(
+            OverrideViaXmlRequest overrideViaXmlRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         return MetadataProviderResponse.NOT_HANDLED;
     }
 
     @Override
-    public MetadataProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata) {
+    public MetadataProviderResponse addMetadataFromMappingData(
+            AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest,
+            FieldMetadata metadata
+    ) {
         return MetadataProviderResponse.NOT_HANDLED;
     }
 

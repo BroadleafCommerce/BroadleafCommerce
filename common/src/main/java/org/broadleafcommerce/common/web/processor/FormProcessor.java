@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,32 +37,36 @@ import jakarta.annotation.Resource;
 /**
  * Used as a replacement to the HTML {@code <form>} element which adds a CSRF token input field to forms that are submitted
  * via anything but GET. This is required to properly bypass the {@link CsrfFilter}.
- * 
+ *
  * @author apazzolini
  * @see {@link CsrfFilter}
  */
 @Component("blFormProcessor")
 @ConditionalOnTemplating
 public class FormProcessor extends AbstractBroadleafModelModifierProcessor {
-    
+
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService eps;
 
     @Resource(name = "blStaleStateProtectionService")
     protected StaleStateProtectionService spps;
-    
+
     @Override
     public String getName() {
         return "form";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 1001;
     }
-    
+
     @Override
-    public BroadleafTemplateModelModifierDTO getInjectedModelAndTagAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafTemplateContext context) {
+    public BroadleafTemplateModelModifierDTO getInjectedModelAndTagAttributes(
+            String rootTagName,
+            Map<String, String> rootTagAttributes,
+            BroadleafTemplateContext context
+    ) {
         Map<String, String> formAttributes = new HashMap<>();
         formAttributes.putAll(rootTagAttributes);
         BroadleafTemplateModel model = context.createModel();
@@ -84,33 +88,37 @@ public class FormProcessor extends AbstractBroadleafModelModifierProcessor {
                     if (stateVersionToken != null) {
                         csrfQueryParameter += "&" + spps.getStateVersionTokenParameter() + "=" + stateVersionToken;
                     }
-                    
+
                     // Add this into the attribute map to be used for the new <form> tag. The expression has already
                     // been executed, don't need to treat the value as an expression
                     String actionValue = formAttributes.get("action");
                     actionValue += csrfQueryParameter;
                     formAttributes.put("action", actionValue);
                 } else {
-                    
+
                     Map<String, String> csrfAttributes = new HashMap<>();
                     csrfAttributes.put("type", "hidden");
                     csrfAttributes.put("name", eps.getCsrfTokenParameter());
                     csrfAttributes.put("value", csrfToken);
-                    BroadleafTemplateElement csrfTag = context.createStandaloneElement("input", csrfAttributes, true);
+                    BroadleafTemplateElement csrfTag = context.createStandaloneElement(
+                            "input", csrfAttributes, true
+                    );
                     model.addElement(csrfTag);
 
                     if (stateVersionToken != null) {
-                        
+
                         Map<String, String> stateVersionAttributes = new HashMap<>();
                         stateVersionAttributes.put("type", "hidden");
                         stateVersionAttributes.put("name", spps.getStateVersionTokenParameter());
                         stateVersionAttributes.put("value", stateVersionToken);
-                        BroadleafTemplateElement stateVersionTag = context.createStandaloneElement("input", stateVersionAttributes, true);
+                        BroadleafTemplateElement stateVersionTag = context.createStandaloneElement(
+                                "input", stateVersionAttributes, true
+                        );
                         model.addElement(stateVersionTag);
                     }
                     dto.setModel(model);
                 }
-                
+
             } catch (ServiceException e) {
                 throw new RuntimeException("Could not get a CSRF token for this session", e);
             }
@@ -119,10 +127,10 @@ public class FormProcessor extends AbstractBroadleafModelModifierProcessor {
         dto.setReplacementTagName("form");
         return dto;
     }
-    
+
     @Override
     public boolean reprocessModel() {
         return true;
     }
-    
+
 }

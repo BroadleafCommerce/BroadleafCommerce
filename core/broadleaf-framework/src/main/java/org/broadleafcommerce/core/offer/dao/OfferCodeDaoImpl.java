@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,10 +44,10 @@ import jakarta.persistence.criteria.Root;
 @Repository("blOfferCodeDao")
 public class OfferCodeDaoImpl implements OfferCodeDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Resource(name = "blOfferCodeDaoExtensionManager")
@@ -127,7 +127,9 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
 
         ExtensionResultHolder<Query> resultHolder = new ExtensionResultHolder<Query>();
         ExtensionResultStatusType extensionResult =
-                extensionManager.getProxy().createReadOfferCodeByCodeQuery(em, resultHolder, code, true, "query.Offer");
+                extensionManager.getProxy().createReadOfferCodeByCodeQuery(
+                        em, resultHolder, code, true, "query.Offer"
+                );
 
         if (extensionResult != null && ExtensionResultStatusType.HANDLED.equals(extensionResult)) {
             query = resultHolder.getResult();

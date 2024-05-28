@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,10 +33,15 @@ public class OnMissingBroadleafModuleCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        Map<String, Object> attributes = metadata.getAnnotationAttributes(ConditionalOnMissingBroadleafModule.class.getName());
+        Map<String, Object> attributes = metadata.getAnnotationAttributes(
+                ConditionalOnMissingBroadleafModule.class.getName()
+        );
         BroadleafModuleEnum module = (BroadleafModuleEnum) attributes.get("value");
-        String moduleName = (BroadleafModuleEnum.IGNORED != module) ? module.getName() : (String) attributes.get("moduleName");
+        String moduleName = (BroadleafModuleEnum.IGNORED != module)
+                ? module.getName()
+                : (String) attributes.get("moduleName");
 
         return StringUtils.isNotEmpty(moduleName) && !ModulePresentUtil.isPresent(moduleName);
     }
+
 }

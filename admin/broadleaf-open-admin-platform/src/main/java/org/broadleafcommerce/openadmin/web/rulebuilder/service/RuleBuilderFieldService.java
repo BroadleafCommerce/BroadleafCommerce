@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,23 +29,24 @@ import java.util.List;
  */
 public interface RuleBuilderFieldService extends Cloneable {
 
-    public String getName();
+    String getName();
 
-    public FieldWrapper buildFields();
+    FieldWrapper buildFields();
 
-    public FieldDTO getField(String fieldName);
+    FieldDTO getField(String fieldName);
 
-    public SupportedFieldType getSupportedFieldType(String fieldName);
+    SupportedFieldType getSupportedFieldType(String fieldName);
 
-    public SupportedFieldType getSecondaryFieldType(String fieldName);
+    SupportedFieldType getSecondaryFieldType(String fieldName);
 
-    public List<FieldData> getFields();
+    List<FieldData> getFields();
 
-    public void setFields(List<FieldData> fields);
+    void setFields(List<FieldData> fields);
 
-    public String getOverrideFieldEntityKey(String fieldName);
+    String getOverrideFieldEntityKey(String fieldName);
 
-    public RuleBuilderFieldService clone() throws CloneNotSupportedException;
+    RuleBuilderFieldService clone() throws CloneNotSupportedException;
 
-    public void setRuleBuilderFieldServiceExtensionManager(RuleBuilderFieldServiceExtensionManager extensionManager);
+    void setRuleBuilderFieldServiceExtensionManager(RuleBuilderFieldServiceExtensionManager extensionManager);
+
 }

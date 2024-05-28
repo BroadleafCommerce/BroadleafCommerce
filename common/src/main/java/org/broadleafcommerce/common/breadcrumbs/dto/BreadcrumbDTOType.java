@@ -10,16 +10,16 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.breadcrumbs.dto;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,25 +27,20 @@ import java.util.Map;
 /**
  * An extensible enumeration of breadcrumb types.   Useful in the view layer to vary the presentation
  * based on the Breadcrumb type.
- * 
- * @author bpolster 
  *
+ * @author bpolster
  */
 public class BreadcrumbDTOType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, BreadcrumbDTOType> TYPES = new LinkedHashMap<String, BreadcrumbDTOType>();
-
+    private static final Map<String, BreadcrumbDTOType> TYPES = new LinkedHashMap<>();
     public static final BreadcrumbDTOType HOME = new BreadcrumbDTOType("HOME", "Home");
     public static final BreadcrumbDTOType CATEGORY = new BreadcrumbDTOType("CATEGORY", "Category");
     public static final BreadcrumbDTOType PRODUCT = new BreadcrumbDTOType("PRODUCT", "Product");
     public static final BreadcrumbDTOType SEARCH = new BreadcrumbDTOType("SEARCH", "Search");
     public static final BreadcrumbDTOType PAGE = new BreadcrumbDTOType("PAGE", "Page");
-
-    public static BreadcrumbDTOType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -59,21 +54,25 @@ public class BreadcrumbDTOType implements Serializable, BroadleafEnumerationType
         setType(type);
     }
 
+    public static BreadcrumbDTOType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     @Override
     public String getType() {
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

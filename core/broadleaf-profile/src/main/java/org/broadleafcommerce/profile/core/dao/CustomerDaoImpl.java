@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,10 +44,10 @@ public class CustomerDaoImpl implements CustomerDao {
 
     private static final Log LOG = LogFactory.getLog(CustomerDaoImpl.class);
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override
@@ -59,7 +59,9 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer readCustomerByExternalId(String externalId) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Customer> criteria = builder.createQuery(Customer.class);
-        Root<? extends Customer> customer = criteria.from(entityConfiguration.lookupEntityClass(Customer.class.getName(), Customer.class));
+        Root<? extends Customer> customer = criteria.from(
+                entityConfiguration.lookupEntityClass(Customer.class.getName(), Customer.class)
+        );
         criteria.select(customer);
         criteria.where(builder.equal(customer.get("externalId"), externalId));
 
@@ -71,7 +73,7 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     @Override
-    public List<Customer> readCustomersByIds(List<Long> ids){
+    public List<Customer> readCustomersByIds(List<Long> ids) {
         if (ids == null || ids.size() == 0) {
             return null;
         }
@@ -142,7 +144,7 @@ public class CustomerDaoImpl implements CustomerDao {
 
     @Override
     public Customer create() {
-        Customer customer =  (Customer) entityConfiguration.createEntityInstance(Customer.class.getName());
+        Customer customer = (Customer) entityConfiguration.createEntityInstance(Customer.class.getName());
         return customer;
     }
 
@@ -182,9 +184,9 @@ public class CustomerDaoImpl implements CustomerDao {
         Root<CustomerImpl> customer = criteria.from(CustomerImpl.class);
         criteria.select(customer);
 
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         //If we have a lastID, find the next customer after that ID
-        if (lastID !=  null) {
+        if (lastID != null) {
             restrictions.add(builder.gt(customer.get("id").as(Long.class), lastID));
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         }
@@ -211,4 +213,5 @@ public class CustomerDaoImpl implements CustomerDao {
     public void refreshCustomer(Customer customer) {
         em.refresh(customer);
     }
+
 }

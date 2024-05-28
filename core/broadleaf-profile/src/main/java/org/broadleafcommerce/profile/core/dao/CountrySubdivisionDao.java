@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,20 +28,20 @@ import jakarta.annotation.Nonnull;
  */
 public interface CountrySubdivisionDao {
 
-    public List<CountrySubdivision> findSubdivisions();
+    List<CountrySubdivision> findSubdivisions();
 
-    public List<CountrySubdivision> findSubdivisions(String countryAbbreviation);
+    List<CountrySubdivision> findSubdivisions(String countryAbbreviation);
 
-    public List<CountrySubdivision> findSubdivisionsByCountryAndCategory(String countryAbbreviation, String category);
+    List<CountrySubdivision> findSubdivisionsByCountryAndCategory(String countryAbbreviation, String category);
 
-    public CountrySubdivision findSubdivisionByAbbreviation(String abbreviation);
+    CountrySubdivision findSubdivisionByAbbreviation(String abbreviation);
 
-    public CountrySubdivision findSubdivisionByCountryAndAltAbbreviation(@Nonnull String countryAbbreviation, @Nonnull String altAbbreviation);
+    CountrySubdivision findSubdivisionByCountryAndAltAbbreviation(@Nonnull String countryAbbreviation, @Nonnull String altAbbreviation);
 
-    public CountrySubdivision findSubdivisionByCountryAndName(@Nonnull String countryAbbreviation, @Nonnull String name);
+    CountrySubdivision findSubdivisionByCountryAndName(@Nonnull String countryAbbreviation, @Nonnull String name);
 
-    public CountrySubdivision create();
+    CountrySubdivision create();
 
-    public CountrySubdivision save(CountrySubdivision subdivision);
+    CountrySubdivision save(CountrySubdivision subdivision);
 
 }

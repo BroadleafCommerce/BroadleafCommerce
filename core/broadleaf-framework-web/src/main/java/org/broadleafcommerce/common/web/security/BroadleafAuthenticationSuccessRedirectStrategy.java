@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,11 +32,10 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * If the incoming request is an ajax request, the system will add the desired redirect path to the session and
  * then redirect to the path configured for the redirectPath property.
- *
+ * <p>
  * It is assumed that the redirectPath will be picked up by the BroadleafRedirectController.
  *
  * @author bpolster
- *
  */
 @Component("blAuthenticationSuccessRedirectStrategy")
 public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectStrategy {
@@ -80,4 +79,5 @@ public class BroadleafAuthenticationSuccessRedirectStrategy implements RedirectS
     public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
         this.redirectStrategy = redirectStrategy;
     }
+
 }

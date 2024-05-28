@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,11 +22,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-
 /**
- *
  * @author ckittrell
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
@@ -49,13 +46,14 @@ public @interface AdminTabPresentation {
 
     /**
      * Optional - only required if you want to order the appearance of tabs in the UI
-     *
+     * <p>
      * Specify an order for this tab. Tabs will be sorted in the resulting form in
      * ascending order based on this parameter.
-     *
+     * <p>
      * The default tab will render with an order of 100.
      *
      * @return the order for this tab
      */
     int order() default 100;
+
 }

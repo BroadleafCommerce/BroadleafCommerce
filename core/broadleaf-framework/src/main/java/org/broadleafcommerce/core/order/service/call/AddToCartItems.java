@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,30 +26,16 @@ import java.util.List;
 public class AddToCartItems {
 
     @SuppressWarnings("unchecked")
-
     //TOOD: this should probably be refactored to be called "rows" like in other model objects
-    private List<OrderItemRequestDTO > addToCartItems =   LazyList.decorate(
+    private List<OrderItemRequestDTO> addToCartItems = LazyList.decorate(
             new ArrayList<OrderItemRequestDTO>(),
-            FactoryUtils.instantiateFactory(OrderItemRequestDTO.class));
+            FactoryUtils.instantiateFactory(OrderItemRequestDTO.class)
+    );
 
     private long productId;
     private long categoryId;
 
-    public void setProductId(long productId) {
-        this.productId = productId;
-        for(OrderItemRequestDTO  addToCartItem : addToCartItems) {
-            addToCartItem.setProductId(productId);
-        }
-    }
-
-    public void setCategoryId(long categoryId) {
-        this.categoryId = categoryId;
-        for(OrderItemRequestDTO  addToCartItem : addToCartItems) {
-            addToCartItem.setCategoryId(categoryId);
-        }
-    }
-
-    public List<OrderItemRequestDTO > getAddToCartItems() {
+    public List<OrderItemRequestDTO> getAddToCartItems() {
         return addToCartItems;
     }
 
@@ -60,8 +46,23 @@ public class AddToCartItems {
     public long getProductId() {
         return productId;
     }
+
+    public void setProductId(long productId) {
+        this.productId = productId;
+        for (OrderItemRequestDTO addToCartItem : addToCartItems) {
+            addToCartItem.setProductId(productId);
+        }
+    }
+
     public long getCategoryId() {
         return categoryId;
+    }
+
+    public void setCategoryId(long categoryId) {
+        this.categoryId = categoryId;
+        for (OrderItemRequestDTO addToCartItem : addToCartItems) {
+            addToCartItem.setCategoryId(categoryId);
+        }
     }
 
 }

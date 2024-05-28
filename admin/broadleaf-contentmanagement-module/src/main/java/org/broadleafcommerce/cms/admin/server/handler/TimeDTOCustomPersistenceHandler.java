@@ -10,15 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -43,8 +41,6 @@ import java.util.Map;
  */
 @Component("blTimeDTOCustomPersistenceHandler")
 public class TimeDTOCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-
-    private static final Log LOG = LogFactory.getLog(TimeDTOCustomPersistenceHandler.class);
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -73,18 +69,29 @@ public class TimeDTOCustomPersistenceHandler extends CustomPersistenceHandlerAda
     }
 
     @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+    public DynamicResultSet inspect(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            InspectHelper helper
+    ) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
-            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
-            Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getSimpleMergedProperties(ceilingEntityFullyQualifiedClassname, persistencePackage.getPersistencePerspective());
+            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
+            Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getSimpleMergedProperties(
+                    ceilingEntityFullyQualifiedClassname, persistencePackage.getPersistencePerspective()
+            );
             allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
-            ClassMetadata mergedMetadata = helper.buildClassMetadata(new Class<?>[]{Class.forName(ceilingEntityFullyQualifiedClassname)}, persistencePackage, allMergedProperties);
+            ClassMetadata mergedMetadata = helper.buildClassMetadata(
+                    new Class<?>[]{Class.forName(ceilingEntityFullyQualifiedClassname)},
+                    persistencePackage,
+                    allMergedProperties
+            );
             DynamicResultSet results = new DynamicResultSet(mergedMetadata);
 
             return results;
         } catch (Exception e) {
-            ServiceException ex = new ServiceException("Unable to retrieve inspection results for " + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
+            ServiceException ex = new ServiceException("Unable to retrieve inspection results for "
+                    + persistencePackage.getCeilingEntityFullyQualifiedClassname(), e);
             throw ex;
         }
     }

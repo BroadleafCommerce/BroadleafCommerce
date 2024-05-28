@@ -10,12 +10,19 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.email.domain;
+
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
+import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,43 +32,40 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.util.Date;
 
 /**
  * @author jfischer
- *
  */
 @Entity
 @Table(name = "BLC_EMAIL_TRACKING_CLICKS", indexes = {
         @Index(name = "TRACKINGCLICKS_TRACKING_INDEX", columnList = "EMAIL_TRACKING_ID"),
-        @Index(name = "TRACKINGCLICKS_CUSTOMER_INDEX", columnList = "CUSTOMER_ID") })
+        @Index(name = "TRACKINGCLICKS_CUSTOMER_INDEX", columnList = "CUSTOMER_ID")})
 public class EmailTrackingClicksImpl implements EmailTrackingClicks {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "ClickId")
     @GenericGenerator(
-        name="ClickId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="EmailTrackingClicksImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl")
-        }
+            name = "ClickId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "EmailTrackingClicksImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl")
+            }
     )
     @Column(name = "CLICK_ID")
     protected Long id;
 
-    @ManyToOne(optional=false, targetEntity = EmailTrackingImpl.class)
+    @ManyToOne(optional = false, targetEntity = EmailTrackingImpl.class)
     @JoinColumn(name = "EMAIL_TRACKING_ID")
     protected EmailTracking emailTracking;
 
-    @Column(nullable=false, name = "DATE_CLICKED")
+    @Column(nullable = false, name = "DATE_CLICKED")
     protected Date dateClicked;
 
     @Column(name = "CUSTOMER_ID")

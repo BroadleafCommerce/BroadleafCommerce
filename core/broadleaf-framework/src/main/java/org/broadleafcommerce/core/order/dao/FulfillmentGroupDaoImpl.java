@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,7 +38,7 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override
@@ -70,26 +70,31 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
 
     @Override
     public FulfillmentGroup createDefault() {
-        final FulfillmentGroup fg = ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroup"));
+        final FulfillmentGroup fg = ((FulfillmentGroup) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.core.order.domain.FulfillmentGroup"
+        ));
         fg.setPrimary(true);
         return fg;
     }
 
     @Override
     public FulfillmentGroup create() {
-        final FulfillmentGroup fg =  ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroup"));
+        final FulfillmentGroup fg = ((FulfillmentGroup) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.core.order.domain.FulfillmentGroup"
+        ));
         return fg;
     }
 
     @Override
     public FulfillmentGroupFee createFulfillmentGroupFee() {
-        return ((FulfillmentGroupFee) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroupFee"));
+        return ((FulfillmentGroupFee) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.core.order.domain.FulfillmentGroupFee"
+        ));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<FulfillmentGroup> readUnfulfilledFulfillmentGroups(int start,
-            int maxResults) {
+    public List<FulfillmentGroup> readUnfulfilledFulfillmentGroups(int start, int maxResults) {
         Query query = em.createNamedQuery("BC_READ_UNFULFILLED_FULFILLMENT_GROUP_ASC");
         query.setFirstResult(start);
         query.setMaxResults(maxResults);
@@ -98,30 +103,32 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<FulfillmentGroup> readPartiallyFulfilledFulfillmentGroups(int start,
-            int maxResults) {
+    public List<FulfillmentGroup> readPartiallyFulfilledFulfillmentGroups(int start, int maxResults) {
         Query query = em.createNamedQuery("BC_READ_PARTIALLY_FULFILLED_FULFILLMENT_GROUP_ASC");
         query.setFirstResult(start);
         query.setMaxResults(maxResults);
-        
+
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<FulfillmentGroup> readUnprocessedFulfillmentGroups(int start,
-            int maxResults) {
+    public List<FulfillmentGroup> readUnprocessedFulfillmentGroups(int start, int maxResults) {
         Query query = em.createNamedQuery("BC_READ_UNPROCESSED_FULFILLMENT_GROUP_ASC");
         query.setFirstResult(start);
         query.setMaxResults(maxResults);
-        
+
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
-            FulfillmentGroupStatusType status, int start, int maxResults, boolean ascending) {
+            FulfillmentGroupStatusType status,
+            int start,
+            int maxResults,
+            boolean ascending
+    ) {
         Query query = null;
         if (ascending) {
             query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_BY_STATUS_ASC");
@@ -131,13 +138,16 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         query.setParameter("status", status.getType());
         query.setFirstResult(start);
         query.setMaxResults(maxResults);
-        
+
         return query.getResultList();
     }
 
     @Override
     public List<FulfillmentGroup> readFulfillmentGroupsByStatus(
-            FulfillmentGroupStatusType status, int start, int maxResults) {
+            FulfillmentGroupStatusType status,
+            int start,
+            int maxResults
+    ) {
         return readFulfillmentGroupsByStatus(status, start, maxResults, true);
     }
 
@@ -156,4 +166,5 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         }
         return 1;
     }
+
 }

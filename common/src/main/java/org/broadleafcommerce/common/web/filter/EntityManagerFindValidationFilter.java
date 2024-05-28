@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,15 +34,15 @@ import jakarta.servlet.http.HttpServletResponse;
  * Used to validate usages of em.find() when querying for a primary key specifically across sibling Multi-Tenant sites.
  * This Servlet filter should only turned on if you often query an entity by ID. Generally this only happens in
  * API-based use cases since most other use cases rely on querying by name, url, etc and not directly on a primary key.
- * 
+ *
  * <p>
  * This is intentionally not activated by default but is included here for convenience within other projects. If you are
  * in Spring Boot, this filter can be activated simply in an @Bean method. If you are not using Spring Boot, this
  * filter must come <i>after</i> the {@link BroadleafRequestFilter} and is generally initialized in {@code applicationContext-filter.xml}.
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
- * @since 5.2
  * @see BroadleafRequestContext#setInternalIgnoreFilters(Boolean)
+ * @since 5.2
  */
 @Order(FilterOrdered.POST_SECURITY_MEDIUM)
 public class EntityManagerFindValidationFilter extends OncePerRequestFilter {
@@ -54,7 +54,7 @@ public class EntityManagerFindValidationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } finally {
             BroadleafRequestContext.getBroadleafRequestContext().setInternalIgnoreFilters(false);
-        }        
+        }
     }
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,11 +22,13 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class PromotableFulfillmentGroupAdjustmentImpl extends AbstractPromotionRounding implements PromotableFulfillmentGroupAdjustment, OfferHolder {
-    
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer;
@@ -40,7 +42,8 @@ public class PromotableFulfillmentGroupAdjustmentImpl extends AbstractPromotionR
             PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer,
             PromotableFulfillmentGroup fulfillmentGroup,
             Money retailAdjustmentValue,
-            Money saleAdjustmentValue) {
+            Money saleAdjustmentValue
+    ) {
         this.promotableCandidateFulfillmentGroupOffer = promotableCandidateFulfillmentGroupOffer;
         this.promotableFulfillmentGroup = fulfillmentGroup;
         this.retailAdjustmentValue = retailAdjustmentValue;
@@ -88,7 +91,7 @@ public class PromotableFulfillmentGroupAdjustmentImpl extends AbstractPromotionR
         }
         return adjustmentValue;
     }
-    
+
     @Override
     public PromotableFulfillmentGroup getPromotableFulfillmentGroup() {
         return promotableFulfillmentGroup;

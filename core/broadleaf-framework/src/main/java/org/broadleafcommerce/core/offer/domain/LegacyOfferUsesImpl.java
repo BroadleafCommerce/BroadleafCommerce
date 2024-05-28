@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,8 +41,7 @@ public class LegacyOfferUsesImpl implements LegacyOfferUses, MultiTenantCloneabl
     protected Offer offer;
 
     @Column(name = "USES")
-    @AdminPresentation(friendlyName = "OfferImpl_Offer_Current_Uses",
-            visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferImpl_Offer_Current_Uses", visibility = VisibilityEnum.HIDDEN_ALL)
     protected int uses;
 
     @Column(name = "APPLY_OFFER_TO_MARKED_ITEMS")
@@ -51,13 +50,13 @@ public class LegacyOfferUsesImpl implements LegacyOfferUses, MultiTenantCloneabl
     protected boolean applyDiscountToMarkedItems;
 
     @Override
-    public void setUses(int uses) {
-        this.uses = uses;
+    public int getUses() {
+        return uses;
     }
 
     @Override
-    public int getUses() {
-        return uses;
+    public void setUses(int uses) {
+        this.uses = uses;
     }
 
     @Override
@@ -87,8 +86,6 @@ public class LegacyOfferUsesImpl implements LegacyOfferUses, MultiTenantCloneabl
         this.applyDiscountToMarkedItems = applyDiscountToMarkedItems;
     }
 
-
-
     public Offer getOffer() {
         return offer;
     }
@@ -109,7 +106,6 @@ public class LegacyOfferUsesImpl implements LegacyOfferUses, MultiTenantCloneabl
         if (uses != that.uses)
             return false;
         return offer.equals(that.offer);
-
     }
 
     @Override
@@ -120,11 +116,12 @@ public class LegacyOfferUsesImpl implements LegacyOfferUses, MultiTenantCloneabl
     }
 
     public <G extends LegacyOfferUses> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context)
-            throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         LegacyOfferUses clone = createResponse.getClone();
         clone.setUses(uses);
         return createResponse;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,23 +23,21 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import java.util.Comparator;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class OrderItemPriceComparator implements Comparator<PromotableOrderItem> {
-    
+
     private boolean applyToSalePrice = false;
-    
+
     public OrderItemPriceComparator(boolean applyToSalePrice) {
         this.applyToSalePrice = applyToSalePrice;
     }
 
     public int compare(PromotableOrderItem c1, PromotableOrderItem c2) {
-        
+
         Money price = c1.getPriceBeforeAdjustments(applyToSalePrice);
         Money price2 = c2.getPriceBeforeAdjustments(applyToSalePrice);
-        
+
         // highest amount first
         return price2.compareTo(price);
     }

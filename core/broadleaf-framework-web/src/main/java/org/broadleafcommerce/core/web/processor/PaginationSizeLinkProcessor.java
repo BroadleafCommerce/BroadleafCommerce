@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -46,14 +45,20 @@ public class PaginationSizeLinkProcessor extends AbstractBroadleafAttributeModif
     public String getName() {
         return "pagination-size-link";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 10000;
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(
+            String tagName,
+            Map<String, String> tagAttributes,
+            String attributeName,
+            String attributeValue,
+            BroadleafTemplateContext context
+    ) {
 
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
@@ -64,7 +69,7 @@ public class PaginationSizeLinkProcessor extends AbstractBroadleafAttributeModif
         Integer pageSize = Integer.parseInt(attributeValue);
 
         if (pageSize != null && pageSize > 1) {
-            params.put(SearchCriteria.PAGE_SIZE_STRING, new String[] { pageSize.toString() });
+            params.put(SearchCriteria.PAGE_SIZE_STRING, new String[]{pageSize.toString()});
         } else {
             params.remove(SearchCriteria.PAGE_SIZE_STRING);
         }

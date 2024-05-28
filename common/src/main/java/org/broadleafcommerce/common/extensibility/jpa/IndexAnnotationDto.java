@@ -17,6 +17,7 @@
 package org.broadleafcommerce.common.extensibility.jpa;
 
 public class IndexAnnotationDto {
+
     private final String indexName;
     private final String indexColumnList;
     private final Boolean indexUnique;
@@ -38,5 +39,6 @@ public class IndexAnnotationDto {
     public Boolean getIndexUnique() {
         return indexUnique;
     }
+
 }
 

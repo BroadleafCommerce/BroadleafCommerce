@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -55,37 +55,45 @@ public class RegisterCustomerController {
     protected String registrationErrorView = displayRegistrationFormView;
     protected String registrationSuccessView = "redirect:/registerCustomer/registerCustomerSuccess.htm";
 
-    @Resource(name="blCustomerService")
+    @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
-    @Resource(name="blRegisterCustomerValidator")
+    @Resource(name = "blRegisterCustomerValidator")
     protected RegisterCustomerValidator registerCustomerValidator;
-    
-    @Resource(name="blChallengeQuestionService")
+
+    @Resource(name = "blChallengeQuestionService")
     protected ChallengeQuestionService challengeQuestionService;
 
-    @Resource(name="blLoginService")
+    @Resource(name = "blLoginService")
     protected LoginService loginService;
 
-    @RequestMapping(value="registerCustomer", method = { RequestMethod.GET })
+    @RequestMapping(value = "registerCustomer", method = {RequestMethod.GET})
     public String registerCustomer() {
         return getDisplayRegistrationFormView();
     }
 
-    @RequestMapping(value="registerCustomer", method = { RequestMethod.POST })
-    public ModelAndView registerCustomer(@ModelAttribute("registerCustomerForm") RegisterCustomerForm registerCustomerForm,
-            BindingResult errors, HttpServletRequest request, HttpServletResponse response) {
+    @RequestMapping(value = "registerCustomer", method = {RequestMethod.POST})
+    public ModelAndView registerCustomer(
+            @ModelAttribute("registerCustomerForm") RegisterCustomerForm registerCustomerForm,
+            BindingResult errors,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
         registerCustomerValidator.validate(registerCustomerForm, errors);
-        if (! errors.hasErrors()) {
-            customerService.registerCustomer(registerCustomerForm.getCustomer(), registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
+        if (!errors.hasErrors()) {
+            customerService.registerCustomer(
+                    registerCustomerForm.getCustomer(),
+                    registerCustomerForm.getPassword(),
+                    registerCustomerForm.getPasswordConfirm()
+            );
             loginService.loginCustomer(registerCustomerForm.getCustomer());
             return new ModelAndView(getRegistrationSuccessView());
         } else {
             return new ModelAndView(getRegistrationErrorView());
         }
     }
-    
-    @RequestMapping (value="registerCustomerSuccess", method = { RequestMethod.GET })
+
+    @RequestMapping(value = "registerCustomerSuccess", method = {RequestMethod.GET})
     public String registerCustomerSuccess() {
         return "/account/registration/registerCustomerSuccess";
     }
@@ -97,7 +105,7 @@ public class RegisterCustomerController {
         customerRegistrationForm.setCustomer(customer);
         return customerRegistrationForm;
     }
-    
+
     @ModelAttribute("challengeQuestions")
     public List<ChallengeQuestion> getChallengeQuestions() {
         return challengeQuestionService.readChallengeQuestions();
@@ -135,7 +143,7 @@ public class RegisterCustomerController {
     public void setDisplayRegistrationFormView(String displayRegistrationFormView) {
         this.displayRegistrationFormView = displayRegistrationFormView;
     }
-    
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.registerCustomEditor(ChallengeQuestion.class, new CustomChallengeQuestionEditor(challengeQuestionService));

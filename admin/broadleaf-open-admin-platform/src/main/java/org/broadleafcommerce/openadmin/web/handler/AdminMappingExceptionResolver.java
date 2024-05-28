@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,22 +31,26 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolver {
 
     private static final Log LOG = LogFactory.getLog(AdminMappingExceptionResolver.class);
-    
+
     protected boolean showDebugMessage = false;
 
     protected boolean enableStacktrace = false;
-    
+
     @Override
-    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, 
-            Exception ex) {
+    public ModelAndView resolveException(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler,
+            Exception ex
+    ) {
         if (BroadleafControllerUtility.isAjaxRequest(request)) {
             // Set up some basic response attributes
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             ModelAndView mav = new ModelAndView("utility/blcException");
-            
+
             // Friendly message
             mav.addObject("exceptionMessage", ex.getMessage());
-            
+
             mav.addObject("showDebugMessage", showDebugMessage);
             if (showDebugMessage) {
                 StringBuilder sb2 = new StringBuilder("An error has occured");
@@ -56,7 +60,7 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
                 mav.addObject("debugMessage", sb2.toString());
                 LOG.error("Unhandled error processing ajax request", ex);
             }
-            
+
             // Add the message to the model so we can render it 
             return mav;
         } else {
@@ -72,11 +76,11 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
             return super.resolveException(request, response, handler, ex);
         }
     }
-    
+
     /**
      * By default, appends the exception and its message followed by the file location that triggered this exception.
      * Recursively builds this out for each cause of the given exception.
-     * 
+     *
      * @param throwable
      * @param sb
      */
@@ -84,7 +88,7 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
         if (throwable == null) {
             return;
         }
-        
+
         StackTraceElement[] st = throwable.getStackTrace();
         if (st != null && st.length > 0) {
             sb.append("\r\n\r\n");
@@ -92,14 +96,14 @@ public class AdminMappingExceptionResolver extends SimpleMappingExceptionResolve
             sb.append("\r\n");
             sb.append(st[0].toString());
         }
-        
+
         appendStackTrace(throwable.getCause(), sb);
     }
 
     public boolean isShowDebugMessage() {
         return showDebugMessage;
     }
-    
+
     public void setShowDebugMessage(boolean showDebugMessage) {
         this.showDebugMessage = showDebugMessage;
     }

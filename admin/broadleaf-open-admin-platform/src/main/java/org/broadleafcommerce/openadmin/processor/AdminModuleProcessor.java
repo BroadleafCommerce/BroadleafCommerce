@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,7 +36,7 @@ import jakarta.annotation.Resource;
  * A Thymeleaf processor that will add the appropriate AdminModules to the model. It does this by
  * iterating through the permissions specified in the SecurityContexts AdminUser object and adding the
  * appropriate section to the model attribute specified by resultVar
- *
+ * <p>
  * This is useful in constructing the left navigation menu for the admin console.
  *
  * @author elbertbautista
@@ -49,7 +49,7 @@ public class AdminModuleProcessor implements AdminModuleExpression {
 
     @Resource(name = "blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
-    
+
     @Resource(name = "blAdminSecurityService")
     protected AdminSecurityService securityService;
 
@@ -62,12 +62,12 @@ public class AdminModuleProcessor implements AdminModuleExpression {
     public int getPrecedence() {
         return 10001;
     }
-    
+
     public List<AdminModule> getAllModules() {
         AdminUser user = getPersistentAdminUser();
         return adminNavigationService.buildMenu(user).getAdminModules();
     }
-    
+
     protected AdminUser getPersistentAdminUser() {
         SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {

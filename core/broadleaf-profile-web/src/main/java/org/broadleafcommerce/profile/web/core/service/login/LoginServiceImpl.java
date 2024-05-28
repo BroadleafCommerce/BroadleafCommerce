@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,19 +31,15 @@ import org.springframework.web.context.request.WebRequest;
 
 import jakarta.annotation.Resource;
 
-
 @Service("blLoginService")
 public class LoginServiceImpl implements LoginService {
 
-    @Resource(name="blAuthenticationManager")
-    private AuthenticationManager authenticationManager;
-    
-    @Resource(name="blUserDetailsService")
-    private UserDetailsService userDetailsService;
-
     @Resource(name = "blCartStateRequestProcessor")
     protected BroadleafWebRequestProcessor cartStateRequestProcessor;
-
+    @Resource(name = "blAuthenticationManager")
+    private AuthenticationManager authenticationManager;
+    @Resource(name = "blUserDetailsService")
+    private UserDetailsService userDetailsService;
     @Resource(name = "blCustomerStateRequestProcessor")
     private BroadleafWebRequestProcessor customerStateRequestProcessor;
 
@@ -51,11 +47,13 @@ public class LoginServiceImpl implements LoginService {
     public Authentication loginCustomer(Customer customer) {
         return loginCustomer(customer.getUsername(), customer.getUnencodedPassword());
     }
-    
+
     @Override
     public Authentication loginCustomer(String username, String clearTextPassword) {
         UserDetails principal = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, clearTextPassword, principal.getAuthorities());
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                principal, clearTextPassword, principal.getAuthorities()
+        );
         Authentication authentication = authenticationManager.authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         customerStateRequestProcessor.process(getWebRequest());

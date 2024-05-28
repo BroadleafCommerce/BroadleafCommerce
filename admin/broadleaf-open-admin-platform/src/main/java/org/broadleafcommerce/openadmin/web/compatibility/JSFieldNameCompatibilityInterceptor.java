@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,30 +37,39 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JSFieldNameCompatibilityInterceptor implements HandlerInterceptor {
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) {
+    public void postHandle(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Object handler,
+            ModelAndView modelAndView
+    ) {
         if (modelAndView != null) {
             Entity entity = (Entity) modelAndView.getModelMap().get("entity");
             EntityForm entityForm = (EntityForm) modelAndView.getModelMap().get("entityForm");
-    
+
             if (entity != null) {
-                if (entity.getProperties()!=null){
-                for (Property property : entity.getProperties()) {
-                    if (property.getName().contains(".")) {
-                        property.setName(JSCompatibilityHelper.encode(property.getName()));
+                if (entity.getProperties() != null) {
+                    for (Property property : entity.getProperties()) {
+                        if (property.getName().contains(".")) {
+                            property.setName(JSCompatibilityHelper.encode(property.getName()));
+                        }
                     }
                 }
-                }
             }
-    
+
             if (entityForm != null) {
                 entityForm.clearFieldsMap();
                 for (Map.Entry<String, Field> field : entityForm.getFields().entrySet()) {
                     if (field.getKey().contains(".")) {
                         field.getValue().setName(JSCompatibilityHelper.encode(field.getValue().getName()));
-                        field.getValue().setAssociatedFieldName(JSCompatibilityHelper.encode(field.getValue().getAssociatedFieldName()));
+                        field.getValue().setAssociatedFieldName(
+                                JSCompatibilityHelper.encode(field.getValue().getAssociatedFieldName())
+                        );
                         if (field.getValue() instanceof RuleBuilderField) {
-                            ((RuleBuilderField) field.getValue()).setJsonFieldName(JSCompatibilityHelper.encode((
-                                    (RuleBuilderField) field.getValue()).getJsonFieldName()));
+                            ((RuleBuilderField) field.getValue()).setJsonFieldName(
+                                    JSCompatibilityHelper.encode(((RuleBuilderField) field.getValue())
+                                            .getJsonFieldName())
+                            );
                         }
                     }
                 }
@@ -68,4 +77,5 @@ public class JSFieldNameCompatibilityInterceptor implements HandlerInterceptor {
             }
         }
     }
+
 }

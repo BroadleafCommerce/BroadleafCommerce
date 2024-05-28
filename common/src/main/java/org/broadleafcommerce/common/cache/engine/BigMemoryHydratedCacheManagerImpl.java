@@ -10,18 +10,17 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.cache.engine;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.cache.JCacheUtil;
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,25 +34,22 @@ import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.EternalExpiryPolicy;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheManager {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
-    private static final Log LOG = LogFactory.getLog(BigMemoryHydratedCacheManagerImpl.class);
+
     private static final BigMemoryHydratedCacheManagerImpl MANAGER = new BigMemoryHydratedCacheManagerImpl();
     private static final String BIG_MEMORY_HYDRATED_CACHE_NAME = "hydrated-offheap-cache";
+    private Map<String, List<String>> cacheMemberNamesByEntity = Collections.synchronizedMap(new HashMap<>(100));
+    private List<String> removeKeys = Collections.synchronizedList(new ArrayList<>(100));
+    private Cache<String, Object> offHeap = null;
 
     public static BigMemoryHydratedCacheManagerImpl getInstance() {
         return MANAGER;
     }
-
-    private Map<String, List<String>> cacheMemberNamesByEntity = Collections.synchronizedMap(new HashMap<String, List<String>>(100));
-    private List<String> removeKeys = Collections.synchronizedList(new ArrayList<String>(100));
-    private Cache<String, Object> offHeap = null;
 
     private synchronized Cache<String, Object> getHeap() {
         if (offHeap == null) {
@@ -90,12 +86,18 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
     }
 
     @Override
-    public void addHydratedCacheElementItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
+    public void addHydratedCacheElementItem(
+            String cacheRegion,
+            String cacheName,
+            Serializable elementKey,
+            String elementItemName,
+            Object elementValue
+    ) {
         String heapKey = createHeapKey(cacheRegion, cacheName, elementItemName, elementKey);
         String nameKey = createNameKey(cacheRegion, cacheName, elementKey);
         removeKeys.remove(nameKey);
         if (!cacheMemberNamesByEntity.containsKey(nameKey)) {
-            List<String> myMembers = new ArrayList<String>(50);
+            List<String> myMembers = new ArrayList<>(50);
             myMembers.add(elementItemName);
             cacheMemberNamesByEntity.put(nameKey, myMembers);
         } else {
@@ -130,7 +132,7 @@ public class BigMemoryHydratedCacheManagerImpl extends AbstractHydratedCacheMana
             cacheMemberNamesByEntity.remove(nameKey);
         }
     }
-    
+
     private String createItemKey(String cacheRegion, String myMember, Serializable key) {
         String itemKey = "";
         if (useCacheRegionInKey()) {

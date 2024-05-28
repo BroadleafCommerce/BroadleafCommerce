@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -63,45 +63,47 @@ import java.util.TimeZone;
 import jakarta.annotation.Resource;
 
 /**
- * 
  * @author jfischer
- *
  */
 public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     private static final Log LOG = LogFactory.getLog(AbstractBaseProcessor.class);
     private static final Map EXPRESSION_CACHE = new LRUMap(1000);
-
+    protected final PromotableOfferUtility promotableOfferUtility;
     @Resource(name = "blOfferTimeZoneProcessor")
     protected OfferTimeZoneProcessor offerTimeZoneProcessor;
-    
     @Resource(name = "blOfferServiceExtensionManager")
     protected OfferServiceExtensionManager extensionManager;
-
-    protected final PromotableOfferUtility promotableOfferUtility;
 
     protected AbstractBaseProcessor(PromotableOfferUtility promotableOfferUtility) {
         this.promotableOfferUtility = promotableOfferUtility;
     }
 
-    protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<PromotableOrderItem> promotableOrderItems) {
+    protected CandidatePromotionItems couldOfferApplyToOrderItems(
+            Offer offer,
+            List<PromotableOrderItem> promotableOrderItems
+    ) {
         CandidatePromotionItems candidates = new CandidatePromotionItems();
         if (offer.getQualifyingItemCriteriaXref() == null || offer.getQualifyingItemCriteriaXref().size() == 0) {
             candidates.setMatchedQualifier(true);
         } else {
             for (OfferQualifyingCriteriaXref criteriaXref : offer.getQualifyingItemCriteriaXref()) {
                 if (criteriaXref.getOfferItemCriteria() != null) {
-                    checkForItemRequirements(offer, candidates, criteriaXref.getOfferItemCriteria(), promotableOrderItems, true);
+                    checkForItemRequirements(
+                            offer, candidates, criteriaXref.getOfferItemCriteria(), promotableOrderItems, true
+                    );
                     if (!candidates.isMatchedQualifier()) {
                         break;
                     }
                 }
-            }           
+            }
         }
 
         if (offer.getType().equals(OfferType.ORDER_ITEM) && BooleanUtils.isTrue(offer.getUseListForDiscounts())) {
             for (OfferPriceData offerPriceData : offer.getOfferPriceData()) {
-                PromotableOrderItem qualifyingOrderItem = findQualifyingItemForPriceData(offerPriceData, promotableOrderItems);
+                PromotableOrderItem qualifyingOrderItem = findQualifyingItemForPriceData(
+                        offerPriceData, promotableOrderItems
+                );
                 if (qualifyingOrderItem != null) {
                     candidates.addFixedTarget(offerPriceData, qualifyingOrderItem);
                     candidates.setMatchedTarget(true);
@@ -109,7 +111,9 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             }
         } else if (offer.getType().equals(OfferType.ORDER_ITEM) && offer.getTargetItemCriteriaXref() != null) {
             for (OfferTargetCriteriaXref xref : offer.getTargetItemCriteriaXref()) {
-                checkForItemRequirements(offer, candidates, xref.getOfferItemCriteria(), promotableOrderItems, false);
+                checkForItemRequirements(
+                        offer, candidates, xref.getOfferItemCriteria(), promotableOrderItems, false
+                );
                 if (!candidates.isMatchedTarget()) {
                     break;
                 }
@@ -117,15 +121,18 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
 
         if (candidates.isMatchedQualifier()) {
-            if (! meetsItemQualifierSubtotal(offer, candidates)) {
+            if (!meetsItemQualifierSubtotal(offer, candidates)) {
                 candidates.setMatchedQualifier(false);
             }
-        }       
-        
+        }
+
         return candidates;
     }
 
-    protected PromotableOrderItem findQualifyingItemForPriceData(OfferPriceData offerPriceData, List<PromotableOrderItem> promotableOrderItems) {
+    protected PromotableOrderItem findQualifyingItemForPriceData(
+            OfferPriceData offerPriceData,
+            List<PromotableOrderItem> promotableOrderItems
+    ) {
         for (PromotableOrderItem promotableOrderItem : promotableOrderItems) {
             if (promotableOfferUtility.itemMatchesOfferPriceData(offerPriceData, promotableOrderItem)) {
                 return promotableOrderItem;
@@ -134,17 +141,17 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         return null;
     }
 
-    private boolean isEmpty(Collection<? extends Object> collection) {
+    protected boolean isEmpty(Collection<? extends Object> collection) {
         return (collection == null || collection.size() == 0);
     }
 
-    private boolean hasPositiveValue(Money money) {
+    protected boolean hasPositiveValue(Money money) {
         return (money != null && money.greaterThan(Money.ZERO));
     }
-    
+
     protected boolean meetsItemQualifierSubtotal(Offer offer, CandidatePromotionItems candidateItem) {
-        Money qualifyingSubtotal = offer.getQualifyingItemSubTotal(); 
-        if (! hasPositiveValue(qualifyingSubtotal)) {
+        Money qualifyingSubtotal = offer.getQualifyingItemSubTotal();
+        if (!hasPositiveValue(qualifyingSubtotal)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Offer " + offer.getName() + " does not have an item subtotal requirement.");
             }
@@ -157,13 +164,13 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                     LOG.warn("Offer " + offer.getName() + " has a subtotal item requirement but no item qualification criteria.");
                 }
                 return false;
-            } else {            
+            } else {
                 // Checking if targets meet subtotal for item offer with no item criteria.
                 Money accumulatedTotal = null;
 
                 for (PromotableOrderItem orderItem : candidateItem.getAllCandidateTargets()) {
                     Money itemPrice = orderItem.getCurrentBasePrice().multiply(orderItem.getQuantity());
-                    accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
+                    accumulatedTotal = accumulatedTotal == null ? itemPrice : accumulatedTotal.add(itemPrice);
                     if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Offer " + offer.getName() + " meets qualifying item subtotal.");
@@ -172,14 +179,14 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                     }
                 }
             }
-            
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Offer " + offer.getName() + " does not meet qualifying item subtotal.");
             }
         } else {
             if (candidateItem.getCandidateQualifiersMap() != null) {
                 Money accumulatedTotal = null;
-                Set<PromotableOrderItem> usedItems = new HashSet<PromotableOrderItem>();
+                Set<PromotableOrderItem> usedItems = new HashSet<>();
                 for (OfferItemCriteria criteria : candidateItem.getCandidateQualifiersMap().keySet()) {
                     List<PromotableOrderItem> promotableItems = candidateItem.getCandidateQualifiersMap().get(criteria);
                     if (promotableItems != null) {
@@ -187,7 +194,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                             if (!usedItems.contains(item)) {
                                 usedItems.add(item);
                                 Money itemPrice = item.getCurrentBasePrice().multiply(item.getQuantity());
-                                accumulatedTotal = accumulatedTotal==null?itemPrice:accumulatedTotal.add(itemPrice);
+                                accumulatedTotal = accumulatedTotal == null ? itemPrice : accumulatedTotal.add(itemPrice);
                                 if (accumulatedTotal.greaterThan(qualifyingSubtotal)) {
                                     if (LOG.isTraceEnabled()) {
                                         LOG.trace("Offer " + offer.getName() + " meets the item subtotal requirement.");
@@ -207,8 +214,14 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         return false;
 
     }
-    
-    protected void checkForItemRequirements(Offer offer, CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, boolean isQualifier) {
+
+    protected void checkForItemRequirements(
+            Offer offer,
+            CandidatePromotionItems candidates,
+            OfferItemCriteria criteria,
+            List<PromotableOrderItem> promotableOrderItems,
+            boolean isQualifier
+    ) {
         boolean matchFound = false;
         int criteriaQuantity = criteria.getQuantity();
         int matchedQuantity = 0;
@@ -229,7 +242,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             }
             matchFound = (matchedQuantity >= criteriaQuantity);
         }
-        
+
         if (isQualifier) {
             candidates.setMatchedQualifier(matchFound);
         } else {
@@ -237,7 +250,13 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
     }
 
-    protected void addChildOrderItemsToCandidates(Offer offer, CandidatePromotionItems candidates, OfferItemCriteria criteria, List<PromotableOrderItem> promotableOrderItems, PromotableOrderItem item) {
+    protected void addChildOrderItemsToCandidates(
+            Offer offer,
+            CandidatePromotionItems candidates,
+            OfferItemCriteria criteria,
+            List<PromotableOrderItem> promotableOrderItems,
+            PromotableOrderItem item
+    ) {
         if (offer.getApplyToChildItems()) {
             final List<OrderItem> childItems = item.getOrderItem().getChildOrderItems();
             if (CollectionUtils.isEmpty(childItems)) {
@@ -263,7 +282,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         boolean appliesToItem = false;
 
         if (criteria.getMatchRule() != null && criteria.getMatchRule().trim().length() != 0) {
-            HashMap<String, Object> vars = new HashMap<String, Object>();
+            HashMap<String, Object> vars = new HashMap<>();
             orderItem.updateRuleVariables(vars);
 
             if (extensionManager != null) {
@@ -296,17 +315,17 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         contextImports.put("OfferType", OfferType.class);
         contextImports.put("FulfillmentType", FulfillmentType.class);
         return MvelHelper.evaluateRule(expression, vars, EXPRESSION_CACHE, contextImports);
-
     }
 
     protected String usePriceBeforeAdjustments(String expression) {
         return expression.replace("?price.", "?getPriceBeforeAdjustments(true).");
     }
-    
+
     /**
      * We were not able to meet all of the ItemCriteria for a promotion, but some of the items were
      * marked as qualifiers or targets.  This method removes those items from being used as targets or
      * qualifiers so they are eligible for other promotions.
+     *
      * @param priceDetails
      */
     protected void clearAllNonFinalizedQuantities(List<PromotableOrderItemPriceDetail> priceDetails) {
@@ -314,10 +333,11 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             priceDetail.clearAllNonFinalizedQuantities();
         }
     }
-    
+
     /**
-     * Updates the finalQuanties for the PromotionDiscounts and PromotionQualifiers. 
+     * Updates the finalQuanties for the PromotionDiscounts and PromotionQualifiers.
      * Called after we have confirmed enough qualifiers and targets for the promotion.
+     *
      * @param priceDetails
      */
     protected void finalizeQuantities(List<PromotableOrderItemPriceDetail> priceDetails) {
@@ -325,11 +345,11 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             priceDetail.finalizeQuantities();
         }
     }
-    
+
     /**
-     * Checks to see if the discountQty matches the detailQty.   If not, splits the 
+     * Checks to see if the discountQty matches the detailQty.   If not, splits the
      * priceDetail.
-     * 
+     *
      * @param priceDetails
      */
     protected void splitDetailsIfNecessary(List<PromotableOrderItemPriceDetail> priceDetails) {
@@ -343,7 +363,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
     @Override
     public List<Offer> filterOffers(List<Offer> offers, Customer customer) {
-        List<Offer> filteredOffers = new ArrayList<Offer>();
+        List<Offer> filteredOffers = new ArrayList<>();
         if (offers != null && !offers.isEmpty()) {
             filteredOffers = removeOutOfDateOffers(offers);
             filteredOffers = removeTimePeriodOffers(filteredOffers);
@@ -359,7 +379,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             requestDTO = BroadleafRequestContext.getBroadleafRequestContext().getRequestDTO();
         }
 
-        List<Offer> offersToRemove = new ArrayList<Offer>();
+        List<Offer> offersToRemove = new ArrayList<>();
         for (Offer offer : offers) {
             if (!couldOfferApplyToRequestDTO(offer, requestDTO)) {
                 offersToRemove.add(offer);
@@ -370,7 +390,6 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
             offers.remove(offer);
         }
         return offers;
-
     }
 
     protected boolean couldOfferApplyToRequestDTO(Offer offer, RequestDTO requestDTO) {
@@ -384,7 +403,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
 
         if (rule != null) {
-            HashMap<String, Object> vars = new HashMap<String, Object>();
+            HashMap<String, Object> vars = new HashMap<>();
             vars.put("request", requestDTO);
             Boolean expressionOutcome = executeExpression(rule, vars);
             if (expressionOutcome != null && expressionOutcome) {
@@ -396,16 +415,17 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         return appliesToRequestRule;
     }
+
     /**
-     * Removes all offers that are not within the timezone and timeperiod of the offer.  
+     * Removes all offers that are not within the timezone and timeperiod of the offer.
      * If an offer does not fall within the timezone or timeperiod rule,
-     * that offer will be removed.  
+     * that offer will be removed.
      *
      * @param offers
      * @return List of Offers within the timezone or timeperiod of the offer
      */
     protected List<Offer> removeTimePeriodOffers(List<Offer> offers) {
-        List<Offer> offersToRemove = new ArrayList<Offer>();
+        List<Offer> offersToRemove = new ArrayList<>();
 
         for (Offer offer : offers) {
             if (!couldOfferApplyToTimePeriod(offer)) {
@@ -423,7 +443,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         boolean appliesToTimePeriod = false;
 
         String rule = null;
-        
+
         OfferOfferRuleXref ruleXref = offer.getOfferMatchRulesXref().get(OfferRuleType.TIME.getType());
         if (ruleXref != null && ruleXref.getOfferRule() != null) {
             rule = ruleXref.getOfferRule().getMatchRule();
@@ -432,7 +452,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         if (rule != null) {
             TimeZone timeZone = getOfferTimeZoneProcessor().getTimeZone(offer);
             TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar(timeZone));
-            HashMap<String, Object> vars = new HashMap<String, Object>();
+            HashMap<String, Object> vars = new HashMap<>();
             vars.put("time", timeDto);
             Boolean expressionOutcome = executeExpression(rule, vars);
             if (expressionOutcome != null && expressionOutcome) {
@@ -444,6 +464,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
         return appliesToTimePeriod;
     }
+
     /**
      * Removes all out of date offers.  If an offer does not have a start date, or the start
      * date is a later date, that offer will be removed.  Offers without a start date should
@@ -454,7 +475,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @param offers
      * @return List of Offers with valid dates
      */
-    protected List<Offer> removeOutOfDateOffers(List<Offer> offers){
+    protected List<Offer> removeOutOfDateOffers(List<Offer> offers) {
         Iterator<Offer> offersIterator = offers.iterator();
 
         while (offersIterator.hasNext()) {
@@ -475,7 +496,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
                 start = dateToCalendar(offer.getStartDate(), offerTimeZone);
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.debug("Offer: " + offer.getName() + " timeZone:" + offerTimeZone + " startTime:" + start.getTime() + " currentTime:" + current.getTime());
+                    LOG.debug("Offer: " + offer.getName() + " timeZone:" + offerTimeZone + " startTime:"
+                            + start.getTime() + " currentTime:" + current.getTime());
                 }
             }
 
@@ -522,8 +544,8 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      * @param customer
      * @return List of Offers that apply to this customer
      */
-    protected List<Offer> removeInvalidCustomerOffers(List<Offer> offers, Customer customer){
-        List<Offer> offersToRemove = new ArrayList<Offer>();
+    protected List<Offer> removeInvalidCustomerOffers(List<Offer> offers, Customer customer) {
+        List<Offer> offersToRemove = new ArrayList<>();
         for (Offer offer : offers) {
             if (!couldOfferApplyToCustomer(offer, customer)) {
                 offersToRemove.add(offer);
@@ -535,7 +557,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
         return offers;
     }
-    
+
     /**
      * Private method which executes the appliesToCustomerRules in the Offer to determine if this Offer
      * can be applied to the Customer.
@@ -546,7 +568,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
      */
     protected boolean couldOfferApplyToCustomer(Offer offer, Customer customer) {
         boolean appliesToCustomer = false;
-        
+
         String rule = null;
         OfferOfferRuleXref ruleXref = offer.getOfferMatchRulesXref().get(OfferRuleType.CUSTOMER.getType());
         if (ruleXref != null && ruleXref.getOfferRule() != null) {
@@ -554,7 +576,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
         }
 
         if (rule != null) {
-            HashMap<String, Object> vars = new HashMap<String, Object>();
+            HashMap<String, Object> vars = new HashMap<>();
             vars.put("customer", customer);
             Boolean expressionOutcome = executeExpression(rule, vars);
             if (expressionOutcome != null && expressionOutcome) {

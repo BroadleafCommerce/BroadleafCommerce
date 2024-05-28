@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -102,16 +102,15 @@ import jakarta.annotation.Resource;
 @Service("blSolrHelperService")
 public class SolrHelperServiceImpl implements SolrHelperService {
 
-    private static final Log LOG = LogFactory.getLog(SolrHelperServiceImpl.class);
-
     // The value of these two fields has no special significance, but they must be non-blank
     protected static final String GLOBAL_FACET_TAG_FIELD = "a";
-    protected static final String[] specialCharacters = new String[] { "\\\\", "\\+", "-", "&&", "\\|\\|", "\\!", "\\(", "\\)", "\\{", "\\}", "\\[", "\\]", "\\^", "\"", "~", "\\*", "\\?", ":" };
+    protected static final String[] specialCharacters = new String[]{
+            "\\\\", "\\+", "-", "&&", "\\|\\|", "\\!", "\\(", "\\)", "\\{", "\\}", "\\[", "\\]", "\\^", "\"", "~", "\\*", "\\?", ":"
+    };
+    protected static final String PREFIX_SEPARATOR = "_";
+    private static final Log LOG = LogFactory.getLog(SolrHelperServiceImpl.class);
     private static final String SOLR_SORTABLE_FIELD_TYPES = "solr.sortable.field.types";
     private static final String DEFAULT_SORTABLE_FIELD_TYPES = "sort,s,p,i,l";
-
-    protected static final String PREFIX_SEPARATOR = "_";
-
     protected static Locale defaultLocale;
 
     @Resource(name = "blSystemPropertiesService")
@@ -137,16 +136,14 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
-
+    @Autowired
+    protected Environment environment;
     @Value(value = "${enable.solr.optimize:false}")
     private boolean optimizeEnabled;
 
-
-    @Autowired
-    protected Environment environment;
-
     /**
      * This should only ever be called when using the Solr reindex service to do a full reindex.
+     *
      * @throws SecurityException
      * @throws NoSuchFieldException
      * @throws IllegalAccessException
@@ -188,7 +185,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 throw new ServiceException("Unable to swap SolrCloud collections after a full reindex.", e);
             }
         } else {
-            if (solrConfiguration.getReindexServer() == null || solrConfiguration.getServer() == solrConfiguration.getReindexServer()) {
+            if (solrConfiguration.getReindexServer() == null
+                    || solrConfiguration.getServer() == solrConfiguration.getReindexServer()) {
                 LOG.debug("In single core mode. There are no cores to swap.");
             } else {
                 LOG.debug("Swapping active cores");
@@ -205,7 +203,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     try {
                         solrConfiguration.getAdminServer().request(car);
                     } catch (Exception e) {
-                        LOG.error("An error has occurred ",e);
+                        LOG.error("An error has occurred ", e);
                         throw new ServiceException("Unable to swap cores", e);
                     }
                 } else {
@@ -230,7 +228,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     @Override
     public String getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix) {
         ExtensionResultHolder<String> erh = new ExtensionResultHolder<>();
-        ExtensionResultStatusType result = searchExtensionManager.getProxy().getPropertyNameForIndexField(field, fieldType, prefix, erh);
+        ExtensionResultStatusType result = searchExtensionManager.getProxy().getPropertyNameForIndexField(
+                field, fieldType, prefix, erh
+        );
 
         if (!ExtensionResultStatusType.NOT_HANDLED.equals(result) && erh.getResult() != null) {
             return erh.getResult();
@@ -249,7 +249,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public String getPropertyNameForIndexField(IndexField field, FieldType searchableFieldType) {
-        List<String> prefixList = new ArrayList<String>();
+        List<String> prefixList = new ArrayList<>();
         searchExtensionManager.getProxy().buildPrefixListForIndexField(field, searchableFieldType, prefixList);
         String prefix = convertPrefixListToString(prefixList);
         return getPropertyNameForIndexField(field, searchableFieldType, prefix);
@@ -279,7 +279,10 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public Long getCategoryId(Long category) {
         Long[] returnId = new Long[1];
         //TODO (qa 607) Need to review the performance of retrieval of the Category instance here every time (using the id version breaks for indexing derived catalogs)
-        ExtensionResultStatusType result = searchExtensionManager.getProxy().getCategoryId(genericEntityDao.readGenericEntity(CategoryImpl.class, category), returnId);
+        ExtensionResultStatusType result = searchExtensionManager.getProxy().getCategoryId(
+                genericEntityDao.readGenericEntity(CategoryImpl.class, category),
+                returnId
+        );
         if (result.equals(ExtensionResultStatusType.HANDLED)) {
             return returnId[0];
         }
@@ -436,9 +439,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     public Object getPropertyValue(Object object, String propertyName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         String[] components = propertyName.split("\\.");
         Object propertyValueInternal = getPropertyValueInternal(object, components, 0);
-        if(propertyValueInternal instanceof String){
+        if (propertyValueInternal instanceof String) {
             String enabled = environment.getProperty("exploitProtection.xssEnabled", "false");
-            if(Boolean.parseBoolean(enabled)){
+            if (Boolean.parseBoolean(enabled)) {
                 return StringEscapeUtils.unescapeHtml4((String) propertyValueInternal);
             }
         }
@@ -459,7 +462,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             if (isSolrConfigured && optimizeEnabled) {
                 server.optimize(collection);
             }
-            if(!optimizeEnabled){
+            if (!optimizeEnabled) {
                 LOG.warn("property enable.solr.optimize is false so no optimize will happen, but SolrHelperServiceImpl.optimizeIndex was invoked, check if you need to call this method");
             }
         } catch (SolrServerException e) {
@@ -488,7 +491,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public List<SearchFacetDTO> buildSearchFacetDTOs(List<SearchFacet> searchFacets) {
-        List<SearchFacetDTO> facets = new ArrayList<SearchFacetDTO>();
+        List<SearchFacetDTO> facets = new ArrayList<>();
         Map<String, String[]> requestParameters = BroadleafRequestContext.getRequestParameterMap();
 
         for (SearchFacet facet : searchFacets) {
@@ -590,9 +593,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
      * Builds a {@code facet.field} Solr param based on the {@code fieldName} provided.
      *
      * @param fieldName Name of the index field (e.g., mgf_s, heatRange_i, price_p)
-     * @param param Optional name of the param (e.g., tag, key, ex). Defaults to "ex".
-     *
-     * @return  a {@code facet.field} Solr param based on the {@code fieldName} provided.
+     * @param param     Optional name of the param (e.g., tag, key, ex). Defaults to "ex".
+     * @return a {@code facet.field} Solr param based on the {@code fieldName} provided.
      */
     protected String buildSolrFacetField(String fieldName, String param) {
         Assert.notNull(fieldName, "FieldName cannot be null");
@@ -613,12 +615,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
      * If {@code addExParam == false}, then this will produce
      * {@code {!key=price_p[0.00:5.00] frange incl=false l=0.00 u=5.00}}.
      *
-     * @param fieldName Name of the index field on which to query
-     * @param range {@link SearchFacetRange} representing the range for which to create a {@code facet.query}.
+     * @param fieldName  Name of the index field on which to query
+     * @param range      {@link SearchFacetRange} representing the range for which to create a {@code facet.query}.
      * @param addExParam Whether to add an exclude filter by tag ("ex") parameter to the query. This assumes
-     *                  that the filter has a tag matching the {@code fieldName}. Defaults to true.
-     * @param param Optional name of the main param (e.g., tag, key, ex). Defaults to "key".
-     *
+     *                   that the filter has a tag matching the {@code fieldName}. Defaults to true.
+     * @param param      Optional name of the main param (e.g., tag, key, ex). Defaults to "key".
      * @return a {@code facet.query} Solr param based on the {@code range} and {@code fieldName} provided.
      */
     protected String buildSolrFacetQuery(String fieldName, SearchFacetRange range, Boolean addExParam, String param) {
@@ -698,7 +699,6 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         );
     }
 
-
     @Override
     @Deprecated
     public void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap) {
@@ -711,7 +711,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
         for (Entry<String, SearchFacetDTO> entry : namedFacetMap.entrySet()) {
             SearchFacetDTO dto = entry.getValue();
 
-            ExtensionResultStatusType status = searchExtensionManager.getProxy().attachFacet(query, entry.getKey(), dto, searchCriteria);
+            ExtensionResultStatusType status = searchExtensionManager.getProxy().attachFacet(
+                    query, entry.getKey(), dto, searchCriteria
+            );
 
             if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
                 List<SearchFacetRange> facetRanges = searchFacetDao.readSearchFacetRangesForSearchFacet(dto.getFacet());
@@ -758,8 +760,8 @@ public class SolrHelperServiceImpl implements SolrHelperService {
     protected List<String> getSortableFieldTypes() {
         List<String> strings;
         try {
-            strings = Arrays.asList(systemPropertiesService.resolveSystemProperty(SOLR_SORTABLE_FIELD_TYPES).
-                    split(","));
+            strings = Arrays.asList(systemPropertiesService.resolveSystemProperty(SOLR_SORTABLE_FIELD_TYPES)
+                    .split(","));
         } catch (Exception ex) {
             LOG.error(String.format("Error reading property %s. Using default values: %s",
                     SOLR_SORTABLE_FIELD_TYPES, DEFAULT_SORTABLE_FIELD_TYPES), ex);
@@ -784,7 +786,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 String requestedSortFieldName = sortFieldsSegments[0];
                 ORDER order = getSortOrder(sortFieldsSegments, sortQuery);
 
-                ExtensionResultStatusType result = searchExtensionManager.getProxy().attachSortField(query, requestedSortFieldName, order);
+                ExtensionResultStatusType result = searchExtensionManager.getProxy().attachSortField(
+                        query, requestedSortFieldName, order
+                );
 
                 if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                     // if an index field was not found, or the extension handler handled attaching the sort field, move to the next field
@@ -868,31 +872,41 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
     @Override
     public Map<String, String> getSolrFieldKeyMap(SearchCriteria searchCriteria, List<IndexField> fields) {
-        Map<String, String> solrFieldKeyMap = new HashMap<String, String>();
+        Map<String, String> solrFieldKeyMap = new HashMap<>();
         for (IndexField field : fields) {
             for (IndexFieldType type : field.getFieldTypes()) {
-                solrFieldKeyMap.put(field.getField().getAbbreviation(), getPropertyNameForIndexField(field, type.getFieldType()));
+                solrFieldKeyMap.put(
+                        field.getField().getAbbreviation(),
+                        getPropertyNameForIndexField(field, type.getFieldType())
+                );
             }
         }
         return solrFieldKeyMap;
     }
 
     @Override
-    public Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets,
-            final SearchCriteria searchCriteria) {
+    public Map<String, SearchFacetDTO> getNamedFacetMap(
+            List<SearchFacetDTO> facets,
+            final SearchCriteria searchCriteria
+    ) {
         return BLCMapUtils.keyedMap(facets, new TypedClosure<String, SearchFacetDTO>() {
 
             @Override
             public String getKey(SearchFacetDTO facet) {
-                return getPropertyNameForIndexField(facet.getFacet().getFieldType().getIndexField(),
-                        FieldType.getInstance(facet.getFacet().getFacetFieldType()));
+                return getPropertyNameForIndexField(
+                        facet.getFacet().getFieldType().getIndexField(),
+                        FieldType.getInstance(facet.getFacet().getFacetFieldType())
+                );
             }
         });
     }
 
     @Override
-    public void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap,
-            SearchCriteria searchCriteria) {
+    public void attachActiveFacetFilters(
+            SolrQuery query,
+            Map<String, SearchFacetDTO> namedFacetMap,
+            SearchCriteria searchCriteria
+    ) {
         if (searchCriteria.getFilterCriteria() != null) {
             for (Entry<String, String[]> filterCriteria : searchCriteria.getFilterCriteria().entrySet()) {
                 String solrKey = null;
@@ -916,8 +930,10 @@ public class SolrHelperServiceImpl implements SolrHelperService {
 
                 for (int i = 0; i < selectedValues.length; i++) {
                     if (selectedValues[i].contains("range[")) {
-                        String rangeValue = selectedValues[i].substring(selectedValues[i].indexOf('[') + 1,
-                                selectedValues[i].indexOf(']'));
+                        String rangeValue = selectedValues[i].substring(
+                                selectedValues[i].indexOf('[') + 1,
+                                selectedValues[i].indexOf(']')
+                        );
                         String[] rangeValues = StringUtils.split(rangeValue, ':');
                         BigDecimal minValue = new BigDecimal(rangeValues[0]);
                         BigDecimal maxValue = null;
@@ -931,7 +947,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                 }
 
                 List<String> valueStrings = new ArrayList<>();
-                ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(namedFacetMap.get(solrKey).getFacet(), selectedValues, valueStrings);
+                ExtensionResultStatusType status = searchExtensionManager.getProxy().buildActiveFacetFilter(
+                        namedFacetMap.get(solrKey).getFacet(), selectedValues, valueStrings
+                );
 
                 if (ExtensionResultStatusType.NOT_HANDLED.equals(status)) {
                     String range = StringUtils.join(selectedValues, " OR ");
@@ -947,8 +965,11 @@ public class SolrHelperServiceImpl implements SolrHelperService {
      * This method iteratively and recursively attempts to return the value or values of the property specified by the currentPosition in the
      * array of components.  The components argument is an array of strings representing the object graph.
      */
-    protected Object getPropertyValueInternal(Object object, String[] components, int currentPosition) throws NoSuchMethodException,
-            InvocationTargetException, IllegalAccessException {
+    protected Object getPropertyValueInternal(
+            Object object,
+            String[] components,
+            int currentPosition
+    ) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         if (object == null) {
             return null;
         }
@@ -966,7 +987,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
             if (currentPosition < components.length - 1) {
                 if (Collection.class.isAssignableFrom(propertyObject.getClass())) {
                     Collection<?> collection = (Collection<?>) propertyObject;
-                    HashSet<Object> newCollection = new HashSet<Object>();
+                    HashSet<Object> newCollection = new HashSet<>();
                     for (Object item : collection) {
                         Object result = getPropertyValueInternal(item, components, currentPosition + 1);
                         if (result != null) {
@@ -976,7 +997,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     propertyObject = newCollection;
                 } else if (Map.class.isAssignableFrom(propertyObject.getClass())) {
                     Map<?, ?> map = (Map<?, ?>) propertyObject;
-                    HashSet<Object> newCollection = new HashSet<Object>();
+                    HashSet<Object> newCollection = new HashSet<>();
                     for (Object item : map.values()) {
                         Object result = getPropertyValueInternal(item, components, currentPosition + 1);
                         if (result != null) {
@@ -986,7 +1007,7 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     propertyObject = newCollection;
                 } else if (propertyObject.getClass().isArray()) {
                     Object[] array = (Object[]) propertyObject;
-                    HashSet<Object> newCollection = new HashSet<Object>();
+                    HashSet<Object> newCollection = new HashSet<>();
                     for (Object item : array) {
                         Object result = getPropertyValueInternal(item, components, currentPosition + 1);
                         if (result != null) {
@@ -995,7 +1016,9 @@ public class SolrHelperServiceImpl implements SolrHelperService {
                     }
                     propertyObject = newCollection;
                 } else {
-                    propertyObject = getPropertyValueInternal(propertyObject, components, currentPosition + 1);
+                    propertyObject = getPropertyValueInternal(
+                            propertyObject, components, currentPosition + 1
+                    );
                 }
             } else {
                 if (Money.class.isAssignableFrom(propertyObject.getClass())) {

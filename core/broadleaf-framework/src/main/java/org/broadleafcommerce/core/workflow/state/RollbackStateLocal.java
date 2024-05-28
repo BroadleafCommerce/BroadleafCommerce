@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,6 +30,8 @@ import java.util.Stack;
 public class RollbackStateLocal {
 
     private static final ThreadLocal<Stack> THREAD_LOCAL = ThreadLocalManager.createThreadLocal(Stack.class, true);
+    private String threadId;
+    private String workflowId;
 
     public static RollbackStateLocal getRollbackStateLocal() {
         return (RollbackStateLocal) THREAD_LOCAL.get().peek();
@@ -39,14 +41,11 @@ public class RollbackStateLocal {
         Stack localState = THREAD_LOCAL.get();
         localState.push(rollbackStateLocal);
     }
-    
+
     public static void clearRollbackStateLocal() {
         Stack localState = THREAD_LOCAL.get();
         localState.pop();
     }
-
-    private String threadId;
-    private String workflowId;
 
     public String getThreadId() {
         return threadId;
@@ -63,4 +62,5 @@ public class RollbackStateLocal {
     public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
     }
+
 }

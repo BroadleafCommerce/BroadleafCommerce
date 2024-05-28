@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -66,37 +66,26 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     private static final Log LOG = LogFactory.getLog(StaticAssetServiceImpl.class);
     private static final String UPLOAD_FILE_EXTENSION_EXCEPTION = "java.io.IOException: Invalid extension type of file.";
-
-    @Resource(name = "blImageArtifactProcessor")
-    protected ImageArtifactProcessor imageArtifactProcessor;
-
-    @Value("${asset.use.filesystem.storage}")
-    protected boolean storeAssetsOnFileSystem = false;
-
-    @Resource(name = "blStaticAssetDao")
-    protected StaticAssetDao staticAssetDao;
-
-    @Resource(name = "blStaticAssetStorageService")
-    protected StaticAssetStorageService staticAssetStorageService;
-
-    @Resource(name = "blStaticAssetPathService")
-    protected StaticAssetPathService staticAssetPathService;
-
-    @Resource(name = "blStaticAssetMultiTenantExtensionManager")
-    protected StaticAssetMultiTenantExtensionManager staticAssetExtensionManager;
-
-    @Value("${should.accept.non.image.asset:true}")
-    protected boolean shouldAcceptNonImageAsset;
-
-    @Value("${disabled.file.extensions}")
-    protected String disabledFileExtensions;
-
-    @Value("${allowed.file.extensions}")
-    protected String allowedFileExtensions;
-
     private final Random random = new Random();
     private final String FILE_NAME_CHARS = "0123456789abcdef";
-
+    @Resource(name = "blImageArtifactProcessor")
+    protected ImageArtifactProcessor imageArtifactProcessor;
+    @Value("${asset.use.filesystem.storage}")
+    protected boolean storeAssetsOnFileSystem = false;
+    @Resource(name = "blStaticAssetDao")
+    protected StaticAssetDao staticAssetDao;
+    @Resource(name = "blStaticAssetStorageService")
+    protected StaticAssetStorageService staticAssetStorageService;
+    @Resource(name = "blStaticAssetPathService")
+    protected StaticAssetPathService staticAssetPathService;
+    @Resource(name = "blStaticAssetMultiTenantExtensionManager")
+    protected StaticAssetMultiTenantExtensionManager staticAssetExtensionManager;
+    @Value("${should.accept.non.image.asset:true}")
+    protected boolean shouldAcceptNonImageAsset;
+    @Value("${disabled.file.extensions}")
+    protected String disabledFileExtensions;
+    @Value("${allowed.file.extensions}")
+    protected String allowedFileExtensions;
     @Value("${static.asset.invalid.chars.in.filename}")
     protected char[] notAllowedCharsInFileName;
 
@@ -105,6 +94,34 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     @Value("${static.asset.invalid.chars.replacement}")
     protected String replacementString;
+
+    private static String normalizeFileExtension(MultipartFile file) {
+        int index = file.getOriginalFilename().lastIndexOf(".");
+        return file.getOriginalFilename().substring(0, index + 1)
+                + file.getOriginalFilename().substring(index + 1).toLowerCase();
+    }
+
+    private static String getFileExtension(MultipartFile file) {
+        String tikaExtension = null;
+        String name = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
+        try {
+            final Tika tika = new Tika();
+            final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
+            Metadata metadata = new Metadata();
+            //let's try to detect type from the data and not just file extension
+            MediaType tikaType = tika.getDetector().detect(TikaInputStream.get(file.getBytes(), metadata), metadata);
+            if (tikaType != null) {
+                String detectedType = tikaType.toString();
+                if (detectedType != null && !detectedType.isEmpty()) {
+                    final MimeType mimeType = allTypes.forName(detectedType);
+                    tikaExtension = mimeType.getExtension().replace(".", "").toLowerCase();
+                }
+            }
+        } catch (MimeTypeException | IOException ignored) {
+        }
+        //in case something is wrong fallback to simply take extension from the file name
+        return (tikaExtension != null && !tikaExtension.isEmpty()) ? tikaExtension : FilenameUtils.getExtension(name);
+    }
 
     @Override
     public StaticAsset findStaticAssetById(Long id) {
@@ -153,9 +170,8 @@ public class StaticAssetServiceImpl implements StaticAssetService {
      * <p>
      * If the properties above are not set, it will generate the fileName randomly.
      *
-     * @param url
-     * @param asset
      * @param assetProperties
+     * @param originalFilename
      * @return
      */
     protected String buildAssetURL(Map<String, String> assetProperties, String originalFilename) {
@@ -188,33 +204,6 @@ public class StaticAssetServiceImpl implements StaticAssetService {
         return path.append(fileName).toString();
     }
 
-    private static String normalizeFileExtension(MultipartFile file) {
-        int index = file.getOriginalFilename().lastIndexOf(".");
-        return file.getOriginalFilename().substring(0, index + 1) + file.getOriginalFilename().substring(index + 1).toLowerCase();
-    }
-
-    private static String getFileExtension(MultipartFile file) {
-        String tikaExtension = null;
-        String name = StringUtils.isNotBlank(file.getOriginalFilename()) ? file.getOriginalFilename() : file.getName();
-        try {
-            final Tika tika = new Tika();
-            final MimeTypes allTypes = MimeTypes.getDefaultMimeTypes();
-            Metadata metadata = new Metadata();
-            //let's try to detect type from the data and not just file extension
-            MediaType tikaType = tika.getDetector().detect(TikaInputStream.get(file.getBytes(), metadata), metadata);
-            if(tikaType!=null) {
-                String detectedType = tikaType.toString();
-                if (detectedType != null && !detectedType.isEmpty()) {
-                    final MimeType mimeType = allTypes.forName(detectedType);
-                    tikaExtension = mimeType.getExtension().replace(".", "").toLowerCase();
-                }
-            }
-        } catch (MimeTypeException | IOException ignored) {
-        }
-        //in case something is wrong fallback to simply take extension from the file name
-        return (tikaExtension != null && !tikaExtension.isEmpty()) ? tikaExtension : FilenameUtils.getExtension(name);
-    }
-
     public void validateFileExtension(MultipartFile file) throws IOException {
         final String extension = getFileExtension(file);
         //if we have whitelist, don't care about blacklist
@@ -242,7 +231,10 @@ public class StaticAssetServiceImpl implements StaticAssetService {
             String fileName = normalizeFileExtension(file);
             boolean b = validateFileName(fileName);
             if (b) {
-                fileName = fileName.replaceAll("[" + String.valueOf(notAllowedCharsInFileName) + "]", replacementString);
+                fileName = fileName.replaceAll(
+                        "[" + String.valueOf(notAllowedCharsInFileName) + "]",
+                        replacementString
+                );
             }
             return createStaticAsset(file.getInputStream(), fileName, file.getSize(), properties);
         } catch (IOException e) {
@@ -260,9 +252,14 @@ public class StaticAssetServiceImpl implements StaticAssetService {
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
-    public StaticAsset createStaticAsset(InputStream inputStream, String fileName, long fileSize, Map<String, String> properties) {
+    public StaticAsset createStaticAsset(
+            InputStream inputStream,
+            String fileName,
+            long fileSize,
+            Map<String, String> properties
+    ) {
         if (properties == null) {
-            properties = new HashMap<String, String>();
+            properties = new HashMap<>();
         }
 
         String fullUrl = buildAssetURL(properties, fileName);
@@ -456,4 +453,5 @@ public class StaticAssetServiceImpl implements StaticAssetService {
     public void setAllowedFileExtensions(String allowedFileExtensions) {
         this.allowedFileExtensions = allowedFileExtensions;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,31 +40,31 @@ public interface AdornedTargetAutoPopulateExtensionHandler extends ExtensionHand
      * Note, a special key/value pair can be included put into the managedField map to cause the second tab to be skipped
      * and the adorned target item add form to auto submit after completing the first tab.
      *
-     * @param md the metadata describing the adorned target collection field
-     * @param mainClassName the class name of the entity that contains this adorned target field
-     * @param id the id of the containing entity
-     * @param collectionField the name of the adorned target field
+     * @param md               the metadata describing the adorned target collection field
+     * @param mainClassName    the class name of the entity that contains this adorned target field
+     * @param id               the id of the containing entity
+     * @param collectionField  the name of the adorned target field
      * @param collectionItemId the id of the adorned target collection member
-     * @param managedFields the map containing the adorned target field values that should be auto populated
+     * @param managedFields    the map containing the adorned target field values that should be auto populated
      * @return the final status of the operation
      */
     public ExtensionResultStatusType autoSetAdornedTargetManagedFields(FieldMetadata md, String mainClassName,
-                                   String id, String collectionField, String collectionItemId, Map<String, Object> managedFields);
+                                                                       String id, String collectionField, String collectionItemId, Map<String, Object> managedFields);
 
     /**
      * Provide validation during persistence. The implementation is responsible for determining suitability based
      * on the property information passed in.
      *
-     * @param entity all the values passed from the client for persistence
-     * @param instance the entity instance that is being populated
+     * @param entity              all the values passed from the client for persistence
+     * @param instance            the entity instance that is being populated
      * @param entityFieldMetadata the {@link FieldMetadata} for all the fields
-     * @param propertyMetadata the {@link FieldMetadata} for the property
-     * @param propertyName the name of the field
-     * @param value the value being assigned to the property
-     * @param validationResult whether or not the property passes validation
+     * @param propertyMetadata    the {@link FieldMetadata} for the property
+     * @param propertyName        the name of the field
+     * @param value               the value being assigned to the property
+     * @param validationResult    whether or not the property passes validation
      * @return the final status of the operation
      */
     public ExtensionResultStatusType validateSubmittedAdornedTargetManagedFields(Entity entity, Serializable instance,
-                                Map<String, FieldMetadata> entityFieldMetadata, BasicFieldMetadata propertyMetadata,
-                                String propertyName, String value, ExtensionResultHolder<Boolean> validationResult);
+                                                                                 Map<String, FieldMetadata> entityFieldMetadata, BasicFieldMetadata propertyMetadata,
+                                                                                 String propertyName, String value, ExtensionResultHolder<Boolean> validationResult);
 }

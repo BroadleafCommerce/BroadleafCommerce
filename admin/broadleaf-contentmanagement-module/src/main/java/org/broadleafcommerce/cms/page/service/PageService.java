@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.cache.Cache;
 
-
 /**
  * Created by bpolster.
  */
@@ -45,6 +44,7 @@ public interface PageService {
 
     /**
      * Returns the page-fields associated with a page.
+     *
      * @param pageId
      * @return
      */
@@ -57,10 +57,10 @@ public interface PageService {
      * @return The associated page template.
      */
     PageTemplate findPageTemplateById(Long id);
-    
+
     /**
      * Saves the given {@link PageTemplate}
-     * 
+     *
      * @param template the {@link PageTemplate} to save
      * @return the database-saved {@link PageTemplate}
      */
@@ -71,29 +71,31 @@ public interface PageService {
      * fix the URL if the site has overridden the URL for images.   If secure is true
      * and images are being overridden, the system will use https.
      *
-     * @param locale - current locale
-     * @param uri - the URI to return a page for
+     * @param locale   - current locale
+     * @param uri      - the URI to return a page for
      * @param ruleDTOs - ruleDTOs that are used as the data to process page rules
-     * @param secure - set to true if current request is over HTTPS
+     * @param secure   - set to true if current request is over HTTPS
      * @return
      */
-    PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure);
-    
+    PageDTO findPageByURI(Locale locale, String uri, Map<String, Object> ruleDTOs, boolean secure);
+
     /**
      * Returns all pages, regardless of any sandbox they are apart of
+     *
      * @return all {@link Page}s configured in the system
      */
     List<Page> readAllPages();
-    
+
     /**
      * Returns all page templates, regardless of any sandbox they are apart of
+     *
      * @return all {@link PageTemplate}s configured in the system
      */
     List<PageTemplate> readAllPageTemplates();
 
     /**
      * Call to evict all known PageDTOs that are associated with the given page from cache
-     * 
+     *
      * @param key
      * @return whether successful
      */
@@ -112,12 +114,12 @@ public interface PageService {
     Cache getPageCache();
 
     Cache getPageMapCache();
-    
+
     Cache getUriCachedDateCache();
 
     /**
      * Builds a list of {@link PageDTO} objects from the given list of {@link Page} objects and caches the list
-     * 
+     *
      * @param pageList
      * @param secure
      * @param identifier
@@ -127,4 +129,5 @@ public interface PageService {
     List<PageDTO> buildPageDTOList(List<Page> pageList, boolean secure, String identifier, Locale locale);
 
     String getPageMapCacheKey(String uri, Long site);
+
 }

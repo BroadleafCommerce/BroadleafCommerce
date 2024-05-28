@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -66,7 +66,7 @@ public interface PersistenceService {
 
     /**
      * Identifies the default {@link EntityManager} for the given targetModeType
-     *
+     * <p>
      * NOTE: This assumes that the {@link EntityManager} is based on blPU
      *
      * @param targetModeType
@@ -76,7 +76,7 @@ public interface PersistenceService {
 
     /**
      * Identifies the default {@link PlatformTransactionManager} for the given targetModeType
-     *
+     * <p>
      * NOTE: This assumes that the {@link PlatformTransactionManager} is based on blPU
      *
      * @param targetModeType
@@ -108,4 +108,5 @@ public interface PersistenceService {
      */
     @Nullable
     Class<?> getCeilingImplClassFromEntityManagers(String className);
+
 }

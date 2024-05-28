@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,24 +30,24 @@ import jakarta.annotation.Resource;
 /**
  * An abstract controller that provides convenience methods and resource declarations for its
  * children. Operations that are shared between controllers that deal with the catalog belong here.
- * 
+ *
  * @author apazzolini
  */
 public abstract class AbstractCartController extends BroadleafAbstractController {
-    
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-    
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-    
+
     @Resource(name = "blOfferService")
     protected OfferService offerService;
 
-    @Resource(name="blUpdateCartService")
+    @Resource(name = "blUpdateCartService")
     protected UpdateCartService updateCartService;
 
     @Resource(name = "blOrderToPaymentRequestDTOService")

@@ -10,24 +10,25 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.event;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * Effectively a copy of com.broadleafcommerce.jobsevents.domain.dto.SystemEventDetailDTO
  * to be used when creating a org.broadleafcommerce.common.event.BroadleafSystemEvent
- * 
- * @author Jay Aisenbrey (cja769)
  *
+ * @author Jay Aisenbrey (cja769)
  */
 public class BroadleafSystemEventDetail implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected String friendlyName;
@@ -75,4 +76,5 @@ public class BroadleafSystemEventDetail implements Serializable {
     public void setBlob(Serializable blob) {
         this.blob = blob;
     }
+
 }

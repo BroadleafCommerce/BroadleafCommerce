@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,12 +34,11 @@ public interface RollbackHandler<T extends ProcessContext<?>> {
     /**
      * Rollback the state of the activity to what it was prior to execution.
      *
-     * @param activity The Activity instance whose state is being reverted
-     * @param processContext The ProcessContext for the workflow
+     * @param activity           The Activity instance whose state is being reverted
+     * @param processContext     The ProcessContext for the workflow
      * @param stateConfiguration Any user-defined state configuration associated with the RollbackHandler
      * @throws RollbackFailureException if there is a failure during the execution of the rollback
      */
-    public void rollbackState(Activity<T> activity,
-            T processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException;
+    void rollbackState(Activity<T> activity, T processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException;
 
 }

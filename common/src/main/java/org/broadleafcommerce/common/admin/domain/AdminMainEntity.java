@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,16 +20,16 @@ package org.broadleafcommerce.common.admin.domain;
 /**
  * When viewing entities that implement this interface in the admin, the {@link #getMainEntityName()} method will be
  * invoked to determine the title of the entity to be rendered.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public interface AdminMainEntity {
 
-    public static final String MAIN_ENTITY_NAME_PROPERTY = "__adminMainEntity";
+    String MAIN_ENTITY_NAME_PROPERTY = "__adminMainEntity";
 
     /**
      * @return the display name of this entity for the admin screen
      */
-    public String getMainEntityName();
+    String getMainEntityName();
 
 }

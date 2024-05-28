@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,7 +50,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @ConditionalOnAdmin
 public class AdminControllerHandlerMapping extends RequestMappingHandlerMapping {
 
-    public static final int REQUEST_MAPPING_ORDER =  Ordered.LOWEST_PRECEDENCE - 1;
+    public static final int REQUEST_MAPPING_ORDER = Ordered.LOWEST_PRECEDENCE - 1;
 
     public AdminControllerHandlerMapping() {
         setOrder(REQUEST_MAPPING_ORDER);
@@ -62,4 +62,5 @@ public class AdminControllerHandlerMapping extends RequestMappingHandlerMapping 
                 AnnotatedElementUtils.hasAnnotation(beanType, RequestMapping.class))
                 && AdminBasicEntityController.class.isAssignableFrom(beanType);
     }
+
 }

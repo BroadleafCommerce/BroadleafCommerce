@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,33 +24,33 @@ import java.util.List;
  * @author Andre Azzolini (apazzolini)
  */
 public class SearchFacetDTO {
-    
+
     protected SearchFacet facet;
     protected boolean showQuantity;
-    protected List<SearchFacetResultDTO> facetValues = new ArrayList<SearchFacetResultDTO>();
+    protected List<SearchFacetResultDTO> facetValues = new ArrayList<>();
     protected boolean active;
     protected String abbreviation;
-    
+
     public SearchFacet getFacet() {
         return facet;
     }
-    
+
     public void setFacet(SearchFacet facet) {
         this.facet = facet;
     }
-    
+
     public boolean isShowQuantity() {
         return showQuantity;
     }
-    
+
     public void setShowQuantity(boolean showQuantity) {
         this.showQuantity = showQuantity;
     }
-    
+
     public List<SearchFacetResultDTO> getFacetValues() {
         return facetValues;
     }
-    
+
     public void setFacetValues(List<SearchFacetResultDTO> facetValues) {
         this.facetValues = facetValues;
     }
@@ -62,17 +62,17 @@ public class SearchFacetDTO {
     public void setActive(boolean active) {
         this.active = active;
     }
-    
+
     public String getAbbreviation() {
         if (abbreviation != null) {
             return abbreviation;
         }
-        
+
         return this.getFacet().getField().getAbbreviation();
     }
 
     public void setAbbreviation(String abbreviation) {
         this.abbreviation = abbreviation;
     }
-    
+
 }

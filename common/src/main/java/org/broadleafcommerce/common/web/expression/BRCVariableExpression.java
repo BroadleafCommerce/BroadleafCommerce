@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,16 +40,15 @@ import jakarta.servlet.http.HttpSession;
 
 import static org.broadleafcommerce.common.web.BroadleafSandBoxResolverImpl.CLIENT_TIMEZONE;
 
-
 /**
  * Exposes the {@link BroadleafRequestContext} to the Thymeleaf expression context
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blBRCVariableExpression")
 @ConditionalOnTemplating
 public class BRCVariableExpression implements BroadleafVariableExpression {
-    
+
     @Autowired(required = false)
     @Qualifier("blCrossAppAuthService")
     protected CrossAppAuthService crossAppAuthService;
@@ -58,7 +57,7 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
     public String getName() {
         return "brc";
     }
-    
+
     public SandBox getSandbox() {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {
@@ -90,7 +89,7 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
         }
         return null;
     }
-    
+
     public Date getCurrentTime() {
         return SystemTime.asDate(true);
     }
@@ -101,21 +100,19 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
 
         WebRequest webRequest = brc.getWebRequest();
 
-        if(BLCRequestUtils.isOKtoUseSession(webRequest)) {
+        if (BLCRequestUtils.isOKtoUseSession(webRequest)) {
             HttpSession session = brc.getRequest().getSession();
             TimeZone timeZone = (TimeZone) session.getAttribute(CLIENT_TIMEZONE);
 
-
-            if(timeZone != null) {
+            if (timeZone != null) {
 
                 return SystemTime.asCalendar(Locale.getDefault(), timeZone, true);
             }
         }
 
         return SystemTime.asCalendar(true);
-
     }
-    
+
     public Object get(String propertyName) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {
@@ -140,7 +137,7 @@ public class BRCVariableExpression implements BroadleafVariableExpression {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         return (brc == null) ? false : (brc.getSandBox() != null);
     }
-    
+
     public Object getAdditionalProperty(String propertyName) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {

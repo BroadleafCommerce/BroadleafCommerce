@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,19 +46,21 @@ public class StaticAssetStorageDaoImpl implements StaticAssetStorageDao {
     @PersistenceContext(unitName = "blCMSStorage")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override
     public StaticAssetStorage create() {
-        return (StaticAssetStorage) entityConfiguration.createEntityInstance("org.broadleafcommerce.cms.file.domain.StaticAssetStorage");
+        return (StaticAssetStorage) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.cms.file.domain.StaticAssetStorage"
+        );
     }
 
     @Override
     public Blob createBlob(MultipartFile uploadedFile) throws IOException {
         return createBlob(uploadedFile.getInputStream(), uploadedFile.getSize());
     }
-    
+
     @Override
     public Blob createBlob(InputStream uploadedFileInputStream, long fileSize) throws IOException {
         InputStream inputStream = uploadedFileInputStream;
@@ -96,4 +98,5 @@ public class StaticAssetStorageDaoImpl implements StaticAssetStorageDao {
         }
         em.remove(assetStorage);
     }
+
 }

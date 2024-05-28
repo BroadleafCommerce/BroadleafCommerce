@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,10 +36,12 @@ import jakarta.annotation.Resource;
 
 /**
  * Adds special behavior specific for Typed Entities during any entity persistence flows.
+ *
  * @author Jon Fleschler (jfleschler)
  */
 @Component("blTypedEntityBasicEntityExtensionHandler")
 public class TypedEntityBasicEntityExtensionHandler extends AbstractAdminAbstractControllerExtensionHandler {
+
     protected static final Log LOG = LogFactory.getLog(TypedEntityBasicEntityExtensionHandler.class);
 
     @Resource(name = "blAdminAbstractControllerExtensionManager")
@@ -54,13 +56,18 @@ public class TypedEntityBasicEntityExtensionHandler extends AbstractAdminAbstrac
 
     /**
      * This allows us to set the Type on the entityForm before the entity is first persisted.
+     *
      * @param entityForm
      * @param cmd
      * @param pathVars
      * @return
      */
     @Override
-    public ExtensionResultStatusType modifyPreAddEntityForm(EntityForm entityForm, ClassMetadata cmd, Map<String, String> pathVars) {
+    public ExtensionResultStatusType modifyPreAddEntityForm(
+            EntityForm entityForm,
+            ClassMetadata cmd,
+            Map<String, String> pathVars
+    ) {
         Class<?> implClass = getDynamicEntityDao(cmd.getCeilingType()).getCeilingImplClass(cmd.getCeilingType());
         if (TypedEntity.class.isAssignableFrom(implClass)) {
             // Set the Type on the Add entity form
@@ -100,4 +107,5 @@ public class TypedEntityBasicEntityExtensionHandler extends AbstractAdminAbstrac
             return null;
         }
     }
+
 }

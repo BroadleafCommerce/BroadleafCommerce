@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,21 +30,21 @@ import jakarta.servlet.http.HttpServletRequest;
  * <p>
  * This Thymeleaf variable expression class provides access to runtime configuration properties that are configured
  * in development.properties, development-shared.properties, etc, for the current environment.
- * 
+ *
  * <p>
  * This also includes properties that have been saved/overwritten in the database via {@link SystemProperty}.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blPropertiesVariableExpression")
 @ConditionalOnTemplating
 public class PropertiesVariableExpression implements BroadleafVariableExpression {
-    
+
     @Override
     public String getName() {
         return "props";
     }
-    
+
     public String get(String propertyName) {
         return BLCSystemProperty.resolveSystemProperty(propertyName);
     }
@@ -52,15 +52,15 @@ public class PropertiesVariableExpression implements BroadleafVariableExpression
     public int getAsInt(String propertyName) {
         return BLCSystemProperty.resolveIntSystemProperty(propertyName);
     }
-    
+
     public boolean getAsBoolean(String propertyName) {
-        return BLCSystemProperty.resolveBooleanSystemProperty(propertyName); 
+        return BLCSystemProperty.resolveBooleanSystemProperty(propertyName);
     }
-    
+
     public long getAsLong(String propertyName) {
-        return BLCSystemProperty.resolveLongSystemProperty(propertyName); 
+        return BLCSystemProperty.resolveLongSystemProperty(propertyName);
     }
-    
+
     /**
      * Returns true if the <b>listGrid.forceShowIdColumns</b> system property or a <b>showIds</b> request parameter is set
      * to true. Used in the admin to show ID columns when displaying list grids.
@@ -70,8 +70,8 @@ public class PropertiesVariableExpression implements BroadleafVariableExpression
 
         boolean forceShow = BLCSystemProperty.resolveBooleanSystemProperty("listGrid.forceShowIdColumns");
         forceShow = forceShow || "true".equals(request.getParameter("showIds"));
-        
+
         return forceShow;
     }
-    
+
 }

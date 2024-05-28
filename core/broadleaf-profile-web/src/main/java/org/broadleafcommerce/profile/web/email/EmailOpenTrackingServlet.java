@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,6 +26,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,12 +36,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- *
  * @author jfischer
- *
  */
 public class EmailOpenTrackingServlet extends HttpServlet {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private static final Log LOG = LogFactory.getLog(EmailOpenTrackingServlet.class);
@@ -67,7 +67,9 @@ public class EmailOpenTrackingServlet extends HttpServlet {
                 LOG.debug("service() => Recording Open for Email[" + emailId + "]");
             }
             WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-            EmailTrackingManager emailTrackingManager = (EmailTrackingManager) context.getBean("blEmailTrackingManager");
+            EmailTrackingManager emailTrackingManager = (EmailTrackingManager) context.getBean(
+                    "blEmailTrackingManager"
+            );
             String userAgent = request.getHeader("USER-AGENT");
             Map<String, String> extraValues = new HashMap<String, String>();
             extraValues.put("userAgent", userAgent);
@@ -90,7 +92,9 @@ public class EmailOpenTrackingServlet extends HttpServlet {
             }
         } finally {
             if (bis != null) {
-                try{ bis.close(); } catch (Throwable e) {
+                try {
+                    bis.close();
+                } catch (Throwable e) {
                     LOG.error("Unable to close output stream in EmailOpenTrackingServlet", e);
                 }
             }
@@ -98,4 +102,5 @@ public class EmailOpenTrackingServlet extends HttpServlet {
             //handle this.
         }
     }
+
 }

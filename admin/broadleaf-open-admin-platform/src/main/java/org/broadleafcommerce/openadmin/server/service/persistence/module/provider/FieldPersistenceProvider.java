@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,27 +40,29 @@ import java.util.Map;
  * and therefore relate to variations on persistence of basic fields. Implementers should generally
  * extend {@link FieldPersistenceProviderAdapter}.
  *
- * @see org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.openadmin.server.service.persistence.module.PersistenceModule
  */
 public interface FieldPersistenceProvider extends Ordered {
 
     //standard ordering constants for BLC providers
-    public static final int BASIC = Integer.MAX_VALUE;
+    int BASIC = Integer.MAX_VALUE;
+
     /**
      * The {@link MediaFieldPersistenceProvider} MUST come prior to the normal Map field provider since they can both
      * respond to the same type of map fields. However, the Media fields are a special case since it needs to parse out the
      * Media DTO
      */
-    public static final int MEDIA = 20000;
+    int MEDIA = 20000;
+
     /**
      * The {@link RuleFieldPersistenceProvider} MUST come prior to the normal map field provider. They both deal with map
      * field types but rules are a special case
      */
-    public static final int RULE = 30000;
-    public static final int MAP_FIELD = 40000;
-    public static final int MONEY = 50000;
-    public static final int HTML = 60000;
+    int RULE = 30000;
+    int MAP_FIELD = 40000;
+    int MONEY = 50000;
+    int HTML = 60000;
 
     /**
      * Set the property value on the target object. Implementations should translate the requestedValue
@@ -69,7 +71,7 @@ public interface FieldPersistenceProvider extends Ordered {
      * field of <tt>instance</tt> (which should be a JPA managed entity). Used during admin create and update events.
      *
      * @param populateValueRequest contains the requested value and support classes.
-     * @param instance the persistence entity instance on which to set the value harvested from the request
+     * @param instance             the persistence entity instance on which to set the value harvested from the request
      * @return whether or not the implementation handled the persistence request
      */
     MetadataProviderResponse populateValue(PopulateValueRequest populateValueRequest, Serializable instance);
@@ -81,7 +83,7 @@ public interface FieldPersistenceProvider extends Ordered {
      * instance parameter. Used during admin fetch events.
      *
      * @param extractValueRequest contains the requested value and support classes.
-     * @param property the property for the admin that will contain the information harvested from the persistence value
+     * @param property            the property for the admin that will contain the information harvested from the persistence value
      * @return whether or not the implementation handled the persistence request
      */
     MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property);
@@ -92,7 +94,7 @@ public interface FieldPersistenceProvider extends Ordered {
      * and is generally used to drive the added FilterMapping instances.
      *
      * @param addSearchMappingRequest contains the requested cto and support classes.
-     * @param filterMappings filter criteria should be added here. It is used to generate the final search criteria.
+     * @param filterMappings          filter criteria should be added here. It is used to generate the final search criteria.
      * @return whether or not the implementation handled the persistence request
      */
     MetadataProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, List<FilterMapping> filterMappings);
@@ -102,7 +104,7 @@ public interface FieldPersistenceProvider extends Ordered {
      * immediately before persistence is attempted. Properties may be altered, removed or added.
      *
      * @param addFilterPropertiesRequest contains the <tt>Entity</tt> instance.
-     * @param properties the collection of properties to filter
+     * @param properties                 the collection of properties to filter
      * @return whether or not the implementation handled the persistence request
      */
     MetadataProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties);
@@ -116,7 +118,9 @@ public interface FieldPersistenceProvider extends Ordered {
 
     /**
      * If the provider should handle populating null values or if it should delegate to the default persistence provider
+     *
      * @return
      */
     boolean canHandlePopulateNull();
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
 
-
 public interface StaticAssetStorageDao {
+
     StaticAssetStorage create();
 
     StaticAssetStorage readStaticAssetStorageById(Long id);
@@ -37,16 +37,16 @@ public interface StaticAssetStorageDao {
     void delete(StaticAssetStorage assetStorage);
 
     Blob createBlob(MultipartFile uploadedFile) throws IOException;
-    
+
     /**
      * Overloaded method for {@link #createBlob(MultipartFile)} just in case you do not have the Spring {@link MultipartFile}
      * and are dealing with an already-uploadd file
-     * 
+     *
      * @param uploadedFileInputStream the input stream of the file the blob should be created from
-     * @param fileSize the size of the file which is represented by <b>uploadedFileInputStream</b>, in bytes
+     * @param fileSize                the size of the file which is represented by <b>uploadedFileInputStream</b>, in bytes
      * @return
      * @throws IOException
      */
     Blob createBlob(InputStream uploadedFileInputStream, long fileSize) throws IOException;
-    
+
 }

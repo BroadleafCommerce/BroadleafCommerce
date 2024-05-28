@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,15 +37,15 @@ public class OfferDuplicateModifier extends AbstractEntityDuplicationHelper<Offe
     @Autowired
     public OfferDuplicateModifier(final Environment environment) {
         super(environment);
-        
+
         addCopyHint(OfferImpl.EXCLUDE_OFFERCODE_COPY_HINT, Boolean.TRUE.toString());
     }
-    
+
     @Override
     public boolean canHandle(final MultiTenantCloneable candidate) {
         return Offer.class.isAssignableFrom(candidate.getClass());
     }
-    
+
     @Override
     public void modifyInitialDuplicateState(final Offer original, final Offer copy, MultiTenantCopyContext context) {
         String currentName = copy.getName();
@@ -53,4 +53,5 @@ public class OfferDuplicateModifier extends AbstractEntityDuplicationHelper<Offe
         copy.setStartDate(null);
         copy.setEndDate(null);
     }
+
 }

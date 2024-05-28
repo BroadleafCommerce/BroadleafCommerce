@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
-public class AbstractMultiTenantCopierExtensionHandler extends AbstractExtensionHandler 
+public class AbstractMultiTenantCopierExtensionHandler extends AbstractExtensionHandler
         implements MultiTenantCopierExtensionHandler {
 
     @Override
@@ -40,7 +40,12 @@ public class AbstractMultiTenantCopierExtensionHandler extends AbstractExtension
     }
 
     @Override
-    public ExtensionResultStatusType shouldClone(MultiTenantCopyContext context, Object from, ExtensionResultHolder<Boolean> result) {
+    public ExtensionResultStatusType shouldClone(
+            MultiTenantCopyContext context,
+            Object from,
+            ExtensionResultHolder<Boolean> result
+    ) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
 }

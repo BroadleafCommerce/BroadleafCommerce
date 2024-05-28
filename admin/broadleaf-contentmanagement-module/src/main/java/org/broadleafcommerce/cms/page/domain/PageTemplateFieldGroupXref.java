@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,26 +24,24 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * 
  * @author Kelly Tisdell
- *
  */
 public interface PageTemplateFieldGroupXref extends Serializable, MultiTenantCloneable<PageTemplateFieldGroupXref> {
 
-    public void setId(Long id);
+    Long getId();
 
-    public Long getId();
+    void setId(Long id);
 
-    public void setPageTemplate(PageTemplate pageTemplate);
+    PageTemplate getPageTemplate();
 
-    public PageTemplate getPageTemplate();
+    void setPageTemplate(PageTemplate pageTemplate);
 
-    public void setFieldGroup(FieldGroup fieldGroup);
+    FieldGroup getFieldGroup();
 
-    public FieldGroup getFieldGroup();
+    void setFieldGroup(FieldGroup fieldGroup);
 
-    public void setGroupOrder(BigDecimal groupOrder);
+    BigDecimal getGroupOrder();
 
-    public BigDecimal getGroupOrder();
+    void setGroupOrder(BigDecimal groupOrder);
 
 }

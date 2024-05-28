@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.util.service;
-
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -68,25 +67,39 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
     protected EntityManager em;
 
     /**
-     *
-     * @param rootType type to start build sql dependency list
+     * @param rootType        type to start build sql dependency list
      * @param rootTypeIdValue value of id column of the rootType to be passed in where clause
-     * @param dependencies - map of additional dependencies that can't be discovered during iteration from root type,
-     *                     key is table name to depend on like blc_order->some other table, value is structure representing dependant table, its PK, and FK to join with/
-     * @param exclustions - Set with table name to exclude from list, like price_list, etc
+     * @param dependencies    - map of additional dependencies that can't be discovered during iteration from root type,
+     *                        key is table name to depend on like blc_order->some other table, value is structure representing dependant table, its PK, and FK to join with/
+     * @param exclustions     - Set with table name to exclude from list, like price_list, etc
      * @return a Map which key is a table name, and value is string with sql delete statement.
      * This map is the LinkedHashMap so order of keys is important. You should exec sql from the beginning.
-     *
      */
-    public Map<String, String> generateDeleteStatementsForType(Class<?> rootType, String rootTypeIdValue, Map<String, List<PathElement>> dependencies, Set<String> exclustions) {
-        if(StringUtils.isEmpty(rootTypeIdValue)){
-            rootTypeIdValue="XX";
+    public Map<String, String> generateDeleteStatementsForType(
+            Class<?> rootType,
+            String rootTypeIdValue,
+            Map<String, List<PathElement>> dependencies,
+            Set<String> exclustions
+    ) {
+        if (StringUtils.isEmpty(rootTypeIdValue)) {
+            rootTypeIdValue = "XX";
         }
-        LOG.info("Start generating SQL delete statements for type:"+rootType.getSimpleName());
+        LOG.info("Start generating SQL delete statements for type:" + rootType.getSimpleName());
         Stack<PathElement> stack = new Stack<>();
         Set<Class<?>> processedClasses = new HashSet<>();
         LinkedHashMap<String, OperationStackHolder> result = new LinkedHashMap<>();
-        diveDeep(rootType, null, null, stack, processedClasses, result, dependencies, exclustions, false, null);
+        diveDeep(
+                rootType,
+                null,
+                null,
+                stack,
+                processedClasses,
+                result,
+                dependencies,
+                exclustions,
+                false,
+                null
+        );
 
         Object[] objects = result.entrySet().toArray();
         Arrays.sort(objects, new Comparator<Object>() {
@@ -94,28 +107,30 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             public int compare(Object o1, Object o2) {
                 OperationStackHolder val2 = ((Map.Entry<String, OperationStackHolder>) o2).getValue();
                 OperationStackHolder val1 = ((Map.Entry<String, OperationStackHolder>) o1).getValue();
-                if(rootType.equals(OrderImpl.class)){
+                if (rootType.equals(OrderImpl.class)) {
                     String key2 = ((Map.Entry<String, OperationStackHolder>) o2).getKey();
                     String key1 = ((Map.Entry<String, OperationStackHolder>) o1).getKey();
-                    if(key2.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")){
+                    if (key2.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")) {
                         return 1;
-                    }else if(key1.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")){
+                    } else if (key1.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")) {
                         return -1;
-                    }else if(key2.equalsIgnoreCase("BLC_RETURN_AUTHORIZATION_ITEM") && !key1.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")){
+                    } else if (key2.equalsIgnoreCase("BLC_RETURN_AUTHORIZATION_ITEM")
+                            && !key1.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")) {
                         return 1;
-                    }else if(key1.equalsIgnoreCase("BLC_RETURN_AUTHORIZATION_ITEM") && !key2.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")){
+                    } else if (key1.equalsIgnoreCase("BLC_RETURN_AUTHORIZATION_ITEM")
+                            && !key2.equalsIgnoreCase("BLC_RETURN_CONFIRMATION")) {
                         return -1;
                     }
                 }
-                if(((val2.isUpdate() && !val2.isRelationshipUpdate()) && !val1.isUpdate()) || (val2.isXref() && !val1.isXref())){
+                if (((val2.isUpdate() && !val2.isRelationshipUpdate()) && !val1.isUpdate()) || (val2.isXref() && !val1.isXref())) {
                     return 1;
-                }else if((val1.isUpdate() && !val1.isRelationshipUpdate()) && !val2.isUpdate() || (val1.isXref() && !val2.isXref())){
+                } else if ((val1.isUpdate() && !val1.isRelationshipUpdate()) && !val2.isUpdate() || (val1.isXref() && !val2.isXref())) {
                     return -1;
-                }else if(val1.isRelationshipUpdate() && !val2.isRelationshipUpdate() && val1.getStack().size()+1==val2.getStack().size()){
+                } else if (val1.isRelationshipUpdate() && !val2.isRelationshipUpdate() && val1.getStack().size() + 1 == val2.getStack().size()) {
                     return -1;
-                }else if(val2.isRelationshipUpdate() && !val1.isRelationshipUpdate() && val2.getStack().size()+1==val1.getStack().size()){
+                } else if (val2.isRelationshipUpdate() && !val1.isRelationshipUpdate() && val2.getStack().size() + 1 == val1.getStack().size()) {
                     return 1;
-                }else{
+                } else {
                     return val2.getStack().size() - val1.getStack().size();
                 }
             }
@@ -127,7 +142,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             String x = getSqls(rootTypeIdValue, operationStackHolder);
             sqls.put(entry.getKey(), x);
         }
-        LOG.info("End generating SQL delete statements for type:"+rootType.getSimpleName()+". Generated "+sqls.size()+" statements");
+        LOG.info("End generating SQL delete statements for type:" + rootType.getSimpleName() + ". Generated " + sqls.size() + " statements");
         return sqls;
     }
 
@@ -143,20 +158,21 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         } else {
             builder.append("delete FROM ").append(prevTable.getName());
         }
-        String prevTableAlias="";
+        String prevTableAlias = "";
         if (value.size() == 1) {
             shouldAppendWhere = false;
             PathElement pop = value.pop();
-            if(prevTable.isFromManyToOne()){
-                if(pop.getIdField().equals(prevTable.getJoinColumn()) || operationStackHolder.isManyToOneRelationshipDelete()) {
+            if (prevTable.isFromManyToOne()) {
+                if (pop.getIdField().equals(prevTable.getJoinColumn())
+                        || operationStackHolder.isManyToOneRelationshipDelete()) {
                     builder.append(" WHERE ")
                             .append(pop.getIdField()).append("=").append(rootTypeIdValue);
-                }else{
+                } else {
                     builder.append(" WHERE ").append(prevTable.getIdField()).append(" IN (SELECT ")
                             .append("t.").append(prevTable.getJoinColumn()).append(" FROM ").append(pop.getName())
                             .append(" t WHERE ").append("t.").append(pop.getIdField()).append("=").append(rootTypeIdValue).append(")");
                 }
-            }else {
+            } else {
                 builder.append(" WHERE ").append(prevTable.getJoinColumn()).append("=").append(rootTypeIdValue);
             }
         } else if (value.size() > 0) {
@@ -173,12 +189,12 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         while (!value.empty()) {
             String nextTableAlias = "a" + index;
             PathElement next = value.pop();
-            if(prevTable.isFromManyToOne()){
+            if (prevTable.isFromManyToOne()) {
                 builder.append(" inner join ").append(next.getName()).append(" ").append(nextTableAlias).append(" on ")
                         .append(prevTableAlias).append(".").append(prevTable.getIdField()).append("=")
                         .append(nextTableAlias).append(".").append(prevTable.getJoinColumn());
 
-            }else {
+            } else {
                 builder.append(" inner join ").append(next.getName()).append(" ").append(nextTableAlias).append(" on ")
                         .append(prevTableAlias).append(".").append(prevTable.getJoinColumn()).append("=")
                         .append(nextTableAlias).append(".").append(next.getIdField());
@@ -189,7 +205,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         }
         if (shouldAppendWhere) {
             builder.append(" WHERE ");
-            if(StringUtils.isNotEmpty(prevTableAlias)){
+            if (StringUtils.isNotEmpty(prevTableAlias)) {
                 builder.append(prevTableAlias).append(".");
             }
             builder.append(prevTable.getIdField()).append("=").append(rootTypeIdValue);
@@ -202,9 +218,21 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         return x;
     }
 
-
-    private void diveDeep(Class<?> classToProcess, String joinColumn, String mappedBy, Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result, Map<String, List<PathElement>> dependencies, Set<String> exclusions, boolean fromManyToOne, Class prevProcessedClass) {
-        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(classToProcess,false,true);
+    protected void diveDeep(
+            Class<?> classToProcess,
+            String joinColumn,
+            String mappedBy,
+            Stack<PathElement> stack,
+            Set<Class<?>> processedClasses,
+            HashMap<String, OperationStackHolder> result,
+            Map<String, List<PathElement>> dependencies,
+            Set<String> exclusions,
+            boolean fromManyToOne,
+            Class prevProcessedClass
+    ) {
+        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(
+                classToProcess, false, true
+        );
         if (processedClasses.contains(classToProcess)) {
             return;
         }
@@ -215,20 +243,31 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         processedClasses.add(classToProcess);
 
         Field[] declaredFields = classToProcess.getDeclaredFields();
-        Table tableAnnotation =  classToProcess.getAnnotation(Table.class);
+        Table tableAnnotation = classToProcess.getAnnotation(Table.class);
         if (StringUtils.isNotEmpty(mappedBy)) {
             Field field = getField(mappedBy, declaredFields);
             JoinColumn annotation = field.getAnnotation(JoinColumn.class);
             joinColumn = annotation.name();
         }
-        if(exclusions.contains(tableAnnotation.name())){
+        if (exclusions.contains(tableAnnotation.name())) {
             return;
         }
         PathElement el = new PathElement(tableAnnotation.name(), idField, joinColumn, fromManyToOne);
         stack.push(el);
         for (Class<?> aClass : classes) {
             if (!aClass.equals(classToProcess)) {
-                diveDeep(aClass, idField, null, stack, processedClasses, result, dependencies, exclusions, false, classToProcess);
+                diveDeep(
+                        aClass,
+                        idField,
+                        null,
+                        stack,
+                        processedClasses,
+                        result,
+                        dependencies,
+                        exclusions,
+                        false,
+                        classToProcess
+                );
             }
         }
         for (Field declaredField : declaredFields) {
@@ -237,39 +276,69 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             }
             OneToMany annotation = declaredField.getAnnotation(OneToMany.class);
             if (annotation != null) {
-                processField(stack, processedClasses, result, declaredField,dependencies, exclusions, false, classToProcess);
+                processField(
+                        stack,
+                        processedClasses,
+                        result,
+                        declaredField,
+                        dependencies,
+                        exclusions,
+                        false,
+                        classToProcess
+                );
             } else if (declaredField.getAnnotation(Embedded.class) != null) {
                 Class<?> type = declaredField.getType();
                 for (Field decl : type.getDeclaredFields()) {
-                    processField(stack, processedClasses, result, decl,dependencies, exclusions, true, classToProcess);
+                    processField(
+                            stack,
+                            processedClasses,
+                            result,
+                            decl,
+                            dependencies,
+                            exclusions,
+                            true,
+                            classToProcess
+                    );
                 }
-            }else if(declaredField.getAnnotation(CollectionTable.class) != null){
+            } else if (declaredField.getAnnotation(CollectionTable.class) != null) {
                 CollectionTable collectionTable = declaredField.getAnnotation(CollectionTable.class);
                 JoinColumn collectionJoinColumn = collectionTable.joinColumns()[0];
                 String collectionTableName = collectionTable.name();
-                PathElement p = new PathElement(collectionTableName, collectionJoinColumn.name(),collectionJoinColumn.name());
+                PathElement p = new PathElement(
+                        collectionTableName, collectionJoinColumn.name(), collectionJoinColumn.name()
+                );
                 stack.push(p);
                 result.put(collectionTableName, new OperationStackHolder((Stack<PathElement>) stack.clone()));
                 stack.pop();
-            }else if(declaredField.getAnnotation(ManyToOne.class)!=null){
+            } else if (declaredField.getAnnotation(ManyToOne.class) != null) {
                 ManyToOne manyToOne = declaredField.getAnnotation(ManyToOne.class);
-                if(manyToOne.targetEntity().equals(classToProcess)){
+                if (manyToOne.targetEntity().equals(classToProcess)) {
                     JoinColumn selfJoinColumn = declaredField.getAnnotation(JoinColumn.class);
-                    result.put(tableAnnotation.name()+"_UPDATE", new OperationStackHolder((Stack<PathElement>) stack.clone(), true, selfJoinColumn.name()));
-                }else if(manyToOne.targetEntity().equals(prevProcessedClass) && fromManyToOne){
+                    result.put(
+                            tableAnnotation.name() + "_UPDATE",
+                            new OperationStackHolder(
+                                    (Stack<PathElement>) stack.clone(), true, selfJoinColumn.name()
+                            )
+                    );
+                } else if (manyToOne.targetEntity().equals(prevProcessedClass) && fromManyToOne) {
                     //ManyToMany without 3rd table
                     Stack<PathElement> clone = (Stack<PathElement>) stack.clone();
                     PathElement pop = clone.pop();
-                    result.put(tableAnnotation.name()+"_UPDATE", new OperationStackHolder(clone, true, pop.getJoinColumn(), true));
+                    result.put(
+                            tableAnnotation.name() + "_UPDATE",
+                            new OperationStackHolder(clone, true, pop.getJoinColumn(), true)
+                    );
                 }/*else{
                     JoinColumn jnColumn = declaredField.getAnnotation(JoinColumn.class);
                     diveDeep(manyToOne.targetEntity(), jnColumn.name(), null, stack, processedClasses, result, dependencies, exclusions, true, classToProcess);
                 }*/
-            }else if(declaredField.getAnnotation(ManyToMany.class)!=null){
+            } else if (declaredField.getAnnotation(ManyToMany.class) != null) {
                 JoinTable joinTable = declaredField.getAnnotation(JoinTable.class);
                 JoinColumn[] joinColumns = joinTable.joinColumns();
-                stack.push(new PathElement(joinTable.name(),joinColumns[0].referencedColumnName(),joinColumns[0].name()));
-                result.put(joinTable.name(), new OperationStackHolder((Stack<PathElement>) stack.clone(),true));
+                stack.push(
+                        new PathElement(joinTable.name(), joinColumns[0].referencedColumnName(), joinColumns[0].name())
+                );
+                result.put(joinTable.name(), new OperationStackHolder((Stack<PathElement>) stack.clone(), true));
                 stack.pop();
             }/*else if(declaredField.getAnnotation(OneToOne.class)!=null){
                 JoinColumn jnColumn = declaredField.getAnnotation(JoinColumn.class);
@@ -280,25 +349,39 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         OperationStackHolder operationStackHolder = result.get(tableAnnotation.name() + "_UPDATE");
         //so this is biderectional and we will update one side to set null, to to delete we need to use another side of relationship
         //mostly for order->blc_quote->order relationship case.
-        if(operationStackHolder!=null && operationStackHolder.isRelationshipUpdate()){
-            result.put(tableAnnotation.name(),new OperationStackHolder((Stack<PathElement>) stack.clone(), false, "",false, true));
-        }else {
+        if (operationStackHolder != null && operationStackHolder.isRelationshipUpdate()) {
+            result.put(
+                    tableAnnotation.name(),
+                    new OperationStackHolder(
+                            (Stack<PathElement>) stack.clone(),
+                            false,
+                            "",
+                            false,
+                            true
+                    )
+            );
+        } else {
             result.put(tableAnnotation.name(), new OperationStackHolder((Stack<PathElement>) stack.clone()));
         }
         stack.pop();
     }
 
-    private void processManualDefinedDependencies(Stack<PathElement> stack, HashMap<String, OperationStackHolder> result, Map<String, List<PathElement>> dependencies, String tableName) {
+    protected void processManualDefinedDependencies(
+            Stack<PathElement> stack,
+            HashMap<String, OperationStackHolder> result,
+            Map<String, List<PathElement>> dependencies,
+            String tableName
+    ) {
         List<PathElement> pathElement = dependencies.get(tableName);
         if (pathElement != null) {
-            for(PathElement p: pathElement) {
+            for (PathElement p : pathElement) {
                 stack.push(p);
-                if(dependencies.get(p.getName())!=null){
+                if (dependencies.get(p.getName()) != null) {
                     processManualDefinedDependencies(stack, result, dependencies, p.getName());
                 }
                 String name = p.getName();
                 if (result.get(p.getName()) != null) {
-                    name+="_DUPLICATE";
+                    name += "_DUPLICATE";
                 }
                 result.put(name, new OperationStackHolder((Stack<PathElement>) stack.clone()));
                 stack.pop();
@@ -306,7 +389,16 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         }
     }
 
-    private void processField(Stack<PathElement> stack, Set<Class<?>> processedClasses, HashMap<String, OperationStackHolder> result, Field decl,  Map<String, List<PathElement>> dependencies, Set<String> exclustions, boolean fromEmbedded, Class prevClassToProcess) {
+    protected void processField(
+            Stack<PathElement> stack,
+            Set<Class<?>> processedClasses,
+            HashMap<String, OperationStackHolder> result,
+            Field decl,
+            Map<String, List<PathElement>> dependencies,
+            Set<String> exclustions,
+            boolean fromEmbedded,
+            Class prevClassToProcess
+    ) {
         OneToMany oneToManyAnnot = decl.getAnnotation(OneToMany.class);
         if (oneToManyAnnot != null) {
             Class<?> aClass = oneToManyAnnot.targetEntity();
@@ -318,7 +410,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
                 joinTableNameFromJoinTable = joinTable.name();
                 JoinColumn jnColumn = joinTable.joinColumns()[0];
                 JoinColumn inverseJoinColumn = joinTable.inverseJoinColumns()[0];
-                if(exclustions.contains(joinTable.name())){
+                if (exclustions.contains(joinTable.name())) {
                     return;
                 }
                 PathElement pathElement = new PathElement(joinTable.name(), inverseJoinColumn.name(), jnColumn.name());
@@ -326,26 +418,59 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
                 joinColumnFromJoinTable = inverseJoinColumn.name();
                 result.put(joinTableNameFromJoinTable, new OperationStackHolder((Stack<PathElement>) stack.clone(), true));
             }
-            diveDeep(aClass, joinColumnFromJoinTable, mappedByAnnotation, stack, processedClasses, result,dependencies, exclustions, false, prevClassToProcess);
+            diveDeep(
+                    aClass,
+                    joinColumnFromJoinTable,
+                    mappedByAnnotation,
+                    stack,
+                    processedClasses,
+                    result,
+                    dependencies,
+                    exclustions,
+                    false,
+                    prevClassToProcess
+            );
             if (StringUtils.isNotEmpty(joinTableNameFromJoinTable)) {
-                if(!result.containsKey(joinTableNameFromJoinTable)) {
+                if (!result.containsKey(joinTableNameFromJoinTable)) {
                     result.put(joinTableNameFromJoinTable, new OperationStackHolder((Stack<PathElement>) stack.clone()));
                 }
                 stack.pop();
             }
-        }else if(decl.getAnnotation(ManyToOne.class)!=null){
+        } else if (decl.getAnnotation(ManyToOne.class) != null) {
             ManyToOne manyToOne = decl.getAnnotation(ManyToOne.class);
             Class aClass = manyToOne.targetEntity();
             if (!processedClasses.contains(aClass)) {
                 String joinColumnName = decl.getAnnotation(JoinColumn.class).name();
-                diveDeep(aClass,joinColumnName, null, stack, processedClasses, result, dependencies, exclustions, fromEmbedded, prevClassToProcess);
+                diveDeep(
+                        aClass,
+                        joinColumnName,
+                        null,
+                        stack,
+                        processedClasses,
+                        result,
+                        dependencies,
+                        exclustions,
+                        fromEmbedded,
+                        prevClassToProcess
+                );
             }
-        }else if(decl.getAnnotation(OneToOne.class)!=null){
+        } else if (decl.getAnnotation(OneToOne.class) != null) {
             OneToOne manyToOne = decl.getAnnotation(OneToOne.class);
             Class aClass = manyToOne.targetEntity();
             if (!processedClasses.contains(aClass)) {
                 String joinColumnName = decl.getAnnotation(JoinColumn.class).name();
-                diveDeep(aClass,joinColumnName, null, stack, processedClasses, result, dependencies, exclustions, fromEmbedded, prevClassToProcess);
+                diveDeep(
+                        aClass,
+                        joinColumnName,
+                        null,
+                        stack,
+                        processedClasses,
+                        result,
+                        dependencies,
+                        exclustions,
+                        fromEmbedded,
+                        prevClassToProcess
+                );
             }
         }
     }
@@ -377,12 +502,11 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         private final boolean fromManyToOne;
 
         /**
-         *
-         * @param name table name
-         * @param idField id field name
-         * @param joinColumn fk column name in this table to join with "parent table", like blc_order->order_item, fk is ORDER_ID
+         * @param name          table name
+         * @param idField       id field name
+         * @param joinColumn    fk column name in this table to join with "parent table", like blc_order->order_item, fk is ORDER_ID
          * @param fromManyToOne is this path came from @ManyToOne - ManyToMany case without 3rd table
-         *                     (or exceptional case @OneToOne biderectional with one site @ManyToOne)
+         *                      (or exceptional case @OneToOne biderectional with one site @ManyToOne)
          */
         public PathElement(String name, String idField, String joinColumn, boolean fromManyToOne) {
             this.name = name;
@@ -390,6 +514,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             this.joinColumn = joinColumn;
             this.fromManyToOne = fromManyToOne;
         }
+
         public PathElement(String name, String idField, String joinColumn) {
             this(name, idField, joinColumn, false);
         }
@@ -419,13 +544,25 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
         private boolean relationshipUpdate;
         private boolean manyToOneRelationshipDelete;
 
-        public OperationStackHolder(Stack<PathElement> stack, boolean isUpdate, String columnToUpdate,boolean relationshipUpdate) {
+        public OperationStackHolder(
+                Stack<PathElement> stack,
+                boolean isUpdate,
+                String columnToUpdate,
+                boolean relationshipUpdate
+        ) {
             this.stack = stack;
             this.isUpdate = isUpdate;
             this.columnToUpdate = columnToUpdate;
             this.relationshipUpdate = relationshipUpdate;
         }
-        public OperationStackHolder(Stack<PathElement> stack, boolean isUpdate, String columnToUpdate,boolean relationshipUpdate, boolean manyToOneRelationshipDelete) {
+
+        public OperationStackHolder(
+                Stack<PathElement> stack,
+                boolean isUpdate,
+                String columnToUpdate,
+                boolean relationshipUpdate,
+                boolean manyToOneRelationshipDelete
+        ) {
             this(stack, isUpdate, columnToUpdate, relationshipUpdate);
             this.manyToOneRelationshipDelete = manyToOneRelationshipDelete;
         }
@@ -435,6 +572,7 @@ public class DeleteStatementGeneratorImpl implements DeleteStatementGenerator {
             this.isUpdate = isUpdate;
             this.columnToUpdate = columnToUpdate;
         }
+
         public OperationStackHolder(Stack<PathElement> stack) {
             this(stack, false, null);
         }

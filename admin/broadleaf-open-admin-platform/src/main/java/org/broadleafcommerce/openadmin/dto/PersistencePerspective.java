@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.dto;
 import org.apache.commons.lang3.ArrayUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -27,17 +28,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class PersistencePerspective implements Serializable {
-     
+
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     protected String[] additionalNonPersistentProperties = new String[]{};
     protected ForeignKey[] additionalForeignKeys = new ForeignKey[]{};
-    protected Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>();
+    protected Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = new HashMap<>();
     protected OperationTypes operationTypes = new OperationTypes();
     protected Boolean populateToOneFields = false;
     protected String[] excludeFields = new String[]{};
@@ -45,11 +45,15 @@ public class PersistencePerspective implements Serializable {
     protected String configurationKey;
     protected Boolean showArchivedFields = false;
     protected Boolean useServerSideInspectionCache = true;
-    
+
     public PersistencePerspective() {
     }
-    
-    public PersistencePerspective(OperationTypes operationTypes, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignKeys) {
+
+    public PersistencePerspective(
+            OperationTypes operationTypes,
+            String[] additionalNonPersistentProperties,
+            ForeignKey[] additionalForeignKeys
+    ) {
         setAdditionalNonPersistentProperties(additionalNonPersistentProperties);
         setAdditionalForeignKeys(additionalForeignKeys);
         this.operationTypes = operationTypes;
@@ -88,7 +92,7 @@ public class PersistencePerspective implements Serializable {
     public void setOperationTypes(OperationTypes operationTypes) {
         this.operationTypes = operationTypes;
     }
-    
+
     public void addPersistencePerspectiveItem(PersistencePerspectiveItemType type, PersistencePerspectiveItem item) {
         persistencePerspectiveItems.put(type, item);
     }
@@ -97,7 +101,9 @@ public class PersistencePerspective implements Serializable {
         return persistencePerspectiveItems;
     }
 
-    public void setPersistencePerspectiveItems(Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems) {
+    public void setPersistencePerspectiveItems(
+            Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems
+    ) {
         this.persistencePerspectiveItems = persistencePerspectiveItems;
     }
 
@@ -217,18 +223,25 @@ public class PersistencePerspective implements Serializable {
 
         if (additionalNonPersistentProperties != null) {
             persistencePerspective.additionalNonPersistentProperties = new String[additionalNonPersistentProperties.length];
-            System.arraycopy(additionalNonPersistentProperties, 0, persistencePerspective.additionalNonPersistentProperties, 0, additionalNonPersistentProperties.length);
+            System.arraycopy(
+                    additionalNonPersistentProperties,
+                    0,
+                    persistencePerspective.additionalNonPersistentProperties,
+                    0,
+                    additionalNonPersistentProperties.length
+            );
         }
 
         if (additionalForeignKeys != null) {
             persistencePerspective.additionalForeignKeys = new ForeignKey[additionalForeignKeys.length];
-            for (int j=0; j<additionalForeignKeys.length;j++){
+            for (int j = 0; j < additionalForeignKeys.length; j++) {
                 persistencePerspective.additionalForeignKeys[j] = additionalForeignKeys[j].cloneForeignKey();
             }
         }
 
         if (this.persistencePerspectiveItems != null) {
-            Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>(this.persistencePerspectiveItems.size());
+            Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems =
+                    new HashMap<>(this.persistencePerspectiveItems.size());
             for (Map.Entry<PersistencePerspectiveItemType, PersistencePerspectiveItem> entry : this.persistencePerspectiveItems.entrySet()) {
                 persistencePerspectiveItems.put(entry.getKey(), entry.getValue().clonePersistencePerspectiveItem());
             }
@@ -286,7 +299,7 @@ public class PersistencePerspective implements Serializable {
         if (showArchivedFields != null ? !showArchivedFields.equals(that.showArchivedFields) : that.showArchivedFields != null)
             return false;
         if (useServerSideInspectionCache != null ? !useServerSideInspectionCache.equals(that.useServerSideInspectionCache) : that.useServerSideInspectionCache != null)
-                    return false;
+            return false;
 
         return true;
     }
@@ -305,4 +318,5 @@ public class PersistencePerspective implements Serializable {
         result = 31 * result + (useServerSideInspectionCache != null ? useServerSideInspectionCache.hashCode() : 0);
         return result;
     }
+
 }

@@ -10,15 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.web.expression;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.core.catalog.domain.Category;
@@ -35,8 +33,6 @@ import jakarta.annotation.Resource;
 @ConditionalOnTemplating
 public class SeoVariableExpression implements BroadleafVariableExpression {
 
-    private static final Log LOG = LogFactory.getLog(SeoVariableExpression.class);
-
     @Resource(name = "blSeoPropertyService")
     protected SeoPropertyService seoPropertyService;
 
@@ -44,7 +40,6 @@ public class SeoVariableExpression implements BroadleafVariableExpression {
     public String getName() {
         return "seo";
     }
-
 
     public Map<String, String> getMetaProperties(Category category) {
         return seoPropertyService.getSeoProperties(category);

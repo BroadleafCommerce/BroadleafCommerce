@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -52,7 +52,8 @@ public class TranslationsFormBuilderExtensionHandler extends AbstractFormBuilder
         try {
             if (Translation.class.isAssignableFrom(Class.forName(className))) {
                 Field translatedValue = record.getField("translatedValue");
-                if (translatedValue != null && translatedValue.getDisplayValue() != null && translatedValue.getValue() != null) {
+                if (translatedValue != null && translatedValue.getDisplayValue() != null
+                        && translatedValue.getValue() != null) {
                     String displayValue = translatedValue.getDisplayValue();
                     String value = translatedValue.getValue();
                     if (displayValue.length() > 30) {
@@ -67,8 +68,9 @@ public class TranslationsFormBuilderExtensionHandler extends AbstractFormBuilder
                 return ExtensionResultStatusType.HANDLED;
             }
         } catch (ClassNotFoundException e) {
-            LOG.error("An error has occurred ",e);
+            LOG.error("An error has occurred ", e);
         }
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
 }

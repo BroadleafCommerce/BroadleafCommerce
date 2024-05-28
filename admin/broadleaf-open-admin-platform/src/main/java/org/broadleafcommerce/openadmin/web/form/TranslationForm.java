@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,8 +32,8 @@ public class TranslationForm {
      * Whether the field to translate is rich text
      *
      * @deprecated Prefer using {@link #fieldType} to explicitly specify the field type for more
-     *             advanced logic. Note that {@link #getIsRte()} will remain as a shorthand way of
-     *             determining if the field type should be rendered as HTML/rich-text
+     * advanced logic. Note that {@link #getIsRte()} will remain as a shorthand way of
+     * determining if the field type should be rendered as HTML/rich-text
      */
     @Deprecated
     protected Boolean isRte;
@@ -126,4 +126,5 @@ public class TranslationForm {
     public void setFieldType(String fieldType) {
         this.fieldType = fieldType;
     }
+
 }

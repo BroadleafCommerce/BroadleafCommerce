@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,22 +29,26 @@ import java.util.Date;
 public interface SolrIndexStatusService {
 
     /**
-     * Adds an IndexStatusInfo entry into the status providers
-     * @param status
-     */
-    void setIndexStatus(IndexStatusInfo status);
-
-    /**
      * Adds a new IndexStatusInfo given the eventId and the create date
-     * @param status
+     *
+     * @param eventId
+     * @param eventCreatedDate
      */
     void addIndexStatus(Long eventId, Date eventCreatedDate);
 
     /**
      * Returns a populated IndexStatusInfo instance from the provider(s)
-     * @return the index status information 
+     *
+     * @return the index status information
      */
     IndexStatusInfo getIndexStatus();
+
+    /**
+     * Adds an IndexStatusInfo entry into the status providers
+     *
+     * @param status
+     */
+    void setIndexStatus(IndexStatusInfo status);
 
     /**
      * Provide a custom IndexStatusInfo instance to be used by the system.
@@ -55,9 +59,11 @@ public interface SolrIndexStatusService {
 
     /**
      * Adds an error into the index status
-     * @param eventId the Id of the event that has erred
-     * @param retryCount the pre-set retry count defined in the event
+     *
+     * @param eventId          the Id of the event that has erred
+     * @param retryCount       the pre-set retry count defined in the event
      * @param eventCreatedDate the date that the event was created
      */
     void addIndexErrorStatus(Long eventId, Integer retryCount, Date eventCreatedDate);
+
 }

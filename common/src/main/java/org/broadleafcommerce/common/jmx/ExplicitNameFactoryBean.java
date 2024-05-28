@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,15 +20,13 @@ package org.broadleafcommerce.common.jmx;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class ExplicitNameFactoryBean implements FactoryBean {
-    
+
     private final String name;
     private final String suffix;
-    
+
     public ExplicitNameFactoryBean(String name, String suffix) {
         this.name = name;
         this.suffix = suffix;

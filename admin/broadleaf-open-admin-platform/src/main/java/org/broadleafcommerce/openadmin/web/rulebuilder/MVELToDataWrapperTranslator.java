@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,20 +46,31 @@ import java.util.List;
  */
 public class MVELToDataWrapperTranslator {
 
-    private static final Log LOG = LogFactory.getLog(MVELToDataWrapperTranslator.class);
-
     public static final String SUB_GROUP_MESSAGE = "MVEL phrase is not compatible with nested expressions. " +
             "Please use the rule builder to re-structure the rule.  Use top-level expressions, " +
             "product groups and/or customer segments.";
-
+    private static final Log LOG = LogFactory.getLog(MVELToDataWrapperTranslator.class);
     protected GroupingTranslator groupingTranslator = new GroupingTranslator();
     protected PhraseTranslator phraseTranslator = new PhraseTranslator();
 
-    public DataWrapper createRuleData(Entity[] entities, String mvelProperty, String quantityProperty, String idProperty, RuleBuilderFieldService fieldService) {
+    public DataWrapper createRuleData(
+            Entity[] entities,
+            String mvelProperty,
+            String quantityProperty,
+            String idProperty,
+            RuleBuilderFieldService fieldService
+    ) {
         return createRuleData(entities, mvelProperty, quantityProperty, idProperty, null, fieldService);
     }
 
-    public DataWrapper createRuleData(Entity[] entities, String mvelProperty, String quantityProperty, String idProperty, String containedProperty, RuleBuilderFieldService fieldService) {
+    public DataWrapper createRuleData(
+            Entity[] entities,
+            String mvelProperty,
+            String quantityProperty,
+            String idProperty,
+            String containedProperty,
+            RuleBuilderFieldService fieldService
+    ) {
         if (entities == null || entities.length == 0 || mvelProperty == null) {
             return null;
         }
@@ -72,11 +83,11 @@ public class MVELToDataWrapperTranslator {
                 Long id = null;
                 Long containedId = null;
                 for (Property p : e.getProperties()) {
-                    if (mvelProperty.equals(p.getName())){
+                    if (mvelProperty.equals(p.getName())) {
                         mvel = p.getValue();
                     }
 
-                    if (quantityProperty !=null && quantityProperty.equals(p.getName())){
+                    if (quantityProperty != null && quantityProperty.equals(p.getName())) {
                         qty = Integer.parseInt(p.getValue());
                     }
 
@@ -120,23 +131,27 @@ public class MVELToDataWrapperTranslator {
 
     protected Boolean checkForInvalidSubGroup(DataDTO dataDTO) {
         for (DataDTO rules : dataDTO.getRules()) {
-            if(!rules.isCreatedFromSubGroup()){
+            if (!rules.isCreatedFromSubGroup()) {
                 continue;
             }
             ArrayList<DataDTO> subRules = rules.getRules();
 
-            if (CollectionUtils.size(subRules) == 2 && isExpressionDTO(subRules.get(0)) && isExpressionDTO(subRules.get(1))) {
+            if (CollectionUtils.size(subRules) == 2 && isExpressionDTO(subRules.get(0))
+                    && isExpressionDTO(subRules.get(1))) {
                 ExpressionDTO expression1 = (ExpressionDTO) subRules.get(0);
                 ExpressionDTO expression2 = (ExpressionDTO) subRules.get(1);
 
-                boolean isBetween = StringUtils.equals(expression1.getOperator(), BLCOperator.GREATER_THAN.name()) && StringUtils.equals(expression2.getOperator(), BLCOperator.LESS_THAN.name());
-                boolean isBetweenInclusive = StringUtils.equals(expression1.getOperator(), BLCOperator.GREATER_OR_EQUAL.name()) && StringUtils.equals(expression2.getOperator(), BLCOperator.LESS_OR_EQUAL.name());
+                boolean isBetween = StringUtils.equals(expression1.getOperator(), BLCOperator.GREATER_THAN.name())
+                        && StringUtils.equals(expression2.getOperator(), BLCOperator.LESS_THAN.name());
+                boolean isBetweenInclusive = StringUtils.equals(expression1.getOperator(), BLCOperator.GREATER_OR_EQUAL.name())
+                        && StringUtils.equals(expression2.getOperator(), BLCOperator.LESS_OR_EQUAL.name());
 
                 return !(isBetween || isBetweenInclusive);
             } else if (isExpressionDTO(rules)) {
                 ExpressionDTO expression = (ExpressionDTO) rules;
 
-                if (!StringUtils.equals(expression.getOperator(), BLCOperator.BETWEEN.name()) && !StringUtils.equals(expression.getOperator(), BLCOperator.BETWEEN_INCLUSIVE.name())) {
+                if (!StringUtils.equals(expression.getOperator(), BLCOperator.BETWEEN.name())
+                        && !StringUtils.equals(expression.getOperator(), BLCOperator.BETWEEN_INCLUSIVE.name())) {
                     return true;
                 }
             } else {
@@ -150,20 +165,19 @@ public class MVELToDataWrapperTranslator {
         return ExpressionDTO.class.isAssignableFrom(rules.getClass());
     }
 
-    protected DataDTO createRuleDataDTO(DataDTO parentDTO, Group group, RuleBuilderFieldService fieldService)
-        throws MVELTranslationException {
+    protected DataDTO createRuleDataDTO(DataDTO parentDTO, Group group, RuleBuilderFieldService fieldService) throws MVELTranslationException {
         DataDTO data = new DataDTO();
         if (group.getOperatorType() == null) {
             group.setOperatorType(BLCOperator.AND);
         }
-        if(parentDTO == null){
+        if (parentDTO == null) {
             data.setCreatedFromSubGroup(false);
-        }else{
+        } else {
             data.setCreatedFromSubGroup(true);
         }
         BLCOperator operator = group.getOperatorType();
         data.setCondition(operator.name());
-        List<ExpressionDTO> myCriteriaList = new ArrayList<ExpressionDTO>();
+        List<ExpressionDTO> myCriteriaList = new ArrayList<>();
         if (BLCOperator.NOT.equals(group.getOperatorType()) && group.getIsTopGroup()) {
             group = group.getSubGroups().get(0);
             data.setCreatedFromSubGroup(true);
@@ -175,7 +189,7 @@ public class MVELToDataWrapperTranslator {
         if (!myCriteriaList.isEmpty()) {
             data.getRules().addAll(myCriteriaList);
         }
-        if(data.isCreatedFromSubGroup()){
+        if (data.isCreatedFromSubGroup()) {
             for (DataDTO rule : data.getRules()) {
                 rule.setCreatedFromSubGroup(true);
             }
@@ -183,10 +197,10 @@ public class MVELToDataWrapperTranslator {
         for (Group subgroup : group.getSubGroups()) {
             DataDTO subCriteria = createRuleDataDTO(data, subgroup, fieldService);
             if (subCriteria != null && !subCriteria.getRules().isEmpty()) {
-                if(subCriteria.getRules().size()==1){
+                if (subCriteria.getRules().size() == 1) {
                     data.getRules().add(subCriteria.getRules().get(0));
                     subCriteria.getRules().get(0).setCreatedFromSubGroup(false);
-                }else {
+                } else {
                     data.getRules().add(subCriteria);
                 }
             }
@@ -198,18 +212,22 @@ public class MVELToDataWrapperTranslator {
         }
     }
 
-    public void appendExpression(String phrase, RuleBuilderFieldService fieldService, DataDTO parentDTO,
-                                 List<ExpressionDTO> myCriteriaList) throws MVELTranslationException {
+    public void appendExpression(
+            String phrase,
+            RuleBuilderFieldService fieldService,
+            DataDTO parentDTO,
+            List<ExpressionDTO> myCriteriaList
+    ) throws MVELTranslationException {
         Expression expression = phraseTranslator.createExpression(phrase);
         FieldDTO field = fieldService.getField(expression.getField());
         if (field == null) {
-            throw new MVELTranslationException(MVELTranslationException.SPECIFIED_FIELD_NOT_FOUND, "MVEL phrase is not " +
-                    "compatible with the RuleBuilderFieldService associated with the current rules builder. " +
-                    "Unable to find the field specified: ("+expression.getField()+")");
+            throw new MVELTranslationException(MVELTranslationException.SPECIFIED_FIELD_NOT_FOUND, "MVEL phrase is not "
+                    + "compatible with the RuleBuilderFieldService associated with the current rules builder. "
+                    + "Unable to find the field specified: (" + expression.getField() + ")");
         }
         SupportedFieldType type = fieldService.getSupportedFieldType(expression.getField());
         ExpressionDTO expressionDTO = createExpressionDTO(expression);
-        if(parentDTO!=null){
+        if (parentDTO != null) {
             expressionDTO.setCreatedFromSubGroup(true);
         }
         postProcessCriteria(parentDTO, myCriteriaList, expressionDTO, type);
@@ -228,19 +246,23 @@ public class MVELToDataWrapperTranslator {
         return stringValue.startsWith("[") && stringValue.endsWith("]") && stringValue.indexOf(",") > 0;
     }
 
-    protected void postProcessCriteria(DataDTO parentDTO, List<ExpressionDTO> myCriteriaList,
-                                       ExpressionDTO temp, SupportedFieldType type) {
+    protected void postProcessCriteria(
+            DataDTO parentDTO,
+            List<ExpressionDTO> myCriteriaList,
+            ExpressionDTO temp,
+            SupportedFieldType type
+    ) {
         int lstIdx = myCriteriaList.size() - 1;
         ExpressionDTO prevExpression = lstIdx != -1 ? myCriteriaList.get(lstIdx) : null;
         boolean sameExpressionId = prevExpression != null && temp.getId().equals(prevExpression.getId());
-        
+
         if (sameExpressionId && isBetweenOperator(prevExpression, temp)) {
             prevExpression.setOperator(BLCOperator.BETWEEN.name());
             boolean hasTempSmallerVal = Long.parseLong(temp.getValue()) < Long.parseLong(prevExpression.getValue());
             String start = hasTempSmallerVal ? temp.getValue() : prevExpression.getValue();
             String end = hasTempSmallerVal ? prevExpression.getValue() : temp.getValue();
             if (type.toString().equals(SupportedFieldType.DATE.toString())) {
-                start = "\"" + start + "\"" ;
+                start = "\"" + start + "\"";
                 end = "\"" + end + "\"";
             }
             prevExpression.setValue("[" + start + "," + end + "]");
@@ -253,7 +275,7 @@ public class MVELToDataWrapperTranslator {
             String start = hasTempSmallerVal ? temp.getValue() : prevExpression.getValue();
             String end = hasTempSmallerVal ? prevExpression.getValue() : temp.getValue();
             if (type.toString().equals(SupportedFieldType.DATE.toString())) {
-                start = "\"" + start + "\"" ;
+                start = "\"" + start + "\"";
                 end = "\"" + end + "\"";
             }
             prevExpression.setValue("[" + start + "," + end + "]");
@@ -275,24 +297,24 @@ public class MVELToDataWrapperTranslator {
         boolean isBetweenOperator;
         final String prevOperator = prev.getOperator();
         final String tempOperator = temp.getOperator();
-        
+
         try {
             final long prevVal = Long.parseLong(prev.getValue());
             final long tempVal = Long.parseLong(temp.getValue());
 
-            isBetweenOperator = (tempVal > prevVal && prevOperator.equals(BLCOperator.GREATER_THAN.name()) 
-                                 && tempOperator.equals(BLCOperator.LESS_THAN.name())) 
-                                || (prevVal > tempVal && prevOperator.equals(BLCOperator.LESS_THAN.name()) 
-                                    && tempOperator.equals(BLCOperator.GREATER_THAN.name()) && tempVal < prevVal);
+            isBetweenOperator = (tempVal > prevVal && prevOperator.equals(BLCOperator.GREATER_THAN.name())
+                    && tempOperator.equals(BLCOperator.LESS_THAN.name()))
+                    || (prevVal > tempVal && prevOperator.equals(BLCOperator.LESS_THAN.name())
+                    && tempOperator.equals(BLCOperator.GREATER_THAN.name()) && tempVal < prevVal);
         } catch (final NumberFormatException e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Trying to parse a non-long value to a long: %s, %s", 
-                                        StringUtil.sanitize(prev.getValue()), StringUtil.sanitize(temp.getValue())));
+                LOG.debug(String.format("Trying to parse a non-long value to a long: %s, %s",
+                        StringUtil.sanitize(prev.getValue()), StringUtil.sanitize(temp.getValue())));
             }
-            
+
             isBetweenOperator = false;
         }
-        
+
         return isBetweenOperator;
     }
 
@@ -300,23 +322,23 @@ public class MVELToDataWrapperTranslator {
         boolean isBetweenOperator;
         final String prevOperator = prev.getOperator();
         final String tempOperator = temp.getOperator();
-        
+
         try {
             final long prevVal = Long.parseLong(prev.getValue());
             final long tempVal = Long.parseLong(temp.getValue());
-            isBetweenOperator = (tempVal >= prevVal && prevOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) 
-                                 && tempOperator.equals(BLCOperator.LESS_OR_EQUAL.name())) 
-                                || (prevVal >= tempVal && prevOperator.equals(BLCOperator.LESS_OR_EQUAL.name()) 
-                                    && tempOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempVal <= prevVal);
+            isBetweenOperator = (tempVal >= prevVal && prevOperator.equals(BLCOperator.GREATER_OR_EQUAL.name())
+                    && tempOperator.equals(BLCOperator.LESS_OR_EQUAL.name()))
+                    || (prevVal >= tempVal && prevOperator.equals(BLCOperator.LESS_OR_EQUAL.name())
+                    && tempOperator.equals(BLCOperator.GREATER_OR_EQUAL.name()) && tempVal <= prevVal);
         } catch (final NumberFormatException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(String.format("Trying to parse a non-long value to a long: %s, %s",
-                                        StringUtil.sanitize(prev.getValue()), StringUtil.sanitize(temp.getValue())));
+                        StringUtil.sanitize(prev.getValue()), StringUtil.sanitize(temp.getValue())));
             }
 
             isBetweenOperator = false;
         }
-        
+
         return isBetweenOperator;
     }
 

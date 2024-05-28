@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,6 +33,8 @@ import java.util.Map;
  * @author Jeff Fischer
  */
 public interface BasicPersistenceModuleExtensionHandler extends ExtensionHandler {
+
+    public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 
     /**
      * Handle reorder change requests from the admin for sortable basic collections
@@ -66,6 +68,4 @@ public interface BasicPersistenceModuleExtensionHandler extends ExtensionHandler
                                               PersistencePackage persistencePackage, Serializable instance,
                                               Map<String, FieldMetadata> mergedProperties,
                                               ExtensionResultHolder<Serializable> resultHolder);
-
-    public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 }

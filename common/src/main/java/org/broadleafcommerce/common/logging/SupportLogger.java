@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,13 +50,11 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author Jeff Fischer
  * @author elbertbautista
- *
  */
 public class SupportLogger {
 
+    public static final String FQCN_KEY = "SupportLogger.adapter.fqcn";
     private static final Log LOG = LogFactory.getLog(SupportLogger.class);
-    public static final String FQCN_KEY =  "SupportLogger.adapter.fqcn";
-
     private String moduleName;
     private SupportLoggerAdapter adapter;
 
@@ -83,8 +81,13 @@ public class SupportLogger {
         }
     }
 
+    public static String getSupportLoggerAdapterFQCN() {
+        return System.getProperty(FQCN_KEY);
+    }
+
     /**
      * emit a SUPPORT level message
+     *
      * @param message
      */
     public void support(Object message) {
@@ -93,6 +96,7 @@ public class SupportLogger {
 
     /**
      * emit a SUPPORT level message with throwable
+     *
      * @param message
      * @param t
      */
@@ -102,19 +106,21 @@ public class SupportLogger {
 
     /**
      * emit a SUPPORT lifecycle message
+     *
      * @param lifeCycleEvent
      * @param message
      */
     public void lifecycle(LifeCycleEvent lifeCycleEvent, Object message) {
-        adapter.lifecycle(lifeCycleEvent, moduleName + " - " + lifeCycleEvent.toString() + (!StringUtils.isEmpty(message.toString())?" - " + message:""));
+        adapter.lifecycle(lifeCycleEvent, moduleName + " - " + lifeCycleEvent.toString()
+                + (!StringUtils.isEmpty(message.toString()) ? " - " + message : ""));
     }
 
     /**
      * In order to be backwards compatible. The support logger should also support
      * the debug, error, fatal, info, and warn levels as well.
+     *
      * @param message
      */
-
     public void debug(Object message) {
         adapter.debug(moduleName + " - " + message);
     }
@@ -153,10 +159,6 @@ public class SupportLogger {
 
     public void warn(Object message, Throwable t) {
         adapter.warn(moduleName + " - " + message, t);
-    }
-
-    public static String getSupportLoggerAdapterFQCN() {
-        return System.getProperty(FQCN_KEY);
     }
 
 }

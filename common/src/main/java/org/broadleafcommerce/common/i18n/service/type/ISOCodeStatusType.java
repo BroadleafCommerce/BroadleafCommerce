@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.i18n.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,9 +32,9 @@ import java.util.Map;
  */
 public class ISOCodeStatusType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, ISOCodeStatusType> TYPES = new LinkedHashMap<String, ISOCodeStatusType>();
+    private static final Map<String, ISOCodeStatusType> TYPES = new LinkedHashMap<>();
 
     public static final ISOCodeStatusType OFFICIALLY_ASSIGNED = new ISOCodeStatusType("OFFICIALLY_ASSIGNED", "Officially assigned: assigned to a country, territory, or area of geographical interest.");
     public static final ISOCodeStatusType USER_ASSIGNED = new ISOCodeStatusType("USER_ASSIGNED", "User-assigned: free for assignment at the disposal of users.");
@@ -42,10 +43,6 @@ public class ISOCodeStatusType implements Serializable, BroadleafEnumerationType
     public static final ISOCodeStatusType INDETERMINATELY_RESERVED = new ISOCodeStatusType("INDETERMINATELY_RESERVED", "Indeterminately reserved: used in coding systems associated with ISO 3166-1.");
     public static final ISOCodeStatusType NOT_USED = new ISOCodeStatusType("NOT_USED", "Not used: not used in ISO 3166-1 in deference to intergovernmental intellectual property organisation names.");
     public static final ISOCodeStatusType UNASSIGNED = new ISOCodeStatusType("UNASSIGNED", "Unassigned: free for assignment by the ISO 3166/MA only.");
-
-    public static ISOCodeStatusType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -59,19 +56,23 @@ public class ISOCodeStatusType implements Serializable, BroadleafEnumerationType
         setType(type);
     }
 
+    public static ISOCodeStatusType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

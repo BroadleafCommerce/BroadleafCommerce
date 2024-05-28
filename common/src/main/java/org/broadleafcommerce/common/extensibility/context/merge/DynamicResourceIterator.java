@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -73,7 +73,9 @@ public class DynamicResourceIterator extends ArrayList<ResourceInputStream> {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ResourceInputStream ris = new ResourceInputStream(new ByteArrayInputStream(sourceArray), null, resourceInputStream.getNames());
+        ResourceInputStream ris = new ResourceInputStream(
+                new ByteArrayInputStream(sourceArray), null, resourceInputStream.getNames()
+        );
         return super.add(ris);
     }
 
@@ -95,14 +97,16 @@ public class DynamicResourceIterator extends ArrayList<ResourceInputStream> {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ResourceInputStream ris = new ResourceInputStream(new ByteArrayInputStream(sourceArray), null, resourceInputStream.getNames());
+        ResourceInputStream ris = new ResourceInputStream(
+                new ByteArrayInputStream(sourceArray), null, resourceInputStream.getNames()
+        );
         super.add(index, ris);
     }
 
     protected byte[] buildArrayFromStream(InputStream source) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean eof = false;
-        try{
+        try {
             while (!eof) {
                 int temp = source.read();
                 if (temp == -1) {
@@ -112,11 +116,14 @@ public class DynamicResourceIterator extends ArrayList<ResourceInputStream> {
                 }
             }
         } finally {
-            try{ source.close(); } catch (Throwable e) {
+            try {
+                source.close();
+            } catch (Throwable e) {
                 LOG.error("Unable to merge source and patch locations", e);
             }
         }
 
         return baos.toByteArray();
     }
+
 }

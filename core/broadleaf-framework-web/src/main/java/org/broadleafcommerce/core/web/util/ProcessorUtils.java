@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,15 +24,15 @@ import java.util.Map.Entry;
 
 /**
  * @author apazzolini
- *
+ * <p>
  * Utility class for Thymeleaf Processors
  */
 public class ProcessorUtils {
-    
+
     /**
-     * Gets a UTF-8 URL encoded URL based on the current URL as well as the specified map 
+     * Gets a UTF-8 URL encoded URL based on the current URL as well as the specified map
      * of query string parameters
-     * 
+     *
      * @param baseUrl
      * @param parameters
      * @return the built URL
@@ -41,12 +41,12 @@ public class ProcessorUtils {
         if (baseUrl.contains("?")) {
             throw new IllegalArgumentException("baseUrl contained a ? indicating it is not a base url");
         }
-        
+
         StringBuilder sb = new StringBuilder();
         sb.append(baseUrl);
-        
+
         boolean atLeastOneParam = false;
-        
+
         if (parameters != null && parameters.size() > 0) {
             for (Entry<String, String[]> entry : parameters.entrySet()) {
                 if (entry.getValue().length > 0) {
@@ -54,13 +54,13 @@ public class ProcessorUtils {
                 }
             }
         }
-        
+
         if (atLeastOneParam) {
             sb.append("?");
         } else {
             return sb.toString();
         }
-        
+
         for (Entry<String, String[]> entry : parameters.entrySet()) {
             String key = entry.getKey();
             for (String value : entry.getValue()) {
@@ -76,12 +76,12 @@ public class ProcessorUtils {
                 sb.append(parameter);
             }
         }
-        
+
         String url = sb.toString();
         if (url.charAt(url.length() - 1) == '&') {
             url = url.substring(0, url.length() - 1);
         }
-        
+
         return url;
     }
 

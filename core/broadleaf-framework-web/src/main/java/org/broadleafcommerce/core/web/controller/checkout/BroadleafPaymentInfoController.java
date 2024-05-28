@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.apache.commons.lang3.StringUtils;
@@ -53,9 +52,9 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
 
     /**
      * Processes the request to save an {@link OrderPayment} based on an existing or new {@link CustomerPayment}.
-     *
+     * <p>
      * Note: this default Broadleaf implementation will create a CustomerPayment if one does not exist,
-     *  and copy it's data to a new OrderPayment.
+     * and copy it's data to a new OrderPayment.
      *
      * @param request
      * @param response
@@ -64,8 +63,13 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
      * @return the return path
      * @throws ServiceException
      */
-    public String savePaymentInfo(HttpServletRequest request, HttpServletResponse response, Model model,
-                                 PaymentInfoForm paymentForm, BindingResult result) throws PricingException, ServiceException {
+    public String savePaymentInfo(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            PaymentInfoForm paymentForm,
+            BindingResult result
+    ) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
         Customer customer = CustomerState.getCustomer();
 
@@ -74,7 +78,7 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
 
         if (!result.hasErrors()) {
             if (paymentForm.getShouldSaveNewPayment() && !paymentForm.getShouldUseCustomerPayment()) {
-                if (paymentForm.getCustomerPaymentId() != null){
+                if (paymentForm.getCustomerPaymentId() != null) {
                     savedPaymentService.updateSavedPayment(customer, paymentForm);
                 } else if (paymentForm.getCustomerPaymentId() == null) {
                     Long customerPaymentId = savedPaymentService.addSavedPayment(customer, paymentForm);
@@ -85,11 +89,15 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
             }
 
             if (paymentForm.getShouldUseCustomerPayment()) {
-                CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentById(paymentForm.getCustomerPaymentId());
+                CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentById(
+                        paymentForm.getCustomerPaymentId()
+                );
 
                 if (!cartStateService.cartHasCreditCardPaymentWithSameToken(customerPayment.getPaymentToken())) {
                     orderService.removeCreditCardPaymentsFromOrder(cart);
-                    orderPaymentService.createOrderPaymentFromCustomerPayment(cart, customerPayment, cart.getTotalAfterAppliedPayments());
+                    orderPaymentService.createOrderPaymentFromCustomerPayment(
+                            cart, customerPayment, cart.getTotalAfterAppliedPayments()
+                    );
                 }
             }
         }
@@ -105,7 +113,7 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
 
     /**
      * Processes the request to save a billing address.
-     *
+     * <p>
      * Note: this default Broadleaf implementation will create an OrderPayment of
      * type CREDIT_CARD and save the passed in billing address
      *
@@ -116,24 +124,29 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
      * @return the return path
      * @throws ServiceException
      */
-    public String saveBillingAddress(HttpServletRequest request, HttpServletResponse response, Model model,
-                                 PaymentInfoForm paymentForm, BindingResult result) throws PricingException, ServiceException {
+    public String saveBillingAddress(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            PaymentInfoForm paymentForm,
+            BindingResult result
+    ) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
 
         preProcessBillingAddress(paymentForm, cart);
         paymentInfoFormValidator.validate(paymentForm, result);
 
         if (!result.hasErrors()) {
-            if ((paymentForm.getAddress().getPhonePrimary() != null) &&
-                    (StringUtils.isEmpty(paymentForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
+            if ((paymentForm.getAddress().getPhonePrimary() != null)
+                    && (StringUtils.isEmpty(paymentForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
                 paymentForm.getAddress().setPhonePrimary(null);
             }
-            if ((paymentForm.getAddress().getPhoneSecondary() != null) &&
-                    (StringUtils.isEmpty(paymentForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            if ((paymentForm.getAddress().getPhoneSecondary() != null)
+                    && (StringUtils.isEmpty(paymentForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
                 paymentForm.getAddress().setPhoneSecondary(null);
             }
-            if ((paymentForm.getAddress().getPhoneFax() != null) &&
-                    (StringUtils.isEmpty(paymentForm.getAddress().getPhoneFax().getPhoneNumber()))) {
+            if ((paymentForm.getAddress().getPhoneFax() != null)
+                    && (StringUtils.isEmpty(paymentForm.getAddress().getPhoneFax().getPhoneNumber()))) {
                 paymentForm.getAddress().setPhoneFax(null);
             }
             orderService.removeCreditCardPaymentsFromOrder(cart);
@@ -155,7 +168,7 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
     }
 
     protected void preProcessBillingAddress(PaymentInfoForm paymentForm, Order cart) {
-        if (paymentForm.getShouldUseShippingAddress()){
+        if (paymentForm.getShouldUseShippingAddress()) {
             copyShippingAddressToBillingAddress(cart, paymentForm);
         }
 
@@ -175,14 +188,16 @@ public class BroadleafPaymentInfoController extends AbstractCheckoutController {
         if (fulfillmentGroupService.getFirstShippableFulfillmentGroup(order) != null) {
             Address shipping = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order).getAddress();
             if (shipping != null) {
-                Address billing = addressService.copyAddress(shipping) ;
+                Address billing = addressService.copyAddress(shipping);
                 paymentInfoForm.setAddress(billing);
             }
         }
     }
 
     protected void copyCustomerPaymentAddressToBillingAddress(PaymentInfoForm paymentForm) {
-        CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentById(paymentForm.getCustomerPaymentId());
+        CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentById(
+                paymentForm.getCustomerPaymentId()
+        );
 
         if (customerPayment != null) {
             Address address = customerPayment.getBillingAddress();

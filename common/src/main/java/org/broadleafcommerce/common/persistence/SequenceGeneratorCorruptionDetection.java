@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -59,10 +59,10 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
     @Resource(name = "blTargetModeMaps")
     protected List<Map<String, Map<String, Object>>> targetModeMaps;
 
-    @Resource(name="blPersistenceService")
+    @Resource(name = "blPersistenceService")
     protected PersistenceService persistenceService;
 
-    @Resource(name="blStreamingTransactionCapableUtil")
+    @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
     @Value("${detect.sequence.generator.inconsistencies}")
@@ -155,7 +155,8 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                 segmentColumnName = tableAnnot.pkColumnName();
                 valueColumnName = tableAnnot.valueColumnName();
             }
-            if (!StringUtils.isEmpty(segmentValue) && !StringUtils.isEmpty(tableName) && !StringUtils.isEmpty(segmentColumnName) && !StringUtils.isEmpty(valueColumnName)) {
+            if (!StringUtils.isEmpty(segmentValue) && !StringUtils.isEmpty(tableName)
+                    && !StringUtils.isEmpty(segmentColumnName) && !StringUtils.isEmpty(valueColumnName)) {
                 StringBuilder sb2 = new StringBuilder();
                 sb2.append("select ");
                 sb2.append(valueColumnName);
@@ -180,7 +181,8 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                 }
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Detecting id sequence state between " + mappedClass.getName() + " and " + segmentValue + " in " + tableName);
+                    LOG.debug("Detecting id sequence state between " + mappedClass.getName() + " and " + segmentValue
+                            + " in " + tableName);
                 }
 
                 StringBuilder sb = new StringBuilder();
@@ -202,15 +204,15 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                 } finally {
                     context.setInternalIgnoreFilters(false);
                 }
-                if(incrementSize==null){
+                if (incrementSize == null) {
                     incrementSize = (long) IdOverrideTableGenerator.DEFAULT_INCREMENT_SIZE;
                 }
                 if (CollectionUtils.isNotEmpty(results) && results.get(0) != null) {
                     LOG.debug(String.format("Checking for sequence corruption on entity %s", segmentValue));
                     Long maxEntityId = BLCNumberUtils.toLong(results.get(0));
-                    if (maxEntityId+incrementSize+1 >= maxSequenceId) {
+                    if (maxEntityId + incrementSize + 1 >= maxSequenceId) {
                         String invalidSequenceDetectedMsg = String.format("The sequence value for %s in %s was found as %d (or an entry did not exist) but the actual max sequence in"
-                            + " %s's table was found as %d", segmentValue, tableName, maxSequenceId, mappedClass.getName(), maxEntityId);
+                                + " %s's table was found as %d", segmentValue, tableName, maxSequenceId, mappedClass.getName(), maxEntityId);
                         if (automaticallyCorrectInconsistencies) {
                             //with hibernate 6 formulat is maxId+allocationSize+1
                             //https://github.com/hibernate/hibernate-orm/blob/6.0/migration-guide.adoc#defaults-for-implicit-sequence-generators
@@ -277,4 +279,5 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
             }
         }
     }
+
 }

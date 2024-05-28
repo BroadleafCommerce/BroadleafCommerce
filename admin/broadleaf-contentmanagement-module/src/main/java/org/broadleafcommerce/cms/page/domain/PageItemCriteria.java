@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,10 +30,10 @@ import jakarta.annotation.Nonnull;
  * For example, a <code>Page</code>  could be setup to only show to user's
  * who have a particular product in their cart.
  *
- * @see org.broadleafcommerce.core.order.service.PageCartRuleProcessor
  * @author bpolster
+ * @see org.broadleafcommerce.core.order.service.PageCartRuleProcessor
  */
-public interface PageItemCriteria extends QuantityBasedRule,MultiTenantCloneable<PageItemCriteria> {
+public interface PageItemCriteria extends QuantityBasedRule, MultiTenantCloneable<PageItemCriteria> {
 
     /**
      * Returns the parent <code>Page</code> to which this
@@ -42,13 +42,14 @@ public interface PageItemCriteria extends QuantityBasedRule,MultiTenantCloneable
      * @return
      */
     @Nonnull
-    public Page getPage();
+    Page getPage();
 
     /**
      * Sets the parent <code>Page</code>.
+     *
      * @param page
      */
-    public void setPage(@Nonnull Page page);
+    void setPage(@Nonnull Page page);
 
     /**
      * Builds a copy of this item.   Used by the content management system when an
@@ -57,6 +58,6 @@ public interface PageItemCriteria extends QuantityBasedRule,MultiTenantCloneable
      * @return a copy of this item
      */
     @Nonnull
-    public PageItemCriteria cloneEntity();
-    
+    PageItemCriteria cloneEntity();
+
 }

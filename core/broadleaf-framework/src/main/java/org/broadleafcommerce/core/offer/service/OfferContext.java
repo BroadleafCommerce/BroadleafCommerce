@@ -10,29 +10,27 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.offer.service;
 
-
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 
 public class OfferContext {
-    
+
     private static final ThreadLocal<OfferContext> OFFERCONTEXT = ThreadLocalManager.createThreadLocal(OfferContext.class);
-    
+    protected Boolean executePromotionCalculation = true;
+
     public static OfferContext getOfferContext() {
         return OFFERCONTEXT.get();
     }
-    
+
     public static void setOfferContext(OfferContext offerContext) {
         OFFERCONTEXT.set(offerContext);
     }
-
-    protected Boolean executePromotionCalculation = true;
 
     public Boolean getExecutePromotionCalculation() {
         return executePromotionCalculation;
@@ -41,4 +39,5 @@ public class OfferContext {
     public void setExecutePromotionCalculation(Boolean executePromotionCalculation) {
         this.executePromotionCalculation = executePromotionCalculation;
     }
+
 }

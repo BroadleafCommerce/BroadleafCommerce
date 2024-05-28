@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,14 +42,15 @@ import jakarta.persistence.Table;
 @AdminPresentationClass(friendlyName = "GiftWrapOrderItemImpl_giftWrapOrderItem")
 public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements GiftWrapOrderItem {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "giftWrapOrderItem", targetEntity = OrderItemImpl.class,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderItemImpl_Price_Details",
-                tab = OrderItemImpl.Presentation.Tab.Name.Advanced, tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
-    protected List<OrderItem> wrappedItems = new ArrayList<OrderItem>();
+    @AdminPresentationCollection(friendlyName = "OrderItemImpl_Price_Details",
+            tab = OrderItemImpl.Presentation.Tab.Name.Advanced, tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
+    protected List<OrderItem> wrappedItems = new ArrayList<>();
 
     @Override
     public List<OrderItem> getWrappedItems() {
@@ -64,7 +66,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
     public OrderItem clone() {
         GiftWrapOrderItem orderItem = (GiftWrapOrderItem) super.clone();
         if (wrappedItems != null) orderItem.getWrappedItems().addAll(wrappedItems);
-        
+
         return orderItem;
     }
 
@@ -74,13 +76,13 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
-        GiftWrapOrderItem cloned = (GiftWrapOrderItem)createResponse.getClone();
-        for(OrderItem entry : wrappedItems){
+        GiftWrapOrderItem cloned = (GiftWrapOrderItem) createResponse.getClone();
+        for (OrderItem entry : wrappedItems) {
             OrderItem clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setGiftWrapOrderItem(cloned);
             cloned.getWrappedItems().add(clonedEntry);
         }
-        return  createResponse;
+        return createResponse;
     }
 
     @Override
@@ -95,7 +97,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null) 
+        if (obj == null)
             return false;
         if (!super.equals(obj))
             return false;
@@ -106,7 +108,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         if (!super.equals(obj)) {
             return false;
         }
-        
+
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
@@ -116,4 +118,5 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         } else
             return wrappedItems.equals(other.wrappedItems);
     }
+
 }

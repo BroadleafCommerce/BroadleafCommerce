@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,25 +40,24 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
                 )
         }
 )
-
 public interface URLHandlerAdminPresentation {
 
-
-    public static class TabName {
+    class TabName {
         public static final String General = "General";
     }
 
-    public static class TabOrder {
+    class TabOrder {
         public static final int General = 1000;
     }
 
-    public static class GroupName {
+    class GroupName {
         public static final String General = "General";
         public static final String Redirect = "URLHandlerImpl_group_Redirect";
     }
 
-    public static class GroupOrder {
+    class GroupOrder {
         public static final int General = 1000;
         public static final int Redirect = 2000;
     }
+
 }

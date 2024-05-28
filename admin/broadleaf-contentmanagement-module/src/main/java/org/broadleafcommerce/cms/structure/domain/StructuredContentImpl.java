@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,7 +47,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -179,10 +178,8 @@ import jakarta.persistence.Transient;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 public class StructuredContentImpl implements StructuredContent, AdminMainEntity, ProfileEntity {
 
-    private static final long serialVersionUID = 1L;
-
     public static final String SC_DONT_DUPLICATE_SC_TYPE_HINT = "dont-duplicate-sc-type";
-
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(generator = "StructuredContentId")
     @GenericGenerator(
@@ -219,7 +216,38 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
             group = Presentation.Group.Name.Description,
             groupOrder = Presentation.Group.Order.Description)
     protected Integer priority;
-
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class,
+            cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "SC_ID"),
+            inverseJoinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"))
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
+            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
+    @IgnoreEnterpriseBehavior
+    protected Set<StructuredContentItemCriteria> qualifyingItemCriteria = new HashSet<>();
+    @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
+    @JoinColumn(name = "SC_TYPE_ID")
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Type", order = 2,
+            prominent = true,
+            group = Presentation.Group.Name.Description,
+            groupOrder = Presentation.Group.Order.Description,
+            requiredOverride = RequiredOverride.REQUIRED)
+    @AdminPresentationToOneLookup(lookupDisplayProperty = "name",
+            forcePopulateChildProperties = true)
+    protected StructuredContentType structuredContentType;
+    @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldXrefImpl.class,
+            cascade = CascadeType.ALL)
+    @MapKey(name = "key")
+    @BatchSize(size = 20)
+    @AdminPresentationMap(forceFreeFormKeys = true, friendlyName = "structuredContentFields")
+    protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<>();
+    @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4,
+            group = Presentation.Group.Name.Description,
+            groupOrder = Presentation.Group.Order.Description)
+    @Column(name = "OFFLINE_FLAG")
+    protected Boolean offlineFlag = false;
+    @Transient
+    protected Map<String, String> fieldValuesMap = null;
     @ManyToMany(targetEntity = StructuredContentRuleImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_SC_RULE_MAP",
             joinColumns = @JoinColumn(name = "BLC_SC_SC_ID", referencedColumnName = "SC_ID"),
@@ -232,44 +260,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @IgnoreEnterpriseBehavior
     Map<String, StructuredContentRule> structuredContentMatchRules =
             new HashMap<String, StructuredContentRule>();
-
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = StructuredContentItemCriteriaImpl.class,
-            cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_QUAL_CRIT_SC_XREF", joinColumns = @JoinColumn(name = "SC_ID"),
-            inverseJoinColumns = @JoinColumn(name = "SC_ITEM_CRITERIA_ID"))
-    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
-            org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
-    @IgnoreEnterpriseBehavior
-    protected Set<StructuredContentItemCriteria> qualifyingItemCriteria =
-            new HashSet<StructuredContentItemCriteria>();
-
-    @ManyToOne(targetEntity = StructuredContentTypeImpl.class)
-    @JoinColumn(name = "SC_TYPE_ID")
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Content_Type", order = 2,
-            prominent = true,
-            group = Presentation.Group.Name.Description,
-            groupOrder = Presentation.Group.Order.Description,
-            requiredOverride = RequiredOverride.REQUIRED)
-    @AdminPresentationToOneLookup(lookupDisplayProperty = "name",
-            forcePopulateChildProperties = true)
-    protected StructuredContentType structuredContentType;
-
-    @OneToMany(mappedBy = "structuredContent", targetEntity = StructuredContentFieldXrefImpl.class,
-            cascade = CascadeType.ALL)
-    @MapKey(name = "key")
-    @BatchSize(size = 20)
-    @AdminPresentationMap(forceFreeFormKeys = true, friendlyName = "structuredContentFields")
-    protected Map<String, StructuredContentFieldXref> structuredContentFields = new HashMap<>();
-
-    @AdminPresentation(friendlyName = "StructuredContentImpl_Offline", order = 4,
-            group = Presentation.Group.Name.Description,
-            groupOrder = Presentation.Group.Order.Description)
-    @Column(name = "OFFLINE_FLAG")
-    protected Boolean offlineFlag = false;
-
-    @Transient
-    protected Map<String, String> fieldValuesMap = null;
 
     @Override
     public Long getId() {
@@ -331,11 +321,6 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     }
 
     @Override
-    public void setFieldValues(Map<String, String> fieldValuesMap) {
-        this.fieldValuesMap = fieldValuesMap;
-    }
-
-    @Override
     public Map<String, String> getFieldValues() {
         if (fieldValuesMap == null) {
             fieldValuesMap = new HashMap<String, String>();
@@ -345,6 +330,11 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
             }
         }
         return fieldValuesMap;
+    }
+
+    @Override
+    public void setFieldValues(Map<String, String> fieldValuesMap) {
+        this.fieldValuesMap = fieldValuesMap;
     }
 
     @Override

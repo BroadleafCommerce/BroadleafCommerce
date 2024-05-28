@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,17 +33,11 @@ import jakarta.annotation.Resource;
 @Service("blSolrIndexStatusService")
 public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
 
-    @Resource(name="blSolrIndexStatusProviders")
+    @Resource(name = "blSolrIndexStatusProviders")
     protected List<SolrIndexStatusProvider> providers;
-    
+
     @Value("${solr.index.status.error.retry.count:3}")
     protected Integer solrIndexStatusErrorRetryCount;
-
-    @Override
-    public synchronized void setIndexStatus(IndexStatusInfo status) {
-        clearErrorStatus(status);
-        updateIndexStatus(status);
-    }
 
     @Override
     public void addIndexStatus(Long eventId, Date eventCreatedDate) {
@@ -52,7 +46,7 @@ public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
         statusInfo.getAdditionalInfo().put(String.format("SystemEventId%s", eventId), String.valueOf(eventId));
         setIndexStatus(statusInfo);
     }
-    
+
     @Override
     public synchronized IndexStatusInfo getIndexStatus() {
         IndexStatusInfo status = getSeedStatusInstance();
@@ -62,12 +56,18 @@ public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
         return status;
     }
 
+    @Override
+    public synchronized void setIndexStatus(IndexStatusInfo status) {
+        clearErrorStatus(status);
+        updateIndexStatus(status);
+    }
+
     /**
      * Will add a new IndexError entry if one does not exist.  If one exists, it will increment the retry count.  If the
      * retry count is exceeded, it will move the event to the dead events list and treat the event as if it were successful
-     * 
-     * @param eventId The id of the event producing the error
-     * @param retryCount The retry count as defined by the event
+     *
+     * @param eventId          The id of the event producing the error
+     * @param eventRetryCount  The retry count as defined by the event
      * @param eventCreatedDate The date that the event was created
      */
     public synchronized void addIndexErrorStatus(Long eventId, Integer eventRetryCount, Date eventCreatedDate) {
@@ -75,7 +75,9 @@ public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
         if (status != null) {
             Integer retryCount = status.getIndexErrors().get(eventId);
             if (retryCount != null) {
-                Integer allowedRetryAttempts = eventRetryCount != null && eventRetryCount > 0 ? eventRetryCount : solrIndexStatusErrorRetryCount;
+                Integer allowedRetryAttempts = eventRetryCount != null && eventRetryCount > 0
+                        ? eventRetryCount
+                        : solrIndexStatusErrorRetryCount;
                 if (retryCount >= allowedRetryAttempts) {
                     status.getDeadIndexEvents().put(eventId, new Date());
                     status.setLastIndexDate(eventCreatedDate);
@@ -91,24 +93,27 @@ public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
         }
         updateIndexStatus(status);
     }
-    
+
     @Override
     public IndexStatusInfo getSeedStatusInstance() {
         return new IndexStatusInfoImpl();
     }
+
     /**
      * Performs the actual update process with the list of providers
+     *
      * @param status
      */
     protected void updateIndexStatus(IndexStatusInfo status) {
         for (SolrIndexStatusProvider provider : providers) {
             provider.handleUpdateIndexStatus(status);
-        }        
+        }
     }
 
     /**
-     * Removes an existing error status entry.  The assumption is that an entry had an error condition and subsequently succeeded.  
+     * Removes an existing error status entry.  The assumption is that an entry had an error condition and subsequently succeeded.
      * Upon success, the current error entry should be removed.
+     *
      * @param status
      */
     protected void clearErrorStatus(IndexStatusInfo status) {
@@ -116,7 +121,7 @@ public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
         if (persistedStatus.getIndexErrors().size() > 0) {
             if (status.getAdditionalInfo().size() > 0) {
                 List<Long> eventIdsToClear = isEventIdInError(status.getAdditionalInfo().values(), persistedStatus);
-                for(Long eventId : eventIdsToClear) {
+                for (Long eventId : eventIdsToClear) {
                     persistedStatus.getIndexErrors().remove(eventId);
                 }
             }
@@ -126,6 +131,7 @@ public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
 
     /**
      * Determines which passed InfoIds already exist in the persisted statuses from the provider(s)
+     *
      * @param additionalInfoIds
      * @param persistedStatus
      * @return
@@ -134,7 +140,7 @@ public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
         List<Long> eventIdsInError = new ArrayList<Long>();
         for (String infoValue : additionalInfoIds) {
             Long eventId = Long.valueOf(infoValue);
-            for(Long entry : persistedStatus.getIndexErrors().keySet()) {
+            for (Long entry : persistedStatus.getIndexErrors().keySet()) {
                 if (eventId.equals(entry)) {
                     eventIdsInError.add(eventId);
                 }
@@ -142,5 +148,5 @@ public class SolrIndexStatusServiceImpl implements SolrIndexStatusService {
         }
         return eventIdsInError;
     }
-    
+
 }

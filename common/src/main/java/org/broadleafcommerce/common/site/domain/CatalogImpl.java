@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -84,17 +84,18 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
     protected Long id;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "Catalog_Name", gridOrder = 1, order = 1, prominent = true, requiredOverride = RequiredOverride.REQUIRED, translatable = true)
+    @AdminPresentation(friendlyName = "Catalog_Name", gridOrder = 1, order = 1, prominent = true,
+            requiredOverride = RequiredOverride.REQUIRED, translatable = true)
     protected String name;
 
     @OneToMany(targetEntity = SiteCatalogXrefImpl.class, mappedBy = "catalog", orphanRemoval = true)
-    @Cascade(value = { org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST })
+    @Cascade(value = {org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSiteElements")
     @BatchSize(size = 50)
-    protected List<SiteCatalogXref> siteXrefs = new ArrayList<SiteCatalogXref>();
+    protected List<SiteCatalogXref> siteXrefs = new ArrayList<>();
 
     @Transient
-    protected List<Site> sites = new ArrayList<Site>();
+    protected List<Site> sites = new ArrayList<>();
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
@@ -146,7 +147,8 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
 
     public void checkCloneable(Catalog catalog) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = catalog.getClass().getMethod("clone");
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !catalog.getClass().getName().startsWith("org.broadleafcommerce")) {
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
+                && !catalog.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
         }
@@ -160,7 +162,8 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
             try {
                 checkCloneable(clone);
             } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: "
+                        + clone.getClass().getName(), e);
             }
             clone.setId(id);
             clone.setName(name);
@@ -172,7 +175,7 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
     }
 
     @Override
-    public int compareTo(Catalog other){
+    public int compareTo(Catalog other) {
         return name.compareTo(other.getName());
     }
 
@@ -227,4 +230,5 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
+
 }

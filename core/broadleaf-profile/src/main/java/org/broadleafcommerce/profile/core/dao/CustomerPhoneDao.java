@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,20 +23,20 @@ import java.util.List;
 
 public interface CustomerPhoneDao {
 
-    public List<CustomerPhone> readActiveCustomerPhonesByCustomerId(Long customerId);
+    List<CustomerPhone> readActiveCustomerPhonesByCustomerId(Long customerId);
 
-    public CustomerPhone save(CustomerPhone customerPhone);
+    CustomerPhone save(CustomerPhone customerPhone);
 
-    public CustomerPhone readCustomerPhoneById(Long customerPhoneId);
+    CustomerPhone readCustomerPhoneById(Long customerPhoneId);
 
-    public void makeCustomerPhoneDefault(Long customerPhoneId, Long customerId);
+    void makeCustomerPhoneDefault(Long customerPhoneId, Long customerId);
 
-    public void deleteCustomerPhoneById(Long customerPhoneId);
+    void deleteCustomerPhoneById(Long customerPhoneId);
 
-    public CustomerPhone findDefaultCustomerPhone(Long customerId);
+    CustomerPhone findDefaultCustomerPhone(Long customerId);
 
-    public List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId);
+    List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId);
 
-    public CustomerPhone create();
+    CustomerPhone create();
 
 }

@@ -10,37 +10,33 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * The type of action the translation form is built for 
+ * The type of action the translation form is built for
  * Created by gdiaz.
  */
 public class TranslationFormAction implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, TranslationFormAction> TYPES = new LinkedHashMap<String, TranslationFormAction>();
+    private static final Map<String, TranslationFormAction> TYPES = new LinkedHashMap<>();
 
     public static final TranslationFormAction ADD = new TranslationFormAction("ADD", "Translation Form - Add");
     public static final TranslationFormAction UPDATE = new TranslationFormAction("UPDATE", "Translation Form - Update");
     public static final TranslationFormAction OTHER = new TranslationFormAction("OTHER", "Translation Form - Other actions");
-
-    public static TranslationFormAction getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -54,23 +50,28 @@ public class TranslationFormAction implements Serializable, BroadleafEnumeration
         setType(type);
     }
 
+    public static TranslationFormAction getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     @Override
     public String getType() {
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-            throw new IllegalArgumentException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new IllegalArgumentException("Cannot add the type: (" + type + "). It already exists as a type via "
+                    + getInstance(type).getClass().getName());
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

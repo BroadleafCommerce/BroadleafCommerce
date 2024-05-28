@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,24 +40,6 @@ import jakarta.persistence.EntityManager;
  */
 public class TransactionInfo {
 
-    public TransactionInfo() {
-        initialize();
-    }
-
-    public TransactionInfo(EntityManager em, TransactionDefinition definition, boolean isCompressed, boolean isAbbreviated,
-                           int abbreviatedLength, boolean decompressStatementForLog, int maxQueryListLength) {
-        this.entityManager = new WeakReference<EntityManager>(em);
-        this.definition = new WeakReference<TransactionDefinition>(definition);
-        this.isCompressed = isCompressed;
-        this.isAbbreviated = isAbbreviated;
-        this.abbreviatedLength = abbreviatedLength;
-        this.decompressStatementForLog = decompressStatementForLog;
-        this.maxQueryListLength = maxQueryListLength;
-        queries = new LinkedBlockingQueue<String>(maxQueryListLength==-1?Integer.MAX_VALUE:maxQueryListLength);
-        compressedQueries = new LinkedBlockingQueue<CompressedItem>(maxQueryListLength==-1?Integer.MAX_VALUE:maxQueryListLength);
-        initialize();
-    }
-
     protected WeakReference<EntityManager> entityManager;
     protected WeakReference<TransactionDefinition> definition;
     protected String beginStack;
@@ -68,7 +50,7 @@ public class TransactionInfo {
     protected Long startTime;
     protected LinkedBlockingQueue<String> queries;
     protected LinkedBlockingQueue<CompressedItem> compressedQueries;
-    protected Map<String, String> additionalParams = new HashMap<String, String>();
+    protected Map<String, String> additionalParams = new HashMap<>();
     protected String currentStackElement;
     protected Long lastLogTime;
     protected Long stuckThreadStartTime;
@@ -80,6 +62,31 @@ public class TransactionInfo {
     protected Boolean decompressStatementForLog;
     protected Integer maxQueryListLength;
     protected Integer totalQueries = 0;
+    public TransactionInfo() {
+        initialize();
+    }
+    public TransactionInfo(
+            EntityManager em,
+            TransactionDefinition definition,
+            boolean isCompressed,
+            boolean isAbbreviated,
+            int abbreviatedLength,
+            boolean decompressStatementForLog,
+            int maxQueryListLength
+    ) {
+        this.entityManager = new WeakReference<EntityManager>(em);
+        this.definition = new WeakReference<TransactionDefinition>(definition);
+        this.isCompressed = isCompressed;
+        this.isAbbreviated = isAbbreviated;
+        this.abbreviatedLength = abbreviatedLength;
+        this.decompressStatementForLog = decompressStatementForLog;
+        this.maxQueryListLength = maxQueryListLength;
+        queries = new LinkedBlockingQueue<String>(maxQueryListLength == -1 ? Integer.MAX_VALUE : maxQueryListLength);
+        compressedQueries = new LinkedBlockingQueue<CompressedItem>(maxQueryListLength == -1
+                ? Integer.MAX_VALUE
+                : maxQueryListLength);
+        initialize();
+    }
 
     public EntityManager getEntityManager() {
         return entityManager.get();
@@ -322,7 +329,8 @@ public class TransactionInfo {
                     CompressedItem allQueries = new CompressedItem(queryBuilder.toString(), false);
                     sb.append(", queries=").append(allQueries);
                 } catch (IOException e) {
-                    sb.append(", queries='Unable to build compressed representation of queries because of an exception: ").append(e.getMessage()).append('\'');
+                    sb.append(", queries='Unable to build compressed representation of queries because of an exception: ")
+                            .append(e.getMessage()).append('\'');
                 }
             } else {
                 sb.append(", queries=").append(compressedQueries);
@@ -358,4 +366,5 @@ public class TransactionInfo {
         sb.append('}');
         return sb.toString();
     }
+
 }

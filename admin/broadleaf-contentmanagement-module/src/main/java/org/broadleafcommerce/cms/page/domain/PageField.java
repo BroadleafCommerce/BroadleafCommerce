@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,22 +24,22 @@ import java.io.Serializable;
 /**
  * Created by bpolster.
  */
-public interface PageField extends Serializable,MultiTenantCloneable<PageField> {
+public interface PageField extends Serializable, MultiTenantCloneable<PageField> {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public String getFieldKey();
+    String getFieldKey();
 
-    public void setFieldKey(String fieldKey);
+    void setFieldKey(String fieldKey);
 
-    public String getValue();
+    String getValue();
 
-    public void setValue(String value);
+    void setValue(String value);
 
-    public Page getPage();
+    Page getPage();
 
-    public void setPage(Page page);
+    void setPage(Page page);
 
 }

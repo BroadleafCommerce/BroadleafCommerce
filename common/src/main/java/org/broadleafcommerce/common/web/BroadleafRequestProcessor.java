@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,23 +50,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * 
  * @author Phillip Verheyden
  * @see {@link BroadleafRequestFilter}
  */
 @Component("blRequestProcessor")
 public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProcessor {
 
-    protected final Log LOG = LogFactory.getLog(getClass());
-
-    private static String REQUEST_DTO_PARAM_NAME = BroadleafRequestFilter.REQUEST_DTO_PARAM_NAME;
-    public static String REPROCESS_PARAM_NAME = "REPROCESS_BLC_REQUEST";
-    
-    private static final String SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "site.strict.validate.production.changes";
     public static final String SITE_DISABLE_SANDBOX_PREVIEW = "site.disable.sandbox.preview";
-
+    private static final String SITE_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY = "site.strict.validate.production.changes";
     private static final String SANDBOX_ID_PARAM = "blSandboxId";
-
+    public static String REPROCESS_PARAM_NAME = "REPROCESS_BLC_REQUEST";
+    private static String REQUEST_DTO_PARAM_NAME = BroadleafRequestFilter.REQUEST_DTO_PARAM_NAME;
+    protected final Log LOG = LogFactory.getLog(getClass());
     @Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
 
@@ -93,7 +88,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
 
     @Resource(name = "blSandBoxService")
     protected SandBoxService sandBoxService;
-    
+
     @Value("${thymeleaf.threadLocalCleanup.enabled}")
     protected boolean thymeleafThreadLocalCleanupEnabled = true;
 
@@ -105,17 +100,17 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
 
     @Resource(name = "blDeployBehaviorUtil")
     protected DeployBehaviorUtil deployBehaviorUtil;
-    
-    @Resource(name="blEntityExtensionManagers")
+
+    @Resource(name = "blEntityExtensionManagers")
     protected Map<String, ExtensionManager> entityExtensionManagers;
-    
+
     @Override
     public void process(WebRequest request) {
         BroadleafRequestContext brc = new BroadleafRequestContext();
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
-        
+
         Site site = siteResolver.resolveSite(request);
-        
+
         brc.setNonPersistentSite(site);
         brc.setWebRequest(request);
         if (site == null) {
@@ -142,17 +137,19 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         }
 
         SandBox currentSandbox = sandboxResolver.resolveSandBox(request, site);
-        
+
         // When a user elects to switch his sandbox, we want to invalidate the current session. We'll then redirect the 
         // user to the current URL so that the configured filters trigger again appropriately.
-        Boolean reprocessRequest = (Boolean) request.getAttribute(BroadleafRequestProcessor.REPROCESS_PARAM_NAME, WebRequest.SCOPE_REQUEST);
+        Boolean reprocessRequest = (Boolean) request.getAttribute(
+                BroadleafRequestProcessor.REPROCESS_PARAM_NAME, WebRequest.SCOPE_REQUEST
+        );
         if (reprocessRequest != null && reprocessRequest) {
             LOG.debug("Reprocessing request");
             if (request instanceof ServletWebRequest) {
                 HttpServletRequest hsr = ((ServletWebRequest) request).getRequest();
-                
+
                 clearBroadleafSessionAttrs(request);
-                
+
                 StringBuffer url = hsr.getRequestURL();
                 HttpServletResponse response = ((ServletWebRequest) request).getResponse();
 
@@ -168,8 +165,9 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
                     if (isSandboxIdValid(sandboxId)) {
                         String queryString = "?" + SANDBOX_ID_PARAM + "=" + sandboxId;
                         url.append(queryString);
-                        if(hsr.getParameter(BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR) != null){
-                            url.append("&"+BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR+"="+hsr.getParameter(BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR));
+                        if (hsr.getParameter(BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR) != null) {
+                            url.append("&" + BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR + "="
+                                    + hsr.getParameter(BroadleafIncludeMyChangesResolver.INCLUDE_MY_CHANGES_VAR));
                         }
                     }
 
@@ -180,8 +178,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
                 throw new HaltFilterChainException("Reprocess required, redirecting user");
             }
         }
-        
-        
+
         if (!siteDisableSandboxPreview && currentSandbox != null) {
             SandBoxContext previewSandBoxContext = new SandBoxContext();
             previewSandBoxContext.setSandBoxId(currentSandbox.getId());
@@ -194,12 +191,14 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         }
         //We do this to prevent lazy init exceptions when this context/sandbox combination
         // is used in a different session that it was initiated in. see QA#2576
-        if(currentSandbox != null && currentSandbox.getChildSandBoxes() != null) {
+        if (currentSandbox != null && currentSandbox.getChildSandBoxes() != null) {
             currentSandbox.getChildSandBoxes().size();
         }
 
         brc.setSandBox(currentSandbox);
-        brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
+        brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode()
+                ? DeployBehavior.CLONE_PARENT
+                : DeployBehavior.OVERWRITE_PARENT);
         brc.setRequestDTO(requestDTO);
 
         // Note that this must happen after the request context is set up as resolving a theme is dependent on site
@@ -209,10 +208,12 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
         brc.setMessageSource(messageSource);
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         brc.setTimeZone(timeZone);
-        Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute("blRuleMap", WebRequest.SCOPE_REQUEST);
+        Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute(
+                "blRuleMap", WebRequest.SCOPE_REQUEST
+        );
         if (ruleMap == null) {
             LOG.trace("Creating ruleMap and adding in Locale.");
-            ruleMap = new HashMap<String, Object>();
+            ruleMap = new HashMap<>();
             request.setAttribute("blRuleMap", ruleMap, WebRequest.SCOPE_REQUEST);
         } else {
             LOG.trace("Using pre-existing ruleMap - added by non standard BLC process.");
@@ -224,7 +225,6 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             //TODO: Add token logic to secure the admin user id
             brc.setAdminUserId(Long.parseLong(adminUserId));
         }
-
     }
 
     protected boolean isUrlValid(String url) {
@@ -258,7 +258,7 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     public void postProcess(WebRequest request) {
         ThreadLocalManager.remove();
     }
-    
+
     protected void clearBroadleafSessionAttrs(WebRequest request) {
         if (BLCRequestUtils.isOKtoUseSession(request)) {
             request.removeAttribute(BroadleafLocaleResolverImpl.LOCALE_VAR, WebRequest.SCOPE_SESSION);
@@ -272,4 +272,5 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
             request.removeAttribute("_blc_anonymousCustomerId", WebRequest.SCOPE_SESSION);
         }
     }
+
 }

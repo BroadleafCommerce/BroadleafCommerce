@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,11 +21,11 @@ package org.broadleafcommerce.common.web.expression;
  * Classes that implement this interface will be exposed to the Thymeleaf expression evaluation context.
  * If an implementing class defines its name as "theme" and has a method called attr(String name), that method
  * could then be invoked by ${#theme.attr('someName')}.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public interface BroadleafVariableExpression {
-    
-    public String getName();
-    
+
+    String getName();
+
 }

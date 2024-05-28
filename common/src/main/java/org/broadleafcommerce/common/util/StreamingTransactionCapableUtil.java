@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -72,14 +72,25 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     }
 
     @Override
-    public <G extends Throwable> void runStreamingTransactionalOperation(final StreamCapableTransactionalOperation
-                                        streamOperation, Class<G> exceptionType) throws G {
-        runStreamingTransactionalOperation(streamOperation, exceptionType, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT);
+    public <G extends Throwable> void runStreamingTransactionalOperation(
+            final StreamCapableTransactionalOperation
+                    streamOperation, Class<G> exceptionType
+    ) throws G {
+        runStreamingTransactionalOperation(
+                streamOperation,
+                exceptionType,
+                TransactionDefinition.PROPAGATION_REQUIRED,
+                TransactionDefinition.ISOLATION_DEFAULT
+        );
     }
 
     @Override
-    public <G extends Throwable> void runStreamingTransactionalOperation(final StreamCapableTransactionalOperation
-                                        streamOperation, Class<G> exceptionType, int transactionBehavior, int isolationLevel) throws G {
+    public <G extends Throwable> void runStreamingTransactionalOperation(
+            final StreamCapableTransactionalOperation streamOperation,
+            Class<G> exceptionType,
+            int transactionBehavior,
+            int isolationLevel
+    ) throws G {
         //this should be a read operation, so doesn't need to be in a transaction
         EntityManager em = getEntityManager();
         final Long totalCount = streamOperation.retrieveTotalCount();
@@ -114,14 +125,22 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
                     }
                 }
 
-                private boolean isFinalPage(Holder holder, int pagedItemCount, Long totalCount) {
+                protected boolean isFinalPage(Holder holder, int pagedItemCount, Long totalCount) {
                     int processedItemCount = holder.getVal() + pagedItemCount;
 
                     return processedItemCount >= totalCount;
                 }
             };
             while (holder.getVal() < totalCount) {
-                runOptionalTransactionalOperation(operation, exceptionType, true, transactionBehavior, isolationLevel, false, getTransactionManager());
+                runOptionalTransactionalOperation(
+                        operation,
+                        exceptionType,
+                        true,
+                        transactionBehavior,
+                        isolationLevel,
+                        false,
+                        getTransactionManager()
+                );
                 if (em != null) {
                     //The idea behind using this class is that it will likely process a lot of records. As such, it is necessary
                     //to clear the level 1 cache after each iteration so that we don't run out of heap
@@ -129,8 +148,7 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
                 }
                 streamOperation.executeAfterCommit(((StreamCapableTransactionalOperationAdapter) operation).getPagedItems());
             }
-        }
-        finally {
+        } finally {
             if (em != null && em.isOpen()) {
                 em.close();
             }
@@ -138,33 +156,90 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     }
 
     @Override
-    public <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                        Class<G> exceptionType) throws G {
-        runOptionalTransactionalOperation(operation, exceptionType, true, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT, false, getTransactionManager());
+    public <G extends Throwable> void runTransactionalOperation(
+            StreamCapableTransactionalOperation operation,
+            Class<G> exceptionType
+    ) throws G {
+        runOptionalTransactionalOperation(
+                operation,
+                exceptionType,
+                true,
+                TransactionDefinition.PROPAGATION_REQUIRED,
+                TransactionDefinition.ISOLATION_DEFAULT,
+                false,
+                getTransactionManager()
+        );
     }
 
     @Override
-    public <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
-            Class<G> exceptionType, PlatformTransactionManager transactionManager) throws G {
-        runOptionalTransactionalOperation(operation, exceptionType, true, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT, false, transactionManager);
+    public <G extends Throwable> void runTransactionalOperation(
+            StreamCapableTransactionalOperation operation,
+            Class<G> exceptionType,
+            PlatformTransactionManager transactionManager
+    ) throws G {
+        runOptionalTransactionalOperation(
+                operation,
+                exceptionType,
+                true,
+                TransactionDefinition.PROPAGATION_REQUIRED,
+                TransactionDefinition.ISOLATION_DEFAULT,
+                false,
+                transactionManager
+        );
     }
 
     @Override
-    public <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                        Class<G> exceptionType, int transactionBehavior, int isolationLevel) throws G {
-        runOptionalTransactionalOperation(operation, exceptionType, true, transactionBehavior, isolationLevel, false, getTransactionManager());
+    public <G extends Throwable> void runTransactionalOperation(
+            StreamCapableTransactionalOperation operation,
+            Class<G> exceptionType,
+            int transactionBehavior,
+            int isolationLevel
+    ) throws G {
+        runOptionalTransactionalOperation(
+                operation,
+                exceptionType,
+                true,
+                transactionBehavior,
+                isolationLevel,
+                false,
+                getTransactionManager()
+        );
     }
 
     @Override
-    public <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                        Class<G> exceptionType, boolean useTransaction) throws G {
-        runOptionalTransactionalOperation(operation, exceptionType, useTransaction, TransactionDefinition.PROPAGATION_REQUIRED, TransactionDefinition.ISOLATION_DEFAULT, false, getTransactionManager());
+    public <G extends Throwable> void runOptionalTransactionalOperation(
+            StreamCapableTransactionalOperation operation,
+            Class<G> exceptionType,
+            boolean useTransaction
+    ) throws G {
+        runOptionalTransactionalOperation(
+                operation,
+                exceptionType,
+                useTransaction,
+                TransactionDefinition.PROPAGATION_REQUIRED,
+                TransactionDefinition.ISOLATION_DEFAULT,
+                false,
+                getTransactionManager()
+        );
     }
 
     @Override
-    public <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                            Class<G> exceptionType, boolean useTransaction, int transactionBehavior, int isolationLevel) throws G {
-        runOptionalTransactionalOperation(operation, exceptionType, useTransaction, transactionBehavior, isolationLevel, false, getTransactionManager());
+    public <G extends Throwable> void runOptionalTransactionalOperation(
+            StreamCapableTransactionalOperation operation,
+            Class<G> exceptionType,
+            boolean useTransaction,
+            int transactionBehavior,
+            int isolationLevel
+    ) throws G {
+        runOptionalTransactionalOperation(
+                operation,
+                exceptionType,
+                useTransaction,
+                transactionBehavior,
+                isolationLevel,
+                false,
+                getTransactionManager()
+        );
     }
 
     @Override
@@ -187,9 +262,15 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
     }
 
     @Override
-    public <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                        Class<G> exceptionType, boolean useTransaction, int transactionBehavior, int isolationLevel,
-                                        boolean readOnly, PlatformTransactionManager transactionManager) throws G {
+    public <G extends Throwable> void runOptionalTransactionalOperation(
+            StreamCapableTransactionalOperation operation,
+            Class<G> exceptionType,
+            boolean useTransaction,
+            int transactionBehavior,
+            int isolationLevel,
+            boolean readOnly,
+            PlatformTransactionManager transactionManager
+    ) throws G {
         int maxCount = operation.retryMaxCountOverrideForLockAcquisitionFailure();
         if (maxCount == -1) {
             maxCount = retryMax;
@@ -216,9 +297,12 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
                     }
                 }
             } catch (RuntimeException e) {
-                checkException: {
+                checkException:
+                {
                     if (operation.shouldRetryOnTransactionLockAcquisitionFailure()) {
-                        Exception result = ExceptionHelper.refineException(LockAcquisitionException.class, RuntimeException.class, e);
+                        Exception result = ExceptionHelper.refineException(
+                                LockAcquisitionException.class, RuntimeException.class, e
+                        );
                         if (result.getClass().equals(LockAcquisitionException.class)) {
                             if (tryCount < maxCount) {
                                 try {
@@ -272,7 +356,12 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
         this.retryMax = retryMax;
     }
 
-    protected <G extends Throwable> void endTransaction(TransactionStatus status, boolean error, Class<G> exceptionType, PlatformTransactionManager transactionManager) throws G {
+    protected <G extends Throwable> void endTransaction(
+            TransactionStatus status,
+            boolean error,
+            Class<G> exceptionType,
+            PlatformTransactionManager transactionManager
+    ) throws G {
         try {
             TransactionUtils.finalizeTransaction(status, transactionManager, error);
         } catch (Throwable e) {
@@ -280,7 +369,12 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
         }
     }
 
-    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel, boolean isReadOnly, PlatformTransactionManager transactionManager) {
+    protected TransactionStatus startTransaction(
+            int propagationBehavior,
+            int isolationLevel,
+            boolean isReadOnly,
+            PlatformTransactionManager transactionManager
+    ) {
         TransactionStatus status;
         try {
             status = TransactionUtils.createTransaction(propagationBehavior, isolationLevel,
@@ -304,4 +398,5 @@ public class StreamingTransactionCapableUtil implements StreamingTransactionCapa
             this.val = val;
         }
     }
+
 }

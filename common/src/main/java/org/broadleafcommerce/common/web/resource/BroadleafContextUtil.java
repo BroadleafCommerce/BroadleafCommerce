@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,22 +39,21 @@ import jakarta.servlet.http.HttpSession;
 /**
  * <p>
  * Some resource handlers need a valid site, theme, or sandbox to be available when serving request.
- * 
+ *
  * <p>
- * This component provides the {@link #establishThinRequestContext()} method for that purpose.  
+ * This component provides the {@link #establishThinRequestContext()} method for that purpose.
  *
  * @author bpolster
- *
  */
 @Service("blBroadleafContextUtil")
 public class BroadleafContextUtil {
-    
+
     @jakarta.annotation.Resource(name = "blSiteResolver")
     protected BroadleafSiteResolver siteResolver;
-    
+
     @jakarta.annotation.Resource(name = "blSandBoxResolver")
     protected BroadleafSandBoxResolver sbResolver;
-    
+
     @jakarta.annotation.Resource(name = "blThemeResolver")
     protected BroadleafThemeResolver themeResolver;
 
@@ -65,6 +64,7 @@ public class BroadleafContextUtil {
 
     /**
      * Creates a BroadleafRequestContext with supported values populated
+     *
      * @see #establishThinRequestContextInternal(boolean, boolean)
      */
     public void establishThinRequestContext() {
@@ -77,6 +77,7 @@ public class BroadleafContextUtil {
 
     /**
      * Creates a BroadleafRequestContext without a Sandbox
+     *
      * @see #establishThinRequestContextInternal(boolean, boolean)
      */
     public void establishThinRequestContextWithoutSandBox() {
@@ -85,6 +86,7 @@ public class BroadleafContextUtil {
 
     /**
      * Creates a BroadleafRequestContext without a Theme or Sandbox
+     *
      * @see #establishThinRequestContextInternal(boolean, boolean)
      */
     public void establishThinRequestContextWithoutThemeOrSandbox() {
@@ -93,10 +95,10 @@ public class BroadleafContextUtil {
 
     /**
      * Adds request and site to the BroadleafRequestContext
-     * 
+     * <p>
      * If includeTheme is true then also adds the Theme.
      * If includeSandBox is true then also adds the SandBox.
-     * 
+     *
      * @param includeTheme
      * @param includeSandBox
      */
@@ -104,8 +106,12 @@ public class BroadleafContextUtil {
         establishThinRequestContextInternal(includeTheme, includeSandBox, false);
     }
 
-    protected void establishThinRequestContextInternal(boolean includeTheme, boolean includeSandBox, boolean forceCreate) {
-        if(forceCreate) {
+    protected void establishThinRequestContextInternal(
+            boolean includeTheme,
+            boolean includeSandBox,
+            boolean forceCreate
+    ) {
+        if (forceCreate) {
             //remove old
             BroadleafRequestContext.setBroadleafRequestContext(null);
         }
@@ -131,7 +137,9 @@ public class BroadleafContextUtil {
                 if (includeSandBox) {
                     brc.setSandBox(sbResolver.resolveSandBox(wr, brc.getNonPersistentSite()));
                 }
-                brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
+                brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode()
+                        ? DeployBehavior.CLONE_PARENT
+                        : DeployBehavior.OVERWRITE_PARENT);
             }
 
             if (includeTheme) {
@@ -173,7 +181,5 @@ public class BroadleafContextUtil {
 
         return (SecurityContext) ctxFromSession;
     }
-    
-    
 
 }

@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.catalog.dao;
 
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -54,7 +53,6 @@ import jakarta.persistence.criteria.Root;
  *
  * @author Jeff Fischer
  */
-
 @Repository("blSkuDao")
 public class SkuDaoImpl implements SkuDao {
 
@@ -199,7 +197,7 @@ public class SkuDaoImpl implements SkuDao {
         criteria.select(builder.count(sku));
 
         // Ensure the sku is currently active
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
 
         // Add the active start/end date restrictions
         restrictions.add(builder.lessThan(sku.get("activeStartDate").as(Date.class), currentDate));
@@ -300,7 +298,7 @@ public class SkuDaoImpl implements SkuDao {
         criteria.select(sku);
 
         // Ensure the product is currently active
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
 
         // Add the active start/end date restrictions
         restrictions.add(builder.lessThan(sku.get("activeStartDate").as(Date.class), currentDate));
@@ -318,4 +316,5 @@ public class SkuDaoImpl implements SkuDao {
         criteria.orderBy(builder.asc(sku.get("id")));
         return criteria;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,27 +46,25 @@ import java.util.Map.Entry;
 import jakarta.annotation.Resource;
 
 /**
- * This method is able to convert a fieldKey 
+ * This method is able to convert a fieldKey
  * Created by bpolster.
  */
 @Service("blPageServiceUtility")
 public class PageServiceUtility {
 
     protected static final Log LOG = LogFactory.getLog(PageServiceUtility.class);
-    
-    protected static String AND = " && ";
     protected static final String FOREIGN_LOOKUP = "BLC_FOREIGN_LOOKUP";
-
-    @Resource(name="blPageDao")
+    protected static String AND = " && ";
+    @Resource(name = "blPageDao")
     protected PageDao pageDao;
-    
+
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericDao;
 
     @Resource(name = "blPageServiceExtensionManager")
     protected PageServiceExtensionManager extensionManager;
 
-    @Resource(name="blStaticAssetPathService")
+    @Resource(name = "blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
 
     @Resource(name = "blSandBoxHelper")
@@ -111,18 +109,22 @@ public class PageServiceUtility {
 
     public void addPageFieldToDTO(Page page, boolean secure, PageDTO pageDTO, String fieldKey, String originalValue) {
         String cmsPrefix = staticAssetPathService.getStaticAssetUrlPrefix();
-        
+
         PageField pf = page.getPageFields().get(fieldKey);
         if (originalValue == null) {
             originalValue = pf.getValue();
         }
-        
+
         FieldDefinition fd = getFieldDefinition(page, fieldKey);
-        
+
         if (fd != null && fd.getFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY
                 && StringUtils.isNotBlank(originalValue)) {
-            pageDTO.getPageFields().put(fieldKey, FOREIGN_LOOKUP + '|' + fd.getAdditionalForeignKeyClass() + '|' + originalValue);
-        } else if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix) && originalValue.contains(cmsPrefix)) {
+            pageDTO.getPageFields().put(
+                    fieldKey,
+                    FOREIGN_LOOKUP + '|' + fd.getAdditionalForeignKeyClass() + '|' + originalValue
+            );
+        } else if (StringUtils.isNotBlank(originalValue) && StringUtils.isNotBlank(cmsPrefix)
+                && originalValue.contains(cmsPrefix)) {
             //This may either be an ASSET_LOOKUP image path or an HTML block (with multiple <img>) or a plain STRING that contains the cmsPrefix.
             //If there is an environment prefix configured (e.g. a CDN), then we must replace the cmsPrefix with this one.
             String fldValue = staticAssetPathService.convertAllAssetPathsInContent(originalValue, secure);
@@ -131,15 +133,15 @@ public class PageServiceUtility {
             pageDTO.getPageFields().put(fieldKey, originalValue);
         }
     }
-    
+
     protected FieldDefinition getFieldDefinition(Page page, String fieldKey) {
-        ExtensionResultHolder<FieldDefinition> erh = new ExtensionResultHolder<FieldDefinition>();
+        ExtensionResultHolder<FieldDefinition> erh = new ExtensionResultHolder<>();
         ExtensionResultStatusType result = extensionManager.getProxy().getFieldDefinition(erh, page, fieldKey);
-        
+
         if (result == ExtensionResultStatusType.HANDLED) {
             return erh.getResult();
         }
-        
+
         if (page.getPageTemplate() != null) {
             for (PageTemplateFieldGroupXref fgXrefs : page.getPageTemplate().getFieldGroupXrefs()) {
                 for (FieldDefinition fd : fgXrefs.getFieldGroup().getFieldDefinitions()) {
@@ -149,7 +151,7 @@ public class PageServiceUtility {
                 }
             }
         }
-        
+
         return null;
     }
 
@@ -174,7 +176,7 @@ public class PageServiceUtility {
     }
 
     protected List<ItemCriteriaDTO> buildItemCriteriaDTOList(Page page) {
-        List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<ItemCriteriaDTO>();
+        List<ItemCriteriaDTO> itemCriteriaDTOList = new ArrayList<>();
         for (PageItemCriteria criteria : page.getQualifyingItemCriteria()) {
             ItemCriteriaDTO criteriaDTO = new ItemCriteriaDTO();
             criteriaDTO.setMatchRule(criteria.getMatchRule());
@@ -213,4 +215,5 @@ public class PageServiceUtility {
             return page;
         }
     }
+
 }

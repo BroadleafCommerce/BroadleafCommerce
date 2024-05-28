@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,31 +19,27 @@ package org.broadleafcommerce.core.offer.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of offer types.
- *
  */
 public class OfferType implements Serializable, BroadleafEnumerationType, Comparable<OfferType> {
-    
-    private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferType> TYPES = new LinkedHashMap<String, OfferType>();
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static final Map<String, OfferType> TYPES = new LinkedHashMap<>();
+
     public static final OfferType ORDER_ITEM = new OfferType("ORDER_ITEM", "Order Item", 1000);
     public static final OfferType ORDER = new OfferType("ORDER", "Order", 2000);
     public static final OfferType FULFILLMENT_GROUP = new OfferType("FULFILLMENT_GROUP", "Fulfillment Group", 3000);
 
-
-    public static OfferType getInstance(final String type) {
-        return TYPES.get(type);
-    }
-
     private String type;
     private String friendlyType;
-    private int order;    
+    private int order;
 
     public OfferType() {
         //do nothing
@@ -55,6 +51,14 @@ public class OfferType implements Serializable, BroadleafEnumerationType, Compar
         setOrder(order);
     }
 
+    public static OfferType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
@@ -62,14 +66,10 @@ public class OfferType implements Serializable, BroadleafEnumerationType, Compar
         }
     }
 
-    public String getType() {
-        return type;
-    }
-
     public String getFriendlyType() {
         return friendlyType;
     }
-    
+
     public int getOrder() {
         return order;
     }
@@ -102,7 +102,7 @@ public class OfferType implements Serializable, BroadleafEnumerationType, Compar
             return false;
         return true;
     }
-    
+
     @Override
     public int compareTo(OfferType arg0) {
         return this.order - arg0.order;

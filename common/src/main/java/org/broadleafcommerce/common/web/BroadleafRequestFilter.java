@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -45,35 +45,34 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Responsible for setting up the site and locale used by Broadleaf Commerce components.
- * 
+ *
  * @author bpolster
  */
 @Component("blRequestFilter")
 @ConditionalOnNotAdmin
 public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilter {
 
-    private final Log LOG = LogFactory.getLog(getClass());
-
-    /**
-     * Parameter/Attribute name for the current language
-     */
-    public static String REQUEST_DTO_PARAM_NAME = "blRequestDTO";
-
     public static final String ADMIN_USER_ID_PARAM_NAME = "blAdminUserId";
-
     // Properties to manage URLs that will not be processed by this filter.
     private static final String BLC_ADMIN_GWT = "org.broadleafcommerce.admin";
     private static final String BLC_ADMIN_PREFIX = "blcadmin";
     private static final String BLC_ADMIN_SERVICE = ".service";
-
-    private Set<String> ignoreSuffixes;
-
+    /**
+     * Parameter/Attribute name for the current language
+     */
+    public static String REQUEST_DTO_PARAM_NAME = "blRequestDTO";
+    private final Log LOG = LogFactory.getLog(getClass());
     @Autowired
     @Qualifier("blRequestProcessor")
     protected BroadleafRequestProcessor requestProcessor;
+    private Set<String> ignoreSuffixes;
 
     @Override
-    protected void doFilterInternalUnlessIgnored(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternalUnlessIgnored(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws IOException, ServletException {
 
         if (!shouldProcessURL(request, request.getRequestURI())) {
             if (LOG.isTraceEnabled()) {
@@ -82,7 +81,7 @@ public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilte
             filterChain.doFilter(request, response);
             return;
         }
-        
+
         if (LOG.isTraceEnabled()) {
             String requestURIWithoutContext;
 
@@ -124,9 +123,8 @@ public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilte
      * By default, this method returns false for any BLC-Admin URLs and service calls and for all common image/digital mime-types (as determined by an internal call to {@code getIgnoreSuffixes}.
      * <p/>
      * This check is called with the {@code doFilterInternal} method to short-circuit the content processing which can be expensive for requests that do not require it.
-     * 
-     * @param requestURI
-     *            - the HttpServletRequest.getRequestURI
+     *
+     * @param requestURI - the HttpServletRequest.getRequestURI
      * @return true if the {@code HttpServletRequest} should be processed
      */
     protected boolean shouldProcessURL(HttpServletRequest request, String requestURI) {
@@ -137,7 +135,7 @@ public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilte
         if (requestURI.contains(BLC_ADMIN_GWT) || requestURI.endsWith(BLC_ADMIN_SERVICE) || requestURI.contains(BLC_ADMIN_PREFIX)) {
             return false;
         } else if (!ignoreSessionCheck && BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))
-            && ModulePresentUtil.isPresent(BroadleafModuleEnum.ENTERPRISE)) {
+                && ModulePresentUtil.isPresent(BroadleafModuleEnum.ENTERPRISE)) {
             //if session usage is enabled and enterprise is in play - disable to allow the enterprise request filters
             //if session usage is disallowed - allow this filter regardless of enterprise (i.e. rest api)
             return false;
@@ -149,14 +147,17 @@ public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilte
      * Returns a set of suffixes that can be ignored by content processing. The following are returned:
      * <p/>
      * <B>List of suffixes ignored:</B>
-     * 
+     * <p>
      * ".aif", ".aiff", ".asf", ".avi", ".bin", ".bmp", ".doc", ".eps", ".gif", ".hqx", ".jpg", ".jpeg", ".mid", ".midi", ".mov", ".mp3", ".mpg", ".mpeg", ".p65", ".pdf", ".pic", ".pict", ".png", ".ppt", ".psd", ".qxd", ".ram", ".ra", ".rm", ".sea", ".sit", ".stk", ".swf", ".tif", ".tiff", ".txt", ".rtf", ".vob", ".wav", ".wmf", ".xls", ".zip";
-     * 
+     *
      * @return set of suffixes to ignore.
      */
     protected Set getIgnoreSuffixes() {
         if (ignoreSuffixes == null || ignoreSuffixes.isEmpty()) {
-            String[] ignoreSuffixList = { ".aif", ".aiff", ".asf", ".avi", ".bin", ".bmp", ".css", ".doc", ".eps", ".gif", ".hqx", ".js", ".jpg", ".jpeg", ".mid", ".midi", ".mov", ".mp3", ".mpg", ".mpeg", ".p65", ".pdf", ".pic", ".pict", ".png", ".ppt", ".psd", ".qxd", ".ram", ".ra", ".rm", ".sea", ".sit", ".stk", ".swf", ".tif", ".tiff", ".txt", ".rtf", ".vob", ".wav", ".wmf", ".xls", ".zip" };
+            String[] ignoreSuffixList = {".aif", ".aiff", ".asf", ".avi", ".bin", ".bmp", ".css", ".doc", ".eps", ".gif",
+                    ".hqx", ".js", ".jpg", ".jpeg", ".mid", ".midi", ".mov", ".mp3", ".mpg", ".mpeg", ".p65", ".pdf",
+                    ".pic", ".pict", ".png", ".ppt", ".psd", ".qxd", ".ram", ".ra", ".rm", ".sea", ".sit", ".stk",
+                    ".swf", ".tif", ".tiff", ".txt", ".rtf", ".vob", ".wav", ".wmf", ".xls", ".zip"};
             ignoreSuffixes = new HashSet<>(Arrays.asList(ignoreSuffixList));
         }
         return ignoreSuffixes;
@@ -171,4 +172,5 @@ public class BroadleafRequestFilter extends AbstractIgnorableOncePerRequestFilte
     public int getOrder() {
         return FilterOrdered.PRE_SECURITY_LOW;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,7 +20,6 @@ package org.broadleafcommerce.openadmin.web.service;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
-
 
 /**
  * @author Jon Fleschler (jfleschler)
@@ -36,5 +35,6 @@ public interface AdminFieldBuilderProcessorExtensionHandler extends ExtensionHan
      * @param fieldWrapper
      * @return
      */
-    public ExtensionResultStatusType modifyRuleBuilderFields(String fieldBuilder, String ceilingEntity, FieldWrapper fieldWrapper);
+    ExtensionResultStatusType modifyRuleBuilderFields(String fieldBuilder, String ceilingEntity, FieldWrapper fieldWrapper);
+
 }

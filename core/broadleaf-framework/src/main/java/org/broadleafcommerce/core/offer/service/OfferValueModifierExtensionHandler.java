@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,11 +25,11 @@ import org.broadleafcommerce.core.order.domain.Order;
 import java.util.List;
 
 /**
- *  Allows convert offer values for offers with OfferDiscountType.AMOUNT_OFF
- *  and OfferDiscountType.FIX_PRICE types based on the used PriceList
+ * Allows convert offer values for offers with OfferDiscountType.AMOUNT_OFF
+ * and OfferDiscountType.FIX_PRICE types based on the used PriceList
  */
 public interface OfferValueModifierExtensionHandler extends ExtensionHandler {
 
-    public ExtensionResultStatusType modifyOfferValues(List<Offer> offers, Order order);
+    ExtensionResultStatusType modifyOfferValues(List<Offer> offers, Order order);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * Detects whether or not a Broadleaf module has been registered via am {@link spring.factories} entry for {@link BroadleafModuleRegistration}
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  * @author Philip Baggett (pbaggett)
  * @see {@link ConditionalOnBroadleafModule}
@@ -39,7 +39,9 @@ public class OnBroadleafModuleCondition implements Condition {
 
     @Override
     public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-        MultiValueMap<String, Object> attributes = metadata.getAllAnnotationAttributes(ConditionalOnBroadleafModule.class.getName());
+        MultiValueMap<String, Object> attributes = metadata.getAllAnnotationAttributes(
+                ConditionalOnBroadleafModule.class.getName()
+        );
         List<Object> modules = attributes.get("value");
         List<Object> moduleNames = attributes.get("moduleName");
         List<String> moduleNameStrings = new ArrayList<>();
@@ -50,4 +52,5 @@ public class OnBroadleafModuleCondition implements Condition {
         }
         return ModulePresentUtil.allPresent(moduleNameStrings);
     }
+
 }

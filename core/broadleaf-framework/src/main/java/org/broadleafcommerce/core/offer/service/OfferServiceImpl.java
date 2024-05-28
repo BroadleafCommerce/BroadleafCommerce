@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -74,32 +74,32 @@ import jakarta.persistence.PersistenceContext;
  */
 @Service("blOfferService")
 public class OfferServiceImpl implements OfferService {
-    
+
     private static final Log LOG = LogFactory.getLog(OfferServiceImpl.class);
 
     // should be called outside of Offer service after Offer service is executed
-    @Resource(name="blCustomerOfferDao")
+    @Resource(name = "blCustomerOfferDao")
     protected CustomerOfferDao customerOfferDao;
 
-    @Resource(name="blOfferCodeDao")
+    @Resource(name = "blOfferCodeDao")
     protected OfferCodeDao offerCodeDao;
-    
-    @Resource(name="blOfferAuditService")
+
+    @Resource(name = "blOfferAuditService")
     protected OfferAuditService offerAuditService;
 
-    @Resource(name="blOfferDao")
+    @Resource(name = "blOfferDao")
     protected OfferDao offerDao;
-    
-    @Resource(name="blOrderOfferProcessor")
+
+    @Resource(name = "blOrderOfferProcessor")
     protected OrderOfferProcessor orderOfferProcessor;
-    
-    @Resource(name="blItemOfferProcessor")
+
+    @Resource(name = "blItemOfferProcessor")
     protected ItemOfferProcessor itemOfferProcessor;
-    
-    @Resource(name="blFulfillmentGroupOfferProcessor")
+
+    @Resource(name = "blFulfillmentGroupOfferProcessor")
     protected FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor;
-    
-    @Resource(name="blPromotableItemFactory")
+
+    @Resource(name = "blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
 
     @Resource(name = "blOfferServiceExtensionManager")
@@ -111,13 +111,13 @@ public class OfferServiceImpl implements OfferService {
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blStreamingTransactionCapableUtil")
+    @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
-    @Resource(name="blEntityDuplicator")
+    @Resource(name = "blEntityDuplicator")
     protected EntityDuplicator duplicator;
 
     /**
@@ -161,15 +161,15 @@ public class OfferServiceImpl implements OfferService {
         }
         return offer;
     }
-    
+
     @Override
-    public OfferCode lookupOfferCodeByCode(String code){
+    public OfferCode lookupOfferCodeByCode(String code) {
         return offerCodeDao.readOfferCodeByCode(code);
     }
 
     @Override
     public List<Offer> lookupAllOffersByCode(String code) {
-        List<Offer> offers = new ArrayList<Offer>();
+        List<Offer> offers = new ArrayList<>();
         List<OfferCode> offerCodes = offerCodeDao.readAllOfferCodesByCode(code);
         for (OfferCode offerCode : offerCodes) {
             if (offerCode != null) {
@@ -180,7 +180,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public List<OfferCode> lookupAllOfferCodesByCode(String code){
+    public List<OfferCode> lookupAllOfferCodesByCode(String code) {
         return offerCodeDao.readAllOfferCodesByCode(code);
     }
 
@@ -194,7 +194,7 @@ public class OfferServiceImpl implements OfferService {
      */
     @Override
     public List<Offer> buildOfferListForOrder(Order order) {
-        List<Offer> offers = new ArrayList<Offer>();
+        List<Offer> offers = new ArrayList<>();
         List<CustomerOffer> customerOffers = lookupOfferCustomerByCustomer(order.getCustomer());
         for (CustomerOffer customerOffer : customerOffers) {
             if (!offers.contains(customerOffer.getOffer())) {
@@ -215,11 +215,11 @@ public class OfferServiceImpl implements OfferService {
                 offers.add(globalOffer);
             }
         }
-        
+
         if (extensionManager != null) {
             extensionManager.applyAdditionalFilters(offers, order);
         }
-        
+
         return offers;
     }
 
@@ -227,7 +227,7 @@ public class OfferServiceImpl implements OfferService {
     public List<OfferCode> buildOfferCodeListForCustomer(Order order) {
         Customer customer = order.getCustomer();
         ArrayList<OfferCode> offerCodes = new ArrayList<>();
-        
+
         if (extensionManager != null) {
             extensionManager.buildOfferCodeListForCustomer(customer, offerCodes);
         }
@@ -242,11 +242,11 @@ public class OfferServiceImpl implements OfferService {
         }
         return offerCodes;
     }
-    
+
     @Deprecated
     @Override
     public List<OfferCode> buildOfferCodeListForCustomer(Customer customer) {
-        ArrayList<OfferCode> offerCodes = new ArrayList<OfferCode>();
+        ArrayList<OfferCode> offerCodes = new ArrayList<>();
         if (extensionManager != null) {
             extensionManager.buildOfferCodeListForCustomer(customer, offerCodes);
         }
@@ -298,10 +298,10 @@ public class OfferServiceImpl implements OfferService {
      * @param offerCodes
      * @return a List of non-expired offers
      */
-    protected List<OfferCode> removeOutOfDateOfferCodes(List<OfferCode> offerCodes){
-        List<OfferCode> offerCodesToRemove = new ArrayList<OfferCode>();
+    protected List<OfferCode> removeOutOfDateOfferCodes(List<OfferCode> offerCodes) {
+        List<OfferCode> offerCodesToRemove = new ArrayList<>();
         for (OfferCode offerCode : offerCodes) {
-            if (!offerCode.isActive()){
+            if (!offerCode.isActive()) {
                 offerCodesToRemove.add(offerCode);
             }
         }
@@ -327,8 +327,11 @@ public class OfferServiceImpl implements OfferService {
             public void execute() {
                 for (OfferCode offerCode : orderOfferCodes) {
                     if (offerCode.getOffer() != null) {
-                        Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(OfferImpl.class, offerCode.getOffer().getId());
-                        if (sandBoxVersionId != null && !Objects.equals(sandBoxVersionId, offerCode.getOffer().getId())) {
+                        Long sandBoxVersionId = sandBoxHelper.getSandBoxVersionId(
+                                OfferImpl.class, offerCode.getOffer().getId()
+                        );
+                        if (sandBoxVersionId != null
+                                && !Objects.equals(sandBoxVersionId, offerCode.getOffer().getId())) {
                             em.refresh(offerCode);
                             //trigger loading of offer. Somehow sometimes if you have offer & offer code in global(template) site
                             //and have overridden both in test site, sometimes offer code will from the test site has reference
@@ -390,35 +393,41 @@ public class OfferServiceImpl implements OfferService {
          */
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
-            PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(order, false);
+            PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(
+                    order, false
+            );
             List<Offer> filteredOffers = orderOfferProcessor.filterOffers(offers, order.getCustomer());
             if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("No offers applicable to this order.");
                 }
             } else {
-                List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<PromotableCandidateOrderOffer>();
-                List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<PromotableCandidateItemOffer>();
+                List<PromotableCandidateOrderOffer> qualifiedOrderOffers = new ArrayList<>();
+                List<PromotableCandidateItemOffer> qualifiedItemOffers = new ArrayList<>();
 
-                itemOfferProcessor.filterOffers(promotableOrder, filteredOffers, qualifiedOrderOffers, qualifiedItemOffers);
+                itemOfferProcessor.filterOffers(
+                        promotableOrder, filteredOffers, qualifiedOrderOffers, qualifiedItemOffers
+                );
 
-                if (! (qualifiedItemOffers.isEmpty() && qualifiedOrderOffers.isEmpty())) {                
+                if (!(qualifiedItemOffers.isEmpty() && qualifiedOrderOffers.isEmpty())) {
                     // At this point, we should have a PromotableOrder that contains PromotableItems each of which
                     // has a list of candidatePromotions that might be applied.
 
                     // We also have a list of orderOffers that might apply and a list of itemOffers that might apply.
-                    itemOfferProcessor.applyAndCompareOrderAndItemOffers(promotableOrder, qualifiedOrderOffers, qualifiedItemOffers);
+                    itemOfferProcessor.applyAndCompareOrderAndItemOffers(
+                            promotableOrder, qualifiedOrderOffers, qualifiedItemOffers
+                    );
                 }
             }
             orderOfferProcessor.synchronizeAdjustmentsAndPrices(promotableOrder);
-            
+
             verifyAdjustments(order, true);
-            
+
             order.setSubTotal(order.calculateSubTotal());
             order.finalizeItemPrices();
-            
+
             order = orderService.save(order, false);
-            
+
             boolean madeChange = verifyAdjustments(order, false);
             if (madeChange) {
                 order = orderService.save(order, false);
@@ -427,10 +436,10 @@ public class OfferServiceImpl implements OfferService {
 
         return order;
     }
-    
+
     protected boolean verifyAdjustments(Order order, boolean beforeSave) {
         boolean madeChange = false;
-        
+
         if (order.getOrderItems() == null) {
             return madeChange;
         }
@@ -445,25 +454,25 @@ public class OfferServiceImpl implements OfferService {
                     continue;
                 }
 
-                Map<Long, OrderItemPriceDetailAdjustment> adjs = new HashMap<Long, OrderItemPriceDetailAdjustment>();
-                List<OrderItemPriceDetailAdjustment> adjustmentsToRemove = new ArrayList<OrderItemPriceDetailAdjustment>();
+                Map<Long, OrderItemPriceDetailAdjustment> adjs = new HashMap<>();
+                List<OrderItemPriceDetailAdjustment> adjustmentsToRemove = new ArrayList<>();
                 for (OrderItemPriceDetailAdjustment adj : pd.getOrderItemPriceDetailAdjustments()) {
                     if (adjs.containsKey(adj.getOffer().getId())) {
                         adjustmentsToRemove.add(adj);
                         if (LOG.isDebugEnabled()) {
                             StringBuilder sb = new StringBuilder("Detected collisions ")
-                                .append(beforeSave ? "before saving" : "after saving")
-                                .append(" with ids ")
-                                .append(adjs.get(adj.getOffer().getId()).getId())
-                                .append(" and ")
-                                .append(adj.getId());
+                                    .append(beforeSave ? "before saving" : "after saving")
+                                    .append(" with ids ")
+                                    .append(adjs.get(adj.getOffer().getId()).getId())
+                                    .append(" and ")
+                                    .append(adj.getId());
                             LOG.debug(sb.toString());
                         }
                     } else {
                         adjs.put(adj.getOffer().getId(), adj);
                     }
                 }
-                
+
                 for (OrderItemPriceDetailAdjustment adj : adjustmentsToRemove) {
                     pd.getOrderItemPriceDetailAdjustments().remove(adj);
                     madeChange = true;
@@ -472,7 +481,7 @@ public class OfferServiceImpl implements OfferService {
         }
 
         return madeChange;
-     }
+    }
 
     @Override
     @Transactional("blTransactionManager")
@@ -493,18 +502,21 @@ public class OfferServiceImpl implements OfferService {
     public Order applyAndSaveFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         OfferContext offerContext = OfferContext.getOfferContext();
         if (offerContext == null || offerContext.executePromotionCalculation) {
-            PromotableOrder promotableOrder =
-                    promotableItemFactory.createPromotableOrder(order, true);
-            List<Offer> possibleFGOffers = new ArrayList<Offer>();
+            PromotableOrder promotableOrder = promotableItemFactory.createPromotableOrder(
+                    order, true
+            );
+            List<Offer> possibleFGOffers = new ArrayList<>();
             for (Offer offer : offers) {
                 if (offer.getType().getType().equals(OfferType.FULFILLMENT_GROUP.getType())) {
                     possibleFGOffers.add(offer);
                 }
             }
             List<Offer> filteredOffers = orderOfferProcessor.filterOffers(possibleFGOffers, order.getCustomer());
-            List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers = new ArrayList<PromotableCandidateFulfillmentGroupOffer>();
+            List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers = new ArrayList<>();
             for (Offer offer : filteredOffers) {
-                fulfillmentGroupOfferProcessor.filterFulfillmentGroupLevelOffer(promotableOrder, qualifiedFGOffers, offer);
+                fulfillmentGroupOfferProcessor.filterFulfillmentGroupLevelOffer(
+                        promotableOrder, qualifiedFGOffers, offer
+                );
             }
             if (!qualifiedFGOffers.isEmpty()) {
                 fulfillmentGroupOfferProcessor.applyAllFulfillmentGroupOffers(qualifiedFGOffers, promotableOrder);
@@ -526,42 +538,46 @@ public class OfferServiceImpl implements OfferService {
             boolean checkUsingCustomer = (strategy == null || strategy.equals(CustomerMaxUsesStrategyType.CUSTOMER));
             Long currentUses;
             if (checkUsingCustomer) {
-                currentUses = offerAuditService.countUsesByCustomer(order, order.getCustomer().getId(), offer.getId(), offer.getMinimumDaysPerUsage());
+                currentUses = offerAuditService.countUsesByCustomer(
+                        order, order.getCustomer().getId(), offer.getId(), offer.getMinimumDaysPerUsage()
+                );
             } else {
-                currentUses = offerAuditService.countUsesByAccount(order, order.getBroadleafAccountId(), offer.getId(), offer.getMinimumDaysPerUsage());
+                currentUses = offerAuditService.countUsesByAccount(
+                        order, order.getBroadleafAccountId(), offer.getId(), offer.getMinimumDaysPerUsage()
+                );
             }
-            
+
             if (currentUses >= offer.getMaxUsesPerCustomer()) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     @Deprecated
     @Override
     public boolean verifyMaxCustomerUsageThreshold(Customer customer, Offer offer) {
-        if (offer.isLimitedUsePerCustomer()) {                
+        if (offer.isLimitedUsePerCustomer()) {
             Long currentUses = offerAuditService.countUsesByCustomer(customer.getId(), offer.getId());
-            
+
             if (currentUses >= offer.getMaxUsesPerCustomer()) {
                 return false;
             }
         }
-        
+
         return true;
     }
 
     @Override
     public boolean verifyMaxCustomerUsageThreshold(Order order, OfferCode code) {
         boolean underCodeMaxUses = true;
-        
+
         if (code.isLimitedUse()) {
             Long currentCodeUses = offerAuditService.countOfferCodeUses(order, code.getId());
             underCodeMaxUses = currentCodeUses < code.getMaxUses();
         }
-        
+
         return underCodeMaxUses && verifyMaxCustomerUsageThreshold(order, code.getOffer());
     }
 
@@ -575,30 +591,32 @@ public class OfferServiceImpl implements OfferService {
         }
         return underCodeMaxUses && verifyMaxCustomerUsageThreshold(customer, code.getOffer());
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public Set<Offer> getUniqueOffersFromOrder(Order order) {
-        HashSet<Offer> result = new HashSet<Offer>();
-        
+        HashSet<Offer> result = new HashSet<>();
+
         Transformer adjustmentToOfferTransformer = new Transformer() {
-            
+
             @Override
             public Object transform(Object input) {
-                return ((Adjustment)input).getOffer();
+                return ((Adjustment) input).getOffer();
             }
         };
-        
+
         result.addAll(CollectionUtils.collect(order.getOrderAdjustments(), adjustmentToOfferTransformer));
 
         if (order.getOrderItems() != null) {
             for (OrderItem item : order.getOrderItems()) {
                 result.addAll(CollectionUtils.collect(item.getOrderItemAdjustments(), adjustmentToOfferTransformer));
-                
+
                 //record usage for price details on the item as well
                 if (item.getOrderItemPriceDetails() != null) {
                     for (OrderItemPriceDetail detail : item.getOrderItemPriceDetails()) {
-                        result.addAll(CollectionUtils.collect(detail.getOrderItemPriceDetailAdjustments(), adjustmentToOfferTransformer));
+                        result.addAll(CollectionUtils.collect(
+                                detail.getOrderItemPriceDetailAdjustments(), adjustmentToOfferTransformer
+                        ));
                     }
                 }
             }
@@ -611,21 +629,21 @@ public class OfferServiceImpl implements OfferService {
         }
         return result;
     }
-    
+
     @Override
-    public Map<Offer, OfferCode> getOffersRetrievedFromCodes(Order order)  {
+    public Map<Offer, OfferCode> getOffersRetrievedFromCodes(Order order) {
         return getOffersRetrievedFromCodes(order.getAddedOfferCodes(), getUniqueOffersFromOrder(order));
     }
-    
+
     @Override
     public Map<Offer, OfferCode> getOffersRetrievedFromCodes(List<OfferCode> codes, Set<Offer> appliedOffers) {
-        HashMap<Offer, OfferCode> offerToCodeMapping = new HashMap<Offer, OfferCode>();
+        HashMap<Offer, OfferCode> offerToCodeMapping = new HashMap<>();
         for (OfferCode code : codes) {
             if (appliedOffers.contains(code.getOffer())) {
                 offerToCodeMapping.put(code.getOffer(), code);
             }
 
-            List<Offer> additionalOffersToBeApplied = new ArrayList<Offer>();
+            List<Offer> additionalOffersToBeApplied = new ArrayList<>();
 
             extensionManager.getProxy().addAdditionalOffersForCode(additionalOffersToBeApplied, code);
             for (Offer additionalOfferToBeApplied : additionalOffersToBeApplied) {
@@ -634,7 +652,7 @@ public class OfferServiceImpl implements OfferService {
         }
         return offerToCodeMapping;
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public Boolean deleteOfferCode(OfferCode code) {
@@ -746,4 +764,5 @@ public class OfferServiceImpl implements OfferService {
     public Offer findOfferById(Long offerId) {
         return offerDao.readOfferById(offerId);
     }
+
 }

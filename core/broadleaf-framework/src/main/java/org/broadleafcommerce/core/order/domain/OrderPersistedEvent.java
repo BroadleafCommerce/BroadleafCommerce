@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,16 +19,17 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.event.BroadleafApplicationEvent;
 
+import java.io.Serial;
 
 /**
  * An event for whenever an {@link OrderImpl} has been persisted
  *
  * @author Phillip Verheyden (phillipuniverse)
- * 
  * @see {@link OrderPersistedEntityListener}
  */
 public class OrderPersistedEvent extends BroadleafApplicationEvent {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -37,14 +38,14 @@ public class OrderPersistedEvent extends BroadleafApplicationEvent {
     public OrderPersistedEvent(Order order) {
         super(order);
     }
-    
+
     /**
      * Gets the newly-persisted {@link Order} set by the {@link OrderPersistedEntityListener}
-     * 
+     *
      * @return
      */
     public Order getOrder() {
-        return (Order)source;
+        return (Order) source;
     }
 
 }

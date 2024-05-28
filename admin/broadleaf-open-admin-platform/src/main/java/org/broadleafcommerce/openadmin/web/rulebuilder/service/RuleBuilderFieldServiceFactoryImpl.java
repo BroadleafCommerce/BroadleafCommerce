@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,21 +26,21 @@ import jakarta.annotation.Resource;
 /**
  * Factory class that returns the appropriate RuleBuilderFieldService
  * given the service name. The services are injected into the factory defined in applicationContext-servlet-open-admin.xml
- * @see org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService
  *
  * @author Elbert Bautista (elbertbautista)
+ * @see org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService
  */
 @Service("blRuleBuilderFieldServiceFactory")
 public class RuleBuilderFieldServiceFactoryImpl implements RuleBuilderFieldServiceFactory {
 
-    @Resource(name="blRuleBuilderFieldServices")
+    @Resource(name = "blRuleBuilderFieldServices")
     protected List<RuleBuilderFieldService> fieldServices;
 
     @Override
     public RuleBuilderFieldService createInstance(String name) {
 
         for (RuleBuilderFieldService service : fieldServices) {
-            if (service.getName().equals(name)){
+            if (service.getName().equals(name)) {
                 try {
                     return service.clone();
                 } catch (CloneNotSupportedException e) {
@@ -61,4 +61,5 @@ public class RuleBuilderFieldServiceFactoryImpl implements RuleBuilderFieldServi
     public void setFieldServices(List<RuleBuilderFieldService> fieldServices) {
         this.fieldServices = fieldServices;
     }
+
 }

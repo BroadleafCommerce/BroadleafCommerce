@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,20 +44,19 @@ import java.math.BigDecimal;
  * <p>Note: this implementation assumes that units of measurement (lb, kg, etc) are the same across the site implementation</p>
  *
  * @author Phillip Verheyden
- * 
  */
 public interface FulfillmentWeightBand extends FulfillmentBand {
 
-    public BigDecimal getMinimumWeight();
-    
-    public void setMinimumWeight(BigDecimal weight);
-    
-    public BandedWeightFulfillmentOption getOption();
+    BigDecimal getMinimumWeight();
 
-    public void setOption(BandedWeightFulfillmentOption option);
-    
-    public WeightUnitOfMeasureType getWeightUnitOfMeasure();
-    
-    public void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure);
+    void setMinimumWeight(BigDecimal weight);
+
+    BandedWeightFulfillmentOption getOption();
+
+    void setOption(BandedWeightFulfillmentOption option);
+
+    WeightUnitOfMeasureType getWeightUnitOfMeasure();
+
+    void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure);
 
 }

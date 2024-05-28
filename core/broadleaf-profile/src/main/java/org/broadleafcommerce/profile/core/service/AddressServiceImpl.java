@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,7 +39,7 @@ public class AddressServiceImpl implements AddressService {
 
     protected boolean mustValidateAddresses = false;
 
-    @Resource(name="blAddressDao")
+    @Resource(name = "blAddressDao")
     protected AddressDao addressDao;
 
     @Resource(name = "blModuleConfigurationService")
@@ -88,7 +88,9 @@ public class AddressServiceImpl implements AddressService {
 
         if (providers != null && !providers.isEmpty()) {
 
-            List<ModuleConfiguration> moduleConfigs = moduleConfigService.findActiveConfigurationsByType(ModuleConfigurationType.ADDRESS_VERIFICATION);
+            List<ModuleConfiguration> moduleConfigs = moduleConfigService.findActiveConfigurationsByType(
+                    ModuleConfigurationType.ADDRESS_VERIFICATION
+            );
 
             if (moduleConfigs != null && !moduleConfigs.isEmpty()) {
                 //Try to find a default configuration
@@ -115,7 +117,7 @@ public class AddressServiceImpl implements AddressService {
         if (mustValidateAddresses) {
             throw new AddressVerificationException("No providers were configured to handle address validation");
         }
-        ArrayList<Address> out = new ArrayList<Address>();
+        ArrayList<Address> out = new ArrayList<>();
         out.add(address);
         return out;
     }
@@ -165,14 +167,18 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public void populateAddressISOCountrySub(Address address) {
-        if (StringUtils.isBlank(address.getIsoCountrySubdivision()) &&
-                address.getIsoCountryAlpha2() != null &&
-                StringUtils.isNotBlank(address.getStateProvinceRegion())) {
+        if (StringUtils.isBlank(address.getIsoCountrySubdivision())
+                && address.getIsoCountryAlpha2() != null
+                && StringUtils.isNotBlank(address.getStateProvinceRegion())) {
 
             String friendlyStateProvRegion = address.getStateProvinceRegion();
-            CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByCountryAndAltAbbreviation(address.getIsoCountryAlpha2().getAlpha2(), friendlyStateProvRegion);
+            CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByCountryAndAltAbbreviation(
+                    address.getIsoCountryAlpha2().getAlpha2(), friendlyStateProvRegion
+            );
             if (isoCountrySub == null) {
-                isoCountrySub = countrySubdivisionService.findSubdivisionByCountryAndName(address.getIsoCountryAlpha2().getAlpha2(), friendlyStateProvRegion);
+                isoCountrySub = countrySubdivisionService.findSubdivisionByCountryAndName(
+                        address.getIsoCountryAlpha2().getAlpha2(), friendlyStateProvRegion
+                );
             }
 
             if (isoCountrySub != null) {
@@ -183,9 +189,11 @@ public class AddressServiceImpl implements AddressService {
 
     /**
      * Default is false. If set to true, the verifyAddress method will throw an exception if there are no providers to handle the request.
+     *
      * @param mustValidateAddresses
      */
     public void setMustValidateAddresses(boolean mustValidateAddresses) {
         this.mustValidateAddresses = mustValidateAddresses;
     }
+
 }

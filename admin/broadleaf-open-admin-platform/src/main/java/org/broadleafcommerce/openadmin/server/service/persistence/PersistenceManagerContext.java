@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,7 +26,9 @@ import java.util.Stack;
  */
 public class PersistenceManagerContext {
 
-    private static final ThreadLocal<PersistenceManagerContext> BROADLEAF_PERSISTENCE_MANAGER_CONTEXT = ThreadLocalManager.createThreadLocal(PersistenceManagerContext.class, false);
+    private static final ThreadLocal<PersistenceManagerContext> BROADLEAF_PERSISTENCE_MANAGER_CONTEXT =
+            ThreadLocalManager.createThreadLocal(PersistenceManagerContext.class, false);
+    private final Stack<PersistenceManager> persistenceManager = new Stack<>();
 
     public static PersistenceManagerContext getPersistenceManagerContext() {
         return BROADLEAF_PERSISTENCE_MANAGER_CONTEXT.get();
@@ -40,14 +42,12 @@ public class PersistenceManagerContext {
         BROADLEAF_PERSISTENCE_MANAGER_CONTEXT.remove();
     }
 
-    private final Stack<PersistenceManager> persistenceManager = new Stack<PersistenceManager>();
-
     public void addPersistenceManager(PersistenceManager persistenceManager) {
         this.persistenceManager.add(persistenceManager);
     }
 
     public PersistenceManager getPersistenceManager() {
-        return !persistenceManager.empty()?persistenceManager.peek():null;
+        return !persistenceManager.empty() ? persistenceManager.peek() : null;
     }
 
     public void remove() {
@@ -58,4 +58,5 @@ public class PersistenceManagerContext {
             PersistenceManagerContext.clear();
         }
     }
+
 }

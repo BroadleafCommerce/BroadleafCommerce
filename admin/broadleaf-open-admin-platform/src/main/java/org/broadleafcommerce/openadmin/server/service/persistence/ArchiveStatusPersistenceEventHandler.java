@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,7 +46,7 @@ import jakarta.persistence.criteria.Predicate;
 /**
  * Adds {@link FilterMapping} to the {@link CriteriaTransferObject}'s {@link CriteriaTransferObject#getAdditionalFilterMappings()}
  * in order to exclude by default any entities that are archived.
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blArchiveStatusPersistenceEventHandler")
@@ -56,12 +56,17 @@ public class ArchiveStatusPersistenceEventHandler extends PersistenceManagerEven
 
     @Resource(name = "blArchiveStatusPersistenceEventHandlerExtensionManager")
     protected ArchiveStatusPersistenceEventHandlerExtensionManager extensionManager;
-    
+
     @Override
-    public PersistenceManagerEventHandlerResponse preFetch(PersistenceManager persistenceManager, PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
+    public PersistenceManagerEventHandlerResponse preFetch(
+            PersistenceManager persistenceManager,
+            PersistencePackage persistencePackage,
+            CriteriaTransferObject cto
+    ) throws ServiceException {
         try {
-            Class<?>[] entityClasses = persistenceManager.getDynamicEntityDao()
-                    .getAllPolymorphicEntitiesFromCeiling(Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname()));
+            Class<?>[] entityClasses = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(
+                    Class.forName(persistencePackage.getCeilingEntityFullyQualifiedClassname())
+            );
             AtomicBoolean isArchivable = new AtomicBoolean(false);
             for (Class<?> entity : entityClasses) {
                 AtomicBoolean test = new AtomicBoolean(true);
@@ -78,39 +83,40 @@ public class ArchiveStatusPersistenceEventHandler extends PersistenceManagerEven
             if (isArchivable.get() && !persistencePackage.getPersistencePerspective().getShowArchivedFields()) {
                 String targetPropertyName = "archiveStatus.archived";
                 if (persistencePackage.getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.ADORNEDTARGETLIST)) {
-                    AdornedTargetList atl = (AdornedTargetList) persistencePackage.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+                    AdornedTargetList atl = (AdornedTargetList) persistencePackage.getPersistencePerspectiveItems()
+                            .get(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
                     targetPropertyName = atl.getTargetObjectPath() + "." + targetPropertyName;
                 }
                 FilterMapping filterMapping = new FilterMapping()
-                    .withFieldPath(new FieldPath().withTargetProperty(targetPropertyName))
-                    .withDirectFilterValues(new EmptyFilterValues())
-                    .withRestriction(new Restriction()
-                            .withPredicateProvider(new PredicateProvider<Character, Character>() {
-                                @Override
-                                public Predicate buildPredicate(CriteriaBuilder builder,
-                                                                FieldPathBuilder fieldPathBuilder,
-                                                                From root, String ceilingEntity,
-                                                                String fullPropertyName, Path<Character> explicitPath,
-                                                                List<Character> directValues) {
-                                    return builder.or(builder.equal(explicitPath, 'N'), builder.isNull(explicitPath));
-                                }
-                            })
-                    );
+                        .withFieldPath(new FieldPath().withTargetProperty(targetPropertyName))
+                        .withDirectFilterValues(new EmptyFilterValues())
+                        .withRestriction(new Restriction()
+                                .withPredicateProvider(new PredicateProvider<Character, Character>() {
+                                    @Override
+                                    public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                    FieldPathBuilder fieldPathBuilder,
+                                                                    From root, String ceilingEntity,
+                                                                    String fullPropertyName, Path<Character> explicitPath,
+                                                                    List<Character> directValues) {
+                                        return builder.or(builder.equal(explicitPath, 'N'), builder.isNull(explicitPath));
+                                    }
+                                })
+                        );
                 cto.getAdditionalFilterMappings().add(filterMapping);
             }
-            return new PersistenceManagerEventHandlerResponse().
-                    withStatus(PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED);
+            return new PersistenceManagerEventHandlerResponse()
+                    .withStatus(PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED);
         } catch (ClassNotFoundException e) {
             LOG.error("Could not find the class " + persistencePackage.getCeilingEntityFullyQualifiedClassname() + " to "
                     + "compute polymorphic entity types for. Assuming that the entity is not archivable");
-            return new PersistenceManagerEventHandlerResponse().
-                    withStatus(PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.NOT_HANDLED);
+            return new PersistenceManagerEventHandlerResponse()
+                    .withStatus(PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.NOT_HANDLED);
         }
     }
-    
+
     @Override
     public int getOrder() {
         return HIGHEST_PRECEDENCE;
     }
-    
+
 }

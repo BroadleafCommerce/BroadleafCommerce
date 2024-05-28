@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,17 +42,15 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 /**
- * 
  * @author jfischer
- *
  */
 @Repository("blAdminPermissionDao")
 public class AdminPermissionDaoImpl implements AdminPermissionDao {
-    
+
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public void deleteAdminPermission(AdminPermission permission) {
@@ -63,7 +61,12 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
     }
 
     public AdminPermission readAdminPermissionById(Long id) {
-        return (AdminPermission) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminPermission"), id);
+        return (AdminPermission) em.find(
+                entityConfiguration.lookupEntityClass(
+                        "org.broadleafcommerce.openadmin.server.security.domain.AdminPermission"
+                ),
+                id
+        );
     }
 
     @Override
@@ -73,7 +76,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
         Root<AdminPermissionImpl> adminPerm = criteria.from(AdminPermissionImpl.class);
         criteria.select(adminPerm);
 
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.equal(adminPerm.get("name"), name));
         restrictions.add(builder.equal(adminPerm.get("type"), type));
 
@@ -89,7 +92,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
             return results.get(0);
         }
     }
-    
+
     @Override
     public AdminPermission readAdminPermissionByName(String name) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -97,7 +100,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
         Root<AdminPermissionImpl> adminPerm = criteria.from(AdminPermissionImpl.class);
         criteria.select(adminPerm);
 
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.equal(adminPerm.get("name"), name));
 
         // Execute the query with the restrictions
@@ -126,10 +129,14 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
         return permissions;
     }
 
-    public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
+    public boolean isUserQualifiedForOperationOnCeilingEntity(
+            AdminUser adminUser,
+            PermissionType permissionType,
+            String ceilingEntityFullyQualifiedName
+    ) {
         //the ceiling may be an impl, which will fail because entity permission is normally specified for the interface
         //try the passed in ceiling first, but also try an interfaces implemented
-        List<String> testClasses = new ArrayList<String>();
+        List<String> testClasses = new ArrayList<>();
         testClasses.add(ceilingEntityFullyQualifiedName);
         try {
             for (Object interfaze : ClassUtils.getAllInterfaces(Class.forName(ceilingEntityFullyQualifiedName))) {
@@ -158,7 +165,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
     public boolean isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(String ceilingEntityFullyQualifiedName) {
         //the ceiling may be an impl, which will fail because entity permission is normally specified for the interface
         //try the passed in ceiling first, but also try an interfaces implemented
-        List<String> testClasses = new ArrayList<String>();
+        List<String> testClasses = new ArrayList<>();
         testClasses.add(ceilingEntityFullyQualifiedName);
         try {
             for (Object interfaze : ClassUtils.getAllInterfaces(Class.forName(ceilingEntityFullyQualifiedName))) {
@@ -186,7 +193,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
     public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
         //the ceiling may be an impl, which will fail because entity permission is normally specified for the interface
         //try the passed in ceiling first, but also try an interfaces implemented
-        List<String> testClasses = new ArrayList<String>();
+        List<String> testClasses = new ArrayList<>();
         testClasses.add(ceilingEntityFullyQualifiedName);
         try {
             for (Object interfaze : ClassUtils.getAllInterfaces(Class.forName(ceilingEntityFullyQualifiedName))) {

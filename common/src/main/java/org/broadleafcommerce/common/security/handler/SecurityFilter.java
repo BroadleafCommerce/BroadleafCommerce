@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -49,9 +49,8 @@ import jakarta.servlet.http.HttpServletResponse;
  * ({@code servletPath + pathInfo}) of an {@code HttpServletRequest}.
  * This allows you to use wildcard matching as well, for example {@code /**} or {@code **}
  *
- * @see AntPathRequestMatcher
- *
  * @author Jeff Fischer
+ * @see AntPathRequestMatcher
  */
 public class SecurityFilter extends OncePerRequestFilter {
 
@@ -118,13 +117,12 @@ public class SecurityFilter extends OncePerRequestFilter {
      * This allows you to declaratively set a list of excluded Request Patterns
      *
      * <bean id="blCsrfFilter" class="org.broadleafcommerce.common.security.handler.CsrfFilter" >
-     *     <property name="excludedRequestPatterns">
-     *         <list>
-     *             <value>/exclude-me/**</value>
-     *         </list>
-     *     </property>
+     * <property name="excludedRequestPatterns">
+     * <list>
+     * <value>/exclude-me/**</value>
+     * </list>
+     * </property>
      * </bean>
-     *
      **/
     public void setExcludedRequestPatterns(List<String> excludedRequestPatterns) {
         this.excludedRequestPatterns = excludedRequestPatterns;

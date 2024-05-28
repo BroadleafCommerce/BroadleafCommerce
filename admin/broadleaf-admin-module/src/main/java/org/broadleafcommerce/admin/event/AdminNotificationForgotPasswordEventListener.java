@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -63,7 +63,9 @@ public class AdminNotificationForgotPasswordEventListener extends AbstractBroadl
             Map<String, Object> context = createContext(event, adminUser);
 
             try {
-                notificationDispatcher.dispatchNotification(new EmailNotification(adminUser.getEmail(), NotificationEventType.ADMIN_FORGOT_PASSWORD, context));
+                notificationDispatcher.dispatchNotification(new EmailNotification(
+                        adminUser.getEmail(), NotificationEventType.ADMIN_FORGOT_PASSWORD, context
+                ));
             } catch (ServiceException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Unable to send an admin forgot password email for " + adminUser.getEmail(), e);
@@ -71,7 +73,9 @@ public class AdminNotificationForgotPasswordEventListener extends AbstractBroadl
             }
 
             try {
-                notificationDispatcher.dispatchNotification(new SMSNotification(adminUser.getPhoneNumber(), NotificationEventType.ADMIN_FORGOT_PASSWORD, context));
+                notificationDispatcher.dispatchNotification(new SMSNotification(
+                        adminUser.getPhoneNumber(), NotificationEventType.ADMIN_FORGOT_PASSWORD, context
+                ));
             } catch (ServiceException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Unable to send an admin forgot password email for " + adminUser.getEmail(), e);
@@ -94,4 +98,5 @@ public class AdminNotificationForgotPasswordEventListener extends AbstractBroadl
     public boolean isAsynchronous() {
         return true;
     }
+
 }

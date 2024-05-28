@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,7 +31,7 @@ import jakarta.annotation.Resource;
 
 /**
  * Common functionality between checking availability between adds and updates
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 public abstract class AbstractCheckAvailabilityActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
@@ -44,8 +44,9 @@ public abstract class AbstractCheckAvailabilityActivity extends BaseActivity<Pro
         Order order = context.getSeedData().getOrder();
         return order != null && !Objects.equals(order.getStatus(), OrderStatus.NAMED);
     }
-    
+
     protected void checkSkuAvailability(Order order, Sku sku, Integer requestedQuantity) throws InventoryUnavailableException {
         inventoryService.checkSkuAvailability(order, sku, requestedQuantity);
     }
+
 }

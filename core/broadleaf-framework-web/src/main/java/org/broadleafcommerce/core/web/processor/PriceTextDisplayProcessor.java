@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,7 +31,7 @@ import java.util.Map;
  * For example, when rendering "6.99" in a US locale, the output text would be "$6.99".
  * When viewing in France for example, you might see "6,99 (US)$". Alternatively, if currency conversion
  * was enabled, you may see "5,59 (euro-symbol)"
- * 
+ *
  * @author apazzolini
  */
 @Component("blPriceTextDisplayProcessor")
@@ -42,21 +42,27 @@ public class PriceTextDisplayProcessor extends AbstractBroadleafTagTextModifierP
     public String getName() {
         return "price";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 1500;
     }
 
     @Override
-    public String getTagText(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+    public String getTagText(
+            String tagName,
+            Map<String, String> tagAttributes,
+            String attributeName,
+            String attributeValue,
+            BroadleafTemplateContext context
+    ) {
         Money price = null;
 
         Object result = context.parseExpression(attributeValue);
         if (result instanceof Money) {
             price = (Money) result;
         } else if (result instanceof Number) {
-            price = new Money(((Number)result).doubleValue());
+            price = new Money(((Number) result).doubleValue());
         }
 
         return BLCMoneyFormatUtils.formatPrice(price);

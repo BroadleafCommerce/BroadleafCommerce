@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,10 +25,10 @@ import java.io.Serializable;
 /**
  * <p>
  * XREF entity between a {@link StructuredContentFieldTemplate} and a {@link FieldGroup}
- * 
+ *
  * <p>
  * This was created to facilitate specifying ordering for the {@link FieldGroup}s within a {@link StructuredContentFieldTemplate}
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 public interface StructuredContentFieldGroupXref extends Serializable, MultiTenantCloneable<StructuredContentFieldGroupXref> {
@@ -45,7 +45,7 @@ public interface StructuredContentFieldGroupXref extends Serializable, MultiTena
     void setTemplate(StructuredContentFieldTemplate template);
 
     FieldGroup getFieldGroup();
-    
+
     void setFieldGroup(FieldGroup fieldGroup);
-    
+
 }

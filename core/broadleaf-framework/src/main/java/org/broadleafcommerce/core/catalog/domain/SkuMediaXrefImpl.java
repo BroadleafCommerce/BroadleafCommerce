@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,6 +37,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,8 +57,7 @@ import jakarta.persistence.Table;
 @AdminPresentationClass(excludeFromPolymorphism = false,
         populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneable<SkuMediaXrefImpl> {
@@ -64,18 +65,8 @@ public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneab
     /**
      * The Constant serialVersionUID.
      */
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    public SkuMediaXrefImpl(Sku sku, Media media, String key) {
-        this.sku = sku;
-        this.media = media;
-        this.key = key;
-    }
-
-    public SkuMediaXrefImpl() {
-        //support default constructor for Hibernate
-    }
-
     @Id
     @GeneratedValue(generator = "SkuMediaId")
     @GenericGenerator(
@@ -89,22 +80,29 @@ public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneab
     )
     @Column(name = "SKU_MEDIA_ID")
     protected Long id;
-
     //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
     @ManyToOne(targetEntity = SkuImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "BLC_SKU_SKU_ID")
     @AdminPresentation(excluded = true)
     protected Sku sku;
-
     //for the basic collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
     @ManyToOne(targetEntity = MediaImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "MEDIA_ID")
     @ClonePolicy
     protected Media media;
-
     @Column(name = "MAP_KEY", nullable = false)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String key;
+
+    public SkuMediaXrefImpl(Sku sku, Media media, String key) {
+        this.sku = sku;
+        this.media = media;
+        this.key = key;
+    }
+
+    public SkuMediaXrefImpl() {
+        //support default constructor for Hibernate
+    }
 
     @Override
     public Long getId() {
@@ -234,6 +232,5 @@ public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneab
         cloned.setTitle(getTitle());
         return createResponse;
     }
-
 
 }

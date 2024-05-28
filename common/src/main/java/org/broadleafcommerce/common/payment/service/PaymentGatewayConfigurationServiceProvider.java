@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,28 +31,28 @@ import jakarta.annotation.Nonnull;
  * can be configured for a single implementation (like Paypal Express and Braintree, or Paypal Express, a credit card
  * module and a gift card module) this allows you to select between them to perform additional operations on a payment
  * transaction.</p>
- * 
+ *
  * <p>Once you obtain the correct gateway configuration bean, you can then obtain links to each service to perform individual
  * operations like {@link PaymentGatewayTransactionService} or {@link PaymentGatewayFraudService}.</p>
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 public interface PaymentGatewayConfigurationServiceProvider {
-    
+
     /**
      * <p>Returns the first {@link PaymentGatewayConfigurationService} that matches the given {@link PaymentGatewayType}. Useful when
      * you need a particular {@link PaymentGatewayConfigurationService} to communicate in different ways to a payment gateway.</p>
-     * 
+     *
      * @throws IllegalArgumentException if the given {@link PaymentGatewayType} is null or if there is no configuration for
-     * the given {@link PaymentGatewayType}.
+     *                                  the given {@link PaymentGatewayType}.
      */
-    public PaymentGatewayConfigurationService getGatewayConfigurationService(@Nonnull PaymentGatewayType gatewayType);
-    
+    PaymentGatewayConfigurationService getGatewayConfigurationService(@Nonnull PaymentGatewayType gatewayType);
+
     /*
      * All of the gateway configurations configured in the system.
      */
-    public List<PaymentGatewayConfigurationService> getGatewayConfigurationServices();
-    
-    public void setGatewayConfigurationServices(List<PaymentGatewayConfigurationService> gatewayConfigurationServices);
-    
+    List<PaymentGatewayConfigurationService> getGatewayConfigurationServices();
+
+    void setGatewayConfigurationServices(List<PaymentGatewayConfigurationService> gatewayConfigurationServices);
+
 }

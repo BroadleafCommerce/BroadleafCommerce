@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,6 +37,7 @@ import jakarta.annotation.Resource;
  * the order. As a result, implementors may host sensitive user account
  * information in a datastore separate from the datastore housing the order.
  * This measure goes towards achieving a PCI compliant architecture.
+ *
  * @author jfischer
  */
 @Service("blSecureOrderPaymentService")
@@ -72,19 +73,22 @@ public class SecureOrderPaymentServiceImpl implements SecureOrderPaymentService 
         if (paymentType.isCreditCardType()) {
             CreditCardPayment ccinfo = findCreditCardInfo(referenceNumber);
             if (ccinfo == null) {
-                throw new WorkflowException("No credit card info associated with credit card payment type with reference number: " + referenceNumber);
+                throw new WorkflowException("No credit card info associated with credit card payment type with reference number: "
+                        + referenceNumber);
             }
             return ccinfo;
         } else if (paymentType == PaymentType.BANK_ACCOUNT) {
             BankAccountPayment bankinfo = findBankAccountInfo(referenceNumber);
             if (bankinfo == null) {
-                throw new WorkflowException("No bank account info associated with bank account payment type with reference number: " + referenceNumber);
+                throw new WorkflowException("No bank account info associated with bank account payment type with reference number: "
+                        + referenceNumber);
             }
             return bankinfo;
         } else if (paymentType == PaymentType.GIFT_CARD) {
             GiftCardPayment gcinfo = findGiftCardInfo(referenceNumber);
             if (gcinfo == null) {
-                throw new WorkflowException("No bank account info associated with gift card payment type with reference number: " + referenceNumber);
+                throw new WorkflowException("No bank account info associated with gift card payment type with reference number: "
+                        + referenceNumber);
             }
             return gcinfo;
         }
@@ -99,7 +103,6 @@ public class SecureOrderPaymentServiceImpl implements SecureOrderPaymentService 
         if (referenced != null) {
             remove(referenced);
         }
-
     }
 
     @Override
@@ -119,4 +122,5 @@ public class SecureOrderPaymentServiceImpl implements SecureOrderPaymentService 
     protected GiftCardPayment findGiftCardInfo(String referenceNumber) {
         return securePaymentInfoDao.findGiftCardPayment(referenceNumber);
     }
+
 }

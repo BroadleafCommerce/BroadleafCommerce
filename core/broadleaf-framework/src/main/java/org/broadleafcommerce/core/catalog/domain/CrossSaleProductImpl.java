@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,6 +32,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.CascadeType;
@@ -55,14 +56,13 @@ import jakarta.persistence.Table;
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blRelatedProducts")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class CrossSaleProductImpl
-        implements CrossSaleProduct, MultiTenantCloneable<CrossSaleProductImpl> {
+public class CrossSaleProductImpl implements CrossSaleProduct, MultiTenantCloneable<CrossSaleProductImpl> {
 
-    protected static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "CrossSaleProductId")
@@ -200,7 +200,8 @@ public class CrossSaleProductImpl
 
     @Override
     public <G extends CrossSaleProductImpl> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -220,4 +221,5 @@ public class CrossSaleProductImpl
         }
         return createResponse;
     }
+
 }

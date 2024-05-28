@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,7 +27,7 @@ import java.io.Serializable;
  *
  * @author Nick Crum (ncrum)
  */
-public interface IndexFieldType extends Serializable, MultiTenantCloneable<IndexFieldType>  {
+public interface IndexFieldType extends Serializable, MultiTenantCloneable<IndexFieldType> {
 
     Long getId();
 
@@ -36,7 +36,7 @@ public interface IndexFieldType extends Serializable, MultiTenantCloneable<Index
     FieldType getFieldType();
 
     void setFieldType(FieldType fieldType);
-    
+
     IndexField getIndexField();
 
     void setIndexField(IndexField indexField);

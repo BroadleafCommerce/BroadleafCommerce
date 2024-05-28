@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,7 +41,7 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
     private static ApplicationContext applicationContext;
     private static PostLoaderDao postLoaderDao;
 
-    @Resource(name="blPersistenceService")
+    @Resource(name = "blPersistenceService")
     protected PersistenceService persistenceService;
 
     public static PostLoaderDao getPostLoaderDao() {
@@ -56,13 +56,13 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
 
     /**
      * see org.broadleafcommerce.test.TestNGSiteIntegrationSetup#reSetApplicationContext()
+     *
      * @param applicationContext
      */
     public static void resetApplicationContext(ApplicationContext applicationContext) {
         DefaultPostLoaderDao.applicationContext = applicationContext;
         postLoaderDao = null;
     }
-
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -71,17 +71,17 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
 
     /**
      * Find and return the entity by primary key and class.
-     *
+     * <p>
      * Delegates find to {@link jakarta.persistence.EntityManager#find(Class, Object)}.
      *
      * @param clazz entity class
-     * @param id primary key
+     * @param id    primary key
      * @return managed entity or null if not found
      */
     @Override
     public <T> T find(Class<T> clazz, Object id) {
         EntityManager em = getEntityManager(clazz);
-        if(em == null) {
+        if (em == null) {
             LOG.warn("EntityManager is null in DefaultPostLoaderDao returning NULL instead of doing em.find");
             return null;
         }
@@ -96,7 +96,7 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
     @Override
     public void evict(Class<?> clazz, Object id) {
         EntityManager em = getEntityManager(clazz);
-        if(em != null){
+        if (em != null) {
             Session session = em.unwrap(Session.class);
             session.evict(session.getReference(clazz, id));
         }
@@ -105,14 +105,14 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
     @Override
     public void evict(Object entity) {
         EntityManager em;
-        if(entity instanceof HibernateProxy){
+        if (entity instanceof HibernateProxy) {
             Class<?> persistentClass = ((HibernateProxy) entity).getHibernateLazyInitializer().getPersistentClass();
             em = getEntityManager(persistentClass);
-        }else {
+        } else {
             em = getEntityManager(entity.getClass());
         }
 
-        if(em != null){
+        if (em != null) {
             Session session = em.unwrap(Session.class);
             session.evict(entity);
         }

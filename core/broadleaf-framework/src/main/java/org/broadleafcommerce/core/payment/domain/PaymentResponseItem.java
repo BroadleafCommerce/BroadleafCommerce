@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,25 +26,25 @@ import java.util.Map;
 
 public interface PaymentResponseItem extends Serializable {
 
-    public String getAuthorizationCode();
+    String getAuthorizationCode();
 
-    public void setAuthorizationCode(String authorizationCode);
+    void setAuthorizationCode(String authorizationCode);
 
-    public String getMiddlewareResponseCode();
+    String getMiddlewareResponseCode();
 
-    public void setMiddlewareResponseCode(String middlewareResponseCode);
+    void setMiddlewareResponseCode(String middlewareResponseCode);
 
-    public String getMiddlewareResponseText();
+    String getMiddlewareResponseText();
 
-    public void setMiddlewareResponseText(String middlewareResponseText);
+    void setMiddlewareResponseText(String middlewareResponseText);
 
-    public String getProcessorResponseCode();
+    String getProcessorResponseCode();
 
-    public void setProcessorResponseCode(String processorResponseCode);
+    void setProcessorResponseCode(String processorResponseCode);
 
-    public String getProcessorResponseText();
+    String getProcessorResponseText();
 
-    public void setProcessorResponseText(String processorResponseText);
+    void setProcessorResponseText(String processorResponseText);
 
     /**
      * The amount that the system processed. For example, when submitting an order, this would be the order.getTotal.
@@ -52,58 +52,58 @@ public interface PaymentResponseItem extends Serializable {
      *
      * @return
      */
-    public Money getTransactionAmount();
+    Money getTransactionAmount();
 
     /**
      * Sets the transaction amount.
      *
      * @param amount
      */
-    public void setTransactionAmount(Money amount);
+    void setTransactionAmount(Money amount);
 
-    public Boolean getTransactionSuccess();
+    Boolean getTransactionSuccess();
 
-    public void setTransactionSuccess(Boolean transactionSuccess);
+    void setTransactionSuccess(Boolean transactionSuccess);
 
-    public Date getTransactionTimestamp();
+    Date getTransactionTimestamp();
 
-    public void setTransactionTimestamp(Date transactionTimestamp);
+    void setTransactionTimestamp(Date transactionTimestamp);
 
-    public String getImplementorResponseCode();
+    String getImplementorResponseCode();
 
-    public void setImplementorResponseCode(String implementorResponseCode);
+    void setImplementorResponseCode(String implementorResponseCode);
 
-    public String getImplementorResponseText();
+    String getImplementorResponseText();
 
-    public void setImplementorResponseText(String implementorResponseText);
+    void setImplementorResponseText(String implementorResponseText);
 
-    public String getTransactionId();
+    String getTransactionId();
 
-    public void setTransactionId(String transactionId);
+    void setTransactionId(String transactionId);
 
-    public String getAvsCode();
+    String getAvsCode();
 
-    public void setAvsCode(String avsCode);
+    void setAvsCode(String avsCode);
 
     // TODO: Rename to getRemainingTransactionAmount
-    public Money getRemainingBalance();
+    Money getRemainingBalance();
 
-    public void setRemainingBalance(Money remainingBalance);
+    void setRemainingBalance(Money remainingBalance);
 
-    public Map<String, String> getAdditionalFields();
+    Map<String, String> getAdditionalFields();
 
-    public void setAdditionalFields(Map<String, String> additionalFields);
+    void setAdditionalFields(Map<String, String> additionalFields);
 
-    public String getUserName();
+    String getUserName();
 
-    public void setUserName(String userName);
+    void setUserName(String userName);
 
-    public Customer getCustomer();
+    Customer getCustomer();
 
-    public void setCustomer(Customer customer);
+    void setCustomer(Customer customer);
 
-    public void setPaymentTransaction(PaymentTransaction paymentTransaction);
+    PaymentTransaction getPaymentTransaction();
 
-    public PaymentTransaction getPaymentTransaction();
+    void setPaymentTransaction(PaymentTransaction paymentTransaction);
 
 }

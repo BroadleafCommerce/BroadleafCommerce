@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,7 +40,11 @@ public class CookieRuleFilter extends AbstractIgnorableOncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternalUnlessIgnored(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternalUnlessIgnored(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
         ServletWebRequest request = new ServletWebRequest(httpServletRequest, httpServletResponse);
         try {
             processor.process(request);
@@ -54,5 +58,6 @@ public class CookieRuleFilter extends AbstractIgnorableOncePerRequestFilter {
     public int getOrder() {
         return FilterOrdered.POST_SECURITY_LOW;
     }
+
 }
 

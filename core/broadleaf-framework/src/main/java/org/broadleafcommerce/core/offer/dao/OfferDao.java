@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,7 +47,7 @@ public interface OfferDao {
     Offer create();
 
     CandidateOrderOffer createCandidateOrderOffer();
-    
+
     CandidateItemOffer createCandidateItemOffer();
 
     CandidateFulfillmentGroupOffer createCandidateFulfillmentGroupOffer();
@@ -73,7 +73,7 @@ public interface OfferDao {
      *
      * @return the milliseconds to cache the current date/time
      */
-    public Long getCurrentDateResolution();
+    Long getCurrentDateResolution();
 
     /**
      * Sets the number of milliseconds that the current date/time will be cached for queries before refreshing.
@@ -82,5 +82,6 @@ public interface OfferDao {
      *
      * @param currentDateResolution the milliseconds to cache the current date/time
      */
-    public void setCurrentDateResolution(Long currentDateResolution);
+    void setCurrentDateResolution(Long currentDateResolution);
+
 }

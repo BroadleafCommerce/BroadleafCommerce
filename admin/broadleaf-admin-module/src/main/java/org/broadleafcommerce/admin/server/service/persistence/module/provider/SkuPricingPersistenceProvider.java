@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,15 +42,15 @@ import java.util.Locale;
 
 /**
  * Persistence provider capable of extracting friendly display values for Sku prices, taking currency into consideration.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Scope("prototype")
 @Component("blSkuPricingPersistenceProvider")
 public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistenceProvider {
-    
+
     public static int ORDER = FieldPersistenceProvider.MONEY - 1000;
-    
+
     @Override
     public int getOrder() {
         return ORDER;
@@ -61,43 +61,43 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
         if (!canHandleExtraction(extractValueRequest, property)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
-        
+
         Object displayValue = extractValueRequest.getRequestedValue();
         if (displayValue == null) {
             try {
                 displayValue = PropertyUtils.getProperty(extractValueRequest.getEntity(), property.getName());
-                ((BasicFieldMetadata)property.getMetadata()).setDerived(true);
+                ((BasicFieldMetadata) property.getMetadata()).setDerived(true);
             } catch (Exception e) {
                 //swallow all exceptions because null is fine for the display value
             }
         }
         Object actualValue = extractValueRequest.getRequestedValue();
-        
+
         property.setValue(formatValue(actualValue, extractValueRequest, property));
         property.setDisplayValue(formatDisplayValue(displayValue, extractValueRequest, property));
 
         return MetadataProviderResponse.HANDLED_BREAK;
     }
-    
+
     protected String formatValue(Object value, ExtractValueRequest extractValueRequest, Property property) {
         if (value == null) {
             return null;
         }
-        BigDecimal decimalValue = (value instanceof Money) ? ((Money)value).getAmount() : (BigDecimal) value;
+        BigDecimal decimalValue = (value instanceof Money) ? ((Money) value).getAmount() : (BigDecimal) value;
         return super.formatValue(decimalValue, extractValueRequest, property);
     }
-    
+
     protected String formatDisplayValue(Object value, ExtractValueRequest extractValueRequest, Property property) {
         if (value == null) {
             return null;
         }
-        BigDecimal decimalValue = (value instanceof Money) ? ((Money)value).getAmount() : (BigDecimal) value;
+        BigDecimal decimalValue = (value instanceof Money) ? ((Money) value).getAmount() : (BigDecimal) value;
         return super.formatDisplayValue(decimalValue, extractValueRequest, property);
     }
-    
+
     /**
      * Handle all fields that have declared themselves to be apart of a Sku and have a field type of Money
-     *  
+     *
      * @param extractValueRequest
      * @param property
      * @return whether or not we can handle extraction
@@ -105,17 +105,17 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
     @Override
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
         return (
-                extractValueRequest.getMetadata().getTargetClass().equals(SkuImpl.class.getName()) ||
-                extractValueRequest.getMetadata().getTargetClass().equals(Sku.class.getName())
-               ) 
+                extractValueRequest.getMetadata().getTargetClass().equals(SkuImpl.class.getName())
+                        || extractValueRequest.getMetadata().getTargetClass().equals(Sku.class.getName())
+        )
                 && !property.getName().contains(FieldManager.MAPFIELDSEPARATOR)
                 && SupportedFieldType.MONEY.equals(extractValueRequest.getMetadata().getFieldType());
     }
-    
+
     protected boolean isDefaultSkuProperty(ExtractValueRequest extractValueRequest, Property property) {
         return property.getName().startsWith("defaultSku");
     }
-    
+
     @Override
     protected Locale getLocale(ExtractValueRequest extractValueRequest, Property property) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
@@ -132,7 +132,7 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
             Sku s = (Sku) extractValueRequest.getEntity();
             bc = s.getCurrency();
         }
-        
+
         if (bc == null) {
             BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
             return brc.getJavaCurrency();
@@ -140,4 +140,5 @@ public class SkuPricingPersistenceProvider extends AbstractMoneyFieldPersistence
             return Currency.getInstance(bc.getCurrencyCode());
         }
     }
+
 }

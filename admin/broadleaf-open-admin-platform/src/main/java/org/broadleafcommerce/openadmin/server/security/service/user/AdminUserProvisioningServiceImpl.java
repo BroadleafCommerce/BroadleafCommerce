@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,11 +39,10 @@ import java.util.Set;
 import jakarta.annotation.Resource;
 
 /**
- * This component allows for the default provisioning of an AdminUser and roles in the Broadleaf database, based on the 
+ * This component allows for the default provisioning of an AdminUser and roles in the Broadleaf database, based on the
  * external authentication of a user (e.g. LDAP or custom external authentication provider).
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 @Service("blAdminUserProvisioningService")
 public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningService {
@@ -54,24 +53,21 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
     @Resource(name = "blAdminExternalLoginExtensionManager")
     protected AdminExternalLoginUserExtensionManager adminExternalLoginExtensionManager;
 
-    @Resource(name="blAdminSecurityHelper")
+    @Resource(name = "blAdminSecurityHelper")
     protected AdminSecurityHelper adminSecurityHelper;
 
     protected Map<String, String[]> roleNameSubstitutions;
 
     @Override
-    public AdminUserDetails provisionAdminUser(
-            final BroadleafExternalAuthenticationUserDetails details) {
+    public AdminUserDetails provisionAdminUser(final BroadleafExternalAuthenticationUserDetails details) {
         final HashSet<AdminRole> parsedRoles = parseAdminRoles(details);
-        final Set<SimpleGrantedAuthority> adminUserAuthorities = 
-                extractAdminUserAuthorities(parsedRoles);
+        final Set<SimpleGrantedAuthority> adminUserAuthorities = extractAdminUserAuthorities(parsedRoles);
         final AdminUser adminUser = getAdminUser(details, parsedRoles);
 
         return createDetails(adminUser, details, adminUserAuthorities);
     }
-    
-    protected HashSet<AdminRole> parseAdminRoles(
-            final BroadleafExternalAuthenticationUserDetails details) {
+
+    protected HashSet<AdminRole> parseAdminRoles(final BroadleafExternalAuthenticationUserDetails details) {
         final HashSet<String> parsedRoleNames = parseRolesFromUserDetails(details);
         final HashSet<AdminRole> parsedRoles = new HashSet<>();
         final List<AdminRole> adminRoles = securityService.readAllAdminRoles();
@@ -83,9 +79,9 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
                 }
             }
         }
-        
+
         return parsedRoles;
-    } 
+    }
 
     /**
      * Extracts the {@code SimpleGrantedAuthority}s for the given List of {@code AdminRole}s. In addition, this will handle
@@ -101,19 +97,20 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
 
         return new HashSet<>(adminUserAuthorities);
     }
-    
-    protected void addPermissions(final HashSet<AdminRole> parsedRoles,
-            final List<SimpleGrantedAuthority> adminUserAuthorities) {
+
+    protected void addPermissions(
+            final HashSet<AdminRole> parsedRoles,
+            final List<SimpleGrantedAuthority> adminUserAuthorities
+    ) {
         for (final String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
             adminUserAuthorities.add(new SimpleGrantedAuthority(perm));
         }
 
         for (final AdminRole role : parsedRoles) {
-            adminSecurityHelper
-                    .addAllPermissionsToAuthorities(adminUserAuthorities, role.getAllPermissions());
+            adminSecurityHelper.addAllPermissionsToAuthorities(adminUserAuthorities, role.getAllPermissions());
         }
     }
-    
+
     protected void convertPermissionPrefixToRole(
             final List<SimpleGrantedAuthority> adminUserAuthorities) {
         // Spring security expects everything to begin with ROLE_ for things like hasRole() 
@@ -123,23 +120,26 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
         // The following authorities will appear in the final list to Spring security:
         // PERMISSION_ALL_PRODUCT, ROLE_PERMISSION_ALL_PRODUCT, ROLE_ALL_PRODUCT
         final ListIterator<SimpleGrantedAuthority> it = adminUserAuthorities.listIterator();
-        
+
         while (it.hasNext()) {
             final SimpleGrantedAuthority auth = it.next();
-            
+
             if (auth.getAuthority().startsWith(AdminUserDetailsServiceImpl.LEGACY_ROLE_PREFIX)) {
                 it.add(new SimpleGrantedAuthority(
-                        AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX + auth
-                                .getAuthority()));
+                        AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX + auth.getAuthority()
+                ));
                 it.add(new SimpleGrantedAuthority(auth.getAuthority()
                         .replaceAll(AdminUserDetailsServiceImpl.LEGACY_ROLE_PREFIX,
-                                AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
+                                AdminUserDetailsServiceImpl.DEFAULT_SPRING_SECURITY_ROLE_PREFIX)
+                ));
             }
         }
     }
-    
-    protected AdminUser getAdminUser(final BroadleafExternalAuthenticationUserDetails details,
-            final HashSet<AdminRole> parsedRoles) {
+
+    protected AdminUser getAdminUser(
+            final BroadleafExternalAuthenticationUserDetails details,
+            final HashSet<AdminRole> parsedRoles
+    ) {
         AdminUser adminUser = securityService.readAdminUserByUserName(details.getUsername());
         if (adminUser == null) {
             adminUser = new AdminUserImpl();
@@ -175,13 +175,23 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
         //Save the user data and all of the roles...
         return securityService.saveAdminUser(adminUser);
     }
-    
-    protected AdminUserDetails createDetails(final AdminUser adminUser, 
+
+    protected AdminUserDetails createDetails(
+            final AdminUser adminUser,
             final BroadleafExternalAuthenticationUserDetails details,
-            final Set<SimpleGrantedAuthority> adminUserAuthorities) {
-        return new AdminUserDetails(adminUser.getId(), details.getUsername(), "", true, true, true,
-                true, adminUserAuthorities);
-    } 
+            final Set<SimpleGrantedAuthority> adminUserAuthorities
+    ) {
+        return new AdminUserDetails(
+                adminUser.getId(),
+                details.getUsername(),
+                "",
+                true,
+                true,
+                true,
+                true,
+                adminUserAuthorities
+        );
+    }
 
     /**
      * Uses the provided role name substitutions to map the LDAP roles to Broadleaf roles.
@@ -217,17 +227,19 @@ public class AdminUserProvisioningServiceImpl implements AdminUserProvisioningSe
      * map that to the role "ADMIN".  By default the prefix "ROLE_" will be pre-pended to this name. So to configure this, you would specify:
      *
      * <bean class="org.broadleaf.loadtest.web.security.ActiveDirectoryUserDetailsContextMapper">
-     *     <property name="roleMappings">
-     *         <map>
-     *             <entry key="Marketing_Administrator" value="ROLE_CATALOG_ADMIN"/>
-     *         </map>
-     *     </property>
+     * <property name="roleMappings">
+     * <map>
+     * <entry key="Marketing_Administrator" value="ROLE_CATALOG_ADMIN"/>
+     * </map>
+     * </property>
      * </bean>
-     *
+     * <p>
      * With this configuration, all roles returned by LDAP that have a DN of "Marketing Administrator" will be converted to "ADMIN"
+     *
      * @param roleNameSubstitutions
      */
     public void setRoleNameSubstitutions(Map<String, String[]> roleNameSubstitutions) {
         this.roleNameSubstitutions = roleNameSubstitutions;
     }
+
 }

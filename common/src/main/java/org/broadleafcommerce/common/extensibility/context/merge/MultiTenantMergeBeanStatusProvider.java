@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,9 +21,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
- * This {@link MergeBeanStatusProvider} can be utilized by modules that are trying to provide functionality that 
+ * This {@link MergeBeanStatusProvider} can be utilized by modules that are trying to provide functionality that
  * is only required when MultiTenant is loaded.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blMultiTenantMergeBeanStatusProvider")

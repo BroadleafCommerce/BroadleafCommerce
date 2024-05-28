@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -84,7 +84,7 @@ import jakarta.annotation.Resource;
 
 /**
  * Responsible for building and rebuilding the Solr index
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
  */
@@ -150,6 +150,8 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
 
     @Resource(name = "blIndexFieldDao")
     protected IndexFieldDao indexFieldDao;
+    @Value(value = "${enable.solr.optimize:false}")
+    private boolean optimizeEnabled;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -159,9 +161,6 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
             }
         }
     }
-
-    @Value(value = "${enable.solr.optimize:false}")
-    private boolean optimizeEnabled;
 
     @Override
     public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException {
@@ -309,7 +308,7 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     /**
      * <p>
      * This method deletes all of the documents from {@link SolrContext#getReindexServer()}
-     * 
+     *
      * @throws ServiceException if there was a problem removing the documents
      * @deprecated use {@link #deleteAllReindexCoreDocuments()} instead
      */
@@ -317,11 +316,11 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     protected void deleteAllDocuments() throws ServiceException {
         deleteAllReindexCoreDocuments();
     }
-    
+
     /**
      * <p>
      * This method deletes all of the documents from {@link SolrContext#getReindexServer()}
-     * 
+     *
      * @throws ServiceException if there was a problem removing the documents
      */
     protected void deleteAllReindexCoreDocuments() throws ServiceException {
@@ -331,7 +330,7 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     @Override
     public void deleteAllNamespaceDocuments(String collection, SolrClient server) throws ServiceException {
         try {
-            String deleteQuery = StringUtil.sanitize(shs.getNamespaceFieldName()) + ":(\"" 
+            String deleteQuery = StringUtil.sanitize(shs.getNamespaceFieldName()) + ":(\""
                     + StringUtil.sanitize(solrConfiguration.getNamespace()) + "\")";
             LOG.debug("Deleting by query: " + deleteQuery);
             server.deleteByQuery(collection, deleteQuery);
@@ -345,7 +344,7 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
             throw new ServiceException("Could not delete documents", e);
         }
     }
-    
+
     @Override
     public void deleteAllDocuments(String collection, SolrClient server) throws ServiceException {
         try {
@@ -359,8 +358,12 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     }
 
     protected Long buildIncrementalIndex(int pageSize, Long lastId, SolrIndexOperation operation) throws ServiceException {
-        TransactionStatus status = TransactionUtils.createTransaction("readItemsToIndex",
-            TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
+        TransactionStatus status = TransactionUtils.createTransaction(
+                "readItemsToIndex",
+                TransactionDefinition.PROPAGATION_REQUIRED,
+                transactionManager,
+                true
+        );
         if (SolrIndexCachedOperation.getCache() == null) {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
                     "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
@@ -372,7 +375,7 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
                 operation.beforeReadIndexables();
                 indexables = operation.readIndexables(pageSize, lastId);
                 if (CollectionUtils.isNotEmpty(indexables)) {
-                    response = indexables.get(indexables.size()-1).getId();
+                    response = indexables.get(indexables.size() - 1).getId();
                 }
             } finally {
                 operation.afterReadIndexables();
@@ -396,9 +399,17 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     }
 
     @Override
-    public Collection<SolrInputDocument> buildIncrementalIndex(String collection, List<? extends Indexable> indexables, SolrClient solrServer) throws ServiceException {
-        TransactionStatus status = TransactionUtils.createTransaction("executeIncrementalIndex",
-                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager, true);
+    public Collection<SolrInputDocument> buildIncrementalIndex(
+            String collection,
+            List<? extends Indexable> indexables,
+            SolrClient solrServer
+    ) throws ServiceException {
+        TransactionStatus status = TransactionUtils.createTransaction(
+                "executeIncrementalIndex",
+                TransactionDefinition.PROPAGATION_REQUIRED,
+                transactionManager,
+                true
+        );
         if (SolrIndexCachedOperation.getCache() == null) {
             LOG.warn("Consider using SolrIndexService.performCachedOperation() in combination with " +
                     "SolrIndexService.buildIncrementalIndex() for better caching performance during solr indexing");
@@ -451,7 +462,8 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Built incremental product index - pageSize: [%s] in [%s]", indexables.size(), s.toLapString()));
+                LOG.debug(String.format("Built incremental product index - pageSize: [%s] in [%s]",
+                        indexables.size(), s.toLapString()));
             }
 
             return documents;
@@ -494,10 +506,10 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
         }
         return new ArrayList<>(processedLocales.values());
     }
-    
+
     @Override
     public SolrInputDocument buildDocument(final Indexable indexable, List<IndexField> fields, List<Locale> locales) {
-        final SolrInputDocument document = new SolrInputDocument(new LinkedHashMap<String,SolrInputField>());
+        final SolrInputDocument document = new SolrInputDocument(new LinkedHashMap<>());
 
         attachBasicDocumentFields(indexable, document);
 
@@ -511,7 +523,12 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     }
 
     @Override
-    public void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<IndexField> fields, List<Locale> locales) {
+    public void attachIndexableDocumentFields(
+            SolrInputDocument document,
+            Indexable indexable,
+            List<IndexField> fields,
+            List<Locale> locales
+    ) {
         for (IndexField indexField : fields) {
             try {
                 // If we find an IndexField entry for this field, then we need to store it in the index
@@ -521,9 +538,13 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
                     // For each of its search field types, get the property values, and add a field to the document for each property value
                     for (IndexFieldType sft : searchableFieldTypes) {
                         FieldType fieldType = sft.getFieldType();
-                        Map<String, Object> propertyValues = getPropertyValues(indexable, indexField.getField(), fieldType, locales);
+                        Map<String, Object> propertyValues = getPropertyValues(
+                                indexable, indexField.getField(), fieldType, locales
+                        );
 
-                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForIndexField(document, indexField, fieldType, propertyValues);
+                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForIndexField(
+                                document, indexField, fieldType, propertyValues
+                        );
 
                         if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                             // Build out the field for every prefix
@@ -545,8 +566,8 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
                 }
 
             } catch (Exception e) {
-                LOG.error("Could not get value for property[" + indexField.getField().getQualifiedFieldName() + "] for product id["
-                        + indexable.getId() + "]", e);
+                LOG.error("Could not get value for property[" + indexField.getField().getQualifiedFieldName()
+                        + "] for product id[" + indexable.getId() + "]", e);
                 throw ExceptionHelper.refineException(e);
             }
         }
@@ -554,7 +575,7 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
 
     /**
      * Implementors can extend this and override this method to add additional fields to the Solr document.
-     * 
+     *
      * @param indexable
      * @param document
      */
@@ -567,8 +588,8 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
         CatalogStructure cache = SolrIndexCachedOperation.getCache();
         if (cache == null) {
             String msg = "SolrIndexService.performCachedOperation() must be used in conjuction with"
-                + " solrIndexDao.populateProductCatalogStructure() in order to correctly build catalog documents or should"
-                + " be invoked from buildIncrementalIndex()";
+                    + " solrIndexDao.populateProductCatalogStructure() in order to correctly build catalog documents or "
+                    + "should be invoked from buildIncrementalIndex()";
             LOG.error(msg);
             throw new IllegalStateException(msg);
         }
@@ -608,13 +629,13 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
                     displayOrderKey = shs.getCategoryId(categoryId) + "-" + cacheKey;
                     displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
                 }
-                
+
                 if (document.getField(categorySortFieldName) == null && displayOrder != null) {
                     document.addField(categorySortFieldName, displayOrder);
                 }
 
                 // This is the entire tree of every category defined on the product
-                buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
+                buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<>());
             }
         }
     }
@@ -622,12 +643,17 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     /**
      * Walk the category hierarchy upwards, adding a field for each level to the solr document
      *
-     * @param document the solr document for the product
-     * @param cache the catalog structure cache
+     * @param document   the solr document for the product
+     * @param cache      the catalog structure cache
      * @param categoryId the current category id
      */
-    protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId, Set<Long> indexedParents) {
-        Long catIdToAdd = shs.getCategoryId(categoryId); 
+    protected void buildFullCategoryHierarchy(
+            SolrInputDocument document,
+            CatalogStructure cache,
+            Long categoryId,
+            Set<Long> indexedParents
+    ) {
+        Long catIdToAdd = shs.getCategoryId(categoryId);
 
         Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
         if (existingValues == null || !existingValues.contains(catIdToAdd)) {
@@ -646,10 +672,10 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     /**
      * Returns a map of prefix to value for the requested attributes. For example, if the requested field corresponds to
      * a Sku's description and the locales list has the en_US locale and the es_ES locale, the resulting map could be
-     * 
+     * <p>
      * { "en_US" : "A description",
-     *   "es_ES" : "Una descripcion" }
-     * 
+     * "es_ES" : "Una descripcion" }
+     *
      * @param indexedItem
      * @param field
      * @param fieldType
@@ -659,17 +685,23 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    protected Map<String, Object> getPropertyValues(Indexable indexedItem, Field field, FieldType fieldType, List<Locale> locales)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    protected Map<String, Object> getPropertyValues(
+            Indexable indexedItem,
+            Field field,
+            FieldType fieldType,
+            List<Locale> locales
+    ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String propertyName = field.getPropertyName();
         Map<String, Object> values = new HashMap<>();
 
         ExtensionResultStatusType extensionResult = ExtensionResultStatusType.NOT_HANDLED;
         if (extensionManager != null) {
-            extensionResult = extensionManager.getProxy().addPropertyValues(indexedItem, field, fieldType, values, propertyName, locales);
+            extensionResult = extensionManager.getProxy().addPropertyValues(
+                    indexedItem, field, fieldType, values, propertyName, locales
+            );
         }
-        
+
         if (ExtensionResultStatusType.NOT_HANDLED.equals(extensionResult)) {
             Object propertyValue = shs.getPropertyValue(indexedItem, field);
             if (propertyValue != null) {
@@ -684,17 +716,16 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
      * Converts a propertyName to one that is able to reference inside a map. For example, consider the property
      * in Product that references a List<ProductAttribute>, "productAttributes". Also consider the utility method
      * in Product called "mappedProductAttributes", which returns a map of the ProductAttributes keyed by the name
-     * property in the ProductAttribute. Given the parameters "productAttributes.heatRange", "productAttributes", 
-     * "mappedProductAttributes" (which would represent a property called "productAttributes.heatRange" that 
-     * references a specific ProductAttribute inside of a product whose "name" property is equal to "heatRange", 
-     * this method will convert this property to mappedProductAttributes(heatRange).value, which is then usable 
+     * property in the ProductAttribute. Given the parameters "productAttributes.heatRange", "productAttributes",
+     * "mappedProductAttributes" (which would represent a property called "productAttributes.heatRange" that
+     * references a specific ProductAttribute inside of a product whose "name" property is equal to "heatRange",
+     * this method will convert this property to mappedProductAttributes(heatRange).value, which is then usable
      * by the standard beanutils PropertyUtils class to get the value.
-     * 
+     *
      * @param propertyName
      * @param listPropertyName
      * @param mapPropertyName
      * @return the converted property name
-     * 
      * @deprecated see SolrHelperService.getPropertyValue()
      */
     @Deprecated
@@ -719,23 +750,23 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
 
     @Override
     public Object[] saveState() {
-         return new Object[] {
-             BroadleafRequestContext.getBroadleafRequestContext(),
-             SkuPricingConsiderationContext.getSkuPricingConsiderationContext(),
-             SkuPricingConsiderationContext.getSkuPricingService(),
-             SkuActiveDateConsiderationContext.getSkuActiveDatesService()
-         };
-     }
-         
+        return new Object[]{
+                BroadleafRequestContext.getBroadleafRequestContext(),
+                SkuPricingConsiderationContext.getSkuPricingConsiderationContext(),
+                SkuPricingConsiderationContext.getSkuPricingService(),
+                SkuActiveDateConsiderationContext.getSkuActiveDatesService()
+        };
+    }
+
     @Override
     @SuppressWarnings("rawtypes")
     public void restoreState(Object[] pack) {
-         BroadleafRequestContext.setBroadleafRequestContext((BroadleafRequestContext) pack[0]);
-         SkuPricingConsiderationContext.setSkuPricingConsiderationContext((HashMap) pack[1]);
-         SkuPricingConsiderationContext.setSkuPricingService((DynamicSkuPricingService) pack[2]);
-         SkuActiveDateConsiderationContext.setSkuActiveDatesService((DynamicSkuActiveDatesService) pack[3]);
-     }
-     
+        BroadleafRequestContext.setBroadleafRequestContext((BroadleafRequestContext) pack[0]);
+        SkuPricingConsiderationContext.setSkuPricingConsiderationContext((HashMap) pack[1]);
+        SkuPricingConsiderationContext.setSkuPricingService((DynamicSkuPricingService) pack[2]);
+        SkuActiveDateConsiderationContext.setSkuActiveDatesService((DynamicSkuActiveDatesService) pack[3]);
+    }
+
     @Override
     public void optimizeIndex(String collection, SolrClient server) throws ServiceException, IOException {
         shs.optimizeIndex(collection, server);
@@ -751,7 +782,13 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     }
 
     @Override
-    public void commit(String collection, SolrClient server, boolean softCommit, boolean waitSearcher, boolean waitFlush) throws ServiceException, IOException {
+    public void commit(
+            String collection,
+            SolrClient server,
+            boolean softCommit,
+            boolean waitSearcher,
+            boolean waitFlush
+    ) throws ServiceException, IOException {
         try {
             if (!this.commit) {
                 LOG.warn("The flag / property \"solr.index.commit\" is set to false but a commit is being forced via the API.");
@@ -778,8 +815,8 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     }
 
     /**
-     *  We multiply the BigDecimal by 1,000,000 to maintain any possible decimals in use the
-     *  displayOrder value.
+     * We multiply the BigDecimal by 1,000,000 to maintain any possible decimals in use the
+     * displayOrder value.
      *
      * @param cache
      * @param displayOrderKey
@@ -824,7 +861,10 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
     }
 
     @Override
-    public Collection<SolrInputDocument> buildIncrementalIndex(List<? extends Indexable> indexables, SolrClient solrServer) throws ServiceException {
+    public Collection<SolrInputDocument> buildIncrementalIndex(
+            List<? extends Indexable> indexables,
+            SolrClient solrServer
+    ) throws ServiceException {
         return buildIncrementalIndex(null, indexables, solrServer);
     }
 
@@ -853,9 +893,9 @@ public class SolrIndexServiceImpl implements SolrIndexService, InitializingBean 
         deleteAllDocuments(null, server);
     }
 
-
     @Override
     public boolean useLegacyIndexer() {
         return useLegacySolrIndexer;
     }
+
 }

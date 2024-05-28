@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,34 +21,36 @@ import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
-
 /**
  * @author Andre Azzolini (apazzolini), bpolster
  */
 public interface BroadleafTemplateViewResolverExtensionHandler extends ExtensionHandler {
-    
+
     /**
      * Allows an extension handler to override the view name.
+     *
      * @param erh
      * @return
      */
     ExtensionResultStatusType overrideView(ExtensionResultHolder<String> erh, String originalViewName,
-            boolean isAjaxRequest);
+                                           boolean isAjaxRequest);
 
     /**
      * Allows an extension handler to alter the cache key for the view.
+     *
      * @param erh
      * @return
      */
     ExtensionResultStatusType appendCacheKey(ExtensionResultHolder<String> erh, String originalViewName,
-            boolean isAjaxRequest);
+                                             boolean isAjaxRequest);
 
     /**
      * Allows an extension handler to provide a wrapper for the template.
+     *
      * @param erh
      * @return
      */
     ExtensionResultStatusType provideTemplateWrapper(ExtensionResultHolder<String> erh, String originalViewName,
-            boolean isAjaxRequest);
+                                                     boolean isAjaxRequest);
 
 }

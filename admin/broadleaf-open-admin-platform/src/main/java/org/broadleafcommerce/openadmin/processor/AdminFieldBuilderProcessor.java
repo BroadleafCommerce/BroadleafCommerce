@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,8 +35,8 @@ public class AdminFieldBuilderProcessor implements AdminFieldBuilderExpression {
 
     @Resource(name = "blRuleBuilderFieldServiceFactory")
     protected RuleBuilderFieldServiceFactory ruleBuilderFieldServiceFactory;
-    
-    @Resource(name="blAdminFieldBuilderProcessorExtensionManager")
+
+    @Resource(name = "blAdminFieldBuilderProcessorExtensionManager")
     protected AdminFieldBuilderProcessorExtensionManager extensionManager;
 
     @Override
@@ -59,18 +59,17 @@ public class AdminFieldBuilderProcessor implements AdminFieldBuilderExpression {
                 fieldWrapper = ruleBuilderFieldService.buildFields();
             }
         }
-        
+
         if (extensionManager != null) {
             extensionManager.getProxy().modifyRuleBuilderFields(fieldBuilder, ceilingEntity, fieldWrapper);
         }
 
         return fieldWrapper;
     }
-    
+
     @Override
     public boolean useGlobalScope() {
         return false;
     }
-
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,9 +20,7 @@ package org.broadleafcommerce.openadmin.dto;
 import org.broadleafcommerce.openadmin.dto.visitor.PersistencePerspectiveItemVisitor;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class AdornedTargetList implements PersistencePerspectiveItem {
 
@@ -41,15 +39,15 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
     private String joinEntityClass;
     private Boolean mutable = true;
     private String idProperty;
-    
+
     public AdornedTargetList() {
         //do nothing
     }
-    
+
     public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname) {
         this(collectionFieldName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, null, null);
     }
-    
+
     public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String adornedTargetEntityPolymorphicType) {
         this(collectionFieldName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, adornedTargetEntityPolymorphicType, null, null);
     }
@@ -57,7 +55,7 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
     public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String sortField, Boolean sortAscending) {
         this(collectionFieldName, linkedObjectPath, linkedIdProperty, targetObjectPath, targetIdProperty, adornedTargetEntityClassname, null, sortField, sortAscending);
     }
-    
+
     public AdornedTargetList(String collectionFieldName, String linkedObjectPath, String linkedIdProperty, String targetObjectPath, String targetIdProperty, String adornedTargetEntityClassname, String adornedTargetEntityPolymorphicType, String sortField, Boolean sortAscending) {
         this.collectionFieldName = collectionFieldName;
         this.linkedObjectPath = linkedObjectPath;
@@ -69,11 +67,11 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
         this.linkedIdProperty = linkedIdProperty;
         this.targetIdProperty = targetIdProperty;
     }
-    
+
     public String getCollectionFieldName() {
         return collectionFieldName;
     }
-    
+
     public void setCollectionFieldName(String manyToField) {
         this.collectionFieldName = manyToField;
     }
@@ -141,7 +139,7 @@ public class AdornedTargetList implements PersistencePerspectiveItem {
     public void setInverse(Boolean inverse) {
         this.inverse = inverse;
     }
-    
+
     public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
     }

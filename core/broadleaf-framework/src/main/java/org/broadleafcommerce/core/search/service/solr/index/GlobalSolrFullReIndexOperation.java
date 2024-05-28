@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,29 +28,33 @@ import org.broadleafcommerce.core.search.service.solr.SolrHelperService;
  * reindex operation. The rebuild operation is done on {@link SolrContext#getReindexServer()} and then at the end, the
  * Solr cores are swapped. Prior to building the index, all documents from {@link SolrContext#getReindexServer()} are
  * deleted.
- * 
- * @see {@link SolrHelperService#swapActiveCores()}
+ *
  * @author Phillip Verheyden (phillipuniverse)
+ * @see {@link SolrHelperService#swapActiveCores()}
  */
 public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperation {
 
-    private static final Log LOG = LogFactory.getLog(GlobalSolrFullReIndexOperation.class);
-    
     protected final static Object LOCK_OBJECT = new Object();
+    private static final Log LOG = LogFactory.getLog(GlobalSolrFullReIndexOperation.class);
     protected static boolean IS_LOCKED;
     protected boolean errorOnConcurrentReIndex;
-    
+
     protected SolrConfiguration solrConfiguration;
     protected SolrIndexService indexService;
     protected SolrHelperService shs;
-    
-    public GlobalSolrFullReIndexOperation(SolrIndexService indexService, SolrConfiguration solrConfiguration, SolrHelperService shs, boolean errorOnConcurrentReindex) {
+
+    public GlobalSolrFullReIndexOperation(
+            SolrIndexService indexService,
+            SolrConfiguration solrConfiguration,
+            SolrHelperService shs,
+            boolean errorOnConcurrentReindex
+    ) {
         this.solrConfiguration = solrConfiguration;
         this.indexService = indexService;
         this.shs = shs;
         this.errorOnConcurrentReIndex = errorOnConcurrentReindex;
     }
-    
+
     @Override
     public boolean obtainLock() {
         synchronized (LOCK_OBJECT) {
@@ -68,7 +72,7 @@ public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperati
             }
         }
     }
-    
+
     @Override
     public void releaseLock() {
         synchronized (LOCK_OBJECT) {
@@ -115,4 +119,5 @@ public abstract class GlobalSolrFullReIndexOperation implements SolrIndexOperati
     public void afterBuildPage() {
         // By default we want to do nothing here
     }
+
 }

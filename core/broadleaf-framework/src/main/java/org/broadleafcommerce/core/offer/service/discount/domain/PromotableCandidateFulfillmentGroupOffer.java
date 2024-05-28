@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,17 +26,18 @@ import java.util.List;
 
 public interface PromotableCandidateFulfillmentGroupOffer extends PromotionRounding {
 
-    public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
+    HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap();
 
-    public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
+    void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap);
 
-    public Money computeDiscountedAmount();
+    Money computeDiscountedAmount();
 
-    public Money getDiscountedPrice();
-    
-    public Offer getOffer();
-    
-    public PromotableFulfillmentGroup getFulfillmentGroup();
+    Money getDiscountedPrice();
 
-    public Money getDiscountedAmount();
+    Offer getOffer();
+
+    PromotableFulfillmentGroup getFulfillmentGroup();
+
+    Money getDiscountedAmount();
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,7 +22,6 @@ import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-
 /**
  * Implementations of this interface are used to hold data about the many-to-many relationship between
  * the Category table and a parent Category.
@@ -31,8 +30,7 @@ import java.math.BigDecimal;
  * relationship between Category and parent Category.  If you just want to add additional fields
  * then you should extend {@link CategoryXrefImpl}.
  *
- *  @see {@link CategoryXrefImpl},{@link Category}
- *
+ * @see {@link CategoryXrefImpl},{@link Category}
  */
 public interface CategoryXref extends Serializable, MultiTenantCloneable<CategoryXref> {
 
@@ -41,45 +39,46 @@ public interface CategoryXref extends Serializable, MultiTenantCloneable<Categor
      *
      * @return
      */
-    public BigDecimal getDisplayOrder();
+    BigDecimal getDisplayOrder();
 
-    public void setDisplayOrder(final BigDecimal displayOrder);
+    void setDisplayOrder(final BigDecimal displayOrder);
 
     /**
      * Return the parent category
      *
      * @return
      */
-    public Category getCategory();
+    Category getCategory();
 
-    public void setCategory(final Category category);
+    void setCategory(final Category category);
 
     /**
      * Return the child category
      *
      * @return
      */
-    public Category getSubCategory();
+    Category getSubCategory();
 
-    public void setSubCategory(final Category subCategory);
+    void setSubCategory(final Category subCategory);
+
+    Long getId();
 
     /**
      * Return the primary key
      *
      * @param id
      */
-    public void setId(Long id);
-
-    public Long getId();
+    void setId(Long id);
 
     /**
      * Specifies the default reference between a category and a parent category. This replaces the concept of
      * {@link org.broadleafcommerce.core.catalog.domain.CategoryImpl#getDefaultParentCategory()} ()}
      *
-     * @see org.broadleafcommerce.core.catalog.domain.CategoryImpl#getParentCategory() ()
      * @return the default reference between a category and a parent category
+     * @see org.broadleafcommerce.core.catalog.domain.CategoryImpl#getParentCategory() ()
      */
     Boolean getDefaultReference();
 
     void setDefaultReference(Boolean defaultReference);
+
 }

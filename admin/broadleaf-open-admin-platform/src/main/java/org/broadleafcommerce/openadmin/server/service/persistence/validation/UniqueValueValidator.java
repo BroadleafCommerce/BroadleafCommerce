@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,10 +31,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Checks for uniqueness of this field's value among other entities of this type
- * 
+ *
  * @author Brandon Smith
  */
 @Component("blUniqueValueValidator")
@@ -43,13 +42,15 @@ public class UniqueValueValidator implements PropertyValidator {
     protected static final Log LOG = LogFactory.getLog(UniqueValueValidator.class);
 
     @Override
-    public PropertyValidationResult validate(Entity entity,
+    public PropertyValidationResult validate(
+            Entity entity,
             Serializable instance,
             Map<String, FieldMetadata> entityFieldMetadata,
             Map<String, String> validationConfiguration,
             BasicFieldMetadata propertyMetadata,
             String propertyName,
-            String value) {
+            String value
+    ) {
 
         String instanceClassName = instance.getClass().getName();
         DynamicEntityDao dynamicEntityDao = getDynamicEntityDao(instanceClassName);
@@ -61,7 +62,7 @@ public class UniqueValueValidator implements PropertyValidator {
                     propertyName + " already exists. This attribute's value must be unique.";
         }
 
-        if(responseIds.size() == 0) {
+        if (responseIds.size() == 0) {
             return new PropertyValidationResult(true, message);
         } else {
             return new PropertyValidationResult(false, message);
@@ -71,4 +72,5 @@ public class UniqueValueValidator implements PropertyValidator {
     protected DynamicEntityDao getDynamicEntityDao(String className) {
         return PersistenceManagerFactory.getPersistenceManager(className).getDynamicEntityDao();
     }
+
 }

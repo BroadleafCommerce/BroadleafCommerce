@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,31 +38,31 @@ import jakarta.annotation.PostConstruct;
  * {@code
  * <?xml version="1.0" encoding="UTF-8"?>
  * <configuration>
- *  <include resource="org/springframework/boot/logging/logback/defaults.xml" />
- *  <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
- *  <property name="WORKFLOW_LOG_FILE" value="${WORKFLOW_LOG_FILE:-${java.io.tmpdir:-/tmp}/blc-logs/workflow.log}"/>
- *  <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
- *  <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
- *  <root level="INFO">
- *      <appender-ref ref="CONSOLE" />
- *      <appender-ref ref="FILE" />
- *  </root>
- *  <appender name="rollingDailyEnterpriseWorkflow" class="ch.qos.logback.core.rolling.RollingFileAppender">
- *      <file>${WORKFLOW_LOG_FILE}</file>
- *      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
- *          <fileNamePattern>${WORKFLOW_LOG_FILE}.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
- *          <maxHistory>30</maxHistory>
- *      </rollingPolicy>
- *      <encoder>
- *          <pattern>[%-5level] %d{MM-dd-yyyy HH:mm:ss} %logger{35} - %message%n</pattern>
- *      </encoder>
- *  </appender>
- *  <logger name="com.broadleafcommerce.enterprise.workflow.process.detail" level="DEBUG">
- *      <appender-ref ref="rollingDailyEnterpriseWorkflow"/>
- *  </logger>
+ * <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+ * <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
+ * <property name="WORKFLOW_LOG_FILE" value="${WORKFLOW_LOG_FILE:-${java.io.tmpdir:-/tmp}/blc-logs/workflow.log}"/>
+ * <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+ * <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+ * <root level="INFO">
+ * <appender-ref ref="CONSOLE" />
+ * <appender-ref ref="FILE" />
+ * </root>
+ * <appender name="rollingDailyEnterpriseWorkflow" class="ch.qos.logback.core.rolling.RollingFileAppender">
+ * <file>${WORKFLOW_LOG_FILE}</file>
+ * <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+ * <fileNamePattern>${WORKFLOW_LOG_FILE}.%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+ * <maxHistory>30</maxHistory>
+ * </rollingPolicy>
+ * <encoder>
+ * <pattern>[%-5level] %d{MM-dd-yyyy HH:mm:ss} %logger{35} - %message%n</pattern>
+ * </encoder>
+ * </appender>
+ * <logger name="com.broadleafcommerce.enterprise.workflow.process.detail" level="DEBUG">
+ * <appender-ref ref="rollingDailyEnterpriseWorkflow"/>
+ * </logger>
  * </configuration>
  * }
- *
+ * <p>
  * If you duplicated the sample configuration exactly, you would provide the logger name "com.broadleafcommerce.enterprise.workflow.process.detail"
  * to the {@link #ProcessDetailLogger(String)} constructor.
  *
@@ -102,7 +102,7 @@ public class ProcessDetailLogger {
     }
 
     @PostConstruct
-    public void init(){
+    public void init() {
         if (!disableAllProcessDetailLogging) {
             processDetailLog = LogFactory.getLog(logIdentifier);
             if (!ignoreNoProcessDetailLoggerConfiguration && !isProperLogLevelEnabled()) {
@@ -180,8 +180,8 @@ public class ProcessDetailLogger {
     /**
      * Log a message to the configured log file
      *
-     * @param logContext a fragment describing the context of this log message - will be prepended in the log. Can be null.
-     * @param messageTemplate A template string using the same approach employed by {@link String#format(String, Object...)}
+     * @param logContext        a fragment describing the context of this log message - will be prepended in the log. Can be null.
+     * @param messageTemplate   A template string using the same approach employed by {@link String#format(String, Object...)}
      * @param templateVariables the variable used to replace the %s values in the template string
      */
     public void logProcessDetail(String logContext, String messageTemplate, Object... templateVariables) {
@@ -195,7 +195,7 @@ public class ProcessDetailLogger {
      * Log a message to the configured log file
      *
      * @param logContext a fragment describing the context of this log message - will be prepended in the log. Can be null.
-     * @param message a message to log
+     * @param message    a message to log
      */
     public void logProcessDetail(String logContext, String message) {
         logProcessDetail(logContext, null, message);
@@ -204,9 +204,9 @@ public class ProcessDetailLogger {
     /**
      * Log a message to the configured log file
      *
-     * @param logContext a fragment describing the context of this log message - will be prepended in the log. Can be null.
-     * @param e an exception to include with the log message as a stack trace
-     * @param messageTemplate A template string using the same approach employed by {@link String#format(String, Object...)}
+     * @param logContext        a fragment describing the context of this log message - will be prepended in the log. Can be null.
+     * @param e                 an exception to include with the log message as a stack trace
+     * @param messageTemplate   A template string using the same approach employed by {@link String#format(String, Object...)}
      * @param templateVariables the variable used to replace the %s values in the template string
      */
     public void logProcessDetail(String logContext, Throwable e, String messageTemplate, Object... templateVariables) {
@@ -220,8 +220,8 @@ public class ProcessDetailLogger {
      * Log a message to the configured log file
      *
      * @param logContext a fragment describing the context of this log message - will be prepended in the log. Can be null.
-     * @param e an exception to include with the log message as a stack trace
-     * @param message a message to log
+     * @param e          an exception to include with the log message as a stack trace
+     * @param message    a message to log
      */
     public void logProcessDetail(String logContext, Throwable e, String message) {
         if (!disableAllProcessDetailLogging && isProperLogLevelEnabled()) {
@@ -245,7 +245,7 @@ public class ProcessDetailLogger {
      * @return the processed list
      */
     protected Object[] processVariables(Object[] variables) {
-        for (int j=0;j<variables.length;j++) {
+        for (int j = 0; j < variables.length; j++) {
             Object[] temp = null;
             if (variables[j] != null) {
                 if (variables[j].getClass().isArray()) {
@@ -267,7 +267,7 @@ public class ProcessDetailLogger {
                 variables[j] = joined;
             }
             if (variables[j] instanceof String && ((String) variables[j]).length() > stringTemplateVariableMaxLength) {
-                variables[j] = ((String) variables[j]).substring(0, stringTemplateVariableMaxLength-1) + "...";
+                variables[j] = ((String) variables[j]).substring(0, stringTemplateVariableMaxLength - 1) + "...";
             }
         }
         return variables;
@@ -288,4 +288,5 @@ public class ProcessDetailLogger {
     public void setStringTemplateVariableMaxLength(int stringTemplateVariableMaxLength) {
         this.stringTemplateVariableMaxLength = stringTemplateVariableMaxLength;
     }
+
 }

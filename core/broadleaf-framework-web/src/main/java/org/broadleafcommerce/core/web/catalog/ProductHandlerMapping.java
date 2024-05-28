@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.catalog;
 
 import org.apache.commons.logging.Log;
@@ -36,31 +35,26 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This handler mapping works with the Product entity to determine if a product has been configured for
- * the passed in URL.   
- * 
- * If the URL matches a valid Product then this mapping returns the handler configured via the 
- * controllerName property or blProductController by default. 
+ * the passed in URL.
+ * <p>
+ * If the URL matches a valid Product then this mapping returns the handler configured via the
+ * controllerName property or blProductController by default.
  *
  * @author bpolster
- * @since 2.0
  * @see org.broadleafcommerce.core.catalog.domain.Product
  * @see CatalogService
+ * @since 2.0
  */
 public class ProductHandlerMapping extends BLCAbstractHandlerMapping {
 
-    private static final Log LOG = LogFactory.getLog(ProductHandlerMapping.class);
-
     public static final String CURRENT_PRODUCT_ATTRIBUTE_NAME = "currentProduct";
-
-    protected String defaultTemplateName = "catalog/product";
-
+    private static final Log LOG = LogFactory.getLog(ProductHandlerMapping.class);
     private final String controllerName = "blProductController";
-
-    @Resource(name = "blCatalogService")
-    protected CatalogService catalogService;
-
     @Value("${request.uri.encoding}")
     public String charEncoding;
+    protected String defaultTemplateName = "catalog/product";
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {

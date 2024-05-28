@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,7 +41,7 @@ public class DateUtil {
      * {@code startDate} is checked.
      *
      * @param includeTime If true, then the full timestamp to the millisecond is used. If false, only the date will be
-     * used and the time is zeroed out.
+     *                    used and the time is zeroed out.
      * @return True if the date range is currently active, false otherwise.
      */
     public static boolean isActive(Date startDate, Date endDate, boolean includeTime) {
@@ -59,8 +59,8 @@ public class DateUtil {
      * <p>
      * NOTE: This method will update the passed in {@code cachedDate} if the resolution has passed.
      *
-     * @param cachedDate a {@link Date} that is cached, typically by a DAO, to be used in queries that involve date
-     * ranges. This object will be updated if the resolution has passed.
+     * @param cachedDate            a {@link Date} that is cached, typically by a DAO, to be used in queries that involve date
+     *                              ranges. This object will be updated if the resolution has passed.
      * @param currentDateResolution resolution in milliseconds.
      * @return the {@link Date} object to use in a query involving date ranges.
      */

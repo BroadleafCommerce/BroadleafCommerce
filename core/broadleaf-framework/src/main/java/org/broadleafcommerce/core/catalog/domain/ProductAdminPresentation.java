@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,86 +26,85 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
  * @author Jon Fleschler (jfleschler)
  */
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "baseProduct",
-    tabs = {
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.General,
-            order = ProductAdminPresentation.TabOrder.General,
-            groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.General,
-                    order = ProductAdminPresentation.GroupOrder.General,
-                    untitled = true),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Image,
-                    order = ProductAdminPresentation.GroupOrder.Image,
-                    column = 1),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ActiveDateRange,
-                    order = ProductAdminPresentation.GroupOrder.ActiveDateRange,
-                    column = 1),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Financial,
-                    order = ProductAdminPresentation.GroupOrder.Financial,
-                    column = 1),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Miscellaneous,
-                    order = ProductAdminPresentation.GroupOrder.Miscellaneous,
-                    column = 1, collapsed = true)
-            }
-        ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Pricing,
-            order = ProductAdminPresentation.TabOrder.Pricing,
-            groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Price,
-                    order = ProductAdminPresentation.GroupOrder.Price),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Discountable,
-                    order = ProductAdminPresentation.GroupOrder.Discountable,
-                    untitled = true, column = 1)
-            }
-        ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Marketing,
-            order = ProductAdminPresentation.TabOrder.Marketing,
-            groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Marketing,
-                    order = ProductAdminPresentation.GroupOrder.Marketing,
-                    untitled = true)
-            }
-        ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Media,
-            order = ProductAdminPresentation.TabOrder.Media
-        ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.ProductOptions,
-            order = ProductAdminPresentation.TabOrder.ProductOptions,
-            groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ProductOptionsAdvanced,
-                    order = ProductAdminPresentation.GroupOrder.ProductOptionsAdvanced,
-                    untitled = true, column = 1)
-            }
-        ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Inventory,
-            order = ProductAdminPresentation.TabOrder.Inventory,
-            groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Inventory,
-                    order = ProductAdminPresentation.GroupOrder.Inventory,
-                    untitled = true)
-            }
-        ),
-        @AdminTabPresentation(name = ProductAdminPresentation.TabName.Shipping,
-            order = ProductAdminPresentation.TabOrder.Shipping,
-            groups = {
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingDimensions,
-                    order = ProductAdminPresentation.GroupOrder.ShippingDimensions),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingOther,
-                    order = ProductAdminPresentation.GroupOrder.ShippingOther,
-                    untitled = true),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingFulfillment,
-                    order = ProductAdminPresentation.GroupOrder.ShippingFulfillment,
-                    untitled = true, column = 1),
-                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingContainer,
-                    order = ProductAdminPresentation.GroupOrder.ShippingContainer,
-                    untitled = true, column = 1)
-            }
-        )
-    }
+        tabs = {
+                @AdminTabPresentation(name = ProductAdminPresentation.TabName.General,
+                        order = ProductAdminPresentation.TabOrder.General,
+                        groups = {
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.General,
+                                        order = ProductAdminPresentation.GroupOrder.General,
+                                        untitled = true),
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Image,
+                                        order = ProductAdminPresentation.GroupOrder.Image,
+                                        column = 1),
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ActiveDateRange,
+                                        order = ProductAdminPresentation.GroupOrder.ActiveDateRange,
+                                        column = 1),
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Financial,
+                                        order = ProductAdminPresentation.GroupOrder.Financial,
+                                        column = 1),
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Miscellaneous,
+                                        order = ProductAdminPresentation.GroupOrder.Miscellaneous,
+                                        column = 1, collapsed = true)
+                        }
+                ),
+                @AdminTabPresentation(name = ProductAdminPresentation.TabName.Pricing,
+                        order = ProductAdminPresentation.TabOrder.Pricing,
+                        groups = {
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Price,
+                                        order = ProductAdminPresentation.GroupOrder.Price),
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Discountable,
+                                        order = ProductAdminPresentation.GroupOrder.Discountable,
+                                        untitled = true, column = 1)
+                        }
+                ),
+                @AdminTabPresentation(name = ProductAdminPresentation.TabName.Marketing,
+                        order = ProductAdminPresentation.TabOrder.Marketing,
+                        groups = {
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Marketing,
+                                        order = ProductAdminPresentation.GroupOrder.Marketing,
+                                        untitled = true)
+                        }
+                ),
+                @AdminTabPresentation(name = ProductAdminPresentation.TabName.Media,
+                        order = ProductAdminPresentation.TabOrder.Media
+                ),
+                @AdminTabPresentation(name = ProductAdminPresentation.TabName.ProductOptions,
+                        order = ProductAdminPresentation.TabOrder.ProductOptions,
+                        groups = {
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ProductOptionsAdvanced,
+                                        order = ProductAdminPresentation.GroupOrder.ProductOptionsAdvanced,
+                                        untitled = true, column = 1)
+                        }
+                ),
+                @AdminTabPresentation(name = ProductAdminPresentation.TabName.Inventory,
+                        order = ProductAdminPresentation.TabOrder.Inventory,
+                        groups = {
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.Inventory,
+                                        order = ProductAdminPresentation.GroupOrder.Inventory,
+                                        untitled = true)
+                        }
+                ),
+                @AdminTabPresentation(name = ProductAdminPresentation.TabName.Shipping,
+                        order = ProductAdminPresentation.TabOrder.Shipping,
+                        groups = {
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingDimensions,
+                                        order = ProductAdminPresentation.GroupOrder.ShippingDimensions),
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingOther,
+                                        order = ProductAdminPresentation.GroupOrder.ShippingOther,
+                                        untitled = true),
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingFulfillment,
+                                        order = ProductAdminPresentation.GroupOrder.ShippingFulfillment,
+                                        untitled = true, column = 1),
+                                @AdminGroupPresentation(name = ProductAdminPresentation.GroupName.ShippingContainer,
+                                        order = ProductAdminPresentation.GroupOrder.ShippingContainer,
+                                        untitled = true, column = 1)
+                        }
+                )
+        }
 )
-
 public interface ProductAdminPresentation {
 
-    public static class TabName {
+    class TabName {
 
         public static final String General = "General";
         public static final String Pricing = "ProductImpl_Pricing_Tab";
@@ -117,7 +116,7 @@ public interface ProductAdminPresentation {
 
     }
 
-    public static class TabOrder {
+    class TabOrder {
 
         public static final int General = 1000;
         public static final int Pricing = 2000;
@@ -128,7 +127,7 @@ public interface ProductAdminPresentation {
         public static final int Shipping = 7000;
     }
 
-    public static class GroupName {
+    class GroupName {
 
         public static final String General = "General";
         public static final String Image = "ProductImpl_Product_Image";
@@ -153,7 +152,7 @@ public interface ProductAdminPresentation {
         public static final String Advanced = "ProductImpl_Advanced";
     }
 
-    public static class GroupOrder {
+    class GroupOrder {
 
         public static final int General = 1000;
         public static final int Image = 2000;
@@ -178,7 +177,7 @@ public interface ProductAdminPresentation {
         public static final int Advanced = 1000;
     }
 
-    public static class FieldOrder {
+    class FieldOrder {
 
         public static final int NAME = 1000;
         public static final int LONG_DESCRIPTION = 3000;
@@ -194,4 +193,5 @@ public interface ProductAdminPresentation {
 
         public static final int FULFILLMENT_TYPE = 1000;
     }
+
 }

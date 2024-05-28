@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
@@ -34,11 +33,10 @@ import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
  * <p>This allows anyone using the framework to configure the ServiceMonitor AOP hooks
  * and detect any outages to provide (email/logging) feedback when necessary.</p>
  *
+ * @author Elbert Bautista (elbertbautista)
  * @see org.broadleafcommerce.common.vendor.service.monitor.ServiceMonitor
  * @see org.broadleafcommerce.common.vendor.service.monitor.StatusHandler
  * @see ServiceStatusDetectable
- *
- * @author Elbert Bautista (elbertbautista)
  */
 public abstract class AbstractExternalPaymentGatewayCall<T, R> implements ServiceStatusDetectable<T>, FailureCountExposable {
 

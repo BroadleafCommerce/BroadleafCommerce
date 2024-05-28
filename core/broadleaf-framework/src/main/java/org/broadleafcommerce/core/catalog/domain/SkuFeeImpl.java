@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,6 +38,7 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -63,11 +64,11 @@ import jakarta.persistence.Table;
 @Table(name = "BLC_SKU_FEE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true)
 })
 public class SkuFeeImpl implements SkuFee {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -77,8 +78,7 @@ public class SkuFeeImpl implements SkuFee {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "SkuFeeImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.order.domain.SkuFeeImpl")
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.SkuFeeImpl")
             }
     )
     @Column(name = "SKU_FEE_ID")
@@ -108,10 +108,8 @@ public class SkuFeeImpl implements SkuFee {
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
     @JoinTable(name = "BLC_SKU_FEE_XREF",
-            joinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID",
-                    nullable = true),
-            inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID",
-                    nullable = true))
+            joinColumns = @JoinColumn(name = "SKU_FEE_ID", referencedColumnName = "SKU_FEE_ID", nullable = true),
+            inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     protected List<Sku> skus;
 
@@ -120,8 +118,6 @@ public class SkuFeeImpl implements SkuFee {
     @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order = 1,
             group = "FixedPriceFulfillmentOptionImpl_Details", prominent = true)
     protected BroadleafCurrency currency;
-
-
 
     @Override
     public Long getId() {
@@ -213,7 +209,6 @@ public class SkuFeeImpl implements SkuFee {
         this.currency = currency;
     }
 
-
     @Override
     public boolean equals(Object obj) {
 
@@ -251,4 +246,5 @@ public class SkuFeeImpl implements SkuFee {
                 .append(currency)
                 .toHashCode();
     }
+
 }

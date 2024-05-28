@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,7 +24,7 @@ import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 
 /**
  * Convenience methods for determining the state of the active cart
- * 
+ *
  * @author Chris Kittrell (ckittrell)
  */
 public interface CartStateService {
@@ -71,9 +71,9 @@ public interface CartStateService {
 
     /**
      * A helper method used to determine whether or not the {@link CartState#getCart()} contains a temporary credit card.
-     *
+     * <p>
      * Note: Temporary credit card {@link OrderPayment}s are created to store the payment's billing address prior
-     *  to submitting the checkout if a {@link CustomerPayment} is not used.
+     * to submitting the checkout if a {@link CustomerPayment} is not used.
      *
      * @return boolean
      */
@@ -85,4 +85,5 @@ public interface CartStateService {
      * @return boolean
      */
     boolean cartHasUnconfirmedCreditCard();
+
 }

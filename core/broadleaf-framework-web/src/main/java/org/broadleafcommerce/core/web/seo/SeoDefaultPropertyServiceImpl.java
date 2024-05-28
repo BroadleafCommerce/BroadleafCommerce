@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -231,7 +231,7 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
 
     /**
      * This method is intended to be overridden to also determine whether or not the {@param pageNumber} is under
-     *  the total number of pages for the given {@param product}.
+     * the total number of pages for the given {@param product}.
      */
     protected boolean isValidNextPageNumber(Product product, Integer pageNumber) {
         return true;
@@ -304,7 +304,7 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
 
         String categoryPaginationParam = getCategoryPaginationParam();
         String categoryPaginationParamValue = null;
-        if(categoryPaginationParam!=null) {
+        if (categoryPaginationParam != null) {
             categoryPaginationParamValue = request.getParameter(categoryPaginationParam);
         }
         boolean hasPaginationParamValue = StringUtils.isNotBlank(categoryPaginationParamValue);
@@ -339,10 +339,10 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
             HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
             String categoryPaginationParam = getCategoryPaginationParam();
-            if(categoryPaginationParam != null) {
+            if (categoryPaginationParam != null) {
                 String categoryPaginationParamValue = request.getParameter(categoryPaginationParam);
                 return Integer.valueOf(categoryPaginationParamValue);
-            }else{
+            } else {
                 return 1;
             }
         } catch (NumberFormatException e) {

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,9 +30,8 @@ import org.broadleafcommerce.common.value.ValueAssignable;
  * class is persisted.  If you just want to add additional fields then you should
  * extend {@link SkuAttributeImpl}.
  *
- * @see {@link SkuAttributeImpl}, {@link Sku}
  * @author btaylor
- *
+ * @see {@link SkuAttributeImpl}, {@link Sku}
  */
 public interface SkuAttribute extends ValueAssignable<String>, MultiTenantCloneable<SkuAttribute> {
 
@@ -41,41 +40,41 @@ public interface SkuAttribute extends ValueAssignable<String>, MultiTenantClonea
      *
      * @return the id
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the id.
      *
      * @param id the new id
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Gets the sku.
      *
      * @return the sku
      */
-    public Sku getSku();
+    Sku getSku();
 
     /**
      * Sets the sku.
      *
      * @param sku the new sku
      */
-    public void setSku(Sku sku);
+    void setSku(Sku sku);
 
     /**
      * Gets the name.
      *
      * @return the name
      */
-    public String getName();
+    String getName();
 
     /**
      * Sets the name.
      *
      * @param name the new name
      */
-    public void setName(String name);
+    void setName(String name);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,17 +24,16 @@ import java.util.List;
 
 import jakarta.annotation.Resource;
 
-
 /**
  * Extension Manager used to aggregate option values for all registered {@link RuleBuilderEnumOptionsExtensionListener}
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blRuleBuilderEnumOptionsExtensionManager")
 public class RuleBuilderEnumOptionsExtensionManager implements RuleBuilderEnumOptionsExtensionListener {
-    
+
     @Resource(name = "blRuleBuilderEnumOptionsExtensionListeners")
-    protected List<RuleBuilderEnumOptionsExtensionListener> listeners = new ArrayList<RuleBuilderEnumOptionsExtensionListener>();
+    protected List<RuleBuilderEnumOptionsExtensionListener> listeners = new ArrayList<>();
 
     @Override
     public String getOptionValues() {
@@ -44,11 +43,11 @@ public class RuleBuilderEnumOptionsExtensionManager implements RuleBuilderEnumOp
         }
         return sb.toString();
     }
-    
+
     public List<RuleBuilderEnumOptionsExtensionListener> getListeners() {
         return listeners;
     }
-    
+
     public void setListeners(List<RuleBuilderEnumOptionsExtensionListener> listeners) {
         this.listeners = listeners;
     }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -62,16 +62,16 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
 
     @Resource(name = "blOrderItemRequestValidationService")
     protected OrderItemRequestValidationService orderItemRequestValidationService;
-    
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
     @Resource(name = "blProductOptionValidationService")
     protected ProductOptionValidationService productOptionValidationService;
-    
+
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
 
@@ -84,7 +84,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     public ValidateAddRequestActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         ExtensionResultHolder<Exception> resultHolder = new ExtensionResultHolder<>();
@@ -126,7 +126,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             try {
                 // TODO: In the next minor release, refactor this to leverage OrderItemRequestValidationService. Leaving as-is to maintain the API for now.
                 sku = determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(),
-                    (ActivityMessages) context);
+                        (ActivityMessages) context);
             } catch (RequiredAttributeNotProvidedException e) {
                 if (orderItemRequestDTO instanceof ConfigurableOrderItemRequest) {
                     // Mark the request as a configuration error and proceed with the add.
@@ -144,7 +144,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
 
             validateIfParentOrderItemExists(orderItemRequestDTO);
         }
-        
+
         return context;
     }
 
@@ -166,16 +166,21 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
 
             if (product == null) {
                 throw new IllegalArgumentException("Product was specified but no matching product was found with the productId ("
-                                                   + orderItemRequestDTO.getProductId() + ")");
+                        + orderItemRequestDTO.getProductId() + ")");
             }
         }
 
         return product;
     }
-    
-    protected Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
+
+    protected Sku determineSku(
+            Product product,
+            Long skuId,
+            Map<String, String> attributeValues,
+            ActivityMessages messages
+    ) throws RequiredAttributeNotProvidedException {
         Sku sku = null;
-        
+
         // Check whether the sku is correct given the product options.
         sku = findMatchingSku(product, attributeValues, messages);
 
@@ -198,7 +203,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     protected boolean canSellDefaultSku(Product product) {
         return CollectionUtils.isEmpty(product.getAdditionalSkus()) || product.getCanSellWithoutOptions();
     }
-    
+
     protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
         Map<String, String> attributesRelevantToFindMatchingSku = new HashMap<>();
 
@@ -232,7 +237,12 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return null;
     }
 
-    protected boolean shouldValidateWithException(boolean isRequired, boolean isAddOrNoneType, String attributeValue, boolean hasStrategy) {
+    protected boolean shouldValidateWithException(
+            boolean isRequired,
+            boolean isAddOrNoneType,
+            String attributeValue,
+            boolean hasStrategy
+    ) {
         return (!hasStrategy || isAddOrNoneType) && (isRequired || StringUtils.isNotEmpty(attributeValue));
     }
 
@@ -241,7 +251,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         List<Long> possibleSkuIds = new ArrayList<>();
 
         for (Map.Entry<String, String> entry : MapUtils.emptyIfNull(attributeValuesForSku).entrySet()) {
-            possibleSkuIds = productOptionValidationService.findSkuIdsForProductOptionValues(product.getId(), entry.getKey(), entry.getValue(), possibleSkuIds);
+            possibleSkuIds = productOptionValidationService.findSkuIdsForProductOptionValues(
+                    product.getId(), entry.getKey(), entry.getValue(), possibleSkuIds
+            );
 
             if (CollectionUtils.isEmpty(possibleSkuIds)) {
                 break;
@@ -255,7 +267,12 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         return matchingSku;
     }
 
-    protected void addSkuToCart(Sku sku, OrderItemRequestDTO orderItemRequestDTO, Product product, CartOperationRequest request) {
+    protected void addSkuToCart(
+            Sku sku,
+            OrderItemRequestDTO orderItemRequestDTO,
+            Product product,
+            CartOperationRequest request
+    ) {
         // If we couldn't find a sku, then we're unable to add to cart.
         if (!hasSkuOrIsNonDiscreteOI(sku, orderItemRequestDTO)) {
             handleIfNoSku(orderItemRequestDTO, product);
@@ -281,9 +298,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
         }
 
         throw new IllegalArgumentException("Could not find SKU for :" +
-                                           " productId: " + (product == null ? "null" : product.getId()) +
-                                           " skuId: " + orderItemRequestDTO.getSkuId() +
-                                           " attributes: " + sb.toString());
+                " productId: " + (product == null ? "null" : product.getId()) +
+                " skuId: " + orderItemRequestDTO.getSkuId() +
+                " attributes: " + sb.toString());
     }
 
     protected void handleIfNonDiscreteOI(OrderItemRequestDTO orderItemRequestDTO) {
@@ -301,7 +318,8 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     }
 
     protected boolean hasSameCurrency(OrderItemRequestDTO orderItemRequestDTO, CartOperationRequest request, Sku sku) {
-        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO || sku == null || sku.getCurrency() == null || request.getOrder().getCurrency() == null) {
+        if (orderItemRequestDTO instanceof NonDiscreteOrderItemRequestDTO || sku == null
+                || sku.getCurrency() == null || request.getOrder().getCurrency() == null) {
             return true;
         } else {
             BroadleafCurrency orderCurrency = request.getOrder().getCurrency();
@@ -317,8 +335,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             OrderItem parent = orderItemService.readOrderItemById(orderItemRequestDTO.getParentOrderItemId());
             if (parent == null) {
                 throw new IllegalArgumentException("Could not find parent order item by the given id ("
-                                                   + orderItemRequestDTO.getParentOrderItemId() + ")");
+                        + orderItemRequestDTO.getParentOrderItemId() + ")");
             }
         }
     }
+
 }

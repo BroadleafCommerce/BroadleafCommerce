@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,6 +27,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
@@ -41,50 +42,55 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
+
 /**
  * The Class OrderAttributeImpl
+ *
  * @see OrderAttribute
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_ORDER_ATTRIBUTE",
-                uniqueConstraints = @UniqueConstraint(name = "ATTR_NAME_ORDER_ID", columnNames = {"NAME", "ORDER_ID"}))
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
-@AdminPresentationMergeOverrides(
-    {
+@Table(name = "BLC_ORDER_ATTRIBUTE",
+        uniqueConstraints = @UniqueConstraint(name = "ATTR_NAME_ORDER_ID", columnNames = {"NAME", "ORDER_ID"}))
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
-)
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
 @AdminPresentationClass(friendlyName = "OrderAttributeImpl_baseProductAttribute")
 public class OrderAttributeImpl implements OrderAttribute {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    @GeneratedValue(generator= "OrderAttributeId")
+    @GeneratedValue(generator = "OrderAttributeId")
     @GenericGenerator(
-        name="OrderAttributeId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="OrderAttributeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.OrderAttributeImpl")
-        }
+            name = "OrderAttributeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OrderAttributeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.catalog.domain.OrderAttributeImpl")
+            }
     )
     @Column(name = "ORDER_ATTRIBUTE_ID")
     protected Long id;
-    
-    @Column(name = "NAME", nullable=false)
-    @AdminPresentation(friendlyName = "OrderAttributeImpl_Attribute_Name", order=1000, prominent=true)
+
+    @Column(name = "NAME", nullable = false)
+    @AdminPresentation(friendlyName = "OrderAttributeImpl_Attribute_Name", order = 1000, prominent = true)
     protected String name;
 
-    /** The value. */
+    /**
+     * The value.
+     */
     @Column(name = "VALUE")
-    @AdminPresentation(friendlyName = "OrderAttributeImpl_Attribute_Value", order=2000, prominent=true)
+    @AdminPresentation(friendlyName = "OrderAttributeImpl_Attribute_Value", order = 2000, prominent = true)
     protected String value;
-    
-    @ManyToOne(targetEntity = OrderImpl.class, optional=false)
+
+    @ManyToOne(targetEntity = OrderImpl.class, optional = false)
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
 
@@ -146,16 +152,18 @@ public class OrderAttributeImpl implements OrderAttribute {
             return false;
         if (!getClass().isAssignableFrom(obj.getClass()))
             return false;
-        
+
         if (value == null) {
             return false;
         }
-        
+
         return value.equals(((OrderAttribute) obj).getValue());
     }
 
     @Override
-    public <G extends OrderAttribute> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OrderAttribute> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -167,4 +175,5 @@ public class OrderAttributeImpl implements OrderAttribute {
         cloned.setOrder(order);
         return createResponse;
     }
+
 }

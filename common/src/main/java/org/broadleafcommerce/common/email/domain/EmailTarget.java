@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,16 +22,21 @@ import java.io.Serializable;
 /**
  * The EmailTarget interface is used to specify the recipients of the email.
  *
- * @see EmailTargetImpl
  * @author bpolster
+ * @see EmailTargetImpl
  */
 public interface EmailTarget extends Serializable {
 
-    public String getEmailAddress();
-    public void setEmailAddress(String emailAddress);
-    public String[] getCCAddresses();
-    public void setCCAddresses(String[] ccAddresses);
-    public String[] getBCCAddresses();
-    public void setBCCAddresses(String[] BCCAddresses);
+    String getEmailAddress();
+
+    void setEmailAddress(String emailAddress);
+
+    String[] getCCAddresses();
+
+    void setCCAddresses(String[] ccAddresses);
+
+    String[] getBCCAddresses();
+
+    void setBCCAddresses(String[] BCCAddresses);
 
 }

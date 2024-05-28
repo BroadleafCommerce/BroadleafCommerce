@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.payment.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 
@@ -31,35 +32,31 @@ import java.util.LinkedHashMap;
  */
 public class OrderPaymentStatus implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final LinkedHashMap<String, OrderPaymentStatus> TYPES = new LinkedHashMap<String, OrderPaymentStatus>();
+    private static final LinkedHashMap<String, OrderPaymentStatus> TYPES = new LinkedHashMap<>();
 
     /**
      * This is the default status for an Order Payment and is meant to encompass a state not
      * represented by the other payment statuses.
      */
     public static final OrderPaymentStatus UNDETERMINED = new OrderPaymentStatus("UNDETERMINED", "Undetermined");
-
     /**
      * This represents the state where there is only a {@link org.broadleafcommerce.common.payment.PaymentTransactionType#UNCONFIRMED}
      * transaction on the payment.
      */
     public static final OrderPaymentStatus UNCONFIRMED = new OrderPaymentStatus("UNCONFIRMED", "Unconfirmed Transaction");
-
     /**
      * This represents the state where there is a {@link org.broadleafcommerce.common.payment.PaymentTransactionType#PENDING}
      * transaction on the payment, but there is not yet a completed {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE}
      * or {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE_AND_CAPTURE} transaction.
      */
     public static final OrderPaymentStatus PENDING = new OrderPaymentStatus("PENDING", "Pending Charge");
-
     /**
      * This is equivalent to having a successful {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE}
      * transaction on the payment, but there are no transactions indicating that payment has been captured.
      */
     public static final OrderPaymentStatus AUTHORIZED = new OrderPaymentStatus("AUTHORIZED", "Authorized");
-
     /**
      * This is equivalent to having a successful {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE_AND_CAPTURE}
      * transaction on the payment OR all the partial {@link org.broadleafcommerce.common.payment.PaymentTransactionType#CAPTURE}
@@ -67,14 +64,12 @@ public class OrderPaymentStatus implements Serializable, BroadleafEnumerationTyp
      * but there are no transactions indicating that payment has had any refunds issued against it.
      */
     public static final OrderPaymentStatus FULLY_CAPTURED = new OrderPaymentStatus("FULLY_CAPTURED", "Fully Captured");
-
     /**
      * This is equivalent to having a successful {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE_AND_CAPTURE}
      * OR one or more {@link org.broadleafcommerce.common.payment.PaymentTransactionType#CAPTURE} transactions which
      * may have zero or more refund transactions issued against it.
      */
     public static final OrderPaymentStatus PARTIALLY_COMPLETE = new OrderPaymentStatus("PARTIALLY_COMPLETE", "Partially Complete");
-
     /**
      * This represents a completed state for this order payment wherein no more action can be performed on the original transaction.
      * Specifically, if the transaction log contains a successful {@link org.broadleafcommerce.common.payment.PaymentTransactionType#REVERSE_AUTH},
@@ -82,10 +77,6 @@ public class OrderPaymentStatus implements Serializable, BroadleafEnumerationTyp
      * or the total transaction amount is equal to all the refund transactions.
      */
     public static final OrderPaymentStatus COMPLETE = new OrderPaymentStatus("Complete", "Complete");
-
-    public static OrderPaymentStatus getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -99,21 +90,25 @@ public class OrderPaymentStatus implements Serializable, BroadleafEnumerationTyp
         setType(type);
     }
 
+    public static OrderPaymentStatus getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     @Override
     public String getType() {
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

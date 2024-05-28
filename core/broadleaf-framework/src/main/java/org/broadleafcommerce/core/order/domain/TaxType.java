@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,21 +19,21 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extensible enumeration of tax detail types
- * 
- * @author aazzolini
  *
+ * @author aazzolini
  */
 public class TaxType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, TaxType> TYPES = new LinkedHashMap<String, TaxType>();
+    private static final Map<String, TaxType> TYPES = new LinkedHashMap<>();
 
     public static final TaxType CITY = new TaxType("CITY", "City");
     public static final TaxType STATE = new TaxType("STATE", "State");
@@ -41,13 +41,8 @@ public class TaxType implements Serializable, BroadleafEnumerationType {
     public static final TaxType COUNTY = new TaxType("COUNTY", "County");
     public static final TaxType COUNTRY = new TaxType("COUNTRY", "Country");
     public static final TaxType SHIPPING = new TaxType("SHIPPING", "Shipping");
-
     // Used by SimpleTaxProvider to represent total taxes owed.
     public static final TaxType COMBINED = new TaxType("COMBINED", "Combined");
-
-    public static TaxType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -61,19 +56,23 @@ public class TaxType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static TaxType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -100,4 +99,5 @@ public class TaxType implements Serializable, BroadleafEnumerationType {
             return false;
         return true;
     }
+
 }

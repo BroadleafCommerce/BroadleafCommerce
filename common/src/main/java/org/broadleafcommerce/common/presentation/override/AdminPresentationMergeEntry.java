@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,13 +32,13 @@ import java.lang.annotation.Target;
 /**
  * Represents a override value for a specific admin presentation property.
  *
+ * @author Jeff Fischer
  * @see org.broadleafcommerce.common.presentation.AdminPresentation
  * @see org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup
  * @see org.broadleafcommerce.common.presentation.AdminPresentationDataDrivenEnumeration
  * @see org.broadleafcommerce.common.presentation.AdminPresentationCollection
  * @see org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection
  * @see org.broadleafcommerce.common.presentation.AdminPresentationMap
- * @author Jeff Fischer
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -49,8 +49,8 @@ public @interface AdminPresentationMergeEntry {
      * the various admin presentation annotations. See {@link PropertyType} for a comprehensive list of
      * available values organized by admin presentation annotation type.
      *
-     * @see PropertyType
      * @return the property override type
+     * @see PropertyType
      */
     String propertyType();
 
@@ -195,4 +195,5 @@ public @interface AdminPresentationMergeEntry {
      * @return the field value configurations
      */
     FieldValueConfiguration[] showIfFieldEquals() default {};
+
 }

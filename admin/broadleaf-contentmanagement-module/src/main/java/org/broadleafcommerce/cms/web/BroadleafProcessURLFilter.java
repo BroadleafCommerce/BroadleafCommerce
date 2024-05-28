@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -62,74 +62,28 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 /**
+ * @author bpolster
  * @deprecated In favor of org.broadleafcommerce.common.web.BroadleafRequestFilter.
  * formally component name "blProcessURLFilter"
- *
+ * <p>
  * This filter sets up the CMS system by setting the current sandbox, locale, time of day, and languageCode
  * that used by content items.
  * <p/>
  * After setting up content variables, it checks to see if a request can be processed by an instance of
  * URLProcessor and if so, delegates the request to that processor.
- *
+ * <p>
  * This filter creates an internal cache to quickly determine if the request should be processed
  * by an instance of URLProcessor or be passed to the next filter in the filter chain.    The
  * cache settings (including expiration seconds, maximum elements, and concurrency) can be
  * configured via Spring at startup.   See {@code com.google.common.cache.CacheBuilder} for more information
  * on these parameters.
- *
- * @author bpolster
  */
 @Deprecated
 public class BroadleafProcessURLFilter extends OncePerRequestFilter {
-    private final Log LOG = LogFactory.getLog(BroadleafProcessURLFilter.class);
-
-    // List of URLProcessors
-    private List<URLProcessor> urlProcessorList = new ArrayList<URLProcessor>();
-
-    // Cache-settings
-    //   by default, expire cache every four hours (4 hours * 60 minutes * 60 seconds)
-    private int cacheExpirationSeconds = 4 * 60 * 60;
-    private int maxCacheElements = 10000;
-    private int maxCacheConcurrency = 3;
-    private Cache<String, URLProcessor> urlCache;
-
-
-    @Autowired
-    @Qualifier("blSandBoxService")
-    private SandBoxService sandBoxService;
-
-    @Autowired
-    @Qualifier("blLocaleService")
-    private LocaleService localeService;
-
-    protected Boolean sandBoxPreviewEnabled = true;
-
-    /**
-     * Parameter/Attribute name for the current language
-     */
-    public static String LOCALE_VAR = "blLocale";
-
-    /**
-     * Parameter/Attribute name for the current language
-     */
-    public static String LOCALE_CODE_PARAM = "blLocaleCode";
-
-    /**
-     * Parameter/Attribute name for the current language
-     */
-    public static String REQUEST_DTO = "blRequestDTO";
-
-    /**
-     * Request attribute to store the current sandbox
-     */
-    public static String SANDBOX_VAR = "blSandbox";
-
     // Properties to manage URLs that will not be processed by this filter.
     private static final String BLC_ADMIN_GWT = "org.broadleafcommerce.admin";
     private static final String BLC_ADMIN_PREFIX = "blcadmin";
     private static final String BLC_ADMIN_SERVICE = ".service";
-    private HashSet<String> ignoreSuffixes;
-
     // Request Parameters and Attributes for Sandbox Mode properties - mostly date values.
     private static final String SANDBOX_ID_VAR = "blSandboxId";
     private static final String SANDBOX_DATE_TIME_VAR = "blSandboxDateTime";
@@ -143,7 +97,39 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     private static final String SANDBOX_DISPLAY_DATE_TIME_HOURS_PARAM = "blSandboxDisplayDateTimeHours";
     private static final String SANDBOX_DISPLAY_DATE_TIME_MINUTES_PARAM = "blSandboxDisplayDateTimeMinutes";
     private static final String SANDBOX_DISPLAY_DATE_TIME_AMPM_PARAM = "blSandboxDisplayDateTimeAMPM";
-
+    /**
+     * Parameter/Attribute name for the current language
+     */
+    public static String LOCALE_VAR = "blLocale";
+    /**
+     * Parameter/Attribute name for the current language
+     */
+    public static String LOCALE_CODE_PARAM = "blLocaleCode";
+    /**
+     * Parameter/Attribute name for the current language
+     */
+    public static String REQUEST_DTO = "blRequestDTO";
+    /**
+     * Request attribute to store the current sandbox
+     */
+    public static String SANDBOX_VAR = "blSandbox";
+    private final Log LOG = LogFactory.getLog(BroadleafProcessURLFilter.class);
+    protected Boolean sandBoxPreviewEnabled = true;
+    // List of URLProcessors
+    private List<URLProcessor> urlProcessorList = new ArrayList<URLProcessor>();
+    // Cache-settings
+    //   by default, expire cache every four hours (4 hours * 60 minutes * 60 seconds)
+    private int cacheExpirationSeconds = 4 * 60 * 60;
+    private int maxCacheElements = 10000;
+    private int maxCacheConcurrency = 3;
+    private Cache<String, URLProcessor> urlCache;
+    @Autowired
+    @Qualifier("blSandBoxService")
+    private SandBoxService sandBoxService;
+    @Autowired
+    @Qualifier("blLocaleService")
+    private LocaleService localeService;
+    private HashSet<String> ignoreSuffixes;
 
     /**
      * (non-Javadoc)
@@ -195,7 +181,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
                 try {
                     urlProcessor = lookupProcessorFromCache(requestURIWithoutContext);
                 } catch (ExecutionException e) {
-                    LOG.error("An error has occurred ",e);
+                    LOG.error("An error has occurred ", e);
                 }
             }
 
@@ -229,7 +215,6 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
 
     }
 
-
     /**
      * Returns true if the passed in sandbox is null or is of type SandBoxType.PRODUCTION.
      *
@@ -240,7 +225,6 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
         return (sandbox == null) || (SandBoxType.PRODUCTION.equals(sandbox));
     }
 
-
     /**
      * Builds a cache for each URL that determines how it should be processed.
      *
@@ -249,10 +233,10 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     private URLProcessor lookupProcessorFromCache(String requestURIWithoutContextPath) throws ExecutionException {
         if (urlCache == null) {
             urlCache = CacheBuilder.newBuilder()
-                   .maximumSize(maxCacheElements)
-                   .concurrencyLevel(maxCacheConcurrency)
-                   .expireAfterWrite(cacheExpirationSeconds, TimeUnit.SECONDS)
-                   .build(new CacheLoader<String,URLProcessor>() {
+                    .maximumSize(maxCacheElements)
+                    .concurrencyLevel(maxCacheConcurrency)
+                    .expireAfterWrite(cacheExpirationSeconds, TimeUnit.SECONDS)
+                    .build(new CacheLoader<String, URLProcessor>() {
                         @Override
                         public URLProcessor load(String key) throws IOException, ServletException {
                             if (LOG.isDebugEnabled()) {
@@ -260,13 +244,13 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
                             }
                             return determineURLProcessor(key);
                         }
-                   });
+                    });
         }
         return urlCache.getIfPresent(requestURIWithoutContextPath);
     }
 
     private URLProcessor determineURLProcessor(String requestURI) {
-         for (URLProcessor processor: getUrlProcessorList()) {
+        for (URLProcessor processor : getUrlProcessorList()) {
             if (processor.canProcessURL(requestURI)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("URLProcessor found for URI " + requestURI + " - " + processor.getClass().getName());
@@ -292,8 +276,8 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
      */
     protected boolean shouldProcessURL(HttpServletRequest request, String requestURI) {
         if (requestURI.contains(BLC_ADMIN_GWT) ||
-            requestURI.endsWith(BLC_ADMIN_SERVICE) ||
-            requestURI.contains(BLC_ADMIN_PREFIX)) {
+                requestURI.endsWith(BLC_ADMIN_SERVICE) ||
+                requestURI.contains(BLC_ADMIN_PREFIX)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("BroadleafProcessURLFilter ignoring admin request URI " + requestURI);
             }
@@ -445,7 +429,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
         return sandboxId;
     }
 
-    private void setContentTime(HttpServletRequest request) {
+    protected void setContentTime(HttpServletRequest request) {
         String sandboxDateTimeParam = request.getParameter(SANDBOX_DATE_TIME_VAR);
         if (sandBoxPreviewEnabled) {
             sandboxDateTimeParam = null;
@@ -525,7 +509,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
      * are returned:
      * <p/>
      * <B>List of suffixes ignored:</B>
-     *
+     * <p>
      * ".aif", ".aiff", ".asf", ".avi", ".bin", ".bmp", ".doc", ".eps", ".gif", ".hqx", ".jpg", ".jpeg", ".mid", ".midi", ".mov", ".mp3", ".mpg", ".mpeg", ".p65", ".pdf", ".pic", ".pict", ".png", ".ppt", ".psd", ".qxd", ".ram", ".ra", ".rm", ".sea", ".sit", ".stk", ".swf", ".tif", ".tiff", ".txt", ".rtf", ".vob", ".wav", ".wmf", ".xls", ".zip";
      *
      * @return set of suffixes to ignore.
@@ -533,7 +517,7 @@ public class BroadleafProcessURLFilter extends OncePerRequestFilter {
     protected Set getIgnoreSuffixes() {
         if (ignoreSuffixes == null || ignoreSuffixes.isEmpty()) {
             String[] ignoreSuffixList = {".aif", ".aiff", ".asf", ".avi", ".bin", ".bmp", ".css", ".doc", ".eps", ".gif", ".hqx", ".js", ".jpg", ".jpeg", ".mid", ".midi", ".mov", ".mp3", ".mpg", ".mpeg", ".p65", ".pdf", ".pic", ".pict", ".png", ".ppt", ".psd", ".qxd", ".ram", ".ra", ".rm", ".sea", ".sit", ".stk", ".swf", ".tif", ".tiff", ".txt", ".rtf", ".vob", ".wav", ".wmf", ".xls", ".zip"};
-            ignoreSuffixes = new HashSet<String>(Arrays.asList(ignoreSuffixList));
+            ignoreSuffixes = new HashSet<>(Arrays.asList(ignoreSuffixList));
         }
         return ignoreSuffixes;
     }

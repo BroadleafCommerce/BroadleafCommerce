@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,7 +50,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * Retrieves the cart for the current BroadleafCommerce Customer based using the authenticated user OR creates an empty non-modifiable cart and
  * stores it in the request.
  * </p>
- * 
+ *
  * <p>
  * This filter is also responsible for establishing a session-wide lock for operations that require a lock, indicated
  * by {@link #requestRequiresLock(ServletRequest)}. By default, this is configured for all POST requests. Requests that
@@ -73,7 +73,7 @@ public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
     @Autowired
     @Qualifier("blOrderLockManager")
     protected OrderLockManager orderLockManager;
-    
+
     @Autowired
     @Qualifier("blOrderService")
     protected OrderService orderService;
@@ -81,10 +81,13 @@ public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
     protected List<String> excludedOrderLockRequestPatterns;
 
     @Override
-    public void doFilterInternalUnlessIgnored(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws IOException, ServletException {        
+    public void doFilterInternalUnlessIgnored(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain
+    ) throws IOException, ServletException {
         cartStateProcessor.process(new ServletWebRequest(request, response));
-        
+
         if (!requestRequiresLock(request)) {
             chain.doFilter(request, response);
             return;
@@ -111,7 +114,7 @@ public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
                     lockObject = orderLockManager.acquireLock(order);
                 }
             }
-    
+
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Thread[" + Thread.currentThread().getId() + "] grabbed lock for order[" + order.getId() + "]");
             }
@@ -129,7 +132,7 @@ public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + order.getId() +"]");
+                LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + order.getId() + "]");
             }
         }
     }
@@ -137,15 +140,15 @@ public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
     /**
      * By default, all POST requests that are not matched by the {@link #getExcludedOrderLockRequestPatterns()} list
      * (using the {@link AntPathRequestMatcher}) will be marked as requiring a lock on the Order.
-     * 
+     *
      * @param req
      * @return whether or not the current request requires a lock on the order
      */
     protected boolean requestRequiresLock(ServletRequest req) {
         if (!(req instanceof HttpServletRequest)) {
-               return false;
+            return false;
         }
-        
+
         if (!orderLockManager.isActive()) {
             return false;
         }
@@ -155,11 +158,11 @@ public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
         if (!request.getMethod().equalsIgnoreCase("post")) {
             return false;
         }
-        
+
         if (excludedOrderLockRequestPatterns != null && excludedOrderLockRequestPatterns.size() > 0) {
             for (String pattern : excludedOrderLockRequestPatterns) {
                 RequestMatcher matcher = new AntPathRequestMatcher(pattern);
-                if (matcher.matches(request)){
+                if (matcher.matches(request)) {
                     return false;
                 }
             }
@@ -181,13 +184,12 @@ public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
      * This allows you to declaratively set a list of excluded Request Patterns
      *
      * <bean id="blCartStateFilter" class="org.broadleafcommerce.core.web.order.security.CartStateFilter">
-     *     <property name="excludedOrderLockRequestPatterns">
-     *         <list>
-     *             <value>/exclude-me/**</value>
-     *         </list>
-     *     </property>
+     * <property name="excludedOrderLockRequestPatterns">
+     * <list>
+     * <value>/exclude-me/**</value>
+     * </list>
+     * </property>
      * </bean>
-     *
      **/
     public void setExcludedOrderLockRequestPatterns(List<String> excludedOrderLockRequestPatterns) {
         this.excludedOrderLockRequestPatterns = excludedOrderLockRequestPatterns;

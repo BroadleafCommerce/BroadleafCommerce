@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,8 @@ import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,7 +40,29 @@ import jakarta.persistence.Transient;
 @Table(name = "BLC_GIFT_CARD_PAYMENT", indexes = {@Index(name = "GIFTCARD_INDEX", columnList = "REFERENCE_NUMBER")})
 public class GiftCardPaymentImpl implements GiftCardPayment {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    @Transient
+    protected EncryptionModule encryptionModule;
+    @Id
+    @GeneratedValue(generator = "GiftCardPaymentId")
+    @GenericGenerator(
+            name = "GiftCardPaymentId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "GiftCardPaymentImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl")
+            }
+    )
+    @Column(name = "PAYMENT_ID")
+    protected Long id;
+    @Column(name = "REFERENCE_NUMBER", nullable = false)
+    protected String referenceNumber;
+    @Column(name = "PAN", nullable = false)
+    protected String pan;
+    @Column(name = "PIN")
+    protected String pin;
 
     /**
      * Rather than constructing directly, use {@link SecureOrderPaymentService#create(org.broadleafcommerce.core.payment.service.type.PaymentType)}
@@ -51,44 +75,9 @@ public class GiftCardPaymentImpl implements GiftCardPayment {
         // construction
     }
 
-    @Transient
-    protected EncryptionModule encryptionModule;
-
-    @Id
-    @GeneratedValue(generator = "GiftCardPaymentId")
-    @GenericGenerator(
-            name = "GiftCardPaymentId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "GiftCardPaymentImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl")
-            }
-    )
-    @Column(name = "PAYMENT_ID")
-    protected Long id;
-
-    @Column(name = "REFERENCE_NUMBER", nullable = false)
-    protected String referenceNumber;
-
-    @Column(name = "PAN", nullable = false)
-    protected String pan;
-
-    @Column(name = "PIN")
-    protected String pin;
-
     @Override
     public Long getId() {
         return id;
-    }
-
-    @Override
-    public String getPan() {
-        return encryptionModule.decrypt(pan);
-    }
-
-    @Override
-    public String getPin() {
-        return encryptionModule.decrypt(pin);
     }
 
     @Override
@@ -97,8 +86,18 @@ public class GiftCardPaymentImpl implements GiftCardPayment {
     }
 
     @Override
+    public String getPan() {
+        return encryptionModule.decrypt(pan);
+    }
+
+    @Override
     public void setPan(String pan) {
         this.pan = encryptionModule.encrypt(pan);
+    }
+
+    @Override
+    public String getPin() {
+        return encryptionModule.decrypt(pin);
     }
 
     @Override

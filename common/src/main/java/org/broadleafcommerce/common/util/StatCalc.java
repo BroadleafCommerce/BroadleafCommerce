@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,11 +29,13 @@ public class StatCalc {
         // Add the number to the dataset.
         count++;
         sum += num;
-        squareSum += num*num;
-        if (num > max)
+        squareSum += num * num;
+        if (num > max) {
             max = num;
-        if (num < min)
+        }
+        if (num < min) {
             min = num;
+        }
     }
 
     public int getCount() {
@@ -56,7 +58,7 @@ public class StatCalc {
         // Return standard deviation of all the items that have been entered.
         // Value will be Double.NaN if count == 0.
         double mean = getMean();
-        return Math.sqrt( squareSum/count - mean*mean );
+        return Math.sqrt(squareSum / count - mean * mean);
     }
 
     public double getMin() {

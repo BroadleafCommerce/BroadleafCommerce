@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -38,32 +37,32 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * <p>
- * A Thymeleaf processor that generates a search query href that will reflect the current 
+ * A Thymeleaf processor that generates a search query href that will reflect the current
  * search criteria in addition to the requested sort string
- * 
+ *
  * <p>
  * This is intended to be used in an anchor tag:
- * 
+ *
  * <pre>
  * {@code
  *  <a blc:addsortlink="price">Sort By Price</a>
  * }
  * </pre>
- * 
+ *
  * <p>
  * Produces:
- * 
+ *
  * <pre>
  * {@code
  *  <a class="asc" href="http://mysite.com/category?sort=price+asc">Sort By Price</a>
  * }
  * </pre>
- * 
+ *
  * <p>
  * This sort link can then be picked up by the {@link BroadleafCategoryController} to actually translate search queries based
  * on that query parameter. If there is no sort active on the request then this will print out a link to sort ascending.
  * Otherwise the link will output the non-active sort (so that you can switch between them).
- * 
+ *
  * @author apazzolini
  */
 @Component("blAddSortLinkProcessor")
@@ -76,14 +75,20 @@ public class AddSortLinkProcessor extends AbstractBroadleafAttributeModifierProc
     public String getName() {
         return "addsortlink";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 10000;
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(
+            String tagName,
+            Map<String, String> tagAttributes,
+            String attributeName,
+            String attributeValue,
+            BroadleafTemplateContext context
+    ) {
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
         HttpServletRequest request = blcContext.getRequest();
 
@@ -100,7 +105,7 @@ public class AddSortLinkProcessor extends AbstractBroadleafAttributeModifierProc
             for (String sortQuery : sortQueries.split(",")) {
                 String[] sort = sortQuery.split(" ");
                 if (sort.length == 2) {
-                    sortedFields.add(new String[] { sort[0], sort[1] });
+                    sortedFields.add(new String[]{sort[0], sort[1]});
                 }
             }
         }
@@ -146,7 +151,7 @@ public class AddSortLinkProcessor extends AbstractBroadleafAttributeModifierProc
             }
         }
 
-        params.put(key, new String[] { sortString });
+        params.put(key, new String[]{sortString});
 
         String url = ProcessorUtils.getUrl(baseUrl, params);
         Map<String, String> newAttributes = new HashMap<>();
@@ -154,4 +159,5 @@ public class AddSortLinkProcessor extends AbstractBroadleafAttributeModifierProc
         newAttributes.put("href", url);
         return new BroadleafAttributeModifier(newAttributes);
     }
+
 }

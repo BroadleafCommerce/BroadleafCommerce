@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,27 +28,28 @@ import java.util.List;
  */
 public interface FieldGroup extends Serializable, MultiTenantCloneable<FieldGroup> {
 
-    public List<StructuredContentFieldGroupXref> getFieldGroupXrefs();
+    List<StructuredContentFieldGroupXref> getFieldGroupXrefs();
 
-    public void setFieldGroupXrefs(List<StructuredContentFieldGroupXref> fieldGroupXrefs);
+    void setFieldGroupXrefs(List<StructuredContentFieldGroupXref> fieldGroupXrefs);
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public Boolean getInitCollapsedFlag();
+    Boolean getInitCollapsedFlag();
 
-    public void setInitCollapsedFlag(Boolean initCollapsedFlag);
+    void setInitCollapsedFlag(Boolean initCollapsedFlag);
 
-    public List<FieldDefinition> getFieldDefinitions();
+    List<FieldDefinition> getFieldDefinitions();
 
-    public void setFieldDefinitions(List<FieldDefinition> fieldDefinitions);
+    void setFieldDefinitions(List<FieldDefinition> fieldDefinitions);
 
-    public Boolean isMasterFieldGroup();
+    Boolean isMasterFieldGroup();
 
-    public void setIsMasterFieldGroup(Boolean isMasterFieldGroup);
+    void setIsMasterFieldGroup(Boolean isMasterFieldGroup);
+
 }

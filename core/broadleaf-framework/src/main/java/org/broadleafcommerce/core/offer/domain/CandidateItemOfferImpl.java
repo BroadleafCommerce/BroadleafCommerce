@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,6 +35,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
@@ -59,7 +60,8 @@ import jakarta.persistence.Transient;
 public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
     public static final Log LOG = LogFactory.getLog(CandidateItemOfferImpl.class);
-    public static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "CandidateItemOfferId")
@@ -82,12 +84,10 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
-
-    @Column(name = "DISCOUNTED_PRICE", precision = 19, scale = 5)
-    private BigDecimal discountedPrice;
-
     @Transient
     protected Offer deproxiedOffer;
+    @Column(name = "DISCOUNTED_PRICE", precision = 19, scale = 5)
+    private BigDecimal discountedPrice;
 
     @Override
     public Long getId() {
@@ -107,12 +107,6 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     @Override
     public void setOrderItem(OrderItem orderItem) {
         this.orderItem = orderItem;
-    }
-
-    @Override
-    public void setOffer(Offer offer) {
-        this.offer = offer;
-        deproxiedOffer = null;
     }
 
     @Override
@@ -139,11 +133,16 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
     }
 
     @Override
+    public void setOffer(Offer offer) {
+        this.offer = offer;
+        deproxiedOffer = null;
+    }
+
+    @Override
     public Money getDiscountedPrice() {
         return discountedPrice == null
                 ? null
-                : BroadleafCurrencyUtils.getMoney(discountedPrice,
-                        getOrderItem().getOrder().getCurrency());
+                : BroadleafCurrencyUtils.getMoney(discountedPrice, getOrderItem().getOrder().getCurrency());
     }
 
     @Override
@@ -151,9 +150,8 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         this.discountedPrice = discountedPrice.getAmount();
     }
 
-    public void checkCloneable(CandidateItemOffer itemOffer)
-            throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = itemOffer.getClass().getMethod("clone", new Class[] {});
+    public void checkCloneable(CandidateItemOffer itemOffer) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
+        Method cloneMethod = itemOffer.getClass().getMethod("clone", new Class[]{});
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
                 && !itemOffer.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
@@ -167,8 +165,7 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         //instantiate from the fully qualified name via reflection
         CandidateItemOffer candidateItemOffer;
         try {
-            candidateItemOffer =
-                    (CandidateItemOffer) Class.forName(this.getClass().getName()).newInstance();
+            candidateItemOffer = (CandidateItemOffer) Class.forName(this.getClass().getName()).newInstance();
             try {
                 checkCloneable(candidateItemOffer);
             } catch (CloneNotSupportedException e) {
@@ -240,7 +237,8 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
 
     @Override
     public <G extends CandidateItemOffer> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -253,4 +251,5 @@ public class CandidateItemOfferImpl implements CandidateItemOffer, Cloneable {
         cloned.setOffer(offer.createOrRetrieveCopyInstance(context).getClone());
         return createResponse;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,11 +29,16 @@ import org.broadleafcommerce.profile.core.domain.CustomerPayment;
  */
 public interface PaymentResponseDTOToEntityService {
 
-    public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, Address tempBillingAddress, boolean isUseBillingAddressFromGateway);
+    void populateBillingInfo(
+            PaymentResponseDTO responseDTO,
+            OrderPayment payment,
+            Address tempBillingAddress,
+            boolean isUseBillingAddressFromGateway
+    );
 
-    public void populateShippingInfo(PaymentResponseDTO responseDTO, Order order);
+    void populateShippingInfo(PaymentResponseDTO responseDTO, Order order);
 
-    public void populateAddressInfo(AddressDTO<PaymentResponseDTO> dto, Address address);
+    void populateAddressInfo(AddressDTO<PaymentResponseDTO> dto, Address address);
 
     /**
      * <p>
@@ -45,10 +50,11 @@ public interface PaymentResponseDTOToEntityService {
      * <p>
      * Usually used during a tokenization flow when there is a direct response from the gateway (e.g. transparent redirect)
      * outside the scope of a checkout flow.
+     *
      * @param customerPayment
      * @param responseDTO
      * @see {@link org.broadleafcommerce.core.payment.service.DefaultPaymentGatewayCheckoutService}
      */
-    public void populateCustomerPaymentToken(PaymentResponseDTO responseDTO, CustomerPayment customerPayment);
+    void populateCustomerPaymentToken(PaymentResponseDTO responseDTO, CustomerPayment customerPayment);
 
 }

@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.web.controller.account;
-
 
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
@@ -67,7 +66,6 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     @Resource(name = "blInitBinderService")
     protected InitBinderService initBinderService;
 
-
     public String viewCustomerPayments(HttpServletRequest request, Model model, PaymentInfoForm paymentInfoForm) {
         Customer customer = CustomerState.getCustomer();
 
@@ -78,24 +76,28 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
         return getCustomerPaymentView();
     }
 
-    public String addCustomerPayment(HttpServletRequest request, Model model,
-            PaymentInfoForm paymentInfoForm, BindingResult bindingResult) {
+    public String addCustomerPayment(
+            HttpServletRequest request,
+            Model model,
+            PaymentInfoForm paymentInfoForm,
+            BindingResult bindingResult
+    ) {
         Customer customer = CustomerState.getCustomer();
 
         addressService.populateAddressISOCountrySub(paymentInfoForm.getAddress());
         paymentInfoFormValidator.validate(paymentInfoForm, bindingResult);
 
         if (!bindingResult.hasErrors()) {
-            if ((paymentInfoForm.getAddress().getPhonePrimary() != null) &&
-                    (StringUtils.isEmpty(paymentInfoForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
+            if ((paymentInfoForm.getAddress().getPhonePrimary() != null)
+                    && (StringUtils.isEmpty(paymentInfoForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
                 paymentInfoForm.getAddress().setPhonePrimary(null);
             }
-            if ((paymentInfoForm.getAddress().getPhoneSecondary() != null) &&
-                    (StringUtils.isEmpty(paymentInfoForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+            if ((paymentInfoForm.getAddress().getPhoneSecondary() != null)
+                    && (StringUtils.isEmpty(paymentInfoForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
                 paymentInfoForm.getAddress().setPhoneSecondary(null);
             }
-            if ((paymentInfoForm.getAddress().getPhoneFax() != null) &&
-                    (StringUtils.isEmpty(paymentInfoForm.getAddress().getPhoneFax().getPhoneNumber()))) {
+            if ((paymentInfoForm.getAddress().getPhoneFax() != null)
+                    && (StringUtils.isEmpty(paymentInfoForm.getAddress().getPhoneFax().getPhoneNumber()))) {
                 paymentInfoForm.getAddress().setPhoneFax(null);
             }
 
@@ -137,4 +139,5 @@ public class BroadleafManageCustomerPaymentsController extends BroadleafAbstract
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
         initBinderService.configAddressInitBinder(binder);
     }
+
 }

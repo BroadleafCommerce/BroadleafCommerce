@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,7 +37,7 @@ import jakarta.annotation.Nullable;
  *
  * @author bpolster.
  */
-public interface StructuredContentType extends Serializable,MultiTenantCloneable<StructuredContentType> {
+public interface StructuredContentType extends Serializable, MultiTenantCloneable<StructuredContentType> {
 
     /**
      * Gets the primary key.
@@ -45,15 +45,14 @@ public interface StructuredContentType extends Serializable,MultiTenantCloneable
      * @return the primary key
      */
     @Nullable
-    public Long getId();
-
+    Long getId();
 
     /**
      * Sets the primary key.
      *
      * @param id the new primary key
      */
-    public void setId(@Nullable Long id);
+    void setId(@Nullable Long id);
 
     /**
      * Gets the name.
@@ -70,6 +69,7 @@ public interface StructuredContentType extends Serializable,MultiTenantCloneable
 
     /**
      * Gets the description.
+     *
      * @return
      */
     @Nullable
@@ -82,6 +82,7 @@ public interface StructuredContentType extends Serializable,MultiTenantCloneable
 
     /**
      * Returns the template associated with this content type.
+     *
      * @return
      */
     @Nonnull
@@ -89,7 +90,9 @@ public interface StructuredContentType extends Serializable,MultiTenantCloneable
 
     /**
      * Sets the template associated with this content type.
+     *
      * @param scft
      */
     void setStructuredContentFieldTemplate(@Nonnull StructuredContentFieldTemplate scft);
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,13 +23,13 @@ import java.util.LinkedHashMap;
 
 /**
  * @author Elbert Bautista (elbertbautista)
- *
+ * <p>
  * Utility class to convert the Polymorphic ClassTree into a Map
  */
 public class PolymorphicEntityMapUtil {
 
     public LinkedHashMap<String, String> convertClassTreeToMap(ClassTree polymorphicEntityTree) {
-        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>(polymorphicEntityTree.getRight()/2);
+        LinkedHashMap<String, String> map = new LinkedHashMap<>(polymorphicEntityTree.getRight() / 2);
         buildPolymorphicEntityMap(polymorphicEntityTree, map);
         return map;
     }
@@ -46,7 +46,7 @@ public class PolymorphicEntityMapUtil {
             //}
 
         }
-        map.put(entity.getFullyQualifiedClassname(), friendlyName!=null?friendlyName:entity.getName());
+        map.put(entity.getFullyQualifiedClassname(), friendlyName != null ? friendlyName : entity.getName());
         for (ClassTree child : entity.getChildren()) {
             buildPolymorphicEntityMap(child, map);
         }

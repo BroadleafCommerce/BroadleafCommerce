@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,17 +43,21 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 @Component("blLinkedDataProcessor")
 public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcessor {
+
     private final Log LOG = LogFactory.getLog(LinkedDataProcessor.class);
 
     @Resource(name = "blLinkedDataGenerators")
     protected List<LinkedDataGenerator> linkedDataGenerators;
 
     @Override
-    public BroadleafTemplateModel getReplacementModel(final String s, final Map<String, String> map, 
-                                                      final BroadleafTemplateContext context) {
+    public BroadleafTemplateModel getReplacementModel(
+            final String s,
+            final Map<String, String> map,
+            final BroadleafTemplateContext context
+    ) {
         String linkedDataText = "<script type=\"application/ld+json\">\n" +
-                                    getData(context.getRequest()) +
-                                "\n</script>";
+                getData(context.getRequest()) +
+                "\n</script>";
 
         final BroadleafTemplateModel model = context.createModel();
         final BroadleafTemplateElement linkedData = context.createTextElement(linkedDataText);
@@ -64,6 +68,7 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
 
     /**
      * Get the metadata for the specific page
+     *
      * @param request the user request
      * @return the JSON string representation of the linked data
      */
@@ -75,14 +80,14 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
             if (linkedDataGenerator.canHandle(request)) {
                 try {
                     linkedDataGenerator.getLinkedDataJSON(requestUrl, request, schemaObjects);
-                } catch(final JSONException e){
+                } catch (final JSONException e) {
                     // the only reason for this exception to be thrown is a null key being put on a JSONObject, 
                     // which shouldn't ever be expected to actually happen
                     LOG.error("A JSON exception occurred while generating LinkedData", e);
                 }
             }
         }
-        
+
         return schemaObjects.toString();
     }
 
@@ -90,4 +95,5 @@ public class LinkedDataProcessor extends AbstractBroadleafTagReplacementProcesso
     public String getName() {
         return "linkedData";
     }
+
 }

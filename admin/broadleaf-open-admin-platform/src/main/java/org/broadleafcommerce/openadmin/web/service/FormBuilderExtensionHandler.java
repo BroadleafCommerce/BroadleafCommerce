@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,7 +27,6 @@ import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 /**
  * Extension handler for various methods from {@link FormBuilderService}
- * 
  *
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link AbstractFormBuilderExtensionHandler}
@@ -43,88 +42,88 @@ public interface FormBuilderExtensionHandler extends ExtensionHandler {
      * every time that an {@link EntityForm} is created, whether it is from a "main" entity (when clicking to view the details
      * screen for an entity from from an admin section) or when building an 'add' or 'edit' form for a related list grid
      * from the detail view for an entity.
-     * 
+     *
      * <p>Example usages of this method would be to modify the display for certain fields for a particular {@link EntityForm}.</p>
-     * 
+     *
      * <p>This method is invoked on <i>every</i> {@link EntityForm} that is built from the admin (both initial creation
      * with empty field values and populating with real values from an {@link Entity}).</p>
-     * 
-     * <p>Also, it's important to note that in most cases you do not need to implement both this method and 
+     *
+     * <p>Also, it's important to note that in most cases you do not need to implement both this method and
      * {@link #modifyPopulatedEntityForm(EntityForm, Entity)}. It is usually sufficient to only modify one or the other.
      * In fact, in some cases (like on a validation failure or when viewing the details for an entity) both this method <i>and</i>
      * {@link #modifyPopulatedEntityForm(EntityForm, Entity)} are invoked (this method is invoked first)</p>
-     * 
+     *
      * <p>This methods is always invoked <i><b>before</b></i> {@link #modifyPopulatedEntityForm(EntityForm, Entity)}.
-     * 
+     *
      * @param ef the {@link EntityForm} that has not yet been populated with values from an entity
-     * @see {@link FormBuilderService#populateEntityForm(org.broadleafcommerce.openadmin.dto.ClassMetadata, EntityForm)}
      * @return
+     * @see {@link FormBuilderService#populateEntityForm(org.broadleafcommerce.openadmin.dto.ClassMetadata, EntityForm)}
      */
-    public ExtensionResultStatusType modifyUnpopulatedEntityForm(EntityForm ef);
-    
+    ExtensionResultStatusType modifyUnpopulatedEntityForm(EntityForm ef);
+
     /**
      * Modifies an {@link EntityForm} after it has been populated with an {@link Entity}. This is invoked after not only
      * all of the {@link EntityForm} fields have been created but the {@link EntityForm} field values have been actually
      * populated with the real values from the given {@link Entity}. An example of when this method is invoked is after
      * validation has failed (on any {@link EntityForm} from the admin) or when viewing the details for an entity.
-     * 
+     *
      * <p>This method is not invoked on the creation of every single {@link EntityForm} but rather <i>only</i> on the cases
      * presented above. If you need functionality for every case that a particular {@link EntityForm} could be built,
      * you should probably implement the {@link #modifyUnpopulatedEntityForm(EntityForm)} method instead.</p>
-     * 
+     *
      * <p>This method is very similar to {@link #modifyUnpopulatedEntityForm(EntityForm)} and usually implementors will only
      * override one or the other.</p>
-     * 
+     *
      * <p>This method is always invoked <i><b>after<b></i> {@link #modifyUnpopulatedEntityForm(EntityForm)}.</p>
-     * 
-     * @param ef the {@link EntityForm} being populated
+     *
+     * @param ef     the {@link EntityForm} being populated
      * @param entity the {@link Entity} that the {@link EntityForm} has used to populate all of the values for its fields
      * @return whether or not it was handled
      * @see {@link FormBuilderService#populateEntityForm(org.broadleafcommerce.openadmin.dto.ClassMetadata, Entity, EntityForm)}
      */
-    public ExtensionResultStatusType modifyPopulatedEntityForm(EntityForm ef, Entity entity);
-    
+    ExtensionResultStatusType modifyPopulatedEntityForm(EntityForm ef, Entity entity);
+
     /**
      * Invoked whenever a detailed {@link EntityForm} is built, <i>after</i> the initial list grids have been created on
      * the given {@link EntityForm}. This allows for further display modifications to the related {@link ListGrids} that
      * could occur on an {@link EntityForm}, or to only modify an {@link EntityForm} when it is showing an entity in
      * a details view
-     * 
+     *
      * <p>A <i>detailed</i> {@link EntityForm} is built when clicking on a row from the main {@link ListGrid} in an {@link AdminSection}
-     *  or when viewing the details for an entity in a read-only.</p>
-     *  
+     * or when viewing the details for an entity in a read-only.</p>
+     *
      * <p>As far as order of operations are concerned, this is always invoked <i>after</i> {@link #modifyPopulatedEntityForm(EntityForm, Entity)},
      * which is invoked <i>after</i> {@link #modifyUnpopulatedEntityForm(EntityForm)}. <b>This means that this method is
      * invoked last and can override values from the previous methods</b></p>
-     *  
-     * @param ef the {@link EntityForm} that has been built with all 
+     *
+     * @param ef the {@link EntityForm} that has been built with all
      * @return whether or not it was handled
      * @see {@link FormBuilderService#populateEntityForm(org.broadleafcommerce.openadmin.dto.ClassMetadata, org.broadleafcommerce.openadmin.dto.Entity, java.util.Map, EntityForm)
      */
-    public ExtensionResultStatusType modifyDetailEntityForm(EntityForm ef);
-    
+    ExtensionResultStatusType modifyDetailEntityForm(EntityForm ef);
+
     /**
      * Provides a hook to modify the ListGridRecord for the given Entity while building the list grid record.
-     * 
+     *
      * @param className
      * @param record
      * @param entity
      * @return whether or not it was handled
      */
-    public ExtensionResultStatusType modifyListGridRecord(String className, ListGridRecord record, Entity entity);
-    
+    ExtensionResultStatusType modifyListGridRecord(String className, ListGridRecord record, Entity entity);
+
     /**
      * <p>
      * Provides a hook to add additional actions to all entity forms.
-     * 
+     *
      * <p>
      * For order of operation purposes, this is the last thing that is run when building an entity form, which means
      * that it occurs after {@link #modifyDetailEntityForm(EntityForm)}.
-     * 
+     *
      * @param entityForm
      * @return whether or not it was handled
      */
-    public ExtensionResultStatusType addAdditionalFormActions(EntityForm entityForm);
+    ExtensionResultStatusType addAdditionalFormActions(EntityForm entityForm);
 
     /**
      * Provides a hook to modify the ListGrid for the given className when building an entityForm.
@@ -133,8 +132,8 @@ public interface FormBuilderExtensionHandler extends ExtensionHandler {
      * @param listGrid
      * @return whether or not it was handled
      */
-    public ExtensionResultStatusType modifyListGrid(String className, ListGrid listGrid);
-    
+    ExtensionResultStatusType modifyListGrid(String className, ListGrid listGrid);
+
     /**
      * <p>
      * Provides a hook to add additional actions to adorned entity forms.
@@ -146,6 +145,6 @@ public interface FormBuilderExtensionHandler extends ExtensionHandler {
      * @param entityForm
      * @return whether or not it was handled
      */
-    public ExtensionResultStatusType addAdditionalAdornedFormActions(EntityForm entityForm);
+    ExtensionResultStatusType addAdditionalAdornedFormActions(EntityForm entityForm);
 
 }

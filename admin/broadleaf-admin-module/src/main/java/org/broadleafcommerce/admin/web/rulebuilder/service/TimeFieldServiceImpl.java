@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,7 +44,6 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options(RuleOptionType.HOUR_OF_DAY)
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
-        
         fields.add(new FieldData.Builder()
                 .label("rule_timeDayOfWeek")
                 .name("dayOfWeek")
@@ -52,7 +51,6 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options(RuleOptionType.DAY_OF_WEEK)
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
-        
         fields.add(new FieldData.Builder()
                 .label("rule_timeMonth")
                 .name("month")
@@ -60,7 +58,6 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options(RuleOptionType.MONTH)
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
-        
         fields.add(new FieldData.Builder()
                 .label("rule_timeDayOfMonth")
                 .name("dayOfMonth")
@@ -68,7 +65,6 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options(RuleOptionType.DAY_OF_MONTH)
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
-        
         fields.add(new FieldData.Builder()
                 .label("rule_timeMinute")
                 .name("minute")
@@ -76,7 +72,6 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options(RuleOptionType.MINUTE)
                 .type(SupportedFieldType.BROADLEAF_ENUMERATION)
                 .build());
-        
         fields.add(new FieldData.Builder()
                 .label("rule_timeDate")
                 .name("date")
@@ -95,4 +90,5 @@ public class TimeFieldServiceImpl extends AbstractRuleBuilderFieldService {
     public String getDtoClassName() {
         return "org.broadleafcommerce.common.TimeDTO";
     }
+
 }

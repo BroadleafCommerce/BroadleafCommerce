@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,26 +38,24 @@ import jakarta.annotation.Resource;
 
 /**
  * Very similar to the {@link CheckAddAvailabilityActivity} but in the blUpdateItemWorkflow instead
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blCheckUpdateAvailabilityActivity")
 public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityActivity {
 
-    private static final Log LOG = LogFactory.getLog(CheckUpdateAvailabilityActivity.class);
-    
     public static final int ORDER = 2000;
-    
+    private static final Log LOG = LogFactory.getLog(CheckUpdateAvailabilityActivity.class);
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-    
+
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-    
+
     public CheckUpdateAvailabilityActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
@@ -78,7 +76,7 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
             return context;
         }
 
-        if(sku.getProduct().getEnableDefaultSkuInInventory()){
+        if (sku.getProduct().getEnableDefaultSkuInInventory()) {
             sku = sku.getProduct().getDefaultSku();
         }
 
@@ -92,7 +90,7 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
             } else if (orderItemFromOrder instanceof BundleOrderItem) {
                 skuFromOrder = ((BundleOrderItem) orderItemFromOrder).getSku();
             }
-            if(skuFromOrder!= null && skuFromOrder.getProduct().getEnableDefaultSkuInInventory()){
+            if (skuFromOrder != null && skuFromOrder.getProduct().getEnableDefaultSkuInInventory()) {
                 skuFromOrder = skuFromOrder.getProduct().getDefaultSku();
             }
             if (skuFromOrder != null && skuFromOrder.equals(sku) && !orderItemFromOrder.equals(orderItem)) {
@@ -107,7 +105,7 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
         Integer previousQty = orderItem.getQuantity();
         for (OrderItem child : orderItem.getChildOrderItems()) {
             Sku childSku = ((DiscreteOrderItem) child).getSku();
-            if(childSku.getProduct().getEnableDefaultSkuInInventory()){
+            if (childSku.getProduct().getEnableDefaultSkuInInventory()) {
                 childSku = childSku.getProduct().getDefaultSku();
             }
             Integer childQuantity = child.getQuantity();
@@ -117,4 +115,5 @@ public class CheckUpdateAvailabilityActivity extends AbstractCheckAvailabilityAc
 
         return context;
     }
+
 }

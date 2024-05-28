@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,21 +23,21 @@ import java.util.List;
 import jakarta.persistence.Query;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class BatchRetrieveDao {
-    
+
     //Default batch read size
     private int inClauseBatchSize = 300;
-    
+
     @SuppressWarnings("unchecked")
     public <T> List<T> batchExecuteReadQuery(Query query, List<?> params, String parameterName) {
-        List<T> response = new ArrayList<T>();
+        List<T> response = new ArrayList<>();
         int start = 0;
         while (start < params.size()) {
-            List<?> batchParams = params.subList(start, params.size() < inClauseBatchSize ? params.size() : inClauseBatchSize);
+            List<?> batchParams = params.subList(
+                    start, params.size() < inClauseBatchSize ? params.size() : inClauseBatchSize
+            );
             query.setParameter(parameterName, batchParams);
             response.addAll(query.getResultList());
             start += inClauseBatchSize;
@@ -52,5 +52,5 @@ public class BatchRetrieveDao {
     public void setInClauseBatchSize(int inClauseBatchSize) {
         this.inClauseBatchSize = inClauseBatchSize;
     }
-    
+
 }

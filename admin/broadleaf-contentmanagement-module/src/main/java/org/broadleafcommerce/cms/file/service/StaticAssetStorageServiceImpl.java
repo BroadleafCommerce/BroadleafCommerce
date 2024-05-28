@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -75,39 +75,35 @@ import jakarta.annotation.Resource;
 @Service("blStaticAssetStorageService")
 public class StaticAssetStorageServiceImpl implements StaticAssetStorageService {
 
-    private static final Log LOG = LogFactory.getLog(StaticAssetStorageServiceImpl.class);
-
-    protected static final String DEFAULT_ADMIN_IMAGE_EXTENSIONS = "bmp,jpg,jpeg,png,img,tiff,gif";
-
     public static final long DEFAULT_ASSET_UPLOAD_SIZE = 1024 * 1024 * 10;
-
+    protected static final String DEFAULT_ADMIN_IMAGE_EXTENSIONS = "bmp,jpg,jpeg,png,img,tiff,gif";
     // 8kb default for the buffer for moving files around
     protected static final int DEFAULT_BUFFER_SIZE = 8096;
-
+    private static final Log LOG = LogFactory.getLog(StaticAssetStorageServiceImpl.class);
     protected String cacheDirectory;
 
     @Autowired
     protected Environment env;
 
-    @Resource(name="blStaticAssetService")
+    @Resource(name = "blStaticAssetService")
     protected StaticAssetService staticAssetService;
 
     @Resource(name = "blFileService")
     protected BroadleafFileService broadleafFileService;
 
-    @Resource(name="blArtifactService")
+    @Resource(name = "blArtifactService")
     protected ArtifactService artifactService;
 
-    @Resource(name="blStaticAssetStorageDao")
+    @Resource(name = "blStaticAssetStorageDao")
     protected StaticAssetStorageDao staticAssetStorageDao;
 
-    @Resource(name="blNamedOperationManager")
+    @Resource(name = "blNamedOperationManager")
     protected NamedOperationManager namedOperationManager;
 
     @Resource(name = "blStaticAssetServiceExtensionManager")
     protected StaticAssetServiceExtensionManager extensionManager;
 
-    @Resource(name="blStreamingTransactionCapableUtil")
+    @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
     @Value("${image.artifact.recompress.formats:png}")
@@ -118,7 +114,6 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
     @Resource(name = "blConcurrentFileOutputStream")
     protected ConcurrentFileOutputStream concurrentFileOutputStream;
-
 
     protected StaticAsset findStaticAsset(String fullUrl) {
         StaticAsset staticAsset = staticAssetService.findStaticAssetByFullUrl(fullUrl);
@@ -209,10 +204,10 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         boolean shouldRecompress = shouldRecompress(mimeType);
         Map<String, String> convertedParameters = namedOperationManager.manageNamedParameters(parameterMap);
         if (shouldRecompress && MapUtils.isEmpty(convertedParameters)) {
-            convertedParameters.put("recompress","true");
+            convertedParameters.put("recompress", "true");
         }
         String cachedFileName = constructCacheFileName(staticAsset, convertedParameters);
-      
+
         if (shouldRecompress) {
             convertedParameters.remove("recompress");
         }
@@ -227,7 +222,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         String baseCachedFileName = constructCacheFileName(staticAsset, null);
         File baseLocalFile = getFileFromLocalRepository(baseCachedFileName);
 
-        if (! baseLocalFile.exists()) {
+        if (!baseLocalFile.exists()) {
             if (broadleafFileService.checkForResourceOnClassPath(staticAsset.getFullUrl())) {
                 cacheFile = broadleafFileService.getSharedLocalResource(cachedFileName);
                 baseLocalFile = broadleafFileService.getSharedLocalResource(baseCachedFileName);
@@ -240,15 +235,16 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
         if (!shouldRecompress && convertedParameters.isEmpty()) {
             return buildModel(baseLocalFile.getAbsolutePath(), mimeType);
-        } 
-        else {
+        } else {
             try (FileInputStream assetStream = new FileInputStream(baseLocalFile)) {
                 try (BufferedInputStream original = new BufferedInputStream(assetStream)) {
                     original.mark(0);
-                    Operation[] operations = artifactService.buildOperations(convertedParameters, original, staticAsset.getMimeType());
-                   try (InputStream converted = artifactService.convert(original, operations, staticAsset.getMimeType())) {
-                       createLocalFileFromInputStream(converted, cacheFile);
-                   }
+                    Operation[] operations = artifactService.buildOperations(
+                            convertedParameters, original, staticAsset.getMimeType()
+                    );
+                    try (InputStream converted = artifactService.convert(original, operations, staticAsset.getMimeType())) {
+                        createLocalFileFromInputStream(converted, cacheFile);
+                    }
                 }
                 if ("image/gif".equals(mimeType)) {
                     mimeType = "image/png";
@@ -276,7 +272,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
     }
 
     protected Map<String, String> buildModel(String returnFilePath, String mimeType) {
-        Map<String, String> model = new HashMap<String, String>(2);
+        Map<String, String> model = new HashMap<>(2);
         model.put("cacheFilePath", returnFilePath);
         model.put("mimeType", mimeType);
 
@@ -384,7 +380,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         if (staticAsset instanceof Auditable) {
             Auditable auditableStaticAsset = (Auditable) staticAsset;
-            sb2.append(format.format(auditableStaticAsset.getDateUpdated() == null ? auditableStaticAsset.getDateCreated() : auditableStaticAsset.getDateUpdated()));
+            sb2.append(format.format(auditableStaticAsset.getDateUpdated() == null
+                    ? auditableStaticAsset.getDateCreated()
+                    : auditableStaticAsset.getDateUpdated()));
         }
 
         if (parameterMap != null) {
@@ -400,9 +398,9 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] messageDigest = md.digest(sb2.toString().getBytes());
-            BigInteger number = new BigInteger(1,messageDigest);
+            BigInteger number = new BigInteger(1, messageDigest);
             digest = number.toString(16);
-        } catch(NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
 
@@ -438,7 +436,10 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
         } else if (StorageType.FILESYSTEM.equals(staticAsset.getStorageType())) {
             FileWorkArea tempWorkArea = broadleafFileService.initializeWorkArea();
             // Convert the given URL from the asset to a system-specific suitable file path
-            String destFileName = FilenameUtils.normalize(tempWorkArea.getFilePathLocation() + File.separator + FilenameUtils.separatorsToSystem(staticAsset.getFullUrl()));
+            String destFileName = FilenameUtils.normalize(
+                    tempWorkArea.getFilePathLocation() + File.separator
+                            + FilenameUtils.separatorsToSystem(staticAsset.getFullUrl())
+            );
 
             InputStream input = fileInputStream;
             byte[] buffer = new byte[getFileBufferSize()];
@@ -539,4 +540,5 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
             throw new IOException("Maximum Upload File Size Exceeded");
         }
     }
+
 }

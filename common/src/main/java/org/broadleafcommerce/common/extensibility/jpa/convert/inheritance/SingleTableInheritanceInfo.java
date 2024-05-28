@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,9 +20,7 @@ package org.broadleafcommerce.common.extensibility.jpa.convert.inheritance;
 import jakarta.persistence.DiscriminatorType;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class SingleTableInheritanceInfo {
 
@@ -30,35 +28,35 @@ public class SingleTableInheritanceInfo {
     protected String discriminatorName;
     protected DiscriminatorType discriminatorType;
     protected int discriminatorLength;
-    
+
     public String getClassName() {
         return className;
     }
-    
+
     public void setClassName(String className) {
         this.className = className;
     }
-    
+
     public String getDiscriminatorName() {
         return discriminatorName;
     }
-    
+
     public void setDiscriminatorName(String discriminatorName) {
         this.discriminatorName = discriminatorName;
     }
-    
+
     public DiscriminatorType getDiscriminatorType() {
         return discriminatorType;
     }
-    
+
     public void setDiscriminatorType(DiscriminatorType discriminatorType) {
         this.discriminatorType = discriminatorType;
     }
-    
+
     public int getDiscriminatorLength() {
         return discriminatorLength;
     }
-    
+
     public void setDiscriminatorLength(int discriminatorLength) {
         this.discriminatorLength = discriminatorLength;
     }
@@ -87,5 +85,5 @@ public class SingleTableInheritanceInfo {
             return false;
         return true;
     }
-    
+
 }

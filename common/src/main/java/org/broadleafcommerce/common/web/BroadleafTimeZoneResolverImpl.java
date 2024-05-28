@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,17 +32,16 @@ import java.util.TimeZone;
  */
 @Component("blTimeZoneResolver")
 public class BroadleafTimeZoneResolverImpl implements BroadleafTimeZoneResolver {
-    private final Log LOG = LogFactory.getLog(BroadleafTimeZoneResolverImpl.class);
-    
-    /**
-     * Parameter/Attribute name for the current time
-     */
-    public static String TIMEZONE_VAR = "blTimeZone";
 
     /**
      * Parameter/Attribute name for the current time
      */
+    public static String TIMEZONE_VAR = "blTimeZone";
+    /**
+     * Parameter/Attribute name for the current time
+     */
     public static String TIMEZONE_CODE_PARAM = "blTimeZoneCode";
+    private final Log LOG = LogFactory.getLog(BroadleafTimeZoneResolverImpl.class);
 
     @Override
     public TimeZone resolveTimeZone(WebRequest request) {
@@ -84,4 +83,5 @@ public class BroadleafTimeZoneResolverImpl implements BroadleafTimeZoneResolver 
         }
         return timeZone;
     }
+
 }

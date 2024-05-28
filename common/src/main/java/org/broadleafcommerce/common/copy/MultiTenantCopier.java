@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -62,25 +62,26 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.PROPAGATI
  * call {@link #copyEntitiesOfType(Class, org.broadleafcommerce.common.site.domain.Site, org.broadleafcommerce.common.site.domain.Catalog, MultiTenantCopyContext)}
  * one or more times inside of their {@link #copyEntities(MultiTenantCopyContext)} implementation to clone and persist
  * an entity object tree.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  * @author Jeff Fischer
  */
 public abstract class MultiTenantCopier implements Ordered {
+
     protected static final Log LOG = LogFactory.getLog(MultiTenantCopier.class);
-    
+
     @Resource(name = "blGenericEntityService")
     protected GenericEntityService genericEntityService;
-    
+
     @Resource(name = "blMultiTenantCopierExtensionManager")
     protected MultiTenantCopierExtensionManager extensionManager;
 
-    @Resource(name="blStreamingTransactionCapableUtil")
+    @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
     @Value("${catalog.copier.optimization.enabled:false}")
     protected boolean catalogCopierOptimizationEnabled = false;
-    
+
     protected int order = 0;
 
     /**
@@ -97,7 +98,6 @@ public abstract class MultiTenantCopier implements Ordered {
     public abstract void copyEntities(MultiTenantCopyContext context) throws Exception;
 
     /**
-     *
      * @return the order of this {@link MultiTenantCopier}
      */
     @Override
@@ -109,7 +109,12 @@ public abstract class MultiTenantCopier implements Ordered {
         this.order = order;
     }
 
-    protected <T, G extends Exception> void persistCopyObjectTree(CopyOperation<T,G> copyOperation, Class<T> clazz, T original, MultiTenantCopyContext context) throws G {
+    protected <T, G extends Exception> void persistCopyObjectTree(
+            CopyOperation<T, G> copyOperation,
+            Class<T> clazz,
+            T original,
+            MultiTenantCopyContext context
+    ) throws G {
         try {
             //don't persist if there is already an equivalent present
             if (context.getEquivalentId(clazz.getName(), genericEntityService.getIdentifier(original)) != null) {
@@ -123,8 +128,10 @@ public abstract class MultiTenantCopier implements Ordered {
             DeployState deployState = BroadleafRequestContext.getBroadleafRequestContext().getDeployState();
             BroadleafRequestContext.getBroadleafRequestContext().setDeployState(DeployState.PRODUCTION);
             BroadleafRequestContext.getBroadleafRequestContext().setSandBox(null);
-            BroadleafRequestContext.getBroadleafRequestContext().setEnforceEnterpriseCollectionBehaviorState(EnforceEnterpriseCollectionBehaviorState.FALSE);
-            persistCopyObjectTreeInternal(copy, new HashSet<Integer>(), context);
+            BroadleafRequestContext.getBroadleafRequestContext().setEnforceEnterpriseCollectionBehaviorState(
+                    EnforceEnterpriseCollectionBehaviorState.FALSE
+            );
+            persistCopyObjectTreeInternal(copy, new HashSet<>(), context);
             genericEntityService.flush();
             BroadleafRequestContext.getBroadleafRequestContext().setSandBox(sandBox);
             BroadleafRequestContext.getBroadleafRequestContext().setDeployState(deployState);
@@ -132,7 +139,9 @@ public abstract class MultiTenantCopier implements Ordered {
             LOG.error("Unable to persist the copy object tree", e);
             throw ExceptionHelper.refineException(e);
         } finally {
-            BroadleafRequestContext.getBroadleafRequestContext().setEnforceEnterpriseCollectionBehaviorState(EnforceEnterpriseCollectionBehaviorState.TRUE);
+            BroadleafRequestContext.getBroadleafRequestContext().setEnforceEnterpriseCollectionBehaviorState(
+                    EnforceEnterpriseCollectionBehaviorState.TRUE
+            );
             context.clearOriginalIdentifiers();
             genericEntityService.enableAutoFlushMode();
         }
@@ -148,7 +157,7 @@ public abstract class MultiTenantCopier implements Ordered {
             return;
         }
         library.add(System.identityHashCode(copy));
-        List<Object[]> collections = new ArrayList<Object[]>();
+        List<Object[]> collections = new ArrayList<>();
         Field[] allFields = context.getAllFields(copy.getClass());
         for (Field field : allFields) {
             if (field.getName().equals("embeddableSiteDiscriminator")) {
@@ -169,9 +178,11 @@ public abstract class MultiTenantCopier implements Ordered {
                             continue;
                         }
                         persistCopyObjectTreeInternal(newTarget, library, context);
-                    } else if (field.getAnnotation(ManyToMany.class) != null || field.getAnnotation(OneToMany.class) != null) {
+                    } else if (field.getAnnotation(ManyToMany.class) != null
+                            || field.getAnnotation(OneToMany.class) != null) {
                         collections.add(new Object[]{field, newTarget});
-                    } else if (field.getType().getAnnotation(Embeddable.class) != null && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
+                    } else if (field.getType().getAnnotation(Embeddable.class) != null
+                            && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
                         persistCopyObjectTreeInternal(newTarget, library, context);
                     }
                 }
@@ -199,7 +210,7 @@ public abstract class MultiTenantCopier implements Ordered {
         }
     }
 
-    private boolean dontTraversThroughEntityFromTheDB(Object copy, MultiTenantCopyContext context) {
+    protected boolean dontTraversThroughEntityFromTheDB(Object copy, MultiTenantCopyContext context) {
         //special optimization for synched catalog copy. In the marketplace test copy of the catalog takes abnoramally long time
         //this is for blc 7.0: after hibernate & spring & etc libs update. Looks like it has a setup of product_category_xref
         //where it references category from the shared catalog, that category has 42 products, and it starts to iterate over those products
@@ -209,11 +220,11 @@ public abstract class MultiTenantCopier implements Ordered {
         //not sure about duplication & propagation flows, so this optimization should be only when you setup a new site/catalog
         //with synched sandbox propagation option.
         return !context.getCopyHints().containsKey(MANUAL_DUPLICATION) && !context.getCopyHints().containsKey(PROPAGATION)
-                && copy.getClass().getAnnotation(Entity.class) != null && genericEntityService.sessionContains(copy) && genericEntityService.idAssigned(copy);
+                && copy.getClass().getAnnotation(Entity.class) != null && genericEntityService.sessionContains(copy)
+                && genericEntityService.idAssigned(copy);
     }
 
     /**
-     *
      * @param copy Copy object
      * @return excluded or not in patterns
      */
@@ -231,7 +242,9 @@ public abstract class MultiTenantCopier implements Ordered {
 
     protected void persistNode(final Object copy, final MultiTenantCopyContext context) {
         if (!genericEntityService.sessionContains(copy) && !genericEntityService.idAssigned(copy)) {
-            final Object original = genericEntityService.readGenericEntity(copy.getClass().getName(), context.removeOriginalIdentifier(copy));
+            final Object original = genericEntityService.readGenericEntity(
+                    copy.getClass().getName(), context.removeOriginalIdentifier(copy)
+            );
             extensionManager.getProxy().transformCopy(context, original, copy);
             extensionManager.getProxy().prepareForSave(context, original, copy);
 
@@ -244,7 +257,9 @@ public abstract class MultiTenantCopier implements Ordered {
                 }
             }, context.getToSite(), context.getToSite(), context.getToCatalog());
 
-            context.storeEquivalentMapping(original.getClass().getName(), context.getIdentifier(original), context.getIdentifier(copy));
+            context.storeEquivalentMapping(
+                    original.getClass().getName(), context.getIdentifier(original), context.getIdentifier(copy)
+            );
         }
     }
 
@@ -259,8 +274,12 @@ public abstract class MultiTenantCopier implements Ordered {
      * @throws ServiceException
      * @throws CloneNotSupportedException
      */
-    protected <T extends MultiTenantCloneable> void copyEntitiesOfType(final Class<T> clazz, final Site fromSite, final Catalog fromCatalog, final MultiTenantCopyContext context)
-            throws ServiceException, CloneNotSupportedException {
+    protected <T extends MultiTenantCloneable> void copyEntitiesOfType(
+            final Class<T> clazz,
+            final Site fromSite,
+            final Catalog fromCatalog,
+            final MultiTenantCopyContext context
+    ) throws ServiceException, CloneNotSupportedException {
         genericEntityService.flush();
         genericEntityService.clear();
         transUtil.runStreamingTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
@@ -308,10 +327,10 @@ public abstract class MultiTenantCopier implements Ordered {
             }
         }, RuntimeException.class);
     }
-    
+
     /**
      * Saves the specified object in the toSite and toCatalog of the given context.
-     * 
+     *
      * @param context
      * @param object
      * @return the saved entity
@@ -325,10 +344,10 @@ public abstract class MultiTenantCopier implements Ordered {
             }
         }, context.getToSite(), context.getToSite(), context.getToCatalog());
     }
-    
+
     /**
      * Returns the count of the given entity class for the specified site and catalog
-     * 
+     *
      * @param clazz
      * @param site
      * @param catalog
@@ -343,15 +362,14 @@ public abstract class MultiTenantCopier implements Ordered {
             }
         }, site, site, catalog);
     }
-    
+
     /**
-     * @see #readAll(Class, int, int, Site, Catalog)
-     * 
      * @param clazz
      * @param site
      * @param catalog
      * @return the list of entities for the specified parameters
      * @throws ServiceException
+     * @see #readAll(Class, int, int, Site, Catalog)
      */
     protected <T> List<T> readAll(Class<T> clazz, Site site, Catalog catalog) throws ServiceException {
         return readAll(clazz, Integer.MAX_VALUE, 0, site, catalog);
@@ -378,7 +396,7 @@ public abstract class MultiTenantCopier implements Ordered {
     /**
      * Returns a list of all entities in the system for the given class, site, and catalog. Additionally,
      * this method supports pagination.
-     * 
+     *
      * @param clazz
      * @param limit
      * @param offset
@@ -387,8 +405,13 @@ public abstract class MultiTenantCopier implements Ordered {
      * @return the list of entities for the specified parameters
      * @throws ServiceException
      */
-    protected <T> List<T> readAll(final Class<T> clazz, final int limit, final int offset, Site site, 
-            Catalog catalog) throws ServiceException {
+    protected <T> List<T> readAll(
+            final Class<T> clazz,
+            final int limit,
+            final int offset,
+            Site site,
+            Catalog catalog
+    ) throws ServiceException {
         return IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<List<T>, ServiceException>() {
             @Override
             public List<T> execute() throws ServiceException {

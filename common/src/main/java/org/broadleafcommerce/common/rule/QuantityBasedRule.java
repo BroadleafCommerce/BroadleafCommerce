@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,7 +32,7 @@ public interface QuantityBasedRule extends Serializable {
      *
      * @return the quantity of matches required
      */
-    public Integer getQuantity();
+    Integer getQuantity();
 
     /**
      * The quantity for which a match must be found using the rule. This generally
@@ -40,34 +40,34 @@ public interface QuantityBasedRule extends Serializable {
      *
      * @param quantity the quantity of matches required
      */
-    public void setQuantity(Integer quantity);
+    void setQuantity(Integer quantity);
 
     /**
      * The rule in the form of an MVEL expression
      *
      * @return the rule as an MVEL string
      */
-    public String getMatchRule();
+    String getMatchRule();
 
     /**
      * Sets the match rule used to test this item.
      *
      * @param matchRule the rule as an MVEL string
      */
-    public void setMatchRule(String matchRule);
+    void setMatchRule(String matchRule);
 
     /**
      * The primary key value for this rule object
      *
      * @return the primary key value
      */
-    public Long getId();
+    Long getId();
 
     /**
      * The primary key value for this rule object
      *
      * @param id the primary key value
      */
-    public void setId(Long id);
+    void setId(Long id);
 
 }

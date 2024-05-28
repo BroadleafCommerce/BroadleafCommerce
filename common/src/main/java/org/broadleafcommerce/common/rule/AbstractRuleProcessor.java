@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,13 +25,12 @@ import org.mvel2.ParserContext;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public abstract class AbstractRuleProcessor<T> implements RuleProcessor<T> {
-    
+
     protected final Log LOG = LogFactory.getLog(this.getClass());
 
     protected ParserContext parserContext;
-    protected Map<String, String> contextClassNames = new HashMap<String, String> ();
+    protected Map<String, String> contextClassNames = new HashMap<>();
 
     /**
      * Having a parser context that imports the classes speeds MVEL by up to 60%.
@@ -47,8 +46,9 @@ public abstract class AbstractRuleProcessor<T> implements RuleProcessor<T> {
 
     /**
      * Helpful method for processing a boolean MVEL expression and associated arguments.
-     *
+     * <p>
      * Caches the expression in an LRUCache.
+     *
      * @param expression
      * @param vars
      * @return the result of the expression
@@ -59,6 +59,7 @@ public abstract class AbstractRuleProcessor<T> implements RuleProcessor<T> {
 
     /**
      * List of class names to add to the MVEL ParserContext.
+     *
      * @see {@link ParserContext}
      */
     public Map<String, String> getContextClassNames() {
@@ -67,6 +68,7 @@ public abstract class AbstractRuleProcessor<T> implements RuleProcessor<T> {
 
     /**
      * List of class names to add to the MVEL ParserContext.
+     *
      * @see {@link ParserContext}
      */
     public void setContextClassNames(Map<String, String> contextClassNames) {

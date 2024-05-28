@@ -10,15 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.search.domain.SearchFacet;
@@ -34,7 +32,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-
 /**
  * When deleting a {@link SearchFacet}, we want to make sure it is a soft delete.
  *
@@ -42,8 +39,6 @@ import java.util.Map;
  */
 @Component("blSearchFacetCustomPersistenceHandler")
 public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-
-    private static final Log LOG = LogFactory.getLog(SearchFacetCustomPersistenceHandler.class);
 
     @Override
     public Boolean canHandleRemove(PersistencePackage persistencePackage) {
@@ -67,14 +62,21 @@ public class SearchFacetCustomPersistenceHandler extends CustomPersistenceHandle
         }
     }
 
-    protected SearchFacet getAdminInstance(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper,
-                                                Entity entity) throws ClassNotFoundException {
+    protected SearchFacet getAdminInstance(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper,
+            Entity entity
+    ) throws ClassNotFoundException {
         PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-        Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(SearchFacetRange.class.getName(), persistencePerspective);
+        Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                SearchFacetRange.class.getName(), persistencePerspective
+        );
         Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
         String type = entity.getType()[0];
         SearchFacet adminInstance = (SearchFacet) dynamicEntityDao.retrieve(Class.forName(type), primaryKey);
 
         return adminInstance;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,7 +50,7 @@ import jakarta.annotation.Resource;
 @Scope("prototype")
 public class CategoryParentCategoryFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
 
-    @Resource(name="blCategoryParentCategoryFieldPersistenceProviderExtensionManager")
+    @Resource(name = "blCategoryParentCategoryFieldPersistenceProviderExtensionManager")
     protected CategoryParentCategoryFieldPersistenceProviderExtensionManager extensionManager;
 
     @Override
@@ -60,7 +60,9 @@ public class CategoryParentCategoryFieldPersistenceProvider extends FieldPersist
         }
         boolean handled = false;
         if (extensionManager != null) {
-            ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategory(populateValueRequest.getProperty(), (Category) instance);
+            ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategory(
+                    populateValueRequest.getProperty(), (Category) instance
+            );
             handled = ExtensionResultStatusType.NOT_HANDLED != result;
         }
         if (!handled || BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
@@ -124,17 +126,18 @@ public class CategoryParentCategoryFieldPersistenceProvider extends FieldPersist
 
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
         Property property = populateValueRequest.getProperty();
-        return instance instanceof Category && property.getName().equals("defaultParentCategory") &&
-                !ParentCategoryLegacyModeServiceImpl.getLegacyModeService().isLegacyMode();
+        return instance instanceof Category && property.getName().equals("defaultParentCategory")
+                && !ParentCategoryLegacyModeServiceImpl.getLegacyModeService().isLegacyMode();
     }
 
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
-        return extractValueRequest.getEntity() instanceof Category && property.getName().equals("defaultParentCategory") &&
-                !ParentCategoryLegacyModeServiceImpl.getLegacyModeService().isLegacyMode();
+        return extractValueRequest.getEntity() instanceof Category && property.getName().equals("defaultParentCategory")
+                && !ParentCategoryLegacyModeServiceImpl.getLegacyModeService().isLegacyMode();
     }
 
     @Override
     public int getOrder() {
-            return Ordered.HIGHEST_PRECEDENCE + 100;
-        }
+        return Ordered.HIGHEST_PRECEDENCE + 100;
+    }
+
 }

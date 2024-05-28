@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,7 +47,7 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         model.addAttribute("customerAddressForm", new CustomerAddressForm());
         return getCustomerAddressesView();
     }
-    
+
     public String viewCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId) {
         CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
         if (customerAddress == null) {
@@ -64,7 +64,13 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         return getCustomerAddressesView();
     }
 
-    public String addCustomerAddress(HttpServletRequest request, Model model, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
+    public String addCustomerAddress(
+            HttpServletRequest request,
+            Model model,
+            CustomerAddressForm form,
+            BindingResult result,
+            RedirectAttributes redirectAttributes
+    ) throws ServiceException {
         addressService.populateAddressISOCountrySub(form.getAddress());
         customerAddressValidator.validate(form, result);
         if (result.hasErrors()) {
@@ -72,7 +78,7 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         }
 
         removeUnusedPhones(form);
-        
+
         Address address = addressService.saveAddress(form.getAddress());
         CustomerAddress customerAddress = customerAddressService.create();
         customerAddress.setAddress(address);
@@ -83,29 +89,38 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         form.setCustomerAddressId(customerAddress.getId());
 
         if (!isAjaxRequest(request)) {
-            List<CustomerAddress> addresses = customerAddressService.readActiveCustomerAddressesByCustomerId(CustomerState.getCustomer().getId());
+            List<CustomerAddress> addresses = customerAddressService.readActiveCustomerAddressesByCustomerId(
+                    CustomerState.getCustomer().getId()
+            );
             model.addAttribute("addresses", addresses);
         }
         redirectAttributes.addFlashAttribute("successMessage", getAddressAddedMessage());
         return getCustomerAddressesRedirect();
     }
-    
-    public String updateCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, CustomerAddressForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
+
+    public String updateCustomerAddress(
+            HttpServletRequest request,
+            Model model,
+            Long customerAddressId,
+            CustomerAddressForm form,
+            BindingResult result,
+            RedirectAttributes redirectAttributes
+    ) throws ServiceException {
         customerAddressValidator.validate(form, result);
         if (result.hasErrors()) {
             return getCustomerAddressesView();
         }
 
-        if ((form.getAddress().getPhonePrimary() != null) &&
-                (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
+        if ((form.getAddress().getPhonePrimary() != null)
+                && (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
             form.getAddress().setPhonePrimary(null);
         }
-        if ((form.getAddress().getPhoneSecondary() != null) &&
-                (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+        if ((form.getAddress().getPhoneSecondary() != null)
+                && (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
             form.getAddress().setPhoneSecondary(null);
         }
-        if ((form.getAddress().getPhoneFax() != null) &&
-                (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
+        if ((form.getAddress().getPhoneFax() != null)
+                && (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
             form.getAddress().setPhoneFax(null);
         }
 
@@ -123,8 +138,13 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
         redirectAttributes.addFlashAttribute("successMessage", getAddressUpdatedMessage());
         return getCustomerAddressesRedirect();
     }
-    
-    public String removeCustomerAddress(HttpServletRequest request, Model model, Long customerAddressId, RedirectAttributes redirectAttributes) {
+
+    public String removeCustomerAddress(
+            HttpServletRequest request,
+            Model model,
+            Long customerAddressId,
+            RedirectAttributes redirectAttributes
+    ) {
         try {
             CustomerAddress customerAddress = customerAddressService.readCustomerAddressById(customerAddressId);
 
@@ -144,16 +164,16 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
     }
 
     public void removeUnusedPhones(CustomerAddressForm form) {
-        if ((form.getAddress().getPhonePrimary() != null) &&
-                    (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
+        if ((form.getAddress().getPhonePrimary() != null)
+                && (StringUtils.isEmpty(form.getAddress().getPhonePrimary().getPhoneNumber()))) {
             form.getAddress().setPhonePrimary(null);
         }
-        if ((form.getAddress().getPhoneSecondary() != null) &&
-                    (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+        if ((form.getAddress().getPhoneSecondary() != null)
+                && (StringUtils.isEmpty(form.getAddress().getPhoneSecondary().getPhoneNumber()))) {
             form.getAddress().setPhoneSecondary(null);
         }
-        if ((form.getAddress().getPhoneFax() != null) &&
-                    (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
+        if ((form.getAddress().getPhoneFax() != null)
+                && (StringUtils.isEmpty(form.getAddress().getPhoneFax().getPhoneNumber()))) {
             form.getAddress().setPhoneFax(null);
         }
     }
@@ -169,7 +189,7 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
     public String getAddressRemovedMessage() {
         return addressRemovedMessage;
     }
-    
+
     public String getAddressRemovedErrorMessage() {
         return addressRemovedErrorMessage;
     }
@@ -187,5 +207,5 @@ public class BroadleafManageCustomerAddressesController extends AbstractCustomer
             }
         }
     }
-    
+
 }

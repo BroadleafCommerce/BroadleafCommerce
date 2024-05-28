@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,8 +18,6 @@
 package org.broadleafcommerce.openadmin.server.security.service;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -39,28 +37,39 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 /**
- * @see org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService
  * @author Phillip Verheyden (phillipuniverse)
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService
  */
 @Service("blRowLevelSecurityService")
 public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, ExceptionAwareRowLevelSecurityProvider {
-    
-    private static final Log LOG = LogFactory.getLog(RowLevelSecurityServiceImpl.class);
-    
+
     @Resource(name = "blRowLevelSecurityProviders")
     protected List<RowLevelSecurityProvider> providers;
 
     @Override
-    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions,
-                                     List<Order> sorts, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder) {
+    public void addFetchRestrictions(
+            AdminUser currentUser,
+            String ceilingEntity,
+            List<Predicate> restrictions,
+            List<Order> sorts,
+            Root entityRoot,
+            CriteriaQuery criteria,
+            CriteriaBuilder criteriaBuilder
+    ) {
         for (RowLevelSecurityProvider provider : getProviders()) {
-            provider.addFetchRestrictions(currentUser, ceilingEntity, restrictions, sorts, entityRoot, criteria, criteriaBuilder);
+            provider.addFetchRestrictions(
+                    currentUser, ceilingEntity, restrictions, sorts, entityRoot, criteria, criteriaBuilder
+            );
         }
     }
-    
+
     @Override
-    public Class<Serializable> getFetchRestrictionRoot(AdminUser currentUser, Class<Serializable> ceilingEntity, List<FilterMapping> filterMappings) {
+    public Class<Serializable> getFetchRestrictionRoot(
+            AdminUser currentUser,
+            Class<Serializable> ceilingEntity,
+            List<FilterMapping> filterMappings
+    ) {
         Class<Serializable> root = null;
         for (RowLevelSecurityProvider provider : getProviders()) {
             Class<Serializable> providerRoot = provider.getFetchRestrictionRoot(currentUser, ceilingEntity, filterMappings);
@@ -68,7 +77,7 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, Exc
                 root = providerRoot;
             }
         }
-        
+
         return root;
     }
 
@@ -87,7 +96,8 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, Exc
         EntityFormModifierConfiguration sum = new EntityFormModifierConfiguration();
         for (RowLevelSecurityProvider provider : getProviders()) {
             if (provider instanceof ExceptionAwareRowLevelSecurityProvider) {
-                EntityFormModifierConfiguration response = ((ExceptionAwareRowLevelSecurityProvider) provider).getUpdateDenialExceptions();
+                EntityFormModifierConfiguration response = ((ExceptionAwareRowLevelSecurityProvider) provider)
+                        .getUpdateDenialExceptions();
                 if (response != null) {
                     if (!CollectionUtils.isEmpty(response.getModifier())) {
                         sum.getModifier().addAll(response.getModifier());
@@ -122,10 +132,16 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, Exc
     }
 
     @Override
-    public GlobalValidationResult validateUpdateRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage) {
+    public GlobalValidationResult validateUpdateRequest(
+            AdminUser currentUser,
+            Entity entity,
+            PersistencePackage persistencePackage
+    ) {
         GlobalValidationResult validationResult = new GlobalValidationResult(true);
         for (RowLevelSecurityProvider provider : getProviders()) {
-            GlobalValidationResult providerValidation = provider.validateUpdateRequest(currentUser, entity, persistencePackage);
+            GlobalValidationResult providerValidation = provider.validateUpdateRequest(
+                    currentUser, entity, persistencePackage
+            );
             if (providerValidation.isNotValid()) {
                 validationResult.setValid(false);
                 validationResult.addErrorMessage(providerValidation.getErrorMessage());
@@ -135,10 +151,16 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, Exc
     }
 
     @Override
-    public GlobalValidationResult validateRemoveRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage) {
+    public GlobalValidationResult validateRemoveRequest(
+            AdminUser currentUser,
+            Entity entity,
+            PersistencePackage persistencePackage
+    ) {
         GlobalValidationResult validationResult = new GlobalValidationResult(true);
         for (RowLevelSecurityProvider provider : getProviders()) {
-            GlobalValidationResult providerValidation = provider.validateRemoveRequest(currentUser, entity, persistencePackage);
+            GlobalValidationResult providerValidation = provider.validateRemoveRequest(
+                    currentUser, entity, persistencePackage
+            );
             if (providerValidation.isNotValid()) {
                 validationResult.setValid(false);
                 validationResult.addErrorMessage(providerValidation.getErrorMessage());
@@ -148,11 +170,16 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, Exc
     }
 
     @Override
-    public GlobalValidationResult validateAddRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage) {
+    public GlobalValidationResult validateAddRequest(
+            AdminUser currentUser,
+            Entity entity,
+            PersistencePackage persistencePackage
+    ) {
         GlobalValidationResult validationResult = new GlobalValidationResult(true);
         for (RowLevelSecurityProvider provider : getProviders()) {
-            GlobalValidationResult providerValidation = provider.validateAddRequest(currentUser, entity,
-                    persistencePackage);
+            GlobalValidationResult providerValidation = provider.validateAddRequest(
+                    currentUser, entity, persistencePackage
+            );
             if (providerValidation.isNotValid()) {
                 validationResult.setValid(false);
                 validationResult.addErrorMessage(providerValidation.getErrorMessage());
@@ -165,7 +192,7 @@ public class RowLevelSecurityServiceImpl implements RowLevelSecurityService, Exc
     public List<RowLevelSecurityProvider> getProviders() {
         return providers;
     }
-    
+
     public void setProviders(List<RowLevelSecurityProvider> providers) {
         this.providers = providers;
     }

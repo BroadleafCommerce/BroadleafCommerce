@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -89,11 +89,15 @@ public class FulfillmentVariableExpression implements BroadleafVariableExpressio
     public FulfillmentEstimationResponse getFulfillmentEstimateResponse() {
         Order cart = CartState.getCart();
 
-        if (!isNullOrder(cart) && cart.getFulfillmentGroups().size() > 0 && cartStateService.cartHasPopulatedShippingAddress()) {
+        if (!isNullOrder(cart) && cart.getFulfillmentGroups().size() > 0
+                && cartStateService.cartHasPopulatedShippingAddress()) {
             try {
                 List<FulfillmentOption> fulfillmentOptions = fulfillmentOptionService.readAllFulfillmentOptions();
-                FulfillmentGroup firstShippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(cart);
-                return fulfillmentPricingService.estimateCostForFulfillmentGroup(firstShippableFulfillmentGroup, new HashSet<>(fulfillmentOptions));
+                FulfillmentGroup firstShippableFulfillmentGroup = fulfillmentGroupService
+                        .getFirstShippableFulfillmentGroup(cart);
+                return fulfillmentPricingService.estimateCostForFulfillmentGroup(
+                        firstShippableFulfillmentGroup, new HashSet<>(fulfillmentOptions)
+                );
             } catch (FulfillmentPriceException e) {
                 // do nothing
             }
@@ -104,6 +108,5 @@ public class FulfillmentVariableExpression implements BroadleafVariableExpressio
     protected boolean isNullOrder(Order cart) {
         return cart == null || (cart instanceof NullOrderImpl);
     }
-
 
 }

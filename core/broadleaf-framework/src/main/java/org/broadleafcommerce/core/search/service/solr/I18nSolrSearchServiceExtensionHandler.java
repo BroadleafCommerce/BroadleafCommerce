@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,7 +35,7 @@ import jakarta.annotation.Resource;
 
 /**
  * If the field is translatable, then this method prefixes the field with supported locales.
- * 
+ *
  * @author bpolster
  */
 @Service("blI18nSolrSearchServiceExtensionHandler")
@@ -73,14 +73,19 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
     }
 
     @Override
-    public ExtensionResultStatusType buildPrefixListForIndexField(IndexField field, FieldType fieldType, List<String> prefixList) {
+    public ExtensionResultStatusType buildPrefixListForIndexField(
+            IndexField field,
+            FieldType fieldType,
+            List<String> prefixList
+    ) {
         return getLocalePrefix(field.getField(), prefixList);
     }
 
     /**
      * If the field is translatable, take the current locale and add that as a prefix.
-     * @param context
+     *
      * @param field
+     * @param prefixList
      * @return
      */
     protected ExtensionResultStatusType getLocalePrefix(Field field, List<String> prefixList) {
@@ -108,4 +113,5 @@ public class I18nSolrSearchServiceExtensionHandler extends AbstractSolrSearchSer
     public int getPriority() {
         return 1000;
     }
+
 }

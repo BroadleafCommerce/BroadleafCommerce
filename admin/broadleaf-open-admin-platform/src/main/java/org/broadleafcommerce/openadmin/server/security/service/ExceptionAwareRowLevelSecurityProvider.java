@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,8 +32,8 @@ public interface ExceptionAwareRowLevelSecurityProvider {
      * Provide a modifier capable of manipulating an {@link EntityForm} that has been marked as readonly and modify its
      * state, presumably to set one or more aspects of the form as editable.
      *
-     * @see EntityFormModifier
      * @return package containing the modifier implementations and any configurations for those modifiers
+     * @see EntityFormModifier
      */
     EntityFormModifierConfiguration getUpdateDenialExceptions();
 

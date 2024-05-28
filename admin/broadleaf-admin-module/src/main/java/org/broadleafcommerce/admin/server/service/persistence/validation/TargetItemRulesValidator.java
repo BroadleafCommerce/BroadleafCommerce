@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,7 +31,6 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.Map;
 
-
 /**
  * Validator that ensures that an offer of type {@link OfferType#ORDER_ITEM} has at least one rule for the target criteria
  *
@@ -41,13 +40,24 @@ import java.util.Map;
 public class TargetItemRulesValidator implements PropertyValidator {
 
     @Override
-    public PropertyValidationResult validate(Entity entity, Serializable instance, Map<String, FieldMetadata> entityFieldMetadata, Map<String, String> validationConfiguration, BasicFieldMetadata propertyMetadata, String propertyName, String value) {
-        Offer offer = (Offer)instance;
+    public PropertyValidationResult validate(
+            Entity entity,
+            Serializable instance,
+            Map<String, FieldMetadata> entityFieldMetadata,
+            Map<String, String> validationConfiguration,
+            BasicFieldMetadata propertyMetadata,
+            String propertyName,
+            String value
+    ) {
+        Offer offer = (Offer) instance;
         if (OfferType.ORDER_ITEM.equals(offer.getType())) {
-            return new PropertyValidationResult(CollectionUtils.isNotEmpty(offer.getTargetItemCriteriaXref()),
-                    RequiredPropertyValidator.ERROR_MESSAGE);
+            return new PropertyValidationResult(
+                    CollectionUtils.isNotEmpty(offer.getTargetItemCriteriaXref()),
+                    RequiredPropertyValidator.ERROR_MESSAGE
+            );
         } else {
             return new PropertyValidationResult(true);
         }
     }
+
 }

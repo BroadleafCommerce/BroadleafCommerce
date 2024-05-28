@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,7 +25,6 @@ import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 
 import java.util.List;
 
-
 /**
  * Extension handler for {@link org.broadleafcommerce.admin.server.service.AdminCatalogService}
  *
@@ -33,7 +32,7 @@ import java.util.List;
  */
 public interface AdminCatalogServiceExtensionHandler extends ExtensionHandler {
 
-    public static final int DEFAULT_PRIORITY = 1000;
+    int DEFAULT_PRIORITY = 1000;
 
     /**
      * Customize the persistence of generated sku permutations based on product options.
@@ -43,6 +42,8 @@ public interface AdminCatalogServiceExtensionHandler extends ExtensionHandler {
      * @param erh
      * @return
      */
-    ExtensionResultStatusType persistSkuPermutation(Product product, List<List<ProductOptionValue>> permutationsToGenerate, ExtensionResultHolder<Integer> erh);
+    ExtensionResultStatusType persistSkuPermutation(
+            Product product, List<List<ProductOptionValue>> permutationsToGenerate, ExtensionResultHolder<Integer> erh
+    );
 
 }

@@ -10,28 +10,22 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.profile.web.site.security;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Cookie used to protected against session fixation attacks
- * 
- * @see SessionFixationProtectionFilter
- * 
- * @author Andre Azzolini (apazzolini)
  *
+ * @author Andre Azzolini (apazzolini)
+ * @see SessionFixationProtectionFilter
  * @deprecated Use {@link org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy} instead
  */
 @Deprecated
 public class SessionFixationProtectionCookie {
-    protected final Log logger = LogFactory.getLog(getClass());
 
     public static final String COOKIE_NAME = "ActiveID";
 

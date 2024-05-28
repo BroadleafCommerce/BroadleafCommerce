@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,11 +32,10 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * 
- * 
  * @author Nathan Moore (nathanmoore).
  */
 public abstract class AbstractLinkedDataGenerator implements LinkedDataGenerator {
+
     protected static final String DEFAULT_STRUCTURED_CONTENT_CONTEXT = "http://schema.org/";
 
     @Autowired
@@ -47,26 +46,9 @@ public abstract class AbstractLinkedDataGenerator implements LinkedDataGenerator
 
     @Resource(name = "blBreadcrumbService")
     protected BreadcrumbService breadcrumbService;
-    
+
     @Resource(name = "blLinkedDataGeneratorExtensionManager")
     protected LinkedDataGeneratorExtensionManager extensionManager;
-
-    @Override
-    public abstract boolean canHandle(final HttpServletRequest request);
-
-    @Override
-    public void getLinkedDataJSON(final String url, final HttpServletRequest request, final JSONArray schemaObjects) throws JSONException {
-        getLinkedDataJsonInternal(url, request, schemaObjects);
-    }
-    
-    protected abstract JSONArray getLinkedDataJsonInternal(final String url, final HttpServletRequest request, 
-                                                           final JSONArray schemaObjects) throws JSONException;
-
-    protected String getRequestUri() {
-        final HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
-
-        return request.getRequestURI();
-    }
 
     protected static Map<String, String[]> getRequestParams() {
         Map<String, String[]> params = new HashMap<>();
@@ -78,6 +60,30 @@ public abstract class AbstractLinkedDataGenerator implements LinkedDataGenerator
         return params;
     }
 
+    @Override
+    public abstract boolean canHandle(final HttpServletRequest request);
+
+    @Override
+    public void getLinkedDataJSON(
+            final String url,
+            final HttpServletRequest request,
+            final JSONArray schemaObjects
+    ) throws JSONException {
+        getLinkedDataJsonInternal(url, request, schemaObjects);
+    }
+
+    protected abstract JSONArray getLinkedDataJsonInternal(
+            final String url,
+            final HttpServletRequest request,
+            final JSONArray schemaObjects
+    ) throws JSONException;
+
+    protected String getRequestUri() {
+        final HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
+
+        return request.getRequestURI();
+    }
+
     protected String getSiteBaseUrl() {
         return baseUrlResolver.getSiteBaseUrl();
     }
@@ -86,4 +92,5 @@ public abstract class AbstractLinkedDataGenerator implements LinkedDataGenerator
     public String getStructuredDataContext() {
         return environment.getProperty("structured.data.context", DEFAULT_STRUCTURED_CONTENT_CONTEXT);
     }
+
 }

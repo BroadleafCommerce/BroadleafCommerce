@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,9 +29,11 @@ public interface CriteriaTransferObjectExtensionHandler extends ExtensionHandler
 
     /**
      * Allows modification of the criteria transfer object for a fetch
+     *
      * @param request the persistence package request the {@code CriteriaTransferObject} was built from
-     * @param cto the criteria transfer object to modify
+     * @param cto     the criteria transfer object to modify
      */
     ExtensionResultStatusType modifyFetchCriteriaTransferObject(PersistencePackageRequest request,
                                                                 CriteriaTransferObject cto);
+
 }

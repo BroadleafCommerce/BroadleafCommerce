@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,11 +33,10 @@ import jakarta.servlet.http.HttpServletRequest;
  * search engines to recognize the site has a search feature and allows users to search the site directly from the
  * search engine.
  * <p>
- * See <a href="http://schema.org/Organization" target="_blank">http://schema.org/Organization</a>, 
- * <a href="http://schema.org/ContactPoint" target="_blank">http://schema.org/ContactPoint</a>, 
- * <a href="http://schema.org/WebSite" target="_blank">http://schema.org/WebSite</a>, 
+ * See <a href="http://schema.org/Organization" target="_blank">http://schema.org/Organization</a>,
+ * <a href="http://schema.org/ContactPoint" target="_blank">http://schema.org/ContactPoint</a>,
+ * <a href="http://schema.org/WebSite" target="_blank">http://schema.org/WebSite</a>,
  * and <a href="http://schema.org/SearchAction" target="_blank">http://schema.org/SearchAction</a>
- * 
  *
  * @author Jacob Mitash
  * @author Nathan Moore (nathanmoore).
@@ -51,8 +50,11 @@ public class HomepageLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
     }
 
     @Override
-    protected JSONArray getLinkedDataJsonInternal(final String url, final HttpServletRequest request,
-                                                  final JSONArray schemaObjects) throws JSONException {
+    protected JSONArray getLinkedDataJsonInternal(
+            final String url,
+            final HttpServletRequest request,
+            final JSONArray schemaObjects
+    ) throws JSONException {
         schemaObjects.put(addWebSiteData(request));
         schemaObjects.put(addOrganizationData(request));
 
@@ -68,7 +70,7 @@ public class HomepageLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
      */
     protected JSONObject addOrganizationData(final HttpServletRequest request) throws JSONException {
         final JSONObject organization = new JSONObject();
-        
+
         organization.put("@context", getStructuredDataContext());
         organization.put("@type", "Organization");
         organization.put("name", getSiteName());
@@ -91,15 +93,15 @@ public class HomepageLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
     protected JSONArray addContactData(final HttpServletRequest request) throws JSONException {
         final JSONArray contactList = new JSONArray();
         final JSONObject contact = new JSONObject();
-        
+
         contact.put("@type", "ContactPoint");
         contact.put("telephone", getSiteCustomerServiceNumber());
         contact.put("contactType", "customerService");
 
         extensionManager.getProxy().addContactData(request, contact);
-        
+
         contactList.put(contact);
-        
+
         return contactList;
     }
 
@@ -139,9 +141,9 @@ public class HomepageLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
         final String siteSocialAccounts = getSiteSocialAccounts();
 
         final JSONArray socialMediaData = new JSONArray(Arrays.asList(siteSocialAccounts.split(",")));
-        
+
         extensionManager.getProxy().addSocialMediaData(request, socialMediaData);
-        
+
         return socialMediaData;
     }
 
@@ -184,4 +186,5 @@ public class HomepageLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
     protected String getSiteName() {
         return environment.getProperty("site.name");
     }
+
 }

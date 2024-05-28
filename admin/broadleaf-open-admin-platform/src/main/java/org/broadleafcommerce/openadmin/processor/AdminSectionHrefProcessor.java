@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,21 +47,27 @@ public class AdminSectionHrefProcessor extends AbstractBroadleafAttributeModifie
     public String getName() {
         return "admin_section_href";
     }
-    
+
     @Override
     public String getPrefix() {
         return BroadleafDialectPrefix.BLC_ADMIN;
     }
-    
+
     @Override
     public int getPrecedence() {
         return 10002;
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(
+            String tagName,
+            Map<String, String> tagAttributes,
+            String attributeName,
+            String attributeValue,
+            BroadleafTemplateContext context
+    ) {
         String href = "#";
-        
+
         AdminSection section = context.parseExpression(attributeValue);
         if (section != null) {
             HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
@@ -90,7 +96,7 @@ public class AdminSectionHrefProcessor extends AbstractBroadleafAttributeModifie
 
             href = request.getContextPath() + folderPart + section.getUrl();
         }
-        
+
         Map<String, String> attrs = new HashMap<>();
         attrs.put("href", href);
         return new BroadleafAttributeModifier(attrs);

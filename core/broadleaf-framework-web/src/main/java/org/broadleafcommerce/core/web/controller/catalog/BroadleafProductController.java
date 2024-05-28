@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -53,16 +53,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public class BroadleafProductController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
 
     public static final String PAGE_TYPE_ATTRIBUTE_NAME = "BLC_PAGE_TYPE";
-    protected String defaultProductView = "catalog/product";
     protected static String MODEL_ATTRIBUTE_NAME = "product";
     protected static String CONFIGURATION_ATTRIBUTE_NAME = "configRequest";
     protected static String ALL_PRODUCTS_ATTRIBUTE_NAME = "blcAllDisplayedProducts";
-    
+    protected String defaultProductView = "catalog/product";
     @Autowired(required = false)
     @Qualifier("blProductDeepLinkService")
     protected DeepLinkService<Product> deepLinkService;
 
-    @Resource(name="blStaticAssetPathService")
+    @Resource(name = "blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
 
     @Resource(name = "blOrderItemService")
@@ -71,16 +70,11 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public class ResourceNotFoundException extends RuntimeException {
-
-    }
-
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView model = new ModelAndView();
         Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
-        assert(product != null);
+        assert (product != null);
         model.addObject(MODEL_ATTRIBUTE_NAME, product);
         model.addObject(PAGE_TYPE_ATTRIBUTE_NAME, "product");
 
@@ -91,7 +85,7 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         model.addObject(ALL_PRODUCTS_ATTRIBUTE_NAME, orderItemService.findAllProductsInRequest(itemRequest));
 
         addDeepLink(model, deepLinkService, product);
-        
+
         String templatePath;
         // Use the products custom template if available
         if (StringUtils.isNotBlank(product.getDisplayTemplate())) {
@@ -102,12 +96,12 @@ public class BroadleafProductController extends BroadleafAbstractController impl
         }
 
         // Allow extension managers to override.
-        ExtensionResultHolder<String> erh = new ExtensionResultHolder<String>();
+        ExtensionResultHolder<String> erh = new ExtensionResultHolder<>();
         ExtensionResultStatusType extResult = templateOverrideManager.getProxy().getOverrideTemplate(erh, product);
         if (extResult != ExtensionResultStatusType.NOT_HANDLED) {
             templatePath = erh.getResult();
         }
-        
+
         model.setViewName(templatePath);
 
         // Check if this is request to edit an existing order item
@@ -128,11 +122,9 @@ public class BroadleafProductController extends BroadleafAbstractController impl
 
         if (product.isActive()) {
             return model;            // whatever
-        }
-        else {
+        } else {
             throw new ResourceNotFoundException();
         }
-
     }
 
     protected boolean orderItemBelongsToCurrentCustomer(OrderItem orderItem) {
@@ -146,12 +138,14 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     public void setDefaultProductView(String defaultProductView) {
         this.defaultProductView = defaultProductView;
     }
-    
+
     @Override
     public String getExpectedTemplateName(HttpServletRequest request) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null) {
-            Product product = (Product) context.getRequest().getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
+            Product product = (Product) context.getRequest().getAttribute(
+                    ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME
+            );
             if (product != null && product.getDisplayTemplate() != null) {
                 return product.getDisplayTemplate();
             }
@@ -162,6 +156,11 @@ public class BroadleafProductController extends BroadleafAbstractController impl
     @Override
     public TemplateType getTemplateType(HttpServletRequest request) {
         return TemplateType.PRODUCT;
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public class ResourceNotFoundException extends RuntimeException {
+
     }
 
 }

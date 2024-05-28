@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,6 +31,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.CascadeType;
@@ -54,14 +55,16 @@ import jakarta.persistence.Table;
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blRelatedProducts")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<UpSaleProductImpl> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
+    @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "CATEGORY_ID")
+    protected Category category;
     @Id
     @GeneratedValue(generator = "UpSaleProductId")
     @GenericGenerator(
@@ -75,24 +78,16 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
     )
     @Column(name = "UP_SALE_PRODUCT_ID")
     private Long id;
-
     @Column(name = "PROMOTION_MESSAGE")
     @AdminPresentation(friendlyName = "UpSaleProductImpl_Upsale_Promotion_Message",
             translatable = true, largeEntry = true)
     private String promotionMessage;
-
     @Column(name = "SEQUENCE", precision = 10, scale = 6)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     private BigDecimal sequence;
-
     @ManyToOne(targetEntity = ProductImpl.class, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_ID")
     private Product product;
-
-    @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "CATEGORY_ID")
-    protected Category category;
-
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     private Product relatedSaleProduct = new ProductImpl();
@@ -197,8 +192,7 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
     }
 
     @Override
-    public <G extends UpSaleProductImpl> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends UpSaleProductImpl> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -212,10 +206,10 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
         }
         cloned.setPromotionMessage(promotionMessage);
         if (relatedSaleProduct != null) {
-            cloned.setRelatedProduct(
-                    relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
+            cloned.setRelatedProduct(relatedSaleProduct.createOrRetrieveCopyInstance(context).getClone());
         }
         cloned.setSequence(sequence);
         return createResponse;
     }
+
 }

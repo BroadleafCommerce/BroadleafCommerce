@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,24 +41,33 @@ import jakarta.annotation.Resource;
 public class AdvancedCollectionFieldMetadataProvider extends FieldMetadataProviderAdapter {
 
     public static String FOREIGN_KEY_ADDITIONAL_METADATA_KEY = "foreign_key";
-    
+
     @Resource(name = "blDefaultFieldMetadataProvider")
     protected DefaultFieldMetadataProvider defaultMetadataProvider;
-    
-    protected boolean canHandleFieldForTypeMetadata(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
-        AdminPresentationMap map = addMetadataFromFieldTypeRequest.getRequestedField().getAnnotation(AdminPresentationMap.class);
-        AdminPresentationCollection collection = addMetadataFromFieldTypeRequest.getRequestedField().getAnnotation(AdminPresentationCollection.class);
+
+    protected boolean canHandleFieldForTypeMetadata(
+            AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
+        AdminPresentationMap map = addMetadataFromFieldTypeRequest.getRequestedField()
+                .getAnnotation(AdminPresentationMap.class);
+        AdminPresentationCollection collection = addMetadataFromFieldTypeRequest.getRequestedField()
+                .getAnnotation(AdminPresentationCollection.class);
         return map != null || collection != null;
     }
 
     @Override
-    public MetadataProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse addMetadataFromFieldType(
+            AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         if (!canHandleFieldForTypeMetadata(addMetadataFromFieldTypeRequest, metadata)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
         CollectionMetadata fieldMetadata = (CollectionMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute();
         if (StringUtils.isEmpty(fieldMetadata.getCollectionCeilingEntity())) {
-            ParameterizedType listType = (ParameterizedType) addMetadataFromFieldTypeRequest.getRequestedField().getGenericType();
+            ParameterizedType listType = (ParameterizedType) addMetadataFromFieldTypeRequest.getRequestedField()
+                    .getGenericType();
             Class<?> listClass = (Class<?>) listType.getActualTypeArguments()[0];
             fieldMetadata.setCollectionCeilingEntity(listClass.getName());
         }
@@ -67,10 +76,12 @@ public class AdvancedCollectionFieldMetadataProvider extends FieldMetadataProvid
                 fieldMetadata.setInheritedFromType(addMetadataFromFieldTypeRequest.getTargetClass().getName());
             }
             if (ArrayUtils.isEmpty(fieldMetadata.getAvailableToTypes())) {
-                fieldMetadata.setAvailableToTypes(new String[]{addMetadataFromFieldTypeRequest.getTargetClass().getName()});
+                fieldMetadata.setAvailableToTypes(
+                        new String[]{addMetadataFromFieldTypeRequest.getTargetClass().getName()}
+                );
             }
         }
-        
+
         // Handle scenarios where the collection metadata is also a foreign key. The {@link BasicFieldMetadata} that has all
         // of the information about the foreign key will travel along with the built {@link BasicCollectionMetadata} under
         // the {@link FieldMetadata#getAdditionalMetadata()} field. This is then pulled out within
@@ -83,12 +94,17 @@ public class AdvancedCollectionFieldMetadataProvider extends FieldMetadataProvid
             // Don't show this anywhere on the form and ensure it's explicitly not required
             basicMetadata.setVisibility(VisibilityEnum.HIDDEN_ALL);
             basicMetadata.setRequired(false);
-            
-            setClassOwnership(addMetadataFromFieldTypeRequest.getReturnedClass(), addMetadataFromFieldTypeRequest.getTargetClass(), metadata, info);
-            Map<String, FieldMetadata> fakedMd = new HashMap<String, FieldMetadata>();
+
+            setClassOwnership(
+                    addMetadataFromFieldTypeRequest.getReturnedClass(),
+                    addMetadataFromFieldTypeRequest.getTargetClass(),
+                    metadata, info
+            );
+            Map<String, FieldMetadata> fakedMd = new HashMap<>();
             fakedMd.put(addMetadataFromFieldTypeRequest.getRequestedField().getName(), basicMetadata);
             // Fake out a request and some metadata to pass along as additional metadata within this metadata
-            AddMetadataFromFieldTypeRequest fakedRequest = new AddMetadataFromFieldTypeRequest(addMetadataFromFieldTypeRequest.getRequestedField(),
+            AddMetadataFromFieldTypeRequest fakedRequest = new AddMetadataFromFieldTypeRequest(
+                    addMetadataFromFieldTypeRequest.getRequestedField(),
                     addMetadataFromFieldTypeRequest.getTargetClass(),
                     addMetadataFromFieldTypeRequest.getForeignField(),
                     addMetadataFromFieldTypeRequest.getAdditionalForeignFields(),
@@ -104,13 +120,14 @@ public class AdvancedCollectionFieldMetadataProvider extends FieldMetadataProvid
                     basicMetadata,
                     addMetadataFromFieldTypeRequest.getExplicitType(),
                     addMetadataFromFieldTypeRequest.getReturnedClass(),
-                    addMetadataFromFieldTypeRequest.getDynamicEntityDao());
+                    addMetadataFromFieldTypeRequest.getDynamicEntityDao()
+            );
             defaultMetadataProvider.addMetadataFromFieldType(fakedRequest, fakedMd);
             fieldMetadata.getAdditionalMetadata().put(FOREIGN_KEY_ADDITIONAL_METADATA_KEY, basicMetadata);
         }
-        
+
         metadata.put(addMetadataFromFieldTypeRequest.getRequestedPropertyName(), fieldMetadata);
         return MetadataProviderResponse.HANDLED;
     }
-    
+
 }

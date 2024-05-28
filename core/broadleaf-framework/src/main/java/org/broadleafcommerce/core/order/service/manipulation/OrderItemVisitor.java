@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,11 +25,15 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
 public interface OrderItemVisitor {
-    
-    public void visit(OrderItem orderItem) throws PricingException;
-    public void visit(BundleOrderItem bundleOrderItem) throws PricingException;
-    public void visit(DiscreteOrderItem discreteOrderItem) throws PricingException;
-    public void visit(DynamicPriceDiscreteOrderItem dynamicPriceDiscreteOrderItem) throws PricingException;
-    public void visit(GiftWrapOrderItem giftWrapOrderItem) throws PricingException;
-    
+
+    void visit(OrderItem orderItem) throws PricingException;
+
+    void visit(BundleOrderItem bundleOrderItem) throws PricingException;
+
+    void visit(DiscreteOrderItem discreteOrderItem) throws PricingException;
+
+    void visit(DynamicPriceDiscreteOrderItem dynamicPriceDiscreteOrderItem) throws PricingException;
+
+    void visit(GiftWrapOrderItem giftWrapOrderItem) throws PricingException;
+
 }

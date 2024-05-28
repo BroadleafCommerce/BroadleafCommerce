@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,13 +21,14 @@ package org.broadleafcommerce.common.time;
  * Provides an abstraction from the current system time.
  * Certain aspects of Broadleaf can be run in a mode that allows the end user to override the
  * current time.
- *
+ * <p>
  * A convenient example of this is when previewing content.   An approver may want to view
  * the site as it would appear on a particular date or time.
- *
+ * <p>
  * See BroadleafProcessURLFilter for example usage of this construct.
  */
 public interface TimeSource {
 
     long timeInMillis();
+
 }

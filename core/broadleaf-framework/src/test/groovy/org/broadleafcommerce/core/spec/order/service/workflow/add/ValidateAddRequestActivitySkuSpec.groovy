@@ -221,6 +221,9 @@ class ValidateAddRequestActivitySkuSpec extends BaseAddItemActivitySpec{
     }
     
     public static class CustomValidationStrategyType extends ProductOptionValidationStrategyType {
-        public static final ProductOptionValidationStrategyType ADD_ITEM = new ProductOptionValidationStrategyType("ADD_ITEM", ProductOptionValidationStrategyType.ADD_ITEM.getRank()+1, "Validate On Add Item")
+        public static final ProductOptionValidationStrategyType ADD_ITEM = new ProductOptionValidationStrategyType(
+                "ADD_ITEM", ProductOptionValidationStrategyType.ADD_ITEM.getRank()+1,
+                "Validate On Add Item"
+        )
     }
 }

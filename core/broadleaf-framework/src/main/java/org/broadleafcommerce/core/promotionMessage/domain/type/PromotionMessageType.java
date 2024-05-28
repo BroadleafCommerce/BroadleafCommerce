@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,27 +19,23 @@ package org.broadleafcommerce.core.promotionMessage.domain.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of promotion message types.
- *
  */
 public class PromotionMessageType implements Serializable, BroadleafEnumerationType, Comparable<PromotionMessageType> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, PromotionMessageType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, PromotionMessageType> TYPES = new LinkedHashMap<String, PromotionMessageType>();
     public static final PromotionMessageType TARGETS = new PromotionMessageType("TARGETS", "Targets only", 1000);
     public static final PromotionMessageType QUALIFIERS = new PromotionMessageType("QUALIFIERS", "Qualifers only", 2000);
     public static final PromotionMessageType TARGETS_OR_QUALIFIERS = new PromotionMessageType("TARGETS_OR_QUALIFIERS", "Targets or Qualifiers", 3000);
-
-
-    public static PromotionMessageType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -55,6 +51,14 @@ public class PromotionMessageType implements Serializable, BroadleafEnumerationT
         setOrder(order);
     }
 
+    public static PromotionMessageType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
@@ -62,14 +66,10 @@ public class PromotionMessageType implements Serializable, BroadleafEnumerationT
         }
     }
 
-    public String getType() {
-        return type;
-    }
-
     public String getFriendlyType() {
         return friendlyType;
     }
-    
+
     public int getOrder() {
         return order;
     }
@@ -102,7 +102,7 @@ public class PromotionMessageType implements Serializable, BroadleafEnumerationT
             return false;
         return true;
     }
-    
+
     @Override
     public int compareTo(PromotionMessageType arg0) {
         return this.order - arg0.order;

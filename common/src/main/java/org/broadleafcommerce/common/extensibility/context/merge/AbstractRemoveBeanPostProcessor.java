@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -57,9 +57,9 @@ import java.util.Set;
  * }
  * </pre>
  *
+ * @author Jeff Fischer
  * @see LateStageRemoveBeanPostProcessor
  * @see EarlyStageRemoveBeanPostProcessor
- * @author Jeff Fischer
  */
 public abstract class AbstractRemoveBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 
@@ -112,7 +112,7 @@ public abstract class AbstractRemoveBeanPostProcessor implements BeanPostProcess
                         field.setAccessible(true);
                         sourceSet = (Set) field.get(bean);
                     } else {
-                        sourceSet = (Set)bean;
+                        sourceSet = (Set) bean;
                     }
                     List tempList = new ArrayList(sourceSet);
                     Iterator itr = tempList.iterator();
@@ -193,4 +193,5 @@ public abstract class AbstractRemoveBeanPostProcessor implements BeanPostProcess
     public void setMapKeyRef(String mapKeyRef) {
         this.mapKeyRef = mapKeyRef;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 /**
  * Utility methods for common currency operations
  *
@@ -38,9 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BroadleafCurrencyUtils {
 
-    protected static final Map<String, NumberFormat> FORMAT_CACHE = new ConcurrentHashMap<String, NumberFormat>();
-
     public static final MathContext ROUND_FLOOR_MATH_CONTEXT = new MathContext(0, RoundingMode.FLOOR);
+    protected static final Map<String, NumberFormat> FORMAT_CACHE = new ConcurrentHashMap<>();
 
     public static Money getMoney(BigDecimal amount, BroadleafCurrency currency) {
         if (amount == null) {
@@ -145,4 +143,5 @@ public class BroadleafCurrencyUtils {
         }
         return FORMAT_CACHE.get(key);
     }
+
 }

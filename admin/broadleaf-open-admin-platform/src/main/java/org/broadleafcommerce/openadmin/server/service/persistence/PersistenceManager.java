@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,9 +38,11 @@ public interface PersistenceManager {
 
     Class<?>[] getPolymorphicEntities(String ceilingEntityFullyQualifiedClassname) throws ClassNotFoundException;
 
-    Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
+    Map<String, FieldMetadata> getSimpleMergedProperties(String entityName,
+                                                         PersistencePerspective persistencePerspective) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, NoSuchFieldException;
 
-    ClassMetadata buildClassMetadata(Class<?>[] entities, PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws IllegalArgumentException;
+    ClassMetadata buildClassMetadata(Class<?>[] entities, PersistencePackage persistencePackage,
+                                     Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) throws IllegalArgumentException;
 
     PersistenceResponse inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException;
 
@@ -56,7 +58,7 @@ public interface PersistenceManager {
 
     /**
      * This method produces a {@link DynamicEntityDao} with a blPU-based standardEntityManager
-     *  using the passed in {@link TargetModeType}
+     * using the passed in {@link TargetModeType}
      */
     void configureDefaultDynamicEntityDao(TargetModeType targetModeType);
 

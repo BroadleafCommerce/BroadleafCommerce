@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.service;
 
 import org.apache.commons.io.FilenameUtils;
@@ -44,19 +43,18 @@ import java.util.zip.GZIPOutputStream;
 import jakarta.annotation.Resource;
 
 /**
- * Component responsible for generating a sitemap.   Relies on SiteMapGenerators to 
+ * Component responsible for generating a sitemap.   Relies on SiteMapGenerators to
  * produce the actual url entries within the sitemap.
- * 
+ * <p>
  * Create a sitemap index file and at least one sitemap file with the URL elements.
- * 
- * @author bpolster
  *
+ * @author bpolster
  */
 @Service("blSiteMapService")
 public class SiteMapServiceImpl implements SiteMapService {
 
     protected static final Log LOG = LogFactory.getLog(SiteMapServiceImpl.class);
-    
+
     protected static final String ENCODING_EXTENSION = ".gz";
 
     protected Boolean gzipSiteMapFiles;
@@ -87,7 +85,9 @@ public class SiteMapServiceImpl implements SiteMapService {
         }
 
         FileWorkArea fileWorkArea = broadleafFileService.initializeWorkArea();
-        SiteMapBuilder siteMapBuilder = new SiteMapBuilder(smc, fileWorkArea, baseUrlResolver.getSiteBaseUrl(), getGzipSiteMapFiles());
+        SiteMapBuilder siteMapBuilder = new SiteMapBuilder(
+                smc, fileWorkArea, baseUrlResolver.getSiteBaseUrl(), getGzipSiteMapFiles()
+        );
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("File work area initalized with path " + fileWorkArea.getFilePathLocation());
@@ -106,25 +106,24 @@ public class SiteMapServiceImpl implements SiteMapService {
                 }
                 generator.addSiteMapEntries(currentConfiguration, siteMapBuilder);
             } else {
-                LOG.warn("No site map generator found to process generator configuration for " + currentConfiguration.getSiteMapGeneratorType());
+                LOG.warn("No site map generator found to process generator configuration for "
+                        + currentConfiguration.getSiteMapGeneratorType());
             }
         }
 
         siteMapBuilder.persistSiteMap();
 
-
         // Check for GZip
         if (getGzipSiteMapFiles()) {
             gzipAndDeleteFiles(fileWorkArea, siteMapBuilder.getIndexedFileNames(), false);
-            List<String> indexFileNames = new ArrayList<String>();
-            for (String fileName: siteMapBuilder.getIndexedFileNames()) {
+            List<String> indexFileNames = new ArrayList<>();
+            for (String fileName : siteMapBuilder.getIndexedFileNames()) {
                 indexFileNames.add(fileName + ENCODING_EXTENSION);
             }
             smgr.setSiteMapFilePaths(indexFileNames);
         } else {
             smgr.setSiteMapFilePaths(siteMapBuilder.getIndexedFileNames());
         }
-
 
         // Move the generated files to their permanent location
         broadleafFileService.addOrUpdateResources(fileWorkArea, true);
@@ -148,7 +147,7 @@ public class SiteMapServiceImpl implements SiteMapService {
                 if ((now - lastModified) > getSiteMapTimeoutInMillis().longValue()) {
                     generateSiteMap();
                     siteMapFile = broadleafFileService.getResource(fileName, getSiteMapTimeoutInMillis());
-                    if (LOG.isTraceEnabled()){
+                    if (LOG.isTraceEnabled()) {
                         LOG.trace("Generating new SiteMap after timeout");
                     }
                 }
@@ -178,11 +177,13 @@ public class SiteMapServiceImpl implements SiteMapService {
             } else {
                 return null;
             }
-        }        
+        }
     }
 
     protected SiteMapConfiguration findActiveSiteMapConfiguration() {
-        List<ModuleConfiguration> configurations = moduleConfigurationService.findActiveConfigurationsByType(ModuleConfigurationType.SITE_MAP);
+        List<ModuleConfiguration> configurations = moduleConfigurationService.findActiveConfigurationsByType(
+                ModuleConfigurationType.SITE_MAP
+        );
 
         SiteMapConfiguration smc = null;
         if (configurations != null && !configurations.isEmpty()) {
@@ -203,8 +204,8 @@ public class SiteMapServiceImpl implements SiteMapService {
     }
 
     /**
-     * Returns the siteMapGenerator most qualified to handle the given configuration.     
-     * 
+     * Returns the siteMapGenerator most qualified to handle the given configuration.
+     *
      * @param smgc
      * @return
      */
@@ -218,14 +219,15 @@ public class SiteMapServiceImpl implements SiteMapService {
     }
 
     /**
-     *
      * @param fileWorkArea
      * @param fileNames
      */
-    protected void gzipAndDeleteFiles(FileWorkArea fileWorkArea, List<String> fileNames,boolean shouldDeleteOriginal){
+    protected void gzipAndDeleteFiles(FileWorkArea fileWorkArea, List<String> fileNames, boolean shouldDeleteOriginal) {
         for (String fileName : fileNames) {
             try {
-                String fileNameWithPath = FilenameUtils.normalize(fileWorkArea.getFilePathLocation() + File.separator + fileName);
+                String fileNameWithPath = FilenameUtils.normalize(
+                        fileWorkArea.getFilePathLocation() + File.separator + fileName
+                );
 
                 FileInputStream fis = new FileInputStream(fileNameWithPath);
                 FileOutputStream fos = new FileOutputStream(fileNameWithPath + ENCODING_EXTENSION);
@@ -240,11 +242,10 @@ public class SiteMapServiceImpl implements SiteMapService {
                 fos.close();
                 fis.close();
 
-                if(shouldDeleteOriginal){
+                if (shouldDeleteOriginal) {
                     File originalFile = new File(fileNameWithPath);
                     originalFile.delete();
                 }
-
 
             } catch (IOException e) {
                 LOG.error("Error writing zip file.", e);
@@ -254,13 +255,13 @@ public class SiteMapServiceImpl implements SiteMapService {
 
     /**
      * GZip a file, Then delete it
+     *
      * @param fileWorkArea
      * @param fileNames
      */
     protected void gzipAndDeleteFiles(FileWorkArea fileWorkArea, List<String> fileNames) {
-        gzipAndDeleteFiles(fileWorkArea,fileNames,true);
+        gzipAndDeleteFiles(fileWorkArea, fileNames, true);
     }
-
 
     public List<SiteMapGenerator> getSiteMapGenerators() {
         return siteMapGenerators;
@@ -287,17 +288,12 @@ public class SiteMapServiceImpl implements SiteMapService {
     }
 
     public boolean getAutoGenerateSiteMapAfterTimeout() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("sitemap.createIfTimeoutExpired",false);
+        return BLCSystemProperty.resolveBooleanSystemProperty("sitemap.createIfTimeoutExpired", false);
     }
 
     public Long getSiteMapTimeoutInMillis() {
         Long cacheSeconds = BLCSystemProperty.resolveLongSystemProperty("sitemap.cache.seconds");
         return cacheSeconds * 1000;
-    }
-
-
-    public void setGzipSiteMapFiles(Boolean gzipSiteMapFiles) {
-        this.gzipSiteMapFiles = gzipSiteMapFiles;
     }
 
     public boolean getGzipSiteMapFiles() {
@@ -307,4 +303,9 @@ public class SiteMapServiceImpl implements SiteMapService {
             return getGzipSiteMapFilesDefault();
         }
     }
+
+    public void setGzipSiteMapFiles(Boolean gzipSiteMapFiles) {
+        this.gzipSiteMapFiles = gzipSiteMapFiles;
+    }
+
 }

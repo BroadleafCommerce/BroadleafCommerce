@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * @author Andre Azzolini (apazzolini), bpolster, Jeff Fischer
  */
@@ -48,21 +47,30 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     public static final ExtensionManagerOperation applyAdditionalFilters = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).applyAdditionalFilters((List<Offer>) params[0], (Order) params[1]);
+            return ((OfferServiceExtensionHandler) handler).applyAdditionalFilters(
+                    (List<Offer>) params[0], (Order) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation buildOfferCodeListForCustomer = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).buildOfferCodeListForCustomer((Customer) params[0], (List<OfferCode>) params[1]);
+            return ((OfferServiceExtensionHandler) handler).buildOfferCodeListForCustomer(
+                    (Customer) params[0], (List<OfferCode>) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation calculatePotentialSavings = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).calculatePotentialSavings((PromotableCandidateItemOffer) params[0], (PromotableOrderItem) params[1], (Integer) params[2], (Map<String, Object>) params[3]);
+            return ((OfferServiceExtensionHandler) handler).calculatePotentialSavings(
+                    (PromotableCandidateItemOffer) params[0],
+                    (PromotableOrderItem) params[1],
+                    (Integer) params[2],
+                    (Map<String, Object>) params[3]
+            );
         }
     };
 
@@ -76,7 +84,11 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     public static final ExtensionManagerOperation applyItemOffer = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).applyItemOffer((PromotableOrder) params[0], (PromotableCandidateItemOffer) params[1], (Map<String, Object>) params[2]);
+            return ((OfferServiceExtensionHandler) handler).applyItemOffer(
+                    (PromotableOrder) params[0],
+                    (PromotableCandidateItemOffer) params[1],
+                    (Map<String, Object>) params[2]
+            );
         }
     };
 
@@ -97,31 +109,42 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     public static final ExtensionManagerOperation createOrderItemPriceDetailAdjustment = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).createOrderItemPriceDetailAdjustment((ExtensionResultHolder<?>) params[0], (OrderItemPriceDetail) params[1]);
+            return ((OfferServiceExtensionHandler) handler).createOrderItemPriceDetailAdjustment(
+                    (ExtensionResultHolder<?>) params[0],
+                    (OrderItemPriceDetail) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation applyAdditionalRuleVariablesForItemOfferEvaluation = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).applyAdditionalRuleVariablesForItemOfferEvaluation((PromotableOrderItem) params[0], (HashMap<String, Object>) params[1]);
+            return ((OfferServiceExtensionHandler) handler).applyAdditionalRuleVariablesForItemOfferEvaluation(
+                    (PromotableOrderItem) params[0],
+                    (HashMap<String, Object>) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation addAdditionalOffersForCode = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).addAdditionalOffersForCode((List<Offer>) params[0], (OfferCode) params[1]);
+            return ((OfferServiceExtensionHandler) handler).addAdditionalOffersForCode(
+                    (List<Offer>) params[0],
+                    (OfferCode) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation removeOfferCodeFromOrder = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OfferServiceExtensionHandler) handler).removeOfferCodeFromOrder((OfferCode) params[0], (Order) params[1]);
+            return ((OfferServiceExtensionHandler) handler).removeOfferCodeFromOrder(
+                    (OfferCode) params[0],
+                    (Order) params[1]
+            );
         }
     };
-
 
     public OfferServiceExtensionManager() {
         super(OfferServiceExtensionHandler.class);
@@ -138,7 +161,12 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     }
 
     @Override
-    public ExtensionResultStatusType calculatePotentialSavings(PromotableCandidateItemOffer itemOffer, PromotableOrderItem item, int quantity, Map<String, Object> contextMap) {
+    public ExtensionResultStatusType calculatePotentialSavings(
+            PromotableCandidateItemOffer itemOffer,
+            PromotableOrderItem item,
+            int quantity,
+            Map<String, Object> contextMap
+    ) {
         return execute(calculatePotentialSavings, itemOffer, item, quantity, contextMap);
     }
 
@@ -148,7 +176,11 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     }
 
     @Override
-    public ExtensionResultStatusType applyItemOffer(PromotableOrder order, PromotableCandidateItemOffer itemOffer, Map<String, Object> contextMap) {
+    public ExtensionResultStatusType applyItemOffer(
+            PromotableOrder order,
+            PromotableCandidateItemOffer itemOffer,
+            Map<String, Object> contextMap
+    ) {
         return execute(applyItemOffer, order, itemOffer, contextMap);
     }
 
@@ -163,12 +195,18 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
     }
 
     @Override
-    public ExtensionResultStatusType createOrderItemPriceDetailAdjustment(ExtensionResultHolder<?> resultHolder, OrderItemPriceDetail itemDetail) {
+    public ExtensionResultStatusType createOrderItemPriceDetailAdjustment(
+            ExtensionResultHolder<?> resultHolder,
+            OrderItemPriceDetail itemDetail
+    ) {
         return execute(createOrderItemPriceDetailAdjustment, resultHolder, itemDetail);
     }
 
     @Override
-    public ExtensionResultStatusType applyAdditionalRuleVariablesForItemOfferEvaluation(PromotableOrderItem orderItem, HashMap<String, Object> vars) {
+    public ExtensionResultStatusType applyAdditionalRuleVariablesForItemOfferEvaluation(
+            PromotableOrderItem orderItem,
+            HashMap<String, Object> vars
+    ) {
         return execute(applyAdditionalRuleVariablesForItemOfferEvaluation, orderItem, vars);
     }
 
@@ -182,10 +220,10 @@ public class OfferServiceExtensionManager extends ExtensionManager<OfferServiceE
         return execute(removeOfferCodeFromOrder, offerCode, order);
     }
 
-
     @Override
     public boolean isEnabled() {
         //not used - fulfills interface contract
         return true;
     }
+
 }

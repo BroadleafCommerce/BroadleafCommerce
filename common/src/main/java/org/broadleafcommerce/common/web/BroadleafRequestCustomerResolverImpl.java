@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,21 +28,24 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * By default, we'll resolve the customer from the "customer" attribute on the request.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Service("blRequestCustomerResolver")
 public class BroadleafRequestCustomerResolverImpl implements ApplicationContextAware, BroadleafRequestCustomerResolver {
-    
-    private static ApplicationContext applicationContext;
 
     protected static String customerRequestAttributeName = "customer";
+    private static ApplicationContext applicationContext;
+
+    public static BroadleafRequestCustomerResolver getRequestCustomerResolver() {
+        return (BroadleafRequestCustomerResolver) applicationContext.getBean("blRequestCustomerResolver");
+    }
 
     @Override
     public Object getCustomer(HttpServletRequest request) {
         return getCustomer(new ServletWebRequest(request));
     }
-    
+
     @Override
     public Object getCustomer() {
         WebRequest request = BroadleafRequestContext.getBroadleafRequestContext().getWebRequest();
@@ -50,14 +53,14 @@ public class BroadleafRequestCustomerResolverImpl implements ApplicationContextA
     }
 
     @Override
-    public Object getCustomer(WebRequest request) {
-        return request.getAttribute(getCustomerRequestAttributeName(), WebRequest.SCOPE_REQUEST);
-    }
-
-    @Override
     public void setCustomer(Object customer) {
         WebRequest request = BroadleafRequestContext.getBroadleafRequestContext().getWebRequest();
         request.setAttribute(getCustomerRequestAttributeName(), customer, WebRequest.SCOPE_REQUEST);
+    }
+
+    @Override
+    public Object getCustomer(WebRequest request) {
+        return request.getAttribute(getCustomerRequestAttributeName(), WebRequest.SCOPE_REQUEST);
     }
 
     @Override
@@ -74,9 +77,5 @@ public class BroadleafRequestCustomerResolverImpl implements ApplicationContextA
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         BroadleafRequestCustomerResolverImpl.applicationContext = applicationContext;
     }
-    
-    public static BroadleafRequestCustomerResolver getRequestCustomerResolver() {
-        return (BroadleafRequestCustomerResolver) applicationContext.getBean("blRequestCustomerResolver");
-    }
-    
+
 }

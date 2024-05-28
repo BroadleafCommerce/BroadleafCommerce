@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,19 +41,19 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * with a servlet-specific {@link ApplicationContext}, this annotation should only be placed on an {@literal @}Configuration class within
  * <b>that</b> servlet-specific {@lnk ApplicationContext}. If this is not the case and no servlet-specific {@link ApplicationContext} exists in your
  * project and you are using Spring Boot, this <b>must</b> be placed on an <b>inner static class</b> within the {@literal @}SpringBootApplication class. Example:
- * 
+ *
  * <pre>
  * {@literal @}SpringBootApplication
  * public class MyApplication extends SpringBootServletInitializer {
- * 
+ *
  *     {@literal @}Configuration
  *     {@literal @}EnableBroadleafSiteServletAutoConfiguration
  *     public static class BroadleafConfiguration { }
- *     
+ *
  *     public static void main(String[] args) {
  *         SpringApplication.run(ApiApplication.class, args);
  *     }
- *  
+ *
  *     {@literal @}Override
  *     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
  *         return application.sources(ApiApplication.class);
@@ -61,7 +61,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * }
  *
  * </pre>
- * 
+ *
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}Import, this <b>can</b> be placed on a {@literal @}Configuration class
  * that contains an {@literal @}Import annotation, <b>but</b> this {@literal @}Import's beans will take precedence over
@@ -71,7 +71,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * This annotation assumes that you have activated the root configuration via {@link EnableBroadleafAdminRootAutoConfiguration} in a parent
  * context. However, rather than using this annotation in a parent-child configuration consider using {@link EnableBroadleafSiteAutoConfiguration} to
  * ensure that only a single {@link ApplicationContext} is present, or just use the {@link EnableBroadleafAutoConfiguration}
- * 
+ *
  * <p>
  * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
  * overwrite beans defined in a project.
@@ -86,8 +86,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target(TYPE)
 @Import({
-    BroadleafSiteServletAutoConfiguration.class,
-    BroadleafSiteServletAutoConfigurationOverrides.class
+        BroadleafSiteServletAutoConfiguration.class,
+        BroadleafSiteServletAutoConfigurationOverrides.class
 })
 public @interface EnableBroadleafSiteServletAutoConfiguration {
 
@@ -103,8 +103,11 @@ public @interface EnableBroadleafSiteServletAutoConfiguration {
             "classpath*:/blc-config/site/bl-*-applicationContext-servlet.xml",
             "classpath*:/blc-config/site/late/bl-*-applicationContext-servlet.xml"
     }, reader = FrameworkXmlBeanDefinitionReader.class)
-    class BroadleafSiteServletAutoConfiguration {}
-    
+    class BroadleafSiteServletAutoConfiguration {
+    }
+
     @ImportResource("classpath:/override-contexts/site-servlet-autoconfiguration-overrides.xml")
-    class BroadleafSiteServletAutoConfigurationOverrides {}
+    class BroadleafSiteServletAutoConfigurationOverrides {
+    }
+
 }

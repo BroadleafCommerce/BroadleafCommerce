@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,129 +31,143 @@ public interface StaticAsset extends Serializable, MultiTenantCloneable<StaticAs
 
     /**
      * Returns the id of the static asset.
+     *
      * @return
      */
-    public Long getId();
+    Long getId();
 
     /**
-     * Sets the id of the static asset.    
+     * Sets the id of the static asset.
+     *
      * @param id
      */
-    public void setId(Long id);
-
+    void setId(Long id);
 
     /**
      * The name of the static asset.
+     *
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
-     * Sets the name of the static asset.   Used primarily for 
+     * Sets the name of the static asset.   Used primarily for
+     *
      * @param name
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Returns the altText of this asset.
-     * 
+     *
      * @return
      */
-    public String getAltText();
+    String getAltText();
 
     /**
      * Set the altText of the static asset.
+     *
      * @param altText
      */
-    public void setAltText(String altText);
+    void setAltText(String altText);
 
     /**
      * Returns the title of this asset.
-     * 
+     *
      * @return
      */
-    public String getTitle();
+    String getTitle();
 
     /**
      * Set the title of the static asset.
+     *
      * @param title
      */
-    public void setTitle(String title);
+    void setTitle(String title);
 
     /**
      * URL used to retrieve this asset.
+     *
      * @return
      */
-    public String getFullUrl();
+    String getFullUrl();
 
     /**
      * Sets the URL for the asset
+     *
      * @param fullUrl
      */
-    public void setFullUrl(String fullUrl);
+    void setFullUrl(String fullUrl);
 
     /**
      * Filesize of the asset.
+     *
      * @return
      */
-    public Long getFileSize();
+    Long getFileSize();
 
     /**
      * Sets the filesize of the asset
+     *
      * @param fileSize
      */
-    public void setFileSize(Long fileSize);
+    void setFileSize(Long fileSize);
 
     /**
-     * @deprecated - Use {@link #getTitle()} or {@link #getAltText()}getAltText() instead.
      * @return
+     * @deprecated - Use {@link #getTitle()} or {@link #getAltText()}getAltText() instead.
      */
-    public Map<String, StaticAssetDescription> getContentMessageValues();
+    Map<String, StaticAssetDescription> getContentMessageValues();
 
     /**
-     * @deprecated - Use {@link #setTitle(String)} or {@link #setAltText(String)} instead.
      * @param contentMessageValues
+     * @deprecated - Use {@link #setTitle(String)} or {@link #setAltText(String)} instead.
      */
-    public void setContentMessageValues(Map<String, StaticAssetDescription> contentMessageValues);
+    void setContentMessageValues(Map<String, StaticAssetDescription> contentMessageValues);
 
     /**
      * Returns the mimeType of the asset.
+     *
      * @return
      */
-    public String getMimeType();
+    String getMimeType();
 
     /**
      * Sets the mimeType of the asset.
+     *
      * @return
      */
-    public void setMimeType(String mimeType);
+    void setMimeType(String mimeType);
 
     /**
      * Returns the file extension of the asset.
+     *
      * @return
      */
-    public String getFileExtension();
+    String getFileExtension();
 
     /**
      * Sets the fileExtension of the asset.
+     *
      * @param fileExtension
      */
-    public void setFileExtension(String fileExtension);
+    void setFileExtension(String fileExtension);
 
     /**
      * Returns how the underlying asset is stored.  Typically on the FileSystem or the Database.
-     * 
+     * <p>
      * If null, this method returns <code>StorageType.DATABASE</code> for backwards compatibility.
-     * 
-     * @see {@link StaticAssetService}
+     *
      * @return
+     * @see {@link StaticAssetService}
      */
-    public StorageType getStorageType();
+    StorageType getStorageType();
 
     /**
      * Returns how the asset was stored in the backend (e.g. DATABASE or FILESYSTEM)
+     *
      * @param storageType
      */
-    public void setStorageType(StorageType storageType);
+    void setStorageType(StorageType storageType);
 
 }

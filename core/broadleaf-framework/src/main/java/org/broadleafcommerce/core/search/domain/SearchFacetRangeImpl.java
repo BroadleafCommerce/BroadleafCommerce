@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,6 +40,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -58,7 +59,8 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SEARCH_FACET_RANGE",
-        indexes = {@Index(name = "SEARCH_FACET_INDEX", columnList = "SEARCH_FACET_ID")})
+        indexes = {@Index(name = "SEARCH_FACET_INDEX", columnList = "SEARCH_FACET_ID")}
+)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @AdminPresentationMergeOverrides(value = {
@@ -69,14 +71,11 @@ import jakarta.persistence.Table;
                                 propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
                                 overrideValue = "PriceListImpl_Friendly_Name"),
                         @AdminPresentationMergeEntry(
-                                propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                booleanOverrideValue = false),
+                                propertyType = PropertyType.AdminPresentation.EXCLUDED, booleanOverrideValue = false),
                         @AdminPresentationMergeEntry(
-                                propertyType = PropertyType.AdminPresentation.ORDER,
-                                intOverrideValue = 1),
+                                propertyType = PropertyType.AdminPresentation.ORDER, intOverrideValue = 1),
                         @AdminPresentationMergeEntry(
-                                propertyType = PropertyType.AdminPresentation.GRIDORDER,
-                                intOverrideValue = 1),
+                                propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 1),
                         @AdminPresentationMergeEntry(
                                 propertyType = PropertyType.AdminPresentation.GROUP,
                                 overrideValue = "SearchFacetRangeImpl_Description"),
@@ -96,6 +95,7 @@ import jakarta.persistence.Table;
 })
 public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -128,8 +128,7 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
                     @ValidationConfiguration(
                             validationImplementation = "blMaxGreaterThanMinValidator",
                             configurationItems = {
-                                    @ConfigurationItem(itemName = "otherField",
-                                            itemValue = "minValue")
+                                    @ConfigurationItem(itemName = "otherField", itemValue = "minValue")
                             })
             })
     protected BigDecimal maxValue;
@@ -198,7 +197,8 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
 
     @Override
     public <G extends SearchFacetRange> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -211,4 +211,5 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
         }
         return createResponse;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,10 +33,15 @@ public class FileUploadExceptionAdvice extends SimpleMappingExceptionResolver {
     protected String DEFAULT_ERROR_VIEW = "utility/error";
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ModelAndView handleMaxSizeException(MaxUploadSizeExceededException exc, HttpServletRequest request, HttpServletResponse response){
+    public ModelAndView handleMaxSizeException(
+            MaxUploadSizeExceededException exc,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
         ModelAndView modelAndView = getModelAndView(DEFAULT_ERROR_VIEW, exc, request);
         modelAndView.getModel().put("exceptionUUID", "File too large!");
         modelAndView.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         return modelAndView;
     }
+
 }

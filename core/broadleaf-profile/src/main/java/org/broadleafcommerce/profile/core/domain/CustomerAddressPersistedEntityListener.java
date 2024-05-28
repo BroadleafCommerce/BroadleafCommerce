@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,10 +26,11 @@ import jakarta.persistence.PostRemove;
 import jakarta.persistence.PostUpdate;
 
 public class CustomerAddressPersistedEntityListener {
+
     /**
      * Invoked on PostPersist, PostUpdate, and PostRemove. The default implementation is to simply publish a Spring event
      * to the ApplicationContext after the transaction has completed.
-     * 
+     *
      * @param entity the newly-persisted CustomerAddress
      * @see CustomerPersistedEvent
      */
@@ -41,9 +42,12 @@ public class CustomerAddressPersistedEntityListener {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
                 @Override
                 public void afterCommit() {
-                    ApplicationContextHolder.getApplicationContext().publishEvent(new CustomerPersistedEvent(((CustomerAddress) entity).getCustomer()));
+                    ApplicationContextHolder.getApplicationContext().publishEvent(
+                            new CustomerPersistedEvent(((CustomerAddress) entity).getCustomer())
+                    );
                 }
             });
         }
     }
+
 }

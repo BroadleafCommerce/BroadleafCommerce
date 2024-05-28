@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,14 +29,14 @@ import org.broadleafcommerce.common.web.payment.controller.CustomerPaymentGatewa
  * <p>These service methods are usually invoked from the controller that listens to the endpoint hit by the external payment
  * provider (which should be a subclass of {@link org.broadleafcommerce.common.web.payment.controller.CustomerPaymentGatewayAbstractController}).</p>
  *
- * @see {@link CustomerPaymentGatewayAbstractController}
  * @author Elbert Bautista (elbertbautista)
+ * @see {@link CustomerPaymentGatewayAbstractController}
  */
 public interface CustomerPaymentGatewayService {
 
     /**
      * @param responseDTO the response from the gateway
-     * @param config configuration values for the payment gateway
+     * @param config      configuration values for the payment gateway
      * @return a unique ID of the customer payment token as it is saved in the core commerce engine. If using Broadleaf's
      * core commerce engine, it will be the ID of the created {@link CustomerPayment} entity.
      * @throws IllegalArgumentException
@@ -46,7 +46,7 @@ public interface CustomerPaymentGatewayService {
 
     /**
      * @param responseDTO the response from the gateway
-     * @param config configuration values for the payment gateway
+     * @param config      configuration values for the payment gateway
      * @return a unique ID of the customer payment token as it is saved in the core commerce engine. If using Broadleaf's
      * core commerce engine, it will be the ID of the created {@link CustomerPayment} entity.
      * @throws IllegalArgumentException
@@ -56,8 +56,7 @@ public interface CustomerPaymentGatewayService {
 
     /**
      * @param responseDTO the response from the gateway
-     * @param config configuration values for the payment gateway
-     *
+     * @param config      configuration values for the payment gateway
      * @throws IllegalArgumentException
      */
     void deleteCustomerPaymentFromResponseDTO(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config)

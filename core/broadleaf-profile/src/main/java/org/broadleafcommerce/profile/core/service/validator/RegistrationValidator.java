@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,6 +32,14 @@ public class RegistrationValidator implements Validator {
 
     private static final String DEFAULT_VALID_PASSWORD_REGEX = "[^\\s]{6,}";
 
+    public static String getValidNameRegex() {
+        return BLCSystemProperty.resolveSystemProperty("name.valid.regex", DEFAULT_VALID_NAME_REGEX);
+    }
+
+    public static String getValidPasswordRegex() {
+        return BLCSystemProperty.resolveSystemProperty("password.valid.regex", DEFAULT_VALID_PASSWORD_REGEX);
+    }
+
     public void validate(Customer customer, String password, String passwordConfirm, Errors errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "password.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passwordConfirm", "passwordConfirm.required");
@@ -41,11 +49,11 @@ public class RegistrationValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emailAddress", "emailAddress.required");
         errors.popNestedPath();
 
-        if (errors.hasErrors()){
+        if (errors.hasErrors()) {
             if (!passwordConfirm.equals(password)) {
-                errors.rejectValue("passwordConfirm", "invalid"); 
+                errors.rejectValue("passwordConfirm", "invalid");
             }
-            
+
             if (!customer.getFirstName().matches(getValidNameRegex())) {
                 errors.rejectValue("firstName", "firstName.invalid", null, null);
             }
@@ -68,19 +76,13 @@ public class RegistrationValidator implements Validator {
         }
     }
 
-    public static String getValidNameRegex() {
-        return BLCSystemProperty.resolveSystemProperty("name.valid.regex", DEFAULT_VALID_NAME_REGEX);
-    }
-
-    public static String getValidPasswordRegex() {
-        return BLCSystemProperty.resolveSystemProperty("password.valid.regex", DEFAULT_VALID_PASSWORD_REGEX);
-    }
-
     @Override
     public boolean supports(Class<?> clazz) {
         return false;
     }
 
     @Override
-    public void validate(Object target, Errors errors) {}
+    public void validate(Object target, Errors errors) {
+    }
+
 }

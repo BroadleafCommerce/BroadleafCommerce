@@ -10,24 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.order.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,46 +47,56 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.springframework.context.ApplicationContext;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM_PRICE_DTL")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-    {
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
-)
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyCodeIdentifiable {
 
-    private static final long serialVersionUID = 1L;
-
-    private static RoundingMode _roundingMode;
-
     protected static final Log LOG = LogFactory.getLog(OrderItemPriceDetailImpl.class);
-
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static RoundingMode _roundingMode;
     @Id
     @GeneratedValue(generator = "OrderItemPriceDetailId")
     @GenericGenerator(
-        name="OrderItemPriceDetailId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="OrderItemPriceDetailImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl")
-        }
+            name = "OrderItemPriceDetailId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OrderItemPriceDetailImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl")
+            }
     )
     @Column(name = "ORDER_ITEM_PRICE_DTL_ID")
-    @AdminPresentation(friendlyName = "OrderItemPriceDetailImpl_Id", group = "OrderItemPriceDetailImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailImpl_Id",
+            group = "OrderItemPriceDetailImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
@@ -105,17 +104,21 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     @AdminPresentation(excluded = true)
     protected OrderItem orderItem;
 
-    @OneToMany(mappedBy = "orderItemPriceDetail", targetEntity = OrderItemPriceDetailAdjustmentImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderItemPriceDetail", targetEntity = OrderItemPriceDetailAdjustmentImpl.class,
+            cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(addType = AddMethodType.PERSIST, friendlyName = "OrderItemPriceDetailImpl_orderItemPriceDetailAdjustments")
-    protected List<OrderItemPriceDetailAdjustment> orderItemPriceDetailAdjustments = new ArrayList<OrderItemPriceDetailAdjustment>();
+    @AdminPresentationCollection(addType = AddMethodType.PERSIST,
+            friendlyName = "OrderItemPriceDetailImpl_orderItemPriceDetailAdjustments")
+    protected List<OrderItemPriceDetailAdjustment> orderItemPriceDetailAdjustments = new ArrayList<>();
 
-    @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName = "OrderItemPriceDetailImpl_quantity", order = 5, group = "OrderItemPriceDetailImpl_Pricing", prominent = true)
+    @Column(name = "QUANTITY", nullable = false)
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailImpl_quantity", order = 5,
+            group = "OrderItemPriceDetailImpl_Pricing", prominent = true)
     protected int quantity;
 
     @Column(name = "USE_SALE_PRICE")
-    @AdminPresentation(friendlyName = "OrderItemPriceDetailImpl_useSalePrice", order = 5, group = "OrderItemPriceDetailImpl_Pricing", prominent = true)
+    @AdminPresentation(friendlyName = "OrderItemPriceDetailImpl_useSalePrice", order = 5,
+            group = "OrderItemPriceDetailImpl_Pricing", prominent = true)
     protected Boolean useSalePrice = true;
 
     @Override
@@ -157,7 +160,6 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     @Override
     public void setOrderItemAdjustments(List<OrderItemPriceDetailAdjustment> orderItemPriceDetailAdjustments) {
         this.orderItemPriceDetailAdjustments = orderItemPriceDetailAdjustments;
-        
     }
 
     @Override
@@ -178,7 +180,7 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     public Money getAdjustmentValue() {
         Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderItemPriceDetailAdjustment adjustment : orderItemPriceDetailAdjustments) {
-            if (! adjustment.isFutureCredit()) {
+            if (!adjustment.isFutureCredit()) {
                 // preserve highest scale / allows adjustments to maintain more precision
                 // adjustments should only have more precision if the roundingScale was
                 // overridden
@@ -275,7 +277,9 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
     }
 
     @Override
-    public <G extends OrderItemPriceDetail> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OrderItemPriceDetail> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -285,11 +289,12 @@ public class OrderItemPriceDetailImpl implements OrderItemPriceDetail, CurrencyC
         cloned.setUseSalePrice(useSalePrice);
         // dont clone
         cloned.setOrderItem(orderItem);
-        for(OrderItemPriceDetailAdjustment entry : orderItemPriceDetailAdjustments){
+        for (OrderItemPriceDetailAdjustment entry : orderItemPriceDetailAdjustments) {
             OrderItemPriceDetailAdjustment clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setOrderItemPriceDetail(cloned);
             cloned.getOrderItemPriceDetailAdjustments().add(clonedEntry);
         }
-        return  createResponse;
+        return createResponse;
     }
+
 }

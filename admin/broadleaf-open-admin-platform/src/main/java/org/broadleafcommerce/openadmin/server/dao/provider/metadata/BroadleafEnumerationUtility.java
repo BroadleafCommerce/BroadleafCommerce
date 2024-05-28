@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,24 +34,26 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
- * 
- *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blBroadleafEnumerationUtility")
 public class BroadleafEnumerationUtility {
+
     @SuppressWarnings("rawtypes")
-    public List<Tuple<String, String>> getEnumerationValues(String broadleafEnumerationClass, DynamicEntityDao dynamicEntityDao) {
+    public List<Tuple<String, String>> getEnumerationValues(
+            String broadleafEnumerationClass,
+            DynamicEntityDao dynamicEntityDao
+    ) {
         try {
             Map<String, String> enumVals;
-            Class<?> broadleafEnumeration = Class.forName(broadleafEnumerationClass);  
-    
+            Class<?> broadleafEnumeration = Class.forName(broadleafEnumerationClass);
+
             Method typeMethod = broadleafEnumeration.getMethod("getType");
             Method friendlyTypeMethod = broadleafEnumeration.getMethod("getFriendlyType");
             Field types = dynamicEntityDao.getFieldManager().getField(broadleafEnumeration, "TYPES");
-            
+
             if (Comparable.class.isAssignableFrom(broadleafEnumeration)) {
-                enumVals = new LinkedHashMap<String, String>();
+                enumVals = new LinkedHashMap<>();
                 if (types != null) {
                     Map<Object, ?> typesMap = getTypesMap(types, broadleafEnumeration);
                     for (final Object value : getSortedEnumValues(typesMap)) {
@@ -69,16 +71,19 @@ public class BroadleafEnumerationUtility {
                     Field[] fields = dynamicEntityDao.getAllFields(broadleafEnumeration);
                     for (Field field : fields) {
                         boolean isStatic = Modifier.isStatic(field.getModifiers());
-                        if (isStatic && field.getType().isAssignableFrom(broadleafEnumeration)){
-                            enumVals.put((String) friendlyTypeMethod.invoke(field.get(null)), (String) typeMethod.invoke(field.get(null)));
+                        if (isStatic && field.getType().isAssignableFrom(broadleafEnumeration)) {
+                            enumVals.put(
+                                    (String) friendlyTypeMethod.invoke(field.get(null)),
+                                    (String) typeMethod.invoke(field.get(null))
+                            );
                         }
                     }
                 }
             }
-            
-            List<Tuple<String, String>> enumerationValues = new ArrayList<Tuple<String, String>>();
+
+            List<Tuple<String, String>> enumerationValues = new ArrayList<>();
             for (String key : enumVals.keySet()) {
-                Tuple<String, String> t = new Tuple<String, String>(enumVals.get(key), key);
+                Tuple<String, String> t = new Tuple<>(enumVals.get(key), key);
                 enumerationValues.add(t);
             }
             return enumerationValues;
@@ -96,7 +101,9 @@ public class BroadleafEnumerationUtility {
 
     protected Collection<Object> getSortedEnumValues(final Map<Object, ?> typesMap) {
         //noinspection unchecked
-        final ArrayList<Comparable<Object>> broadleafEnumerationTypes = new ArrayList<>((Collection<Comparable<Object>>) typesMap.values());
+        final ArrayList<Comparable<Object>> broadleafEnumerationTypes = new ArrayList<>(
+                (Collection<Comparable<Object>>) typesMap.values()
+        );
         Collections.sort(broadleafEnumerationTypes);
 
         return broadleafEnumerationTypes.stream()

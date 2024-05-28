@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,136 +26,145 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * The Interface TaxDetail. A TaxDetail object stores relevant tax information 
+ * The Interface TaxDetail. A TaxDetail object stores relevant tax information
  * including a tax type, amount, and rate.
- *
  */
 public interface TaxDetail extends Serializable, MultiTenantCloneable<TaxDetail> {
 
     /**
      * Gets the id.
-     * 
+     *
      * @return the id
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the id.
-     * 
+     *
      * @param id the new id
      */
-    public void setId(Long id);
-    
+    void setId(Long id);
+
     /**
      * Gets the tax type
-     * 
+     *
      * @return the tax type
      */
-    public TaxType getType();
+    TaxType getType();
 
     /**
      * Sets the tax type
-     * 
+     *
      * @param type the tax type
      */
-    public void setType(TaxType type);
+    void setType(TaxType type);
 
     /**
      * Gets the tax amount
-     * 
+     *
      * @return the tax amount
      */
-    public Money getAmount();
+    Money getAmount();
 
     /**
      * Sets the tax amount
-     * 
+     *
      * @param amount the tax amount
      */
-    public void setAmount(Money amount);
+    void setAmount(Money amount);
 
     /**
      * Gets the tax rate
-     * 
+     *
      * @return the rate
      */
-    public BigDecimal getRate();
+    BigDecimal getRate();
 
     /**
      * Sets the tax rate.
-     * 
-     * @param name the tax rate
+     *
+     * @param rate name the tax rate
      */
-    public void setRate(BigDecimal rate);
-    
-    public BroadleafCurrency getCurrency();
+    void setRate(BigDecimal rate);
 
-    public void setCurrency(BroadleafCurrency currency);
+    BroadleafCurrency getCurrency();
+
+    void setCurrency(BroadleafCurrency currency);
 
     /**
-     * Returns the configuration of the module that was used to calculate taxes. Allows 
+     * Returns the configuration of the module that was used to calculate taxes. Allows
      * for tracking, especially when more than one module may be used by the system.
+     *
      * @return
      */
-    public ModuleConfiguration getModuleConfiguration();
+    ModuleConfiguration getModuleConfiguration();
 
     /**
-     * Sets the module configuration that was used to calculate taxes.  Allows for tracking 
-     * of which module was used, especially in cases where more than one module is available 
+     * Sets the module configuration that was used to calculate taxes.  Allows for tracking
+     * of which module was used, especially in cases where more than one module is available
      * over time.
+     *
      * @param config
      */
-    public void setModuleConfiguration(ModuleConfiguration config);
-
-    /**
-     * Optionally sets the name of the tax jurisdiction.
-     * @param jurisdiction
-     */
-    public void setJurisdictionName(String jurisdiction);
+    void setModuleConfiguration(ModuleConfiguration config);
 
     /**
      * Returns the name of the tax jurisdiction. May return null.
+     *
      * @return
      */
-    public String getJurisdictionName();
+    String getJurisdictionName();
 
     /**
-     * Sets the name of the tax, if applicable.
-     * @param taxName
+     * Optionally sets the name of the tax jurisdiction.
+     *
+     * @param jurisdiction
      */
-    public void setTaxName(String taxName);
+    void setJurisdictionName(String jurisdiction);
 
     /**
      * Gets the name of the tax. May return null.
+     *
      * @return
      */
-    public String getTaxName();
+    String getTaxName();
 
     /**
-     * Sets the region, as a string. Typically this will be a 
+     * Sets the name of the tax, if applicable.
+     *
+     * @param taxName
+     */
+    void setTaxName(String taxName);
+
+    /**
+     * Returns the name of the region used for tax calculation. May
+     * return null.
+     *
+     * @return
+     */
+    String getRegion();
+
+    /**
+     * Sets the region, as a string. Typically this will be a
      * State, Province, or County.
+     *
      * @param region
      */
-    public void setRegion(String region);
+    void setRegion(String region);
 
     /**
-     * Returns the name of the region used for tax calculation. May 
-     * return null.
+     * Returns the country, as a string, used for tax calculation.
+     * May return null.
+     *
      * @return
      */
-    public String getRegion();
+    String getCountry();
 
     /**
      * Sets the country used for tax calculation.
+     *
      * @param country
      */
-    public void setCountry(String country);
-
-    /**
-     * Returns the country, as a string, used for tax calculation. 
-     * May return null.
-     * @return
-     */
-    public String getCountry();
+    void setCountry(String country);
 
 }

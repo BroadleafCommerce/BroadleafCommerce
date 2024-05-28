@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,23 +46,27 @@ public class OrderMultishipOptionDaoImpl implements OrderMultishipOptionDao {
 
     @Override
     public List<OrderMultishipOption> readOrderMultishipOptions(final Long orderId) {
-        TypedQuery<OrderMultishipOption> query = em.createNamedQuery("BC_READ_MULTISHIP_OPTIONS_BY_ORDER_ID", OrderMultishipOption.class);
+        TypedQuery<OrderMultishipOption> query = em.createNamedQuery(
+                "BC_READ_MULTISHIP_OPTIONS_BY_ORDER_ID", OrderMultishipOption.class
+        );
         query.setParameter("orderId", orderId);
         return query.getResultList();
     }
-    
+
     @Override
     public List<OrderMultishipOption> readOrderItemOrderMultishipOptions(final Long orderItemId) {
-        TypedQuery<OrderMultishipOption> query = em.createNamedQuery("BC_READ_MULTISHIP_OPTIONS_BY_ORDER_ITEM_ID", OrderMultishipOption.class);
+        TypedQuery<OrderMultishipOption> query = em.createNamedQuery(
+                "BC_READ_MULTISHIP_OPTIONS_BY_ORDER_ITEM_ID", OrderMultishipOption.class
+        );
         query.setParameter("orderItemId", orderItemId);
         return query.getResultList();
     }
-    
+
     @Override
     public OrderMultishipOption create() {
         return (OrderMultishipOption) entityConfiguration.createEntityInstance(OrderMultishipOption.class.getName());
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public void deleteAll(List<OrderMultishipOption> options) {
@@ -70,4 +74,5 @@ public class OrderMultishipOptionDaoImpl implements OrderMultishipOptionDao {
             em.remove(option);
         }
     }
+
 }

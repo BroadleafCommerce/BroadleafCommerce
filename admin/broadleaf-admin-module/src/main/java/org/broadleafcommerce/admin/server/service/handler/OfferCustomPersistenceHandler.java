@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -69,18 +69,12 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import jakarta.annotation.Resource;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.From;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
 
 /**
  * Created by Jon on 11/23/15.
  */
 @Component("blOfferCustomPersistenceHandler")
 public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {
-
-    private static final Log LOG = LogFactory.getLog(OfferCustomPersistenceHandler.class);
 
     protected static final String SHOW_ADVANCED_VISIBILITY_OPTIONS = "showAdvancedVisibilityOptions";
     protected static final String QUALIFIERS_CAN_BE_QUALIFIERS = "qualifiersCanBeQualifiers";
@@ -91,10 +85,9 @@ public class OfferCustomPersistenceHandler extends ClassCustomPersistenceHandler
     protected static final String IS_ACTIVE = "isActive";
     protected static final String IS_TIERED_OFFER = "embeddableAdvancedOffer.isTieredOffer";
     protected static final String OFFER_VALUE = "value";
-
+    private static final Log LOG = LogFactory.getLog(OfferCustomPersistenceHandler.class);
     @Value("${admin.offer.isactive.filter:false}")
     protected boolean isActiveFilter = false;
-
 
     @Resource(name = "blOfferCustomServiceExtensionManager")
     protected OfferCustomServiceExtensionManager extensionManager;

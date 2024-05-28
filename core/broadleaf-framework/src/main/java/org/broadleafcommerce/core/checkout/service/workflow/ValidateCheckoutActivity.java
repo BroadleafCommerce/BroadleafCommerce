@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,10 +35,10 @@ import jakarta.annotation.Resource;
 public class ValidateCheckoutActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
     public static final int ORDER = 500;
-    
+
     @Resource(name = "blValidateCheckoutActivityExtensionManager")
     protected ValidateCheckoutActivityExtensionManager extensionManager;
-    
+
     public ValidateCheckoutActivity() {
         setOrder(ORDER);
     }
@@ -47,7 +47,9 @@ public class ValidateCheckoutActivity extends BaseActivity<ProcessContext<Checko
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         ExtensionResultHolder<Exception> resultHolder = new ExtensionResultHolder<>();
         resultHolder.setResult(null);
-        ExtensionResultStatusType result = extensionManager.getProxy().validateCheckout(context.getSeedData(), resultHolder);
+        ExtensionResultStatusType result = extensionManager.getProxy().validateCheckout(
+                context.getSeedData(), resultHolder
+        );
         if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
             if (resultHolder.getResult() != null) {
                 throw resultHolder.getResult();
@@ -56,4 +58,5 @@ public class ValidateCheckoutActivity extends BaseActivity<ProcessContext<Checko
 
         return context;
     }
+
 }

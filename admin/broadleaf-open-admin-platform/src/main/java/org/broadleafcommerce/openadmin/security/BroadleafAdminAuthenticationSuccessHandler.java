@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,16 +41,18 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    protected String loginUri = "/login"; // default login uri but can be overridden in admin security config
-    private RequestCache requestCache = new HttpSessionRequestCache();
     private static final String successUrlParameter = "successUrl=";
-
+    protected String loginUri = "/login"; // default login uri but can be overridden in admin security config
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
+    private RequestCache requestCache = new HttpSessionRequestCache();
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) throws ServletException, IOException {
+    public void onAuthenticationSuccess(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication
+    ) throws ServletException, IOException {
         AdminUser user = adminRemoteSecurityService.getPersistentAdminUser();
         if (user != null && user.getLastUsedSandBoxId() != null) {
             request.getSession(false).setAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, user.getLastUsedSandBoxId());
@@ -63,7 +65,8 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
         }
 
         String targetUrlParameter = getTargetUrlParameter();
-        if (isAlwaysUseDefaultTargetUrl() || (targetUrlParameter != null && StringUtils.hasText(request.getParameter(targetUrlParameter)))) {
+        if (isAlwaysUseDefaultTargetUrl() || (targetUrlParameter != null
+                && StringUtils.hasText(request.getParameter(targetUrlParameter)))) {
             requestCache.removeRequest(request, response);
             super.onAuthenticationSuccess(request, response, authentication);
             return;
@@ -107,6 +110,7 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
 
     /**
      * Given the instance attribute loginUri, removes the loginUri from the passed url when present
+     *
      * @param url
      * @return String
      */
@@ -129,4 +133,5 @@ public class BroadleafAdminAuthenticationSuccessHandler extends SimpleUrlAuthent
     public void setLoginUri(String loginUri) {
         this.loginUri = loginUri;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,7 +38,7 @@ public interface CatalogService {
     Product saveProduct(Product product);
 
     Product findProductById(Long productId);
-    
+
     Product findProductByExternalId(String externalId);
 
     List<Product> findProductsByName(String searchName);
@@ -46,9 +46,10 @@ public interface CatalogService {
     /**
      * Find a subset of {@code Product} instances whose name starts with
      * or is equal to the passed in search parameter.  Res
+     *
      * @param searchName
-     * @param limit the maximum number of results
-     * @param offset the starting point in the record set
+     * @param limit      the maximum number of results
+     * @param offset     the starting point in the record set
      * @return the list of product instances that fit the search criteria
      */
     List<Product> findProductsByName(String searchName, int limit, int offset);
@@ -57,7 +58,7 @@ public interface CatalogService {
 
     /**
      * Given a category and a ProudctSearchCriteria, returns the appropriate matching products
-     * 
+     *
      * @param category
      * @param searchCriteria
      * @return the matching products
@@ -65,18 +66,17 @@ public interface CatalogService {
     List<Product> findFilteredActiveProductsByCategory(Category category, SearchCriteria searchCriteria);
 
     /**
-     * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, SearchCriteria)}
-     * 
      * @param category
      * @param currentDate
      * @param searchCriteria
      * @return
+     * @deprecated Use {@link #findFilteredActiveProductsByCategory(Category, SearchCriteria)}
      */
     List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, SearchCriteria searchCriteria);
-    
+
     /**
      * Given a search query and a SearchCriteria, returns the appropriate matching products
-     * 
+     *
      * @param query
      * @param searchCriteria
      * @return the matching products
@@ -90,7 +90,7 @@ public interface CatalogService {
 
     /**
      * Same as {@link #findActiveProductsByCategory(Category)} but allowing for pagination.
-     * 
+     *
      * @param category
      * @param limit
      * @param offset
@@ -106,7 +106,7 @@ public interface CatalogService {
 
     /**
      * Find all ProductBundles whose automatic attribute is set to true.
-     *
+     * <p>
      * Automatic product bundles are collections of products that can receive special
      * pricing.  With automatic product bundles, if a customer adds all of the
      * components of the bundle individually to the cart, they will automatically get
@@ -116,9 +116,8 @@ public interface CatalogService {
      */
     List<ProductBundle> findAutomaticProductBundles();
 
-
     Category saveCategory(Category category);
-    
+
     void removeCategory(Category category);
 
     void removeProduct(Product product);
@@ -131,7 +130,7 @@ public interface CatalogService {
 
     /**
      * Retrieve a {@code Category} instance based on its name property.
-     *
+     * <p>
      * Broadleaf allows more than one category to have the same name. Calling
      * this method could produce an exception in such situations. Use
      * {@link #findCategoriesByName(String)} instead.
@@ -155,8 +154,8 @@ public interface CatalogService {
      * Retrieve a list of {@code Category} instances based on the search criteria
      *
      * @param categoryName the name of the category to search by
-     * @param limit the maximum number of results to return
-     * @param offset the starting point of the records to return
+     * @param limit        the maximum number of results to return
+     * @param offset       the starting point of the records to return
      * @return a list of category instances that match the search criteria
      */
     List<Category> findCategoriesByName(String categoryName, int limit, int offset);
@@ -174,7 +173,7 @@ public interface CatalogService {
     List<Product> findProductsForCategory(Category category, int limit, int offset);
 
     Sku saveSku(Sku sku);
-    
+
     SkuFee saveSkuFee(SkuFee fee);
 
     List<Sku> findAllSkus();
@@ -189,7 +188,7 @@ public interface CatalogService {
 
     /**
      * Method to look up a Sku by the Universal Product Code (UPC).
-     * 
+     *
      * @param upc
      * @return
      */
@@ -206,9 +205,9 @@ public interface CatalogService {
     Map<String, List<Long>> getChildCategoryURLMapByCategoryId(Long categoryId);
 
     Category createCategory();
-    
+
     Sku createSku();
-    
+
     Product createProduct(ProductType productType);
 
     Long findTotalCategoryCount();
@@ -220,19 +219,19 @@ public interface CatalogService {
     List<Category> findActiveSubCategoriesByCategory(Category category);
 
     List<Category> findActiveSubCategoriesByCategory(Category category, int limit, int offset);
-    
+
     List<ProductOption> readAllProductOptions();
-    
+
     ProductOption saveProductOption(ProductOption option);
-    
+
     ProductOption findProductOptionById(Long productOptionId);
-    
+
     ProductOptionValue findProductOptionValueById(Long productOptionValueId);
-    
+
     /**
      * Returns a category associated with the passed in URI or null if no Category is
      * mapped to this URI.
-     * 
+     *
      * @param uri
      * @return
      */
@@ -243,10 +242,10 @@ public interface CatalogService {
     /**
      * Returns a product associated with the passed in URI or null if no Product is
      * mapped to this URI.
-     * 
+     *
      * @param uri
      * @return
-     */    
+     */
     Product findProductByURI(String uri);
 
     Product findOriginalProductByURI(String uri);
@@ -254,10 +253,10 @@ public interface CatalogService {
     /**
      * Returns a sku associated with the passed in URI or null if no sku is
      * mapped to this URI.
-     * 
+     *
      * @param uri
      * @return
-     */    
+     */
     Sku findSkuByURI(String uri);
 
     /**

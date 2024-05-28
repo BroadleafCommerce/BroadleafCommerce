@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,12 +35,11 @@ import jakarta.annotation.PostConstruct;
 public class ActivityStateManagerImpl<T extends ProcessContext<?>> implements ActivityStateManager<T> {
 
     private static ActivityStateManager ACTIVITY_STATE_MANAGER;
+    protected Map<String, Stack<StateContainer>> stateMap = Collections.synchronizedMap(new HashMap<String, Stack<StateContainer>>());
 
     public static ActivityStateManager getStateManager() {
         return ACTIVITY_STATE_MANAGER;
     }
-
-    protected Map<String, Stack<StateContainer>> stateMap = Collections.synchronizedMap(new HashMap<String, Stack<StateContainer>>());
 
     @PostConstruct
     public void init() {
@@ -57,7 +56,9 @@ public class ActivityStateManagerImpl<T extends ProcessContext<?>> implements Ac
     @Override
     public void clearRegionState(String region) {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
-        Stack<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
+        Stack<StateContainer> containers = stateMap.get(
+                rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId()
+        );
         if (containers != null) {
             while (!containers.empty()) {
                 String myRegion = containers.pop().getRegion();
@@ -74,14 +75,27 @@ public class ActivityStateManagerImpl<T extends ProcessContext<?>> implements Ac
     }
 
     @Override
-    public void registerState(Activity<T> activity, T processContext, RollbackHandler<T> rollbackHandler, Map<String, Object> stateItems) {
+    public void registerState(
+            Activity<T> activity,
+            T processContext,
+            RollbackHandler<T> rollbackHandler,
+            Map<String, Object> stateItems
+    ) {
         registerState(activity, processContext, null, rollbackHandler, stateItems);
     }
 
     @Override
-    public void registerState(Activity<T> activity, T processContext, String region, RollbackHandler<T> rollbackHandler, Map<String, Object> stateItems) {
+    public void registerState(
+            Activity<T> activity,
+            T processContext,
+            String region,
+            RollbackHandler<T> rollbackHandler,
+            Map<String, Object> stateItems
+    ) {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
-        Stack<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
+        Stack<StateContainer> containers = stateMap.get(
+                rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId()
+        );
         if (containers == null) {
             containers = new Stack<>();
             stateMap.put(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId(), containers);
@@ -100,11 +114,17 @@ public class ActivityStateManagerImpl<T extends ProcessContext<?>> implements Ac
     @Override
     public void rollbackAllState() throws RollbackFailureException {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
-        Stack<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
+        Stack<StateContainer> containers = stateMap.get(
+                rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId()
+        );
         if (containers != null) {
             while (!containers.empty()) {
                 StateContainer stateContainer = containers.pop();
-                stateContainer.getRollbackHandler().rollbackState(stateContainer.getActivity(), stateContainer.getProcessContext(), stateContainer.getStateItems());
+                stateContainer.getRollbackHandler().rollbackState(
+                        stateContainer.getActivity(),
+                        stateContainer.getProcessContext(),
+                        stateContainer.getStateItems()
+                );
             }
         }
     }
@@ -112,12 +132,19 @@ public class ActivityStateManagerImpl<T extends ProcessContext<?>> implements Ac
     @Override
     public void rollbackRegionState(String region) throws RollbackFailureException {
         RollbackStateLocal rollbackStateLocal = getRollbackStateLocal();
-        Stack<StateContainer> containers = stateMap.get(rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId());
+        Stack<StateContainer> containers = stateMap.get(
+                rollbackStateLocal.getThreadId() + "_" + rollbackStateLocal.getWorkflowId()
+        );
         if (containers != null) {
             while (!containers.empty()) {
                 StateContainer stateContainer = containers.pop();
-                if ((region == null && stateContainer.getRegion() == null) || (region != null && region.equals(stateContainer.getRegion()))) {
-                    stateContainer.getRollbackHandler().rollbackState(stateContainer.getActivity(), stateContainer.getProcessContext(), stateContainer.getStateItems());
+                if ((region == null && stateContainer.getRegion() == null)
+                        || (region != null && region.equals(stateContainer.getRegion()))) {
+                    stateContainer.getRollbackHandler().rollbackState(
+                            stateContainer.getActivity(),
+                            stateContainer.getProcessContext(),
+                            stateContainer.getStateItems()
+                    );
                 }
             }
         }
@@ -179,4 +206,5 @@ public class ActivityStateManagerImpl<T extends ProcessContext<?>> implements Ac
             this.processContext = processContext;
         }
     }
+
 }

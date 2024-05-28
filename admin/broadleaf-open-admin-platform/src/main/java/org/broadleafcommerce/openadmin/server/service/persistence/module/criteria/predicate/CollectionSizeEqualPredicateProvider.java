@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,8 +35,15 @@ import jakarta.persistence.criteria.Predicate;
 public class CollectionSizeEqualPredicateProvider implements PredicateProvider<Collection, Integer> {
 
     @Override
-    public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root, String ceilingEntity,
-                                    String fullPropertyName, Path<Collection> explicitPath, List<Integer> directValues) {
+    public Predicate buildPredicate(
+            CriteriaBuilder builder,
+            FieldPathBuilder fieldPathBuilder,
+            From root,
+            String ceilingEntity,
+            String fullPropertyName,
+            Path<Collection> explicitPath,
+            List<Integer> directValues
+    ) {
         Path<Collection> path;
         if (explicitPath != null) {
             path = explicitPath;
@@ -45,4 +52,5 @@ public class CollectionSizeEqualPredicateProvider implements PredicateProvider<C
         }
         return builder.equal(builder.size(path), directValues.get(0));
     }
+
 }

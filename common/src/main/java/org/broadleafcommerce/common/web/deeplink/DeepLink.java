@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,7 +20,7 @@ package org.broadleafcommerce.common.web.deeplink;
 /**
  * DTO Class that contains enough information to allow the client site application to generate
  * the necessary information for a link to an admin screen
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class DeepLink {
@@ -33,7 +33,7 @@ public class DeepLink {
     /* ******************* *
      * WITH FLUID BUILDERS *
      * ******************* */
-    
+
     public DeepLink withAdminBaseUrl(String adminBaseUrl) {
         setAdminBaseUrl(adminBaseUrl);
         return this;
@@ -48,7 +48,7 @@ public class DeepLink {
         setDisplayText(displayText);
         return this;
     }
-    
+
     public DeepLink withSourceObject(Object sourceObject) {
         setSourceObject(sourceObject);
         return this;
@@ -58,6 +58,14 @@ public class DeepLink {
      * CUSTOM GETTERS / SETTERS *
      * ************************ */
 
+    public String getFullUrl() {
+        return adminBaseUrl + "/" + urlFragment;
+    }
+
+    public String getAdminBaseUrl() {
+        return adminBaseUrl;
+    }
+
     public void setAdminBaseUrl(String adminBaseUrl) {
         if (adminBaseUrl.charAt(adminBaseUrl.length() - 1) == '/') {
             adminBaseUrl = adminBaseUrl.substring(0, adminBaseUrl.length() - 1);
@@ -65,27 +73,19 @@ public class DeepLink {
         this.adminBaseUrl = adminBaseUrl;
     }
 
+    /* ************************* *
+     * GENERIC GETTERS / SETTERS *
+     * ************************* */
+
+    public String getUrlFragment() {
+        return urlFragment;
+    }
+
     public void setUrlFragment(String urlFragment) {
         if (urlFragment.charAt(0) == '/') {
             urlFragment = urlFragment.substring(1);
         }
         this.urlFragment = urlFragment;
-    }
-    
-    public String getFullUrl() {
-        return adminBaseUrl + "/" + urlFragment;
-    }
-
-    /* ************************* *
-     * GENERIC GETTERS / SETTERS *
-     * ************************* */
-
-    public String getAdminBaseUrl() {
-        return adminBaseUrl;
-    }
-
-    public String getUrlFragment() {
-        return urlFragment;
     }
 
     public String getDisplayText() {
@@ -95,13 +95,13 @@ public class DeepLink {
     public void setDisplayText(String displayText) {
         this.displayText = displayText;
     }
-    
+
     public Object getSourceObject() {
         return sourceObject;
     }
-    
+
     public void setSourceObject(Object sourceObject) {
         this.sourceObject = sourceObject;
     }
-    
+
 }

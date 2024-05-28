@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,34 +43,32 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Helper class for some common rule functions that can be called from mvel as well as utility functions
- * to make calling MVEL rules within Broadleaf easier.  
- * 
- * An instance of this class is available to the mvel runtime under the variable name MvelHelper with the 
+ * to make calling MVEL rules within Broadleaf easier.
+ * <p>
+ * An instance of this class is available to the mvel runtime under the variable name MvelHelper with the
  * following functions:
- * 
- *    convertField(type, fieldValue)
- *    toUpperCase(value)
+ * <p>
+ * convertField(type, fieldValue)
+ * toUpperCase(value)
  *
  * @author Jeff Fischer
  */
 public class MvelHelper {
 
-    private static final Map<String, Serializable> DEFAULT_EXPRESSION_CACHE = new EfficientLRUMap<String, Serializable>(5000);
-    private static final Log LOG = LogFactory.getLog(MvelHelper.class);
-
-    private static boolean TEST_MODE = false;
-    
     public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
-
     // The following attribute is set in BroadleafProcessURLFilter
     public static final String REQUEST_DTO = "blRequestDTO";
+    private static final Map<String, Serializable> DEFAULT_EXPRESSION_CACHE = new EfficientLRUMap<String, Serializable>(5000);
+    private static final Log LOG = LogFactory.getLog(MvelHelper.class);
+    private static boolean TEST_MODE = false;
 
     static {
         System.setProperty("mvel2.disable.jit", "true");
     }
 
     /**
-     * Converts a field to the specified type.    Useful when 
+     * Converts a field to the specified type.    Useful when
+     *
      * @param type
      * @param fieldValue
      * @return
@@ -90,7 +88,8 @@ public class MvelHelper {
                 }
             } else if (type.equals(SupportedFieldType.INTEGER.toString())) {
                 return Integer.parseInt(fieldValue);
-            } else if (type.equals(SupportedFieldType.MONEY.toString()) || type.equals(SupportedFieldType.DECIMAL.toString())) {
+            } else if (type.equals(SupportedFieldType.MONEY.toString())
+                    || type.equals(SupportedFieldType.DECIMAL.toString())) {
                 return new BigDecimal(fieldValue);
             }
         } catch (ParseException e) {
@@ -120,14 +119,14 @@ public class MvelHelper {
     }
 
     /**
-     * Returns true if the passed in rule passes based on the passed in ruleParameters.   
-     * 
+     * Returns true if the passed in rule passes based on the passed in ruleParameters.
+     * <p>
      * Also returns true if the rule is blank or null.
-     * 
+     * <p>
      * Calls the {@link #evaluateRule(String, Map, Map)} method passing in the DEFAULT_EXPRESSION_CACHE.
      * For systems that need to cache a large number of rule expressions, an alternate cache can be passed in.   The
      * default cache is able to cache up to 1,000 rule expressions which should suffice for most systems.
-     * 
+     *
      * @param rule
      * @param ruleParameters
      * @return
@@ -137,28 +136,35 @@ public class MvelHelper {
     }
 
     /**
-     * Evaluates the passed in rule given the passed in parameters.   
-     * 
+     * Evaluates the passed in rule given the passed in parameters.
+     *
      * @param rule
      * @param ruleParameters
      * @return
      */
-    public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
-            Map<String, Serializable> expressionCache) {
+    public static boolean evaluateRule(
+            String rule, Map<String,
+            Object> ruleParameters,
+            Map<String, Serializable> expressionCache
+    ) {
         return evaluateRule(rule, ruleParameters, expressionCache, null);
     }
-    
+
     /**
      * @param rule
      * @param ruleParameters
      * @param expressionCache
      * @param additionalContextImports additional imports to give to the {@link ParserContext} besides "MVEL" ({@link MVEL} and
-     * "MvelHelper" ({@link MvelHelper}) since they are automatically added 
+     *                                 "MvelHelper" ({@link MvelHelper}) since they are automatically added
      * @return
      */
-    public static boolean evaluateRule(String rule, Map<String, Object> ruleParameters,
-        Map<String, Serializable> expressionCache, Map<String, Class<?>> additionalContextImports) {
-        
+    public static boolean evaluateRule(
+            String rule,
+            Map<String, Object> ruleParameters,
+            Map<String, Serializable> expressionCache,
+            Map<String, Class<?>> additionalContextImports
+    ) {
+
         // Null or empty is a match
         if (rule == null || "".equals(rule)) {
             return true;
@@ -178,7 +184,7 @@ public class MvelHelper {
                         context.addImport(entry.getKey(), entry.getValue());
                     }
                 }
-                
+
                 String modifiedRule = modifyExpression(rule, ruleParameters, context);
 
                 synchronized (expressionCache) {
@@ -187,7 +193,7 @@ public class MvelHelper {
                 }
             }
 
-            Map<String, Object> mvelParameters = new HashMap<String, Object>();
+            Map<String, Object> mvelParameters = new HashMap<>();
 
             populateParamsFromMap(ruleParameters, mvelParameters);
 
@@ -209,12 +215,12 @@ public class MvelHelper {
             }
         }
     }
-    
+
     /**
      * <p>
      * Provides a hook point to modify the final expression before it's built. By default, this looks for attribute
      * maps and replaces them such that it does string comparison.
-     * 
+     *
      * <p>
      * For example, given an expression like getProductAttributes()['somekey'] == 'someval', getProductAttributes()['somekey']
      * actually returns a ProductAttribute object, not a String, so the comparison is wrong. Instead, we actually want
@@ -231,7 +237,10 @@ public class MvelHelper {
     protected static String modifyExpression(String rule, Map<String, Object> ruleParameters, ParserContext context) {
         String modifiedExpression = rule;
         for (String attributeMap : getRuleAttributeMaps()) {
-            modifiedExpression = modifiedExpression.replaceAll(attributeMap + "\\(\\)\\[(.*?)\\](?!\\.\\?value)", attributeMap + "().?get($1).?value");
+            modifiedExpression = modifiedExpression.replaceAll(
+                    attributeMap + "\\(\\)\\[(.*?)\\](?!\\.\\?value)",
+                    attributeMap + "().?get($1).?value"
+            );
         }
         return modifiedExpression;
     }
@@ -242,39 +251,39 @@ public class MvelHelper {
      */
     protected static String[] getRuleAttributeMaps() {
         // intentionally left out pricing context getPricingContextAttributes because that's a Map<String, String>
-        return new String[]{ "getProductAttributes",
-            "getCategoryAttributesMap",
-            "getSkuAttributes",
-            "getOrderItemAttributes",
-            "getCustomerAttributes",
-            // Map<String, PageAttribute>
-            "getAdditionalAttributes",
-            // Map<String, AdminUserAttribute>
-            "getAdditionalFields"}; 
+        return new String[]{"getProductAttributes",
+                "getCategoryAttributesMap",
+                "getSkuAttributes",
+                "getOrderItemAttributes",
+                "getCustomerAttributes",
+                // Map<String, PageAttribute>
+                "getAdditionalAttributes",
+                // Map<String, AdminUserAttribute>
+                "getAdditionalFields"};
     }
 
     /**
      * When true, LOG.info statement will be suppressed.   Should only be set from within MvelHelperTest.
      * Prevents an error from displaying during unit test runs.
+     *
      * @param testMode
      */
     public static void setTestMode(boolean testMode) {
         TEST_MODE = testMode;
     }
-    
+
     /**
      * Builds parameters using time, request, customer, and cart.
-     * 
+     * <p>
      * Should be called from within a valid web request.
      *
-     * @param request
      * @return
      */
     public static Map<String, Object> buildMvelParameters() {
-        Map<String, Object> mvelParameters = new HashMap<String, Object>();
+        Map<String, Object> mvelParameters = new HashMap<>();
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null && brc.getRequest() != null) {
-           TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
+            TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
             HttpServletRequest request = brc.getRequest();
             RequestDTO requestDto = brc.getRequestDTO();
             mvelParameters.put("time", timeDto);
@@ -282,18 +291,19 @@ public class MvelHelper {
 
             Map<String, Object> blcRuleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
             populateParamsFromMap(blcRuleMap, mvelParameters);
-        }else if(brc != null) {
+        } else if (brc != null) {
             populateParamsFromMap((Map<String, Object>) brc.getAdditionalProperties().get("blRuleMap"), mvelParameters);
         }
 
-       return mvelParameters;
-   }
+        return mvelParameters;
+    }
 
-    private static void populateParamsFromMap(Map<String, Object> blcRuleMap, Map<String, Object> mvelParameters) {
+    protected static void populateParamsFromMap(Map<String, Object> blcRuleMap, Map<String, Object> mvelParameters) {
         if (blcRuleMap != null) {
             for (String mapKey : blcRuleMap.keySet()) {
                 mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
             }
         }
     }
+
 }

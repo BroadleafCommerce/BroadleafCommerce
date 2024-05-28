@@ -10,14 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.web.form.entity;
-
-
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -30,7 +28,7 @@ public class CodeField extends Field {
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
     /* ************************** */
-    
+
     public String getFileType() {
         return fileType;
     }
@@ -38,11 +36,11 @@ public class CodeField extends Field {
     public void setFileType(String fileType) {
         this.fileType = fileType;
     }
-    
+
     public String getFetchUrlSuffix() {
         return fetchUrlSuffix;
     }
-    
+
     public void setFetchUrlSuffix(String fetchUrlSuffix) {
         this.fetchUrlSuffix = fetchUrlSuffix;
     }

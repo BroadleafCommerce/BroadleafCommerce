@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,19 +25,19 @@ import java.util.List;
 /**
  * Convenience passthrough for {@link CustomPersistenceHandlerAdapter} that provides a method for class detection
  * based on the provided constructor.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class ClassCustomPersistenceHandlerAdapter extends CustomPersistenceHandlerAdapter {
-    
-    List<Class<?>> handledClasses = new ArrayList<Class<?>>();
-    
+
+    List<Class<?>> handledClasses = new ArrayList<>();
+
     public ClassCustomPersistenceHandlerAdapter(Class<?>... classes) {
         for (Class<?> clazz : classes) {
             handledClasses.add(clazz);
         }
     }
-    
+
     protected boolean classMatches(PersistencePackage pkg) {
         String ceilingEntityFullyQualifiedClassname = pkg.getCeilingEntityFullyQualifiedClassname();
         for (Class<?> clazz : handledClasses) {

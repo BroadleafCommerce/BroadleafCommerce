@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,7 +51,7 @@ import jakarta.annotation.Resource;
 @Scope("prototype")
 public class ProductParentCategoryFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
 
-    @Resource(name="blProductParentCategoryFieldPersistenceProviderExtensionManager")
+    @Resource(name = "blProductParentCategoryFieldPersistenceProviderExtensionManager")
     protected ProductParentCategoryFieldPersistenceProviderExtensionManager extensionManager;
 
     @Override
@@ -61,7 +61,9 @@ public class ProductParentCategoryFieldPersistenceProvider extends FieldPersiste
         }
         boolean handled = false;
         if (extensionManager != null) {
-            ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategory(populateValueRequest.getProperty(), (Product) instance);
+            ExtensionResultStatusType result = extensionManager.getProxy().manageParentCategory(
+                    populateValueRequest.getProperty(), (Product) instance
+            );
             handled = ExtensionResultStatusType.NOT_HANDLED != result;
         }
         if (!handled || BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
@@ -136,6 +138,7 @@ public class ProductParentCategoryFieldPersistenceProvider extends FieldPersiste
 
     @Override
     public int getOrder() {
-            return Ordered.HIGHEST_PRECEDENCE + 100;
-        }
+        return Ordered.HIGHEST_PRECEDENCE + 100;
+    }
+
 }

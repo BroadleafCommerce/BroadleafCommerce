@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.extensibility.jpa;
 
 /**
  * Represents the columns that get weaved into entities that are marked as site-specific.
- * 
+ *
  * @author Jeff Fischer
  */
 public interface SiteDiscriminator extends Discriminatable {
@@ -27,12 +27,13 @@ public interface SiteDiscriminator extends Discriminatable {
     /**
      * @return the site discriminator
      */
-    public Long getSiteDiscriminator();
+    Long getSiteDiscriminator();
 
     /**
      * Sets the site discriminator
-     * 
+     *
      * @param siteDiscriminator
      */
-    public void setSiteDiscriminator(Long siteDiscriminator);
+    void setSiteDiscriminator(Long siteDiscriminator);
+
 }

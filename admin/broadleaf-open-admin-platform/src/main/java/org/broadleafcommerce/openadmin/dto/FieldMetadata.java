@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,12 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 
  * @author jfischer
- *
  */
 public abstract class FieldMetadata implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     private String inheritedFromType;
@@ -51,7 +49,7 @@ public abstract class FieldMetadata implements Serializable {
     private Integer groupOrder;
     private Boolean lazyFetch;
     private Boolean manualFetch;
-    
+
     //temporary fields
     private Boolean childrenExcluded;
     private String targetClass;
@@ -63,7 +61,7 @@ public abstract class FieldMetadata implements Serializable {
     private String currencyCodeField;
 
     //Additional metadata not supported as first class
-    private Map<String, Object> additionalMetadata = new HashMap<String, Object>();
+    private Map<String, Object> additionalMetadata = new HashMap<>();
 
     public String[] getAvailableToTypes() {
         return availableToTypes;

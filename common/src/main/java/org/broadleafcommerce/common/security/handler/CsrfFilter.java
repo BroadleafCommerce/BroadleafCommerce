@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -45,12 +45,13 @@ import jakarta.servlet.http.HttpServletResponse;
  * ({@code servletPath + pathInfo}) of an {@code HttpServletRequest}.
  * This allows you to use wildcard matching as well, for example {@code /**} or {@code **}
  *
+ * @author Andre Azzolini (apazzolini)
  * @see AntPathRequestMatcher
  * @deprecated Use {@link SecurityFilter} instead
- * @author Andre Azzolini (apazzolini)
  */
 @Deprecated
 public class CsrfFilter extends GenericFilterBean {
+
     protected static final Log LOG = LogFactory.getLog(CsrfFilter.class);
 
     @Autowired
@@ -68,7 +69,7 @@ public class CsrfFilter extends GenericFilterBean {
         if (excludedRequestPatterns != null && excludedRequestPatterns.size() > 0) {
             for (String pattern : excludedRequestPatterns) {
                 RequestMatcher matcher = new AntPathRequestMatcher(pattern);
-                if (matcher.matches(request)){
+                if (matcher.matches(request)) {
                     excludedRequestFound = true;
                     break;
                 }
@@ -99,15 +100,15 @@ public class CsrfFilter extends GenericFilterBean {
      * This allows you to declaratively set a list of excluded Request Patterns
      *
      * <bean id="blCsrfFilter" class="org.broadleafcommerce.common.security.handler.CsrfFilter" >
-     *     <property name="excludedRequestPatterns">
-     *         <list>
-     *             <value>/exclude-me/**</value>
-     *         </list>
-     *     </property>
+     * <property name="excludedRequestPatterns">
+     * <list>
+     * <value>/exclude-me/**</value>
+     * </list>
+     * </property>
      * </bean>
-     *
      **/
     public void setExcludedRequestPatterns(List<String> excludedRequestPatterns) {
         this.excludedRequestPatterns = excludedRequestPatterns;
     }
+
 }

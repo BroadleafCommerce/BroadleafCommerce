@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,13 +39,11 @@ import jakarta.annotation.Resource;
 /**
  * Core framework implementation of the {@link CustomerPaymentGatewayService}.
  *
- * @see {@link CustomerPaymentGatewayAbstractController}
  * @author Elbert Bautista (elbertbautista)
+ * @see {@link CustomerPaymentGatewayAbstractController}
  */
 @Service("blCustomerPaymentGatewayService")
 public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGatewayService {
-
-    private static final Log LOG = LogFactory.getLog(DefaultCustomerPaymentGatewayService.class);
 
     @Resource(name = "blAddressService")
     protected AddressService addressService;
@@ -60,8 +58,10 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
     protected PaymentResponseDTOToEntityService dtoToEntityService;
 
     @Override
-    public Long createCustomerPaymentFromResponseDTO(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config)
-            throws IllegalArgumentException {
+    public Long createCustomerPaymentFromResponseDTO(
+            PaymentResponseDTO responseDTO,
+            PaymentGatewayConfiguration config
+    ) throws IllegalArgumentException {
         validateResponseAndConfig(responseDTO, config);
 
         Long customerId = Long.parseLong(responseDTO.getCustomer().getCustomerId());
@@ -84,7 +84,7 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
         return null;
     }
 
-    private boolean isNewDefaultPaymentMethod(PaymentResponseDTO responseDTO) {
+    protected boolean isNewDefaultPaymentMethod(PaymentResponseDTO responseDTO) {
         Map<String, String> responseMap = responseDTO.getResponseMap();
         String defaultMethod = responseMap.get("isDefault");
 
@@ -92,8 +92,10 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
     }
 
     @Override
-    public Long updateCustomerPaymentFromResponseDTO(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config)
-            throws IllegalArgumentException {
+    public Long updateCustomerPaymentFromResponseDTO(
+            PaymentResponseDTO responseDTO,
+            PaymentGatewayConfiguration config
+    ) throws IllegalArgumentException {
         validateResponseAndConfig(responseDTO, config);
 
         String paymentToken = responseDTO.getPaymentToken();
@@ -110,14 +112,15 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
     }
 
     @Override
-    public void deleteCustomerPaymentFromResponseDTO(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config)
-            throws IllegalArgumentException {
+    public void deleteCustomerPaymentFromResponseDTO(
+            PaymentResponseDTO responseDTO,
+            PaymentGatewayConfiguration config
+    ) throws IllegalArgumentException {
         validateResponseAndConfig(responseDTO, config);
 
         String paymentToken = responseDTO.getPaymentToken();
         customerPaymentService.deleteCustomerPaymentByToken(paymentToken);
     }
-
 
     protected void validateResponseAndConfig(PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config) throws IllegalArgumentException {
         //Customer payment tokens can ONLY be parsed into Customer Payments if they are 'valid'
@@ -130,7 +133,11 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
         }
     }
 
-    protected void populateCustomerPayment(CustomerPayment customerPayment, PaymentResponseDTO responseDTO, PaymentGatewayConfiguration config) {
+    protected void populateCustomerPayment(
+            CustomerPayment customerPayment,
+            PaymentResponseDTO responseDTO,
+            PaymentGatewayConfiguration config
+    ) {
         Map<String, String> responseMap = responseDTO.getResponseMap();
 
         customerPayment.setPaymentGatewayType(config.getGatewayType());
@@ -144,7 +151,7 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
             customerPayment.setBillingAddress(billingAddress);
         }
 
-        if (responseDTO.getCreditCard() !=null && responseDTO.getCreditCard().creditCardPopulated()) {
+        if (responseDTO.getCreditCard() != null && responseDTO.getCreditCard().creditCardPopulated()) {
             if (responseDTO.getCreditCard().getCreditCardHolderName() != null) {
                 customerPayment.getAdditionalFields().put(PaymentAdditionalFieldType.NAME_ON_CARD.getType(), responseDTO.getCreditCard().getCreditCardHolderName());
             }
@@ -168,4 +175,5 @@ public class DefaultCustomerPaymentGatewayService implements CustomerPaymentGate
         String isDefault = responseMap.get("isDefault");
         customerPayment.setIsDefault(Boolean.parseBoolean(isDefault));
     }
+
 }

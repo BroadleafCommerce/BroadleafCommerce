@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -62,42 +62,30 @@ public class PageServiceImpl implements PageService {
 
     protected static final Log LOG = LogFactory.getLog(PageServiceImpl.class);
     protected static String AND = " && ";
-
-    @Resource(name="blPageDao")
+    protected final PageDTO NULL_PAGE = new NullPageDTO();
+    @Resource(name = "blPageDao")
     protected PageDao pageDao;
-
-    @Resource(name="blPageRuleProcessors")
+    @Resource(name = "blPageRuleProcessors")
     protected List<RuleProcessor<PageDTO>> pageRuleProcessors;
-
-    @Resource(name="blLocaleService")
+    @Resource(name = "blLocaleService")
     protected LocaleService localeService;
-
-    @Resource(name="blStaticAssetService")
+    @Resource(name = "blStaticAssetService")
     protected StaticAssetService staticAssetService;
-
-    @Resource(name="blStatisticsService")
+    @Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
-
     @Resource(name = "blTemplateOverrideExtensionManager")
     protected TemplateOverrideExtensionManager templateOverrideManager;
-
     @Resource(name = "blPageServiceUtility")
     protected PageServiceUtility pageServiceUtility;
-
     @Resource(name = "blPageServiceExtensionManager")
     protected PageServiceExtensionManager extensionManager;
-
     @Resource(name = "blPageQueryExtensionManager")
     protected PageQueryExtensionManager queryExtensionManager;
-    
     @Resource(name = "blCacheManager")
     protected CacheManager cacheManager;
-
     protected Cache pageCache;
     protected Cache pageMapCache;
     protected Cache uriCachedDateCache;
-    
-    protected final PageDTO NULL_PAGE = new NullPageDTO();
 
     /*
      * Returns the page with the passed in id.
@@ -137,7 +125,7 @@ public class PageServiceImpl implements PageService {
      * Retrieve the page if one is available for the passed in uri.
      */
     @Override
-    public PageDTO findPageByURI(Locale locale, String uri, Map<String,Object> ruleDTOs, boolean secure) {
+    public PageDTO findPageByURI(Locale locale, String uri, Map<String, Object> ruleDTOs, boolean secure) {
         PageDTO dto;
 
         if (!isNullPageCached(locale, uri, secure)) {
@@ -211,7 +199,7 @@ public class PageServiceImpl implements PageService {
         final Object element = getUriCachedDateCache().get(key);
         final Date cachedDate;
 
-        if (element != null ) {
+        if (element != null) {
             cachedDate = (Date) element;
         } else {
             cachedDate = new Date();
@@ -239,7 +227,12 @@ public class PageServiceImpl implements PageService {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<PageDTO> buildPageDTOListUsingCache(List<Page> pageList, String identifier, Locale locale, boolean secure) {
+    protected List<PageDTO> buildPageDTOListUsingCache(
+            List<Page> pageList,
+            String identifier,
+            Locale locale,
+            boolean secure
+    ) {
         List<PageDTO> dtoList = getCachedPageDTOList(pageList, identifier, locale, secure);
 
         if (dtoList == null || dtoList.isEmpty()) {
@@ -268,7 +261,7 @@ public class PageServiceImpl implements PageService {
 
     protected void addPageListToPageDTOList(List<Page> pageList, boolean secure, List<PageDTO> dtoList) {
         if (pageList != null) {
-            for(Page page : pageList) {
+            for (Page page : pageList) {
                 PageDTO pageDTO = pageServiceUtility.buildPageDTO(page, secure);
 
                 if (!dtoList.contains(pageDTO)) {
@@ -283,7 +276,7 @@ public class PageServiceImpl implements PageService {
         if (key != null) {
             Object cacheElement = getPageCache().get(key);
 
-            if (cacheElement != null ) {
+            if (cacheElement != null) {
                 statisticsService.addCacheStat(CacheStatType.PAGE_CACHE_HIT_RATE.toString(), true);
                 return (List<PageDTO>) cacheElement;
             }
@@ -332,7 +325,6 @@ public class PageServiceImpl implements PageService {
         return buildKey(identifier, localeCode, secure, null);
     }
 
-    
     protected String buildKey(String identifier, String localeCode, Boolean secure, ResultType resultType) {
         if (resultType == null) {
             resultType = ResultType.STANDARD;
@@ -359,9 +351,9 @@ public class PageServiceImpl implements PageService {
         }
         return key.toString();
     }
-        
+
     protected Locale findLanguageOnlyLocale(Locale locale) {
-        if (locale != null ) {
+        if (locale != null) {
             Locale languageOnlyLocale = localeService.findLocaleByCode(LocaleUtil.findLanguageCode(locale));
             if (languageOnlyLocale != null) {
                 return languageOnlyLocale;
@@ -441,7 +433,7 @@ public class PageServiceImpl implements PageService {
         if (pageRuleProcessors != null) {
             for (RuleProcessor<PageDTO> processor : pageRuleProcessors) {
                 boolean matchFound = processor.checkForMatch(page, ruleDTOs);
-                if (! matchFound) {
+                if (!matchFound) {
                     return false;
                 }
             }
@@ -488,17 +480,18 @@ public class PageServiceImpl implements PageService {
         List<String> cacheKeys = new ArrayList<>();
         cacheKeys.add(cacheKey);
         if (queryExtensionManager != null) {
-            ExtensionResultHolder<List<String>> response = new ExtensionResultHolder<List<String>>();
+            ExtensionResultHolder<List<String>> response = new ExtensionResultHolder<>();
             queryExtensionManager.getProxy().getCacheKeyListForTemplateSite(cacheKey, response);
             cacheKeys = response.getResult();
         }
         for (String cKey : cacheKeys) {
             // cacheKeys from the templateSites (extensionManager) are returned with a "templateSiteId:" prefix.  Parsing those out to get just the child site keys
             if (cKey.contains(":")) {
-                cKey = cKey.substring(cKey.indexOf(":")+1);
+                cKey = cKey.substring(cKey.indexOf(":") + 1);
             }
             getPageCache().remove(cKey);
         }
         return true;
     }
+
 }

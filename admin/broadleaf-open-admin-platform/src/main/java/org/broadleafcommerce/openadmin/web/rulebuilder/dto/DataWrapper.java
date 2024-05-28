@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,48 +25,49 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * @author Elbert Bautista (elbertbautista)
- *
+ * <p>
  * An example of the Serialized JSON:
  * (This is an example of a complex Item Rule)
- *
+ * <p>
  * {'data': [
- *      {'pk':'100',
- *      'quantity':'1',
- *      'condition':'AND',
- *      'rules':[
- *          {'pk':null,
- *          'quantity':null,
- *          'condition':null,
- *          'rules':null,
- *          'id':'name',
- *          'operator':'IEQUALS',
- *          'value':'merchandise'}]},
- *      {'pk':'200',
- *      'quantity':'2',
- *      'condition':'AND',
- *      'rules':[
- *          {'pk':null,
- *          'quantity':null,
- *          'condition':null,
- *          'rules':null,
- *          'id':'retailPrice',
- *          'operator':'GREATER_THAN',
- *          'value':'20.00'}]}
- *      ],
+ * {'pk':'100',
+ * 'quantity':'1',
+ * 'condition':'AND',
+ * 'rules':[
+ * {'pk':null,
+ * 'quantity':null,
+ * 'condition':null,
+ * 'rules':null,
+ * 'id':'name',
+ * 'operator':'IEQUALS',
+ * 'value':'merchandise'}]},
+ * {'pk':'200',
+ * 'quantity':'2',
+ * 'condition':'AND',
+ * 'rules':[
+ * {'pk':null,
+ * 'quantity':null,
+ * 'condition':null,
+ * 'rules':null,
+ * 'id':'retailPrice',
+ * 'operator':'GREATER_THAN',
+ * 'value':'20.00'}]}
+ * ],
  * "error":null,
  * "rawMvel":null}
- *
  */
 public class DataWrapper implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    protected ArrayList<DataDTO> data = new ArrayList<DataDTO>();
+    protected ArrayList<DataDTO> data = new ArrayList<>();
 
     protected String error;
     protected String rawMvel;
@@ -98,20 +99,19 @@ public class DataWrapper implements Serializable {
     public String serialize() throws JsonGenerationException, JsonMappingException, IOException {
         return new ObjectMapper().writeValueAsString(this);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             DataWrapper that = (DataWrapper) obj;
             return new EqualsBuilder()
-                .append(error, that.error)
-                .append(rawMvel, that.rawMvel)
-                .append(data.toArray(), that.data.toArray())
-                .build();
+                    .append(error, that.error)
+                    .append(rawMvel, that.rawMvel)
+                    .append(data.toArray(), that.data.toArray())
+                    .build();
         }
         return false;
     }
-
 
     @Override
     public int hashCode() {
@@ -121,4 +121,5 @@ public class DataWrapper implements Serializable {
                 .append(rawMvel)
                 .toHashCode();
     }
+
 }

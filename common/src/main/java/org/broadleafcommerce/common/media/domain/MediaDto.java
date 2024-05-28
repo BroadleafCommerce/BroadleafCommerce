@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,13 +19,16 @@ package org.broadleafcommerce.common.media.domain;
 
 import org.broadleafcommerce.common.util.UnknownUnwrapTypeException;
 
+import java.io.Serial;
+
 /**
  * A null safe media object.
- * @author bpolster
  *
+ * @author bpolster
  */
 public class MediaDto implements Media {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected long id;
@@ -73,12 +76,12 @@ public class MediaDto implements Media {
     public void setAltText(String altText) {
         this.altText = altText;
     }
-    
+
     @Override
     public String getTags() {
         return tags;
     }
-    
+
     @Override
     public void setTags(String tags) {
         this.tags = tags;
@@ -93,6 +96,5 @@ public class MediaDto implements Media {
     public <T> T unwrap(Class<T> unwrapType) {
         throw new UnknownUnwrapTypeException(unwrapType);
     }
-
 
 }

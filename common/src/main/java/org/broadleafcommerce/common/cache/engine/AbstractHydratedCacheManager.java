@@ -10,15 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.cache.engine;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.cache.HydratedSetup;
 
 import java.io.Serializable;
@@ -31,8 +29,6 @@ import java.util.Map;
  * @author jfischer
  */
 public abstract class AbstractHydratedCacheManager implements HydratedCacheManager, HydratedAnnotationManager {
-
-    private static final Log LOG = LogFactory.getLog(AbstractHydratedCacheManager.class);
 
     private Map<String, HydrationDescriptor> hydrationDescriptors = Collections.synchronizedMap(new HashMap(100));
 

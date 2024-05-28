@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,17 +30,16 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Persistence unit post processor for dynamically modifying the persistence unit. 
- * 
+ * Persistence unit post processor for dynamically modifying the persistence unit.
+ * <p>
  * jcache.disable.cache - default: false, disables hibernate L2 and query cache if true
  * hibernate.javax.cache.provider - default: null, overrides the cache provider defined in the persistence.xml
  * hibernate.cache.region.factory_class - default: null, overrides the cache region factory defined in the persistence.xml
- * 
+ * <p>
  * uriProvider - A configurable provider class that returns the URI to be used for caching
  * overrideCacheProperties - A map used to set any additional properties on the persistence unit, presumeably related to caching
- * 
- * @author Jay Aisenbrey (cja769)
  *
+ * @author Jay Aisenbrey (cja769)
  */
 public class JCachePersistenceUnitPostProcessor implements PersistenceUnitPostProcessor {
 

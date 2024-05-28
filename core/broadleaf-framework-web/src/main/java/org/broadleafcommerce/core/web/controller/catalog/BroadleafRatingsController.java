@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,11 +34,10 @@ public class BroadleafRatingsController {
     protected RatingService ratingService;
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
-    
+
     protected String formView = "catalog/partials/review";
     protected String successView = "catalog/partials/reviewSuccessful";
-    
-    
+
     public String viewReviewForm(HttpServletRequest request, Model model, ReviewForm form, String itemId) {
         Product product = catalogService.findProductById(Long.valueOf(itemId));
         form.setProduct(product);
@@ -50,19 +49,21 @@ public class BroadleafRatingsController {
         model.addAttribute("reviewForm", form);
         return getFormView();
     }
-    
+
     public String reviewItem(HttpServletRequest request, Model model, ReviewForm form, String itemId) {
-        ratingService.reviewItem(itemId, RatingType.PRODUCT, CustomerState.getCustomer(), form.getRating(), form.getReviewText());
+        ratingService.reviewItem(
+                itemId, RatingType.PRODUCT, CustomerState.getCustomer(), form.getRating(), form.getReviewText()
+        );
         model.addAttribute("reviewForm", form);
         return getSuccessView();
     }
-    
+
     public String getFormView() {
         return formView;
     }
-    
+
     public String getSuccessView() {
         return successView;
     }
-    
+
 }

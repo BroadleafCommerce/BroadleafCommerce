@@ -10,12 +10,21 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.email.domain;
+
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,17 +33,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author jfischer
- *
  */
 @Entity
 @Table(name = "BLC_EMAIL_TRACKING", indexes = {
@@ -42,18 +43,21 @@ import java.util.Set;
         @Index(name = "DATESENT_INDEX", columnList = "DATE_SENT")})
 public class EmailTrackingImpl implements EmailTracking {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "EmailTrackingId")
     @GenericGenerator(
-        name="EmailTrackingId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="EmailTrackingImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.common.email.domain.EmailTrackingImpl")
-        }
+            name = "EmailTrackingId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "EmailTrackingImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.email.domain.EmailTrackingImpl")
+            }
     )
     @Column(name = "EMAIL_TRACKING_ID")
     protected Long id;
@@ -68,10 +72,10 @@ public class EmailTrackingImpl implements EmailTracking {
     protected String type;
 
     @OneToMany(mappedBy = "emailTracking", targetEntity = EmailTrackingClicksImpl.class)
-    protected Set<EmailTrackingClicks> emailTrackingClicks = new HashSet<EmailTrackingClicks>();
+    protected Set<EmailTrackingClicks> emailTrackingClicks = new HashSet<>();
 
     @OneToMany(mappedBy = "emailTracking", targetEntity = EmailTrackingOpensImpl.class)
-    protected Set<EmailTrackingOpens> emailTrackingOpens = new HashSet<EmailTrackingOpens>();
+    protected Set<EmailTrackingOpens> emailTrackingOpens = new HashSet<>();
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTracking#getId()
@@ -112,6 +116,7 @@ public class EmailTrackingImpl implements EmailTracking {
     public Date getDateSent() {
         return dateSent;
     }
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTracking#setDateSent(java.util.Date)
      */

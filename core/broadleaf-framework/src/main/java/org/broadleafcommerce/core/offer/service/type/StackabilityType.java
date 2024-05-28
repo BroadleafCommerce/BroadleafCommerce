@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,27 +19,23 @@ package org.broadleafcommerce.core.offer.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of offer types.
- *
  */
 public class StackabilityType implements Serializable, BroadleafEnumerationType, Comparable<StackabilityType> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, StackabilityType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, StackabilityType> TYPES = new LinkedHashMap<String, StackabilityType>();
     public static final StackabilityType NO = new StackabilityType("NO", "No", 1000);
     public static final StackabilityType YES = new StackabilityType("YES", "Yes, with other stackable offers", 2000);
     public static final StackabilityType YES_ALWAYS = new StackabilityType("YES_ALWAYS", "Yes, always", 3000);
-
-
-    public static StackabilityType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -55,6 +51,14 @@ public class StackabilityType implements Serializable, BroadleafEnumerationType,
         setOrder(order);
     }
 
+    public static StackabilityType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
@@ -62,14 +66,10 @@ public class StackabilityType implements Serializable, BroadleafEnumerationType,
         }
     }
 
-    public String getType() {
-        return type;
-    }
-
     public String getFriendlyType() {
         return friendlyType;
     }
-    
+
     public int getOrder() {
         return order;
     }
@@ -102,7 +102,7 @@ public class StackabilityType implements Serializable, BroadleafEnumerationType,
             return false;
         return true;
     }
-    
+
     @Override
     public int compareTo(StackabilityType arg0) {
         return this.order - arg0.order;

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,8 +24,7 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 /**
  * @author Nick Crum ncrum
  */
-public abstract class AbstractCatalogServiceExtensionHandler extends AbstractExtensionHandler
-        implements CatalogServiceExtensionHandler {
+public abstract class AbstractCatalogServiceExtensionHandler extends AbstractExtensionHandler implements CatalogServiceExtensionHandler {
 
     @Override
     public ExtensionResultStatusType findCategoryByURI(String uri, ExtensionResultHolder resultHolder) {
@@ -43,17 +42,30 @@ public abstract class AbstractCatalogServiceExtensionHandler extends AbstractExt
     }
 
     @Override
-    public ExtensionResultStatusType findProductByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder) {
+    public ExtensionResultStatusType findProductByURI(
+            CatalogContextDTO context,
+            String uri,
+            ExtensionResultHolder resultHolder
+    ) {
         return findProductByURI(uri, resultHolder);
     }
 
     @Override
-    public ExtensionResultStatusType findCategoryByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder) {
+    public ExtensionResultStatusType findCategoryByURI(
+            CatalogContextDTO context,
+            String uri,
+            ExtensionResultHolder resultHolder
+    ) {
         return findCategoryByURI(uri, resultHolder);
     }
 
     @Override
-    public ExtensionResultStatusType findSkuByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder) {
+    public ExtensionResultStatusType findSkuByURI(
+            CatalogContextDTO context,
+            String uri,
+            ExtensionResultHolder resultHolder
+    ) {
         return findSkuByURI(uri, resultHolder);
     }
+
 }

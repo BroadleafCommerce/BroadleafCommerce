@@ -10,39 +10,32 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.persistence;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of target mode types.
- * 
+ *
  * @author jfischer
  */
 public class TargetModeType implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, TargetModeType> TYPES = new HashMap<>();
 
-    private static final Map<String, TargetModeType> TYPES = new HashMap<String, TargetModeType>();
-
-    public static final TargetModeType SANDBOX  = new TargetModeType("sandbox", "entity manager target for the sandbox datasource");
-    public static final TargetModeType STAGE  = new TargetModeType("stage", "entity manager target for the stage datasource");
-    public static final TargetModeType PRODUCTION  = new TargetModeType("production", "entity manager target for the production datasource");
-
-    public static TargetModeType getInstance(final String type) {
-        return TYPES.get(type);
-    }
-
-    public static Map<String, TargetModeType> getTypes() {
-        return TYPES;
-    }
+    public static final TargetModeType SANDBOX = new TargetModeType("sandbox", "entity manager target for the sandbox datasource");
+    public static final TargetModeType STAGE = new TargetModeType("stage", "entity manager target for the stage datasource");
+    public static final TargetModeType PRODUCTION = new TargetModeType("production", "entity manager target for the production datasource");
 
     private String type;
     private String friendlyType;
@@ -56,19 +49,27 @@ public class TargetModeType implements Serializable {
         setType(type);
     }
 
+    public static TargetModeType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public static Map<String, TargetModeType> getTypes() {
+        return TYPES;
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -95,4 +96,5 @@ public class TargetModeType implements Serializable {
             return false;
         return true;
     }
+
 }

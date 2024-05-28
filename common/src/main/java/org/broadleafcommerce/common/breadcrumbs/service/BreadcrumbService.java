@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,12 +26,13 @@ public interface BreadcrumbService {
 
     /**
      * Builds a breadcrumb from the passed in url and parameter list.   By default, this method simply delegates its logic
-     * to the {@link BreadcrumbServiceExtensionManager} which will invoke {@link BreadcrumbServiceExtensionHandler}'s 
+     * to the {@link BreadcrumbServiceExtensionManager} which will invoke {@link BreadcrumbServiceExtensionHandler}'s
      * in priority order to build the Breadcrumbs
-     * 
+     *
      * @param baseUrl
      * @param params
      * @return
      */
     List<BreadcrumbDTO> buildBreadcrumbDTOs(String baseUrl, Map<String, String[]> params);
+
 }

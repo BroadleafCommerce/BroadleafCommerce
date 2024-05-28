@@ -10,26 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.order.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
@@ -48,34 +35,49 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP_FEE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-    {
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
-)
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
 public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCodeIdentifiable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "FulfillmentGroupFeeId")
     @GenericGenerator(
-        name="FulfillmentGroupFeeId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="FulfillmentGroupFeeImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl")
-        }
+            name = "FulfillmentGroupFeeId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FulfillmentGroupFeeImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.FulfillmentGroupFeeImpl")
+            }
     )
     @Column(name = "FULFILLMENT_GROUP_FEE_ID")
     protected Long id;
@@ -84,7 +86,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
     protected FulfillmentGroup fulfillmentGroup;
 
-    @Column(name = "AMOUNT", precision=19, scale=5)
+    @Column(name = "AMOUNT", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Amount", prominent = true, gridOrder = 2000, order = 2000)
     protected BigDecimal amount;
 
@@ -95,19 +97,20 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     @Column(name = "REPORTING_CODE")
     @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Reporting_Code", order = 3000)
     protected String reportingCode;
-    
+
     @Column(name = "FEE_TAXABLE_FLAG")
     @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Taxable", order = 5000)
-    protected Boolean feeTaxable = false; 
+    protected Boolean feeTaxable = false;
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_FG_FEE_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_FEE_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @JoinTable(name = "BLC_FG_FEE_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_FEE_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
-    
-    @Column(name = "TOTAL_FEE_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Total_Fee_Tax", order=4000, fieldType=SupportedFieldType.MONEY)
+
+    @Column(name = "TOTAL_FEE_TAX", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupFeeImpl_Total_Fee_Tax", order = 4000, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     @Override
@@ -132,7 +135,9 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
 
     @Override
     public Money getAmount() {
-        return amount == null ? null : BroadleafCurrencyUtils.getMoney(amount, getFulfillmentGroup().getOrder().getCurrency());
+        return amount == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(amount, getFulfillmentGroup().getOrder().getCurrency());
     }
 
     @Override
@@ -159,7 +164,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     public void setReportingCode(String reportingCode) {
         this.reportingCode = reportingCode;
     }
-    
+
     @Override
     public Boolean isTaxable() {
         return feeTaxable == null || feeTaxable;
@@ -169,7 +174,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     public void setTaxable(Boolean taxable) {
         this.feeTaxable = taxable;
     }
-    
+
     @Override
     public List<TaxDetail> getTaxes() {
         return taxes;
@@ -179,14 +184,16 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     public void setTaxes(List<TaxDetail> taxes) {
         this.taxes = taxes;
     }
-    
+
     @Override
     public Money getTotalTax() {
-        return totalTax == null ? null : BroadleafCurrencyUtils.getMoney(totalTax, getFulfillmentGroup().getOrder().getCurrency());
+        return totalTax == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(totalTax, getFulfillmentGroup().getOrder().getCurrency());
     }
 
     @Override
-    public void setTotalTax(Money totalTax) { 
+    public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
     }
 
@@ -194,7 +201,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
     public String getCurrencyCode() {
         return ((CurrencyCodeIdentifiable) fulfillmentGroup).getCurrencyCode();
     }
-    
+
     @Override
     public CreateResponse<FulfillmentGroupFee> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<FulfillmentGroupFee> createResponse = context.createOrRetrieveCopyInstance(this);
@@ -207,7 +214,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee, CurrencyCod
         cloned.setName(name);
         cloned.setReportingCode(reportingCode);
         cloned.setTaxable(feeTaxable);
-        return  createResponse;
+        return createResponse;
     }
 
     @Override

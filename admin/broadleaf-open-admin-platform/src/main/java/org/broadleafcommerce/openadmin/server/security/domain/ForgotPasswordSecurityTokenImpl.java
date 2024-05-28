@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,11 +36,11 @@ import jakarta.persistence.TemporalType;
 @Table(name = "BLC_ADMIN_PASSWORD_TOKEN")
 public class ForgotPasswordSecurityTokenImpl implements ForgotPasswordSecurityToken {
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @Column(name = "PASSWORD_TOKEN", nullable = false)
     protected String token;
-    
+
     @Column(name = "CREATE_DATE", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     protected Date createDate;
@@ -48,10 +48,10 @@ public class ForgotPasswordSecurityTokenImpl implements ForgotPasswordSecurityTo
     @Column(name = "TOKEN_USED_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     protected Date tokenUsedDate;
-    
+
     @Column(name = "ADMIN_USER_ID", nullable = false)
     protected Long adminUserId;
-    
+
     @Column(name = "TOKEN_USED_FLAG", nullable = false)
     protected boolean tokenUsedFlag;
 

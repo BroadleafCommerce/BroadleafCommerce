@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,6 +29,7 @@ import java.util.Map;
 public class NonPersistentSiteThreadLocalCache {
 
     private static final ThreadLocal<NonPersistentSiteThreadLocalCache> SITES_CACHE = ThreadLocalManager.createThreadLocal(NonPersistentSiteThreadLocalCache.class);
+    protected Map<Long, Site> sites = new HashMap<>();
 
     public static NonPersistentSiteThreadLocalCache getSitesCache() {
         return SITES_CACHE.get();
@@ -37,8 +38,6 @@ public class NonPersistentSiteThreadLocalCache {
     public static void setSitesCache(NonPersistentSiteThreadLocalCache sitesCache) {
         SITES_CACHE.set(sitesCache);
     }
-
-    protected Map<Long, Site> sites = new HashMap<Long, Site>();
 
     public Map<Long, Site> getSites() {
         return sites;
@@ -51,4 +50,5 @@ public class NonPersistentSiteThreadLocalCache {
     public void clear() {
         SITES_CACHE.remove();
     }
+
 }

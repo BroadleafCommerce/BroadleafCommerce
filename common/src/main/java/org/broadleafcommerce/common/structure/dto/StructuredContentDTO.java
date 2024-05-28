@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.structure.dto;
 
 import org.apache.commons.beanutils.BeanUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,13 +29,14 @@ import java.util.Map;
 /**
  * Scoped as a prototype bean via bl-cms-applicationContext-entity. This bean is used to wrap an {@link StructuredContentImpl}
  * so that modifications and additional properties can be used without worrying about Hibernate's persistence.
- * 
+ *
  * @author bpolster.
  * @see {@link StructuredContentServiceImpl#buildStructuredContentDTO};
  * @see {@link StructuredContentServiceImpl#buildFieldValues};
  */
 public class StructuredContentDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Long id;
@@ -42,25 +44,27 @@ public class StructuredContentDTO implements Serializable {
     protected String contentType;
     protected String localeCode;
     protected Integer priority;
-    protected Map<String, Object> values = new HashMap<String,Object>();
+    protected Map<String, Object> values = new HashMap<>();
     protected String ruleExpression;
     protected List<ItemCriteriaDTO> itemCriteriaDTOList;
 
     /**
      * Attempts to obtain the given property value from the dynamic property map first, and then an actual bean property
      * via a getter
-     * 
+     *
      * @param propertyName
      * @return
      */
     public Object getPropertyValue(String propertyName) {
         try {
-            return getValues().containsKey(propertyName) ? getValues().get(propertyName) : BeanUtils.getProperty(this, propertyName);
+            return getValues().containsKey(propertyName)
+                    ? getValues().get(propertyName)
+                    : BeanUtils.getProperty(this, propertyName);
         } catch (Exception e) {
             return null;
         }
     }
-    
+
     public Long getId() {
         return id;
     }
@@ -136,7 +140,7 @@ public class StructuredContentDTO implements Serializable {
         clonedDto.setContentType(contentType);
         clonedDto.setLocaleCode(localeCode);
         clonedDto.setPriority(priority);
-        clonedDto.setValues(new HashMap<String, Object>(values));
+        clonedDto.setValues(new HashMap<>(values));
         clonedDto.setRuleExpression(ruleExpression);
         if (itemCriteriaDTOList != null) {
             List<ItemCriteriaDTO> itemCriteriaDTOs = new ArrayList<ItemCriteriaDTO>();
@@ -147,4 +151,5 @@ public class StructuredContentDTO implements Serializable {
         }
         return clonedDto;
     }
+
 }

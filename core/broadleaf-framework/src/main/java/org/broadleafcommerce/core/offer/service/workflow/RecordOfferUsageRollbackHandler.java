@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,7 +31,6 @@ import java.util.Map;
 
 import jakarta.annotation.Resource;
 
-
 /**
  * Rolls back audits that were saved in the database from {@link RecordOfferUsageActivity}.
  *
@@ -43,14 +42,18 @@ public class RecordOfferUsageRollbackHandler implements RollbackHandler<ProcessC
 
     @Resource(name = "blOfferAuditService")
     protected OfferAuditService offerAuditService;
-    
+
     @Override
-    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
+    public void rollbackState(
+            Activity<ProcessContext<CheckoutSeed>> activity,
+            ProcessContext<CheckoutSeed> processContext,
+            Map<String, Object> stateConfiguration
+    ) throws RollbackFailureException {
         List<OfferAudit> audits = (List<OfferAudit>) stateConfiguration.get(RecordOfferUsageActivity.SAVED_AUDITS);
-        
+
         for (OfferAudit audit : audits) {
             offerAuditService.delete(audit);
         }
     }
-    
+
 }

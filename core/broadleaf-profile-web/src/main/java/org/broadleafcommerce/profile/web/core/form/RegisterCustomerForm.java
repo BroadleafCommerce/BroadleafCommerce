@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,10 +20,13 @@ package org.broadleafcommerce.profile.web.core.form;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class RegisterCustomerForm implements Serializable {
-    protected static final long serialVersionUID = 1L;
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     protected Customer customer;
     protected String password;
@@ -35,31 +38,31 @@ public class RegisterCustomerForm implements Serializable {
     public Customer getCustomer() {
         return customer;
     }
-    
+
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
-    
+
     public String getPassword() {
         return password;
     }
-    
+
     public void setPassword(String password) {
         this.password = password;
     }
-    
+
     public String getPasswordConfirm() {
         return passwordConfirm;
     }
-    
+
     public void setPasswordConfirm(String passwordConfirm) {
         this.passwordConfirm = passwordConfirm;
     }
-    
+
     public String getRedirectUrl() {
         return redirectUrl;
     }
-    
+
     public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
     }
@@ -79,5 +82,5 @@ public class RegisterCustomerForm implements Serializable {
     public void setOAuth2UserRequest(OAuth2UserRequest oAuth2UserRequest) {
         this.oAuth2UserRequest = oAuth2UserRequest;
     }
-    
+
 }

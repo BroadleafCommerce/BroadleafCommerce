@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,10 +36,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Abstract implementatino of {@link AdminAbstractControllerExtensionHandler}.
- * 
- * Individual implementations of this extension handler should subclass this class as it will allow them to 
+ * <p>
+ * Individual implementations of this extension handler should subclass this class as it will allow them to
  * only override the methods that they need for their particular scenarios.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class AbstractAdminAbstractControllerExtensionHandler extends AbstractExtensionHandler implements AdminAbstractControllerExtensionHandler {
@@ -65,12 +65,15 @@ public class AbstractAdminAbstractControllerExtensionHandler extends AbstractExt
     }
 
     @Override
-    public ExtensionResultStatusType modifyModelForAddCollectionType(HttpServletRequest request,
-                                                                     HttpServletResponse response,
-                                                                     Model model,
-                                                                     String sectionKey,
-                                                                     String id,
-                                                                     MultiValueMap<String, String> requestParams, MapMetadata md) {
+    public ExtensionResultStatusType modifyModelForAddCollectionType(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            String sectionKey,
+            String id,
+            MultiValueMap<String, String> requestParams,
+            MapMetadata md
+    ) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -80,12 +83,23 @@ public class AbstractAdminAbstractControllerExtensionHandler extends AbstractExt
     }
 
     @Override
-    public ExtensionResultStatusType overrideSaveEntityJsonResponse(HttpServletResponse response, boolean hasValidationErrors, String sectionKey, String id, ExtensionResultHolder<String> resultHolder) {
+    public ExtensionResultStatusType overrideSaveEntityJsonResponse(
+            HttpServletResponse response,
+            boolean hasValidationErrors,
+            String sectionKey,
+            String id,
+            ExtensionResultHolder<String> resultHolder
+    ) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType modifyPreAddEntityForm(EntityForm entityForm, ClassMetadata cmd, Map<String, String> pathVars) {
+    public ExtensionResultStatusType modifyPreAddEntityForm(
+            EntityForm entityForm,
+            ClassMetadata cmd,
+            Map<String, String> pathVars
+    ) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
 }

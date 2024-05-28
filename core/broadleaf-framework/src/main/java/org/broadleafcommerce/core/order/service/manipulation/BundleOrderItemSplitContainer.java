@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,22 +23,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BundleOrderItemSplitContainer {
-    
+
     protected BundleOrderItem key;
-    protected List<BundleOrderItem> splitItems = new ArrayList<BundleOrderItem>();
-    
+    protected List<BundleOrderItem> splitItems = new ArrayList<>();
+
     public BundleOrderItem getKey() {
         return key;
     }
-    
+
     public void setKey(BundleOrderItem key) {
         this.key = key;
     }
-    
+
     public List<BundleOrderItem> getSplitItems() {
         return splitItems;
     }
-    
+
     public void setSplitItems(List<BundleOrderItem> splitItems) {
         this.splitItems = splitItems;
     }

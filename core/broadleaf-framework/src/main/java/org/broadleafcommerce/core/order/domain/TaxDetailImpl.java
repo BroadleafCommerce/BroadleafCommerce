@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,6 +26,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -42,43 +43,45 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name="BLC_TAX_DETAIL")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
+@Table(name = "BLC_TAX_DETAIL")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(friendlyName = "TaxDetailImpl_baseTaxDetail")
 public class TaxDetailImpl implements TaxDetail {
-    
+
+    @Serial
     private static final long serialVersionUID = -4036994446393527252L;
 
     @Id
     @GeneratedValue(generator = "TaxDetailId")
     @GenericGenerator(
-        name="TaxDetailId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="TaxDetailImpl"),
-            @Parameter(name="increment_size", value="150"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.catalog.domain.TaxDetailImpl")
-        }
+            name = "TaxDetailId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "TaxDetailImpl"),
+                    @Parameter(name = "increment_size", value = "150"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.TaxDetailImpl")
+            }
     )
     @Column(name = "TAX_DETAIL_ID")
     protected Long id;
-    
+
     @Column(name = "TYPE")
-    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Type", order=1, group = "TaxDetailImpl_Tax_Detail")
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Type", order = 1, group = "TaxDetailImpl_Tax_Detail")
     protected String type;
-    
-    @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Amount", order=2, group = "TaxDetailImpl_Tax_Detail")
+
+    @Column(name = "AMOUNT", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Amount", order = 2, group = "TaxDetailImpl_Tax_Detail")
     protected BigDecimal amount;
-    
-    @Column(name = "RATE", precision=19, scale=5)
+
+    @Column(name = "RATE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Rate", order = 3, group = "TaxDetailImpl_Tax_Detail")
     protected BigDecimal rate;
-    
+
     @Column(name = "JURISDICTION_NAME")
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Jurisdiction_Name", order = 4, group = "TaxDetailImpl_Tax_Detail")
     protected String jurisdictionName;
@@ -86,7 +89,7 @@ public class TaxDetailImpl implements TaxDetail {
     @Column(name = "TAX_COUNTRY")
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Country", order = 5, group = "TaxDetailImpl_Tax_Detail")
     protected String country;
-    
+
     @Column(name = "TAX_REGION")
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Region", order = 6, group = "TaxDetailImpl_Tax_Detail")
     protected String region;
@@ -97,7 +100,8 @@ public class TaxDetailImpl implements TaxDetail {
 
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order = 1, group = "FixedPriceFulfillmentOptionImpl_Details", prominent = true)
+    @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order = 1,
+            group = "FixedPriceFulfillmentOptionImpl_Details", prominent = true)
     protected BroadleafCurrency currency;
 
     @ManyToOne(targetEntity = AbstractModuleConfiguration.class)
@@ -105,9 +109,9 @@ public class TaxDetailImpl implements TaxDetail {
     protected ModuleConfiguration moduleConfiguation;
 
     public TaxDetailImpl() {
-        
+
     }
-    
+
     public TaxDetailImpl(TaxType type, Money amount, BigDecimal rate) {
         this.type = type.getType();
         this.amount = amount.getAmount();
@@ -175,18 +179,13 @@ public class TaxDetailImpl implements TaxDetail {
     }
 
     @Override
-    public void setJurisdictionName(String jurisdiction) {
-        this.jurisdictionName = jurisdiction;
-    }
-
-    @Override
     public String getJurisdictionName() {
         return this.jurisdictionName;
     }
 
     @Override
-    public void setTaxName(String taxName) {
-        this.taxName = taxName;
+    public void setJurisdictionName(String jurisdiction) {
+        this.jurisdictionName = jurisdiction;
     }
 
     @Override
@@ -195,8 +194,8 @@ public class TaxDetailImpl implements TaxDetail {
     }
 
     @Override
-    public void setRegion(String region) {
-        this.region = region;
+    public void setTaxName(String taxName) {
+        this.taxName = taxName;
     }
 
     @Override
@@ -205,15 +204,20 @@ public class TaxDetailImpl implements TaxDetail {
     }
 
     @Override
-    public void setCountry(String country) {
-        this.country = country;
+    public void setRegion(String region) {
+        this.region = region;
     }
 
     @Override
     public String getCountry() {
         return this.country;
     }
-    
+
+    @Override
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
     @Override
     public CreateResponse<TaxDetail> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<TaxDetail> createResponse = context.createOrRetrieveCopyInstance(this);
@@ -231,6 +235,7 @@ public class TaxDetailImpl implements TaxDetail {
         cloned.setRegion(region);
         cloned.setTaxName(taxName);
         cloned.setType(getType());
-        return  createResponse;
+        return createResponse;
     }
+
 }

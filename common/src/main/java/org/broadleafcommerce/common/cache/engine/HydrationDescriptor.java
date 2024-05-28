@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,38 +21,36 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class HydrationDescriptor {
 
     private Map<String, HydrationItemDescriptor> hydratedMutators;
     private Method[] idMutators;
     private String cacheRegion;
-    
+
     public Map<String, HydrationItemDescriptor> getHydratedMutators() {
         return hydratedMutators;
-    }
-    
-    public Method[] getIdMutators() {
-        return idMutators;
-    }
-    
-    public String getCacheRegion() {
-        return cacheRegion;
     }
 
     public void setHydratedMutators(Map<String, HydrationItemDescriptor> hydratedMutators) {
         this.hydratedMutators = hydratedMutators;
     }
 
+    public Method[] getIdMutators() {
+        return idMutators;
+    }
+
     public void setIdMutators(Method[] idMutators) {
         this.idMutators = idMutators;
+    }
+
+    public String getCacheRegion() {
+        return cacheRegion;
     }
 
     public void setCacheRegion(String cacheRegion) {
         this.cacheRegion = cacheRegion;
     }
-    
+
 }

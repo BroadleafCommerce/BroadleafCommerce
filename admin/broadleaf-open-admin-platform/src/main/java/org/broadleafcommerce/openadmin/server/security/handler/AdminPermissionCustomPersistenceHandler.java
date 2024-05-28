@@ -10,18 +10,15 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.security.handler;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
@@ -48,13 +45,12 @@ import java.util.Map;
 @Component("blAdminPermissionCustomPersistenceHandler")
 public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(AdminPermissionCustomPersistenceHandler.class);
-
     @Override
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         String[] criteria = persistencePackage.getCustomCriteria();
-        return !ArrayUtils.isEmpty(criteria) && criteria[0].equals("createNewPermission") && AdminPermission.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return !ArrayUtils.isEmpty(criteria) && criteria[0].equals("createNewPermission")
+                && AdminPermission.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
@@ -71,19 +67,26 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
 
     @Override
     public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-        if (persistencePackage.getEntity().findProperty("id") != null && !StringUtils.isEmpty(persistencePackage.getEntity().findProperty("id").getValue())) {
+        if (persistencePackage.getEntity().findProperty("id") != null
+                && !StringUtils.isEmpty(persistencePackage.getEntity().findProperty("id").getValue())) {
             return update(persistencePackage, dynamicEntityDao, helper);
         }
         Entity entity = checkPermissionName(persistencePackage);
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             AdminPermission adminInstance = (AdminPermission) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminPermission.class.getName(), persistencePerspective);
-            adminInstance = (AdminPermission) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    AdminPermission.class.getName(), persistencePerspective
+            );
+            adminInstance = (AdminPermission) helper.createPopulatedInstance(
+                    adminInstance, entity, adminProperties, false
+            );
 
             adminInstance = dynamicEntityDao.merge(adminInstance);
 
-            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(
+                    adminProperties, adminInstance, null, null
+            );
 
             return adminEntity;
         } catch (Exception e) {
@@ -115,14 +118,22 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
         Entity entity = checkPermissionName(persistencePackage);
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminPermission.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    AdminPermission.class.getName(), persistencePerspective
+            );
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            AdminPermission adminInstance = (AdminPermission) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            adminInstance = (AdminPermission) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            AdminPermission adminInstance = (AdminPermission) dynamicEntityDao.retrieve(
+                    Class.forName(entity.getType()[0]), primaryKey
+            );
+            adminInstance = (AdminPermission) helper.createPopulatedInstance(
+                    adminInstance, entity, adminProperties, false
+            );
 
             adminInstance = dynamicEntityDao.merge(adminInstance);
 
-            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(
+                    adminProperties, adminInstance, null, null
+            );
 
             return adminEntity;
         } catch (Exception e) {
@@ -131,11 +142,18 @@ public class AdminPermissionCustomPersistenceHandler extends CustomPersistenceHa
     }
 
     @Override
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    public DynamicResultSet fetch(
+            PersistencePackage persistencePackage,
+            CriteriaTransferObject cto,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
         addFriendlyRestriction(cto);
         addDefaultSort(cto);
 
-        PersistenceModule myModule = helper.getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
+        PersistenceModule myModule = helper.getCompatibleModule(
+                persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType()
+        );
         DynamicResultSet results = myModule.fetch(persistencePackage, cto);
 
         return results;

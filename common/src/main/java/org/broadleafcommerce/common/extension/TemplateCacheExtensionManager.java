@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,17 +25,20 @@ public class TemplateCacheExtensionManager extends ExtensionManager<TemplateCach
     public static final ExtensionManagerOperation getTemplateCacheKeyOperation = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((TemplateCacheExtensionHandler) handler).getTemplateCacheKey(params[0], (String)params[1], (ExtensionResultHolder<Object>) params[2]);
+            return ((TemplateCacheExtensionHandler) handler).getTemplateCacheKey(
+                    params[0], (String) params[1], (ExtensionResultHolder<Object>) params[2]
+            );
         }
     };
 
     public static final ExtensionManagerOperation getTemplateNameOperation = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((TemplateCacheExtensionHandler) handler).getTemplateName(params[0], (ExtensionResultHolder<Object>) params[1]);
+            return ((TemplateCacheExtensionHandler) handler).getTemplateName(
+                    params[0], (ExtensionResultHolder<Object>) params[1]
+            );
         }
     };
-
 
     public TemplateCacheExtensionManager() {
         super(TemplateCacheExtensionHandler.class);
@@ -47,7 +50,11 @@ public class TemplateCacheExtensionManager extends ExtensionManager<TemplateCach
     }
 
     @Override
-    public ExtensionResultStatusType getTemplateCacheKey(Object key, String template, ExtensionResultHolder<Object> resultHolder) {
+    public ExtensionResultStatusType getTemplateCacheKey(
+            Object key,
+            String template,
+            ExtensionResultHolder<Object> resultHolder
+    ) {
         return execute(getTemplateCacheKeyOperation, key, template, resultHolder);
     }
 
@@ -55,4 +62,5 @@ public class TemplateCacheExtensionManager extends ExtensionManager<TemplateCach
     public ExtensionResultStatusType getTemplateName(Object key, ExtensionResultHolder<Object> result) {
         return execute(getTemplateNameOperation, key, result);
     }
+
 }

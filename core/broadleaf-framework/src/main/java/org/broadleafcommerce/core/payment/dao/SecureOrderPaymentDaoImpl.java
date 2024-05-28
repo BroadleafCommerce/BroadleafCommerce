@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -49,19 +49,25 @@ public class SecureOrderPaymentDaoImpl implements SecureOrderPaymentDao {
     }
 
     public BankAccountPayment createBankAccountPayment() {
-        BankAccountPayment response = entityConfiguration.createEntityInstance(BankAccountPayment.class.getName(), BankAccountPayment.class);
+        BankAccountPayment response = entityConfiguration.createEntityInstance(
+                BankAccountPayment.class.getName(), BankAccountPayment.class
+        );
         response.setEncryptionModule(encryptionModule);
         return response;
     }
 
     public GiftCardPayment createGiftCardPayment() {
-        GiftCardPayment response = entityConfiguration.createEntityInstance(GiftCardPayment.class.getName(), GiftCardPayment.class);
+        GiftCardPayment response = entityConfiguration.createEntityInstance(
+                GiftCardPayment.class.getName(), GiftCardPayment.class
+        );
         response.setEncryptionModule(encryptionModule);
         return response;
     }
 
     public CreditCardPayment createCreditCardPayment() {
-        CreditCardPayment response = entityConfiguration.createEntityInstance(CreditCardPayment.class.getName(), CreditCardPayment.class);
+        CreditCardPayment response = entityConfiguration.createEntityInstance(
+                CreditCardPayment.class.getName(), CreditCardPayment.class
+        );
         response.setEncryptionModule(encryptionModule);
         return response;
     }

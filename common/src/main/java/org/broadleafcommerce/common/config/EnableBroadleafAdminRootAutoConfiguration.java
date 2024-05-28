@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,19 +36,19 @@ import java.lang.annotation.Target;
  * Bootstraps the Broadleaf <b>root</b> admin configuration XML for only non-servlet beans. This can be placed on any {@literal @}Configuration
  * class (except ones with additional {@literal @}ImportResource) to make the root Broadleaf beans apart of the {@link ApplicationContext}.
  * If you are using Spring boot, this <b>must</b> be placed on an <b>inner static class</b> within the {@literal @}SpringBootApplication class. Example:
- * 
+ *
  * <pre>
  * {@literal @}SpringBootApplication
  * public class MyApplication extends SpringBootServletInitializer {
- * 
+ *
  *     {@literal @}Configuration
  *     {@literal @}EnableBroadleafAdminRootAutoConfiguration
  *     public static class BroadleafConfiguration { }
- *     
+ *
  *     public static void main(String[] args) {
  *         SpringApplication.run(ApiApplication.class, args);
  *     }
- *  
+ *
  *     {@literal @}Override
  *     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
  *         return application.sources(ApiApplication.class);
@@ -56,18 +56,18 @@ import java.lang.annotation.Target;
  * }
  *
  * </pre>
- * 
+ *
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}Import, this <b>can</b> be placed on a {@literal @}Configuration class
  * that contains an {@literal @}Import annotation, <b>but</b> this {@literal @}Import's beans will take precedence over
  * any additional {@literal @}Import applied.
- *  
+ *
  * <p>
- * Since this does not include any of the servlet-specific Broadleaf beans, this is generally only used when you are not running in a 
+ * Since this does not include any of the servlet-specific Broadleaf beans, this is generally only used when you are not running in a
  * servlet environment at all or there is a parent-child relationship between a root {@link ApplicationContext} and you want to
  * configure multiple servlets that share much of the same beans. In general, rather than create multiple servlets with shared
  * configuration you should instead create separate deployments and utilize {@link EnableBroadleafAdminAutoConfiguration} in a single place.
- * 
+ *
  * <p>
  * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
  * overwrite beans defined in a project.
@@ -84,9 +84,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({
-    EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration.class,
-    BroadleafAdminRootAutoConfiguration.class,
-    BroadleafAdminRootAutoConfigurationOverrides.class
+        EnableBroadleafRootAutoConfiguration.BroadleafRootAutoConfiguration.class,
+        BroadleafAdminRootAutoConfiguration.class,
+        BroadleafAdminRootAutoConfigurationOverrides.class
 })
 public @interface EnableBroadleafAdminRootAutoConfiguration {
 
@@ -109,7 +109,9 @@ public @interface EnableBroadleafAdminRootAutoConfiguration {
             return new AdminOnlyTarget();
         }
     }
-    
+
     @ImportResource("classpath:/override-contexts/admin-root-autoconfiguration-overrides.xml")
-    class BroadleafAdminRootAutoConfigurationOverrides {}
+    class BroadleafAdminRootAutoConfigurationOverrides {
+    }
+
 }

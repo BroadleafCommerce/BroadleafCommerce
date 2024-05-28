@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,13 +26,12 @@ import org.springframework.web.context.request.WebRequestInterceptor;
 
 import jakarta.annotation.Resource;
 
-
 /**
  * Interceptor responsible for putting the current customer on the current request. Note that this should always come after
  * the {@link PortletAuthenticationProcessingInterceptor} in order for this to work properly as this assumes that the
  * Spring {@link Authentication} object has already been set on Spring's {@link SecurityContext} (assuming that the user
  * is authenticated to begin with).
- * 
+ *
  * @author Phillip Verheyden
  * @see {@link CustomerStateRequestProcessor}
  * @see {@lnk CustomerState}

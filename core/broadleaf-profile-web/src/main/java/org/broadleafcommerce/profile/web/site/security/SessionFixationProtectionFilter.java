@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,17 +50,14 @@ import jakarta.servlet.http.HttpSession;
  * user to "/" and remove his session cookie.
  *
  * @author Andre Azzolini (apazzolini)
- *
  * @deprecated Use {@link org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy} instead
  */
 @Deprecated
 @Component("blSessionFixationProtectionFilter")
 public class SessionFixationProtectionFilter extends GenericFilterBean {
 
-    private static final Log LOG = LogFactory.getLog(SessionFixationProtectionFilter.class);
-
     protected static final String SESSION_ATTR = "SFP-ActiveID";
-
+    private static final Log LOG = LogFactory.getLog(SessionFixationProtectionFilter.class);
     @Autowired
     @Qualifier("blSessionFixationEncryptionModule")
     protected EncryptionModule encryptionModule;
@@ -88,7 +85,9 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
             if (StringUtils.isNotBlank(activeIdSessionValue) && request.isSecure()) {
                 // The request is secure and and we've set a session fixation protection cookie
 
-                String activeIdCookieValue = cookieUtils.getCookieValue(request, SessionFixationProtectionCookie.COOKIE_NAME);
+                String activeIdCookieValue = cookieUtils.getCookieValue(
+                        request, SessionFixationProtectionCookie.COOKIE_NAME
+                );
                 String decryptedActiveIdValue = encryptionModule.decrypt(activeIdCookieValue);
 
                 if (!activeIdSessionValue.equals(decryptedActiveIdValue)) {
@@ -110,7 +109,14 @@ public class SessionFixationProtectionFilter extends GenericFilterBean {
                 String encryptedActiveIdValue = encryptionModule.encrypt(token);
 
                 session.setAttribute(SESSION_ATTR, token);
-                cookieUtils.setCookieValue(response, SessionFixationProtectionCookie.COOKIE_NAME, encryptedActiveIdValue, "/", -1, true);
+                cookieUtils.setCookieValue(
+                        response,
+                        SessionFixationProtectionCookie.COOKIE_NAME,
+                        encryptedActiveIdValue,
+                        "/",
+                        -1,
+                        true
+                );
             }
         }
 

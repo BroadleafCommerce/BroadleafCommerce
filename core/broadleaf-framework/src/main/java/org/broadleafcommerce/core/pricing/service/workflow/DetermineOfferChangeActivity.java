@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,9 +35,8 @@ import jakarta.annotation.Resource;
  * This class is used in conjunction with the {@link CountTotalOffersActivity} to determine if the number
  * of offers changed on the order during the pricing workflow. This is important in determining if an offer
  * expired between the last time the order was priced and when the order was about to be sent through checkout.
- * 
- * @author Jay Aisenbrey (cja769)
  *
+ * @author Jay Aisenbrey (cja769)
  */
 @Component("blDetermineOfferChangeActivity")
 public class DetermineOfferChangeActivity extends BaseActivity<ProcessContext<Order>> {
@@ -55,12 +54,19 @@ public class DetermineOfferChangeActivity extends BaseActivity<ProcessContext<Or
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
-        Boolean isCheckout = (Boolean) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(OfferActivity.FINALIZE_CHECKOUT);
+        Boolean isCheckout = (Boolean) BroadleafRequestContext.getBroadleafRequestContext()
+                .getAdditionalProperties()
+                .get(OfferActivity.FINALIZE_CHECKOUT);
         if (isCheckout != null && isCheckout) {
             Set<Long> currentOffers = convertOffersToIds(offerService.getUniqueOffersFromOrder(order));
-            Set<Long> oldOffers = (Set<Long>) BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(OfferActivity.ORIG_OFFERS);
+            Set<Long> oldOffers = (Set<Long>) BroadleafRequestContext.getBroadleafRequestContext()
+                    .getAdditionalProperties()
+                    .get(OfferActivity.ORIG_OFFERS);
             if (!CollectionUtils.isEqualCollection(currentOffers, oldOffers)) {
-                BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(OfferActivity.OFFERS_EXPIRED, Boolean.TRUE);
+                BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(
+                        OfferActivity.OFFERS_EXPIRED,
+                        Boolean.TRUE
+                );
             }
         }
         return context;

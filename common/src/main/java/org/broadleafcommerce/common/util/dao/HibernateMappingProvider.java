@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -55,27 +55,14 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
 
     /**
      * Initialize with seed data independent of {@link #getSessionFactoryBuilder(MetadataImplementor, SessionFactoryBuilderImplementor)}
+     *
      * @param metadataMap seed data
      */
     public HibernateMappingProvider(Map<String, PersistentClass> metadataMap) {
         HibernateMappingProvider.metadataMap.putAll(metadataMap);
     }
 
-    @Override
-    public SessionFactoryBuilder getSessionFactoryBuilder(MetadataImplementor metadata, SessionFactoryBuilderImplementor defaultBuilder) {
-        // This aggregates all of the metadata for all persistence untis. No need to discriminate by persistence unit since the map is
-        // keyed by class name
-        Collection<PersistentClass> classes = metadata.getEntityBindings();
-        classes.forEach((clazz) -> {
-            if(clazz != null && clazz.getClassName()!= null){
-                 metadataMap.put(clazz.getClassName(), clazz);
-            }});
-        return defaultBuilder;
-     }
-
-
     /**
-     *
      * Returns the underlying Hibernate metadata about a given entity class across all available persistence units
      *
      * @param entityClass FQN of a Hibernate entity
@@ -88,6 +75,7 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
 
     /**
      * Retrieve the names of all of the Hibernate mapped properties for the given <b>entityClass</b>
+     *
      * @param entityClass mapped class
      * @return all property names or empty list if the class is not mapped by Hibernate or has no properties
      * @see #getPropertyTypes(String)
@@ -108,6 +96,7 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
 
     /**
      * Retrieve all of the types of all of the Hibernate mapped properties for the given <b>entityClass</b>
+     *
      * @param entityClass mapped class
      * @return all property types or empty list if the class is not mapped by Hibernate or has no properties
      * @see #getPropertyNames(String)
@@ -120,7 +109,7 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
             return propertyTypes;
         }
         List<Property> properties = metadata.getPropertyClosure();
-        for(Property prop : properties) {
+        for (Property prop : properties) {
             propertyTypes.add(prop.getType());
         }
         return propertyTypes;
@@ -128,11 +117,28 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
 
     /**
      * Retrieves all Hibernate metadata for all entities
+     *
      * @return all of the tracked {@link PersistentClass} across all registered persistence units
      */
     @NonNull
     public static Collection<PersistentClass> getAllMappings() {
         return metadataMap.values();
+    }
+
+    @Override
+    public SessionFactoryBuilder getSessionFactoryBuilder(
+            MetadataImplementor metadata,
+            SessionFactoryBuilderImplementor defaultBuilder
+    ) {
+        // This aggregates all of the metadata for all persistence untis. No need to discriminate by persistence unit since the map is
+        // keyed by class name
+        Collection<PersistentClass> classes = metadata.getEntityBindings();
+        classes.forEach((clazz) -> {
+            if (clazz != null && clazz.getClassName() != null) {
+                metadataMap.put(clazz.getClassName(), clazz);
+            }
+        });
+        return defaultBuilder;
     }
 
 }

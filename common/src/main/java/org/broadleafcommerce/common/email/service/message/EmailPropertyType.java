@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,29 +19,25 @@ package org.broadleafcommerce.common.email.service.message;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of email property types.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class EmailPropertyType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, EmailPropertyType> TYPES = new LinkedHashMap<String, EmailPropertyType>();
+    private static final Map<String, EmailPropertyType> TYPES = new LinkedHashMap<>();
 
     public static final EmailPropertyType USER = new EmailPropertyType("user", "User");
     public static final EmailPropertyType INFO = new EmailPropertyType("info", "Info");
     public static final EmailPropertyType SERVERINFO = new EmailPropertyType("serverInfo", "Server Info");
-
-    public static EmailPropertyType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -55,19 +51,23 @@ public class EmailPropertyType implements Serializable, BroadleafEnumerationType
         setType(type);
     }
 
+    public static EmailPropertyType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -94,4 +94,5 @@ public class EmailPropertyType implements Serializable, BroadleafEnumerationType
             return false;
         return true;
     }
+
 }

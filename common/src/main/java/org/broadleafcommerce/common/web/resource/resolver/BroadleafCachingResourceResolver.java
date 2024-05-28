@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,13 +40,13 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * A ResourceResolver that handles using the theme as part of the cache key and adds in
  * support to disable with environment properties.
- *
+ * <p>
  * We bypass {@link CachingResourceResolver} and instead borrow its code in order to be
  * able to inject the theme key that is needed by BLC since Spring's class could not be
  * leveraged otherwise.
+ * <p>
+ * {@code }
  *
- *  {@code }
- * 
  * @author Brian Polster
  * @since Broadleaf 4.0
  */
@@ -58,20 +58,15 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
     public static final String RESOLVED_RESOURCE_CACHE_KEY_PREFIX_NULL = "resolvedResourceNull:";
     public static final String RESOLVED_URL_PATH_CACHE_KEY_PREFIX_NULL = "resolvedUrlPathNull:";
     private static final Object NULL_REFERENCE = new Object();
-    private int order = BroadleafResourceResolverOrder.BLC_CACHE_RESOURCE_RESOLVER;
-
+    private static final String DEFAULT_CACHE_NAME = "blResourceCacheElements";
     private final Cache cache;
-
-    @jakarta.annotation.Resource(name = "blSpringCacheManager")
-    private CacheManager cacheManager;
-
     @jakarta.annotation.Resource(name = "blBroadleafContextUtil")
     protected BroadleafContextUtil blcContextUtil;
-    
-    private static final String DEFAULT_CACHE_NAME = "blResourceCacheElements";
-
     @Value("${resource.caching.enabled:true}")
     protected boolean resourceCachingEnabled;
+    private int order = BroadleafResourceResolverOrder.BLC_CACHE_RESOURCE_RESOLVER;
+    @jakarta.annotation.Resource(name = "blSpringCacheManager")
+    private CacheManager cacheManager;
 
     @Autowired
     public BroadleafCachingResourceResolver(@Qualifier("blSpringCacheManager") CacheManager cacheManager) {
@@ -92,8 +87,12 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
     }
 
     @Override
-    protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
-            List<? extends Resource> locations, ResourceResolverChain chain) {
+    protected Resource resolveResourceInternal(
+            HttpServletRequest request,
+            String requestPath,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         blcContextUtil.establishThinRequestContext();
 
         if (resourceCachingEnabled) {
@@ -149,8 +148,11 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
     }
 
     @Override
-    protected String resolveUrlPathInternal(String resourceUrlPath,
-            List<? extends Resource> locations, ResourceResolverChain chain) {
+    protected String resolveUrlPathInternal(
+            String resourceUrlPath,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         if (resourceCachingEnabled) {
             String response = null;
 
@@ -192,7 +194,7 @@ public class BroadleafCachingResourceResolver extends AbstractResourceResolver i
         }
     }
 
-    private void logNullReferenceUrlPatchMatch(String resourceUrlPath) {
+    protected void logNullReferenceUrlPatchMatch(String resourceUrlPath) {
         if (logger.isTraceEnabled()) {
             logger.trace(String.format("Found null reference url path match for '%s'", resourceUrlPath));
         }

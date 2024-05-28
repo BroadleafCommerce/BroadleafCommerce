@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -70,65 +70,13 @@ import java.util.Set;
  * }
  * </pre>
  *
+ * @author Jeff Fischer
  * @see LateStageMergeBeanPostProcessor
  * @see EarlyStageMergeBeanPostProcessor
- * @author Jeff Fischer
  */
 public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 
-    public static class BeanPackage {
-
-        protected String sourceRef;
-        protected String targetRef;
-        protected Placement placement = Placement.APPEND;
-        protected int position;
-        protected MergeBeanStatusProvider statusProvider;
-        protected boolean bySource = false;
-
-        public String getSourceRef() {
-            return sourceRef;
-        }
-
-        public void setSourceRef(String sourceRef) {
-            this.sourceRef = sourceRef;
-        }
-
-        public String getTargetRef() {
-            return targetRef;
-        }
-
-        public void setTargetRef(String targetRef) {
-            this.targetRef = targetRef;
-        }
-
-        public Placement getPlacement() {
-            return placement;
-        }
-
-        public void setPlacement(Placement placement) {
-            this.placement = placement;
-        }
-
-        public int getPosition() {
-            return position;
-        }
-
-        public void setPosition(int position) {
-            this.position = position;
-        }
-
-        public MergeBeanStatusProvider getStatusProvider() {
-            return statusProvider;
-        }
-
-        public void setStatusProvider(MergeBeanStatusProvider statusProvider) {
-            this.statusProvider = statusProvider;
-        }
-
-    }
-
     protected static final Log LOG = LogFactory.getLog(AbstractMergeBeanPostProcessor.class);
-
     protected ApplicationContext applicationContext;
     protected BeanPackage defaultBeanPackage = new BeanPackage();
 
@@ -153,7 +101,8 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
         beanPackage.setTargetRef((String) methodAnnotationAttributes.get("targetRef"));
         beanPackage.setPlacement((Placement) methodAnnotationAttributes.get("placement"));
         beanPackage.setPosition((Integer) methodAnnotationAttributes.get("position"));
-        Class<MergeBeanStatusProvider> clazz = (Class<MergeBeanStatusProvider>) methodAnnotationAttributes.get("statusProvider");
+        Class<MergeBeanStatusProvider> clazz = (Class<MergeBeanStatusProvider>) methodAnnotationAttributes
+                .get("statusProvider");
         if (MergeBeanStatusProvider.class != clazz) {
             try {
                 beanPackage.setStatusProvider(clazz.newInstance());
@@ -174,7 +123,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
         MergeBeanStatusProvider statusProvider = beanPackage.getStatusProvider();
         Object sourceItem = null;
         Object targetItem = null;
-        if (beanName.equals(targetRef)){
+        if (beanName.equals(targetRef)) {
             targetItem = bean;
             if (!StringUtils.isEmpty(sourceRef)) {
                 sourceItem = applicationContext.getBean(sourceRef);
@@ -228,8 +177,8 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
                         addMapToMap(targetItem, (Map) sourceItem, placement, position);
                     } else {
                         throw new IllegalArgumentException(String.format("Attempting to merge an item of type " +
-                                    "%s into a target map. Only source items of type MapFactoryBean or Map " +
-                                    "may be used.", sourceItem.getClass().getName()));
+                                "%s into a target map. Only source items of type MapFactoryBean or Map " +
+                                "may be used.", sourceItem.getClass().getName()));
                     }
                 } catch (Exception e) {
                     throw new BeanCreationException(e.getMessage());
@@ -297,7 +246,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
             field.setAccessible(true);
             targetSet = (Set) field.get(bean);
         } else {
-            targetSet = (Set)bean;
+            targetSet = (Set) bean;
         }
         List tempList = new ArrayList(targetSet);
         switch (placement) {
@@ -322,7 +271,7 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
             field.setAccessible(true);
             targetSet = (Set) field.get(bean);
         } else {
-            targetSet = (Set)bean;
+            targetSet = (Set) bean;
         }
         List tempList = new ArrayList(targetSet);
         switch (placement) {
@@ -388,8 +337,8 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
     /**
      * Retrieve the id of the collection to be merged
      *
-     * @deprecated use {@link #getSourceRef()} instead
      * @return the id of the collection to be merged
+     * @deprecated use {@link #getSourceRef()} instead
      */
     @Deprecated
     public String getCollectionRef() {
@@ -399,8 +348,8 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
     /**
      * Set the id of the collection to be merged
      *
-     * @deprecated use {@link #setSourceRef(String)} instead
      * @param collectionRef the id of the collection to be merged
+     * @deprecated use {@link #setSourceRef(String)} instead
      */
     @Deprecated
     public void setCollectionRef(String collectionRef) {
@@ -485,21 +434,72 @@ public abstract class AbstractMergeBeanPostProcessor implements BeanPostProcesso
 
     /**
      * Gets the status provider that is configured for this post processor
-     * 
+     *
      * @return the MergeStatusBeanProvider
      */
     public MergeBeanStatusProvider getStatusProvider() {
         return defaultBeanPackage.getStatusProvider();
     }
-    
+
     /**
      * Sets the MergeBeanStatusProvider, which controls whether or not this post processor is activated.
      * If no statusProvider is set, then we will always execute.
-     * 
+     *
      * @param statusProvider
      */
     public void setStatusProvider(MergeBeanStatusProvider statusProvider) {
         defaultBeanPackage.setStatusProvider(statusProvider);
+    }
+
+    public static class BeanPackage {
+
+        protected String sourceRef;
+        protected String targetRef;
+        protected Placement placement = Placement.APPEND;
+        protected int position;
+        protected MergeBeanStatusProvider statusProvider;
+        protected boolean bySource = false;
+
+        public String getSourceRef() {
+            return sourceRef;
+        }
+
+        public void setSourceRef(String sourceRef) {
+            this.sourceRef = sourceRef;
+        }
+
+        public String getTargetRef() {
+            return targetRef;
+        }
+
+        public void setTargetRef(String targetRef) {
+            this.targetRef = targetRef;
+        }
+
+        public Placement getPlacement() {
+            return placement;
+        }
+
+        public void setPlacement(Placement placement) {
+            this.placement = placement;
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public void setPosition(int position) {
+            this.position = position;
+        }
+
+        public MergeBeanStatusProvider getStatusProvider() {
+            return statusProvider;
+        }
+
+        public void setStatusProvider(MergeBeanStatusProvider statusProvider) {
+            this.statusProvider = statusProvider;
+        }
+
     }
 
 }

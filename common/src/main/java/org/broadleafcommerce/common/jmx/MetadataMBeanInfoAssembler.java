@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,12 +29,11 @@ import javax.management.modelmbean.ModelMBeanOperationInfo;
  * It is possible to cause Spring to use CGLIB proxies instead via configuration, but this causes problems when it is desireable
  * or necessary to use constructor injection for the service definition, since CGLIB proxies require a default, no argument
  * constructor.
- * 
+ * <p>
  * This class enhances the behavior of the Spring implementation to retrieve the rootId object inside the proxy for the sake of
  * metadata retrieval, thereby working around these shortcomings.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class MetadataMBeanInfoAssembler extends org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler {
 
@@ -61,4 +60,5 @@ public class MetadataMBeanInfoAssembler extends org.springframework.jmx.export.a
         managedBean = AspectUtil.exposeRootBean(managedBean);
         return super.getOperationInfo(managedBean, beanKey);
     }
+
 }

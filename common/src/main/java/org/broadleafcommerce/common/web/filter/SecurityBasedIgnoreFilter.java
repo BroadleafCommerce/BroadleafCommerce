@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,9 +43,9 @@ import jakarta.servlet.http.HttpServletResponse;
  * ignore all normal operation. This implementation makes it's determination based on whether or not Spring Security
  * is configured to ignore the requested URI.
  *
+ * @author Jeff Fischer
  * @see AbstractIgnorableFilter
  * @see AbstractIgnorableOncePerRequestFilter
- * @author Jeff Fischer
  */
 @Component("blSecurityBasedIgnoreFilter")
 public class SecurityBasedIgnoreFilter extends GenericFilterBean implements Ordered {
@@ -67,7 +67,10 @@ public class SecurityBasedIgnoreFilter extends GenericFilterBean implements Orde
             List<SecurityFilterChain> securityChains = springSecurity.getFilterChains();
             for (SecurityFilterChain chain : securityChains) {
                 if (chain.matches((HttpServletRequest) request) && chain.getFilters().isEmpty()) {
-                    BLCRequestUtils.setIsFilteringIgnoredForUri(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response), Boolean.TRUE);
+                    BLCRequestUtils.setIsFilteringIgnoredForUri(
+                            new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response),
+                            Boolean.TRUE
+                    );
                     break;
                 }
             }
@@ -79,4 +82,5 @@ public class SecurityBasedIgnoreFilter extends GenericFilterBean implements Orde
     public int getOrder() {
         return FilterOrdered.PRE_SECURITY_HIGH - 500;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -100,37 +100,38 @@ import jakarta.persistence.PersistenceContext;
  * @author apazzolini
  */
 @Service("blOrderService")
-@ManagedResource(objectName="org.broadleafcommerce:name=OrderService", description="Order Service", currencyTimeLimit=15)
+@ManagedResource(objectName = "org.broadleafcommerce:name=OrderService", description = "Order Service", currencyTimeLimit = 15)
 public class OrderServiceImpl implements OrderService {
+
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
 
     /* DAOs */
     @Resource(name = "blOrderPaymentDao")
     protected OrderPaymentDao paymentDao;
-    
+
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
-    
+
     @Resource(name = "blOfferDao")
     protected OfferDao offerDao;
 
     /* Factories */
     @Resource(name = "blNullOrderFactory")
     protected NullOrderFactory nullOrderFactory;
-    
+
     /* Services */
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
     @Resource(name = "blPricingService")
     protected PricingService pricingService;
-    
+
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-    
+
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
-    
+
     @Resource(name = "blOfferService")
     protected OfferService offerService;
 
@@ -139,32 +140,23 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource(name = "blMergeCartService")
     protected MergeCartService mergeCartService;
-    
+
     @Resource(name = "blOrderServiceExtensionManager")
     protected OrderServiceExtensionManager extensionManager;
-    
+
     /* Workflows */
     @Resource(name = "blAddItemWorkflow")
     protected Processor addItemWorkflow;
-    
-    @Resource(name = "blUpdateProductOptionsForItemWorkflow")
-    private Processor updateProductOptionsForItemWorkflow;
-
     @Resource(name = "blUpdateItemWorkflow")
     protected Processor updateItemWorkflow;
-    
     @Resource(name = "blRemoveItemWorkflow")
     protected Processor removeItemWorkflow;
-
     @Resource(name = "blTransactionManager")
     protected PlatformTransactionManager transactionManager;
-
     @Value("${pricing.retry.count.for.lock.failure}")
     protected int pricingRetryCountForLockFailure = 3;
-
     @Value("${pricing.retry.wait.interval.for.lock.failure}")
     protected long pricingRetryWaitIntervalForLockFailure = 500L;
-
     /**
      * Advanced setting. Should Hibernate auto flush before queries during an
      * add-to-cart workflow. This should generally be able to be left false. This is a performance measure and
@@ -172,7 +164,6 @@ public class OrderServiceImpl implements OrderService {
      */
     @Value("${auto.flush.on.query.during.add.to.cart:false}")
     protected boolean autoFlushAddToCart = false;
-
     /**
      * Advanced setting. Should Hibernate auto flush before queries during an
      * update-cart workflow. This should generally be able to be left false. This is a performance measure and
@@ -180,7 +171,6 @@ public class OrderServiceImpl implements OrderService {
      */
     @Value("${auto.flush.on.query.during.update.cart:false}")
     protected boolean autoFlushUpdateCart = false;
-
     /**
      * Advanced setting. Should Hibernate auto flush before queries during an
      * remove-from-cart workflow. This should generally be able to be left false. This is a performance measure and
@@ -188,7 +178,6 @@ public class OrderServiceImpl implements OrderService {
      */
     @Value("${auto.flush.on.query.during.remove.from.cart:false}")
     protected boolean autoFlushRemoveFromCart = false;
-
     /**
      * Advanced setting. Should Hibernate auto flush before queries during an
      * order save pricing flow. This should generally be able to be left false. This is a performance measure and
@@ -196,22 +185,18 @@ public class OrderServiceImpl implements OrderService {
      */
     @Value("${auto.flush.on.query.during.cart.pricing.save:false}")
     protected boolean autoFlushSaveCart = false;
-
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
-
     /* Fields */
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
-
     protected Boolean automaticallyMergeLikeItems;
-
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
-
     @Resource(name = "blOfferServiceExtensionManager")
     protected OfferServiceExtensionManager offerServiceExtensionManager;
-
+    @Resource(name = "blUpdateProductOptionsForItemWorkflow")
+    private Processor updateProductOptionsForItemWorkflow;
 
     @Override
     @Transactional("blTransactionManager")
@@ -230,15 +215,15 @@ public class OrderServiceImpl implements OrderService {
         namedOrder.setCustomer(customer);
         namedOrder.setName(name);
         namedOrder.setStatus(OrderStatus.NAMED);
-        
+
         if (extensionManager != null) {
             extensionManager.getProxy().attachAdditionalDataToNewNamedCart(customer, namedOrder);
         }
-        
+
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
             namedOrder.setLocale(BroadleafRequestContext.getBroadleafRequestContext().getLocale());
         }
-        
+
         return persist(namedOrder); // No need to price here
     }
 
@@ -306,7 +291,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderPayment> findPaymentsForOrder(Order order) {
         return paymentDao.readPaymentsForOrder(order);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public OrderPayment addPaymentToOrder(Order order, OrderPayment payment, Referenced securePaymentInfo) {
@@ -321,7 +306,7 @@ public class OrderServiceImpl implements OrderService {
 
         return order.getPayments().get(paymentIndex);
     }
-    
+
     @Override
     public Order save(Order order, boolean priceOrder, boolean repriceItems) throws PricingException {
         if (repriceItems) {
@@ -334,7 +319,7 @@ public class OrderServiceImpl implements OrderService {
     public Order save(Order order, Boolean priceOrder) throws PricingException {
         //persist the order first
         TransactionStatus status = TransactionUtils.createTransaction("saveOrder",
-                    TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
+                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
         try {
             order = persist(order);
             TransactionUtils.finalizeTransaction(status, transactionManager, false);
@@ -378,7 +363,8 @@ public class OrderServiceImpl implements OrderService {
                         isValid = false;
                         if (retryCount >= pricingRetryCountForLockFailure) {
                             if (LOG.isInfoEnabled()) {
-                                LOG.info("Problem acquiring lock during pricing call. Retry limit exceeded at (" + retryCount + "). Throwing exception.");
+                                LOG.info("Problem acquiring lock during pricing call. Retry limit exceeded at ("
+                                        + retryCount + "). Throwing exception.");
                             }
                             if (ex instanceof PricingException) {
                                 throw (PricingException) ex;
@@ -409,8 +395,11 @@ public class OrderServiceImpl implements OrderService {
             }
 
             //make the final save of the priced order
-            status = TransactionUtils.createTransaction("saveOrder",
-                                TransactionDefinition.PROPAGATION_REQUIRED, transactionManager);
+            status = TransactionUtils.createTransaction(
+                    "saveOrder",
+                    TransactionDefinition.PROPAGATION_REQUIRED,
+                    transactionManager
+            );
             Session session = em.unwrap(Session.class);
             FlushMode current = session.getHibernateFlushMode();
             try {
@@ -441,7 +430,7 @@ public class OrderServiceImpl implements OrderService {
 
         return order;
     }
-    
+
     // This method exists to provide OrderService methods the ability to save an order
     // without having to worry about a PricingException being thrown.
     protected Order persist(Order order) {
@@ -479,7 +468,7 @@ public class OrderServiceImpl implements OrderService {
         }
         if (offerCodes != null && !offerCodes.isEmpty()) {
             for (OfferCode offerCode : offerCodes) {
-                
+
                 if (order.getAddedOfferCodes().contains(offerCode) || addedOffers.contains(offerCode.getOffer())) {
                     throw new OfferAlreadyAddedException("The offer has already been added.");
                 } else if (!offerService.verifyMaxCustomerUsageThreshold(order, offerCode)) {
@@ -503,27 +492,21 @@ public class OrderServiceImpl implements OrderService {
         order.getAddedOfferCodes().remove(offerCode);
         offerServiceExtensionManager.removeOfferCodeFromOrder(offerCode, order);
         order = save(order, priceOrder);
-        return order;   
+        return order;
     }
 
     @Override
     @Transactional("blTransactionManager")
     public Order removeAllOfferCodes(Order order, boolean priceOrder) throws PricingException {
-         order.getAddedOfferCodes().clear();
-         order = save(order, priceOrder);
-         return order;  
+        order.getAddedOfferCodes().clear();
+        order = save(order, priceOrder);
+        return order;
     }
 
     @Override
-    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
-    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
-        this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
-    }
-    
-    @Override
     public OrderItem findLastMatchingItem(Order order, Long skuId, Long productId) {
         if (order.getOrderItems() != null) {
-            for (int i=(order.getOrderItems().size()-1); i >= 0; i--) {
+            for (int i = (order.getOrderItems().size() - 1); i >= 0; i--) {
                 OrderItem currentItem = (order.getOrderItems().get(i));
                 if (currentItem instanceof DiscreteOrderItem) {
                     DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
@@ -531,7 +514,8 @@ public class OrderServiceImpl implements OrderService {
                         if (discreteItem.getSku() != null && skuId.equals(discreteItem.getSku().getId())) {
                             return discreteItem;
                         }
-                    } else if (productId != null && discreteItem.getProduct() != null && productId.equals(discreteItem.getProduct().getId())) {
+                    } else if (productId != null && discreteItem.getProduct() != null
+                            && productId.equals(discreteItem.getProduct().getId())) {
                         return discreteItem;
                     }
 
@@ -541,7 +525,8 @@ public class OrderServiceImpl implements OrderService {
                         if (bundleItem.getSku() != null && skuId.equals(bundleItem.getSku().getId())) {
                             return bundleItem;
                         }
-                    } else if (productId != null && bundleItem.getProduct() != null && productId.equals(bundleItem.getProduct().getId())) {
+                    } else if (productId != null && bundleItem.getProduct() != null
+                            && productId.equals(bundleItem.getProduct().getId())) {
                         return bundleItem;
                     }
                 }
@@ -549,13 +534,13 @@ public class OrderServiceImpl implements OrderService {
         }
         return null;
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public Order confirmOrder(Order order) {
         return orderDao.submitOrder(order);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public Order addAllItemsFromNamedOrder(Order namedOrder, boolean priceOrder) throws RemoveFromCartException, AddToCartException {
@@ -566,7 +551,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItem> items = new ArrayList<OrderItem>(namedOrder.getOrderItems());
 
         // Remove any order items that are children
-        CollectionUtils.filter(items,  new TypedPredicate<OrderItem>() {
+        CollectionUtils.filter(items, new TypedPredicate<OrderItem>() {
             @Override
             public boolean eval(OrderItem orderItem) {
                 return orderItem.getParentOrderItem() == null;
@@ -580,17 +565,21 @@ public class OrderServiceImpl implements OrderService {
                 removeItem(namedOrder.getId(), item.getId(), false);
             }
         }
-        
+
         if (deleteEmptyNamedOrders) {
             cancelOrder(namedOrder);
         }
-        
+
         return cartOrder;
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
-    public Order addItemFromNamedOrder(Order namedOrder, OrderItem item, boolean priceOrder) throws RemoveFromCartException, AddToCartException {
+    public Order addItemFromNamedOrder(
+            Order namedOrder,
+            OrderItem item,
+            boolean priceOrder
+    ) throws RemoveFromCartException, AddToCartException {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
         if (cartOrder == null) {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
@@ -606,20 +595,25 @@ public class OrderServiceImpl implements OrderService {
         if (namedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
             cancelOrder(namedOrder);
         }
-            
+
         return cartOrder;
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
-    public Order addItemFromNamedOrder(Order namedOrder, OrderItem item, int quantity, boolean priceOrder) throws RemoveFromCartException, AddToCartException, UpdateCartException {
+    public Order addItemFromNamedOrder(
+            Order namedOrder,
+            OrderItem item,
+            int quantity,
+            boolean priceOrder
+    ) throws RemoveFromCartException, AddToCartException, UpdateCartException {
         // Validate that the quantity requested makes sense
         if (quantity < 1 || quantity > item.getQuantity()) {
             throw new IllegalArgumentException("Cannot move 0 or less quantity");
         } else if (quantity == item.getQuantity()) {
             return addItemFromNamedOrder(namedOrder, item, priceOrder);
         }
-        
+
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
         if (cartOrder == null) {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
@@ -638,20 +632,20 @@ public class OrderServiceImpl implements OrderService {
         }
         return cartOrder;
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
         GiftWrapOrderItem item = orderItemService.createGiftWrapOrderItem(itemRequest);
         item.setOrder(order);
         item = (GiftWrapOrderItem) orderItemService.saveOrderItem(item);
-        
+
         order.getOrderItems().add(item);
         order = save(order, priceOrder);
-        
+
         return item;
     }
-    
+
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
@@ -662,7 +656,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(value = "blTransactionManager", rollbackFor = { AddToCartException.class })
+    @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
     public Order addItemWithPriceOverrides(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
         Order order = findOrderById(orderId);
         preValidateCartOperation(order);
@@ -685,7 +679,9 @@ public class OrderServiceImpl implements OrderService {
             int numAdditionRequests = priceOrder ? (getTotalChildOrderItems(orderItemRequestDTO)) : -1;
             int currentAddition = 1;
 
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests);
+            CartOperationRequest cartOpRequest = new CartOperationRequest(
+                    findOrderById(orderId), orderItemRequestDTO, currentAddition == numAdditionRequests
+            );
 
             Session session = em.unwrap(Session.class);
             FlushMode current = session.getHibernateFlushMode();
@@ -730,7 +726,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addChildItems(OrderItemRequestDTO orderItemRequestDTO, int numAdditionRequests, int currentAddition, ProcessContext<CartOperationRequest> context, List<ActivityMessageDTO> orderMessages) throws WorkflowException {
+    public void addChildItems(
+            OrderItemRequestDTO orderItemRequestDTO,
+            int numAdditionRequests,
+            int currentAddition,
+            ProcessContext<CartOperationRequest> context,
+            List<ActivityMessageDTO> orderMessages
+    ) throws WorkflowException {
         if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
             Long parentOrderItemId = context.getSeedData().getOrderItem().getId();
             for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
@@ -738,7 +740,11 @@ public class OrderServiceImpl implements OrderService {
                 currentAddition++;
 
                 if (childRequest.getQuantity() > 0) {
-                    CartOperationRequest childCartOpRequest = new CartOperationRequest(context.getSeedData().getOrder(), childRequest, currentAddition == numAdditionRequests);
+                    CartOperationRequest childCartOpRequest = new CartOperationRequest(
+                            context.getSeedData().getOrder(),
+                            childRequest,
+                            currentAddition == numAdditionRequests
+                    );
                     Session session = em.unwrap(Session.class);
                     FlushMode current = session.getHibernateFlushMode();
                     if (!autoFlushAddToCart) {
@@ -764,7 +770,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void addDependentOrderItem(OrderItemRequestDTO parentOrderItemRequest, OrderItemRequestDTO dependentOrderItem) {
+    public void addDependentOrderItem(
+            OrderItemRequestDTO parentOrderItemRequest,
+            OrderItemRequestDTO dependentOrderItem
+    ) {
         parentOrderItemRequest.getChildOrderItems().add(dependentOrderItem);
         Collections.sort(parentOrderItemRequest.getChildOrderItems(), new Comparator<OrderItemRequestDTO>() {
             @Override
@@ -778,16 +787,22 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class, RemoveFromCartException.class})
-    public Order updateItemQuantity(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException, RemoveFromCartException {
+    public Order updateItemQuantity(
+            Long orderId,
+            OrderItemRequestDTO orderItemRequestDTO,
+            boolean priceOrder
+    ) throws UpdateCartException, RemoveFromCartException {
         Order order = findOrderById(orderId);
         preValidateCartOperation(order);
         preValidateUpdateQuantityOperation(findOrderById(orderId), orderItemRequestDTO);
         if (orderItemRequestDTO.getQuantity() == 0) {
             return removeItem(orderId, orderItemRequestDTO.getOrderItemId(), priceOrder);
         }
-        
+
         try {
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+            CartOperationRequest cartOpRequest = new CartOperationRequest(
+                    findOrderById(orderId), orderItemRequestDTO, priceOrder
+            );
             Session session = em.unwrap(Session.class);
             FlushMode current = session.getHibernateFlushMode();
             if (!autoFlushUpdateCart) {
@@ -831,7 +846,7 @@ public class OrderServiceImpl implements OrderService {
             }
             for (Long childToRemove : childrenToRemove) {
                 removeItemInternal(orderId, childToRemove, false);
-            }                    
+            }
 
             return removeItemInternal(orderId, orderItemId, priceOrder);
         } catch (WorkflowException e) {
@@ -839,7 +854,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    protected void findAllChildrenToRemove(List<Long> childrenToRemove, OrderItem orderItem){
+    protected void findAllChildrenToRemove(List<Long> childrenToRemove, OrderItem orderItem) {
         if (CollectionUtils.isNotEmpty(orderItem.getChildOrderItems())) {
             for (OrderItem childOrderItem : orderItem.getChildOrderItems()) {
                 findAllChildrenToRemove(childrenToRemove, childOrderItem);
@@ -847,11 +862,13 @@ public class OrderServiceImpl implements OrderService {
             }
         }
     }
-    
+
     protected Order removeItemInternal(Long orderId, Long orderItemId, boolean priceOrder) throws WorkflowException {
         OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
         orderItemRequestDTO.setOrderItemId(orderItemId);
-        CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
+        CartOperationRequest cartOpRequest = new CartOperationRequest(
+                findOrderById(orderId), orderItemRequestDTO, priceOrder
+        );
         Session session = em.unwrap(Session.class);
         FlushMode current = session.getHibernateFlushMode();
         if (!autoFlushRemoveFromCart) {
@@ -873,7 +890,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(value = "blTransactionManager", rollbackFor = { RemoveFromCartException.class })
+    @Transactional(value = "blTransactionManager", rollbackFor = {RemoveFromCartException.class})
     public Order removeInactiveItems(Long orderId, boolean priceOrder) throws RemoveFromCartException {
         Order order = findOrderById(orderId);
         try {
@@ -892,7 +909,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean getAutomaticallyMergeLikeItems() {
-        
+
         if (automaticallyMergeLikeItems != null) {
             return automaticallyMergeLikeItems;
         }
@@ -904,23 +921,29 @@ public class OrderServiceImpl implements OrderService {
     public void setAutomaticallyMergeLikeItems(boolean automaticallyMergeLikeItems) {
         this.automaticallyMergeLikeItems = automaticallyMergeLikeItems;
     }
-    
+
     @Override
-    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
+    @ManagedAttribute(description = "The move item from named order when adding to the cart attribute", currencyTimeLimit = 15)
     public boolean isMoveNamedOrderItems() {
         return moveNamedOrderItems;
     }
 
     @Override
-    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
+    @ManagedAttribute(description = "The move item from named order when adding to the cart attribute", currencyTimeLimit = 15)
     public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
         this.moveNamedOrderItems = moveNamedOrderItems;
     }
 
     @Override
-    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
+    @ManagedAttribute(description = "The delete empty named order after adding items to cart attribute", currencyTimeLimit = 15)
     public boolean isDeleteEmptyNamedOrders() {
         return deleteEmptyNamedOrders;
+    }
+
+    @Override
+    @ManagedAttribute(description = "The delete empty named order after adding items to cart attribute", currencyTimeLimit = 15)
+    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
+        this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
     }
 
     @Override
@@ -941,7 +964,9 @@ public class OrderServiceImpl implements OrderService {
         order.getPayments().removeAll(infos);
         for (OrderPayment paymentInfo : infos) {
             try {
-                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(
+                        paymentInfo.getReferenceNumber(), paymentInfo.getType()
+                );
             } catch (WorkflowException e) {
                 // do nothing--this is an acceptable condition
                 LOG.debug("No secure payment is associated with the OrderPayment", e);
@@ -964,7 +989,9 @@ public class OrderServiceImpl implements OrderService {
         order.getPayments().removeAll(infos);
         for (OrderPayment paymentInfo : infos) {
             try {
-                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(
+                        paymentInfo.getReferenceNumber(), paymentInfo.getType()
+                );
             } catch (WorkflowException e) {
                 // do nothing--this is an acceptable condition
                 LOG.debug("No secure payment is associated with the OrderPayment", e);
@@ -977,16 +1004,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional("blTransactionManager")
-    public void removePaymentFromOrder(Order order, OrderPayment payment){
+    public void removePaymentFromOrder(Order order, OrderPayment payment) {
         OrderPayment paymentToRemove = null;
-        for (OrderPayment info : order.getPayments()){
-            if (info.equals(payment)){
+        for (OrderPayment info : order.getPayments()) {
+            if (info.equals(payment)) {
                 paymentToRemove = info;
             }
         }
-        if (paymentToRemove != null){
+        if (paymentToRemove != null) {
             try {
-                securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentToRemove.getReferenceNumber(), payment.getType());
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo(
+                        paymentToRemove.getReferenceNumber(), payment.getType()
+                );
             } catch (WorkflowException e) {
                 // do nothing--this is an acceptable condition
                 LOG.debug("No secure payment is associated with the OrderPayment", e);
@@ -996,11 +1025,11 @@ public class OrderServiceImpl implements OrderService {
             paymentDao.delete(payment);
         }
     }
-    
+
     /**
-     * This method will return the exception that is immediately below the deepest 
+     * This method will return the exception that is immediately below the deepest
      * WorkflowException in the current stack trace.
-     * 
+     *
      * @param e the workflow exception that contains the requested root cause
      * @return the root cause of the workflow exception
      */
@@ -1009,7 +1038,7 @@ public class OrderServiceImpl implements OrderService {
         if (cause == null) {
             return e;
         }
-        
+
         Throwable currentCause = cause;
         while (currentCause.getCause() != null) {
             currentCause = currentCause.getCause();
@@ -1017,12 +1046,13 @@ public class OrderServiceImpl implements OrderService {
                 cause = currentCause.getCause();
             }
         }
-        
+
         return cause;
     }
 
     /**
      * Returns true if the two items attributes exactly match.
+     *
      * @param item1Attributes
      * @param item2
      * @return
@@ -1045,8 +1075,12 @@ public class OrderServiceImpl implements OrderService {
         return true;
     }
 
-    protected boolean itemMatches(Sku item1Sku, Product item1Product, Map<String, OrderItemAttribute> item1Attributes,
-            OrderItemRequestDTO item2) {
+    protected boolean itemMatches(
+            Sku item1Sku,
+            Product item1Product,
+            Map<String, OrderItemAttribute> item1Attributes,
+            OrderItemRequestDTO item2
+    ) {
         // Must match on SKU and options
         if (item1Sku != null && item2.getSkuId() != null) {
             if (item1Sku.getId().equals(item2.getSkuId())) {
@@ -1069,8 +1103,12 @@ public class OrderServiceImpl implements OrderService {
         for (OrderItem currentItem : order.getOrderItems()) {
             if (currentItem instanceof DiscreteOrderItem) {
                 DiscreteOrderItem discreteItem = (DiscreteOrderItem) currentItem;
-                if (itemMatches(discreteItem.getSku(), discreteItem.getProduct(), discreteItem.getOrderItemAttributes(),
-                        itemToFind)) {
+                if (itemMatches(
+                        discreteItem.getSku(),
+                        discreteItem.getProduct(),
+                        discreteItem.getOrderItemAttributes(),
+                        itemToFind
+                )) {
                     return discreteItem;
                 }
             } else if (currentItem instanceof BundleOrderItem) {
@@ -1084,11 +1122,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(value = "blTransactionManager", rollbackFor = { UpdateCartException.class })
-    public Order updateProductOptionsForItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws UpdateCartException {
+    @Transactional(value = "blTransactionManager", rollbackFor = {UpdateCartException.class})
+    public Order updateProductOptionsForItem(
+            Long orderId,
+            OrderItemRequestDTO orderItemRequestDTO,
+            boolean priceOrder
+    ) throws UpdateCartException {
         try {
-            CartOperationRequest cartOpRequest = new CartOperationRequest(findOrderById(orderId), orderItemRequestDTO, priceOrder);
-            ProcessContext<CartOperationRequest> context = (ProcessContext<CartOperationRequest>) updateProductOptionsForItemWorkflow.doActivities(cartOpRequest);
+            CartOperationRequest cartOpRequest = new CartOperationRequest(
+                    findOrderById(orderId), orderItemRequestDTO, priceOrder
+            );
+            ProcessContext<CartOperationRequest> context =
+                    (ProcessContext<CartOperationRequest>) updateProductOptionsForItemWorkflow.doActivities(cartOpRequest);
             context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
             return context.getSeedData().getOrder();
         } catch (WorkflowException e) {
@@ -1121,39 +1166,39 @@ public class OrderServiceImpl implements OrderService {
         if (!log.isDebugEnabled()) {
             return;
         }
-        
-        TableCreator tc = new TableCreator(new TableCreator.Col[] {
-            new TableCreator.Col("Order Item", 30),
-            new TableCreator.Col("Qty"),
-            new TableCreator.Col("Unit Price"),
-            new TableCreator.Col("Avg Adj"),
-            new TableCreator.Col("Total Adj"),
-            new TableCreator.Col("Total Price")
+
+        TableCreator tc = new TableCreator(new TableCreator.Col[]{
+                new TableCreator.Col("Order Item", 30),
+                new TableCreator.Col("Qty"),
+                new TableCreator.Col("Unit Price"),
+                new TableCreator.Col("Avg Adj"),
+                new TableCreator.Col("Total Adj"),
+                new TableCreator.Col("Total Price")
         });
 
         for (OrderItem oi : order.getOrderItems()) {
-            tc.addRow(new String[] {
-                oi.getName(),
-                String.valueOf(oi.getQuantity()),
-                String.valueOf(oi.getPriceBeforeAdjustments(true)),
-                String.valueOf(oi.getAverageAdjustmentValue()),
-                String.valueOf(oi.getTotalAdjustmentValue()),
-                String.valueOf(oi.getTotalPrice())
+            tc.addRow(new String[]{
+                    oi.getName(),
+                    String.valueOf(oi.getQuantity()),
+                    String.valueOf(oi.getPriceBeforeAdjustments(true)),
+                    String.valueOf(oi.getAverageAdjustmentValue()),
+                    String.valueOf(oi.getTotalAdjustmentValue()),
+                    String.valueOf(oi.getTotalPrice())
             });
         }
-        
+
         tc.addSeparator()
-            .withGlobalRowHeaderWidth(15)
-            .addRow("Subtotal", order.getSubTotal())
-            .addRow("Order Adj.", order.getOrderAdjustmentsValue())
-            .addRow("Tax", order.getTotalTax())
-            .addRow("Shipping", order.getTotalShipping())
-            .addRow("Total", order.getTotal())
-            .addSeparator();
-        
+                .withGlobalRowHeaderWidth(15)
+                .addRow("Subtotal", order.getSubTotal())
+                .addRow("Order Adj.", order.getOrderAdjustmentsValue())
+                .addRow("Tax", order.getTotalTax())
+                .addRow("Shipping", order.getTotalShipping())
+                .addRow("Total", order.getTotal())
+                .addSeparator();
+
         log.debug(tc.toString());
     }
-    
+
     @Override
     public void preValidateCartOperation(Order cart) {
         ExtensionResultHolder erh = new ExtensionResultHolder();
@@ -1196,7 +1241,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order findCartForCustomerWithEnhancements(Customer customer, Order candidateOrder) {
         ExtensionResultHolder<Order> erh = new ExtensionResultHolder<Order>();
-        ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(customer, candidateOrder, erh);
+        ExtensionResultStatusType resultStatusType = extensionManager.findCartForCustomerWithEnhancements(
+                customer, candidateOrder, erh
+        );
         if (ExtensionResultStatusType.NOT_HANDLED != resultStatusType) {
             return erh.getResult();
         }
@@ -1207,14 +1254,15 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> findOrdersByEmail(String email) {
         return orderDao.readOrdersByEmail(email);
     }
-    
+
     @Override
     public List<Order> readBatchOrders(int start, int pageSize, List<OrderStatus> orderStatusList) {
         return orderDao.readBatchOrders(start, pageSize, orderStatusList);
     }
 
     @Override
-	public Long readNumberOfOrders() {
-    		return orderDao.readNumberOfOrders();
+    public Long readNumberOfOrders() {
+        return orderDao.readNumberOfOrders();
     }
+
 }

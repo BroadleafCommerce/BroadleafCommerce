@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,18 +33,30 @@ public class ImportSQLConfig {
     @Bean
     @Conditional(DemoCondition.class)
     public AutoImportSql blCommonPreBasicData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_i18n_countries.sql", AutoImportStage.PRIMARY_PRE_BASIC_DATA);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/load_i18n_countries.sql",
+                AutoImportStage.PRIMARY_PRE_BASIC_DATA
+        );
     }
 
     @Bean
     public AutoImportSql blCommonBasicData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_admin_users.sql,config/bc/sql/demo/load_sitemap_data.sql", AutoImportStage.PRIMARY_BASIC_DATA);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/load_admin_users.sql,config/bc/sql/demo/load_sitemap_data.sql",
+                AutoImportStage.PRIMARY_BASIC_DATA
+        );
     }
 
     @Bean
     @ConditionalOnBroadleafModule(BroadleafModuleRegistration.BroadleafModuleEnum.MULTI_TENANT_SINGLE_SCHEMA)
     public AutoImportSql blCommonLateData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/fix_admin_user_data.sql,config/bc/sql/demo/fix_system_property_data.sql", AutoImportStage.PRIMARY_LATE);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/fix_admin_user_data.sql,config/bc/sql/demo/fix_system_property_data.sql",
+                AutoImportStage.PRIMARY_LATE
+        );
     }
 
 }

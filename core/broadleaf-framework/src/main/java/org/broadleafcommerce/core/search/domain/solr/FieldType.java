@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,24 +20,24 @@ package org.broadleafcommerce.core.search.domain.solr;
 import org.apache.commons.lang3.ArrayUtils;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extensible enumeration of entities that are used for searching and reporting
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class FieldType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, FieldType> TYPES = new LinkedHashMap<String, FieldType>();
+    private static final Map<String, FieldType> TYPES = new LinkedHashMap<>();
 
     public static final FieldType ID = new FieldType("id", "ID");
     public static final FieldType CATEGORY = new FieldType("category", "Category");
-    
     public static final FieldType INT = new FieldType("i", "Integer");
     public static final FieldType INTS = new FieldType("is", "Integer (Multi)");
     public static final FieldType STRING = new FieldType("s", "String");
@@ -60,22 +60,6 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
     public static final FieldType COORDINATE = new FieldType("c", "Coordinate");
     public static final FieldType SORT = new FieldType("sort", "SORT");
     public static final FieldType TS = new FieldType("ts", "Text sortable");
-    
-    public static boolean isMultiValued(FieldType type) {
-        return ArrayUtils.contains(new FieldType[] {
-            INTS,
-            STRINGS,
-            LONGS,
-            TEXTS,
-            BOOLEANS,
-            DOUBLES,
-            DATES
-        }, type);
-    }
-
-    public static FieldType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -89,21 +73,40 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static boolean isMultiValued(FieldType type) {
+        return ArrayUtils.contains(
+                new FieldType[]{
+                        INTS,
+                        STRINGS,
+                        LONGS,
+                        TEXTS,
+                        BOOLEANS,
+                        DOUBLES,
+                        DATES
+                },
+                type
+        );
+    }
+
+    public static FieldType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     @Override
     public String getType() {
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -130,4 +133,5 @@ public class FieldType implements Serializable, BroadleafEnumerationType {
             return false;
         return true;
     }
+
 }

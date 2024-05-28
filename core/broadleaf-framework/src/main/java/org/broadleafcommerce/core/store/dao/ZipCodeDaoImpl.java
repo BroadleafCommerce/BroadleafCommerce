@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,7 @@ import jakarta.persistence.Query;
 @Repository("blZipCodeDao")
 public class ZipCodeDaoImpl implements ZipCodeDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     private EntityManager em;
 
     @SuppressWarnings("unchecked")
@@ -44,7 +44,7 @@ public class ZipCodeDaoImpl implements ZipCodeDao {
     @SuppressWarnings("unchecked")
     public ZipCode findBestZipCode(String pCity, String pCounty, String pState, Integer pZipCode, Long pZipGeo) {
         // If we have a zip geo, use it
-        if ( pZipGeo != null ) {
+        if (pZipGeo != null) {
             Query query = em.createNamedQuery("FIND_ZIP_WITH_GEO");
             query.setHint("org.hibernate.cacheable", true);
             query.setParameter("geo", pZipGeo);
@@ -58,7 +58,7 @@ public class ZipCodeDaoImpl implements ZipCodeDao {
         }
 
         // If we have a county, try and find a match
-        if ( pCounty != null && !"".equals(pCounty.trim()) ) {
+        if (pCounty != null && !"".equals(pCounty.trim())) {
             Query query = em.createNamedQuery("FIND_ZIP_WITH_COUNTY");
             query.setHint("org.hibernate.cacheable", true);
             query.setParameter("county", pCounty);
@@ -122,4 +122,5 @@ public class ZipCodeDaoImpl implements ZipCodeDao {
 
         return null;
     }
+
 }

@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.payment.service;
 
 import org.broadleafcommerce.common.money.Money;
@@ -40,7 +39,7 @@ public interface OrderToPaymentRequestDTOService {
      * @param order the {@link Order} to be translated
      * @return a {@link PaymentRequestDTO} based on the properties of an <b>order</b>.
      */
-    public PaymentRequestDTO translateOrder(Order order);
+    PaymentRequestDTO translateOrder(Order order);
 
     /**
      * Utilizes the {@link PaymentTransaction#getAdditionalFields()} map to populate necessary request parameters on the
@@ -49,16 +48,16 @@ public interface OrderToPaymentRequestDTOService {
      * type {@link org.broadleafcommerce.common.payment.PaymentTransactionType#AUTHORIZE} might be passed into this method
      * in order for the gateway issue a "reverse auth" against this original transaction.
      *
-     * @param transactionAmount the amount that should be placed on {@link PaymentRequestDTO#getTransactionTotal()}
+     * @param transactionAmount  the amount that should be placed on {@link PaymentRequestDTO#getTransactionTotal()}
      * @param paymentTransaction the transaction whose additional fields should be placed on {@link PaymentRequestDTO#getAdditionalFields()}
      *                           for the gateway to use
      * @return a new {@link PaymentRequestDTO} populated with the additional fields from <b>paymentTransaction</b> and
-     *         the amount from <b>transactionAmount<b> OR override with final payment details on the order if coming in from a
-     *         payment flow.
+     * the amount from <b>transactionAmount<b> OR override with final payment details on the order if coming in from a
+     * payment flow.
      * @see {@link org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity}
      * @see {@link org.broadleafcommerce.core.checkout.service.workflow.ConfirmPaymentsRollbackHandler}
      */
-    public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction);
+    PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction);
 
     /**
      * Important: As of 4.0.1-GA+, there is a requirement to automatically populate the transaction amount on the DTO
@@ -67,14 +66,14 @@ public interface OrderToPaymentRequestDTOService {
      * payment transaction passed in is of type {@link org.broadleafcommerce.common.payment.PaymentTransactionType#UNCONFIRMED}.
      * If the totals need to be auto-calculated, the transaction total will be set from the "final payment" details that
      * are coming off the order itself (along with other details like shipping/billing info etc...)
-     * @see {@link https://github.com/BroadleafCommerce/BroadleafCommerce/issues/1423} for details.
      *
      * @param transactionAmount
      * @param paymentTransaction
      * @param autoCalculateFinalPaymentTotals
      * @return
+     * @see {@link https://github.com/BroadleafCommerce/BroadleafCommerce/issues/1423} for details.
      */
-    public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction, boolean autoCalculateFinalPaymentTotals);
+    PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction, boolean autoCalculateFinalPaymentTotals);
 
     /**
      * Uses total information on the Order to populate the
@@ -82,34 +81,38 @@ public interface OrderToPaymentRequestDTOService {
      * {@link org.broadleafcommerce.common.payment.dto.PaymentRequestDTO#taxTotal(String)}()}
      * {@link org.broadleafcommerce.common.payment.dto.PaymentRequestDTO#shippingTotal(String)}()}
      * {@link org.broadleafcommerce.common.payment.dto.PaymentRequestDTO#orderCurrencyCode(String)}()}
-     * @param order the {@link Order} to get data from
+     *
+     * @param order      the {@link Order} to get data from
      * @param requestDTO the {@link PaymentRequestDTO} that should be populated
      */
-    public void populateTotals(Order order, PaymentRequestDTO requestDTO);
+    void populateTotals(Order order, PaymentRequestDTO requestDTO);
 
     /**
      * Uses customer information on the Order to populate the
      * {@link org.broadleafcommerce.common.payment.dto.PaymentRequestDTO#customer()} object
-     * @param order the {@link Order} to get data from
+     *
+     * @param order      the {@link Order} to get data from
      * @param requestDTO the {@link PaymentRequestDTO} that should be populated
      */
-    public void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO);
-    
+    void populateCustomerInfo(Order order, PaymentRequestDTO requestDTO);
+
     /**
      * Uses the first shippable fulfillment group to populate the {@link PaymentRequestDTO#shipTo()} object
-     * @param order the {@link Order} to get data from
+     *
+     * @param order      the {@link Order} to get data from
      * @param requestDTO the {@link PaymentRequestDTO} that should be populated
      * @see {@link FulfillmentGroupService#getFirstShippableFulfillmentGroup(Order)}
      */
-    public void populateShipTo(Order order, PaymentRequestDTO requestDTO);
+    void populateShipTo(Order order, PaymentRequestDTO requestDTO);
 
     /**
      * Uses billing information on the Order to populate the
      * {@link org.broadleafcommerce.common.payment.dto.PaymentRequestDTO#billTo()} object
-     * @param order the {@link Order} to get data from
+     *
+     * @param order      the {@link Order} to get data from
      * @param requestDTO the {@link PaymentRequestDTO} that should be populated
      */
-    public void populateBillTo(Order order, PaymentRequestDTO requestDTO);
+    void populateBillTo(Order order, PaymentRequestDTO requestDTO);
 
     /**
      * <p>Uses order information to populate various line item and subtotal information on the order</p>
@@ -120,8 +123,9 @@ public interface OrderToPaymentRequestDTOService {
      *
      * <p>In this default implementation, just the subtotal is set, without any line item details.</p>
      *
-     * @param order the {@link Order} to get data from
+     * @param order      the {@link Order} to get data from
      * @param requestDTO the {@link PaymentRequestDTO} that should be populated
      */
-    public void populateDefaultLineItemsAndSubtotal(Order order, PaymentRequestDTO requestDTO);
+    void populateDefaultLineItemsAndSubtotal(Order order, PaymentRequestDTO requestDTO);
+
 }

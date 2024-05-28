@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -124,7 +124,7 @@ public interface StaleStateProtectionService {
      * context change and is stored in session. However, it is now desirable to redirect the user to the target url without
      * the state change params to avoid a subsequent check.
      *
-     * @param response the current http response
+     * @param response          the current http response
      * @param stateChangeParams any request parameter names being used by the system to drive state change
      * @return whether or not a redirect was sent based on detection of an earlier call to {@link #invalidateState()}
      * @throws IOException

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,17 +28,16 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 
-
 @Service("blRegistrationService")
 public class RegistrationServiceImpl implements RegistrationService {
 
-    @Resource(name="blCustomerService")
+    @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
     @Override
     public RegisterCustomerForm initCustomerRegistrationForm() {
         Customer customer = CustomerState.getCustomer();
-        if (customer == null || ! customer.isAnonymous()) {
+        if (customer == null || !customer.isAnonymous()) {
             customer = customerService.createCustomerWithNullId();
         }
 
@@ -58,7 +57,5 @@ public class RegistrationServiceImpl implements RegistrationService {
             registerCustomerForm.setRedirectUrl(request.getContextPath());
         }
     }
-
-
 
 }

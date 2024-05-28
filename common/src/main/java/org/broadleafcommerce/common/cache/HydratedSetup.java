@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,14 +41,12 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class HydratedSetup {
-    
+
     private static final Log LOG = LogFactory.getLog(HydratedSetup.class);
-    private static Map<String, String> inheritanceHierarchyRoots = Collections.synchronizedMap(new HashMap<String, String>());
+    private static Map<String, String> inheritanceHierarchyRoots = Collections.synchronizedMap(new HashMap<>());
     private static HydratedCacheManager manager;
 
     public static void setHydratedCacheManager(HydratedCacheManager hydratedCacheManager) {
@@ -92,11 +90,17 @@ public class HydratedSetup {
                 if (StringUtils.isEmpty(propertyName) || field.equals(propertyName)) {
                     try {
                         Serializable entityId = (Serializable) idMutators[0].invoke(entity);
-                        Object hydratedItem = manager.getHydratedCacheElementItem(cacheRegion, getInheritanceHierarchyRoot(entity.getClass()), entityId, field);
+                        Object hydratedItem = manager.getHydratedCacheElementItem(
+                                cacheRegion, getInheritanceHierarchyRoot(entity.getClass()), entityId, field
+                        );
                         if (hydratedItem == null) {
-                            Method factoryMethod = entity.getClass().getMethod(descriptor.getHydratedMutators().get(field).getFactoryMethod(), new Class[]{});
+                            Method factoryMethod = entity.getClass().getMethod(
+                                    descriptor.getHydratedMutators().get(field).getFactoryMethod(), new Class[]{}
+                            );
                             Object fieldVal = factoryMethod.invoke(entity);
-                            manager.addHydratedCacheElementItem(cacheRegion, getInheritanceHierarchyRoot(entity.getClass()), entityId, field, fieldVal);
+                            manager.addHydratedCacheElementItem(
+                                    cacheRegion, getInheritanceHierarchyRoot(entity.getClass()), entityId, field, fieldVal
+                            );
                             hydratedItem = fieldVal;
                         }
                         descriptor.getHydratedMutators().get(field).getMutators()[1].invoke(entity, hydratedItem);
@@ -104,21 +108,34 @@ public class HydratedSetup {
                         if (e.getTargetException() != null && e.getTargetException() instanceof CacheFactoryException) {
                             LOG.warn("Unable to setup the hydrated cache for an entity. " + e.getTargetException().getMessage());
                         } else {
-                            throw new RuntimeException("There was a problem while replacing a hydrated cache item - field("+field+") : entity("+entity.getClass().getName()+')', e);
+                            throw new RuntimeException("There was a problem while replacing a hydrated cache item - field("
+                                    + field + ") : entity(" + entity.getClass().getName() + ')', e);
                         }
                     } catch (Exception e) {
-                        throw new RuntimeException("There was a problem while replacing a hydrated cache item - field("+field+") : entity("+entity.getClass().getName()+')', e);
+                        throw new RuntimeException("There was a problem while replacing a hydrated cache item - field("
+                                + field + ") : entity(" + entity.getClass().getName() + ')', e);
                     }
                 }
             }
         }
     }
 
-    public static void addCacheItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
+    public static void addCacheItem(
+            String cacheRegion,
+            String cacheName,
+            Serializable elementKey,
+            String elementItemName,
+            Object elementValue
+    ) {
         manager.addHydratedCacheElementItem(cacheRegion, cacheName, elementKey, elementItemName, elementValue);
     }
 
-    public static Object getCacheItem(String cacheRegion, String cacheName, Serializable elementKey, String elementItemName) {
+    public static Object getCacheItem(
+            String cacheRegion,
+            String cacheName,
+            Serializable elementKey,
+            String elementItemName
+    ) {
         return manager.getHydratedCacheElementItem(cacheRegion, cacheName, elementKey, elementItemName);
     }
 
@@ -128,9 +145,10 @@ public class HydratedSetup {
             if (entry.getKey() instanceof EntityManagerFactory) {
                 EntityManagerFactory emf = (EntityManagerFactory) entry.getKey();
                 //return the entityManager from the first found
-                return  ((EntityManagerHolder) entry.getValue()).getEntityManager();
+                return ((EntityManagerHolder) entry.getValue()).getEntityManager();
             }
         }
         throw new RuntimeException("Unable to restore skus from hydrated cache. Please make sure that the OpenEntityManagerInViewFilter is configured in web.xml for the blPU persistence unit.");
     }
+
 }

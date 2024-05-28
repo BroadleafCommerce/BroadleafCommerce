@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,6 +42,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -67,13 +68,13 @@ import jakarta.persistence.Table;
         friendlyName = "OfferPriceDataImpl_baseOfferPriceData")
 @SQLDelete(sql = "UPDATE BLC_OFFER_PRICE_DATA SET ARCHIVED = 'Y' WHERE OFFER_PRICE_DATA_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferPriceDataImpl implements OfferPriceData {
 
-    public static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "OfferPriceDataId")
@@ -87,8 +88,7 @@ public class OfferPriceDataImpl implements OfferPriceData {
             }
     )
     @Column(name = "OFFER_PRICE_DATA_ID")
-    @AdminPresentation(friendlyName = "OfferPriceDataImpl_Offer_Price_Data_Id",
-            visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "OfferPriceDataImpl_Offer_Price_Data_Id", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional = false, cascade = CascadeType.REFRESH)
@@ -110,8 +110,7 @@ public class OfferPriceDataImpl implements OfferPriceData {
                     @ValidationConfiguration(
                             validationImplementation = "blAfterStartDateValidator",
                             configurationItems = {
-                                    @ConfigurationItem(itemName = "otherField",
-                                            itemValue = "activeStartDate")
+                                    @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
                             })
             })
     protected Date activeEndDate;
@@ -284,8 +283,7 @@ public class OfferPriceDataImpl implements OfferPriceData {
         // If the start date for this offer code has not been set, just delegate to the offer to determine if the code is
         // active rather than requiring the user to set offer code dates as well
         if (activeStartDate == null) {
-            datesActive =
-                    DateUtil.isActive(getOffer().getStartDate(), getOffer().getEndDate(), true);
+            datesActive = DateUtil.isActive(getOffer().getStartDate(), getOffer().getEndDate(), true);
         } else {
             datesActive = DateUtil.isActive(activeStartDate, activeEndDate, true);
         }
@@ -343,7 +341,8 @@ public class OfferPriceDataImpl implements OfferPriceData {
 
     @Override
     public <G extends OfferPriceData> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -362,4 +361,5 @@ public class OfferPriceDataImpl implements OfferPriceData {
         cloned.setQuantity(quantity);
         return createResponse;
     }
+
 }

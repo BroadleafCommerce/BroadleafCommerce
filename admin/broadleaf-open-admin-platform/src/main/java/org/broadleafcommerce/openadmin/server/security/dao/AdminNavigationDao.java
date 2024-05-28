@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.server.security.dao;
-
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
@@ -24,29 +23,28 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
 import java.util.List;
 
 /**
- *
  * @author elbertbautista
- *
  */
 public interface AdminNavigationDao {
 
-    public List<AdminModule> readAllAdminModules();
+    List<AdminModule> readAllAdminModules();
 
-    public List<AdminSection> readAllAdminSections();
-    
-    public AdminSection readAdminSectionByClassAndSectionId(Class<?> clazz, String sectionId);
+    List<AdminSection> readAllAdminSections();
 
-    public AdminSection readAdminSectionByURI(String uri);
+    AdminSection readAdminSectionByClassAndSectionId(Class<?> clazz, String sectionId);
 
-    public AdminSection readAdminSectionBySectionKey(String sectionKey);
+    AdminSection readAdminSectionByURI(String uri);
 
-    public AdminSection save(AdminSection adminSection);
+    AdminSection readAdminSectionBySectionKey(String sectionKey);
 
-    public void remove(AdminSection adminSection);
+    AdminSection save(AdminSection adminSection);
 
-    public AdminModule readAdminModuleByModuleKey(String moduleKey);
+    void remove(AdminSection adminSection);
+
+    AdminModule readAdminModuleByModuleKey(String moduleKey);
 
     String getSectionKey(boolean withTypeKey);
 
     List<AdminSection> readAdminSectionForClassName(String className);
+
 }

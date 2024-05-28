@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,24 +25,22 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostUpdate;
 
-
 /**
  * The main function of this entity listener is to publish a Spring event that the customer has been persisted. This is
  * necessary in order to update the current customer in the application
  *
  * @author Phillip Verheyden (phillipuniverse)
- * 
  * @see {@link ApplicationEventPublisher#publishEvent(org.springframework.context.ApplicationEvent)}
  * @see {@link CustomerPersistedEvent}
  * @see {@link org.broadleafcommerce.profile.web.core.CustomerStateRefresher}
  * @see {@link org.broadleafcommerce.profile.web.core.CustomerState}
  */
 public class CustomerPersistedEntityListener {
-    
+
     /**
      * Invoked on both the PostPersist and PostUpdate. The default implementation is to simply publish a Spring event
      * to the ApplicationContext after the transaction has completed.
-     * 
+     *
      * @param entity the newly-persisted Customer
      * @see CustomerPersistedEvent
      */
@@ -58,5 +56,5 @@ public class CustomerPersistedEntityListener {
             });
         }
     }
-    
+
 }

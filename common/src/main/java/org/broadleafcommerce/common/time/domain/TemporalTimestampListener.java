@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,7 +42,7 @@ public class TemporalTimestampListener {
         }
     }
 
-    private void setTimestamps(Field[] fields, Object entity) throws Exception {
+    protected void setTimestamps(Field[] fields, Object entity) throws Exception {
         Calendar cal = null;
         for (Field field : fields) {
             Class<?> type = field.getType();
@@ -52,7 +52,8 @@ public class TemporalTimestampListener {
                 if (field.isAnnotationPresent(Column.class)) {
                     field.setAccessible(true);
                     try {
-                        if (TemporalType.TIMESTAMP.equals(temporalAnnotation.value()) && (field.isAnnotationPresent(AutoPopulate.class))) {
+                        if (TemporalType.TIMESTAMP.equals(temporalAnnotation.value())
+                                && (field.isAnnotationPresent(AutoPopulate.class))) {
                             if (field.get(entity) == null || field.getAnnotation(AutoPopulate.class).autoUpdateValue()) {
                                 if (type.isAssignableFrom(Date.class)) {
                                     if (cal == null) {
@@ -82,4 +83,5 @@ public class TemporalTimestampListener {
             }
         }
     }
+
 }

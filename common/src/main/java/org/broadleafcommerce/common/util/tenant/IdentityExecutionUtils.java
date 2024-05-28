@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,13 +36,18 @@ import jakarta.persistence.EntityManagerFactory;
 /**
  * The utility methods in this class provide a way to ignore the currently configured site/catalog contexts and instead
  * explicitly run operations in the specified context.
- * 
+ *
  * @author Jeff Fischer
  */
 public class IdentityExecutionUtils {
 
-    public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Site profile, Catalog catalog,
-                                                              PlatformTransactionManager transactionManager) throws G {
+    public static <T, G extends Throwable> T runOperationByIdentifier(
+            IdentityOperation<T, G> operation,
+            Site site,
+            Site profile,
+            Catalog catalog,
+            PlatformTransactionManager transactionManager
+    ) throws G {
         IdentityUtilContext context = new IdentityUtilContext();
         context.setIdentifier(site);
         IdentityUtilContext.setUtilContext(context);
@@ -60,7 +65,7 @@ public class IdentityExecutionUtils {
             previousProfile = originalBrc.getCurrentProfile();
             previousIsIgnoringSite = originalBrc.getIgnoreSite();
         }
-        
+
         boolean isNew = initRequestContext(site, profile, catalog);
 
         try {
@@ -93,11 +98,20 @@ public class IdentityExecutionUtils {
         }
     }
 
-    public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Catalog catalog) throws G {
+    public static <T, G extends Throwable> T runOperationByIdentifier(
+            IdentityOperation<T, G> operation,
+            Site site,
+            Catalog catalog
+    ) throws G {
         return runOperationByIdentifier(operation, site, null, catalog, null);
     }
 
-    public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Site profile, Catalog catalog) throws G {
+    public static <T, G extends Throwable> T runOperationByIdentifier(
+            IdentityOperation<T, G> operation,
+            Site site,
+            Site profile,
+            Catalog catalog
+    ) throws G {
         return runOperationByIdentifier(operation, site, profile, catalog, null);
     }
 
@@ -105,16 +119,22 @@ public class IdentityExecutionUtils {
         return runOperationByIdentifier(operation, site, null, null, null);
     }
 
-    public static <T, G extends Throwable> T runOperationByIdentifier(IdentityOperation<T, G> operation, Site site, Site profile) throws G {
+    public static <T, G extends Throwable> T runOperationByIdentifier(
+            IdentityOperation<T, G> operation,
+            Site site,
+            Site profile
+    ) throws G {
         return runOperationByIdentifier(operation, site, profile, null);
     }
 
     public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation) throws G {
         return runOperationAndIgnoreIdentifier(operation, null);
     }
-    
-    public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(IdentityOperation<T, G> operation, 
-            PlatformTransactionManager transactionManager) throws G {
+
+    public static <T, G extends Throwable> T runOperationAndIgnoreIdentifier(
+            IdentityOperation<T, G> operation,
+            PlatformTransactionManager transactionManager
+    ) throws G {
         //Set up pre-existing state...
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext(false);
         Site previousSite = null;
@@ -179,7 +199,7 @@ public class IdentityExecutionUtils {
         requestContext.setNonPersistentSite(site);
         requestContext.setCurrentCatalog(catalog);
         requestContext.setCurrentProfile(profile);
-        
+
         if (site != null) {
             requestContext.setIgnoreSite(false);
         }
@@ -198,10 +218,10 @@ public class IdentityExecutionUtils {
     }
 
     private static TransactionContainer establishTransaction(PlatformTransactionManager transactionManager) {
-        Map<Object, Object> usedResources = new HashMap<Object, Object>();
+        Map<Object, Object> usedResources = new HashMap<>();
         Map<Object, Object> resources = TransactionSynchronizationManager.getResourceMap();
         for (Map.Entry<Object, Object> entry : resources.entrySet()) {
-            if ((entry.getKey() instanceof EntityManagerFactory  || entry.getKey() instanceof DataSource) &&
+            if ((entry.getKey() instanceof EntityManagerFactory || entry.getKey() instanceof DataSource) &&
                     TransactionSynchronizationManager.hasResource(entry.getKey())) {
                 usedResources.put(entry.getKey(), entry.getValue());
             }
@@ -245,4 +265,5 @@ public class IdentityExecutionUtils {
             this.usedResources = usedResources;
         }
     }
+
 }

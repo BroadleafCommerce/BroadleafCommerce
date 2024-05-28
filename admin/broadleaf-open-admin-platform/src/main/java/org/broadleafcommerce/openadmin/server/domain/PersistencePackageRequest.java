@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,7 +47,7 @@ import java.util.Map;
 
 /**
  * A DTO class used to seed a persistence package.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class PersistencePackageRequest {
@@ -73,7 +73,7 @@ public class PersistencePackageRequest {
     protected String sectionEntityField;
     protected String requestingEntityName;
     protected String msg;
-    protected Map<String, PersistencePackageRequest> subRequests = new LinkedHashMap<String, PersistencePackageRequest>();
+    protected Map<String, PersistencePackageRequest> subRequests = new LinkedHashMap<>();
     protected boolean validateUnsubmittedProperties = true;
     protected boolean isUpdateLookupType = false;
     protected boolean isTreeCollection = false;
@@ -85,19 +85,21 @@ public class PersistencePackageRequest {
 
     // These properties are accessed via getters and setters that operate on arrays.
     // We back them with a list so that we can have the convenience .add methods
-    protected List<ForeignKey> additionalForeignKeys = new ArrayList<ForeignKey>();
-    protected List<String> customCriteria = new ArrayList<String>();
-    protected List<FilterAndSortCriteria> filterAndSortCriteria = new ArrayList<FilterAndSortCriteria>();
+    protected List<ForeignKey> additionalForeignKeys = new ArrayList<>();
+    protected List<String> customCriteria = new ArrayList<>();
+    protected List<FilterAndSortCriteria> filterAndSortCriteria = new ArrayList<>();
 
-    public enum Type {
-        STANDARD,
-        ADORNED,
-        MAP
+    public PersistencePackageRequest() {
+
     }
 
     /* ******************* */
     /* STATIC INITIALIZERS */
     /* ******************* */
+
+    public PersistencePackageRequest(Type type) {
+        this.type = type;
+    }
 
     public static PersistencePackageRequest standard() {
         return new PersistencePackageRequest(Type.STANDARD);
@@ -111,11 +113,15 @@ public class PersistencePackageRequest {
         return new PersistencePackageRequest(Type.MAP);
     }
 
+    /* ************ */
+    /* CONSTRUCTORS */
+    /* ************ */
+
     /**
      * Creates a semi-populate PersistencePacakageRequest based on the specified Metadata. This initializer
      * will copy over persistence perspective items from the metadata as well as set the appropriate OperationTypes
      * as specified in the annotation/xml configuration for the field.
-     * 
+     *
      * @param md
      * @return the newly created PersistencePackageRequest
      */
@@ -183,7 +189,7 @@ public class PersistencePackageRequest {
                 request.setCeilingEntityClassname(tmd.getOwningClass());
             }
         });
-        
+
         if (sectionCrumbs != null) {
             request.setSectionCrumbs(sectionCrumbs.toArray(new SectionCrumb[sectionCrumbs.size()]));
         }
@@ -191,26 +197,14 @@ public class PersistencePackageRequest {
         return request;
     }
 
-    /* ************ */
-    /* CONSTRUCTORS */
-    /* ************ */
-
-    public PersistencePackageRequest() {
-
-    }
-
-    public PersistencePackageRequest(Type type) {
-        this.type = type;
+    public PersistencePackageRequest withType(Type type) {
+        setType(type);
+        return this;
     }
 
     /* ************ */
     /* WITH METHODS */
     /* ************ */
-
-    public PersistencePackageRequest withType(Type type) {
-        setType(type);
-        return this;
-    }
 
     public PersistencePackageRequest withCeilingEntityClassname(String className) {
         setCeilingEntityClassname(className);
@@ -260,12 +254,12 @@ public class PersistencePackageRequest {
         setEntity(entity);
         return this;
     }
-    
+
     public PersistencePackageRequest withStartIndex(Integer startIndex) {
         setStartIndex(startIndex);
         return this;
     }
-    
+
     public PersistencePackageRequest withMaxIndex(Integer maxIndex) {
         setMaxIndex(maxIndex);
         return this;
@@ -315,7 +309,7 @@ public class PersistencePackageRequest {
         setSectionEntityField(sectionEntityField);
         return this;
     }
-    
+
     public PersistencePackageRequest withRequestingEntityName(String requestingEntityName) {
         setRequestingEntityName(requestingEntityName);
         return this;
@@ -341,14 +335,14 @@ public class PersistencePackageRequest {
         return this;
     }
 
-    /* *********** */
-    /* ADD METHODS */
-    /* *********** */
-
     public PersistencePackageRequest addAdditionalForeignKey(ForeignKey foreignKey) {
         additionalForeignKeys.add(foreignKey);
         return this;
     }
+
+    /* *********** */
+    /* ADD METHODS */
+    /* *********** */
 
     public PersistencePackageRequest addSubRequest(String infoPropertyName, PersistencePackageRequest subRequest) {
         subRequests.put(infoPropertyName, subRequest);
@@ -359,7 +353,7 @@ public class PersistencePackageRequest {
         if (this.customCriteria == null) {
             this.customCriteria = new ArrayList<>();
         }
-        
+
         if (StringUtils.isNotBlank(customCriteria)) {
             this.customCriteria.add(customCriteria);
         }
@@ -382,23 +376,19 @@ public class PersistencePackageRequest {
         this.filterAndSortCriteria.add(filterAndSortCriteria);
         return this;
     }
-    
+
     public PersistencePackageRequest addFilterAndSortCriteria(FilterAndSortCriteria[] filterAndSortCriteria) {
         if (filterAndSortCriteria != null) {
             this.filterAndSortCriteria.addAll(Arrays.asList(filterAndSortCriteria));
         }
         return this;
     }
-    
+
     public PersistencePackageRequest addFilterAndSortCriteria(List<FilterAndSortCriteria> filterAndSortCriteria) {
         this.filterAndSortCriteria.addAll(filterAndSortCriteria);
         return this;
     }
 
-    /* ************** */
-    /* REMOVE METHODS */
-    /* ************** */
-    
     public PersistencePackageRequest removeFilterAndSortCriteria(String name) {
         Iterator<FilterAndSortCriteria> it = filterAndSortCriteria.listIterator();
         while (it.hasNext()) {
@@ -410,6 +400,10 @@ public class PersistencePackageRequest {
         return this;
     }
 
+    /* ************** */
+    /* REMOVE METHODS */
+    /* ************** */
+
     public PersistencePackageRequest clearFilterAndSortCriteria() {
         Iterator<FilterAndSortCriteria> it = filterAndSortCriteria.listIterator();
         while (it.hasNext()) {
@@ -418,10 +412,6 @@ public class PersistencePackageRequest {
         }
         return this;
     }
-
-    /* ************** */
-    /* STATUS METHODS */
-    /* ************** */
 
     public boolean hasSortCriteria() {
         FilterAndSortCriteria[] fascs = getFilterAndSortCriteria();
@@ -435,25 +425,19 @@ public class PersistencePackageRequest {
         return false;
     }
 
-    /* ************************ */
-    /* CUSTOM GETTERS / SETTERS */
-    /* ************************ */
+    /* ************** */
+    /* STATUS METHODS */
+    /* ************** */
 
     public String[] getCustomCriteria() {
         String[] arr = new String[this.customCriteria.size()];
         arr = this.customCriteria.toArray(arr);
         return arr;
     }
-    
-    public ForeignKey[] getAdditionalForeignKeys() {
-        ForeignKey[] arr = new ForeignKey[this.additionalForeignKeys.size()];
-        arr = this.additionalForeignKeys.toArray(arr);
-        return arr;
-    }
-    
-    public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
-        this.additionalForeignKeys.addAll(Arrays.asList(additionalForeignKeys));
-    }
+
+    /* ************************ */
+    /* CUSTOM GETTERS / SETTERS */
+    /* ************************ */
 
     public void setCustomCriteria(String[] customCriteria) {
         if (customCriteria == null || customCriteria.length == 0) {
@@ -461,6 +445,16 @@ public class PersistencePackageRequest {
         } else {
             this.customCriteria = BLCArrayUtils.asList(customCriteria);
         }
+    }
+
+    public ForeignKey[] getAdditionalForeignKeys() {
+        ForeignKey[] arr = new ForeignKey[this.additionalForeignKeys.size()];
+        arr = this.additionalForeignKeys.toArray(arr);
+        return arr;
+    }
+
+    public void setAdditionalForeignKeys(ForeignKey[] additionalForeignKeys) {
+        this.additionalForeignKeys.addAll(Arrays.asList(additionalForeignKeys));
     }
 
     public FilterAndSortCriteria[] getFilterAndSortCriteria() {
@@ -473,14 +467,14 @@ public class PersistencePackageRequest {
         this.filterAndSortCriteria.addAll(Arrays.asList(filterAndSortCriteria));
     }
 
+    public ForeignKey getForeignKey() {
+        return foreignKey;
+    }
+
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
     /* ************************** */
 
-    public ForeignKey getForeignKey() {
-        return foreignKey;
-    }
-    
     public void setForeignKey(ForeignKey foreignKey) {
         this.foreignKey = foreignKey;
     }
@@ -492,11 +486,11 @@ public class PersistencePackageRequest {
     public void setType(Type type) {
         this.type = type;
     }
-    
+
     /**
-     * Returns the entity that should be checked for security purposes.   If no value is defined explicitly, returns the 
+     * Returns the entity that should be checked for security purposes.   If no value is defined explicitly, returns the
      * value for {@link #getCeilingEntityClassname()}.
-     * 
+     *
      * @return
      */
     public String getSecurityCeilingEntityClassname() {
@@ -514,7 +508,7 @@ public class PersistencePackageRequest {
     public String getCeilingEntityClassname() {
         return ceilingEntityClassname;
     }
-    
+
     public void setCeilingEntityClassname(String ceilingEntityClassname) {
         this.ceilingEntityClassname = ceilingEntityClassname;
     }
@@ -558,7 +552,7 @@ public class PersistencePackageRequest {
     public void setOperationTypesOverride(OperationTypes operationTypesOverride) {
         this.operationTypesOverride = operationTypesOverride;
     }
-    
+
     public Integer getStartIndex() {
         return startIndex;
     }
@@ -598,15 +592,15 @@ public class PersistencePackageRequest {
     public void setSectionEntityField(String sectionEntityField) {
         this.sectionEntityField = sectionEntityField;
     }
-    
+
     public String getRequestingEntityName() {
         return requestingEntityName;
     }
-    
+
     public void setRequestingEntityName(String requestingEntityName) {
         this.requestingEntityName = requestingEntityName;
     }
-    
+
     public String getMsg() {
         return msg;
     }
@@ -622,6 +616,7 @@ public class PersistencePackageRequest {
     public void setSubRequests(Map<String, PersistencePackageRequest> subRequests) {
         this.subRequests = subRequests;
     }
+
     public boolean isValidateUnsubmittedProperties() {
         return validateUnsubmittedProperties;
     }
@@ -633,7 +628,7 @@ public class PersistencePackageRequest {
     public boolean isUpdateLookupType() {
         return isUpdateLookupType;
     }
-    
+
     public void setUpdateLookupType(boolean isUpdateLookupType) {
         this.isUpdateLookupType = isUpdateLookupType;
     }
@@ -736,6 +731,7 @@ public class PersistencePackageRequest {
 
     /**
      * Tells if this {@code PersistentPackageRequest} is a lookup that will end up foldered
+     *
      * @return true if this is a foldered lookup, false otherwise
      */
     public boolean isFolderedLookup() {
@@ -752,6 +748,12 @@ public class PersistencePackageRequest {
 
     public void setFolderId(Long folderId) {
         this.folderId = folderId;
+    }
+
+    public enum Type {
+        STANDARD,
+        ADORNED,
+        MAP
     }
 }
 

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,37 +22,37 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminTabPresentation;
 
 @AdminPresentationClass(friendlyName = "AdminRoleImpl_baseAdminRole",
-    tabs = {
-        @AdminTabPresentation(
-            groups = {
-                @AdminGroupPresentation(name = AdminRoleAdminPresentation.GroupName.RoleDetails,
-                    order = AdminRoleAdminPresentation.GroupOrder.RoleDetails),
-                @AdminGroupPresentation(name = AdminRoleAdminPresentation.GroupName.Permissions,
-                    order = AdminRoleAdminPresentation.GroupOrder.Permissions,
-                    untitled = true)
-            }
-        )
-    }
+        tabs = {
+                @AdminTabPresentation(
+                        groups = {
+                                @AdminGroupPresentation(name = AdminRoleAdminPresentation.GroupName.RoleDetails,
+                                        order = AdminRoleAdminPresentation.GroupOrder.RoleDetails),
+                                @AdminGroupPresentation(name = AdminRoleAdminPresentation.GroupName.Permissions,
+                                        order = AdminRoleAdminPresentation.GroupOrder.Permissions,
+                                        untitled = true)
+                        }
+                )
+        }
 )
 public interface AdminRoleAdminPresentation {
 
-    public static class TabName {
+    class TabName {
     }
 
-    public static class TabOrder {
+    class TabOrder {
     }
 
-    public static class GroupName {
+    class GroupName {
         public static final String RoleDetails = "AdminRoleImpl_RoleDetails";
         public static final String Permissions = "AdminRoleImpl_Permissions";
     }
 
-    public static class GroupOrder {
+    class GroupOrder {
         public static final int RoleDetails = 1000;
         public static final int Permissions = 2000;
     }
 
-    public static class FieldOrder {
+    class FieldOrder {
         public static final int NAME = 1000;
         public static final int DESCRIPTION = 2000;
 

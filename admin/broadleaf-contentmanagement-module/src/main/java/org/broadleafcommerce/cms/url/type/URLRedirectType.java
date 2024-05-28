@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,23 +19,20 @@ package org.broadleafcommerce.cms.url.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class URLRedirectType implements Serializable, BroadleafEnumerationType {
-    
-    private static final long serialVersionUID = 1L;
 
-    private static final Map<String, URLRedirectType> TYPES = new LinkedHashMap<String, URLRedirectType>();
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static final Map<String, URLRedirectType> TYPES = new LinkedHashMap<>();
 
     public static final URLRedirectType FORWARD = new URLRedirectType("FORWARD", "Forward URI");
     public static final URLRedirectType REDIRECT_PERM = new URLRedirectType("REDIRECT_PERM", "Redirect URI Permanently (301)");
     public static final URLRedirectType REDIRECT_TEMP = new URLRedirectType("REDIRECT_TEMP", "Redirect URI Temporarily (302)");
-
-    public static URLRedirectType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -49,15 +46,19 @@ public class URLRedirectType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static URLRedirectType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getFriendlyType() {

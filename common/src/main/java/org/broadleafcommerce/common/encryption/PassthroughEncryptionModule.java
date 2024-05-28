@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,11 +29,10 @@ import jakarta.annotation.PostConstruct;
  * A real implementation should adhere to PCI compliance, which requires robust key
  * management, including regular key rotation. An excellent solution would be a module
  * for interacting with the StrongKey solution. Refer to this discussion:
- *
+ * <p>
  * http://www.strongauth.com/forum/index.php?topic=44.0
  *
  * @author jfischer
- *
  */
 public class PassthroughEncryptionModule implements EncryptionModule {
 
@@ -63,4 +62,5 @@ public class PassthroughEncryptionModule implements EncryptionModule {
     public Boolean matches(String raw, String encrypted) {
         return encrypted.equals(encrypt(raw));
     }
+
 }

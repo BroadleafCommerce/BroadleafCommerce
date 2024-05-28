@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,19 +44,18 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class PrecompressedArtifactFilter extends GenericFilterBean {
 
-    private boolean useWhileInDefaultEnvironment = true;
-
     @Value("#{blPrecompressedArtifactFileExtensionWhitelist}")
     List<String> fileExtensionWhitelist;
-
     @Resource
     Environment environment;
+    private boolean useWhileInDefaultEnvironment = true;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-        checkOutput: {
+        checkOutput:
+        {
             if (ArrayUtils.isNotEmpty(environment.getActiveProfiles()) || useWhileInDefaultEnvironment) {
                 String path = getResourcePath(request);
                 String gzipPath = path + ".gz";
@@ -97,7 +96,7 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
 
     /**
      * Copied from Tomcat
-     *
+     * <p>
      * Return the page resource path from the request. For example:
      * <pre class="codeHtml">
      * <span class="blue">http://www.mycorp.com/banking/secure/login.htm</span>  ->  <span class="red">/secure/login.htm</span> </pre>
@@ -113,13 +112,11 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
         // special attribute holds the correct path.  See section 8.3 of the
         // Servlet 2.3 specification.
 
-        String path = (String)
-            request.getAttribute("javax.servlet.include.servlet_path");
+        String path = (String) request.getAttribute("javax.servlet.include.servlet_path");
 
         // Also take into account the PathInfo stated on
         // SRV.4.4 Request Path Elements.
-        String info = (String)
-            request.getAttribute("javax.servlet.include.path_info");
+        String info = (String) request.getAttribute("javax.servlet.include.path_info");
 
         if (path == null) {
             path = request.getServletPath();
@@ -135,15 +132,20 @@ public class PrecompressedArtifactFilter extends GenericFilterBean {
 
     /**
      * Copied from Tomcat
-     *
+     * <p>
      * Return true if the response should be GZIP compressed.
      *
-     * @param request the request to test
+     * @param request  the request to test
      * @param response the response to test
-     * @param path the request path to test
+     * @param path     the request path to test
      * @return true if the response should be GZIP compressed
      */
-    protected boolean useGzipCompression(HttpServletRequest request, HttpServletResponse response, String path, String gzipPath) throws MalformedURLException {
+    protected boolean useGzipCompression(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String path,
+            String gzipPath
+    ) throws MalformedURLException {
         if (gzipPath == null) {
             return false;
         }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,8 +19,6 @@ package org.broadleafcommerce.openadmin.server.security.handler;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -51,14 +49,12 @@ import jakarta.annotation.Resource;
 @Component("blAdminUserCustomPersistenceHandler")
 public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(AdminUserCustomPersistenceHandler.class);
-
     @Resource(name = "blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
 
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
-    
+
     @Autowired
     protected Environment environment;
 
@@ -94,14 +90,22 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
     }
 
     @Override
-    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    public Entity add(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
         adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.ADD);
         Entity entity = persistencePackage.getEntity();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             AdminUser adminInstance = (AdminUser) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminUser.class.getName(), persistencePerspective);
-            adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    AdminUser.class.getName(), persistencePerspective
+            );
+            adminInstance = (AdminUser) helper.createPopulatedInstance(
+                    adminInstance, entity, adminProperties, false
+            );
 
             Entity errorEntity = validateLegalUsernameAndEmail(entity, adminInstance, true);
             if (errorEntity != null) {
@@ -113,7 +117,9 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 
             adminInstance = adminSecurityService.saveAdminUser(adminInstance);
 
-            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(
+                    adminProperties, adminInstance, null, null
+            );
 
             return adminEntity;
         } catch (Exception e) {
@@ -121,15 +127,22 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
         }
     }
 
-
     @Override
-    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    public Entity update(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(AdminUser.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    AdminUser.class.getName(), persistencePerspective
+            );
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            AdminUser adminInstance = (AdminUser) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            AdminUser adminInstance = (AdminUser) dynamicEntityDao.retrieve(
+                    Class.forName(entity.getType()[0]), primaryKey
+            );
 
             Entity errorEntity = validateLegalUsernameAndEmail(entity, adminInstance, false);
             if (errorEntity != null) {
@@ -138,7 +151,9 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 
             String passwordBefore = adminInstance.getPassword();
             adminInstance.setPassword(null);
-            adminInstance = (AdminUser) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            adminInstance = (AdminUser) helper.createPopulatedInstance(
+                    adminInstance, entity, adminProperties, false
+            );
             Property passwordProperty = entity.getPMap().get("password");
             if (passwordProperty != null) {
                 if (StringUtils.isNotEmpty(passwordProperty.getValue())) {
@@ -152,7 +167,9 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             validateUserUpdateSecurity(persistencePackage, adminInstance);
 
             adminInstance = adminSecurityService.saveAdminUser(adminInstance);
-            Entity adminEntity = helper.getRecord(adminProperties, adminInstance, null, null);
+            Entity adminEntity = helper.getRecord(
+                    adminProperties, adminInstance, null, null
+            );
 
             return adminEntity;
 
@@ -162,11 +179,12 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
     }
 
     @Override
-    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper)
-            throws ServiceException {
+    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         String idValue = entity.findProperty("id").getValue();
-        String userLoginToRemove = entity.findProperty("login")==null?null:entity.findProperty("login").getValue();
+        String userLoginToRemove = entity.findProperty("login") == null
+                ? null
+                : entity.findProperty("login").getValue();
 
         AdminUser persistentAdminUser = adminRemoteSecurityService.getPersistentAdminUser();
 
@@ -190,8 +208,6 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 
         OperationType removeType = persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType();
         helper.getCompatibleModule(removeType).remove(persistencePackage);
-
-
     }
 
     protected void validateUserUpdateSecurity(PersistencePackage persistencePackage, AdminUser changingUser) throws ServiceException {
@@ -200,7 +216,6 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.UPDATE);
         }
     }
-
 
     protected Entity validateLegalUsernameAndEmail(Entity entity, AdminUser adminInstance, boolean isAdd) {
         String login = entity.findProperty("login").getValue();

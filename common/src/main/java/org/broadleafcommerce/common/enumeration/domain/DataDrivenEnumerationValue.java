@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,25 +25,25 @@ import java.io.Serializable;
  * @author Jeff Fischer
  */
 public interface DataDrivenEnumerationValue extends Serializable, MultiTenantCloneable<DataDrivenEnumerationValue> {
-    
-    public String getDisplay();
 
-    public void setDisplay(String display);
+    String getDisplay();
 
-    public Boolean getHidden();
+    void setDisplay(String display);
 
-    public void setHidden(Boolean hidden);
+    Boolean getHidden();
 
-    public Long getId();
+    void setHidden(Boolean hidden);
 
-    public void setId(Long id);
+    Long getId();
 
-    public String getKey();
+    void setId(Long id);
 
-    public void setKey(String key);
+    String getKey();
 
-    public DataDrivenEnumeration getType();
+    void setKey(String key);
 
-    public void setType(DataDrivenEnumeration type);
+    DataDrivenEnumeration getType();
+
+    void setType(DataDrivenEnumeration type);
 
 }

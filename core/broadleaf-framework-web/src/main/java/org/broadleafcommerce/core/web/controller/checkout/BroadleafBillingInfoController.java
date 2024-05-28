@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.apache.commons.lang3.StringUtils;
@@ -42,7 +41,7 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
 
     /**
      * Processes the request to save a billing address.
-     *
+     * <p>
      * Note: this default Broadleaf implementation will create an OrderPayment of
      * type CREDIT_CARD if it doesn't exist and save the passed in billing address
      *
@@ -53,12 +52,17 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
      * @return the return path
      * @throws org.broadleafcommerce.common.exception.ServiceException
      */
-    public String saveBillingAddress(HttpServletRequest request, HttpServletResponse response, Model model,
-                                 BillingInfoForm billingForm, BindingResult result) throws PricingException, ServiceException {
+    public String saveBillingAddress(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            BillingInfoForm billingForm,
+            BindingResult result
+    ) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
         CustomerPayment customerPayment = null;
 
-        if (billingForm.isUseShippingAddress()){
+        if (billingForm.isUseShippingAddress()) {
             copyShippingAddressToBillingAddress(cart, billingForm);
         }
 
@@ -80,16 +84,16 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
             return getCheckoutView();
         }
 
-        if ((billingForm.getAddress().getPhonePrimary() != null) &&
-                (StringUtils.isEmpty(billingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
+        if ((billingForm.getAddress().getPhonePrimary() != null)
+                && (StringUtils.isEmpty(billingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
             billingForm.getAddress().setPhonePrimary(null);
         }
-        if ((billingForm.getAddress().getPhoneSecondary() != null) &&
-                (StringUtils.isEmpty(billingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+        if ((billingForm.getAddress().getPhoneSecondary() != null)
+                && (StringUtils.isEmpty(billingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
             billingForm.getAddress().setPhoneSecondary(null);
         }
-        if ((billingForm.getAddress().getPhoneFax() != null) &&
-                (StringUtils.isEmpty(billingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
+        if ((billingForm.getAddress().getPhoneFax() != null)
+                && (StringUtils.isEmpty(billingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
             billingForm.getAddress().setPhoneFax(null);
         }
 
@@ -104,7 +108,7 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
                     Address updatedAddress = addressService.copyAddress(p.getBillingAddress(), billingForm.getAddress());
                     p.setBillingAddress(updatedAddress);
                 }
-                
+
                 found = true;
             }
         }
@@ -140,7 +144,7 @@ public class BroadleafBillingInfoController extends AbstractCheckoutController {
         if (order.getFulfillmentGroups().get(0) != null) {
             Address shipping = order.getFulfillmentGroups().get(0).getAddress();
             if (shipping != null) {
-                Address billing = addressService.copyAddress(shipping) ;
+                Address billing = addressService.copyAddress(shipping);
                 billingInfoForm.setAddress(billing);
             }
         }

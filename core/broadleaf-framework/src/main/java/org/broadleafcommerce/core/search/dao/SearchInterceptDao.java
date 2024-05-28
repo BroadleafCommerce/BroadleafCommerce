@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,9 +27,15 @@ import java.util.List;
  */
 @Deprecated
 public interface SearchInterceptDao {
-    public SearchIntercept findInterceptByTerm(String term);
-    public List<SearchIntercept> findAllIntercepts();
-    public void createIntercept(SearchIntercept intercept);
-    public void updateIntercept(SearchIntercept intercept);
-    public void deleteIntercept(SearchIntercept intercept);
+
+    SearchIntercept findInterceptByTerm(String term);
+
+    List<SearchIntercept> findAllIntercepts();
+
+    void createIntercept(SearchIntercept intercept);
+
+    void updateIntercept(SearchIntercept intercept);
+
+    void deleteIntercept(SearchIntercept intercept);
+
 }

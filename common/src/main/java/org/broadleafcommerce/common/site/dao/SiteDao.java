@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,63 +26,67 @@ import java.util.List;
 public interface SiteDao {
 
     /**
-     * Creates an instance of Site based on the class matching the bean id of 
+     * Creates an instance of Site based on the class matching the bean id of
      * "org.broadleafcommerce.common.site.domain.Site"
-     * 
+     *
      * @return
      */
-    public Site create();
+    Site create();
 
     /**
      * Finds a site by its id.
+     *
      * @param id
      * @return
      */
-    public Site retrieve(Long id);
+    Site retrieve(Long id);
 
     /**
      * Finds a site by its domain or domain prefix.
+     *
      * @param domain
      * @param prefix
      * @return
      */
-    public Site retrieveSiteByDomainOrDomainPrefix(String domain, String prefix);
-    
+    Site retrieveSiteByDomainOrDomainPrefix(String domain, String prefix);
+
     /**
      * Finds a site by its {@link Site#getSiteIdentifierValue()}.
+     *
      * @param identifier
      * @return
      */
-    public Site retrieveSiteByIdentifier(String identifier);
+    Site retrieveSiteByIdentifier(String identifier);
 
     /**
      * Persists the site changes.
+     *
      * @param site
      * @return
      */
-    public Site save(Site site);
+    Site save(Site site);
 
     /**
      * Returns a default site.   This method returns null in the out of box implementation of Broadleaf.
-     * Extend for implementation specific behavior. 
-     * 
+     * Extend for implementation specific behavior.
+     *
      * @return
      */
-    public Site retrieveDefaultSite();
+    Site retrieveDefaultSite();
 
     /**
      * @return a List of all sites in the system
      */
-    public List<Site> readAllActiveSites();
+    List<Site> readAllActiveSites();
 
     /**
      * Finds a catalog by its id.
-     * 
+     *
      * @param id
      * @return the catalog
      */
-    public Catalog retrieveCatalog(Long id);
-    
+    Catalog retrieveCatalog(Long id);
+
     Catalog retrieveCatalogByName(String name);
 
     /**
@@ -90,21 +94,22 @@ public interface SiteDao {
      *
      * @return the catalog
      */
-    public Catalog createCatalog();
+    Catalog createCatalog();
 
     /**
      * Creates a new instance of {@code SiteCatalogXref} using {@link org.broadleafcommerce.common.persistence.EntityConfiguration}.
      *
      * @return the site catalog
      */
-    public SiteCatalogXref createSiteCatalog();
-    
-    public Catalog save(Catalog catalog);
+    SiteCatalogXref createSiteCatalog();
+
+    Catalog save(Catalog catalog);
 
     /**
      * Retrieves all catalogs
-     * 
+     *
      * @return the list of catalogs
      */
-    public List<Catalog> retrieveAllCatalogs();
+    List<Catalog> retrieveAllCatalogs();
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,6 +31,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -52,6 +53,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -71,60 +73,57 @@ import java.util.List;
 public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable, CurrencyCodeIdentifiable {
 
     private static final Log LOG = LogFactory.getLog(FulfillmentGroupItemImpl.class);
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "FulfillmentGroupItemId")
     @GenericGenerator(
-        name="FulfillmentGroupItemId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="FulfillmentGroupItemImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl")
-        }
+            name = "FulfillmentGroupItemId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FulfillmentGroupItemImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl")
+            }
     )
     @Column(name = "FULFILLMENT_GROUP_ITEM_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional=false)
+    @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional = false)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
     protected FulfillmentGroup fulfillmentGroup;
 
     //this needs to stay OrderItem in order to provide backwards compatibility for those implementations that place a BundleOrderItem
-    @ManyToOne(targetEntity = OrderItemImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = OrderItemImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "ORDER_ITEM_ID")
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Order_Item", prominent = true, order = 1000, gridOrder = 1000)
     @AdminPresentationToOneLookup()
     protected OrderItem orderItem;
 
-    @Column(name = "QUANTITY", nullable=false)
+    @Column(name = "QUANTITY", nullable = false)
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Quantity", prominent = true, order = 2000, gridOrder = 2000)
     protected int quantity;
-
-    @Column(name = "STATUS")
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Status", prominent = true, order = 3000, gridOrder = 3000)
-    private String status;
-    
-    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @JoinTable(name = "BLC_FG_ITEM_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ITEM_ID"), inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
+    @OneToMany(fetch = FetchType.LAZY, targetEntity = TaxDetailImpl.class, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinTable(name = "BLC_FG_ITEM_TAX_XREF", joinColumns = @JoinColumn(name = "FULFILLMENT_GROUP_ITEM_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TAX_DETAIL_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    protected List<TaxDetail> taxes = new ArrayList<TaxDetail>();
-    
-    @Column(name = "TOTAL_ITEM_TAX", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Tax", order=4000, fieldType=SupportedFieldType.MONEY)
+    protected List<TaxDetail> taxes = new ArrayList<>();
+    @Column(name = "TOTAL_ITEM_TAX", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Tax", order = 4000, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
-
     @Column(name = "TOTAL_ITEM_AMOUNT", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Amount", order = 5000, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalItemAmount;
-
     @Column(name = "TOTAL_ITEM_TAXABLE_AMOUNT", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Total_Item_Taxable_Amount", order = 6000, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalItemTaxableAmount;
-
     @Column(name = "PRORATED_ORDER_ADJ")
     @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Prorated_Adjustment", order = 7000, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal proratedOrderAdjustment;
+    @Column(name = "STATUS")
+    @AdminPresentation(friendlyName = "FulfillmentGroupItemImpl_Status", prominent = true, order = 3000, gridOrder = 3000)
+    private String status;
 
     @Override
     public Long getId() {
@@ -215,7 +214,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         totalItemTaxableAmount = Money.toAmount(taxableAmount);
     }
 
-
     @Override
     public FulfillmentGroupStatusType getStatus() {
         return FulfillmentGroupStatusType.getInstance(this.status);
@@ -225,7 +223,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     public void setStatus(FulfillmentGroupStatusType status) {
         this.status = status.getType();
     }
-    
+
     @Override
     public void removeAssociations() {
         if (getFulfillmentGroup() != null) {
@@ -244,10 +242,12 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     public void setTaxes(List<TaxDetail> taxes) {
         this.taxes = taxes;
     }
-    
+
     @Override
     public Money getTotalTax() {
-        return totalTax == null ? null : BroadleafCurrencyUtils.getMoney(totalTax, getFulfillmentGroup().getOrder().getCurrency());
+        return totalTax == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(totalTax, getFulfillmentGroup().getOrder().getCurrency());
     }
 
     @Override
@@ -262,7 +262,8 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
     public void checkCloneable(FulfillmentGroupItem fulfillmentGroupItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = fulfillmentGroupItem.getClass().getMethod("clone");
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
+                && !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
         }
@@ -277,7 +278,8 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
             try {
                 checkCloneable(clonedFulfillmentGroupItem);
             } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clonedFulfillmentGroupItem.getClass().getName(), e);
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: "
+                        + clonedFulfillmentGroupItem.getClass().getName(), e);
             }
 
             clonedFulfillmentGroupItem.setFulfillmentGroup(getFulfillmentGroup());
@@ -294,9 +296,11 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
 
         return clonedFulfillmentGroupItem;
     }
-    
+
     @Override
-    public <G extends FulfillmentGroupItem> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends FulfillmentGroupItem> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -361,4 +365,5 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
         result = prime * result + ((orderItem == null) ? 0 : orderItem.hashCode());
         return result;
     }
+
 }

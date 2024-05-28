@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,31 +22,38 @@ import org.broadleafcommerce.profile.core.domain.Address;
 
 import java.io.Serializable;
 
-public interface Store extends Status, Serializable{
+public interface Store extends Status, Serializable {
 
-    public Long getId();
-    public void setId(Long id);
+    Long getId();
 
-    public String getName();
-    public void setName(String name);
+    void setId(Long id);
 
-    public String getStoreNumber();
-    public void setStoreNumber(String storeNumber);
+    String getName();
 
-    public Boolean getOpen();
-    public void setOpen(Boolean open);
+    void setName(String name);
 
-    public String getStoreHours();
-    public void setStoreHours(String storeHours);
-    
-    public Address getAddress();
-    public void setAddress(Address address);
-    
-    public Double getLongitude();
-    public void setLongitude(Double longitude);
+    String getStoreNumber();
 
-    public Double getLatitude();
-    public void setLatitude(Double latitude);
+    void setStoreNumber(String storeNumber);
 
+    Boolean getOpen();
+
+    void setOpen(Boolean open);
+
+    String getStoreHours();
+
+    void setStoreHours(String storeHours);
+
+    Address getAddress();
+
+    void setAddress(Address address);
+
+    Double getLongitude();
+
+    void setLongitude(Double longitude);
+
+    Double getLatitude();
+
+    void setLatitude(Double latitude);
 
 }

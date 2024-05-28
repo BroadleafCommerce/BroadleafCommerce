@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -59,7 +59,11 @@ public class DefaultCurrentCustomerPaymentRequestService implements CurrentCusto
     }
 
     @Override
-    public void addCustomerAttributeToCustomer(Long customerId, String customerAttributeKey, String customerAttributeValue) throws PaymentException {
+    public void addCustomerAttributeToCustomer(
+            Long customerId,
+            String customerAttributeKey,
+            String customerAttributeValue
+    ) throws PaymentException {
         Customer currentCustomer = CustomerState.getCustomer();
         Long currentCustomerId = currentCustomer.getId();
 
@@ -75,7 +79,6 @@ public class DefaultCurrentCustomerPaymentRequestService implements CurrentCusto
         currentCustomer.getCustomerAttributes().put(customerAttributeKey, customerAttribute);
 
         customerService.saveCustomer(currentCustomer);
-
     }
 
     @Override
@@ -105,4 +108,5 @@ public class DefaultCurrentCustomerPaymentRequestService implements CurrentCusto
             LOG.warn(String.format("The current customer resolved from customer state [%s] is not the same as the requested customer ID [%s]. Session may have expired or local cart state was lost. This may need manual review.", currentCustomerId, customerId));
         }
     }
+
 }

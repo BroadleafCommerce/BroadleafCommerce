@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,7 +56,7 @@ public interface EntityDuplicatorExtensionHandler extends ExtensionHandler {
      * @param entity
      * @return
      */
-    ExtensionResultStatusType addToSandbox (Object entity);
+    ExtensionResultStatusType addToSandbox(Object entity);
 
     /**
      * Tear down any expired context and state used during the duplication
@@ -65,7 +65,11 @@ public interface EntityDuplicatorExtensionHandler extends ExtensionHandler {
      */
     ExtensionResultStatusType tearDownDuplicate();
 
-    ExtensionResultStatusType getCatalogsForPropagation(MultiTenantCopyContext context, ExtensionResultHolder<List<MultiTenantCopyContext>> resultHolder );
+    ExtensionResultStatusType getCatalogsForPropagation(MultiTenantCopyContext context, ExtensionResultHolder<List<MultiTenantCopyContext>> resultHolder);
 
-    ExtensionResultStatusType getClonesByCatalogs(String tableName, Long id, MultiTenantCopyContext multiTenantCopyContext, ExtensionResultHolder<Map<Long, Map<Long,Long>>> resultHolder);
+    ExtensionResultStatusType getClonesByCatalogs(
+            String tableName, Long id, MultiTenantCopyContext multiTenantCopyContext,
+            ExtensionResultHolder<Map<Long, Map<Long, Long>>> resultHolder
+    );
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,24 +31,23 @@ import jakarta.persistence.TypedQuery;
 /**
  * Utility class to construct typed query-language queries. This has an advantage over CriteriaQuery in that it will
  * be automatically responsive to polymorphism thanks to Hibernate's handling of query-language strings.
- * 
- * @author Andre Azzolini (apazzolini)
  *
  * @param <T> the class that is being queried for
+ * @author Andre Azzolini (apazzolini)
  */
 public class TypedQueryBuilder<T> {
-    
+
     protected Class rootClass;
     protected Class<T> returnClass;
     protected String rootAlias;
-    protected List<TQRestriction> restrictions = new ArrayList<TQRestriction>();
-    protected List<TQJoin> joins = new ArrayList<TQJoin>();
-    protected List<TQOrder> orders = new ArrayList<TQOrder>();
-    protected Map<String, Object> paramMap = new HashMap<String, Object>();
+    protected List<TQRestriction> restrictions = new ArrayList<>();
+    protected List<TQJoin> joins = new ArrayList<>();
+    protected List<TQOrder> orders = new ArrayList<>();
+    protected Map<String, Object> paramMap = new HashMap<>();
 
     /**
      * Creates a new TypedQueryBuilder that will utilize the rootAlias as the named object of the class
-     * 
+     *
      * @param rootClass
      * @param rootAlias
      */
@@ -61,11 +60,11 @@ public class TypedQueryBuilder<T> {
         this.rootAlias = rootAlias;
         this.returnClass = returnClass;
     }
-    
+
     /**
      * Adds a simple restriction to the query. Note that all restrictions present on the TypedQueryBuilder will be joined
      * with an AND clause.
-     * 
+     *
      * @param expression
      * @param operation
      * @param parameter
@@ -74,11 +73,11 @@ public class TypedQueryBuilder<T> {
         restrictions.add(new TQRestriction(expression, operation, parameter));
         return this;
     }
-    
+
     /**
      * Adds an explicit TQRestriction object. Note that all restrictions present on the TypedQueryBuilder will be joined
      * with an AND clause.
-     * 
+     *
      * @param restriction
      * @return
      */
@@ -96,29 +95,29 @@ public class TypedQueryBuilder<T> {
         orders.add(order);
         return this;
     }
-    
+
     /**
      * Generates the query string based on the current contents of this builder. As the string is generated, this method
      * will also populate the paramMap, which binds actual restriction values.
-     * 
+     * <p>
      * Note that this method should typically not be invoked through DAOs. Instead, utilize {@link #toQuery(EntityManager)},
      * which will automatically generate the TypedQuery and populate the required parameters.
-     * 
+     *
      * @return the QL string
      */
     public String toQueryString() {
         return toQueryString(false);
     }
-    
+
     /**
      * Generates the query string based on the current contents of this builder. As the string is generated, this method
      * will also populate the paramMap, which binds actual restriction values.
-     * 
+     * <p>
      * Note that this method should typically not be invoked through DAOs. Instead, utilize {@link #toQuery(EntityManager)},
      * which will automatically generate the TypedQuery and populate the required parameters.
-     * 
+     * <p>
      * If you are using this as a COUNT query, you should look at the corresponding {@link #toCountQuery(EntityManager)}
-     * 
+     *
      * @param count - whether or not the resulting query string should be used as a count query or not
      * @return the QL string
      */
@@ -144,7 +143,7 @@ public class TypedQueryBuilder<T> {
         }
         if (CollectionUtils.isNotEmpty(orders)) {
             sb.append(" ORDER BY");
-            for (int j=0;j<orders.size();j++){
+            for (int j = 0; j < orders.size(); j++) {
                 sb.append(" ");
                 sb.append(orders.get(j).toQl());
                 if (j < orders.size() - 1) {
@@ -157,7 +156,7 @@ public class TypedQueryBuilder<T> {
 
     /**
      * Adds the select query from {@link #toQueryString()}
-     * 
+     *
      * @return <b>sb</b> with the select query appended to it
      */
     protected StringBuilder getSelectClause(StringBuilder sb, boolean count) {
@@ -168,11 +167,11 @@ public class TypedQueryBuilder<T> {
             return sb.append(rootAlias);
         }
     }
-    
+
     /**
      * Returns a TypedQuery that represents this builder object. It will already have all of the appropriate parameter
      * values set and is able to be immediately queried against.
-     * 
+     *
      * @param em
      * @return the TypedQuery
      */
@@ -181,13 +180,13 @@ public class TypedQueryBuilder<T> {
         fillParameterMap(q);
         return q;
     }
-    
+
     public TypedQuery<Long> toCountQuery(EntityManager em) {
         TypedQuery<Long> q = em.createQuery(toQueryString(true), Long.class);
         fillParameterMap(q);
         return q;
     }
-    
+
     protected void fillParameterMap(TypedQuery<?> q) {
         for (Entry<String, Object> entry : paramMap.entrySet()) {
             if (entry.getValue() != null) {
@@ -195,13 +194,13 @@ public class TypedQueryBuilder<T> {
             }
         }
     }
-    
+
     /**
      * @return the paramMap
      */
     public Map<String, Object> getParamMap() {
         return paramMap;
     }
-    
+
 }
 

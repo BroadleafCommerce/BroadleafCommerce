@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,14 +22,12 @@ import org.broadleafcommerce.openadmin.dto.visitor.PersistencePerspectiveItemVis
 import java.io.Serializable;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class MapStructure implements Serializable, PersistencePerspectiveItem {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String keyClassName;
     private String mapKeyValueProperty;
     private String keyPropertyName;
@@ -39,13 +37,13 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
     private Boolean deleteValueEntity = Boolean.FALSE;
     private String manyToField;
     private Boolean mutable = true;
-    
+
     public MapStructure() {
         //do nothing - support serialization requirements
     }
-    
-    public MapStructure(String keyClassName, String keyPropertyName, String keyPropertyFriendlyName, String valueClassName, 
-            String mapProperty, Boolean deleteValueEntity, String mapKeyValueProperty) {
+
+    public MapStructure(String keyClassName, String keyPropertyName, String keyPropertyFriendlyName, String valueClassName,
+                        String mapProperty, Boolean deleteValueEntity, String mapKeyValueProperty) {
         if (!keyClassName.equals(String.class.getName())) {
             throw new RuntimeException("keyClass of java.lang.String is currently the only type supported");
         }
@@ -57,30 +55,30 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
         this.deleteValueEntity = deleteValueEntity;
         this.mapKeyValueProperty = mapKeyValueProperty;
     }
-    
+
     public String getKeyClassName() {
         return keyClassName;
     }
-    
+
     public void setKeyClassName(String keyClassName) {
         if (!keyClassName.equals(String.class.getName())) {
             throw new RuntimeException("keyClass of java.lang.String is currently the only type supported");
         }
         this.keyClassName = keyClassName;
     }
-    
+
     public String getValueClassName() {
         return valueClassName;
     }
-    
+
     public void setValueClassName(String valueClassName) {
         this.valueClassName = valueClassName;
     }
-    
+
     public String getMapProperty() {
         return mapProperty;
     }
-    
+
     public void setMapProperty(String mapProperty) {
         this.mapProperty = mapProperty;
     }
@@ -124,11 +122,11 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
     public void setMutable(Boolean mutable) {
         this.mutable = mutable;
     }
-    
+
     public String getMapKeyValueProperty() {
         return mapKeyValueProperty;
     }
-    
+
     public void setMapKeyValueProperty(String mapKeyValueProperty) {
         this.mapKeyValueProperty = mapKeyValueProperty;
     }

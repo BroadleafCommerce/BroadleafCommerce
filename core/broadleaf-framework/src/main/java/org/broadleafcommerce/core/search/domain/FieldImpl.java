@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,6 +35,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -48,8 +49,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FIELD",
-        indexes = {@Index(name = "ENTITY_TYPE_INDEX", columnList = "ENTITY_TYPE")})
+@Table(name = "BLC_FIELD", indexes = {@Index(name = "ENTITY_TYPE_INDEX", columnList = "ENTITY_TYPE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
@@ -58,6 +58,7 @@ import jakarta.persistence.Table;
 })
 public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity {
 
+    @Serial
     private static final long serialVersionUID = 2915813511754425605L;
 
     @Id
@@ -67,8 +68,7 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "FieldImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.search.domain.FieldImpl")
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.search.domain.FieldImpl")
             }
     )
     @Column(name = "FIELD_ID")
@@ -205,7 +205,8 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     @Override
     public void setSearchConfigs(List<SearchConfig> searchConfigs) {
         throw new UnsupportedOperationException(
-                "The default Field implementation does not support search configs");
+                "The default Field implementation does not support search configs"
+        );
     }
 
     @Override
@@ -214,9 +215,9 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     }
 
     @Override
-    public <G extends Field> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
-            throws
-            CloneNotSupportedException {
+    public <G extends Field> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -245,7 +246,6 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
 
         return getEntityType().getType().equals(other.getEntityType().getType())
                 && getPropertyName().equals(other.getPropertyName());
-
     }
 
     @Override
@@ -260,4 +260,5 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
                 .append(translatable)
                 .toHashCode();
     }
+
 }

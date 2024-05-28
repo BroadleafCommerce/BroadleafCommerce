@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,20 +24,26 @@ import org.broadleafcommerce.openadmin.server.security.service.type.PermissionTy
 import java.util.List;
 
 /**
- * 
  * @author jfischer
- *
  */
 public interface AdminPermissionDao {
 
-    public List<AdminPermission> readAllAdminPermissions();
-    public AdminPermission readAdminPermissionById(Long id);
-    public AdminPermission readAdminPermissionByName(String name);
-    public AdminPermission saveAdminPermission(AdminPermission permission);
-    public void deleteAdminPermission(AdminPermission permission);
-    public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName);
-    public boolean isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(String ceilingEntityFullyQualifiedName);
-    public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName);
-    public AdminPermission readAdminPermissionByNameAndType(String name, String type);
+    List<AdminPermission> readAllAdminPermissions();
+
+    AdminPermission readAdminPermissionById(Long id);
+
+    AdminPermission readAdminPermissionByName(String name);
+
+    AdminPermission saveAdminPermission(AdminPermission permission);
+
+    void deleteAdminPermission(AdminPermission permission);
+
+    boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName);
+
+    boolean isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(String ceilingEntityFullyQualifiedName);
+
+    boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName);
+
+    AdminPermission readAdminPermissionByNameAndType(String name, String type);
 
 }

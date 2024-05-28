@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -58,14 +58,14 @@ public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements 
                 if (metadata != null) {
                     Map<String, Object> attributes = metadata.getAnnotationAttributes(Merge.class.getName());
                     if (!MapUtils.isEmpty(attributes)) {
-                        boolean isEarly = MapUtils.getBooleanValue(attributes,"early");
+                        boolean isEarly = MapUtils.getBooleanValue(attributes, "early");
                         BeanDefinitionBuilder builder = BeanDefinitionBuilder
-                            .genericBeanDefinition(isEarly?EarlyStageMergeBeanPostProcessor.class:LateStageMergeBeanPostProcessor.class)
-                            .setScope(BeanDefinition.SCOPE_SINGLETON)
-                            .addPropertyValue("sourceRef", name)
-                            .addPropertyValue("targetRef", attributes.get("targetRef"))
-                            .addPropertyValue("placement", attributes.get("placement"))
-                            .addPropertyValue("position", attributes.get("position"));
+                                .genericBeanDefinition(isEarly ? EarlyStageMergeBeanPostProcessor.class : LateStageMergeBeanPostProcessor.class)
+                                .setScope(BeanDefinition.SCOPE_SINGLETON)
+                                .addPropertyValue("sourceRef", name)
+                                .addPropertyValue("targetRef", attributes.get("targetRef"))
+                                .addPropertyValue("placement", attributes.get("placement"))
+                                .addPropertyValue("position", attributes.get("position"));
                         Class<MergeBeanStatusProvider> clazz = (Class<MergeBeanStatusProvider>) attributes.get("statusProvider");
                         if (MergeBeanStatusProvider.class != clazz) {
                             try {
@@ -80,7 +80,7 @@ public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements 
                         String beanName = name +
                                 "_" +
                                 attributes.get("targetRef") +
-                                (isEarly?"Early":"Late") +
+                                (isEarly ? "Early" : "Late") +
                                 ANNOTATED_POST_PROCESSOR_SUFFIX;
                         if (isBroadleafAnnotationBean(metadata)) {
                             registry.registerBeanDefinition(beanName, definition);
@@ -124,7 +124,7 @@ public class MergeAnnotationAwareBeanDefinitionRegistryPostProcessor implements 
     }
 
     protected boolean isBroadleafBean(BeanDefinition beanDefinition) {
-        if (beanDefinition instanceof AnnotatedBeanDefinition){
+        if (beanDefinition instanceof AnnotatedBeanDefinition) {
             return isBroadleafAnnotationBean(((AnnotatedBeanDefinition) beanDefinition).getFactoryMethodMetadata());
         } else if (beanDefinition instanceof GenericBeanDefinition && ((GenericBeanDefinition) beanDefinition).getResource() != null) {
             return ((GenericBeanDefinition) beanDefinition).getResource().getFilename().startsWith("bl-");

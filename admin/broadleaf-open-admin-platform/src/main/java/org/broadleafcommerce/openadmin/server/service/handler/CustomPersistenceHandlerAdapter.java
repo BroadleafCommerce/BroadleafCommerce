@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -72,23 +72,40 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
     }
 
     @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+    public DynamicResultSet inspect(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            InspectHelper helper
+    ) throws ServiceException {
         throw new ServiceException("Inspect not supported");
     }
 
     @Override
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    public DynamicResultSet fetch(
+            PersistencePackage persistencePackage,
+            CriteriaTransferObject cto,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
         throw new ServiceException("Fetch not supported");
     }
 
     @Override
-    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    public Entity add(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
         throw new ServiceException("Add not supported");
     }
 
     @Override
-    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
-       throw new ServiceException("Remove not supported");
+    public void remove(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
+        throw new ServiceException("Remove not supported");
     }
 
     @Override
@@ -109,8 +126,7 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
     /**
      * This is a helper method that can be invoked as a first step in a custom inspect phase
      */
-    protected Map<String, FieldMetadata> getMetadata(PersistencePackage persistencePackage, InspectHelper helper)
-            throws ServiceException {
+    protected Map<String, FieldMetadata> getMetadata(PersistencePackage persistencePackage, InspectHelper helper) throws ServiceException {
         String entityName = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         PersistencePerspective perspective = persistencePackage.getPersistencePerspective();
         return helper.getSimpleMergedProperties(entityName, perspective);
@@ -120,16 +136,20 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
      * This is a helper method that can be invoked as the last step in a custom inspect phase. It will assemble the
      * appropriate DynamicResultSet from the given parameters.
      */
-    protected DynamicResultSet getResultSet(PersistencePackage persistencePackage, InspectHelper helper,
-            Map<String, FieldMetadata> metadata) throws ServiceException {
+    protected DynamicResultSet getResultSet(
+            PersistencePackage persistencePackage,
+            InspectHelper helper,
+            Map<String, FieldMetadata> metadata
+    ) throws ServiceException {
         String entityName = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             if (helper instanceof PersistenceManager) {
                 Class<?>[] entities = ((PersistenceManager) helper).getPolymorphicEntities(entityName);
-                Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties =
-                        new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+                Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
                 allMergedProperties.put(MergedPropertyType.PRIMARY, metadata);
-                ClassMetadata mergedMetadata = helper.buildClassMetadata(entities, persistencePackage, allMergedProperties);
+                ClassMetadata mergedMetadata = helper.buildClassMetadata(
+                        entities, persistencePackage, allMergedProperties
+                );
                 DynamicResultSet results = new DynamicResultSet(mergedMetadata);
                 return results;
             }
@@ -193,4 +213,5 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
     protected boolean isAdornedListOperation(PersistencePackage pkg) {
         return pkg.getPersistencePerspective().getOperationTypes().getAddType().equals(OperationType.ADORNEDTARGETLIST);
     }
+
 }

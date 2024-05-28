@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,15 +35,17 @@ public class NullCheckoutRollbackHandler implements RollbackHandler<ProcessConte
     private static final Log LOG = LogFactory.getLog(NullCheckoutRollbackHandler.class);
 
     @Override
-    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext,
-                              Map<String, Object> stateConfiguration) throws RollbackFailureException {
-
+    public void rollbackState(
+            Activity<ProcessContext<CheckoutSeed>> activity,
+            ProcessContext<CheckoutSeed> processContext,
+            Map<String, Object> stateConfiguration
+    ) throws RollbackFailureException {
         LOG.warn("NullCheckoutRollbackHandler invoked - Override to provide a " +
                 "mechanism to save any compensating transactions when an error occurs during checkout.");
         LOG.warn("******************* Activity: " + activity.getBeanName() + " *********************");
         RollbackStateLocal rollbackStateLocal = RollbackStateLocal.getRollbackStateLocal();
         LOG.warn("******************* Workflow: " + rollbackStateLocal.getWorkflowId() + " *********************");
         LOG.warn("******************* Thread: " + rollbackStateLocal.getThreadId() + " *********************");
-
     }
+
 }

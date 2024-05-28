@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,60 +30,62 @@ import java.math.BigDecimal;
  *
  * @author Phillip Verheyden
  * @see ProductBundle, Product
- *
  * @deprecated instead, use the ProductType Module's Product Add-Ons to build and configure bundles
  */
 @Deprecated
 public interface SkuBundleItem extends Serializable, MultiTenantCloneable<SkuBundleItem> {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public Integer getQuantity();
+    Integer getQuantity();
 
-    public void setQuantity(Integer quantity);
-
-    /**
-    * Allows for overriding the related Product's sale price. This is only used
-    * if the pricing model for the bundle is a composition of its parts
-    * getProduct().getDefaultSku().getSalePrice()
-    *
-    * @param itemSalePrice The sale price for this bundle item
-    */
-    public void setSalePrice(Money salePrice);
+    void setQuantity(Integer quantity);
 
     /**
-    * @return this itemSalePrice if it is set,
-    *         getProduct().getDefaultSku().getSalePrice() if this item's itemSalePrice is
-    *         null
-    */
-    public Money getSalePrice();
+     * @return this itemSalePrice if it is set,
+     * getProduct().getDefaultSku().getSalePrice() if this item's itemSalePrice is
+     * null
+     */
+    Money getSalePrice();
 
-    public ProductBundle getBundle();
+    /**
+     * Allows for overriding the related Product's sale price. This is only used
+     * if the pricing model for the bundle is a composition of its parts
+     * getProduct().getDefaultSku().getSalePrice()
+     *
+     * @param itemSalePrice The sale price for this bundle item
+     */
+    void setSalePrice(Money salePrice);
 
-    public void setBundle(ProductBundle bundle);
+    ProductBundle getBundle();
 
-    public Money getRetailPrice();
+    void setBundle(ProductBundle bundle);
 
-    public Sku getSku();
+    Money getRetailPrice();
 
-    public void setSku(Sku sku);
+    Sku getSku();
+
+    void setSku(Sku sku);
 
     /**
      * Removes any currently stored dynamic pricing
      */
-    public void clearDynamicPrices();
+    void clearDynamicPrices();
 
     /**
      * Get the sequence order.
+     *
      * @return
      */
-    public BigDecimal getSequence() ;
+    BigDecimal getSequence();
 
     /**
      * Set the order the item shows up in the display.
+     *
      * @param sequence
      */
-    public void setSequence(BigDecimal sequence);
+    void setSequence(BigDecimal sequence);
+
 }

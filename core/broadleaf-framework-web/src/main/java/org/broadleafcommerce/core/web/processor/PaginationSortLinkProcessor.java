@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
@@ -47,14 +46,20 @@ public class PaginationSortLinkProcessor extends AbstractBroadleafAttributeModif
     public String getName() {
         return "pagination-sort-link";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 10000;
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(
+            String tagName,
+            Map<String, String> tagAttributes,
+            String attributeName,
+            String attributeValue,
+            BroadleafTemplateContext context
+    ) {
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
 
         String baseUrl = request.getRequestURL().toString();
@@ -64,7 +69,7 @@ public class PaginationSortLinkProcessor extends AbstractBroadleafAttributeModif
         String sort = attributeValue;
 
         if (StringUtils.isNotBlank(sort)) {
-            params.put(SearchCriteria.SORT_STRING, new String[] { sort });
+            params.put(SearchCriteria.SORT_STRING, new String[]{sort});
         } else {
             params.remove(SearchCriteria.SORT_STRING);
         }
@@ -77,6 +82,6 @@ public class PaginationSortLinkProcessor extends AbstractBroadleafAttributeModif
         Map<String, String> newAttributes = new HashMap<>();
         newAttributes.put("href", url);
         return new BroadleafAttributeModifier(newAttributes);
-
     }
+
 }

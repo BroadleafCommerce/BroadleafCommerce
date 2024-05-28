@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
@@ -23,17 +22,17 @@ import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 /**
  * This interface is a lightweight replacement of gateway-specific classes extending AbstractExternalPaymentGatewayCall, and it helps expose some f the QoS inner methods, for testing purposes.
  * Notice that getServiceStatus() is overlaps a definition in ServiceStatusDetectable
- * @author gdiaz
  *
+ * @author gdiaz
  */
 public interface FailureCountExposable {
 
-    public void clearStatus();
+    void clearStatus();
 
-    public void incrementFailure();
+    void incrementFailure();
 
     ServiceStatusType getServiceStatus();
-    
+
     Integer getFailureReportingThreshold();
 
 }

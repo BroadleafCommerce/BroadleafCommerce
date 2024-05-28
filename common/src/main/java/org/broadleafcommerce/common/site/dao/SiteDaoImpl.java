@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -58,17 +58,17 @@ public class SiteDaoImpl implements SiteDao {
     public Site retrieve(Long id) {
         return em.find(SiteImpl.class, id);
     }
-    
+
     @Override
     public Catalog retrieveCatalog(Long id) {
         return em.find(CatalogImpl.class, id);
     }
-    
+
     @Override
     public Catalog retrieveCatalogByName(String name) {
         TypedQuery<Catalog> catalogByName = new TypedQueryBuilder<>(CatalogImpl.class, "c", Catalog.class)
-            .addRestriction("c.name", "=", name)
-            .toQuery(em);
+                .addRestriction("c.name", "=", name)
+                .toQuery(em);
         List<Catalog> catalogs = catalogByName.getResultList();
         if (CollectionUtils.isNotEmpty(catalogs)) {
             return catalogs.get(0);
@@ -94,18 +94,18 @@ public class SiteDaoImpl implements SiteDao {
         Root<SiteImpl> site = criteria.from(SiteImpl.class);
         criteria.select(site);
         criteria.where(
-            builder.and(
-                builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
-                    builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
-                builder.or(builder.isNull(site.get("deactivated")),
-                    builder.notEqual(site.get("deactivated"), true))
-            )
+                builder.and(
+                        builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
+                                builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
+                        builder.or(builder.isNull(site.get("deactivated")),
+                                builder.notEqual(site.get("deactivated"), true))
+                )
         );
-        
+
         TypedQuery<Site> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "blSiteElementsQuery");
-        
+
         return query.getResultList();
     }
 
@@ -116,7 +116,7 @@ public class SiteDaoImpl implements SiteDao {
         }
 
         List<Site> results = retrieveSitesByPotentialIdentifiers(domain, domainPrefix);
-        
+
         for (Site currentSite : results) {
             if (SiteResolutionType.DOMAIN.equals(currentSite.getSiteResolutionType())) {
                 if (domain.equals(currentSite.getSiteIdentifierValue())) {
@@ -133,13 +133,13 @@ public class SiteDaoImpl implements SiteDao {
 
         return null;
     }
-    
+
     @Override
     public Site retrieveSiteByIdentifier(String identifier) {
         List<Site> sites = retrieveSitesByPotentialIdentifiers(identifier);
         return CollectionUtils.isNotEmpty(sites) ? sites.get(0) : null;
     }
-    
+
     public List<Site> retrieveSitesByPotentialIdentifiers(String... potentialIdentifiers) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Site> criteria = builder.createQuery(Site.class);
@@ -147,13 +147,13 @@ public class SiteDaoImpl implements SiteDao {
         criteria.select(site);
 
         criteria.where(builder.and(site.get("siteIdentifierValue").as(String.class).in(Arrays.asList(potentialIdentifiers)),
-                builder.and(
-                    builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
-                        builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
-                    builder.or(builder.isNull(site.get("deactivated")),
-                        builder.notEqual(site.get("deactivated"), true))
+                        builder.and(
+                                builder.or(builder.isNull(site.get("archiveStatus").get("archived").as(String.class)),
+                                        builder.notEqual(site.get("archiveStatus").get("archived").as(Character.class), 'Y')),
+                                builder.or(builder.isNull(site.get("deactivated")),
+                                        builder.notEqual(site.get("deactivated"), true))
+                        )
                 )
-            )
         );
         TypedQuery<Site> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -170,12 +170,12 @@ public class SiteDaoImpl implements SiteDao {
     public Site retrieveDefaultSite() {
         return null;
     }
-    
+
     @Override
     public Catalog save(Catalog catalog) {
         return em.merge(catalog);
     }
-    
+
     @Override
     public List<Catalog> retrieveAllCatalogs() {
         TypedQuery<Catalog> q = new TypedQueryBuilder<>(CatalogImpl.class, "c", Catalog.class)

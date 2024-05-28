@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,11 +18,10 @@
 package org.broadleafcommerce.common.presentation.client;
 
 /**
- * 
  * @author jfischer
- *
  */
 public enum PersistencePerspectiveItemType {
+
     FOREIGNKEY,
     ADORNEDTARGETLIST,
     MAPSTRUCTURE,
@@ -33,4 +32,5 @@ public enum PersistencePerspectiveItemType {
      * which can be used to cover missing data at the {@link PersistencePackage} level
      */
     PARENTRECORDSTRUCTURE
+
 }

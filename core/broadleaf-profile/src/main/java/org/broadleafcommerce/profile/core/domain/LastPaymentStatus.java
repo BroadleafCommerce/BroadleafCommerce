@@ -10,38 +10,34 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration representing the status of the last attempted payment
- * in CustomerPayment 
- * 
+ * in CustomerPayment
+ *
  * @author gdiaz
  */
 public class LastPaymentStatus implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, LastPaymentStatus> TYPES = new LinkedHashMap<String, LastPaymentStatus>();
+    private static final Map<String, LastPaymentStatus> TYPES = new LinkedHashMap<>();
 
     public static final LastPaymentStatus OK = new LastPaymentStatus("1", "OK");
     public static final LastPaymentStatus ERROR = new LastPaymentStatus("2", "Error");
-
-    public static LastPaymentStatus getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -55,21 +51,26 @@ public class LastPaymentStatus implements Serializable, BroadleafEnumerationType
         setType(type);
     }
 
+    public static LastPaymentStatus getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via "
+                    + getInstance(type).getClass().getName());
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -96,4 +97,5 @@ public class LastPaymentStatus implements Serializable, BroadleafEnumerationType
             return false;
         return true;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,8 +23,8 @@ import java.math.RoundingMode;
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- *  This class allows us to round Big Decimals to 2 decimal places, generally for
- *  marshalling purposes.  This is to be used with <code>javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters</code>.
+ * This class allows us to round Big Decimals to 2 decimal places, generally for
+ * marshalling purposes.  This is to be used with <code>javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters</code>.
  */
 public class BigDecimalRoundingAdapter extends XmlAdapter<String, BigDecimal> {
 
@@ -37,4 +37,5 @@ public class BigDecimalRoundingAdapter extends XmlAdapter<String, BigDecimal> {
     public String marshal(BigDecimal bigDecimal) throws Exception {
         return bigDecimal.setScale(2, RoundingMode.UP).toString();
     }
+
 }

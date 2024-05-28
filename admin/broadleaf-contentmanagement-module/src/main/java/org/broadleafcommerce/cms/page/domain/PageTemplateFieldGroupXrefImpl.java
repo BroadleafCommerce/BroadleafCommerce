@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -97,18 +97,13 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
     }
 
     @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
     public Long getId() {
         return id;
     }
 
     @Override
-    public void setPageTemplate(PageTemplate pageTemplate) {
-        this.pageTemplate = pageTemplate;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
@@ -117,8 +112,8 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
     }
 
     @Override
-    public void setFieldGroup(FieldGroup fieldGroup) {
-        this.fieldGroup = fieldGroup;
+    public void setPageTemplate(PageTemplate pageTemplate) {
+        this.pageTemplate = pageTemplate;
     }
 
     @Override
@@ -127,13 +122,18 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
     }
 
     @Override
-    public void setGroupOrder(BigDecimal groupOrder) {
-        this.groupOrder = groupOrder;
+    public void setFieldGroup(FieldGroup fieldGroup) {
+        this.fieldGroup = fieldGroup;
     }
 
     @Override
     public BigDecimal getGroupOrder() {
         return groupOrder;
+    }
+
+    @Override
+    public void setGroupOrder(BigDecimal groupOrder) {
+        this.groupOrder = groupOrder;
     }
 
     @Override

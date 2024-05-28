@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.expression;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,26 +35,26 @@ import jakarta.annotation.Resource;
 
 /**
  * Exposes "blc" to expressions to the Thymeleaf expression context.
- * 
+ * <p>
  * This class is intended to be augmented using load time weaving by other modules
  * within Broadleaf.
- * 
+ * <p>
  * It provides one function (getDate()) primarily just for testing purposes.   This can
  * be accessed with Thymeleaf as ${#blc.date()}
- * 
+ *
  * @author bpolster
  */
 @Component("blBLCVariableExpression")
 @ConditionalOnTemplating
 public class BLCVariableExpression implements BroadleafVariableExpression {
-    
+
+    @Resource(name = "blCatalogURLService")
+    protected CatalogURLService catalogURLService;
+
     @Override
     public String getName() {
         return "blc";
     }
-    
-    @Resource(name = "blCatalogURLService")
-    protected CatalogURLService catalogURLService;
 
     public String relativeURL(Category category) {
         return catalogURLService.buildRelativeCategoryURL(getCurrentUrl(), category);
@@ -88,9 +87,10 @@ public class BLCVariableExpression implements BroadleafVariableExpression {
 
     /**
      * Returns the price at the correct scale and rounding for the default currency
-     * @see Money#defaultCurrency()
+     *
      * @param amount
      * @return
+     * @see Money#defaultCurrency()
      */
     public String getPrice(String amount) {
         Money price = Money.ZERO;
@@ -99,10 +99,13 @@ public class BLCVariableExpression implements BroadleafVariableExpression {
             price = new Money(sanitizedAmount);
             BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
             if (brc.getJavaLocale() != null) {
-                NumberFormat formatter = BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency());
+                NumberFormat formatter = BroadleafCurrencyUtils.getNumberFormatFromCache(
+                        brc.getJavaLocale(), price.getCurrency()
+                );
                 return formatter.format(price.getAmount());
             }
         }
         return "$ " + price.getAmount().toString();
     }
+
 }

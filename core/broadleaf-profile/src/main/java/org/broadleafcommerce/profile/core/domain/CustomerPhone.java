@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,20 +23,20 @@ import java.io.Serializable;
 
 public interface CustomerPhone extends Serializable, MultiTenantCloneable<CustomerPhone> {
 
-    public void setId(Long id);
+    Long getId();
 
-    public Long getId();
+    void setId(Long id);
 
-    public void setPhoneName(String phoneName);
+    String getPhoneName();
 
-    public String getPhoneName();
+    void setPhoneName(String phoneName);
 
-    public Customer getCustomer();
+    Customer getCustomer();
 
-    public void setCustomer(Customer customer);
+    void setCustomer(Customer customer);
 
-    public Phone getPhone();
+    Phone getPhone();
 
-    public void setPhone(Phone phone);
+    void setPhone(Phone phone);
 
 }

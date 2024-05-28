@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,7 +27,7 @@ import java.util.List;
 
 /**
  * Provides deep links for {@link StructuredContent} items.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class ContentDeepLinkServiceImpl extends DeepLinkService<StructuredContentDTO> {
@@ -36,13 +36,15 @@ public class ContentDeepLinkServiceImpl extends DeepLinkService<StructuredConten
 
     @Override
     protected List<DeepLink> getLinksInternal(StructuredContentDTO item) {
-        List<DeepLink> links = new ArrayList<DeepLink>();
+        List<DeepLink> links = new ArrayList<>();
 
-        links.add(new DeepLink()
-            .withAdminBaseUrl(getAdminBaseUrl())
-            .withUrlFragment(structuredContentAdminPath + item.getId())
-            .withDisplayText("Edit")
-            .withSourceObject(item));
+        links.add(
+                new DeepLink()
+                        .withAdminBaseUrl(getAdminBaseUrl())
+                        .withUrlFragment(structuredContentAdminPath + item.getId())
+                        .withDisplayText("Edit")
+                        .withSourceObject(item)
+        );
 
         return links;
     }

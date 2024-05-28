@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -54,7 +54,7 @@ public class Crop extends BaseFilter {
         Operation operation = new Operation();
         operation.setName(key);
         String factor = parameterMap.get(key + "-factor");
-        operation.setFactor(factor==null?null:Double.valueOf(factor));
+        operation.setFactor(factor == null ? null : Double.valueOf(factor));
 
         UnmarshalledParameter rectangle = new UnmarshalledParameter();
         String rectangleApplyFactor = parameterMap.get(key + "-apply-factor");
@@ -83,15 +83,15 @@ public class Crop extends BaseFilter {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
-            throw new IllegalArgumentException("src image cannot be the "+
-                                               "same as the dst image");
+            throw new IllegalArgumentException("src image cannot be the " +
+                    "same as the dst image");
         }
-        
+
         boolean needToConvert = false;
         ColorModel srcCM = src.getColorModel();
         ColorModel dstCM;
         BufferedImage origDst = dst;
-        
+
         if (srcCM instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel) srcCM;
             src = icm.convertToIntDiscrete(src.getRaster(), false);
@@ -101,38 +101,38 @@ public class Crop extends BaseFilter {
             dst = createCompatibleDestImage(src, null);
             dstCM = srcCM;
             origDst = dst;
-        }
-        else {
+        } else {
             dstCM = dst.getColorModel();
             if (srcCM.getColorSpace().getType() !=
-                dstCM.getColorSpace().getType())
-            {
+                    dstCM.getColorSpace().getType()) {
                 needToConvert = true;
                 dst = createCompatibleDestImage(src, null);
                 dstCM = dst.getColorModel();
-            }
-            else if (dstCM instanceof IndexColorModel) {
+            } else if (dstCM instanceof IndexColorModel) {
                 dst = createCompatibleDestImage(src, null);
                 dstCM = dst.getColorModel();
             }
         }
-        
-        java.awt.image.CropImageFilter cropfilter = new java.awt.image.CropImageFilter(region.x,region.y,region.width,region.height);
-        Image returnImage = Toolkit.getDefaultToolkit().createImage(new java.awt.image.FilteredImageSource(src.getSource(),cropfilter));
+
+        java.awt.image.CropImageFilter cropfilter = new java.awt.image.CropImageFilter(
+                region.x, region.y, region.width, region.height
+        );
+        Image returnImage = Toolkit.getDefaultToolkit().createImage(
+                new java.awt.image.FilteredImageSource(src.getSource(), cropfilter)
+        );
         dst = ImageConverter.convertImage(returnImage);
         origDst = dst;
 
         if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
-        }
-        else if (origDst != dst) {
+        } else if (origDst != dst) {
             java.awt.Graphics2D g2 = origDst.createGraphics();
-        try {
-            g2.drawImage(dst, 0, 0, null);
-        } finally {
-            g2.dispose();
-        }
+            try {
+                g2.drawImage(dst, 0, 0, null);
+            } finally {
+                g2.dispose();
+            }
         }
 
         return origDst;

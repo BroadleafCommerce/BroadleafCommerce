@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,30 +44,32 @@ import jakarta.annotation.Resource;
 
 /**
  * Saves an instance of OfferAudit for each offer in the passed in order.
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link RecordOfferUsageRollbackHandler}
  */
 @Component("blRecordOfferUsageActivity")
 public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
-    
+
     public static final int ORDER = 4000;
-    
+
     /**
      * Key to retrieve the audits that were persisted
      */
     public static final String SAVED_AUDITS = "savedAudits";
-    
+
     protected static final Log LOG = LogFactory.getLog(RecordOfferUsageActivity.class);
 
-    @Resource(name="blOfferAuditService")
+    @Resource(name = "blOfferAuditService")
     protected OfferAuditService offerAuditService;
-    
+
     @Resource(name = "blOfferService")
     protected OfferService offerService;
-    
+
     @Autowired
-    public RecordOfferUsageActivity(@Qualifier("blRecordOfferUsageRollbackHandler") RecordOfferUsageRollbackHandler rollbackHandler) {
+    public RecordOfferUsageActivity(
+            @Qualifier("blRecordOfferUsageRollbackHandler") RecordOfferUsageRollbackHandler rollbackHandler
+    ) {
         setOrder(ORDER);
         setRollbackHandler(rollbackHandler);
     }
@@ -77,20 +79,20 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
         Order order = context.getSeedData().getOrder();
         Set<Offer> appliedOffers = offerService.getUniqueOffersFromOrder(order);
         Map<Offer, OfferCode> offerToCodeMapping = offerService.getOffersRetrievedFromCodes(order.getAddedOfferCodes(), appliedOffers);
-        
+
         List<OfferAudit> audits = saveOfferIds(appliedOffers, offerToCodeMapping, order);
-        
+
         Map<String, Object> state = new HashMap<>();
         state.put(SAVED_AUDITS, audits);
-        
+
         ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackHandler(), state);
 
         return context;
     }
-    
+
     /**
      * Persists each of the offers to the database as {@link OfferAudit}s.
-     * 
+     *
      * @return the {@link OfferAudit}s that were persisted
      */
     protected List<OfferAudit> saveOfferIds(Set<Offer> offers, Map<Offer, OfferCode> offerToCodeMapping, Order order) {
@@ -101,19 +103,19 @@ public class RecordOfferUsageActivity extends BaseActivity<ProcessContext<Checko
             audit.setAccountId(order.getBroadleafAccountId());
             audit.setOfferId(offer.getId());
             audit.setOrderId(order.getId());
-            
+
             //add the code that was used to obtain the offer to the audit context
             OfferCode codeUsedToRetrieveOffer = offerToCodeMapping.get(offer);
             if (codeUsedToRetrieveOffer != null) {
                 audit.setOfferCodeId(codeUsedToRetrieveOffer.getId());
             }
-            
+
             audit.setRedeemedDate(SystemTime.asDate());
             audit = offerAuditService.save(audit);
             audits.add(audit);
         }
-        
+
         return audits;
     }
-        
+
 }

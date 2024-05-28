@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,17 +35,23 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Sets a request attribute that informs all Broadleaf Filters that follow NOT to use the HTTP Session.
- * 
+ * <p>
  * Intended for use by REST api requests.
- * 
+ *
  * @author bpolster
  */
 @Component("blStatelessSessionFilter")
 public class StatelessSessionFilter extends AbstractIgnorableFilter {
 
     @Override
-    public void doFilterUnlessIgnored(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        BLCRequestUtils.setOKtoUseSession(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response), Boolean.FALSE);
+    public void doFilterUnlessIgnored(
+            ServletRequest request,
+            ServletResponse response,
+            FilterChain filterChain
+    ) throws IOException, ServletException {
+        BLCRequestUtils.setOKtoUseSession(
+                new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response), Boolean.FALSE
+        );
         SessionlessHttpServletRequestWrapper wrapper = new SessionlessHttpServletRequestWrapper((HttpServletRequest) request);
         filterChain.doFilter(wrapper, response);
     }
@@ -54,4 +60,5 @@ public class StatelessSessionFilter extends AbstractIgnorableFilter {
     public int getOrder() {
         return FilterOrdered.PRE_SECURITY_HIGH;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,7 +18,6 @@
 package org.broadleafcommerce.common.util;
 
 import java.math.BigDecimal;
-
 
 public class UnitOfMeasureUtil {
 
@@ -86,7 +85,9 @@ public class UnitOfMeasureUtil {
 
     public static BigDecimal findInches(BigDecimal dimension, DimensionUnitOfMeasureType type) {
         if (type.equals(DimensionUnitOfMeasureType.CENTIMETERS)) {
-            dimension = UnitOfMeasureUtil.convertFeetToInches(UnitOfMeasureUtil.convertMetersToFeet(dimension.multiply(BigDecimal.valueOf(0.01))));
+            dimension = UnitOfMeasureUtil.convertFeetToInches(
+                    UnitOfMeasureUtil.convertMetersToFeet(dimension.multiply(BigDecimal.valueOf(0.01)))
+            );
         }
         if (type.equals(DimensionUnitOfMeasureType.METERS)) {
             dimension = UnitOfMeasureUtil.convertFeetToInches(UnitOfMeasureUtil.convertMetersToFeet(dimension));
@@ -96,4 +97,5 @@ public class UnitOfMeasureUtil {
         }
         return dimension;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,14 +38,12 @@ import jakarta.annotation.PostConstruct;
 public class EntityConfiguration implements ApplicationContextAware {
 
     private static final Log LOG = LogFactory.getLog(EntityConfiguration.class);
-
-    private ApplicationContext webApplicationContext;
     private final HashMap<String, Class<?>> entityMap = new HashMap<>(50);
+    @jakarta.annotation.Resource(name = "blMergedEntityContexts")
+    protected Set<String> mergedEntityContexts;
+    private ApplicationContext webApplicationContext;
     private ApplicationContext applicationcontext;
     private Resource[] entityContexts;
-
-    @jakarta.annotation.Resource(name="blMergedEntityContexts")
-    protected Set<String> mergedEntityContexts;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -81,7 +79,7 @@ public class EntityConfiguration implements ApplicationContextAware {
         }
         return clazz;
     }
-    
+
     public String[] getEntityBeanNames() {
         return applicationcontext.getBeanDefinitionNames();
     }
@@ -124,4 +122,5 @@ public class EntityConfiguration implements ApplicationContextAware {
     public void setEntityContexts(Resource[] entityContexts) {
         this.entityContexts = entityContexts;
     }
+
 }

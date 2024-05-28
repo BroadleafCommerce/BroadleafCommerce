@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,6 +36,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -55,7 +56,6 @@ import jakarta.persistence.Table;
  *
  * @author Kelly Tisdell
  */
-
 @Entity
 @Table(name = "BLC_MODULE_CONFIGURATION")
 @EntityListeners(value = {AuditableListener.class})
@@ -67,6 +67,7 @@ import jakarta.persistence.Table;
 })
 public abstract class AbstractModuleConfiguration implements ModuleConfiguration, Status, AbstractModuleConfigurationAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -157,18 +158,23 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
         }
         return this.isDefault;
     }
-    
-    @Override
-    public boolean isDefault() {
-    	if (getIsDefault() != null) {
-    		return getIsDefault();
-    	}
-    	return false;
-    }
 
     @Override
     public void setIsDefault(Boolean isDefault) {
         this.isDefault = isDefault;
+    }
+
+    @Override
+    public boolean isDefault() {
+        if (getIsDefault() != null) {
+            return getIsDefault();
+        }
+        return false;
+    }
+
+    @Override
+    public ModuleConfigurationType getModuleConfigurationType() {
+        return ModuleConfigurationType.getInstance(this.configType);
     }
 
     /**
@@ -179,23 +185,13 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     }
 
     @Override
-    public ModuleConfigurationType getModuleConfigurationType() {
-        return ModuleConfigurationType.getInstance(this.configType);
-    }
-
-    @Override
-    public void setAuditable(Auditable auditable) {
-        this.auditable = auditable;
-    }
-
-    @Override
     public Auditable getAuditable() {
         return this.auditable;
     }
 
     @Override
-    public void setArchived(Character archived) {
-        archiveStatus.setArchived(archived);
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
     }
 
     @Override
@@ -210,13 +206,13 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     }
 
     @Override
-    public boolean isActive() {
-        return DateUtil.isActive(activeStartDate, activeEndDate, true) && 'Y' != getArchived();
+    public void setArchived(Character archived) {
+        archiveStatus.setArchived(archived);
     }
 
     @Override
-    public void setActiveStartDate(Date startDate) {
-        this.activeStartDate = startDate;
+    public boolean isActive() {
+        return DateUtil.isActive(activeStartDate, activeEndDate, true) && 'Y' != getArchived();
     }
 
     @Override
@@ -225,13 +221,18 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     }
 
     @Override
-    public void setActiveEndDate(Date endDate) {
-        this.activeEndDate = endDate;
+    public void setActiveStartDate(Date startDate) {
+        this.activeStartDate = startDate;
     }
 
     @Override
     public Date getActiveEndDate() {
         return this.activeEndDate;
+    }
+
+    @Override
+    public void setActiveEndDate(Date endDate) {
+        this.activeEndDate = endDate;
     }
 
     @Override
@@ -243,4 +244,5 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     public void setPriority(Integer priority) {
         this.priority = priority;
     }
+
 }

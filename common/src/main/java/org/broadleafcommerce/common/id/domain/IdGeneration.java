@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,26 +21,26 @@ import java.io.Serializable;
 
 public interface IdGeneration extends Serializable {
 
-    public String getType();
+    String getType();
 
-    public void setType(String type);
+    void setType(String type);
 
-    public Long getBegin();
+    Long getBegin();
 
-    public void setBegin(Long begin);
+    void setBegin(Long begin);
 
-    public Long getEnd();
+    Long getEnd();
 
-    public void setEnd(Long end);
+    void setEnd(Long end);
 
-    public Long getBatchStart();
+    Long getBatchStart();
 
-    public void setBatchStart(Long batchStart);
+    void setBatchStart(Long batchStart);
 
-    public Long getBatchSize();
+    Long getBatchSize();
 
-    public void setBatchSize(Long batchSize);
+    void setBatchSize(Long batchSize);
 
-    public Integer getVersion();
+    Integer getVersion();
 
 }

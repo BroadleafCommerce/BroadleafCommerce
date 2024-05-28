@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,26 +36,26 @@ public class AdminAuditable implements Serializable, SandBoxNonProductionSkip, A
     @Column(name = "DATE_CREATED", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @AdminPresentation(friendlyName = "AdminAuditable_Date_Created", group = "AdminAuditable_Audit",
-            tab="AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE, order = 2,
+            tab = "AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE, order = 2,
             readOnly = true)
     protected Date dateCreated;
 
     @Column(name = "CREATED_BY", updatable = false)
     @AdminPresentation(friendlyName = "AdminAuditable_Created_By", group = "AdminAuditable_Audit",
-            tab="AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE, order = 1,
+            tab = "AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE, order = 1,
             readOnly = true)
     protected Long createdBy;
 
     @Column(name = "DATE_UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
     @AdminPresentation(friendlyName = "AdminAuditable_Date_Updated", group = "AdminAuditable_Audit",
-            tab="AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE, order = 4,
+            tab = "AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE, order = 4,
             readOnly = true)
     protected Date dateUpdated;
 
     @Column(name = "UPDATED_BY")
     @AdminPresentation(friendlyName = "AdminAuditable_Updated_By", group = "AdminAuditable_Audit",
-            tab="AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE, order = 3,
+            tab = "AdminAuditable_Audit", tabOrder = Integer.MAX_VALUE, order = 3,
             readOnly = true)
     protected Long updatedBy;
 
@@ -65,13 +65,13 @@ public class AdminAuditable implements Serializable, SandBoxNonProductionSkip, A
     }
 
     @Override
-    public Date getDateUpdated() {
-        return dateUpdated;
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     @Override
-    public void setDateCreated(Date dateCreated) {
-        this.dateCreated = dateCreated;
+    public Date getDateUpdated() {
+        return dateUpdated;
     }
 
     @Override

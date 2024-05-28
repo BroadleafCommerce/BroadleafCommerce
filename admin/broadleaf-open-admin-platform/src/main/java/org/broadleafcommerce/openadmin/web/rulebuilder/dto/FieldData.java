@@ -10,24 +10,21 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 /**
  * @author Elbert Bautista (elbertbautista)
- *
+ * <p>
  * A temporary container object used to load the data into a RuleBuilderFieldService
  * @see org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldService
  * @see org.broadleafcommerce.openadmin.web.rulebuilder.service.OrderItemFieldServiceImpl
- *
- *
  */
 public class FieldData {
 
@@ -55,6 +52,50 @@ public class FieldData {
         this.skipValidation = builder.skipValidation;
     }
 
+    public String getFieldLabel() {
+        return fieldLabel;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public String getOperators() {
+        return operators;
+    }
+
+    public String getOptions() {
+        return options;
+    }
+
+    public String getSelectizeSectionKey() {
+        return selectizeSectionKey;
+    }
+
+    public String getOverrideEntityKey() {
+        return overrideEntityKey;
+    }
+
+    public String getOverrideDtoClassName() {
+        return overrideDtoClassName;
+    }
+
+    public SupportedFieldType getFieldType() {
+        return fieldType;
+    }
+
+    public SupportedFieldType getSecondaryFieldType() {
+        return secondaryFieldType;
+    }
+
+    public boolean getSkipValidation() {
+        return skipValidation;
+    }
+
+    public void setSkipValidation(boolean skipValidation) {
+        this.skipValidation = skipValidation;
+    }
+
     public static class Builder {
 
         protected String fieldLabel = null;
@@ -68,11 +109,11 @@ public class FieldData {
         protected SupportedFieldType secondaryFieldType = null;
         protected boolean skipValidation;
 
-        public FieldData build() {
-            return new FieldData(this);
+        public Builder() {
         }
 
-        public Builder() {
+        public FieldData build() {
+            return new FieldData(this);
         }
 
         public Builder label(String fieldLabel) {
@@ -124,50 +165,6 @@ public class FieldData {
             this.skipValidation = skipValidation;
             return this;
         }
-    }
-
-    public String getFieldLabel() {
-        return fieldLabel;
-    }
-
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    public String getOperators() {
-        return operators;
-    }
-
-    public String getOptions() {
-        return options;
-    }
-
-    public String getSelectizeSectionKey() {
-        return selectizeSectionKey;
-    }
-
-    public String getOverrideEntityKey() {
-        return overrideEntityKey;
-    }
-
-    public String getOverrideDtoClassName() {
-        return overrideDtoClassName;
-    }
-
-    public SupportedFieldType getFieldType() {
-        return fieldType;
-    }
-
-    public SupportedFieldType getSecondaryFieldType() {
-        return secondaryFieldType;
-    }
-
-    public boolean getSkipValidation() {
-        return skipValidation;
-    }
-
-    public void setSkipValidation(boolean skipValidation) {
-        this.skipValidation = skipValidation;
     }
 
 }

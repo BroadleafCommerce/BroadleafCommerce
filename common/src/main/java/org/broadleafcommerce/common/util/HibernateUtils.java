@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,9 +36,9 @@ import jakarta.persistence.PersistenceUnit;
  * @author Philip Baggett (pbaggett)
  */
 public class HibernateUtils {
-    
+
     public static final String DEFAULT_ENTITY_MANAGER_NAME = "blPU";
-    
+
     /**
      * <p>Ensure a domain object is an actual persisted object and not a Hibernate proxy object by getting its real implementation.
      *
@@ -49,9 +49,9 @@ public class HibernateUtils {
      */
     public static <T> T deproxy(T t) {
         if (t instanceof HibernateProxy) {
-            HibernateProxy proxy = (HibernateProxy)t;
+            HibernateProxy proxy = (HibernateProxy) t;
             LazyInitializer lazyInitializer = proxy.getHibernateLazyInitializer();
-            return (T)lazyInitializer.getImplementation();
+            return (T) lazyInitializer.getImplementation();
         }
         return t;
     }
@@ -104,15 +104,15 @@ public class HibernateUtils {
     public static <T> T executeWithCache(GenericOperation<T> operation) throws Exception {
         return executeWithCache(operation, DEFAULT_ENTITY_MANAGER_NAME);
     }
-    
+
     /**
      * During bulk operations such as reindexing we don't always want things to be cached.  This allows us to surgically turn off caching where appropriate.
      * If the {@link EntityManager} is null, the operation is executed without affecting the cache settings.
-     * 
+     *
      * @param operation
      * @param em
      * @return
-     * @throws G
+     * @throws Exception
      */
     public static <T> T executeWithoutCache(GenericOperation<T> operation, EntityManager em) throws Exception {
         if (em == null) {
@@ -127,12 +127,12 @@ public class HibernateUtils {
             session.setCacheMode(initialCacheMode);
         }
     }
-    
+
     /**
-     * Attempts to execute the operation without L2 or query cache engaged.  This affects the {@link PersistenceUnit} with the provided name.  
-     * If no {@link EntityManager} is bound to the thread for the provided {@link PersistenceUnit}, 
+     * Attempts to execute the operation without L2 or query cache engaged.  This affects the {@link PersistenceUnit} with the provided name.
+     * If no {@link EntityManager} is bound to the thread for the provided {@link PersistenceUnit},
      * then the operation is performed without modifying the cache mode.  Note that this does not create an {@link EntityManager} if one is not already initialized.
-     * 
+     *
      * @param operation
      * @param persistenceUnitName
      * @return
@@ -141,11 +141,11 @@ public class HibernateUtils {
     public static <T> T executeWithoutCache(GenericOperation<T> operation, String persistenceUnitName) throws Exception {
         return executeWithoutCache(operation, getCurrentEntityManager(persistenceUnitName));
     }
-    
+
     /**
-     * Attempts to execute the operation without L2 or query cache engaged.  This method uses the {@link PersistenceUnit} name "blPU".  If no {@link EntityManager} is bound to the thread, 
+     * Attempts to execute the operation without L2 or query cache engaged.  This method uses the {@link PersistenceUnit} name "blPU".  If no {@link EntityManager} is bound to the thread,
      * then the operation is performed without modifying the cache mode.  Note that this does not create an {@link EntityManager} if one is not already initialized.
-     * 
+     *
      * @param operation
      * @return
      * @throws Exception
@@ -153,10 +153,10 @@ public class HibernateUtils {
     public static <T> T executeWithoutCache(GenericOperation<T> operation) throws Exception {
         return executeWithoutCache(operation, DEFAULT_ENTITY_MANAGER_NAME);
     }
-    
+
     /**
      * Retrieves the current, default {@link EntityManager}, with the {@link PersistenceUnit} name provided, or null if it has not been initialized and bound to the Thread.
-     * 
+     *
      * @param persistenceUnitName
      * @return
      */
@@ -165,16 +165,16 @@ public class HibernateUtils {
         if (ctx != null) {
             EntityManagerFactory emf = EntityManagerFactoryUtils.findEntityManagerFactory(ctx, persistenceUnitName);
             if (emf != null && TransactionSynchronizationManager.hasResource(emf)) {
-                return ((EntityManagerHolder)TransactionSynchronizationManager.getResource(emf)).getEntityManager();
+                return ((EntityManagerHolder) TransactionSynchronizationManager.getResource(emf)).getEntityManager();
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * Retrieves the current, default {@link EntityManager}, with the {@link PersistenceUnit} name "blPU", or null if it has not been initialized and bound to the Thread.
-     * 
+     *
      * @return
      */
     public static EntityManager getCurrentDefaultEntityManager() {
@@ -203,4 +203,5 @@ public class HibernateUtils {
             em.clear();
         }
     }
+
 }

@@ -24,7 +24,7 @@ import spock.lang.Stepwise
 
 /**
  * Root spec that other specs should derive from. This gives all of the tests login functionality
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 abstract class BroadleafAdminSpec extends GebReportingSpec {
@@ -34,14 +34,14 @@ abstract class BroadleafAdminSpec extends GebReportingSpec {
      */
     @Shared
     String snapshotFile
-    
+
     def setupSpec() {
         if (isSpecStepwise()) {
             loginAsDefaultUser()
         }
-        
+
         String snapshotUrl = System.getProperty("snapshot.url")
-        
+
         if (snapshotUrl) {
             println 'Snapshotting current database state'
             def snapshotJson = new JsonSlurper().parseText(new URL(snapshotUrl).text)
@@ -49,13 +49,13 @@ abstract class BroadleafAdminSpec extends GebReportingSpec {
             snapshotFile = snapshotJson.filepath
         }
     }
-    
+
     def setup() {
         if (!isSpecStepwise()) {
             loginAsDefaultUser()
         }
     }
-    
+
     def cleanup() {
         if (!isSpecStepwise()) {
             String reloadUrl = System.getProperty("reload.url")
@@ -67,7 +67,7 @@ abstract class BroadleafAdminSpec extends GebReportingSpec {
             }
         }
     }
-    
+
     def loginAsDefaultUser() {
         Browser.drive(getBrowser()) {
             go ""
@@ -76,9 +76,9 @@ abstract class BroadleafAdminSpec extends GebReportingSpec {
             $('input[type=submit]').click()
         }
     }
-    
+
     def isSpecStepwise() {
         this.class.getAnnotation(Stepwise) != null
     }
-    
+
 }

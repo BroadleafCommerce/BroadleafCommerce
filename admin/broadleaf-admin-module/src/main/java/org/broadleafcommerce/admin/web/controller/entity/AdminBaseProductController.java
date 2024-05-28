@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,27 +40,39 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller("blAdminBaseProductController")
-@RequestMapping("/"+ AdminProductController.SECTION_KEY + ":" + AdminBaseProductController.SECTION_KEY)
+@RequestMapping("/" + AdminProductController.SECTION_KEY + ":" + AdminBaseProductController.SECTION_KEY)
 public class AdminBaseProductController extends AdminProductController {
 
     public static final String SECTION_KEY = "product";
 
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-                                 @PathVariable Map<String, String> pathVars,
-                                 @PathVariable(value = "id") String id) throws Exception {
+    public String viewEntityForm(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id
+    ) throws Exception {
         String view = super.viewEntityForm(request, response, model, pathVars, id);
         return view;
     }
 
     @Override
     @RequestMapping(value = {""}, method = {RequestMethod.GET})
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable Map<String, String> pathVars, @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+    public String viewEntityList(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @RequestParam MultiValueMap<String, String> requestParams
+    ) throws Exception {
         String sectionKey = this.getSectionKey(pathVars);
         String sectionClassName = this.getClassNameForSection(sectionKey);
-        List<SectionCrumb> crumbs = this.getSectionCrumbs(request, (String)null, (String)null);
-        PersistencePackageRequest ppr = this.getSectionPersistencePackageRequest(sectionClassName, requestParams, crumbs, pathVars);
+        List<SectionCrumb> crumbs = this.getSectionCrumbs(request, (String) null, (String) null);
+        PersistencePackageRequest ppr = this.getSectionPersistencePackageRequest(
+                sectionClassName, requestParams, crumbs, pathVars
+        );
         ppr.addCustomCriteria("ProductList");
         ClassMetadata cmd = this.service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         DynamicResultSet drs = this.service.getRecords(ppr).getDynamicResultSet();
@@ -68,9 +80,9 @@ public class AdminBaseProductController extends AdminProductController {
         listGrid.setSelectType(ListGrid.SelectType.NONE);
         Set<Field> headerFields = listGrid.getHeaderFields();
         if (CollectionUtils.isNotEmpty(headerFields)) {
-            Field firstField = (Field)headerFields.iterator().next();
+            Field firstField = (Field) headerFields.iterator().next();
             if (requestParams.containsKey(firstField.getName())) {
-                model.addAttribute("mainSearchTerm", ((List)requestParams.get(firstField.getName())).get(0));
+                model.addAttribute("mainSearchTerm", ((List) requestParams.get(firstField.getName())).get(0));
             }
         }
 
@@ -79,4 +91,5 @@ public class AdminBaseProductController extends AdminProductController {
         model.addAttribute("listGrid", listGrid);
         return "modules/defaultContainer";
     }
+
 }

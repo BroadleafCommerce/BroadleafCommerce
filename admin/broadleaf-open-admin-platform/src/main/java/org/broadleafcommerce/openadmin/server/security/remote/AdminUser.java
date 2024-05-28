@@ -10,47 +10,47 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.server.security.remote;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class AdminUser implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected String userName;
-    protected List<String> roles = new ArrayList<String>();
-    protected List<String> permissions = new ArrayList<String>();
+    protected List<String> roles = new ArrayList<>();
+    protected List<String> permissions = new ArrayList<>();
     protected String currentSandBoxId;
     protected Long id;
     protected String email;
     protected String phoneNumber;
     protected String name;
-    
+
     public List<String> getRoles() {
         return roles;
     }
-    
+
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
-    
+
     public List<String> getPermissions() {
         return permissions;
     }
-    
+
     public void setPermissions(List<String> permissions) {
         this.permissions = permissions;
     }
@@ -102,4 +102,5 @@ public class AdminUser implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -45,9 +45,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 /**
- *
  * @author Phillip Verheyden
- *
  */
 @Service("blAdminCatalogService")
 public class AdminCatalogServiceImpl implements AdminCatalogService {
@@ -70,7 +68,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
     @Resource(name = "blSkuDao")
     protected SkuDao skuDao;
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     @Resource(name = "blAdminCatalogServiceExtensionManager")
@@ -84,7 +82,9 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             return -1;
         }
 
-        List<List<ProductOptionValue>> allPermutations = generatePermutations(0, new ArrayList<ProductOptionValue>(), product.getProductOptions());
+        List<List<ProductOptionValue>> allPermutations = generatePermutations(
+                0, new ArrayList<ProductOptionValue>(), product.getProductOptions()
+        );
 
         // return -2 to indicate that one of the Product Options used in Sku generation has no Allowed Values
         if (allPermutations == null) {
@@ -131,7 +131,9 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         int numPermutationsCreated = 0;
         if (extensionManager != null && CollectionUtils.isNotEmpty(permutationsToGenerate)) {
             ExtensionResultHolder<Integer> result = new ExtensionResultHolder<>();
-            ExtensionResultStatusType resultStatusType = extensionManager.getProxy().persistSkuPermutation(product, permutationsToGenerate, result);
+            ExtensionResultStatusType resultStatusType = extensionManager.getProxy().persistSkuPermutation(
+                    product, permutationsToGenerate, result
+            );
             if (ExtensionResultStatusType.HANDLED == resultStatusType) {
                 numPermutationsCreated = result.getResult();
             }
@@ -157,7 +159,9 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
             return result;
         }
 
-        List<List<ProductOptionValue>> allPermutations = generatePermutations(0, new ArrayList<>(), product.getProductOptions());
+        List<List<ProductOptionValue>> allPermutations = generatePermutations(
+                0, new ArrayList<>(), product.getProductOptions()
+        );
 
         if (allPermutations == null) {
             // one of the Product Options used in Sku generation has no Allowed Values
@@ -207,7 +211,9 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         int numPermutationsCreated = 0;
         if (extensionManager != null && CollectionUtils.isNotEmpty(permutationsToGenerate)) {
             ExtensionResultHolder<Integer> resultHolder = new ExtensionResultHolder<>();
-            ExtensionResultStatusType resultStatusType = extensionManager.getProxy().persistSkuPermutation(product, permutationsToGenerate, resultHolder);
+            ExtensionResultStatusType resultStatusType = extensionManager.getProxy().persistSkuPermutation(
+                    product, permutationsToGenerate, resultHolder
+            );
             if (ExtensionResultStatusType.HANDLED == resultStatusType) {
                 numPermutationsCreated = resultHolder.getResult();
             }
@@ -225,7 +231,8 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
 
     protected List<List<ProductOptionValue>> checkForInconsistentPermutations(
             List<List<ProductOptionValue>> allPermutations,
-            List<List<ProductOptionValue>> previouslyGeneratedPermutations) {
+            List<List<ProductOptionValue>> previouslyGeneratedPermutations
+    ) {
         List<List<ProductOptionValue>> inconsistentGeneratedPermutations = new ArrayList<>();
         for (List<ProductOptionValue> generatedPermutation : previouslyGeneratedPermutations) {
             boolean inconsistentPermutations = true;
@@ -248,7 +255,8 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
                 .filter(ProductOption::getUseInSkuGeneration)
                 .map(ProductOption::getAllowedValues)
                 .mapToInt(List::size)
-                .reduce(1, Math::multiplyExact);;
+                .reduce(1, Math::multiplyExact);
+        ;
         if (count > skuMaxGeneration) {
             beyondAvailable = true;
         }
@@ -266,6 +274,7 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
 
     /**
      * Generates all the possible permutations for the combinations of given ProductOptions
+     *
      * @param currentTypeIndex
      * @param currentPermutation
      * @param options
@@ -339,5 +348,5 @@ public class AdminCatalogServiceImpl implements AdminCatalogService {
         }
         return true;
     }
-    
+
 }

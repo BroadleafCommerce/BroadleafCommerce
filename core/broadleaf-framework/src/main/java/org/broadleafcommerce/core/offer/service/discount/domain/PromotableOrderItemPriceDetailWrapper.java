@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,9 +26,8 @@ import java.util.List;
 
 /**
  * Modules that extend offer engine behavior can benefit from a wrapped PromotableOrderItemPriceDetail.
- * 
- * @author bpolster
  *
+ * @author bpolster
  */
 public class PromotableOrderItemPriceDetailWrapper implements PromotableOrderItemPriceDetail {
 
@@ -94,11 +93,19 @@ public class PromotableOrderItemPriceDetailWrapper implements PromotableOrderIte
         return detail.getQuantityAvailableToBeUsedAsTarget(itemOffer);
     }
 
-    public PromotionQualifier addPromotionQualifier(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsQualifier) {
+    public PromotionQualifier addPromotionQualifier(
+            PromotableCandidateItemOffer itemOffer,
+            OfferItemCriteria itemCriteria,
+            int qtyToMarkAsQualifier
+    ) {
         return detail.addPromotionQualifier(itemOffer, itemCriteria, qtyToMarkAsQualifier);
     }
 
-    public void addPromotionDiscount(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsTarget) {
+    public void addPromotionDiscount(
+            PromotableCandidateItemOffer itemOffer,
+            OfferItemCriteria itemCriteria,
+            int qtyToMarkAsTarget
+    ) {
         detail.addPromotionDiscount(itemOffer, itemCriteria, qtyToMarkAsTarget);
     }
 

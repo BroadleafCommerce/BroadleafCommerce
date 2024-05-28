@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,7 +19,7 @@ package org.broadleafcommerce.common.exception;
 
 /**
  * Base exception class for BroadleafExceptions that understands root cause messages.
- * 
+ *
  * @author bpolster
  */
 public abstract class BroadleafException extends Exception implements RootCauseAccessor {
@@ -39,14 +39,6 @@ public abstract class BroadleafException extends Exception implements RootCauseA
         }
     }
 
-    private Throwable findRootCause(Throwable cause) {
-        Throwable rootCause = cause;
-        while (rootCause != null && rootCause.getCause() != null) {
-            rootCause = rootCause.getCause();
-        }
-        return rootCause;
-    }
-
     public BroadleafException(String message) {
         super(message);
         this.rootCause = this;
@@ -58,6 +50,14 @@ public abstract class BroadleafException extends Exception implements RootCauseA
         if (cause != null) {
             rootCause = findRootCause(cause);
         }
+    }
+
+    private Throwable findRootCause(Throwable cause) {
+        Throwable rootCause = cause;
+        while (rootCause != null && rootCause.getCause() != null) {
+            rootCause = rootCause.getCause();
+        }
+        return rootCause;
     }
 
     public Throwable getRootCause() {

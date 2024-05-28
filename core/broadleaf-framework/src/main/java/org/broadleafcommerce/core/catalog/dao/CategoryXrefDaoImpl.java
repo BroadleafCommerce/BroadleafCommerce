@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,16 +32,15 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 /**
- *
  * @author Jeff Fischer
  */
 @Repository("blCategoryXrefDao")
 public class CategoryXrefDaoImpl implements CategoryXrefDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override
@@ -67,7 +66,7 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
     }
 
     @Override
-    public CategoryXref save(CategoryXrefImpl categoryXref){
+    public CategoryXref save(CategoryXrefImpl categoryXref) {
         return em.merge(categoryXref);
     }
 
@@ -76,12 +75,12 @@ public class CategoryXrefDaoImpl implements CategoryXrefDao {
         if (!em.contains(categoryXref)) {
             categoryXref = readXrefByIds(categoryXref.getCategory().getId(), categoryXref.getSubCategory().getId());
         }
-        em.remove(categoryXref);        
+        em.remove(categoryXref);
     }
 
     @Override
     public CategoryProductXref save(CategoryProductXref categoryProductXref) {
         return em.merge(categoryProductXref);
     }
-    
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -53,7 +53,7 @@ public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
-        
+
         fields.add(new FieldData.Builder()
                 .label("rule_requestUri")
                 .name("requestURI")
@@ -61,7 +61,7 @@ public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.STRING)
                 .build());
-        
+
         fields.add(new FieldData.Builder()
                 .label("rule_requestIsSecure")
                 .name("secure")
@@ -69,7 +69,7 @@ public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
                 .options(RuleOptionType.EMPTY_COLLECTION)
                 .type(SupportedFieldType.BOOLEAN)
                 .build());
-        
+
         fields.add(new FieldData.Builder()
                 .label("rule_requestDevice")
                 .name("properties['currentDevice']")
@@ -89,4 +89,5 @@ public class RequestFieldServiceImpl extends AbstractRuleBuilderFieldService {
     public String getDtoClassName() {
         return "org.broadleafcommerce.common.RequestDTOImpl";
     }
+
 }

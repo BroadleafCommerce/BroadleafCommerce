@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -52,7 +52,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * In charge of performing the various checkout operations
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  * @author Elbert Bautista (elbertbautista)
  * @author Joshua Skorton (jskorton)
@@ -71,8 +71,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param model
      * @return the checkout view path
      */
-    public String checkout(HttpServletRequest request, HttpServletResponse response, Model model,
-            RedirectAttributes redirectAttributes) {
+    public String checkout(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            RedirectAttributes redirectAttributes
+    ) {
         if (CustomerState.getCustomer().getId() != null) {
             preValidateCartOperation(model);
             populateModelWithReferenceData(request, model);
@@ -98,14 +102,20 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @param stage
      * @return the checkout stages partial path
      */
-    public String getCheckoutStagePartial(HttpServletRequest request, HttpServletResponse response, Model model,
-            String stage, RedirectAttributes redirectAttributes) {
+    public String getCheckoutStagePartial(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            String stage,
+            RedirectAttributes redirectAttributes
+    ) {
         model.addAttribute(ACTIVE_STAGE, stage);
         return getCheckoutStagesPartial();
     }
 
     /**
      * Attempts to attach the user's email to the order so that they may proceed anonymously
+     *
      * @param request
      * @param model
      * @param orderInfoForm
@@ -113,8 +123,12 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @return
      * @throws ServiceException
      */
-    public String saveGlobalOrderDetails(HttpServletRequest request, Model model, 
-            OrderInfoForm orderInfoForm, BindingResult result) throws ServiceException {
+    public String saveGlobalOrderDetails(
+            HttpServletRequest request,
+            Model model,
+            OrderInfoForm orderInfoForm,
+            BindingResult result
+    ) throws ServiceException {
         Order cart = CartState.getCart();
 
         orderInfoFormValidator.validate(orderInfoForm, result);
@@ -126,34 +140,34 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
             } catch (PricingException pe) {
                 LOG.error("Error when saving the email address for order confirmation to the cart", pe);
             }
-            
+
             populateModelWithReferenceData(request, model);
             return getCheckoutView();
         }
-        
+
         try {
             cart.setEmailAddress(orderInfoForm.getEmailAddress());
             orderService.save(cart, false);
         } catch (PricingException pe) {
             LOG.error("Error when saving the email address for order confirmation to the cart", pe);
         }
-        
-        return getCheckoutPageRedirect();   
+
+        return getCheckoutPageRedirect();
     }
 
     /**
      * Creates a pass-through payment of the PaymentType passed in with
      * an amount equal to the order total after any non-final applied payments.
      * (for example gift cards, customer credit, or third party accounts)
-     *
+     * <p>
      * This intended to be used in cases like COD and other Payment Types where implementations wish
      * to just checkout without having to do any payment processing.
-     *
+     * <p>
      * This default implementations assumes that the pass-through payment is the only
      * "final" payment, as this will remove any payments that are not PaymentTransactionType.UNCONFIRMED
      * That means that it will look at all transactions on the order payment and see if it has unconfirmed transactions.
      * If it does, it will not remove it.
-     *
+     * <p>
      * Make sure not to expose this method in your extended Controller if you do not wish to
      * have this feature enabled.
      *
@@ -163,12 +177,14 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
      * @throws PaymentException
      * @throws PricingException
      */
-    public String processPassthroughCheckout(final RedirectAttributes redirectAttributes,
-                                             PaymentType paymentType) throws PaymentException, PricingException {
+    public String processPassthroughCheckout(
+            final RedirectAttributes redirectAttributes,
+            PaymentType paymentType
+    ) throws PaymentException, PricingException {
         Order cart = CartState.getCart();
 
         //Invalidate any payments already on the order that do not have transactions on them that are UNCONFIRMED
-        List<OrderPayment> paymentsToInvalidate = new ArrayList<OrderPayment>();
+        List<OrderPayment> paymentsToInvalidate = new ArrayList<>();
         for (OrderPayment payment : cart.getPayments()) {
             if (payment.isActive()) {
                 if (payment.getTransactions() == null || payment.getTransactions().isEmpty()) {
@@ -176,7 +192,7 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
                 } else {
                     for (PaymentTransaction transaction : payment.getTransactions()) {
                         if (!PaymentTransactionType.UNCONFIRMED.equals(transaction.getType())) {
-                             paymentsToInvalidate.add(payment);
+                            paymentsToInvalidate.add(payment);
                         }
                     }
                 }
@@ -203,7 +219,10 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         transaction.setRawResponse("Passthrough Payment");
         transaction.setSuccess(true);
         transaction.setType(PaymentTransactionType.AUTHORIZE_AND_CAPTURE);
-        transaction.getAdditionalFields().put(PassthroughPaymentConstants.PASSTHROUGH_PAYMENT_TYPE, paymentType.getType());
+        transaction.getAdditionalFields().put(
+                PassthroughPaymentConstants.PASSTHROUGH_PAYMENT_TYPE,
+                paymentType.getType()
+        );
 
         transaction.setOrderPayment(passthroughPayment);
         passthroughPayment.addTransaction(transaction);
@@ -229,24 +248,26 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
         String param = "";
         if (cart != null && !(cart instanceof NullOrderImpl)) {
             try {
-                Object o = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(OfferActivity.OFFERS_EXPIRED);
-                if(o!=null && (Boolean) o){
+                Object o = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().get(
+                        OfferActivity.OFFERS_EXPIRED
+                );
+                if (o != null && (Boolean) o) {
                     throw new OfferExpiredException("Offer or offer code was expired and removed, order price was re-calculated, check order total and try again");
                 }
                 String orderNumber = initiateCheckout(cart.getId());
                 return getConfirmationViewRedirect(orderNumber);
             } catch (Exception e) {
                 handleProcessingException(e, redirectAttributes);
-                if(CustomerState.getCustomer().isAnonymous()){
-                    param="?guest-checkout=true";
+                if (CustomerState.getCustomer().isAnonymous()) {
+                    param = "?guest-checkout=true";
                 }
             }
         }
 
-        return getCheckoutPageRedirect()+param;
+        return getCheckoutPageRedirect() + param;
     }
 
-    public String initiateCheckout(Long orderId) throws Exception{
+    public String initiateCheckout(Long orderId) throws Exception {
         if (paymentGatewayCheckoutService != null && orderId != null) {
             return paymentGatewayCheckoutService.initiateCheckout(orderId);
         }
@@ -258,19 +279,28 @@ public class BroadleafCheckoutController extends AbstractCheckoutController {
 
         Throwable cause = e.getCause();
 
-        if (cause!= null && cause.getCause() instanceof RequiredAttributeNotProvidedException) {
-            redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
-                    PaymentGatewayAbstractController.getCartReqAttributeNotProvidedMessage());
-        }else if(cause !=null && cause.getCause() instanceof OfferExpiredException || e instanceof OfferExpiredException) {
+        if (cause != null && cause.getCause() instanceof RequiredAttributeNotProvidedException) {
+            redirectAttributes.addAttribute(
+                    PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
+                    PaymentGatewayAbstractController.getCartReqAttributeNotProvidedMessage()
+            );
+        } else if (cause != null && cause.getCause() instanceof OfferExpiredException
+                || e instanceof OfferExpiredException) {
             String message = (cause != null && cause.getCause() != null) ? cause.getCause().getMessage() : e.getMessage();
-            redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
-                    message);
-        } else if(cause !=null && cause.getCause() instanceof OfferMaxUseExceededException) {
-            redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
-                    "There was an error during checkout:"+cause.getCause().getMessage());
+            redirectAttributes.addAttribute(
+                    PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
+                    message
+            );
+        } else if (cause != null && cause.getCause() instanceof OfferMaxUseExceededException) {
+            redirectAttributes.addAttribute(
+                    PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
+                    "There was an error during checkout:" + cause.getCause().getMessage()
+            );
         } else {
-            redirectAttributes.addAttribute(PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
-                    PaymentGatewayAbstractController.getProcessingErrorMessage());
+            redirectAttributes.addAttribute(
+                    PaymentGatewayAbstractController.PAYMENT_PROCESSING_ERROR,
+                    PaymentGatewayAbstractController.getProcessingErrorMessage()
+            );
         }
     }
 

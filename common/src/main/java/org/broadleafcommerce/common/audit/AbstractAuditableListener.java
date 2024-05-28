@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,7 +35,7 @@ public abstract class AbstractAuditableListener {
 
     /**
      * Method that will be invoked in a registered listener to set the entity's creation data.
-     *  In most cases, calling {@link AbstractAuditableListener#setAuditCreationData(Object, Object)} should suffice.
+     * In most cases, calling {@link AbstractAuditableListener#setAuditCreationData(Object, Object)} should suffice.
      *
      * @param entity
      * @return
@@ -44,7 +44,7 @@ public abstract class AbstractAuditableListener {
 
     /**
      * Method that will be invoked in a registered listener to set the entity's update data.
-     *  In most cases, calling {@link AbstractAuditableListener#setAuditUpdateData(Object, Object)} should suffice.
+     * In most cases, calling {@link AbstractAuditableListener#setAuditUpdateData(Object, Object)} should suffice.
      *
      * @param entity
      * @return
@@ -118,12 +118,12 @@ public abstract class AbstractAuditableListener {
 
     /**
      * Gathers the auditable field name.
-     *  The major purpose of this method is to provide a hook point for extensions to declare a different field name.
+     * The major purpose of this method is to provide a hook point for extensions to declare a different field name.
      *
      * @return the name of the auditable field
      */
     protected String getAuditableFieldName() {
         return "auditable";
     }
-    
+
 }

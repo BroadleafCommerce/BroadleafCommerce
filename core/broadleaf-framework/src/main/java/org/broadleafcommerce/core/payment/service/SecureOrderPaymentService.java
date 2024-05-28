@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,14 +23,14 @@ import org.broadleafcommerce.core.workflow.WorkflowException;
 
 public interface SecureOrderPaymentService {
 
-    public Referenced findSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws WorkflowException;
+    Referenced findSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws WorkflowException;
 
-    public Referenced save(Referenced securePayment);
+    Referenced save(Referenced securePayment);
 
-    public Referenced create(PaymentType paymentType);
+    Referenced create(PaymentType paymentType);
 
-    public void remove(Referenced securePayment);
+    void remove(Referenced securePayment);
 
-    public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws WorkflowException;
+    void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentType paymentType) throws WorkflowException;
 
 }

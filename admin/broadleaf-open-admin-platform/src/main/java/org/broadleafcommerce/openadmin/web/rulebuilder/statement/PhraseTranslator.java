@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -89,9 +89,9 @@ public class PhraseTranslator {
         }
         if (field.contains(caseInsensitivityKey)) {
             isIgnoreCase = true;
-            field = field.substring(field.indexOf(caseInsensitivityKey) + caseInsensitivityKey.length(), field.length()-1);
+            field = field.substring(field.indexOf(caseInsensitivityKey) + caseInsensitivityKey.length(), field.length() - 1);
         }
-        while(value.contains(caseInsensitivityKey)) {
+        while (value.contains(caseInsensitivityKey)) {
             int caseIndex = value.indexOf(caseInsensitivityKey);
             value = value.substring(0, caseIndex) +
                     value.substring(caseIndex + caseInsensitivityKey.length());
@@ -104,14 +104,14 @@ public class PhraseTranslator {
         if (value.startsWith("[") && value.endsWith("]") && !isCollectionCase) {
             value = value.substring(1, value.length() - 1);
             String[] temps = value.split(",");
-            for (int j = 0;j<temps.length;j++) {
+            for (int j = 0; j < temps.length; j++) {
                 if (temps[j].startsWith("\"") && temps[j].endsWith("\"")) {
-                    temps[j] = temps[j].substring(1, temps[j].length()-1);
+                    temps[j] = temps[j].substring(1, temps[j].length() - 1);
                 }
             }
             StringBuffer sb = new StringBuffer();
             sb.append("[");
-            for (int j = 0;j<temps.length;j++) {
+            for (int j = 0; j < temps.length; j++) {
                 sb.append(temps[j]);
                 if (j < temps.length - 1) {
                     sb.append(",");
@@ -131,14 +131,14 @@ public class PhraseTranslator {
             dateFormatKey = newDateFormatKey;
         }
         if (value.startsWith(dateFormatKey)) {
-            value = value.substring(dateFormatKey.length(), value.length()-1);
+            value = value.substring(dateFormatKey.length(), value.length() - 1);
             //convert the date into admin display format
             try {
                 if (value.startsWith("\"")) {
                     value = value.substring(1, value.length());
                 }
                 if (value.endsWith("\"")) {
-                    value = value.substring(0, value.length()-1);
+                    value = value.substring(0, value.length() - 1);
                 }
                 value = RuleBuilderFormatUtil.formatDate(RuleBuilderFormatUtil.parseDate(value));
             } catch (ParseException e) {
@@ -149,21 +149,21 @@ public class PhraseTranslator {
         int entityKeyIndex = field.indexOf(".");
         if (entityKeyIndex < 0) {
             throw new MVELTranslationException(MVELTranslationException.NO_FIELD_FOUND_IN_RULE, "Could not identify a " +
-                    "valid property field value in the expression: ("+phrase+")");
+                    "valid property field value in the expression: (" + phrase + ")");
         }
         if (value.startsWith(caseInsensitivityKey)) {
-            value = value.substring(caseInsensitivityKey.length(), value.length()-1);
+            value = value.substring(caseInsensitivityKey.length(), value.length() - 1);
         }
         String entityKey = field.substring(0, entityKeyIndex);
         boolean isFieldComparison = false;
         if (value.startsWith("\"") && value.endsWith("\"")) {
-            value = value.substring(1, value.length()-1);
+            value = value.substring(1, value.length() - 1);
             //in case string was wrapped in quotes(""), any internal quotes will be escaped with additional \
             //let's restore original by removing extra \\\
             if (value.contains("\"")) {
                 value = value.replace("\\\"", "\"");
             }
-        } else if (value.startsWith(entityKey + ".")){
+        } else if (value.startsWith(entityKey + ".")) {
             isFieldComparison = true;
             value = value.substring(entityKey.length() + 1, value.length());
         }
@@ -181,7 +181,7 @@ public class PhraseTranslator {
         String typeMethod = ".getType()";
         int typeMethodPos = field.lastIndexOf(typeMethod);
         if (typeMethodPos >= 0) {
-           field = field.substring(0, typeMethodPos);
+            field = field.substring(0, typeMethodPos);
         }
 
         Expression expression = new Expression();
@@ -217,7 +217,7 @@ public class PhraseTranslator {
         }
 
         if (!componentsExtracted) {
-            for (String operator: SPECIAL_CASES) {
+            for (String operator : SPECIAL_CASES) {
                 if (phrase.contains(operator)) {
                     components = extractSpecialComponents(phrase, operator);
                     componentsExtracted = true;
@@ -289,7 +289,7 @@ public class PhraseTranslator {
     protected String[] extractProjection(String[] components) {
         String[] temp = new String[3];
         int startsWithIndex = components[0].indexOf("contains");
-        temp[0] = components[0].substring(startsWithIndex+"contains".length()+1, components[0].length()).trim();
+        temp[0] = components[0].substring(startsWithIndex + "contains".length() + 1, components[0].length()).trim();
         if (temp[0].endsWith(".intValue()")) {
             temp[0] = temp[0].substring(0, temp[0].indexOf(".intValue()"));
         }
@@ -349,8 +349,14 @@ public class PhraseTranslator {
         return temp;
     }
 
-    protected BLCOperator getOperator(String field, String operator, String value, boolean isNegation,
-                                     boolean isFieldComparison, boolean isIgnoreCase) throws MVELTranslationException {
+    protected BLCOperator getOperator(
+            String field,
+            String operator,
+            String value,
+            boolean isNegation,
+            boolean isFieldComparison,
+            boolean isIgnoreCase
+    ) throws MVELTranslationException {
         if (operator.equals(DataDTOToMVELTranslator.EQUALS_OPERATOR)) {
             if (value.equals("null")) {
                 return BLCOperator.IS_NULL;
@@ -395,7 +401,8 @@ public class PhraseTranslator {
             } else {
                 return BLCOperator.LESS_OR_EQUAL;
             }
-        } else if (operator.equals(DataDTOToMVELTranslator.CONTAINS_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_CONTAINS_OPERATOR)) {
+        } else if (operator.equals(DataDTOToMVELTranslator.CONTAINS_OPERATOR)
+                || operator.equals(DataDTOToMVELTranslator.OLD_CONTAINS_OPERATOR)) {
             if (isNegation) {
                 if (isIgnoreCase) {
                     return BLCOperator.INOT_CONTAINS;
@@ -412,7 +419,8 @@ public class PhraseTranslator {
                     return BLCOperator.CONTAINS;
                 }
             }
-        } else if (operator.equals(DataDTOToMVELTranslator.STARTS_WITH_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_STARTS_WITH_OPERATOR)) {
+        } else if (operator.equals(DataDTOToMVELTranslator.STARTS_WITH_OPERATOR)
+                || operator.equals(DataDTOToMVELTranslator.OLD_STARTS_WITH_OPERATOR)) {
             if (isNegation) {
                 if (isIgnoreCase) {
                     return BLCOperator.INOT_STARTS_WITH;
@@ -422,13 +430,14 @@ public class PhraseTranslator {
             } else {
                 if (isIgnoreCase) {
                     return BLCOperator.ISTARTS_WITH;
-                } else if (isFieldComparison){
+                } else if (isFieldComparison) {
                     return BLCOperator.STARTS_WITH_FIELD;
                 } else {
                     return BLCOperator.STARTS_WITH;
                 }
             }
-        } else if (operator.equals(DataDTOToMVELTranslator.ENDS_WITH_OPERATOR) || operator.equals(DataDTOToMVELTranslator.OLD_ENDS_WITH_OPERATOR)) {
+        } else if (operator.equals(DataDTOToMVELTranslator.ENDS_WITH_OPERATOR)
+                || operator.equals(DataDTOToMVELTranslator.OLD_ENDS_WITH_OPERATOR)) {
             if (isNegation) {
                 if (isIgnoreCase) {
                     return BLCOperator.INOT_ENDS_WITH;
@@ -454,13 +463,13 @@ public class PhraseTranslator {
             return BLCOperator.COUNT_LESS_OR_EQUAL;
         } else if (operator.equals(DataDTOToMVELTranslator.SIZE_EQUALS_OPERATOR)) {
             return BLCOperator.COUNT_EQUALS;
-        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_GREATER_THAN_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR)){
+        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_GREATER_THAN_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR)) {
             return BLCOperator.COLLECTION_IN;
-        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_EQUALS_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR)){
+        } else if (operator.equals(DataDTOToMVELTranslator.SIZE_EQUALS_OPERATOR + DataDTOToMVELTranslator.ZERO_OPERATOR)) {
             return BLCOperator.COLLECTION_NOT_IN;
         }
         throw new MVELTranslationException(MVELTranslationException.OPERATOR_NOT_FOUND, "Unable to identify an operator compatible with the " +
-                "rules builder: ("+(isNegation?"!":""+field+operator+value)+")");
+                "rules builder: (" + (isNegation ? "!" : "" + field + operator + value) + ")");
     }
 
 }

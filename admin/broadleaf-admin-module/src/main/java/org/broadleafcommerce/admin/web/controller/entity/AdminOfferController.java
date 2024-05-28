@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,17 +41,17 @@ import jakarta.servlet.http.HttpServletResponse;
 /**
  * Handles admin operations for the {@link Offer} entity. Certain Offer fields should only render when specific values
  * are set for other fields; we provide the support for that in this controller.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Controller("blAdminOfferController")
 @RequestMapping("/" + AdminOfferController.SECTION_KEY)
 public class AdminOfferController extends AdminBasicEntityController {
-    
+
     public static final String SECTION_KEY = "offer";
     public static String[] customCriteria = {};
 
-    @Resource(name="blOfferService")
+    @Resource(name = "blOfferService")
     protected OfferService offerService;
 
     @Override
@@ -62,7 +62,7 @@ public class AdminOfferController extends AdminBasicEntityController {
         }
         return SECTION_KEY;
     }
-    
+
     @Override
     public String[] getSectionCustomCriteria() {
         return customCriteria;
@@ -70,9 +70,13 @@ public class AdminOfferController extends AdminBasicEntityController {
 
     @Override
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-                                 @PathVariable Map<String, String> pathVars,
-                                 @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+    public String viewEntityList(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @RequestParam MultiValueMap<String, String> requestParams
+    ) throws Exception {
         customCriteria = new String[]{"listGridView"};
         String view = super.viewEntityList(request, response, model, pathVars, requestParams);
         return view;
@@ -80,30 +84,43 @@ public class AdminOfferController extends AdminBasicEntityController {
 
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @PathVariable(value="id") String id) throws Exception {
+    public String viewEntityForm(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id
+    ) throws Exception {
         customCriteria = new String[]{};
         String view = super.viewEntityForm(request, response, model, pathVars, id);
         modifyModelAttributes(model);
         return view;
     }
-    
+
     @Override
     @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public String viewAddEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @RequestParam(defaultValue = "") String entityType) throws Exception {
+    public String viewAddEntityForm(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @RequestParam(defaultValue = "") String entityType
+    ) throws Exception {
         String view = super.viewAddEntityForm(request, response, model, pathVars, entityType);
         modifyModelAttributes(model);
         return view;
     }
-    
+
     @Override
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String addEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+    public String addEntity(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @ModelAttribute(value = "entityForm") EntityForm entityForm,
+            BindingResult result
+    ) throws Exception {
         String view = super.addEntity(request, response, model, pathVars, entityForm, result);
         if (result.hasErrors()) {
             modifyModelAttributes(model);
@@ -117,18 +134,24 @@ public class AdminOfferController extends AdminBasicEntityController {
     @Deprecated
     @Override
     @RequestMapping(value = "/{id}/duplicate", method = RequestMethod.POST)
-    public String duplicateEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars, @PathVariable(value="id") String id,
-            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result) 
-            throws Exception {
+    public String duplicateEntity(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id,
+            @ModelAttribute(value = "entityForm") EntityForm entityForm,
+            BindingResult result
+    ) throws Exception {
         return super.duplicateEntity(request, response, model, pathVars, id, entityForm, result);
     }
 
     /**
      * Offer field visibility is dependent on other fields in the entity. Mark the form with the appropriate class
      * so that the Javascript will know to handle this form.
-     * 
+     * <p>
      * We also want to tell the UI to make item target criteria required. We cannot manage this at the entity level via an
+     *
      * @AdminPresentation annotation as it is only required when the offer type has a type of {@link OfferType#ORDER_ITEM}.
      */
     protected void modifyModelAttributes(Model model) {
@@ -138,4 +161,5 @@ public class AdminOfferController extends AdminBasicEntityController {
             form.findField("targetItemCriteria").setRequired(true);
         }
     }
+
 }

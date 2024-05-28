@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,7 +42,7 @@ import jakarta.annotation.Resource;
 
 /**
  * Responsible for generating site map entries for Sku.
- * 
+ *
  * @author Joshua Skorton (jskorton)
  */
 @Component("blSkuSiteMapGenerator")
@@ -78,7 +78,7 @@ public class SkuSiteMapGenerator implements SiteMapGenerator {
                 if (StringUtils.isEmpty(sku.getProduct().getUrl() + sku.getUrlKey())) {
                     continue;
                 }
-                
+
                 SiteMapURLWrapper siteMapUrl = new SiteMapURLWrapper();
 
                 // location
@@ -123,7 +123,7 @@ public class SkuSiteMapGenerator implements SiteMapGenerator {
     protected Date generateDate(Sku sku) {
         return new Date();
     }
-    
+
     public SkuDao getSkuDao() {
         return skuDao;
     }

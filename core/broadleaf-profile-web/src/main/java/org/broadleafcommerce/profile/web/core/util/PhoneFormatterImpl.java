@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,8 +23,9 @@ import org.springframework.stereotype.Service;
 
 @Service("blPhoneFormatter")
 public class PhoneFormatterImpl implements PhoneFormatter {
+
     public void formatPhoneNumber(Phone phone) {
-        if(phone != null && !StringUtils.isEmpty(phone.getPhoneNumber())){
+        if (phone != null && !StringUtils.isEmpty(phone.getPhoneNumber())) {
             phone.setPhoneNumber(formatTelephoneNumber(phone.getPhoneNumber()));
         }
     }
@@ -53,4 +54,5 @@ public class PhoneFormatterImpl implements PhoneFormatter {
 
         return newNumber.toString();
     }
+
 }

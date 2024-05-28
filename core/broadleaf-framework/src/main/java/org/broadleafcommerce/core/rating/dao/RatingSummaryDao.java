@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,19 +28,24 @@ import java.util.List;
 
 public interface RatingSummaryDao {
 
-    public RatingSummary createSummary();
-    
-    public RatingSummary createSummary(String itemId, RatingType type);
-    
-    public RatingDetail createDetail();
-    
-    public RatingDetail createDetail(RatingSummary ratingSummary, Double rating, Date submittedDate, Customer customer);
-    
+    RatingSummary createSummary();
+
+    RatingSummary createSummary(String itemId, RatingType type);
+
+    RatingDetail createDetail();
+
+    RatingDetail createDetail(RatingSummary ratingSummary, Double rating, Date submittedDate, Customer customer);
+
     RatingSummary readRatingSummary(String itemId, RatingType type);
+
     List<RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type);
+
     RatingSummary saveRatingSummary(RatingSummary summary);
+
     void deleteRatingSummary(RatingSummary summary);
 
     RatingDetail readRating(Long customerId, Long ratingSummaryId);
+
     ReviewDetail readReview(Long customerId, Long ratingSummaryId);
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
  * @author Elbert Bautista (elbertbautista)
  */
 @Service("blFulfillmentGroupFieldService")
-public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldService {
+public class FulfillmentGroupFieldServiceImpl extends AbstractRuleBuilderFieldService {
 
     @Override
     public void init() {
@@ -181,4 +181,5 @@ public class FulfillmentGroupFieldServiceImpl  extends AbstractRuleBuilderFieldS
     public String getDtoClassName() {
         return "org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl";
     }
+
 }

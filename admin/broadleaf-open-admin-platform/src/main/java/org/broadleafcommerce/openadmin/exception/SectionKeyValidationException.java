@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  *
  * @author Jeff Fischer
  */
-@ResponseStatus(value= HttpStatus.NOT_FOUND)
+@ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class SectionKeyValidationException extends RuntimeException {
 
     public SectionKeyValidationException(String message) {

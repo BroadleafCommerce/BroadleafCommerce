@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,7 +30,7 @@ public class AccountNumberMask {
         this.maskCharacter = maskCharacter;
     }
 
-    public String mask (String accountNumber) {
+    public String mask(String accountNumber) {
         if (accountNumber == null) {
             throw new RuntimeException("account number is null");
         }
@@ -42,7 +42,13 @@ public class AccountNumberMask {
             if (range.getPositionType() == UnmaskRange.BEGINNINGTYPE) {
                 System.arraycopy(characters, 0, newCharacters, 0, range.getLength());
             } else {
-                System.arraycopy(characters, characters.length - range.getLength(), newCharacters, newCharacters.length - range.getLength(), range.getLength());
+                System.arraycopy(
+                        characters,
+                        characters.length - range.getLength(),
+                        newCharacters,
+                        newCharacters.length - range.getLength(),
+                        range.getLength()
+                );
             }
         }
 

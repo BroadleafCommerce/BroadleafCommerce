@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
@@ -39,36 +38,36 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
  */
 public interface PaymentGatewayTransparentRedirectService {
 
-    public PaymentResponseDTO createAuthorizeForm(PaymentRequestDTO requestDTO) throws PaymentException;
+    PaymentResponseDTO createAuthorizeForm(PaymentRequestDTO requestDTO) throws PaymentException;
 
-    public PaymentResponseDTO createAuthorizeAndCaptureForm(PaymentRequestDTO requestDTO) throws PaymentException;
+    PaymentResponseDTO createAuthorizeAndCaptureForm(PaymentRequestDTO requestDTO) throws PaymentException;
 
-    public PaymentResponseDTO createCustomerPaymentTokenForm(PaymentRequestDTO requestDTO) throws PaymentException;
+    PaymentResponseDTO createCustomerPaymentTokenForm(PaymentRequestDTO requestDTO) throws PaymentException;
 
-    public PaymentResponseDTO updateCustomerPaymentTokenForm(PaymentRequestDTO requestDTO) throws PaymentException;
+    PaymentResponseDTO updateCustomerPaymentTokenForm(PaymentRequestDTO requestDTO) throws PaymentException;
 
     /**
      * Return the {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO#responseMap} key
      * that corresponds to creating the customer token return url
      */
-    public String getCreateCustomerPaymentTokenReturnURLFieldKey(PaymentResponseDTO responseDTO);
+    String getCreateCustomerPaymentTokenReturnURLFieldKey(PaymentResponseDTO responseDTO);
 
     /**
      * Return the {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO#responseMap} key
      * that corresponds to creating the customer token cancel url
      */
-    public String getCreateCustomerPaymentTokenCancelURLFieldKey(PaymentResponseDTO responseDTO);
+    String getCreateCustomerPaymentTokenCancelURLFieldKey(PaymentResponseDTO responseDTO);
 
     /**
      * Return the {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO#responseMap} key
      * that corresponds to updating the customer token return url
      */
-    public String getUpdateCustomerPaymentTokenReturnURLFieldKey(PaymentResponseDTO responseDTO);
+    String getUpdateCustomerPaymentTokenReturnURLFieldKey(PaymentResponseDTO responseDTO);
 
     /**
      * Return the {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO#responseMap} key
      * that corresponds to updating the customer token cancel url
      */
-    public String getUpdateCustomerPaymentTokenCancelURLFieldKey(PaymentResponseDTO responseDTO);
+    String getUpdateCustomerPaymentTokenCancelURLFieldKey(PaymentResponseDTO responseDTO);
 
 }

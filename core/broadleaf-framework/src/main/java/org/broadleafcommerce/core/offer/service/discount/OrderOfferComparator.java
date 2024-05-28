@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,21 +22,19 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import java.util.Comparator;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class OrderOfferComparator implements Comparator<PromotableCandidateOrderOffer> {
-    
+
     public static OrderOfferComparator INSTANCE = new OrderOfferComparator();
 
     public int compare(PromotableCandidateOrderOffer p1, PromotableCandidateOrderOffer p2) {
-        
+
         Integer priority1 = p1.getPriority();
         Integer priority2 = p2.getPriority();
-        
+
         int result = priority1.compareTo(priority2);
-        
+
         if (result == 0) {
             // highest potential savings wins
             return p2.getPotentialSavings().compareTo(p1.getPotentialSavings());

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,13 +56,16 @@ public class PassthroughPaymentRollbackServiceImpl extends AbstractPaymentGatewa
     public PaymentResponseDTO rollbackAuthorize(PaymentRequestDTO transactionToBeRolledBack) throws PaymentException {
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Passthrough Payment Gateway - Rolling back authorize transaction with amount: " + transactionToBeRolledBack.getTransactionTotal());
+            LOG.trace("Passthrough Payment Gateway - Rolling back authorize transaction with amount: "
+                    + transactionToBeRolledBack.getTransactionTotal());
         }
 
         if (transactionToBeRolledBack.getAdditionalFields().containsKey(PassthroughPaymentConstants.PASSTHROUGH_PAYMENT_TYPE)) {
 
             return new PaymentResponseDTO(
-                    PaymentType.getInstance((String)transactionToBeRolledBack.getAdditionalFields().get(PassthroughPaymentConstants.PASSTHROUGH_PAYMENT_TYPE)),
+                    PaymentType.getInstance((String) transactionToBeRolledBack.getAdditionalFields().get(
+                            PassthroughPaymentConstants.PASSTHROUGH_PAYMENT_TYPE
+                    )),
                     PaymentGatewayType.PASSTHROUGH)
                     .rawResponse("rollback authorize - successful")
                     .successful(true)
@@ -82,13 +85,16 @@ public class PassthroughPaymentRollbackServiceImpl extends AbstractPaymentGatewa
     @Override
     public PaymentResponseDTO rollbackAuthorizeAndCapture(PaymentRequestDTO transactionToBeRolledBack) throws PaymentException {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Passthrough Payment Gateway - Rolling back authorize and capture transaction with amount: " + transactionToBeRolledBack.getTransactionTotal());
+            LOG.trace("Passthrough Payment Gateway - Rolling back authorize and capture transaction with amount: "
+                    + transactionToBeRolledBack.getTransactionTotal());
         }
 
         if (transactionToBeRolledBack.getAdditionalFields().containsKey(PassthroughPaymentConstants.PASSTHROUGH_PAYMENT_TYPE)) {
 
             return new PaymentResponseDTO(
-                    PaymentType.getInstance((String)transactionToBeRolledBack.getAdditionalFields().get(PassthroughPaymentConstants.PASSTHROUGH_PAYMENT_TYPE)),
+                    PaymentType.getInstance((String) transactionToBeRolledBack.getAdditionalFields().get(
+                            PassthroughPaymentConstants.PASSTHROUGH_PAYMENT_TYPE
+                    )),
                     PaymentGatewayType.PASSTHROUGH)
                     .rawResponse("rollback authorize and capture - successful")
                     .successful(true)
@@ -104,4 +110,5 @@ public class PassthroughPaymentRollbackServiceImpl extends AbstractPaymentGatewa
     public PaymentResponseDTO rollbackRefund(PaymentRequestDTO transactionToBeRolledBack) throws PaymentException {
         throw new PaymentException("The Rollback Refund method is not supported for this module");
     }
+
 }

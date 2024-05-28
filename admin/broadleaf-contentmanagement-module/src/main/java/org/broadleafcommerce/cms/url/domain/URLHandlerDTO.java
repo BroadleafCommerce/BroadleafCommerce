@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,6 +21,8 @@ import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 
+import java.io.Serial;
+
 /**
  * A bean representation of a URLHandler
  *
@@ -28,6 +30,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
  */
 public class URLHandlerDTO implements URLHandler {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     protected Long id = null;
     protected String incomingURL = "";
@@ -112,4 +115,5 @@ public class URLHandlerDTO implements URLHandler {
         cloned.setRegexHandler(Boolean.valueOf(isRegex));
         return createResponse;
     }
+
 }

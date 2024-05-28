@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -59,7 +59,9 @@ public class FrameworkWebConfig {
 
     @Bean
     @ConditionalOnTemplating
-    public List<SeoPropertyGenerator> blSeoPropertyGenerators(@Qualifier("blBasicSeoPropertyGenerator") BasicSeoPropertyGeneratorImpl basicSeo) {
+    public List<SeoPropertyGenerator> blSeoPropertyGenerators(
+            @Qualifier("blBasicSeoPropertyGenerator") BasicSeoPropertyGeneratorImpl basicSeo
+    ) {
         List<SeoPropertyGenerator> generators = new ArrayList<>();
         generators.add(basicSeo);
         return generators;
@@ -76,7 +78,10 @@ public class FrameworkWebConfig {
     @Autowired
     @ConditionalOnProperty("cookie.content.targeting.enabled")
     @ConditionalOnNotAdmin
-    public CookieRuleRequestProcessor blCookieRuleRequestProcessor(@Qualifier("blCookieRuleConfigs") List configs, CookieUtils cookieUtils) {
+    public CookieRuleRequestProcessor blCookieRuleRequestProcessor(
+            @Qualifier("blCookieRuleConfigs") List configs,
+            CookieUtils cookieUtils
+    ) {
         CookieRuleRequestProcessor processor = new CookieRuleRequestProcessor(configs, cookieUtils);
         return processor;
     }
@@ -85,8 +90,11 @@ public class FrameworkWebConfig {
     @Autowired
     @ConditionalOnProperty("cookie.content.targeting.enabled")
     @ConditionalOnNotAdmin
-    public CookieRuleFilter blCookieRuleFilter(@Qualifier("blCookieRuleRequestProcessor") CookieRuleRequestProcessor processor) {
+    public CookieRuleFilter blCookieRuleFilter(
+            @Qualifier("blCookieRuleRequestProcessor") CookieRuleRequestProcessor processor
+    ) {
         CookieRuleFilter filter = new CookieRuleFilter(processor);
         return filter;
     }
+
 }

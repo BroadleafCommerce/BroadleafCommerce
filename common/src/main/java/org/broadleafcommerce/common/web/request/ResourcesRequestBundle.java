@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,7 @@ import java.util.List;
 
 /**
  * Holds information about bundles used during the current request.
+ *
  * @author Jacob Mitash
  */
 public class ResourcesRequestBundle {
@@ -32,7 +33,12 @@ public class ResourcesRequestBundle {
     private final String bundlePath;
     private final List<String> bundleFilePaths;
 
-    public ResourcesRequestBundle(final String bundleName, final String mappingPrefix, final List<String> files, final String bundlePath) {
+    public ResourcesRequestBundle(
+            final String bundleName,
+            final String mappingPrefix,
+            final List<String> files,
+            final String bundlePath
+    ) {
         this.bundleName = bundleName;
         this.mappingPrefix = mappingPrefix;
         this.files = Collections.unmodifiableList(files);
@@ -40,7 +46,12 @@ public class ResourcesRequestBundle {
         this.bundleFilePaths = null;
     }
 
-    public ResourcesRequestBundle(final String bundleName, final String mappingPrefix, final List<String> files, final List<String> bundleFilePaths) {
+    public ResourcesRequestBundle(
+            final String bundleName,
+            final String mappingPrefix,
+            final List<String> files,
+            final List<String> bundleFilePaths
+    ) {
         this.bundleName = bundleName;
         this.mappingPrefix = mappingPrefix;
         this.files = Collections.unmodifiableList(files);
@@ -67,4 +78,5 @@ public class ResourcesRequestBundle {
     public List<String> getBundleFilePaths() {
         return bundleFilePaths;
     }
+
 }

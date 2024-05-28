@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.email.service.message;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -58,7 +57,7 @@ public abstract class MessageCreator {
 
                 // attach headers, if they exist
                 if (MapUtils.isNotEmpty(info.getHeaders())) {
-                    for (Map.Entry<String, String> header: info.getHeaders().entrySet()) {
+                    for (Map.Entry<String, String> header : info.getHeaders().entrySet()) {
                         mimeMessage.addHeader(header.getKey(), header.getValue());
                     }
                 }
@@ -90,7 +89,6 @@ public abstract class MessageCreator {
             }
         };
         return preparator;
-
     }
 
     public JavaMailSender getMailSender() {
@@ -100,4 +98,5 @@ public abstract class MessageCreator {
     public void setMailSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
+
 }

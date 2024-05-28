@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,61 +25,61 @@ import java.util.List;
 
 public interface FulfillmentGroupFee extends Serializable, MultiTenantCloneable<FulfillmentGroupFee> {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public FulfillmentGroup getFulfillmentGroup();
+    FulfillmentGroup getFulfillmentGroup();
 
-    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
+    void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
-    public Money getAmount();
+    Money getAmount();
 
-    public void setAmount(Money amount);
+    void setAmount(Money amount);
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public String getReportingCode();
+    String getReportingCode();
 
-    public void setReportingCode(String reportingCode);
-    
+    void setReportingCode(String reportingCode);
+
     /**
      * Returns whether or not this fee is taxable. If this flag is not set, it returns true by default
-     * 
+     *
      * @return the taxable flag. If null, returns true
      */
-    public Boolean isTaxable();
+    Boolean isTaxable();
 
     /**
      * Sets whether or not this fee is taxable
-     * 
+     *
      * @param taxable
      */
-    public void setTaxable(Boolean taxable);
-    
+    void setTaxable(Boolean taxable);
+
     /**
      * Gets a list of TaxDetail objects, which are taxes that apply directly to this fee.
-     * 
+     *
      * @return a list of taxes that apply to this fee
      */
-    public List<TaxDetail> getTaxes();
+    List<TaxDetail> getTaxes();
 
     /**
      * Sets the list of TaxDetail objects, which are taxes that apply directly to this fee.
-     * 
+     *
      * @param taxes the list of taxes on this fee
      */
-    public void setTaxes(List<TaxDetail> taxes);
-    
+    void setTaxes(List<TaxDetail> taxes);
+
     /**
      * Gets the total tax for this fee, which is the sum of all taxes for this fee.
      * This total is calculated in the TotalActivity stage of the pricing workflow.
      *
      * @return the total tax for this fee
      */
-    public Money getTotalTax();
+    Money getTotalTax();
 
     /**
      * Sets the total tax for this fee, which is the sum of all taxes for this fee.
@@ -87,5 +87,6 @@ public interface FulfillmentGroupFee extends Serializable, MultiTenantCloneable<
      *
      * @param totalTax the total tax for this fee
      */
-    public void setTotalTax(Money totalTax);
+    void setTotalTax(Money totalTax);
+
 }

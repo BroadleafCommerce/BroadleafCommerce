@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,20 +25,19 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Class that provides guidance to modules that need to react when running in a multi-tenant mode.   Especially, 
+ * Class that provides guidance to modules that need to react when running in a multi-tenant mode.   Especially,
  * when an entity is associated with a Profile or Catalog.
- * 
- * @author bpolster
  *
+ * @author bpolster
  */
 public interface EntityInformationService {
 
     /**
      * Given an object, populates {@link EntityInformationDto} with the associated site, profile, and catalog ids.
-     * 
+     * <p>
      * This method does nothing by default and instead relies on the {@link EntityInformationServiceExtensionManager} to
      * populate the correct values.     Designed for use with the commercial "workflow" and "multi-tenant" modules.
-     * 
+     *
      * @param o
      * @return
      */
@@ -49,7 +48,7 @@ public interface EntityInformationService {
     /**
      * Given a Site object, returns the Base Profile Id if one exists.    This method provides a hook
      * for Broadleaf MultiTenant functionality
-     * 
+     *
      * @param site
      * @return
      */
@@ -70,7 +69,7 @@ public interface EntityInformationService {
 
     /**
      * Given an entity instance, returns true if the object has access to a Site Discriminator.
-     * 
+     *
      * @param o
      * @return
      */

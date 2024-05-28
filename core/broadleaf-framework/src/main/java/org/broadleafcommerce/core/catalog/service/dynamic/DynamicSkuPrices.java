@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,15 +19,18 @@ package org.broadleafcommerce.core.catalog.service.dynamic;
 
 import org.broadleafcommerce.common.money.Money;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * DTO to represent pricing overrides returned from invocations to {@link DynamicSkuPricingService}
+ *
  * @author jfischer
  * @see {@link DynamicSkuPricingService}
  */
 public class DynamicSkuPrices implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Money retailPrice;
@@ -62,9 +65,8 @@ public class DynamicSkuPrices implements Serializable {
     /**
      * The out of box implementation returns {@link #getPrice()}.   Intended as a hook for
      * advanced pricing considerations like those in BLC Enterprise pricing.
-     * 
+     *
      * @param quantity
-     * @param currentPrice
      * @return
      */
     public Money getPriceForQuantity(long quantity) {
@@ -74,6 +76,7 @@ public class DynamicSkuPrices implements Serializable {
     /**
      * Returns the lower of {@link #getSalePrice()} and {@link #getRetailPrice()}.  Intended as a hook for
      * advanced pricing considerations like those in BLC Enterprise pricing.
+     *
      * @return
      */
     public Money getPrice() {
@@ -99,4 +102,5 @@ public class DynamicSkuPrices implements Serializable {
     public void setDidOverride(Boolean didOverride) {
         this.didOverride = didOverride;
     }
+
 }

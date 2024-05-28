@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-
 /**
  * Validates that values are actually of their required types before trying to populate it. Integers should be integers,
  * dates should parse correctly, etc.
@@ -48,16 +47,20 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
         Locale locale = brc.getJavaLocale();
         DecimalFormat format = populateValueRequest.getDataFormatProvider().getDecimalFormatter();
         ParsePosition pp;
-        switch(populateValueRequest.getMetadata().getFieldType()) {
+        switch (populateValueRequest.getMetadata().getFieldType()) {
             case INTEGER:
                 try {
-                    if (int.class.isAssignableFrom(populateValueRequest.getReturnType()) || Integer.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                    if (int.class.isAssignableFrom(populateValueRequest.getReturnType())
+                            || Integer.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         Integer.parseInt(populateValueRequest.getRequestedValue());
-                    } else if (byte.class.isAssignableFrom(populateValueRequest.getReturnType()) || Byte.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                    } else if (byte.class.isAssignableFrom(populateValueRequest.getReturnType())
+                            || Byte.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         Byte.parseByte(populateValueRequest.getRequestedValue());
-                    } else if (short.class.isAssignableFrom(populateValueRequest.getReturnType()) || Short.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                    } else if (short.class.isAssignableFrom(populateValueRequest.getReturnType())
+                            || Short.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         Short.parseShort(populateValueRequest.getRequestedValue());
-                    } else if (long.class.isAssignableFrom(populateValueRequest.getReturnType()) || Long.class.isAssignableFrom(populateValueRequest.getReturnType())) {
+                    } else if (long.class.isAssignableFrom(populateValueRequest.getReturnType())
+                            || Long.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                         Long.parseLong(populateValueRequest.getRequestedValue());
                     } else {
                         Integer.parseInt(populateValueRequest.getRequestedValue());
@@ -100,7 +103,8 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
                 try {
                     populateValueRequest.getDataFormatProvider().getSimpleDateFormatter().parse(populateValueRequest.getRequestedValue());
                 } catch (ParseException e) {
-                    return new PropertyValidationResult(false, "Field must be a date of the format: " + populateValueRequest.getDataFormatProvider().getSimpleDateFormatter().toPattern());
+                    return new PropertyValidationResult(false, "Field must be a date of the format: "
+                            + populateValueRequest.getDataFormatProvider().getSimpleDateFormatter().toPattern());
                 }
                 break;
             case FOREIGN_KEY:
@@ -108,7 +112,9 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
                 if (Collection.class.isAssignableFrom(populateValueRequest.getReturnType())) {
                     Collection collection;
                     try {
-                        collection = (Collection) populateValueRequest.getFieldManager().getFieldValue(instance, populateValueRequest.getProperty().getName());
+                        collection = (Collection) populateValueRequest.getFieldManager().getFieldValue(
+                                instance, populateValueRequest.getProperty().getName()
+                        );
                     } catch (FieldNotAvailableException e) {
                         return new PropertyValidationResult(false, "External entity cannot be added to the specified collection at " + populateValueRequest.getProperty().getName());
                     } catch (IllegalAccessException e) {
@@ -137,4 +143,5 @@ public class BasicFieldTypeValidator implements PopulateValueRequestValidator {
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE - 1000;
     }
+
 }

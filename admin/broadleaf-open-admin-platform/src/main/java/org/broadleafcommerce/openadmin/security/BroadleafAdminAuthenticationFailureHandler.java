@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,7 +43,11 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
     }
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException exception
+    ) throws IOException, ServletException {
         String failureUrlParam = StringUtil.cleanseUrlString(request.getParameter("failureUrl"));
         String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
         String failureUrl = (failureUrlParam != null) ? failureUrlParam.trim() : null;
@@ -61,16 +65,16 @@ public class BroadleafAdminAuthenticationFailureHandler extends SimpleUrlAuthent
             //Grab url the user, was redirected from
             successUrlParam = request.getHeader("referer");
         }
-        
+
         if (failureUrl != null) {
             if (!StringUtils.isEmpty(successUrlParam)) {
-            	//Preserve the original successUrl from the referer.  If there is one, it must be the last url segment
-            	int successUrlPos = successUrlParam.indexOf("successUrl");
-            	if (successUrlPos >= 0) {
-            		successUrlParam = successUrlParam.substring(successUrlPos);
-            	} else {
-            		successUrlParam = "successUrl=" + successUrlParam;
-            	}
+                //Preserve the original successUrl from the referer.  If there is one, it must be the last url segment
+                int successUrlPos = successUrlParam.indexOf("successUrl");
+                if (successUrlPos >= 0) {
+                    successUrlParam = successUrlParam.substring(successUrlPos);
+                } else {
+                    successUrlParam = "successUrl=" + successUrlParam;
+                }
 
                 if (!failureUrl.contains("?")) {
                     failureUrl += "?" + successUrlParam;

@@ -10,30 +10,30 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An enumeration of Sitemap change frequency values
- * 
+ *
  * @author Joshua Skorton (jskorton)
  */
 public class SiteMapChangeFreqType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, SiteMapChangeFreqType> TYPES = new LinkedHashMap<String, SiteMapChangeFreqType>();
+    private static final Map<String, SiteMapChangeFreqType> TYPES = new LinkedHashMap<>();
 
     public static final SiteMapChangeFreqType ALWAYS = new SiteMapChangeFreqType("ALWAYS", "always");
     public static final SiteMapChangeFreqType HOURLY = new SiteMapChangeFreqType("HOURLY", "hourly");
@@ -42,10 +42,6 @@ public class SiteMapChangeFreqType implements Serializable, BroadleafEnumeration
     public static final SiteMapChangeFreqType MONTHLY = new SiteMapChangeFreqType("MONTHLY", "monthly");
     public static final SiteMapChangeFreqType YEARLY = new SiteMapChangeFreqType("YEARLY", "yearly");
     public static final SiteMapChangeFreqType NEVER = new SiteMapChangeFreqType("NEVER", "never");
-
-    public static SiteMapChangeFreqType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -59,19 +55,23 @@ public class SiteMapChangeFreqType implements Serializable, BroadleafEnumeration
         setType(type);
     }
 
+    public static SiteMapChangeFreqType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

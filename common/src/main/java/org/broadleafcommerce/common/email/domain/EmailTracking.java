@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,42 +22,41 @@ import java.util.Date;
 
 /**
  * @author jfischer
- *
  */
 public interface EmailTracking extends Serializable {
 
-    public abstract Long getId();
+    Long getId();
 
-    public abstract void setId(Long id);
+    void setId(Long id);
 
     /**
      * @return the emailAddress
      */
-    public abstract String getEmailAddress();
+    String getEmailAddress();
 
     /**
      * @param emailAddress the emailAddress to set
      */
-    public abstract void setEmailAddress(String emailAddress);
+    void setEmailAddress(String emailAddress);
 
     /**
      * @return the dateSent
      */
-    public abstract Date getDateSent();
+    Date getDateSent();
 
     /**
      * @param dateSent the dateSent to set
      */
-    public abstract void setDateSent(Date dateSent);
+    void setDateSent(Date dateSent);
 
     /**
      * @return the type
      */
-    public abstract String getType();
+    String getType();
 
     /**
      * @param type the type to set
      */
-    public abstract void setType(String type);
+    void setType(String type);
 
 }

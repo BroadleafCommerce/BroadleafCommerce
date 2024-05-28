@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.service;
 
 import org.apache.commons.lang3.StringUtils;
@@ -30,19 +29,18 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 /**
- * Responsible for generating site map entries.   
- * 
- * Each SiteMapGenerator can generate 
- * 
- * @author bpolster
+ * Responsible for generating site map entries.
+ * <p>
+ * Each SiteMapGenerator can generate
  *
+ * @author bpolster
  */
 @Component("blCustomSiteMapGenerator")
 public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
-    
+
     /**
-     * Returns true if this SiteMapGenerator is able to process the passed in siteMapGeneratorConfiguration.   
-     * 
+     * Returns true if this SiteMapGenerator is able to process the passed in siteMapGeneratorConfiguration.
+     *
      * @param siteMapGeneratorConfiguration
      * @return
      */
@@ -77,11 +75,11 @@ public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
 
             // lastModDate
             siteMapUrl.setLastModDate(generateDate(urlEntry));
-            
+
             siteMapBuilder.addUrl(siteMapUrl);
         }
     }
-    
+
     protected String generateUri(SiteMapBuilder smb, SiteMapUrlEntry urlEntry) {
         String url = urlEntry.getLocation();
         if (url.contains("://")) {
@@ -92,7 +90,7 @@ public class CustomUrlSiteMapGenerator implements SiteMapGenerator {
     }
 
     protected Date generateDate(SiteMapUrlEntry urlEntry) {
-        if(urlEntry.getLastMod() != null) {
+        if (urlEntry.getLastMod() != null) {
             return urlEntry.getLastMod();
         } else {
             return new Date();

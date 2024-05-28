@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,11 +26,10 @@ import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import java.io.Serializable;
 import java.util.Map;
 
-
 /**
  * Provides a default validate method that uses the validation configuration map to pull out the error key and pre-populate
  * the {@link PropertyValidationResult} based on {@link ConfigurationItem#ERROR_MESSAGE}.
- * 
+ * <p>
  * This class should be used as your base if you are writing a validator based on a {@link ValidationConfiguration}
  *
  * @author Phillip Verheyden (phillipuniverse)
@@ -38,32 +37,42 @@ import java.util.Map;
 public abstract class ValidationConfigurationBasedPropertyValidator implements PropertyValidator {
 
     @Override
-    public PropertyValidationResult validate(Entity entity, Serializable instance, Map<String, FieldMetadata> entityFieldMetadata,
-            Map<String, String> validationConfiguration,
-            BasicFieldMetadata propertyMetadata,
-            String propertyName,
-            String value) {
-        return new PropertyValidationResult(validateInternal(entity,
-                instance,
-                entityFieldMetadata,
-                validationConfiguration,
-                propertyMetadata,
-                propertyName,
-                value), validationConfiguration.get(ConfigurationItem.ERROR_MESSAGE));
-    }
-    
-    /**
-     * Delegate method for {@link ValidationConfiguration}-based processors that don't need to return an error message
-     */
-    public boolean validateInternal(Entity entity,
+    public PropertyValidationResult validate(
+            Entity entity,
             Serializable instance,
             Map<String, FieldMetadata> entityFieldMetadata,
             Map<String, String> validationConfiguration,
             BasicFieldMetadata propertyMetadata,
             String propertyName,
-            String value) {
+            String value
+    ) {
+        return new PropertyValidationResult(
+                validateInternal(
+                        entity,
+                        instance,
+                        entityFieldMetadata,
+                        validationConfiguration,
+                        propertyMetadata,
+                        propertyName,
+                        value
+                ),
+                validationConfiguration.get(ConfigurationItem.ERROR_MESSAGE)
+        );
+    }
+
+    /**
+     * Delegate method for {@link ValidationConfiguration}-based processors that don't need to return an error message
+     */
+    public boolean validateInternal(
+            Entity entity,
+            Serializable instance,
+            Map<String, FieldMetadata> entityFieldMetadata,
+            Map<String, String> validationConfiguration,
+            BasicFieldMetadata propertyMetadata,
+            String propertyName,
+            String value
+    ) {
         return false;
     }
 
-    
 }

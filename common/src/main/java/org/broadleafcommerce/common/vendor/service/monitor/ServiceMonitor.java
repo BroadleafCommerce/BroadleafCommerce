@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,9 +30,9 @@ public class ServiceMonitor {
 
     private static final Log LOG = LogFactory.getLog(ServiceMonitor.class);
 
-    protected Map<ServiceStatusDetectable, StatusHandler> serviceHandlers = new HashMap<ServiceStatusDetectable, StatusHandler>();
+    protected Map<ServiceStatusDetectable, StatusHandler> serviceHandlers = new HashMap<>();
     protected StatusHandler defaultHandler = new LogStatusHandler();
-    protected Map<ServiceStatusDetectable, ServiceStatusType> statusMap = new HashMap<ServiceStatusDetectable, ServiceStatusType>();
+    protected Map<ServiceStatusDetectable, ServiceStatusType> statusMap = new HashMap<>();
 
     public synchronized void init() {
         for (ServiceStatusDetectable statusDetectable : serviceHandlers.keySet()) {
@@ -86,4 +86,5 @@ public class ServiceMonitor {
     public void setDefaultHandler(StatusHandler defaultHandler) {
         this.defaultHandler = defaultHandler;
     }
+
 }

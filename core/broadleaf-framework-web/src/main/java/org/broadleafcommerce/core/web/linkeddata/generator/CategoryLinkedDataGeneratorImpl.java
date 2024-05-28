@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,7 +37,7 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * This generator generates structured data specific to the category pages.
  * <p>
- * See <a href="http://schema.org/ItemList" target="_blank">http://schema.org/ItemList</a> 
+ * See <a href="http://schema.org/ItemList" target="_blank">http://schema.org/ItemList</a>
  * and <a href="http://schema.org/ListItem" target="_blank">http://schema.org/ListItem</a>
  *
  * @author Jacob Mitash
@@ -55,23 +55,25 @@ public class CategoryLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
     }
 
     @Override
-    protected JSONArray getLinkedDataJsonInternal(final String url, final HttpServletRequest request,
-                                                  final JSONArray schemaObjects) throws JSONException {
+    protected JSONArray getLinkedDataJsonInternal(
+            final String url,
+            final HttpServletRequest request,
+            final JSONArray schemaObjects
+    ) throws JSONException {
         final JSONObject categoryData = new JSONObject();
-        
+
         categoryData.put("@context", getStructuredDataContext());
         categoryData.put("@type", "ItemList");
 
         addCategoryProductData(request, categoryData);
-        
+
         extensionManager.getProxy().addCategoryData(request, categoryData);
 
         schemaObjects.put(categoryData);
 
         return schemaObjects;
-
     }
-    
+
     protected void addCategoryProductData(final HttpServletRequest request, final JSONObject categoryData) throws JSONException {
         final List<Product> products = getProducts(request);
         final JSONArray itemList = new JSONArray();
@@ -99,4 +101,5 @@ public class CategoryLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
             }
         });
     }
+
 }

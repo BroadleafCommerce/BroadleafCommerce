@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,62 +41,70 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * The controller responsible for registering a customer.
- * 
+ * <p>
  * Uses a component registered with the name blCustomerValidator to perform validation of the
  * submitted customer.
- * 
+ * <p>
  * Uses the property "useEmailForLogin" to determine if the username should be defaulted to the
  * email address if no username is supplied.
- * 
- * 
+ *
  * @author apazzolini
  * @author bpolster
  */
 public class BroadleafRegisterController extends BroadleafAbstractController {
 
-    @Value("${use.email.for.site.login:true}")
-    protected boolean useEmailForLogin;
-
     protected static String registerSuccessView = "ajaxredirect:";
     protected static String registerView = "authentication/register";
-    
-    @Resource(name="blRegistrationService")
+    @Value("${use.email.for.site.login:true}")
+    protected boolean useEmailForLogin;
+    @Resource(name = "blRegistrationService")
     protected RegistrationService registrationService;
 
-    @Resource(name="blCustomerService")
+    @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
-    @Resource(name="blRegisterCustomerValidator")
+    @Resource(name = "blRegisterCustomerValidator")
     protected RegisterCustomerValidator registerCustomerValidator;
 
-    @Resource(name="blLoginService")
+    @Resource(name = "blLoginService")
     protected LoginService loginService;
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
-    public String register(RegisterCustomerForm registerCustomerForm, HttpServletRequest request, 
-            HttpServletResponse response, Model model) {
+    public String register(
+            RegisterCustomerForm registerCustomerForm,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model
+    ) {
         registrationService.addRedirectUrlToForm(registerCustomerForm);
 
         return getRegisterView();
     }
 
-    public String processRegister(RegisterCustomerForm registerCustomerForm, BindingResult errors, 
-            HttpServletRequest request, HttpServletResponse response, Model model)
-            throws ServiceException, PricingException {
-        
+    public String processRegister(
+            RegisterCustomerForm registerCustomerForm,
+            BindingResult errors,
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model
+    ) throws ServiceException, PricingException {
+
         if (useEmailForLogin) {
             Customer customer = registerCustomerForm.getCustomer();
             customer.setUsername(customer.getEmailAddress());
         }
-        
+
         registerCustomerValidator.validate(registerCustomerForm, errors, useEmailForLogin);
         if (!errors.hasErrors()) {
-            Customer newCustomer = customerService.registerCustomer(registerCustomerForm.getCustomer(), 
-                    registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
-            assert(newCustomer != null);
-            
+            Customer newCustomer = customerService.registerCustomer(
+                    registerCustomerForm.getCustomer(),
+                    registerCustomerForm.getPassword(),
+                    registerCustomerForm.getPasswordConfirm()
+            );
+            assert (newCustomer != null);
+
             // The next line needs to use the customer from the input form and not the customer returned after registration
             // so that we still have the unencoded password for use by the authentication mechanism.
             loginService.loginCustomer(registerCustomerForm.getCustomer());
@@ -107,7 +115,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
                 cart.setEmailAddress(newCustomer.getEmailAddress());
                 orderService.save(cart, false);
             }
-            
+
             String redirectUrl = registerCustomerForm.getRedirectUrl();
             if (StringUtils.isNotBlank(redirectUrl) && redirectUrl.contains(":")) {
                 redirectUrl = null;
@@ -122,7 +130,7 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
             return getRegisterView();
         }
     }
-    
+
     public RegisterCustomerForm initCustomerRegistrationForm() {
         return registrationService.initCustomerRegistrationForm();
     }
@@ -136,12 +144,12 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
     }
 
     /**
-     * Returns the view that will be returned from this controller when the 
-     * registration is successful.   The success view should be a redirect (e.g. start with "redirect:" since 
+     * Returns the view that will be returned from this controller when the
+     * registration is successful.   The success view should be a redirect (e.g. start with "redirect:" since
      * this will cause the entire SpringSecurity pipeline to be fulfilled.
-     * 
+     * <p>
      * By default, returns "redirect:/"
-     * 
+     *
      * @return the register success view
      */
     public String getRegisterSuccessView() {
@@ -150,14 +158,13 @@ public class BroadleafRegisterController extends BroadleafAbstractController {
 
     /**
      * Returns the view that will be used to display the registration page.
-     * 
+     * <p>
      * By default, returns "/register"
-     * 
+     *
      * @return the register view
      */
     public String getRegisterView() {
         return registerView;
     }
-
 
 }

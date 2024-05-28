@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,6 +36,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -64,6 +65,7 @@ import jakarta.persistence.Transient;
 public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable, AdminMainEntity,
         SearchRedirectAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Transient
@@ -120,8 +122,7 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
                     @ValidationConfiguration(
                             validationImplementation = "blAfterStartDateValidator",
                             configurationItems = {
-                                    @ConfigurationItem(itemName = "otherField",
-                                            itemValue = "activeStartDate")
+                                    @ConfigurationItem(itemName = "otherField", itemValue = "activeStartDate")
                             })
             })
     protected Date activeEndDate;
@@ -194,11 +195,11 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
 
         boolean isActive;
         if (isNullActiveStartDateActive) {
-            isActive = (getActiveStartDate() == null || getActiveStartDate().getTime() <= date) && (
-                    getActiveEndDate() == null || getActiveEndDate().getTime() > date);
+            isActive = (getActiveStartDate() == null || getActiveStartDate().getTime() <= date)
+                    && (getActiveEndDate() == null || getActiveEndDate().getTime() > date);
         } else {
-            isActive = (getActiveStartDate() != null && getActiveStartDate().getTime() <= date) && (
-                    getActiveEndDate() == null || getActiveEndDate().getTime() > date);
+            isActive = (getActiveStartDate() != null && getActiveStartDate().getTime() <= date)
+                    && (getActiveEndDate() == null || getActiveEndDate().getTime() > date);
         }
 
         if (LOG.isDebugEnabled() && !isActive) {
@@ -211,4 +212,5 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
     public String getMainEntityName() {
         return getSearchTerm();
     }
+
 }

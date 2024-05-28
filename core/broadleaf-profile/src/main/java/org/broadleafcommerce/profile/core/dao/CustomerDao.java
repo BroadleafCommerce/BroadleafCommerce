@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,20 +23,20 @@ import java.util.List;
 
 public interface CustomerDao {
 
-    public Customer readCustomerById(Long id);
+    Customer readCustomerById(Long id);
 
-    public Customer readCustomerByExternalId(String externalId);
+    Customer readCustomerByExternalId(String externalId);
 
-    public List<Customer> readCustomersByIds(List<Long> ids);
+    List<Customer> readCustomersByIds(List<Long> ids);
 
     /**
      * Reads a batch list of customers from the DB.
+     *
      * @param start
      * @param pageSize
      * @return
      */
-    public List<Customer> readBatchCustomers(int start, int pageSize);
-
+    List<Customer> readBatchCustomers(int start, int pageSize);
 
     /**
      * Reads a batch of customer using ID as a starting point
@@ -47,14 +47,13 @@ public interface CustomerDao {
      */
     List<Customer> readBatchCustomersFromLastID(Long lastID, int pageSize);
 
-
     /**
      * Returns the first customer that match the passed in username, with caching defaulted.
      *
      * @param username
      * @return
      */
-    public Customer readCustomerByUsername(String username);
+    Customer readCustomerByUsername(String username);
 
     /**
      * Returns the first customer that match the passed in username, and caches according to
@@ -64,7 +63,7 @@ public interface CustomerDao {
      * @param cacheable
      * @return
      */
-    public Customer readCustomerByUsername(String username, Boolean cacheable);
+    Customer readCustomerByUsername(String username, Boolean cacheable);
 
     /**
      * Returns all customers that match the passed in username, with caching defaulted.
@@ -72,7 +71,7 @@ public interface CustomerDao {
      * @param username
      * @return
      */
-    public List<Customer> readCustomersByUsername(String username);
+    List<Customer> readCustomersByUsername(String username);
 
     /**
      * Returns all customers that match the passed in username, and caches according to
@@ -82,9 +81,9 @@ public interface CustomerDao {
      * @param cacheable
      * @return
      */
-    public List<Customer> readCustomersByUsername(String username, Boolean cacheable);
+    List<Customer> readCustomersByUsername(String username, Boolean cacheable);
 
-    public Customer save(Customer customer);
+    Customer save(Customer customer);
 
     /**
      * Returns the first customer that matches the passed in email.
@@ -92,7 +91,7 @@ public interface CustomerDao {
      * @param emailAddress
      * @return
      */
-    public Customer readCustomerByEmail(String emailAddress);
+    Customer readCustomerByEmail(String emailAddress);
 
     /**
      * Returns all customers that matches the passed in email.
@@ -100,9 +99,9 @@ public interface CustomerDao {
      * @param emailAddress
      * @return
      */
-    public List<Customer> readCustomersByEmail(String emailAddress);
+    List<Customer> readCustomersByEmail(String emailAddress);
 
-    public Customer create();
+    Customer create();
 
     /**
      * Remove a customer from the persistent store
@@ -121,4 +120,5 @@ public interface CustomerDao {
     Long readNumberOfCustomers();
 
     void refreshCustomer(Customer customer);
+
 }

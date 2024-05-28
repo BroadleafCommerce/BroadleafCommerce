@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -64,62 +64,59 @@ import javax.cache.CacheManager;
 
 import jakarta.annotation.Resource;
 
-
 /**
- *
  * @author jfischer
- *
  */
 @Service("blAdminSecurityService")
 public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     private static final Log LOG = LogFactory.getLog(AdminSecurityServiceImpl.class);
-
-    private static int TEMP_PASSWORD_LENGTH = 12;
     private static final int FULL_PASSWORD_LENGTH = 16;
-
+    protected static String CACHE_NAME = "blSecurityElements";
+    protected static String CACHE_KEY_PREFIX = "security:";
+    private static int TEMP_PASSWORD_LENGTH = 12;
     @Autowired
     @Qualifier("blApplicationEventPublisher")
     protected BroadleafApplicationEventPublisher eventPublisher;
-
     @Resource(name = "blAdminRoleDao")
     protected AdminRoleDao adminRoleDao;
-
     @Resource(name = "blAdminUserDao")
     protected AdminUserDao adminUserDao;
-
     @Resource(name = "blForgotPasswordSecurityTokenDao")
     protected ForgotPasswordSecurityTokenDao forgotPasswordSecurityTokenDao;
-
     @Resource(name = "blAdminPermissionDao")
     protected AdminPermissionDao adminPermissionDao;
-    
     @Resource(name = "blCacheManager")
     protected CacheManager cacheManager;
-
-    protected static String CACHE_NAME = "blSecurityElements";
-    protected static String CACHE_KEY_PREFIX = "security:";
-
-    protected Cache<String, Boolean> cache;;
+    protected Cache<String, Boolean> cache;
+    ;
 
     /**
      * <p>This is simply a placeholder to be used by {@link #setupPasswordEncoder()} to determine if we're using the
      * new {@link PasswordEncoder} or the deprecated {@link org.springframework.security.authentication.encoding.PasswordEncoder PasswordEncoder}
      */
-    @Resource(name="blAdminPasswordEncoder")
+    @Resource(name = "blAdminPasswordEncoder")
     protected PasswordEncoder passwordEncoderBean;
 
-    @Resource(name="blEmailService")
+    @Resource(name = "blEmailService")
     protected EmailService emailService;
 
-    @Resource(name="blSendAdminResetPasswordEmail")
+    @Resource(name = "blSendAdminResetPasswordEmail")
     protected EmailInfo resetPasswordEmailInfo;
 
-    @Resource(name="blSendAdminUsernameEmailInfo")
+    @Resource(name = "blSendAdminUsernameEmailInfo")
     protected EmailInfo sendUsernameEmailInfo;
 
     @Resource(name = "blAdminSecurityServiceExtensionManager")
     protected AdminSecurityServiceExtensionManager extensionManager;
+
+    public static int getPASSWORD_TOKEN_LENGTH() {
+        return TEMP_PASSWORD_LENGTH;
+    }
+
+    public static void setPASSWORD_TOKEN_LENGTH(int PASSWORD_TOKEN_LENGTH) {
+        AdminSecurityServiceImpl.TEMP_PASSWORD_LENGTH = PASSWORD_TOKEN_LENGTH;
+    }
 
     protected int getTokenExpiredMinutes() {
         return BLCSystemProperty.resolveIntSystemProperty("tokenExpiredMinutes");
@@ -228,14 +225,20 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         user.setUnencodedPassword(passwordChange.getNewPassword());
         user = saveAdminUser(user);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(passwordChange.getUsername(), passwordChange.getNewPassword(), auth.getAuthorities());
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
+                passwordChange.getUsername(), passwordChange.getNewPassword(), auth.getAuthorities()
+        );
         SecurityContextHolder.getContext().setAuthentication(authRequest);
         auth.setAuthenticated(false);
         return user;
     }
 
     @Override
-    public boolean isUserQualifiedForOperationOnCeilingEntity(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
+    public boolean isUserQualifiedForOperationOnCeilingEntity(
+            AdminUser adminUser,
+            PermissionType permissionType,
+            String ceilingEntityFullyQualifiedName
+    ) {
         Boolean response = null;
         String cacheKey = buildCacheKey(adminUser, permissionType, ceilingEntityFullyQualifiedName);
         Object objectValue = getCache().get(cacheKey);
@@ -250,18 +253,23 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
         if (response == null) {
             if (extensionManager != null) {
-                ExtensionResultHolder<Boolean> result = new ExtensionResultHolder<Boolean>();
-                ExtensionResultStatusType resultStatusType = extensionManager.getProxy().hasPrivilegesForOperation(adminUser, permissionType, result);
+                ExtensionResultHolder<Boolean> result = new ExtensionResultHolder<>();
+                ExtensionResultStatusType resultStatusType = extensionManager.getProxy()
+                        .hasPrivilegesForOperation(adminUser, permissionType, result);
                 if (ExtensionResultStatusType.HANDLED == resultStatusType) {
                     response = result.getResult();
                 }
             }
 
             if (response == null || !response) {
-                response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(adminUser, permissionType, ceilingEntityFullyQualifiedName);
+                response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntity(
+                        adminUser, permissionType, ceilingEntityFullyQualifiedName
+                );
 
                 if (!response) {
-                    response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(ceilingEntityFullyQualifiedName);
+                    response = adminPermissionDao.isUserQualifiedForOperationOnCeilingEntityViaDefaultPermissions(
+                            ceilingEntityFullyQualifiedName
+                    );
                 }
             }
 
@@ -275,15 +283,22 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return response;
     }
 
-    protected String buildCacheKey(AdminUser adminUser, PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
+    protected String buildCacheKey(
+            AdminUser adminUser,
+            PermissionType permissionType,
+            String ceilingEntityFullyQualifiedName
+    ) {
         return CACHE_KEY_PREFIX
-               + "user:" + adminUser.getId() + ","
-               + "permType:" + permissionType.getFriendlyType() + ","
-               + "ceiling:" + ceilingEntityFullyQualifiedName;
+                + "user:" + adminUser.getId() + ","
+                + "permType:" + permissionType.getFriendlyType() + ","
+                + "ceiling:" + ceilingEntityFullyQualifiedName;
     }
 
     @Override
-    public boolean doesOperationExistForCeilingEntity(PermissionType permissionType, String ceilingEntityFullyQualifiedName) {
+    public boolean doesOperationExistForCeilingEntity(
+            PermissionType permissionType,
+            String ceilingEntityFullyQualifiedName
+    ) {
         return adminPermissionDao.doesOperationExistForCeilingEntity(permissionType, ceilingEntityFullyQualifiedName);
     }
 
@@ -323,7 +338,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         if (CollectionUtils.isEmpty(users)) {
             response.addErrorCode("notFound");
         } else {
-            List<String> activeUsernames = new ArrayList<String>();
+            List<String> activeUsernames = new ArrayList<>();
             for (AdminUser user : users) {
                 if (user.getActiveStatusFlag()) {
                     activeUsernames.add(user.getLogin());
@@ -331,7 +346,9 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             }
 
             if (activeUsernames.size() > 0) {
-                eventPublisher.publishEvent(new AdminForgotUsernameEvent(this, emailAddress, null, activeUsernames));
+                eventPublisher.publishEvent(
+                        new AdminForgotUsernameEvent(this, emailAddress, null, activeUsernames)
+                );
             } else {
                 // send inactive username found email.
                 response.addErrorCode("inactiveUser");
@@ -350,9 +367,9 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             user = adminUserDao.readAdminUserByUserName(username);
         }
 
-        checkUser(user,response);
+        checkUser(user, response);
 
-        if (! response.getHasErrors()) {
+        if (!response.getHasErrors()) {
             String token = PasswordUtils.generateSecurePassword(TEMP_PASSWORD_LENGTH);
             token = token.toLowerCase();
 
@@ -365,20 +382,27 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             String resetPasswordUrl = getResetPasswordURL();
             if (!StringUtils.isEmpty(resetPasswordUrl)) {
                 if (resetPasswordUrl.contains("?")) {
-                    resetPasswordUrl=resetPasswordUrl+"&token="+token;
+                    resetPasswordUrl = resetPasswordUrl + "&token=" + token;
                 } else {
-                    resetPasswordUrl=resetPasswordUrl+"?token="+token;
+                    resetPasswordUrl = resetPasswordUrl + "?token=" + token;
                 }
             }
 
-            eventPublisher.publishEvent(new AdminForgotPasswordEvent(this, user.getId(), token, resetPasswordUrl));
+            eventPublisher.publishEvent(
+                    new AdminForgotPasswordEvent(this, user.getId(), token, resetPasswordUrl)
+            );
         }
         return response;
     }
 
     @Override
     @Transactional("blTransactionManager")
-    public GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword) {
+    public GenericResponse resetPasswordUsingToken(
+            String username,
+            String token,
+            String password,
+            String confirmPassword
+    ) {
         GenericResponse response = new GenericResponse();
         AdminUser user = null;
         if (username != null) {
@@ -391,9 +415,11 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         }
 
         ForgotPasswordSecurityToken fpst = null;
-        if (! response.getHasErrors()) {
+        if (!response.getHasErrors()) {
             token = token.toLowerCase();
-            List<ForgotPasswordSecurityToken> fpstoks = forgotPasswordSecurityTokenDao.readUnusedTokensByAdminUserId(user.getId());
+            List<ForgotPasswordSecurityToken> fpstoks = forgotPasswordSecurityTokenDao.readUnusedTokensByAdminUserId(
+                    user.getId()
+            );
             for (ForgotPasswordSecurityToken fpstok : fpstoks) {
                 if (isPasswordValid(fpstok.getToken(), token)) {
                     fpst = fpstok;
@@ -409,16 +435,17 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
             }
         }
 
-        if (! response.getHasErrors()) {
-            if (! user.getId().equals(fpst.getAdminUserId())) {
+        if (!response.getHasErrors()) {
+            if (!user.getId().equals(fpst.getAdminUserId())) {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Password reset attempt tried with mismatched user and token " + user.getId() + ", " + StringUtil.sanitize(token));
+                    LOG.warn("Password reset attempt tried with mismatched user and token " + user.getId() + ", "
+                            + StringUtil.sanitize(token));
                 }
                 response.addErrorCode("invalidToken");
             }
         }
 
-        if (! response.getHasErrors()) {
+        if (!response.getHasErrors()) {
             user.setUnencodedPassword(password);
             saveAdminUser(user);
             invalidateAllTokensForAdminUser(user);
@@ -428,7 +455,9 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     protected void invalidateAllTokensForAdminUser(AdminUser user) {
-        List<ForgotPasswordSecurityToken> tokens = forgotPasswordSecurityTokenDao.readUnusedTokensByAdminUserId(user.getId());
+        List<ForgotPasswordSecurityToken> tokens = forgotPasswordSecurityTokenDao.readUnusedTokensByAdminUserId(
+                user.getId()
+        );
         for (ForgotPasswordSecurityToken token : tokens) {
             token.setTokenUsedFlag(true);
             forgotPasswordSecurityTokenDao.saveToken(token);
@@ -448,7 +477,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     protected void checkPassword(String password, String confirmPassword, GenericResponse response) {
         if (StringUtils.isBlank(password) || StringUtils.isBlank(confirmPassword)) {
             response.addErrorCode("invalidPassword");
-        } else if (! password.equals(confirmPassword)) {
+        } else if (!password.equals(confirmPassword)) {
             response.addErrorCode("passwordMismatch");
         }
     }
@@ -463,16 +492,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         Date now = SystemTime.asDate();
         long currentTimeInMillis = now.getTime();
         long tokenSaveTimeInMillis = fpst.getCreateDate().getTime();
-        long minutesSinceSave = (currentTimeInMillis - tokenSaveTimeInMillis)/60000;
+        long minutesSinceSave = (currentTimeInMillis - tokenSaveTimeInMillis) / 60000;
         return minutesSinceSave > getTokenExpiredMinutes();
-    }
-
-    public static int getPASSWORD_TOKEN_LENGTH() {
-        return TEMP_PASSWORD_LENGTH;
-    }
-
-    public static void setPASSWORD_TOKEN_LENGTH(int PASSWORD_TOKEN_LENGTH) {
-        AdminSecurityServiceImpl.TEMP_PASSWORD_LENGTH = PASSWORD_TOKEN_LENGTH;
     }
 
     public EmailInfo getSendUsernameEmailInfo() {
@@ -523,7 +544,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
      * due to {@link PasswordEncoder} randomly generating salts internally and appending them to the resulting hash.
      *
      * @param encodedPassword the encoded password
-     * @param rawPassword the raw password to check against the encoded password
+     * @param rawPassword     the raw password to check against the encoded password
      * @return true if rawPassword matches the encodedPassword, false otherwise
      */
     protected boolean isPasswordValid(String encodedPassword, String rawPassword) {
@@ -544,7 +565,7 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     protected String encodePassword(String rawPassword) {
         return passwordEncoderBean.encode(rawPassword);
     }
-    
+
     protected Cache<String, Boolean> getCache() {
         if (cache == null) {
             synchronized (this) {
@@ -555,4 +576,5 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         }
         return cache;
     }
+
 }

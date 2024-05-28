@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,7 +37,7 @@ import jakarta.annotation.Resource;
  * This class is being un-deprecated because we want the query for the customer to happen through Hibernate instead of
  * through raw JDBC, which is the case when <sec:jdbc-user-service /> is used. We need the query to go through Hibernate
  * so that we are able to attach the necessary filters in certain circumstances.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -60,14 +60,25 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (Status.class.isAssignableFrom(customer.getClass())) {
             isActive = isActive && ((Status) customer).isActive();
         }
-        List<GrantedAuthority> grantedAuthorities = createGrantedAuthorities(roleService.findCustomerRolesByCustomerId(customer.getId()));
-        return new CustomerUserDetails(customer.getId(), username, customer.getPassword(), isActive, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities);
+        List<GrantedAuthority> grantedAuthorities = createGrantedAuthorities(
+                roleService.findCustomerRolesByCustomerId(customer.getId())
+        );
+        return new CustomerUserDetails(
+                customer.getId(),
+                username,
+                customer.getPassword(),
+                isActive,
+                true,
+                !customer.isPasswordChangeRequired(),
+                true,
+                grantedAuthorities
+        );
     }
 
     protected List<GrantedAuthority> createGrantedAuthorities(List<CustomerRole> customerRoles) {
         boolean roleUserFound = false;
 
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         for (CustomerRole role : customerRoles) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getRoleName()));
             if (role.getRoleName().equals("ROLE_USER")) {
@@ -81,5 +92,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return grantedAuthorities;
     }
-    
+
 }

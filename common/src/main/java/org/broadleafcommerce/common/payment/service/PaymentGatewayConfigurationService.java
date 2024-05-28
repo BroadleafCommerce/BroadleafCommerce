@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldExtensionHandler;
@@ -26,42 +25,42 @@ import org.broadleafcommerce.common.web.payment.processor.TRCreditCardExtensionH
  * Each payment gateway module should configure an instance of this. In order for multiple gateways to exist in the system
  * at the same time, a list of these is managed via the {@link PaymentGatewayConfigurationServiceProvider}. This allows for proper
  * delegation to the right gateway to perform operations against via different order payments on an order.
- * 
+ *
  * @author Elbert Bautista (elbertbautista)
  * @author Phillip Verheyden (phillipuniverse)
  */
 public interface PaymentGatewayConfigurationService {
 
-    public PaymentGatewayConfiguration getConfiguration();
+    PaymentGatewayConfiguration getConfiguration();
 
-    public PaymentGatewayTransactionService getTransactionService();
+    PaymentGatewayTransactionService getTransactionService();
 
-    public PaymentGatewayTransactionConfirmationService getTransactionConfirmationService();
+    PaymentGatewayTransactionConfirmationService getTransactionConfirmationService();
 
-    public PaymentGatewayReportingService getReportingService();
+    PaymentGatewayReportingService getReportingService();
 
-    public PaymentGatewayCreditCardService getCreditCardService();
+    PaymentGatewayCreditCardService getCreditCardService();
 
-    public PaymentGatewayCustomerService getCustomerService();
+    PaymentGatewayCustomerService getCustomerService();
 
-    public PaymentGatewaySubscriptionService getSubscriptionService();
+    PaymentGatewaySubscriptionService getSubscriptionService();
 
-    public PaymentGatewayFraudService getFraudService();
+    PaymentGatewayFraudService getFraudService();
 
-    public PaymentGatewayHostedService getHostedService();
+    PaymentGatewayHostedService getHostedService();
 
-    public PaymentGatewayRollbackService getRollbackService();
+    PaymentGatewayRollbackService getRollbackService();
 
-    public PaymentGatewayWebResponseService getWebResponseService();
+    PaymentGatewayWebResponseService getWebResponseService();
 
-    public PaymentGatewayTransparentRedirectService getTransparentRedirectService();
+    PaymentGatewayTransparentRedirectService getTransparentRedirectService();
 
-    public PaymentGatewayClientTokenService getClientTokenService();
+    PaymentGatewayClientTokenService getClientTokenService();
 
-    public TRCreditCardExtensionHandler getCreditCardExtensionHandler();
+    TRCreditCardExtensionHandler getCreditCardExtensionHandler();
 
-    public PaymentGatewayFieldExtensionHandler getFieldExtensionHandler();
+    PaymentGatewayFieldExtensionHandler getFieldExtensionHandler();
 
-    public CreditCardTypesExtensionHandler getCreditCardTypesExtensionHandler();
+    CreditCardTypesExtensionHandler getCreditCardTypesExtensionHandler();
 
 }

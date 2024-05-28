@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.service;
 
 import org.broadleafcommerce.common.dao.GenericEntityDao;
@@ -29,13 +28,12 @@ import java.util.List;
 import jakarta.annotation.Resource;
 import jakarta.persistence.EntityManager;
 
-
 @Service("blGenericEntityService")
 public class GenericEntityServiceImpl implements GenericEntityService {
-    
+
     @Resource(name = "blGenericEntityDao")
     protected GenericEntityDao genericEntityDao;
-    
+
     @Override
     public Object readGenericEntity(String className, Object id) {
         Class<?> clazz = genericEntityDao.getImplClass(className);
@@ -46,7 +44,7 @@ public class GenericEntityServiceImpl implements GenericEntityService {
     public <T> T readGenericEntity(Class<T> clazz, Object id) {
         return genericEntityDao.readGenericEntity(clazz, id);
     }
-    
+
     @Override
     public <T> T save(T object) {
         return genericEntityDao.save(object);
@@ -122,4 +120,5 @@ public class GenericEntityServiceImpl implements GenericEntityService {
     public void remove(Object object) {
         genericEntityDao.remove(object);
     }
+
 }

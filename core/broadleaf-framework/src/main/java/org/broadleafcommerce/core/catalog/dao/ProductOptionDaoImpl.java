@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -57,21 +57,21 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
     private static final int IN_CLAUSE_LIMIT = 999;
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
-    
+
     @Override
     public List<ProductOption> readAllProductOptions() {
         TypedQuery<ProductOption> query = em.createNamedQuery("BC_READ_ALL_PRODUCT_OPTIONS", ProductOption.class);
         return query.getResultList();
     }
-    
+
     @Override
     public ProductOption saveProductOption(ProductOption option) {
         return em.merge(option);
@@ -94,13 +94,14 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         Root<SkuProductOptionValueXrefImpl> root = criteria.from(SkuProductOptionValueXrefImpl.class);
         criteria.select(
                 builder.construct(AssignedProductOptionDTO.class,
-                    root.get("sku").get("product").get("id"),
-                    root.get("productOptionValue").get("productOption").get("attributeName"),
-                    root.get("productOptionValue"),
-                    root.get("sku")));
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+                        root.get("sku").get("product").get("id"),
+                        root.get("productOptionValue").get("productOption").get("attributeName"),
+                        root.get("productOptionValue"),
+                        root.get("sku")));
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.and(builder.or(builder.equal(root.get("sku").get("archiveStatus").get("archived"), 'N'),
-                builder.isNull(root.get("sku").get("archiveStatus").get("archived"))), builder.equal(root.get("sku").get("product").get("id"), productId)));
+                        builder.isNull(root.get("sku").get("archiveStatus").get("archived"))),
+                builder.equal(root.get("sku").get("product").get("id"), productId)));
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         criteria.orderBy(builder.asc(root.get("productOptionValue").get("productOption").get("attributeName")));
 
@@ -139,7 +140,12 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
     }
 
     @Override
-    public List<Long> readSkuIdsForProductOptionValues(Long productId, String attributeName, String attributeValue, List<Long> possibleSkuIds) {
+    public List<Long> readSkuIdsForProductOptionValues(
+            Long productId,
+            String attributeName,
+            String attributeValue,
+            List<Long> possibleSkuIds
+    ) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Sku> criteria = cb.createQuery(Sku.class);
         Root<SkuProductOptionValueXrefImpl> root = criteria.from(SkuProductOptionValueXrefImpl.class);
@@ -148,7 +154,9 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         List<Predicate> predicates = new ArrayList<>();
 
         // restrict to skus that match the product
-        predicates.add(root.get("sku").get("product").get("id").in(sandBoxHelper.mergeCloneIds(ProductImpl.class, productId)));
+        predicates.add(root.get("sku").get("product").get("id").in(
+                sandBoxHelper.mergeCloneIds(ProductImpl.class, productId)
+        ));
 
         // restrict to skus that match the attributeName
         predicates.add(cb.equal(root.get("productOptionValue").get("productOption").get("attributeName"), attributeName));
@@ -158,7 +166,9 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
 
         // restrict to skus that have ids within the given list of skus ids
         if (CollectionUtils.isNotEmpty(possibleSkuIds)) {
-            possibleSkuIds = sandBoxHelper.mergeCloneIds(SkuImpl.class, possibleSkuIds.toArray(new Long[possibleSkuIds.size()]));
+            possibleSkuIds = sandBoxHelper.mergeCloneIds(SkuImpl.class, possibleSkuIds.toArray(
+                    new Long[possibleSkuIds.size()]
+            ));
             Predicate skuDomainPredicate = buildSkuDomainPredicate(cb, root.get("sku").get("id"), possibleSkuIds);
             if (skuDomainPredicate != null) {
                 predicates.add(skuDomainPredicate);
@@ -196,13 +206,18 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         return validCandidateSkuIds;
     }
 
-    protected void attachArchivalConditionIfPossible(Class<?> clazz, Path<?> path, CriteriaBuilder cb, List<Predicate> predicates) {
+    protected void attachArchivalConditionIfPossible(
+            Class<?> clazz,
+            Path<?> path,
+            CriteriaBuilder cb,
+            List<Predicate> predicates
+    ) {
         if (Status.class.isAssignableFrom(clazz)) {
             predicates.add(
-                cb.or(
-                    cb.isNull(path.get("archiveStatus").get("archived")),
-                    cb.equal(path.get("archiveStatus").get("archived"), 'N')
-                )
+                    cb.or(
+                            cb.isNull(path.get("archiveStatus").get("archived")),
+                            cb.equal(path.get("archiveStatus").get("archived"), 'N')
+                    )
             );
         }
     }
@@ -262,7 +277,7 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         }
         criteria.distinct(true);
 
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(productOption.get("id").in(sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, productOptionId)));
 
         // Execute the query with the restrictions

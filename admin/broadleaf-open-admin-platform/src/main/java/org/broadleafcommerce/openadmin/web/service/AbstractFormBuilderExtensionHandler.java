@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,9 +25,9 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
 
 /**
- * Abstract class to provide convenience for determining how to handle form 
+ * Abstract class to provide convenience for determining how to handle form
  * extensions in the admin
- * 
+ *
  * @author Kelly Tisdell
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -47,12 +47,12 @@ public abstract class AbstractFormBuilderExtensionHandler extends AbstractExtens
     public ExtensionResultStatusType modifyDetailEntityForm(EntityForm ef) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-    
+
     @Override
     public ExtensionResultStatusType modifyListGridRecord(String className, ListGridRecord record, Entity entity) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-    
+
     @Override
     public ExtensionResultStatusType addAdditionalFormActions(EntityForm entityForm) {
         return ExtensionResultStatusType.NOT_HANDLED;

@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.controller;
 
 import org.apache.commons.logging.Log;
@@ -32,27 +31,22 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Controller to generate and retrieve site map files.
- * 
+ *
  * @author Joshua Skorton (jskorton)
  */
 public class BroadleafSiteMapController {
-
-    private static final Log LOG = LogFactory.getLog(BroadleafSiteMapController.class);
 
     @Resource(name = "blSiteMapService")
     protected SiteMapService siteMapService;
 
     /**
      * Retrieves a site map index file in XML format
-     * 
+     *
      * @param request
      * @param response
-     * @param model
-     * @param fileName
      * @return
      */
-    public FileSystemResource retrieveSiteMapFile(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+    public FileSystemResource retrieveSiteMapFile(HttpServletRequest request, HttpServletResponse response) throws IOException {
         File siteMapFile = siteMapService.getSiteMapFile(getRequestURIWithoutContext(request));
         if (siteMapFile == null || !siteMapFile.exists()) {
             response.setStatus(404);

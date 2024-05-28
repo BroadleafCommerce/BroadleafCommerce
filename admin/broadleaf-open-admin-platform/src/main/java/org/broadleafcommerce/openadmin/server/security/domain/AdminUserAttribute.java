@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,33 +21,37 @@ import org.broadleafcommerce.common.value.ValueAssignable;
 
 /**
  * Stores additional attributes for {@link AdminUser}s
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public interface AdminUserAttribute extends ValueAssignable<String> {
 
     /**
      * Returns the id
+     *
      * @return the id
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the id
+     *
      * @param id
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Returns the {@link AdminUser}
+     *
      * @return the AdminUser
      */
-    public AdminUser getAdminUser();
+    AdminUser getAdminUser();
 
     /**
      * Sets the {@link AdminUser}
+     *
      * @param adminUser
      */
-    public void setAdminUser(AdminUser adminUser);
+    void setAdminUser(AdminUser adminUser);
 
 }

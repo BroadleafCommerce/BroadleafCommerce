@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,9 +43,9 @@ import jakarta.persistence.metamodel.EntityType;
 
 /**
  * Service to help gather the correct {@link EntityManager} or {@link PlatformTransactionManager},
- *  based on a class and {@link TargetModeType}. This functionality is
- *  especially useful when multiple {@link jakarta.persistence.PersistenceUnit}s are in use.
- *
+ * based on a class and {@link TargetModeType}. This functionality is
+ * especially useful when multiple {@link jakarta.persistence.PersistenceUnit}s are in use.
+ * <p>
  * Note: All "default" items reference blPU, which is used to manage most Broadleaf entities in the Admin.
  *
  * @author Chris Kittrell (ckittrell)
@@ -57,25 +57,18 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
 
     protected static final String ENTITY_MANAGER_KEY = "entityManager";
     protected static final String TRANSACTION_MANAGER_KEY = "transactionManager";
-
-    @Resource (name = "blEntityConfiguration")
-    protected EntityConfiguration entityConfiguration;
-
-    @Resource(name = "blTargetModeMaps")
-    protected List<Map<String, Map<String, Object>>> targetModeMaps;
-
-    @Resource(name = "blDefaultTargetModeMap")
-    protected Map<String, Map<String, Object>> defaultTargetModeMap;
-
-    @Resource(name="blStreamingTransactionCapableUtil")
-    protected StreamingTransactionCapableUtil transUtil;
-
-    @Autowired
-    protected List<EntityManager> entityManagers;
-
     private final Map<String, EntityManager> ENTITY_MANAGER_CACHE = new ConcurrentHashMap<>();
     private final Map<String, PlatformTransactionManager> TRANSACTION_MANAGER_CACHE = new ConcurrentHashMap<>();
-
+    @Resource(name = "blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
+    @Resource(name = "blTargetModeMaps")
+    protected List<Map<String, Map<String, Object>>> targetModeMaps;
+    @Resource(name = "blDefaultTargetModeMap")
+    protected Map<String, Map<String, Object>> defaultTargetModeMap;
+    @Resource(name = "blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transUtil;
+    @Autowired
+    protected List<EntityManager> entityManagers;
     private DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
 
     @Override
@@ -206,11 +199,13 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
     public Class<?> getCeilingImplClassFromEntityManagers(String className) {
         Class<?> beanIdClass = getClassForName(className);
 
-            Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(beanIdClass, true, true);
+        Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(
+                beanIdClass, true, true
+        );
 
-            if (ArrayUtils.isNotEmpty(entitiesFromCeiling)) {
-                return entitiesFromCeiling[entitiesFromCeiling.length - 1];
-            }
+        if (ArrayUtils.isNotEmpty(entitiesFromCeiling)) {
+            return entitiesFromCeiling[entitiesFromCeiling.length - 1];
+        }
         return null;
     }
 
@@ -243,4 +238,5 @@ public class PersistenceServiceImpl implements PersistenceService, SmartLifecycl
             throw new RuntimeException(e);
         }
     }
+
 }

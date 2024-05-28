@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,6 +26,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -35,10 +36,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 /**
- * 
  * @author Phillip Verheyden
  */
 @Entity
@@ -51,26 +52,28 @@ import java.math.BigDecimal;
 })
 public class FulfillmentPriceBandImpl extends FulfillmentBandImpl implements FulfillmentPriceBand {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     @Id
-    @GeneratedValue(generator= "FulfillmentPriceBandId")
+    @GeneratedValue(generator = "FulfillmentPriceBandId")
     @GenericGenerator(
-        name="FulfillmentPriceBandId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="FulfillmentPriceBandImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl")
-        }
+            name = "FulfillmentPriceBandId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FulfillmentPriceBandImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl")
+            }
     )
     @Column(name = "FULFILLMENT_PRICE_BAND_ID")
     protected Long id;
 
-    @Column(name="RETAIL_PRICE_MINIMUM_AMOUNT", precision=19, scale=5, nullable = false)
+    @Column(name = "RETAIL_PRICE_MINIMUM_AMOUNT", precision = 19, scale = 5, nullable = false)
     protected BigDecimal retailPriceMinimumAmount;
-    
-    @ManyToOne(targetEntity=BandedPriceFulfillmentOptionImpl.class)
-    @JoinColumn(name="FULFILLMENT_OPTION_ID")
+
+    @ManyToOne(targetEntity = BandedPriceFulfillmentOptionImpl.class)
+    @JoinColumn(name = "FULFILLMENT_OPTION_ID")
     protected BandedPriceFulfillmentOption option;
 
     @Override
@@ -82,7 +85,7 @@ public class FulfillmentPriceBandImpl extends FulfillmentBandImpl implements Ful
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public BigDecimal getRetailPriceMinimumAmount() {
         return retailPriceMinimumAmount;

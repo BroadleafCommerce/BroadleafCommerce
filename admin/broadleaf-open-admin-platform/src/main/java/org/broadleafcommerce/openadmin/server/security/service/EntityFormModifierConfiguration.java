@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,13 +28,16 @@ import java.util.List;
  */
 public class EntityFormModifierConfiguration {
 
-    protected List<EntityFormModifier> modifier = new ArrayList<EntityFormModifier>();
-    protected List<EntityFormModifierData<EntityFormModifierDataPoint>> data = new ArrayList<EntityFormModifierData<EntityFormModifierDataPoint>>();
+    protected List<EntityFormModifier> modifier = new ArrayList<>();
+    protected List<EntityFormModifierData<EntityFormModifierDataPoint>> data = new ArrayList<>();
 
     public EntityFormModifierConfiguration() {
     }
 
-    public EntityFormModifierConfiguration(List<EntityFormModifier> modifier, List<EntityFormModifierData<EntityFormModifierDataPoint>> data) {
+    public EntityFormModifierConfiguration(
+            List<EntityFormModifier> modifier,
+            List<EntityFormModifierData<EntityFormModifierDataPoint>> data
+    ) {
         this.modifier = modifier;
         this.data = data;
     }
@@ -54,4 +57,5 @@ public class EntityFormModifierConfiguration {
     public void setData(List<EntityFormModifierData<EntityFormModifierDataPoint>> data) {
         this.data = data;
     }
+
 }

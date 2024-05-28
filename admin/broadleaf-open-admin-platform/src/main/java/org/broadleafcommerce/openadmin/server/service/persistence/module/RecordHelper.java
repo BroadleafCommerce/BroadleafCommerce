@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,8 +37,8 @@ import java.util.Map;
 
 /**
  * Helper interface for serializing/deserializing the generic {@link Entity} DTO to/from its actual domain object
- * representation. 
- * 
+ * representation.
+ *
  * @author jfischer
  * @see {@link BasicPersistenceModule}
  * @see {@link MapStructurePersistenceModule}
@@ -47,13 +47,13 @@ import java.util.Map;
 public interface RecordHelper extends DataFormatProvider {
 
     List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective, CriteriaTransferObject cto,
-                                                 String ceilingEntityFullyQualifiedClassname,
-                                                 Map<String, FieldMetadata> mergedProperties);
+                                          String ceilingEntityFullyQualifiedClassname,
+                                          Map<String, FieldMetadata> mergedProperties);
 
     List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective, CriteriaTransferObject cto,
-                                                     String ceilingEntityFullyQualifiedClassname,
-                                                     Map<String, FieldMetadata> mergedUnfilteredProperties,
-                                                     RestrictionFactory customRestrictionFactory);
+                                          String ceilingEntityFullyQualifiedClassname,
+                                          Map<String, FieldMetadata> mergedUnfilteredProperties,
+                                          RestrictionFactory customRestrictionFactory);
 
     /**
      * Based on retrieved persistent entities and entity metadata, construct data transfer object instances to represent these records
@@ -65,43 +65,43 @@ public interface RecordHelper extends DataFormatProvider {
     Entity[] getRecords(FetchExtractionRequest fetchExtractionRequest);
 
     /**
-     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead
      * @param primaryMergedProperties
      * @param records
      * @param alternateMergedProperties
      * @param pathToTargetObject
      * @param customCriteria
      * @return
+     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead
      */
     @Deprecated
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records,
-                               Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject,
-                               String[] customCriteria);
+                        Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject,
+                        String[] customCriteria);
 
     /**
-     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead
      * @param primaryMergedProperties
      * @param records
      * @param alternateMergedProperties
      * @param pathToTargetObject
      * @return
+     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead
      */
     @Deprecated
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
 
     /**
-     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead.
      * @param primaryMergedProperties
      * @param records
      * @return
+     * @deprecated use {@link #getRecords(FetchExtractionRequest)} instead.
      */
     @Deprecated
     Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<? extends Serializable> records);
 
     Entity[] getRecords(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, List<? extends Serializable> records);
-    
+
     Entity getRecord(Map<String, FieldMetadata> primaryMergedProperties, Serializable record, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject);
-    
+
     Entity getRecord(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, Serializable record);
 
     /**
@@ -111,30 +111,30 @@ public interface RecordHelper extends DataFormatProvider {
      * validation fails, then the instance is left unchanged and a {@link ValidationException} is thrown. In the common
      * case, this exception bubbles up to the {@link DynamicRemoteService} which catches the exception and communicates
      * appropriately to the invoker</p>
-     * 
+     *
      * @param instance
      * @param entity
      * @param mergedProperties
      * @param setId
      * @param validateUnsubmittedProperties if set to true, will ignore validation for properties that weren't submitted
      *                                      along with the entity
-     * @throws ValidationException if after populating <b>instance</b> via the values in <b>entity</b> then
-     * {@link EntityValidatorService#validate(Entity, Serializable, Map)} returns false
      * @return <b>instance</b> populated with the property values from <b>entity</b> according to the metadata specified
      * in <b>mergedProperties</b>
+     * @throws ValidationException if after populating <b>instance</b> via the values in <b>entity</b> then
+     *                             {@link EntityValidatorService#validate(Entity, Serializable, Map)} returns false
      * @see {@link EntityValidatorService}
      */
     Serializable createPopulatedInstance(Serializable instance, Entity entity,
-            Map<String, FieldMetadata> mergedProperties, Boolean setId, Boolean validateUnsubmittedProperties) throws ValidationException;
+                                         Map<String, FieldMetadata> mergedProperties, Boolean setId, Boolean validateUnsubmittedProperties) throws ValidationException;
 
     /**
      * Delegates to the overloaded method with validateUnsubmittedProperties set to true.
-     * 
+     *
      * @see #createPopulatedInstance(Serializable, Entity, Map, Boolean, Boolean)
      */
     Serializable createPopulatedInstance(Serializable instance, Entity entity,
-            Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException;
-    
+                                         Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException;
+
     Object getPrimaryKey(Entity entity, Map<String, FieldMetadata> mergedProperties);
 
     /**
@@ -144,9 +144,9 @@ public interface RecordHelper extends DataFormatProvider {
      * @return
      */
     String getIdPropertyName(String entityClass);
-    
+
     Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective);
-    
+
     FieldManager getFieldManager();
 
     FieldManager getFieldManager(boolean cleanFieldManger);
@@ -155,8 +155,9 @@ public interface RecordHelper extends DataFormatProvider {
 
     /**
      * Validates the {@link Entity} based on the validators associated with each property
-     * @param entity the instance that is attempted to be saved from. Implementers should set {@link Entity#isValidationFailure()}
-     * accordingly as a result of the validation
+     *
+     * @param entity                        the instance that is attempted to be saved from. Implementers should set {@link Entity#isValidationFailure()}
+     *                                      accordingly as a result of the validation
      * @param populatedInstance
      * @param mergedProperties
      * @param validateUnsubmittedProperties if set to true, will ignore validation for properties that weren't submitted
@@ -168,7 +169,7 @@ public interface RecordHelper extends DataFormatProvider {
 
     /**
      * Delegates to the overloaded method with validateUnsubmittedProperties set to true.
-     * 
+     *
      * @see #validate(Entity, Serializable, Map, boolean)
      */
     boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties);
@@ -176,10 +177,10 @@ public interface RecordHelper extends DataFormatProvider {
     /**
      * Retrieve a total count of persistent entities given some basic metadata and restrictions
      *
-     * @deprecated use {@link #getTotalRecords(FetchRequest)} instead
      * @param ceilingEntity
      * @param filterMappings
      * @return
+     * @deprecated use {@link #getTotalRecords(FetchRequest)} instead
      */
     @Deprecated
     Integer getTotalRecords(String ceilingEntity, List<FilterMapping> filterMappings);
@@ -197,12 +198,12 @@ public interface RecordHelper extends DataFormatProvider {
     /**
      * Retrieve a paged list of persistent entity instances given some basic metadata and restrictions.
      *
-     * @deprecated use {@link #getPersistentRecords(FetchRequest)} instead
      * @param ceilingEntity
      * @param filterMappings
      * @param firstResult
      * @param maxResults
      * @return
+     * @deprecated use {@link #getPersistentRecords(FetchRequest)} instead
      */
     @Deprecated
     List<Serializable> getPersistentRecords(String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults);
@@ -222,7 +223,7 @@ public interface RecordHelper extends DataFormatProvider {
     /**
      * Returns a string representation of the field on the given instance specified by the property name. The propertyName
      * should start from the root of the given instance
-     * 
+     *
      * @param instance
      * @param propertyName
      * @return

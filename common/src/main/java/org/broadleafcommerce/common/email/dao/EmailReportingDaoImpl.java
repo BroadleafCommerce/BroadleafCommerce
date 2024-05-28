@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,23 +36,25 @@ import jakarta.persistence.PersistenceContext;
 
 /**
  * @author jfischer
- *
  */
 @Repository("blEmailReportingDao")
 public class EmailReportingDaoImpl implements EmailReportingDao {
+
     private static final Log LOG = LogFactory.getLog(EmailReportingDaoImpl.class);
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     /* (non-Javadoc)
      * @see WebReportingDao#createTracking(java.lang.String, java.lang.String, java.lang.String)
      */
     public Long createTracking(String emailAddress, String type, String extraValue) {
-        EmailTracking tracking = (EmailTracking) entityConfiguration.createEntityInstance("org.broadleafcommerce.common.email.domain.EmailTracking");
+        EmailTracking tracking = (EmailTracking) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.common.email.domain.EmailTracking"
+        );
         tracking.setDateSent(SystemTime.asDate());
         tracking.setEmailAddress(emailAddress);
         tracking.setType(type);
@@ -63,25 +65,32 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
     }
 
     public EmailTarget createTarget() {
-        EmailTarget target = (EmailTarget) entityConfiguration.createEntityInstance("org.broadleafcommerce.common.email.domain.EmailTarget");
+        EmailTarget target = (EmailTarget) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.common.email.domain.EmailTarget"
+        );
         return target;
     }
 
     @Override
     public void clearAllRecordsOlderThan(LocalDateTime date) {
         int deleteCount = em.createNativeQuery("DELETE FROM BLC_EMAIL_TRACKING WHERE DATE_SENT <= ?1")
-            .setParameter(1, Timestamp.valueOf(date))
-            .executeUpdate();
+                .setParameter(1, Timestamp.valueOf(date))
+                .executeUpdate();
         LOG.info("Deleted " + deleteCount + " records from BLC_EMAIL_TRACKING with date_sent less than " + date);
     }
 
     @SuppressWarnings("unchecked")
     public EmailTracking retrieveTracking(Long emailId) {
-        return (EmailTracking) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.common.email.domain.EmailTracking"), emailId);
+        return (EmailTracking) em.find(
+                entityConfiguration.lookupEntityClass("org.broadleafcommerce.common.email.domain.EmailTracking"),
+                emailId
+        );
     }
 
     public void recordOpen(Long emailId, String userAgent) {
-        EmailTrackingOpens opens = (EmailTrackingOpens) entityConfiguration.createEntityInstance("org.broadleafcommerce.common.email.domain.EmailTrackingOpens");
+        EmailTrackingOpens opens = (EmailTrackingOpens) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.common.email.domain.EmailTrackingOpens"
+        );
         opens.setEmailTracking(retrieveTracking(emailId));
         opens.setDateOpened(SystemTime.asDate());
         opens.setUserAgent(userAgent);
@@ -90,7 +99,9 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
     }
 
     public void recordClick(Long emailId, String customerId, String destinationUri, String queryString) {
-        EmailTrackingClicks clicks = (EmailTrackingClicks) entityConfiguration.createEntityInstance("org.broadleafcommerce.common.email.domain.EmailTrackingClicks");
+        EmailTrackingClicks clicks = (EmailTrackingClicks) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.common.email.domain.EmailTrackingClicks"
+        );
         clicks.setEmailTracking(retrieveTracking(emailId));
         clicks.setDateClicked(SystemTime.asDate());
         clicks.setDestinationUri(destinationUri);
@@ -99,4 +110,5 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
 
         em.persist(clicks);
     }
+
 }

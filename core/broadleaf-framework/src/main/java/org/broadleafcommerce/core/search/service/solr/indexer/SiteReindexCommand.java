@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,17 +19,20 @@ package org.broadleafcommerce.core.search.service.solr.indexer;
 
 import org.springframework.util.Assert;
 
+import java.io.Serial;
+
 public class SiteReindexCommand extends SolrUpdateCommand {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private final Long siteId;
-    
+
     public SiteReindexCommand(Long siteId) {
         Assert.notNull(siteId, "siteId cannot be null.");
         this.siteId = siteId;
     }
-    
+
     public Long getSiteId() {
         return siteId;
     }
@@ -54,6 +57,5 @@ public class SiteReindexCommand extends SolrUpdateCommand {
         }
         return false;
     }
-    
-    
+
 }

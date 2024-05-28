@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,7 +50,7 @@ import jakarta.annotation.Resource;
 
 /**
  * If the field is translatable, then this method prefixes the field with supported locales.
- * 
+ *
  * @author bpolster
  */
 @Service("blI18nSolrIndexServiceExtensionHandler")
@@ -79,11 +79,16 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
     }
 
     @Override
-    public ExtensionResultStatusType addPropertyValues(Indexable indexable, Field field, FieldType fieldType,
-            Map<String, Object> values, String propertyName, List<Locale> locales)
-            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public ExtensionResultStatusType addPropertyValues(
+            Indexable indexable,
+            Field field,
+            FieldType fieldType,
+            Map<String, Object> values,
+            String propertyName,
+            List<Locale> locales
+    ) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
-        Set<String> processedLocaleCodes = new HashSet<String>();
+        Set<String> processedLocaleCodes = new HashSet<>();
 
         ExtensionResultStatusType result = ExtensionResultStatusType.NOT_HANDLED;
         if (field.getTranslatable() && getTranslationEnabled()) {
@@ -131,8 +136,9 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
 
     /**
      * If the field is translatable, take the current locale and add that as a prefix.
-     * @param context
+     *
      * @param field
+     * @param prefixList
      * @return
      */
     protected ExtensionResultStatusType getLocalePrefix(Field field, List<String> prefixList) {
@@ -158,16 +164,16 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
 
     @Override
     public ExtensionResultStatusType startBatchEvent(List<? extends Indexable> indexables) {
-        List<String> skuIds = new ArrayList<String>(indexables.size());
-        List<String> productIds = new ArrayList<String>();
-        List<String> skuAttributeIds = new ArrayList<String>();
-        List<String> productAttributeIds = new ArrayList<String>();
+        List<String> skuIds = new ArrayList<>(indexables.size());
+        List<String> productIds = new ArrayList<>();
+        List<String> skuAttributeIds = new ArrayList<>();
+        List<String> productAttributeIds = new ArrayList<>();
         for (Indexable indexable : indexables) {
             Sku sku = null;
             if (Product.class.isAssignableFrom(indexable.getClass())) {
                 Product product = (Product) indexable;
                 productIds.add(product.getId().toString());
-                for (Map.Entry<String, ProductAttribute> attributeEntry :  product.getProductAttributes().entrySet()) {
+                for (Map.Entry<String, ProductAttribute> attributeEntry : product.getProductAttributes().entrySet()) {
                     ProductAttribute attribute = attributeEntry.getValue();
                     productAttributeIds.add(attribute.getId().toString());
                 }
@@ -176,7 +182,7 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
 
             if (sku != null) {
                 skuIds.add(sku.getId().toString());
-                for (Map.Entry<String, SkuAttribute> attributeEntry :  sku.getSkuAttributes().entrySet()) {
+                for (Map.Entry<String, SkuAttribute> attributeEntry : sku.getSkuAttributes().entrySet()) {
                     SkuAttribute attribute = attributeEntry.getValue();
                     skuAttributeIds.add(attribute.getId().toString());
                 }
@@ -194,7 +200,9 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
     }
 
     protected void addEntitiesToTranslationCache(List<String> entityIds, TranslatedEntity translatedEntity) {
-        List<Translation> translations = translationService.findAllTranslationEntries(translatedEntity, ResultType.STANDARD, entityIds);
+        List<Translation> translations = translationService.findAllTranslationEntries(
+                translatedEntity, ResultType.STANDARD, entityIds
+        );
         TranslationBatchReadCache.addToCache(translations);
     }
 
@@ -208,4 +216,5 @@ public class I18nSolrIndexServiceExtensionHandler extends AbstractSolrIndexServi
     public int getPriority() {
         return 1000;
     }
+
 }

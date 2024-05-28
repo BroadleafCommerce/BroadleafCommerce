@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,7 +36,12 @@ import jakarta.persistence.OneToMany;
  */
 public abstract class AbstractFieldPersistenceProvider implements FieldPersistenceProvider {
 
-    protected Class<?> getListFieldType(Serializable instance, FieldManager fieldManager, Property property, PersistenceManager persistenceManager) {
+    protected Class<?> getListFieldType(
+            Serializable instance,
+            FieldManager fieldManager,
+            Property property,
+            PersistenceManager persistenceManager
+    ) {
         Class<?> returnType = null;
         Field field = fieldManager.getField(instance.getClass(), property.getName());
         Type type = field.getGenericType();
@@ -45,22 +50,30 @@ public abstract class AbstractFieldPersistenceProvider implements FieldPersisten
             Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[0];
             Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
             if (!ArrayUtils.isEmpty(entities)) {
-                returnType = entities[entities.length-1];
+                returnType = entities[entities.length - 1];
             }
         }
         return returnType;
     }
 
-    protected Class<?> getMapFieldType(Serializable instance, FieldManager fieldManager, Property property, PersistenceManager persistenceManager) {
+    protected Class<?> getMapFieldType(
+            Serializable instance,
+            FieldManager fieldManager,
+            Property property,
+            PersistenceManager persistenceManager
+    ) {
         Class<?> returnType = null;
-        Field field = fieldManager.getField(instance.getClass(), property.getName().substring(0, property.getName().indexOf(FieldManager.MAPFIELDSEPARATOR)));
+        Field field = fieldManager.getField(
+                instance.getClass(),
+                property.getName().substring(0, property.getName().indexOf(FieldManager.MAPFIELDSEPARATOR))
+        );
         Type type = field.getGenericType();
         if (type instanceof ParameterizedType) {
             ParameterizedType pType = (ParameterizedType) type;
             Class<?> clazz = (Class<?>) pType.getActualTypeArguments()[1];
             Class<?>[] entities = persistenceManager.getDynamicEntityDao().getAllPolymorphicEntitiesFromCeiling(clazz);
             if (!ArrayUtils.isEmpty(entities)) {
-                returnType = entities[entities.length-1];
+                returnType = entities[entities.length - 1];
             }
         }
         return returnType;

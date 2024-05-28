@@ -10,21 +10,19 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.order.service.call;
 
-
 /**
- * ActivityMessageDTO will hold messages that will be  passed between activities/workflows.  As opposed to 
- * 
+ * ActivityMessageDTO will hold messages that will be  passed between activities/workflows.  As opposed to
+ * <p>
  * Created by priyesh patel.
  */
 public class ActivityMessageDTO {
-
 
     protected String message;
     protected Integer priority;
@@ -35,8 +33,8 @@ public class ActivityMessageDTO {
         this.message = message;
         this.type = type;
         this.priority = priority;
-
     }
+
     public String getMessage() {
         return message;
     }

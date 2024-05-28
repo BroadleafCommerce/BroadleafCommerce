@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -58,7 +58,10 @@ public class OrderItemRequestValidationServiceImpl implements OrderItemRequestVa
     protected Environment env;
 
     @Override
-    public boolean satisfiesMinQuantityCondition(OrderItemRequestDTO orderItemRequestDTO, ProcessContext<CartOperationRequest> context) {
+    public boolean satisfiesMinQuantityCondition(
+            OrderItemRequestDTO orderItemRequestDTO,
+            ProcessContext<CartOperationRequest> context
+    ) {
         if (minOrderQuantityCheckIsEnabled()) {
             Sku sku = determineSku(orderItemRequestDTO, (ActivityMessages) context);
 
@@ -99,7 +102,7 @@ public class OrderItemRequestValidationServiceImpl implements OrderItemRequestVa
 
             if (product == null) {
                 throw new IllegalArgumentException("Product was specified but no matching product was found with the productId ("
-                                                   + orderItemRequestDTO.getProductId() + ")");
+                        + orderItemRequestDTO.getProductId() + ")");
             }
         }
 
@@ -107,14 +110,22 @@ public class OrderItemRequestValidationServiceImpl implements OrderItemRequestVa
     }
 
     @Override
-    public Sku determineSku(OrderItemRequestDTO orderItemRequestDTO, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
+    public Sku determineSku(
+            OrderItemRequestDTO orderItemRequestDTO,
+            ActivityMessages messages
+    ) throws RequiredAttributeNotProvidedException {
         Product product = determineProduct(orderItemRequestDTO);
 
         return determineSku(product, orderItemRequestDTO.getSkuId(), orderItemRequestDTO.getItemAttributes(), messages);
     }
 
     @Override
-    public Sku determineSku(Product product, Long skuId, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
+    public Sku determineSku(
+            Product product,
+            Long skuId,
+            Map<String, String> attributeValues,
+            ActivityMessages messages
+    ) throws RequiredAttributeNotProvidedException {
         Sku sku = null;
 
         //If sku browsing is enabled, product option data will not be available.
@@ -143,7 +154,11 @@ public class OrderItemRequestValidationServiceImpl implements OrderItemRequestVa
         return CollectionUtils.isEmpty(product.getAdditionalSkus()) || product.getCanSellWithoutOptions();
     }
 
-    protected Sku findMatchingSku(Product product, Map<String, String> attributeValues, ActivityMessages messages) throws RequiredAttributeNotProvidedException {
+    protected Sku findMatchingSku(
+            Product product,
+            Map<String, String> attributeValues,
+            ActivityMessages messages
+    ) throws RequiredAttributeNotProvidedException {
         Map<String, String> attributesRelevantToFindMatchingSku = new HashMap<>();
 
         // Verify that required product-option values were set.
@@ -176,7 +191,12 @@ public class OrderItemRequestValidationServiceImpl implements OrderItemRequestVa
         return null;
     }
 
-    protected boolean shouldValidateWithException(boolean isRequired, boolean isAddOrNoneType, String attributeValue, boolean hasStrategy) {
+    protected boolean shouldValidateWithException(
+            boolean isRequired,
+            boolean isAddOrNoneType,
+            String attributeValue,
+            boolean hasStrategy
+    ) {
         return (!hasStrategy || isAddOrNoneType) && (isRequired || StringUtils.isNotEmpty(attributeValue));
     }
 
@@ -185,7 +205,9 @@ public class OrderItemRequestValidationServiceImpl implements OrderItemRequestVa
         List<Long> possibleSkuIds = new ArrayList<>();
 
         for (Entry<String, String> entry : MapUtils.emptyIfNull(attributeValuesForSku).entrySet()) {
-            possibleSkuIds = productOptionValidationService.findSkuIdsForProductOptionValues(product.getId(), entry.getKey(), entry.getValue(), possibleSkuIds);
+            possibleSkuIds = productOptionValidationService.findSkuIdsForProductOptionValues(
+                    product.getId(), entry.getKey(), entry.getValue(), possibleSkuIds
+            );
 
             if (CollectionUtils.isEmpty(possibleSkuIds)) {
                 break;

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,322 +37,328 @@ import java.util.List;
  * also means that in the common case for Orders that are being delivered to a single Address and
  * a single way (shipping everything express; ie a single FulfillmentOption) then there will be
  * only 1 FulfillmentGroup for that Order.
- * 
+ *
  * @author Phillip Verheyden
  * @see {@link Order}, {@link FulfillmentOption}, {@link Address}, {@link FulfillmentGroupItem}
  */
 public interface FulfillmentGroup extends Serializable, MultiTenantCloneable<FulfillmentGroup> {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public Order getOrder();
+    Order getOrder();
 
-    public void setOrder(Order order);
-    
-    public void setSequence(Integer sequence);
+    void setOrder(Order order);
 
-    public Integer getSequence();
+    Integer getSequence();
 
-    public FulfillmentOption getFulfillmentOption();
+    void setSequence(Integer sequence);
 
-    public void setFulfillmentOption(FulfillmentOption fulfillmentOption);
+    FulfillmentOption getFulfillmentOption();
 
-    public Address getAddress();
+    void setFulfillmentOption(FulfillmentOption fulfillmentOption);
 
-    public void setAddress(Address address);
+    Address getAddress();
+
+    void setAddress(Address address);
 
     /**
      * @deprecated use {@link Address#getPhonePrimary()} instead.
      */
     @Deprecated
-    public Phone getPhone();
+    Phone getPhone();
 
     /**
-     * @deprecated use {@link Address#getPhonePrimary()} instead
      * @param phone
+     * @deprecated use {@link Address#getPhonePrimary()} instead
      */
     @Deprecated
-    public void setPhone(Phone phone);
+    void setPhone(Phone phone);
 
-    public List<FulfillmentGroupItem> getFulfillmentGroupItems();
+    List<FulfillmentGroupItem> getFulfillmentGroupItems();
 
-    public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems);
+    void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems);
 
-    public void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem);
+    void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem);
 
     /**
+     * @see {@link FulfillmentOption}
      * @deprecated Should use {@link #getFulfillmentOption()} instead
-     * @see {@link FulfillmentOption}
      */
     @Deprecated
-    public String getMethod();
+    String getMethod();
 
     /**
+     * @see {@link FulfillmentOption}
      * @deprecated Should use {@link #setFulfillmentOption()} instead
-     * @see {@link FulfillmentOption}
      */
     @Deprecated
-    public void setMethod(String fulfillmentMethod);
+    void setMethod(String fulfillmentMethod);
 
     /**
-     * Returns the retail price for this fulfillmentGroup.   The retail and sale concepts used 
-     * for item pricing are not generally used with fulfillmentPricing but supported 
+     * Returns the retail price for this fulfillmentGroup.   The retail and sale concepts used
+     * for item pricing are not generally used with fulfillmentPricing but supported
      * nonetheless.    Typically only a retail price would be set on a fulfillment group.
+     *
      * @return
      */
-    public Money getRetailFulfillmentPrice();
+    Money getRetailFulfillmentPrice();
 
     /**
-     * Sets the retail price for this fulfillmentGroup.   
+     * Sets the retail price for this fulfillmentGroup.
+     *
      * @param fulfillmentPrice
      */
-    public void setRetailFulfillmentPrice(Money fulfillmentPrice);
+    void setRetailFulfillmentPrice(Money fulfillmentPrice);
 
     /**
-     * Returns the sale price for this fulfillmentGroup.    
+     * Returns the sale price for this fulfillmentGroup.
      * Typically this will be null or equal to the retailFulfillmentPrice
+     *
      * @return
      */
-    public Money getSaleFulfillmentPrice();
+    Money getSaleFulfillmentPrice();
 
     /**
      * Sets the sale price for this fulfillmentGroup.  Typically not used.
-     * @see #setRetailFulfillmentPrice(Money)
+     *
      * @param fulfillmentPrice
+     * @see #setRetailFulfillmentPrice(Money)
      */
-    public void setSaleFulfillmentPrice(Money fulfillmentPrice);
+    void setSaleFulfillmentPrice(Money fulfillmentPrice);
 
     /**
-     * Gets the price to charge for this fulfillmentGroup.   Includes the effects of any adjustments such as those that 
+     * Gets the price to charge for this fulfillmentGroup.   Includes the effects of any adjustments such as those that
      * might have been applied by the promotion engine (e.g. free shipping)
+     *
      * @return
      */
-    public Money getFulfillmentPrice();
+    Money getFulfillmentPrice();
 
     /**
      * Sets the price to charge for this fulfillmentGroup.  Typically set internally by the Broadleaf pricing and
      * promotion engines.
+     *
      * @return
      */
-    public void setFulfillmentPrice(Money fulfillmentPrice);
+    void setFulfillmentPrice(Money fulfillmentPrice);
 
     /**
+     * @return
      * @deprecated - use {@link #getRetailFulfillmentPrice()} instead.   Deprecated as the price might be for other
      * fulfillment types such as PickUpAtStore fees or download fees.
-     * @return
      */
     @Deprecated
-    public Money getRetailShippingPrice();
+    Money getRetailShippingPrice();
 
     /**
+     * @return
      * @deprecated - use {@link #setRetailFulfillmentPrice(Money)} instead.
-     * @return
      */
     @Deprecated
-    public void setRetailShippingPrice(Money retailShippingPrice);
+    void setRetailShippingPrice(Money retailShippingPrice);
 
     /**
+     * @return
      * @deprecated - use {@link #getSaleFulfillmentPrice()} instead.
-     * @return
      */
     @Deprecated
-    public Money getSaleShippingPrice();
+    Money getSaleShippingPrice();
 
     /**
-     * @deprecated - use {@link #setSaleFulfillmentPrice(Money)} instead.
      * @param saleShippingPrice
+     * @deprecated - use {@link #setSaleFulfillmentPrice(Money)} instead.
      */
     @Deprecated
-    public void setSaleShippingPrice(Money saleShippingPrice);
+    void setSaleShippingPrice(Money saleShippingPrice);
 
     /**
-     * @deprecated - use {@link #getFulfillmentPrice()} instead.
      * @return
+     * @deprecated - use {@link #getFulfillmentPrice()} instead.
      */
     @Deprecated
-    public Money getShippingPrice();
+    Money getShippingPrice();
 
     /**
-     * @deprecated - use {@link #setRetailFulfillmentPrice(Money)} instead.
      * @param shippingPrice
+     * @deprecated - use {@link #setRetailFulfillmentPrice(Money)} instead.
      */
     @Deprecated
-    public void setShippingPrice(Money shippingPrice);
+    void setShippingPrice(Money shippingPrice);
 
-    public String getReferenceNumber();
+    String getReferenceNumber();
 
-    public void setReferenceNumber(String referenceNumber);
+    void setReferenceNumber(String referenceNumber);
 
-    public FulfillmentType getType();
+    FulfillmentType getType();
 
     void setType(FulfillmentType type);
 
-    public List<CandidateFulfillmentGroupOffer> getCandidateFulfillmentGroupOffers();
+    List<CandidateFulfillmentGroupOffer> getCandidateFulfillmentGroupOffers();
 
-    public void setCandidateFulfillmentGroupOffer(List<CandidateFulfillmentGroupOffer> candidateOffers);
+    void setCandidateFulfillmentGroupOffer(List<CandidateFulfillmentGroupOffer> candidateOffers);
 
-    public void addCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateOffer);
+    void addCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateOffer);
 
-    public void removeAllCandidateOffers();
+    void removeAllCandidateOffers();
 
-    public List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments();
+    List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments();
+
+    void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments);
 
     /**
      * Returns a List of FulfillmentGroupAdjustment originating from FUTURE_CREDIT Offers.
-     * 
+     * <p>
      * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
      *
      * @return a List of FulfillmentGroupAdjustment
      */
     List<FulfillmentGroupAdjustment> getFutureCreditFulfillmentGroupAdjustments();
 
-    public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments);
+    void removeAllAdjustments();
 
-    public void removeAllAdjustments();
-    
     /**
-     * Gets a list of TaxDetail objects, which are taxes that apply directly to this fulfillment group. 
+     * Gets a list of TaxDetail objects, which are taxes that apply directly to this fulfillment group.
      * An example of a such a tax would be a shipping tax.
-     * 
+     *
      * @return a list of taxes that apply to this fulfillment group
      */
-    public List<TaxDetail> getTaxes();
+    List<TaxDetail> getTaxes();
 
     /**
-     * Gets the list of TaxDetail objects, which are taxes that apply directly to this fulfillment group. 
+     * Gets the list of TaxDetail objects, which are taxes that apply directly to this fulfillment group.
      * An example of a such a tax would be a shipping tax.
-     * 
+     *
      * @param taxes the list of taxes on this fulfillment group
      */
-    public void setTaxes(List<TaxDetail> taxes);
+    void setTaxes(List<TaxDetail> taxes);
 
     /**
-     * Gets the total tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * Gets the total tax for this fulfillment group, which is the sum of the taxes on all fulfillment
      * group items, fees, and taxes on this fulfillment group itself (such as a shipping tax).
      * This total is calculated in the TotalActivity stage of the pricing workflow.
      *
      * @return the total tax for the fulfillment group
      */
-    public Money getTotalTax();
+    Money getTotalTax();
 
     /**
-     * Sets the total tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * Sets the total tax for this fulfillment group, which is the sum of the taxes on all fulfillment
      * group items, fees, and taxes on this fulfillment group itself (such as a shipping tax).
      * This total should only be set during the TotalActivity stage of the pricing workflow.
      *
-     * @param the total tax for this fulfillment group
+     * @param totalTax the total tax for this fulfillment group
      */
-    public void setTotalTax(Money totalTax);
-    
+    void setTotalTax(Money totalTax);
+
     /**
-     * Gets the total item tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * Gets the total item tax for this fulfillment group, which is the sum of the taxes on all fulfillment
      * group items. This total is calculated in the TotalActivity stage of the pricing workflow.
      *
      * @return the total tax for this fulfillment group
      */
-    public Money getTotalItemTax();
+    Money getTotalItemTax();
 
     /**
-     * Sets the total item tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * Sets the total item tax for this fulfillment group, which is the sum of the taxes on all fulfillment
      * group items. This total should only be set during the TotalActivity stage of the pricing workflow.
      *
-     * @param the total tax for this fulfillment group
+     * @param totalItemTax the total tax for this fulfillment group
      */
-    public void setTotalItemTax(Money totalItemTax);
-    
+    void setTotalItemTax(Money totalItemTax);
+
     /**
-     * Gets the total fee tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * Gets the total fee tax for this fulfillment group, which is the sum of the taxes on all fulfillment
      * group fees. This total is calculated in the TotalActivity stage of the pricing workflow.
      *
      * @return the total tax for this fulfillment group
      */
-    public Money getTotalFeeTax();
+    Money getTotalFeeTax();
 
     /**
-     * Sets the total fee tax for this fulfillment group, which is the sum of the taxes on all fulfillment 
+     * Sets the total fee tax for this fulfillment group, which is the sum of the taxes on all fulfillment
      * group fees. This total should only be set during the TotalActivity stage of the pricing workflow.
      *
-     * @param the total tax for this fulfillment group
+     * @param totalFeeTax the total tax for this fulfillment group
      */
-    public void setTotalFeeTax(Money totalFeeTax);
-    
+    void setTotalFeeTax(Money totalFeeTax);
+
     /**
-     * Gets the total fulfillment group tax for this fulfillment group, which is the sum of the taxes 
-     * on this fulfillment group itself (such as a shipping tax) only. It does not include the taxes on 
+     * Gets the total fulfillment group tax for this fulfillment group, which is the sum of the taxes
+     * on this fulfillment group itself (such as a shipping tax) only. It does not include the taxes on
      * items or fees in this fulfillment group. This total is calculated in the TotalActivity stage of the pricing workflow.
      *
      * @return the total tax for this fulfillment group
      */
-    public Money getTotalFulfillmentGroupTax();
+    Money getTotalFulfillmentGroupTax();
 
     /**
-     * Sets the total fulfillment group tax for this fulfillment group, which is the sum of the taxes 
-     * on this fulfillment group itself (such as a shipping tax) only. It does not include the taxes on 
+     * Sets the total fulfillment group tax for this fulfillment group, which is the sum of the taxes
+     * on this fulfillment group itself (such as a shipping tax) only. It does not include the taxes on
      * items or fees in this fulfillment group. This total should only be set during the TotalActivity stage of the pricing workflow.
      *
-     * @param the total tax for this fulfillment group
+     * @param totalFulfillmentGroupTax the total tax for this fulfillment group
      */
-    public void setTotalFulfillmentGroupTax(Money totalFulfillmentGroupTax);
+    void setTotalFulfillmentGroupTax(Money totalFulfillmentGroupTax);
 
-    public String getDeliveryInstruction();
+    String getDeliveryInstruction();
 
-    public void setDeliveryInstruction(String deliveryInstruction);
+    void setDeliveryInstruction(String deliveryInstruction);
 
-    public PersonalMessage getPersonalMessage();
+    PersonalMessage getPersonalMessage();
 
-    public void setPersonalMessage(PersonalMessage personalMessage);
+    void setPersonalMessage(PersonalMessage personalMessage);
 
-    public boolean isPrimary();
+    boolean isPrimary();
 
-    public void setPrimary(boolean primary);
+    void setPrimary(boolean primary);
 
-    public Money getMerchandiseTotal();
+    Money getMerchandiseTotal();
 
-    public void setMerchandiseTotal(Money merchandiseTotal);
+    void setMerchandiseTotal(Money merchandiseTotal);
 
-    public Money getTotal();
+    Money getTotal();
 
-    public void setTotal(Money orderTotal);
+    void setTotal(Money orderTotal);
 
-    public FulfillmentGroupStatusType getStatus();
+    FulfillmentGroupStatusType getStatus();
 
-    public void setStatus(FulfillmentGroupStatusType status);
-    
-    public List<FulfillmentGroupFee> getFulfillmentGroupFees();
+    void setStatus(FulfillmentGroupStatusType status);
 
-    public void setFulfillmentGroupFees(List<FulfillmentGroupFee> fulfillmentGroupFees);
+    List<FulfillmentGroupFee> getFulfillmentGroupFees();
 
-    public void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee);
+    void setFulfillmentGroupFees(List<FulfillmentGroupFee> fulfillmentGroupFees);
 
-    public void removeAllFulfillmentGroupFees();
+    void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee);
 
-    public Boolean isShippingPriceTaxable();
+    void removeAllFulfillmentGroupFees();
 
-    public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable);
+    Boolean isShippingPriceTaxable();
+
+    void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable);
 
     /**
+     * @see {@link FulfillmentOption}
      * @deprecated Should use {@link #getFulfillmentOption()} instead
-     * @see {@link FulfillmentOption}
      */
     @Deprecated
-    public String getService();
+    String getService();
 
     /**
-     * @deprecated Should use {@link #setFulfillmentOption()} instead
      * @see {@link FulfillmentOption}
+     * @deprecated Should use {@link #setFulfillmentOption()} instead
      */
     @Deprecated
-    public void setService(String service);
-    
-    public List<DiscreteOrderItem> getDiscreteOrderItems();
-    
-    public Money getFulfillmentGroupAdjustmentsValue();
+    void setService(String service);
+
+    List<DiscreteOrderItem> getDiscreteOrderItems();
+
+    Money getFulfillmentGroupAdjustmentsValue();
 
     /**
      * Returns the discount value of the applied future credit offers for this fulfillment group.
-     * 
+     * <p>
      * See {@link org.broadleafcommerce.core.offer.domain.Offer#getAdjustmentType()} for more info on future credit
      *
      * @return the discount value of the applied future credit offers for this fulfillment group
@@ -362,13 +368,13 @@ public interface FulfillmentGroup extends Serializable, MultiTenantCloneable<Ful
     /**
      * @return whether or not to override the shipping calculation
      */
-    public Boolean getShippingOverride();
+    Boolean getShippingOverride();
 
     /**
      * Sets whether or not to override the shipping calculation
-     * 
+     *
      * @param shippingOverride
      */
-    public void setShippingOverride(Boolean shippingOverride);
-    
+    void setShippingOverride(Boolean shippingOverride);
+
 }

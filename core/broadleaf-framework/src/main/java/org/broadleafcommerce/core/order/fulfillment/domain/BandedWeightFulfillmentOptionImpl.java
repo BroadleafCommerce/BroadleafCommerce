@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
- * 
  * @author Phillip Verheyden
  */
 @Entity
@@ -44,9 +44,10 @@ import jakarta.persistence.Table;
 @AdminPresentationClass(friendlyName = "Banded Weight Fulfillment Option")
 public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl implements BandedWeightFulfillmentOption {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    @OneToMany(mappedBy="option", targetEntity=FulfillmentWeightBandImpl.class)
+    @OneToMany(mappedBy = "option", targetEntity = FulfillmentWeightBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blFulfillmentOptionElements")
     @AdminPresentationCollection(friendlyName = "BandedWeightFulfillmentOptionBands", excluded = true)
     protected List<FulfillmentWeightBand> bands = new ArrayList<FulfillmentWeightBand>();
@@ -62,8 +63,9 @@ public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl imp
     }
 
     @Override
-    public CreateResponse<BandedWeightFulfillmentOption> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
-            throws CloneNotSupportedException {
+    public CreateResponse<BandedWeightFulfillmentOption> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<BandedWeightFulfillmentOption> createResponse = super.createOrRetrieveCopyInstance(context);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -76,4 +78,5 @@ public class BandedWeightFulfillmentOptionImpl extends FulfillmentOptionImpl imp
 
         return createResponse;
     }
+
 }

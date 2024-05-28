@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -115,7 +115,6 @@ public class OrderDaoImpl implements OrderDao {
         } catch (Exception e) {
             return null;
         }
-
     }
 
     @Override
@@ -162,7 +161,7 @@ public class OrderDaoImpl implements OrderDao {
 
         if (CollectionUtils.isNotEmpty(statuses)) {
             // We only want results that match the orders with the correct status
-            ArrayList<String> statusStrings = new ArrayList<String>();
+            ArrayList<String> statusStrings = new ArrayList<>();
             for (OrderStatus status : statuses) {
                 statusStrings.add(status.getType());
             }
@@ -185,9 +184,9 @@ public class OrderDaoImpl implements OrderDao {
         Root<OrderImpl> order = criteria.from(OrderImpl.class);
         criteria.select(order);
 
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         //If we have a lastID, find the next order after that ID
-        if (lastID !=  null) {
+        if (lastID != null) {
             restrictions.add(builder.gt(order.get("id").as(Long.class), lastID));
         }
         //In order for the "from last ID" approach to work we have to sort by ID ascending
@@ -195,7 +194,7 @@ public class OrderDaoImpl implements OrderDao {
 
         if (CollectionUtils.isNotEmpty(statuses)) {
             // We only want results that match the orders with the correct status
-            List<String> statusStrings = new ArrayList<String>();
+            List<String> statusStrings = new ArrayList<>();
             for (OrderStatus status : statuses) {
                 statusStrings.add(status.getType());
             }
@@ -265,8 +264,7 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getType());
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
-        @SuppressWarnings("rawtypes")
-        final List temp = query.getResultList();
+        @SuppressWarnings("rawtypes") final List temp = query.getResultList();
         if (temp != null && !temp.isEmpty()) {
             order = (Order) temp.get(0);
         }
@@ -306,7 +304,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order create() {
-        final Order order = ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.Order"));
+        final Order order = ((Order) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.core.order.domain.Order"
+        ));
 
         return order;
     }
@@ -455,7 +455,9 @@ public class OrderDaoImpl implements OrderDao {
         q.setParameter("currentTime", System.currentTimeMillis());
         q.setParameter("key", orderLockKey);
         Long orderLockTimeToLive = getDatabaseOrderLockTimeToLive();
-        q.setParameter("timeout", orderLockTimeToLive==-1L?orderLockTimeToLive:System.currentTimeMillis() - orderLockTimeToLive);
+        q.setParameter("timeout", orderLockTimeToLive == -1L
+                ? orderLockTimeToLive
+                : System.currentTimeMillis() - orderLockTimeToLive);
         q.setHint(QueryHints.HINT_CACHEABLE, false);
         int rowsAffected = q.executeUpdate();
 
@@ -489,11 +491,13 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     protected String getOrderLockKey() {
-        return getDatabaseOrderLockSessionAffinity()?ORDER_LOCK_KEY:"NO_KEY";
+        return getDatabaseOrderLockSessionAffinity() ? ORDER_LOCK_KEY : "NO_KEY";
     }
 
     protected Boolean getDatabaseOrderLockSessionAffinity() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("order.lock.database.session.affinity", true);
+        return BLCSystemProperty.resolveBooleanSystemProperty(
+                "order.lock.database.session.affinity", true
+        );
     }
 
     protected Long getDatabaseOrderLockTimeToLive() {
@@ -508,15 +512,16 @@ public class OrderDaoImpl implements OrderDao {
         TypedQuery<Order> query = em.createNamedQuery("BC_READ_ORDERS_BY_EMAIL", Order.class);
         query.setParameter("email", email);
         List<Order> orders = query.getResultList();
-        return orders != null ? orders : new ArrayList<Order>();
+        return orders != null ? orders : new ArrayList<>();
     }
 
     @Override
     public Long readNumberOfOrders() {
-    	 CriteriaBuilder builder = em.getCriteriaBuilder();
-         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
-         criteria.select(builder.count(criteria.from(OrderImpl.class)));
-         TypedQuery<Long> query = em.createQuery(criteria);
-         return query.getSingleResult();
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        criteria.select(builder.count(criteria.from(OrderImpl.class)));
+        TypedQuery<Long> query = em.createQuery(criteria);
+        return query.getSingleResult();
     }
+
 }

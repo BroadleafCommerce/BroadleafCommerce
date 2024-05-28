@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -64,7 +64,7 @@ public @interface AdminPresentationToOneLookup {
      * @return whether or not this field uses caching
      */
     boolean useServerSideInspectionCache() default true;
-    
+
     /**
      * <p>Optional - only required if you want to configure the lookup
      * to be driven by a prepopulated dropdown instead of the standard
@@ -76,26 +76,25 @@ public @interface AdminPresentationToOneLookup {
      * @return the item is looked up via a modal or dropdown
      */
     LookupType lookupType() default LookupType.STANDARD;
-    
-    
+
     /**
      * <p>Optional - by setting this value to true, the admin will identify
      * the properties that are inside the target of this to-one field. </p>
-     * 
+     *
      * <p>Typically, this is done if you want to expose a certain field as an
      * AdminPresentationToOneLookup but also allow filtering on a property that
      * resides inside of the target of this lookup.</p>
-     * 
+     *
      * @return whether or not to force population of the child properties
      */
     boolean forcePopulateChildProperties() default false;
-    
+
     /**
      * <p>Optional - by setting this value to true, the admin will utilize a typeahead
      * based lookup to search for the associated entity. When the value is set to
      * false, the admin will utilize a model that can be used to
      * search to the server for the associated entity.</p>
-     * 
+     *
      * @return whether or not to enable the typeahead lookup feature for this field
      */
     boolean enableTypeaheadLookup() default false;

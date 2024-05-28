@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.site.common.web.filter;
 
 import org.broadleafcommerce.common.util.BLCRequestUtils;
@@ -32,7 +31,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 
 @Component("blEstablishSessionFilter")
 public class EstablishSessionFilter extends AbstractIgnorableFilter {
@@ -59,4 +57,5 @@ public class EstablishSessionFilter extends AbstractIgnorableFilter {
     public int getOrder() {
         return FilterOrdered.PRE_SECURITY_LOW;
     }
+
 }

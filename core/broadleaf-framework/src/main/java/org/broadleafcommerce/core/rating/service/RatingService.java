@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,22 +28,29 @@ import java.util.Map;
 
 public interface RatingService {
 
-    public RatingSummary saveRatingSummary(RatingSummary rating);
-    public void deleteRatingSummary(RatingSummary rating);
-    public RatingSummary readRatingSummary(String itemId, RatingType type);
-    public Map<String, RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type);
-    public void rateItem(String itemId, RatingType type, Customer customer, Double rating);
+    RatingSummary saveRatingSummary(RatingSummary rating);
 
-    public List<ReviewDetail> readReviews(String itemId, RatingType type, int start, int finish, RatingSortType sortBy);
-    public void reviewItem(String itemId, RatingType type, Customer customer, Double rating, String reviewText);
-    public void markReviewHelpful(Long reviewId, Customer customer, Boolean helpful);
-    
+    void deleteRatingSummary(RatingSummary rating);
+
+    RatingSummary readRatingSummary(String itemId, RatingType type);
+
+    Map<String, RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type);
+
+    void rateItem(String itemId, RatingType type, Customer customer, Double rating);
+
+    List<ReviewDetail> readReviews(String itemId, RatingType type, int start, int finish, RatingSortType sortBy);
+
+    void reviewItem(String itemId, RatingType type, Customer customer, Double rating, String reviewText);
+
+    void markReviewHelpful(Long reviewId, Customer customer, Boolean helpful);
+
     /**
      * Reads a ReviewDetail by the given customer and the itemId
+     *
      * @param itemId
      * @param customer
      * @return review, or null if review is not found
      */
-    public ReviewDetail readReviewByCustomerAndItem(Customer customer, String itemId);
+    ReviewDetail readReviewByCustomerAndItem(Customer customer, String itemId);
 
 }

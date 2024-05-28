@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,62 +28,62 @@ public interface SearchFacetRange extends MultiTenantCloneable<SearchFacetRange>
 
     /**
      * Returns the internal id
-     * 
+     *
      * @return the internal id
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the internal id
-     * 
+     *
      * @param id
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Gets the minimum value for this SearchFacetRange
-     * 
+     * <p>
      * Note: The default SearchFacetRangeImpl does not allow this value to be null
-     * 
+     *
      * @return the min value
      */
-    public BigDecimal getMinValue();
+    BigDecimal getMinValue();
 
     /**
      * Sets the minium value for this SearchFacetRange
-     * 
+     *
      * @param minValue
      */
-    public void setMinValue(BigDecimal minValue);
+    void setMinValue(BigDecimal minValue);
 
     /**
      * Gets the maximum value for this SearchFacetRange
-     * 
+     * <p>
      * Note: The default SearchFacetRangeImpl allows this value to be null
-     * 
+     *
      * @return the max value
      */
-    public BigDecimal getMaxValue();
+    BigDecimal getMaxValue();
 
     /**
      * Sets the maximum value for this SearchFacetRange
-     * 
+     *
      * @param maxValue
      */
-    public void setMaxValue(BigDecimal maxValue);
+    void setMaxValue(BigDecimal maxValue);
 
     /**
      * Gets the associated SearchFacet to this range
-     * 
+     *
      * @return the associated SearchFacet
      */
-    public SearchFacet getSearchFacet();
-    
+    SearchFacet getSearchFacet();
+
     /**
      * Sets the associated SearchFacet
-     * 
+     *
      * @param searchFacet
      */
-    public void setSearchFacet(SearchFacet searchFacet);
+    void setSearchFacet(SearchFacet searchFacet);
 
 }

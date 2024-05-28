@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.rest.api.wrapper;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -47,12 +46,13 @@ public abstract class BaseWrapper implements ApplicationContextAware {
     /**
      * Utility method.
      * Traverses the domain object's additional fields, and generates a list of MapElementWrappers with them
-     * @param model  the domain object
+     *
+     * @param model the domain object
      */
     protected List<MapElementWrapper> createElementWrappers(AdditionalFields model) {
 
         if (model.getAdditionalFields() != null && !model.getAdditionalFields().isEmpty()) {
-            List<MapElementWrapper> mapElementWrappers = new ArrayList<MapElementWrapper>();
+            List<MapElementWrapper> mapElementWrappers = new ArrayList<>();
             for (String key : model.getAdditionalFields().keySet()) {
                 MapElementWrapper mapElementWrapper = new MapElementWrapper();
                 mapElementWrapper.setKey(key);
@@ -68,11 +68,12 @@ public abstract class BaseWrapper implements ApplicationContextAware {
     /**
      * Used method, to be used by Wrappers that implement the WrapperAdditionalFields interface.
      * Transfers the additional fields from the wrapper into the domain object
-     * @param model
-     * @param me
+     *
+     * @param from
+     * @param to
      */
     public void transferAdditionalFieldsFromWrapper(WrapperAdditionalFields from, AdditionalFields to) {
-        Map<String, String> destination = new HashMap<String, String>();
+        Map<String, String> destination = new HashMap<>();
         if (CollectionUtils.isNotEmpty(from.getAdditionalFields())) {
             for (MapElementWrapper elem : from.getAdditionalFields()) {
                 destination.put(elem.key, elem.value);

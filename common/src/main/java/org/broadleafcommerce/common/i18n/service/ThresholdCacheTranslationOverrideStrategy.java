@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,25 +39,25 @@ import jakarta.annotation.Resource;
 /**
  * Default {@link TranslationOverrideStrategy}. Should run last and will always return a result. Primarily supports multitenant
  * scenarios with the following characteristics:
-  * <ul>
-  *     <li>Small to medium template translation catalog</li>
-  *     <li>Small to medium number of standard site overrides</li>
-  *     <li>Small or large quantity of individual standard sites</li>
-  * </ul>
+ * <ul>
+ *     <li>Small to medium template translation catalog</li>
+ *     <li>Small to medium number of standard site overrides</li>
+ *     <li>Small or large quantity of individual standard sites</li>
+ * </ul>
  * This strategy tries to efficiently cache all standard site overries and/or all template catalog translations. This is the
  * highest efficiency settings, as all translations are cached on the app tier. However, if the override or template catalog
  * member count exceeds the threshold, the strategy falls back to on demand queries that are cached as they occur. See
  * {@link TranslationSupport#getThresholdForFullCache()} and {@link TranslationSupport#getTemplateThresholdForFullCache()}
  * for more information on these properties and how to set their values.
  *
- * @see SparseTranslationOverrideStrategy
  * @author Jeff Fischer
+ * @see SparseTranslationOverrideStrategy
  */
 @Component("blThresholdCacheTranslationOverrideStrategy")
 @Lazy
 public class ThresholdCacheTranslationOverrideStrategy implements TranslationOverrideStrategy {
 
-    @Resource(name="blStatisticsService")
+    @Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
 
     @Resource(name = "blTranslationDao")
@@ -67,8 +67,14 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
     protected TranslationSupport translationSupport;
 
     @Override
-    public LocalePair getLocaleBasedOverride(String property, TranslatedEntity entityType, String entityId,
-                                             String localeCode, String localeCountryCode, String basicCacheKey) {
+    public LocalePair getLocaleBasedOverride(
+            String property,
+            TranslatedEntity entityType,
+            String entityId,
+            String localeCode,
+            String localeCountryCode,
+            String basicCacheKey
+    ) {
         String specificPropertyKey = property + "_" + localeCountryCode;
         String generalPropertyKey = property + "_" + localeCode;
         Object cacheResult = translationSupport.getCache().get(basicCacheKey);
@@ -77,14 +83,16 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
         if (cacheResult == null) {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
             if (dao.countTranslationEntries(entityType, ResultType.STANDARD_CACHE) < translationSupport.getThresholdForFullCache()) {
-                Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = new HashMap<String, Map<String, StandardCacheItem>>();
-                List<StandardCacheItem> convertedList = dao.readConvertedTranslationEntries(entityType, ResultType.STANDARD_CACHE);
+                Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = new HashMap<>();
+                List<StandardCacheItem> convertedList = dao.readConvertedTranslationEntries(
+                        entityType, ResultType.STANDARD_CACHE
+                );
                 if (!CollectionUtils.isEmpty(convertedList)) {
                     for (StandardCacheItem standardCache : convertedList) {
                         Translation translation = (Translation) standardCache.getCacheItem();
                         String key = translation.getFieldName() + "_" + translation.getLocaleCode();
                         if (!propertyTranslationMap.containsKey(key)) {
-                            propertyTranslationMap.put(key, new HashMap<String, StandardCacheItem>());
+                            propertyTranslationMap.put(key, new HashMap<>());
                         }
                         propertyTranslationMap.get(key).put(translation.getEntityId(), standardCache);
                     }
@@ -95,7 +103,9 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
                 //Translation is dual discriminated by site and catalog, which can make it impossible to find results under normal
                 //circumstances because the two discriminators can cancel eachother out. We use the CATALOG_ONLY ResultType
                 //to force the system to only honor the catalog discrimination during this call.
-                Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.CATALOG_ONLY);
+                Translation translation = dao.readTranslation(
+                        entityType, entityId, property, localeCode, localeCountryCode, ResultType.CATALOG_ONLY
+                );
                 buildSingleItemResponse(response, translation);
                 return response;
             }
@@ -105,9 +115,13 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
         }
         Map<String, Map<String, StandardCacheItem>> propertyTranslationMap = (Map<String, Map<String, StandardCacheItem>>) result;
         // Check For a Specific Standard Site Match (language and country)
-        StandardCacheItem specificTranslation = translationSupport.lookupTranslationFromMap(specificPropertyKey, propertyTranslationMap, entityId);
+        StandardCacheItem specificTranslation = translationSupport.lookupTranslationFromMap(
+                specificPropertyKey, propertyTranslationMap, entityId
+        );
         // Check For a General Match (language and country)
-        StandardCacheItem generalTranslation = translationSupport.lookupTranslationFromMap(generalPropertyKey, propertyTranslationMap, entityId);
+        StandardCacheItem generalTranslation = translationSupport.lookupTranslationFromMap(
+                generalPropertyKey, propertyTranslationMap, entityId
+        );
         response.setSpecificItem(specificTranslation);
         response.setGeneralItem(generalTranslation);
 
@@ -115,31 +129,43 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
     }
 
     @Override
-    public LocalePair getLocaleBasedTemplateValue(String templateCacheKey, String property, TranslatedEntity entityType,
-                                                  String entityId, String localeCode, String localeCountryCode, String specificPropertyKey, String generalPropertyKey) {
+    public LocalePair getLocaleBasedTemplateValue(
+            String templateCacheKey,
+            String property,
+            TranslatedEntity entityType,
+            String entityId,
+            String localeCode,
+            String localeCountryCode,
+            String specificPropertyKey,
+            String generalPropertyKey
+    ) {
         Object cacheResult = translationSupport.getCache().get(templateCacheKey);
         LocalePair response = new LocalePair();
         if (cacheResult == null) {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), false);
             if (dao.countTranslationEntries(entityType, ResultType.TEMPLATE_CACHE) < translationSupport.getTemplateThresholdForFullCache()) {
-                Map<String, Map<String, Translation>> propertyTranslationMap = new HashMap<String, Map<String, Translation>>();
+                Map<String, Map<String, Translation>> propertyTranslationMap = new HashMap<>();
                 List<Translation> translationList = dao.readAllTranslationEntries(entityType, ResultType.TEMPLATE_CACHE);
                 if (!CollectionUtils.isEmpty(translationList)) {
                     for (Translation translation : translationList) {
                         String key = translation.getFieldName() + "_" + translation.getLocaleCode();
                         if (!propertyTranslationMap.containsKey(key)) {
-                            propertyTranslationMap.put(key, new HashMap<String, Translation>());
+                            propertyTranslationMap.put(key, new HashMap<>());
                         }
                         propertyTranslationMap.get(key).put(translation.getEntityId(), translation);
                     }
                 }
                 translationSupport.getCache().put(templateCacheKey, propertyTranslationMap);
-                Translation translation = translationSupport.findBestTemplateTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
+                Translation translation = translationSupport.findBestTemplateTranslation(
+                        specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId
+                );
                 if (translation != null) {
                     buildSingleItemResponse(response, translation);
                 }
             } else {
-                Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.TEMPLATE);
+                Translation translation = dao.readTranslation(
+                        entityType, entityId, property, localeCode, localeCountryCode, ResultType.TEMPLATE
+                );
                 if (translation != null) {
                     buildSingleItemResponse(response, translation);
                 }
@@ -147,7 +173,9 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
         } else {
             statisticsService.addCacheStat(CacheStatType.TRANSLATION_CACHE_HIT_RATE.toString(), true);
             Map<String, Map<String, Translation>> propertyTranslationMap = (Map<String, Map<String, Translation>>) cacheResult;
-            Translation bestTranslation = translationSupport.findBestTemplateTranslation(specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId);
+            Translation bestTranslation = translationSupport.findBestTemplateTranslation(
+                    specificPropertyKey, generalPropertyKey, propertyTranslationMap, entityId
+            );
             if (bestTranslation != null) {
                 buildSingleItemResponse(response, bestTranslation);
             }
@@ -162,13 +190,13 @@ public class ThresholdCacheTranslationOverrideStrategy implements TranslationOve
 
     @Override
     public int getOrder() {
-            return 0;
-        }
+        return 0;
+    }
 
     protected void buildSingleItemResponse(LocalePair response, Translation translation) {
         StandardCacheItem cacheItem = new StandardCacheItem();
         cacheItem.setItemStatus(ItemStatus.NORMAL);
-        cacheItem.setCacheItem(translation==null?"":translation);
+        cacheItem.setCacheItem(translation == null ? "" : translation);
         response.setSpecificItem(cacheItem);
     }
 

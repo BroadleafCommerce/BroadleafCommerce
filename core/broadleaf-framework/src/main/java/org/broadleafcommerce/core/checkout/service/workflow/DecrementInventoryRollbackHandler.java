@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,25 +36,26 @@ import jakarta.annotation.Resource;
 
 /**
  * Decrements inventory that was put on by the {@link DecrementInventoryActivity}
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blDecrementInventoryRollbackHandler")
-public class DecrementInventoryRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>>{
+public class DecrementInventoryRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>> {
 
-    private static final Log LOG = LogFactory.getLog(DecrementInventoryRollbackHandler.class);
-    
     public static final String ROLLBACK_BLC_INVENTORY_DECREMENTED = "ROLLBACK_BLC_INVENTORY_DECREMENTED";
     public static final String ROLLBACK_BLC_INVENTORY_INCREMENTED = "ROLLBACK_BLC_INVENTORY_INCREMENTED";
     public static final String ROLLBACK_BLC_ORDER_ID = "ROLLBACK_BLC_ORDER_ID";
     public static final String EXTENDED_ROLLBACK_STATE = "BLC_EXTENDED_ROLLBACK_STATE";
-
+    private static final Log LOG = LogFactory.getLog(DecrementInventoryRollbackHandler.class);
     @Resource(name = "blInventoryService")
     protected ContextualInventoryService inventoryService;
-    
+
     @Override
-    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration)
-            throws RollbackFailureException {
+    public void rollbackState(
+            Activity<ProcessContext<CheckoutSeed>> activity,
+            ProcessContext<CheckoutSeed> processContext,
+            Map<String, Object> stateConfiguration
+    ) throws RollbackFailureException {
 
         if (shouldExecute(activity, processContext, stateConfiguration)) {
 
@@ -62,12 +63,12 @@ public class DecrementInventoryRollbackHandler implements RollbackHandler<Proces
             if (stateConfiguration.get(ROLLBACK_BLC_ORDER_ID) != null) {
                 orderId = String.valueOf(stateConfiguration.get(ROLLBACK_BLC_ORDER_ID));
             }
-            
+
             @SuppressWarnings("unchecked")
             Map<Sku, Integer> inventoryToIncrement = (Map<Sku, Integer>) stateConfiguration.get(ROLLBACK_BLC_INVENTORY_DECREMENTED);
             @SuppressWarnings("unchecked")
             Map<Sku, Integer> inventoryToDecrement = (Map<Sku, Integer>) stateConfiguration.get(ROLLBACK_BLC_INVENTORY_INCREMENTED);
-            
+
             Map<String, Object> contextualInformation = new HashMap<>();
             contextualInformation.put(ContextualInventoryService.ROLLBACK_STATE_KEY, stateConfiguration.get(EXTENDED_ROLLBACK_STATE));
             contextualInformation.put(ContextualInventoryService.ORDER_KEY, processContext.getSeedData().getOrder());
@@ -83,7 +84,7 @@ public class DecrementInventoryRollbackHandler implements RollbackHandler<Proces
                     throw rfe;
                 }
             }
-    
+
             if (inventoryToDecrement != null && !inventoryToDecrement.isEmpty()) {
                 try {
                     inventoryService.decrementInventory(inventoryToDecrement, contextualInformation);
@@ -108,16 +109,21 @@ public class DecrementInventoryRollbackHandler implements RollbackHandler<Proces
             }
         }
     }
-    
+
     /**
      * Returns true if this rollback handler should execute
      */
-    protected boolean shouldExecute(Activity<? extends ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) {
-        return stateConfiguration != null && (
-                stateConfiguration.get(ROLLBACK_BLC_INVENTORY_DECREMENTED) != null ||
-                stateConfiguration.get(ROLLBACK_BLC_INVENTORY_INCREMENTED) != null ||
-                stateConfiguration.get(EXTENDED_ROLLBACK_STATE) != null
-             );
+    protected boolean shouldExecute(
+            Activity<? extends ProcessContext<CheckoutSeed>> activity,
+            ProcessContext<CheckoutSeed> processContext,
+            Map<String, Object> stateConfiguration
+    ) {
+        return stateConfiguration != null
+                &&
+                (stateConfiguration.get(ROLLBACK_BLC_INVENTORY_DECREMENTED) != null
+                        || stateConfiguration.get(ROLLBACK_BLC_INVENTORY_INCREMENTED) != null
+                        || stateConfiguration.get(EXTENDED_ROLLBACK_STATE) != null
+                );
     }
 
 }

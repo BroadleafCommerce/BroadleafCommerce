@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,16 +38,21 @@ import java.util.Set;
  */
 @Service("blPromotionMessageDTOService")
 public class PromotionMessageDTOServiceImpl implements PromotionMessageDTOService {
-    
+
     private static final Log LOG = LogFactory.getLog(PromotionMessageDTOServiceImpl.class);
 
     @Override
-    public Map<String, List<PromotionMessageDTO>> convertPromotionMessagesToDTOs(Set<PromotionMessage> promotionMessages) {
+    public Map<String, List<PromotionMessageDTO>> convertPromotionMessagesToDTOs(
+            Set<PromotionMessage> promotionMessages
+    ) {
         return convertPromotionMessagesToDTOs(promotionMessages, null);
     }
 
     @Override
-    public Map<String, List<PromotionMessageDTO>> convertPromotionMessagesToDTOs(Set<PromotionMessage> promotionMessages, Offer offer) {
+    public Map<String, List<PromotionMessageDTO>> convertPromotionMessagesToDTOs(
+            Set<PromotionMessage> promotionMessages,
+            Offer offer
+    ) {
         MultiValueMap promotionMessageDTOs = new MultiValueMap();
 
         for (PromotionMessage message : promotionMessages) {
@@ -80,4 +85,5 @@ public class PromotionMessageDTOServiceImpl implements PromotionMessageDTOServic
 
         return null;
     }
+
 }

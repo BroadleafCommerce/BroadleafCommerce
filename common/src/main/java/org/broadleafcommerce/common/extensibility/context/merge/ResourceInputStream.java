@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -58,7 +58,7 @@ public class ResourceInputStream extends InputStream {
     public String toString() {
         StringBuilder sb = new StringBuilder(100);
         int size = names.size();
-        for (int j=0;j<size;j++) {
+        for (int j = 0; j < size; j++) {
             sb.append(names.get(j));
             if (j < size - 1) {
                 sb.append(" : ");
@@ -70,7 +70,7 @@ public class ResourceInputStream extends InputStream {
 
     @Override
     public int available() throws IOException {
-        return (is==null)?-1:is.available();
+        return (is == null) ? -1 : is.available();
     }
 
     @Override
@@ -112,4 +112,5 @@ public class ResourceInputStream extends InputStream {
     public long skip(long l) throws IOException {
         return is.skip(l);
     }
+
 }

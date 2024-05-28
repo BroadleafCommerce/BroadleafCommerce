@@ -10,15 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- *
- */
-
 package org.broadleafcommerce.common.config;
 
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePattern;
@@ -52,7 +48,7 @@ import jakarta.persistence.spi.PersistenceUnitInfo;
 public class BroadleafCommonConfig {
 
     @Resource(name = "blDirectCopyIgnorePatterns")
-    protected List<DirectCopyIgnorePattern> ignorePatterns = new ArrayList<DirectCopyIgnorePattern>();
+    protected List<DirectCopyIgnorePattern> ignorePatterns = new ArrayList<>();
 
     /**
      * Other enterprise/mulititenant modules override this adapter to provide one that supports dynamic filtration
@@ -60,10 +56,10 @@ public class BroadleafCommonConfig {
     @Bean
     @ConditionalOnMissingBean(name = "blJpaVendorAdapter")
     public JpaVendorAdapter blJpaVendorAdapter() {
-        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter(){
+        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter() {
             @Override
             public PersistenceProvider getPersistenceProvider() {
-                PersistenceProvider persistenceProvider = new HibernatePersistenceProvider(){
+                PersistenceProvider persistenceProvider = new HibernatePersistenceProvider() {
                     public EntityManagerFactory createContainerEntityManagerFactory(PersistenceUnitInfo info, Map properties) {
                         final List<String> mergedClassesAndPackages = new ArrayList(info.getManagedClassNames());
                         if (info instanceof SmartPersistenceUnitInfo smartInfo) {

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,16 +37,17 @@ public class RegisterCustomerValidator implements Validator {
 
     private String validatePasswordExpression = "[^\\s]{6,}";
 
-    @Resource(name="blCustomerService")
+    @Resource(name = "blCustomerService")
     private CustomerService customerService;
 
-    public RegisterCustomerValidator() {}
+    public RegisterCustomerValidator() {
+    }
 
     @SuppressWarnings("unchecked")
     public boolean supports(Class clazz) {
         return clazz.equals(RegisterCustomerForm.class);
     }
-    
+
     public void validate(Object obj, Errors errors) {
         validate(obj, errors, false);
     }
@@ -66,13 +67,12 @@ public class RegisterCustomerValidator implements Validator {
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "password.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "passwordConfirm", "passwordConfirm.required");
-        
+
         errors.pushNestedPath("customer");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "firstName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "lastName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emailAddress", "emailAddress.required");
         errors.popNestedPath();
-
 
         if (!errors.hasErrors()) {
 
@@ -96,5 +96,6 @@ public class RegisterCustomerValidator implements Validator {
 
     public void setValidatePasswordExpression(String validatePasswordExpression) {
         this.validatePasswordExpression = validatePasswordExpression;
-    }        
+    }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,16 +32,16 @@ import jakarta.annotation.Nonnull;
  * <p>
  * Utility class that checks for the presence of registered Broadleaf modules.
  *
- * @see {@link ConditionalOnBroadleafModule}
- * @see {@link OnBroadleafModuleCondition}
  * @author Nathan Moore (nathanmoore).
  * @author Phillip Verheyden (phillipuniverse)
  * @author Philip Baggett (pbaggett)
+ * @see {@link ConditionalOnBroadleafModule}
+ * @see {@link OnBroadleafModuleCondition}
  */
 public class ModulePresentUtil {
 
     public static final List<BroadleafModuleRegistration> MODULE_REGISTRATIONS = SpringFactoriesLoader.loadFactories(BroadleafModuleRegistration.class, null);
-    
+
     /**
      * Checks if the given module is registered
      *
@@ -85,4 +85,5 @@ public class ModulePresentUtil {
 
         return false;
     }
+
 }

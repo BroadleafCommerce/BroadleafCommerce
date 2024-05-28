@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.promotionMessage.service;
-
 
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -28,12 +27,12 @@ import java.util.Map;
 
 /**
  * A {@link PromotionMessageGenerator} understands how to gather applicable {@link PromotionMessage}s
- *  for the given {@link Product} or {@link OrderItem}.
- * 
+ * for the given {@link Product} or {@link OrderItem}.
+ *
  * @author Chris Kittrell (ckittrell)
  */
 public interface PromotionMessageGenerator {
-    
+
     Map<String, List<PromotionMessageDTO>> generatePromotionMessages(Product product);
 
     List<String> generatePromotionMessages(OrderItem orderItem);

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,14 +24,14 @@ import java.util.List;
 
 /**
  * Container that holds the result of a ProductSearch or a SkuSearch
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class SearchResult {
-    
+
     protected List<Product> products;
     protected List<SearchFacetDTO> facets;
-    
+
     protected Integer totalResults;
     protected Integer page;
     protected Integer pageSize;
@@ -77,15 +77,15 @@ public class SearchResult {
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
-    
+
     public Integer getStartResult() {
         return (products == null || products.size() == 0) ? 0 : ((page - 1) * pageSize) + 1;
     }
-    
+
     public Integer getEndResult() {
         return Math.min(page * pageSize, totalResults);
     }
-    
+
     public Integer getTotalPages() {
         return (products == null || products.size() == 0) ? 1 : (int) Math.ceil(totalResults * 1.0 / pageSize);
     }
@@ -97,4 +97,5 @@ public class SearchResult {
     public void setQueryResponse(QueryResponse queryResponse) {
         this.queryResponse = queryResponse;
     }
+
 }

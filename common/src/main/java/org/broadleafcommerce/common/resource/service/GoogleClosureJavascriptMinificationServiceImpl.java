@@ -10,18 +10,18 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.resource.service;
 
-import com.google.common.io.CharStreams;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.google.common.io.CharStreams;
 import com.google.javascript.jscomp.AbstractCommandLineRunner;
 import com.google.javascript.jscomp.ClosureCodingConvention;
 import com.google.javascript.jscomp.CompilationLevel;
@@ -40,9 +40,9 @@ import java.util.List;
 /**
  * Javascript minification service implemented using the Google Closure Compiler
  * This will be used for minification if the Google Closure Compiler dependency is included in the project
- * 
+ * <p>
  * This library also supports extra aggressive minification, transpiling, code optimizing, and bundleing
- * 
+ *
  * <ul>
  *  <li>minify.closure.compiler.languageIn - Sets ECMAScript version to use for the input.<br/>
  *  Options: ECMASCRIPT3, ECMASCRIPT5, ECMASCRIPT5_STRICT,
@@ -60,21 +60,22 @@ import java.util.List;
  *  <li>minify.closure.compiler.warningLevel - Warnings level. Possible values: QUIET, DEFAULT, VERBOSE<br/>
  *  Default: SILENT</li>
  * </ul>
- * 
- * @author Jay Aisenbrey (cja769)
  *
+ * @author Jay Aisenbrey (cja769)
  */
 @Service("blJavascriptMinificationService")
 public class GoogleClosureJavascriptMinificationServiceImpl implements JavascriptMinificationService {
 
     @Value("${minify.closure.compiler.warningLevel:QUIET}")
     protected String warningLevel;
-    
+
     protected CompilerOptions.LanguageMode languageIn;
     protected CompilerOptions.LanguageMode languageOut;
-    
-    public GoogleClosureJavascriptMinificationServiceImpl(@Value("${minify.closure.compiler.languageIn:ECMASCRIPT5}") String compilerLanguageIn, 
-                                                          @Value("${minify.closure.compiler.languageOut:NO_TRANSPILE}") String compilerLanguageOut) {
+
+    public GoogleClosureJavascriptMinificationServiceImpl(
+            @Value("${minify.closure.compiler.languageIn:ECMASCRIPT5}") String compilerLanguageIn,
+            @Value("${minify.closure.compiler.languageOut:NO_TRANSPILE}") String compilerLanguageOut
+    ) {
         this.languageIn = null;
         this.languageOut = null;
         if (StringUtils.isNotBlank(compilerLanguageIn)) {
@@ -85,7 +86,7 @@ public class GoogleClosureJavascriptMinificationServiceImpl implements Javascrip
         if (StringUtils.isNoneBlank(compilerLanguageOut)) {
             this.languageOut = CompilerOptions.LanguageMode.valueOf(compilerLanguageOut);
             if (this.languageIn == null) {
-                this.languageIn = this.languageOut; 
+                this.languageIn = this.languageOut;
             }
         }
 
@@ -93,7 +94,7 @@ public class GoogleClosureJavascriptMinificationServiceImpl implements Javascrip
             throw new IllegalArgumentException("Please set properties \"minify.closure.compiler.languageIn\" or \"minify.closure.compiler.languageOut\" if you wish to use Google Closure Compiler for Javascript minification");
         }
     }
-    
+
     @Override
     public void minifyJs(String filename, Reader reader, Writer writer) throws ResourceMinificationException {
         try {
@@ -126,7 +127,7 @@ public class GoogleClosureJavascriptMinificationServiceImpl implements Javascrip
     protected Compiler getCompiler() {
         return new Compiler();
     }
-    
+
     protected CompilerOptions getCompilerOptions() {
         CompilerOptions options = new CompilerOptions();
         options.setLanguageIn(this.languageIn);
@@ -138,5 +139,5 @@ public class GoogleClosureJavascriptMinificationServiceImpl implements Javascrip
         options.skipAllCompilerPasses();
         return options;
     }
-    
+
 }

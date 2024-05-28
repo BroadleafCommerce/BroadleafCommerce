@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,6 +35,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Objects;
@@ -57,13 +58,12 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
 @Table(name = "BLC_PRODUCT_OPTION_VALUE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class ProductOptionValueImpl
-        implements ProductOptionValue, ProductOptionValueAdminPresentation {
+public class ProductOptionValueImpl implements ProductOptionValue, ProductOptionValueAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -120,13 +120,13 @@ public class ProductOptionValueImpl
     }
 
     @Override
-    public String getRawAttributeValue() {
-        return attributeValue;
+    public void setAttributeValue(String attributeValue) {
+        this.attributeValue = attributeValue;
     }
 
     @Override
-    public void setAttributeValue(String attributeValue) {
-        this.attributeValue = attributeValue;
+    public String getRawAttributeValue() {
+        return attributeValue;
     }
 
     @Override
@@ -144,8 +144,7 @@ public class ProductOptionValueImpl
         Money returnPrice = null;
 
         if (SkuPricingConsiderationContext.hasDynamicPricing()) {
-            HashMap pricingConsiderationContext =
-                    SkuPricingConsiderationContext.getSkuPricingConsiderationContext();
+            HashMap pricingConsiderationContext = SkuPricingConsiderationContext.getSkuPricingConsiderationContext();
             Money adjustment = priceAdjustment == null ? null : new Money(priceAdjustment);
             DynamicSkuPrices dynamicPrices = SkuPricingConsiderationContext
                     .getSkuPricingService()
@@ -160,13 +159,13 @@ public class ProductOptionValueImpl
     }
 
     @Override
-    public Money getPriceAdjustmentSkipDynamicPricing() {
-        return priceAdjustment != null ? new Money(priceAdjustment, Money.defaultCurrency()) : null;
+    public void setPriceAdjustment(Money priceAdjustment) {
+        this.priceAdjustment = Money.toAmount(priceAdjustment);
     }
 
     @Override
-    public void setPriceAdjustment(Money priceAdjustment) {
-        this.priceAdjustment = Money.toAmount(priceAdjustment);
+    public Money getPriceAdjustmentSkipDynamicPricing() {
+        return priceAdjustment != null ? new Money(priceAdjustment, Money.defaultCurrency()) : null;
     }
 
     @Override
@@ -214,7 +213,8 @@ public class ProductOptionValueImpl
 
     @Override
     public <G extends ProductOptionValue> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -231,4 +231,5 @@ public class ProductOptionValueImpl
 
         return createResponse;
     }
+
 }

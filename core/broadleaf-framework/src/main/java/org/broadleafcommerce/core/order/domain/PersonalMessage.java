@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,23 +23,23 @@ import java.io.Serializable;
 
 public interface PersonalMessage extends Serializable, MultiTenantCloneable<PersonalMessage> {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public String getMessageTo();
+    String getMessageTo();
 
-    public void setMessageTo(String messageTo);
+    void setMessageTo(String messageTo);
 
-    public String getMessageFrom();
+    String getMessageFrom();
 
-    public void setMessageFrom(String messageFrom);
+    void setMessageFrom(String messageFrom);
 
-    public String getMessage();
+    String getMessage();
 
-    public void setMessage(String message);
+    void setMessage(String message);
 
-    public String getOccasion();
+    String getOccasion();
 
-    public void setOccasion(String occasion);
+    void setOccasion(String occasion);
 }

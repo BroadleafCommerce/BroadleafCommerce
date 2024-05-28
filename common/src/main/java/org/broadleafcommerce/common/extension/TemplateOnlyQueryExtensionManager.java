@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,13 +28,12 @@ import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
-
 /**
  * Provides specialized filter and restriction behavior for template-related (MT concept) queries. This is only meaningful
  * in a multi-tenant installation.
  *
- * @see TemplateOnlyQueryExtensionHandler
  * @author Jeff Fischer
+ * @see TemplateOnlyQueryExtensionHandler
  */
 @Service("blTemplateOnlyQueryExtensionManager")
 public class TemplateOnlyQueryExtensionManager extends ExtensionManager<TemplateOnlyQueryExtensionHandler> implements TemplateOnlyQueryExtensionHandler {
@@ -42,14 +41,25 @@ public class TemplateOnlyQueryExtensionManager extends ExtensionManager<Template
     public static final ExtensionManagerOperation refineParameterRetrieve = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((TemplateOnlyQueryExtensionHandler) handler).refineParameterRetrieve((Class<?>) params[0], params[1], (CriteriaBuilder) params[2], (CriteriaQuery) params[3], (Root) params[4], (List<Predicate>) params[5]);
+            return ((TemplateOnlyQueryExtensionHandler) handler).refineParameterRetrieve(
+                    (Class<?>) params[0],
+                    params[1],
+                    (CriteriaBuilder) params[2],
+                    (CriteriaQuery) params[3],
+                    (Root) params[4],
+                    (List<Predicate>) params[5]
+            );
         }
     };
 
     public static final ExtensionManagerOperation refineQuery = new ExtensionManagerOperation() {
-            @Override
-            public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((TemplateOnlyQueryExtensionHandler) handler).refineQuery((Class<?>) params[0], params[1], (TypedQuery) params[2]);
+        @Override
+        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
+            return ((TemplateOnlyQueryExtensionHandler) handler).refineQuery(
+                    (Class<?>) params[0],
+                    params[1],
+                    (TypedQuery) params[2]
+            );
         }
     };
 
@@ -70,7 +80,13 @@ public class TemplateOnlyQueryExtensionManager extends ExtensionManager<Template
     public static final ExtensionManagerOperation refineOrder = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((TemplateOnlyQueryExtensionHandler) handler).refineOrder((Class<?>) params[0], (CriteriaBuilder) params[1], (CriteriaQuery) params[2], (Root) params[3], (List<Order>) params[4]);
+            return ((TemplateOnlyQueryExtensionHandler) handler).refineOrder(
+                    (Class<?>) params[0],
+                    (CriteriaBuilder) params[1],
+                    (CriteriaQuery) params[2],
+                    (Root) params[3],
+                    (List<Order>) params[4]
+            );
         }
     };
 
@@ -84,14 +100,18 @@ public class TemplateOnlyQueryExtensionManager extends ExtensionManager<Template
     public static final ExtensionManagerOperation buildStatus = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((TemplateOnlyQueryExtensionHandler) handler).buildStatus(params[0], (ExtensionResultHolder<ItemStatus>) params[1]);
+            return ((TemplateOnlyQueryExtensionHandler) handler).buildStatus(
+                    params[0], (ExtensionResultHolder<ItemStatus>) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation filterResults = new ExtensionManagerOperation() {
-            @Override
-            public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((TemplateOnlyQueryExtensionHandler) handler).filterResults((Class<?>) params[0], params[1], (List) params[2]);
+        @Override
+        public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
+            return ((TemplateOnlyQueryExtensionHandler) handler).filterResults(
+                    (Class<?>) params[0], params[1], (List) params[2]
+            );
         }
     };
 
@@ -100,7 +120,14 @@ public class TemplateOnlyQueryExtensionManager extends ExtensionManager<Template
     }
 
     @Override
-    public ExtensionResultStatusType refineParameterRetrieve(Class<?> type, Object testObject, CriteriaBuilder builder, CriteriaQuery criteria, Root root, List<Predicate> restrictions) {
+    public ExtensionResultStatusType refineParameterRetrieve(
+            Class<?> type,
+            Object testObject,
+            CriteriaBuilder builder,
+            CriteriaQuery criteria,
+            Root root,
+            List<Predicate> restrictions
+    ) {
         return execute(refineParameterRetrieve, type, testObject, builder, criteria, root, restrictions);
     }
 
@@ -125,7 +152,13 @@ public class TemplateOnlyQueryExtensionManager extends ExtensionManager<Template
     }
 
     @Override
-    public ExtensionResultStatusType refineOrder(Class<?> type, CriteriaBuilder builder, CriteriaQuery criteria, Root root, List<Order> sorts) {
+    public ExtensionResultStatusType refineOrder(
+            Class<?> type,
+            CriteriaBuilder builder,
+            CriteriaQuery criteria,
+            Root root,
+            List<Order> sorts
+    ) {
         return execute(refineOrder, type, builder, criteria, root, sorts);
     }
 
@@ -143,4 +176,5 @@ public class TemplateOnlyQueryExtensionManager extends ExtensionManager<Template
     public ExtensionResultStatusType filterResults(Class<?> type, Object testObject, List results) {
         return execute(filterResults, type, testObject, results);
     }
+
 }

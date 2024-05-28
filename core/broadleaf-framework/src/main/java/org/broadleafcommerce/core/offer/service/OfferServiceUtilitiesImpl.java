@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -58,27 +58,21 @@ import java.util.Map;
 import jakarta.annotation.Resource;
 
 /**
- * 
  * @author bpolster
- *
  */
 @Service("blOfferServiceUtilities")
 public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
-    protected static final Log LOG = LogFactory.getLog(OfferServiceUtilitiesImpl.class);
 
+    protected static final Log LOG = LogFactory.getLog(OfferServiceUtilitiesImpl.class);
+    protected final PromotableOfferUtility promotableOfferUtility;
     @Resource(name = "blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
-
     @Resource(name = "blOfferDao")
     protected OfferDao offerDao;
-
     @Resource(name = "blOfferServiceExtensionManager")
     protected OfferServiceExtensionManager extensionManager;
-
-    @Resource(name = "blGenericEntityService")                                                                                                                                                                   
+    @Resource(name = "blGenericEntityService")
     protected GenericEntityService entityService;
-
-    protected final PromotableOfferUtility promotableOfferUtility;
 
     public OfferServiceUtilitiesImpl(PromotableOfferUtility promotableOfferUtility) {
         this.promotableOfferUtility = promotableOfferUtility;
@@ -121,7 +115,10 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public boolean itemOfferCanBeApplied(PromotableCandidateItemOffer itemOffer, List<PromotableOrderItemPriceDetail> details) {
+    public boolean itemOfferCanBeApplied(
+            PromotableCandidateItemOffer itemOffer,
+            List<PromotableOrderItemPriceDetail> details
+    ) {
 
         for (PromotableOrderItemPriceDetail detail : details) {
             for (PromotableOrderItemPriceDetailAdjustment adjustment : detail.getCandidateItemAdjustments()) {
@@ -140,8 +137,11 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public int markQualifiersForCriteria(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria,
-            List<PromotableOrderItemPriceDetail> priceDetails) {
+    public int markQualifiersForCriteria(
+            PromotableCandidateItemOffer itemOffer,
+            OfferItemCriteria itemCriteria,
+            List<PromotableOrderItemPriceDetail> priceDetails
+    ) {
 
         sortQualifierItemDetails(priceDetails, itemOffer.getOffer().getApplyDiscountToSalePrice());
 
@@ -169,15 +169,22 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public int markTargetsForCriteria(PromotableCandidateItemOffer itemOffer, OrderItem relatedQualifier,
-            boolean checkOnly, Offer promotion, OrderItem relatedQualifierRoot, OfferItemCriteria itemCriteria,
-            List<PromotableOrderItemPriceDetail> priceDetails, int targetQtyNeeded) {
+    public int markTargetsForCriteria(
+            PromotableCandidateItemOffer itemOffer,
+            OrderItem relatedQualifier,
+            boolean checkOnly,
+            Offer promotion,
+            OrderItem relatedQualifierRoot,
+            OfferItemCriteria itemCriteria,
+            List<PromotableOrderItemPriceDetail> priceDetails,
+            int targetQtyNeeded
+    ) {
         for (PromotableOrderItemPriceDetail priceDetail : priceDetails) {
             if (relatedQualifier != null) {
                 // We need to make sure that this item is either a parent, child, or the same as the qualifier root
                 OrderItem thisItem = priceDetail.getPromotableOrderItem().getOrderItem();
-                if (!relatedQualifierRoot.isAParentOf(thisItem) && !thisItem.isAParentOf(relatedQualifierRoot) &&
-                        !thisItem.equals(relatedQualifierRoot)) {
+                if (!relatedQualifierRoot.isAParentOf(thisItem) && !thisItem.isAParentOf(relatedQualifierRoot)
+                        && !thisItem.equals(relatedQualifierRoot)) {
                     continue;
                 }
             }
@@ -201,9 +208,15 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public boolean markTargetsForOfferPriceData(PromotableCandidateItemOffer itemOffer, OrderItem relatedQualifier,
-                                                boolean checkOnly, Offer promotion, OrderItem relatedQualifierRoot, OfferPriceData offerPriceData,
-                                                List<PromotableOrderItemPriceDetail> priceDetails) {
+    public boolean markTargetsForOfferPriceData(
+            PromotableCandidateItemOffer itemOffer,
+            OrderItem relatedQualifier,
+            boolean checkOnly,
+            Offer promotion,
+            OrderItem relatedQualifierRoot,
+            OfferPriceData offerPriceData,
+            List<PromotableOrderItemPriceDetail> priceDetails
+    ) {
         int targetQtyNeeded = offerPriceData.getQuantity();
         int minRequiredTargetQuantity = itemOffer.getMinimumRequiredTargetQuantity();
         if (minRequiredTargetQuantity > 1 && minRequiredTargetQuantity > targetQtyNeeded) {
@@ -214,8 +227,8 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
             if (relatedQualifier != null) {
                 // We need to make sure that this item is either a parent, child, or the same as the qualifier root
                 OrderItem thisItem = priceDetail.getPromotableOrderItem().getOrderItem();
-                if (!relatedQualifierRoot.isAParentOf(thisItem) && !thisItem.isAParentOf(relatedQualifierRoot) &&
-                        !thisItem.equals(relatedQualifierRoot)) {
+                if (!relatedQualifierRoot.isAParentOf(thisItem) && !thisItem.isAParentOf(relatedQualifierRoot)
+                        && !thisItem.equals(relatedQualifierRoot)) {
                     continue;
                 }
             }
@@ -239,9 +252,14 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public int markRelatedQualifiersAndTargetsForItemCriteria(PromotableCandidateItemOffer itemOffer, PromotableOrder order,
-            OrderItemHolder orderItemHolder, OfferItemCriteria itemCriteria,
-            List<PromotableOrderItemPriceDetail> priceDetails, ItemOfferMarkTargets itemOfferMarkTargets) {
+    public int markRelatedQualifiersAndTargetsForItemCriteria(
+            PromotableCandidateItemOffer itemOffer,
+            PromotableOrder order,
+            OrderItemHolder orderItemHolder,
+            OfferItemCriteria itemCriteria,
+            List<PromotableOrderItemPriceDetail> priceDetails,
+            ItemOfferMarkTargets itemOfferMarkTargets
+    ) {
         sortQualifierItemDetails(priceDetails, itemOffer.getOffer().getApplyDiscountToSalePrice());
 
         // Calculate the number of qualifiers needed that will not receive the promotion.  
@@ -268,7 +286,9 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                     int qtyToMarkAsQualifier = Math.min(qualifierQtyNeeded, itemQtyAvailableToBeUsedAsQualifier);
                     qualifierQtyNeeded -= qtyToMarkAsQualifier;
                     PromotionQualifier pq = detail.addPromotionQualifier(itemOffer, itemCriteria, qtyToMarkAsQualifier);
-                    pq.setPrice(detail.getPromotableOrderItem().getPriceBeforeAdjustments(itemOffer.getOffer().getApplyDiscountToSalePrice()));
+                    pq.setPrice(detail.getPromotableOrderItem().getPriceBeforeAdjustments(
+                            itemOffer.getOffer().getApplyDiscountToSalePrice())
+                    );
 
                     // Now, we need to see if there exists a target(s) that is suitable for this qualifier due to
                     // the relationship flag. If we are on the last qualifier required for this offer, we want to 
@@ -299,11 +319,15 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public void applyAdjustmentsForItemPriceDetails(PromotableCandidateItemOffer itemOffer, List<PromotableOrderItemPriceDetail> itemPriceDetails) {
+    public void applyAdjustmentsForItemPriceDetails(
+            PromotableCandidateItemOffer itemOffer,
+            List<PromotableOrderItemPriceDetail> itemPriceDetails
+    ) {
         for (PromotableOrderItemPriceDetail itemPriceDetail : itemPriceDetails) {
             for (PromotionDiscount discount : itemPriceDetail.getPromotionDiscounts()) {
                 if (discount.getPromotion().equals(itemOffer.getOffer())) {
-                    if (itemOffer.getOffer().isTotalitarianOffer() || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
+                    if (itemOffer.getOffer().isTotalitarianOffer()
+                            || !itemOffer.getOffer().isCombinableWithOtherOffers()) {
                         // We've decided to apply this adjustment but if it doesn't actually reduce
                         // the value of the item
                         if (adjustmentIsNotGoodEnoughToBeApplied(itemOffer, itemPriceDetail)) {
@@ -339,16 +363,21 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     /**
      * The adjustment might not be better than the sale price.
+     *
      * @param itemOffer
      * @param detail
      * @return
      */
-    protected boolean adjustmentIsNotGoodEnoughToBeApplied(PromotableCandidateItemOffer itemOffer,
-            PromotableOrderItemPriceDetail detail) {
+    protected boolean adjustmentIsNotGoodEnoughToBeApplied(
+            PromotableCandidateItemOffer itemOffer,
+            PromotableOrderItemPriceDetail detail
+    ) {
         if (!itemOffer.getOffer().getApplyDiscountToSalePrice()) {
             Money salePrice = detail.getPromotableOrderItem().getSalePriceBeforeAdjustments();
             Money retailPrice = detail.getPromotableOrderItem().getRetailPriceBeforeAdjustments();
-            Money savings = promotableOfferUtility.calculateSavingsForOrderItem(itemOffer, detail.getPromotableOrderItem(), 1);
+            Money savings = promotableOfferUtility.calculateSavingsForOrderItem(
+                    itemOffer, detail.getPromotableOrderItem(), 1
+            );
             if (salePrice != null) {
                 if (salePrice.lessThan(retailPrice.subtract(savings))) {
                     // Not good enough
@@ -360,13 +389,15 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public void applyOrderItemAdjustment(PromotableCandidateItemOffer itemOffer,
-            PromotableOrderItemPriceDetail itemPriceDetail) {
+    public void applyOrderItemAdjustment(
+            PromotableCandidateItemOffer itemOffer,
+            PromotableOrderItemPriceDetail itemPriceDetail
+    ) {
         PromotableOrderItemPriceDetailAdjustment promotableOrderItemPriceDetailAdjustment =
                 promotableItemFactory.createPromotableOrderItemPriceDetailAdjustment(itemOffer, itemPriceDetail);
         //don't want to have negative adjustments
-        if(promotableOrderItemPriceDetailAdjustment.getRetailAdjustmentValue().lessThan(BigDecimal.ZERO) ||
-                promotableOrderItemPriceDetailAdjustment.getSaleAdjustmentValue().lessThan(BigDecimal.ZERO)){
+        if (promotableOrderItemPriceDetailAdjustment.getRetailAdjustmentValue().lessThan(BigDecimal.ZERO)
+                || promotableOrderItemPriceDetailAdjustment.getSaleAdjustmentValue().lessThan(BigDecimal.ZERO)) {
             return;
         }
         itemPriceDetail.addCandidateItemPriceDetailAdjustment(promotableOrderItemPriceDetailAdjustment);
@@ -374,7 +405,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     @Override
     public List<OrderItem> buildOrderItemList(Order order) {
-        List<OrderItem> orderItemList = new ArrayList<OrderItem>();
+        List<OrderItem> orderItemList = new ArrayList<>();
         for (OrderItem currentItem : order.getOrderItems()) {
             if (currentItem instanceof OrderItemContainer) {
                 OrderItemContainer container = (OrderItemContainer) currentItem;
@@ -395,7 +426,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     @Override
     public Map<OrderItem, PromotableOrderItem> buildPromotableItemMap(PromotableOrder promotableOrder) {
-        Map<OrderItem, PromotableOrderItem> promotableItemMap = new HashMap<OrderItem, PromotableOrderItem>();
+        Map<OrderItem, PromotableOrderItem> promotableItemMap = new HashMap<>();
         for (PromotableOrderItem item : promotableOrder.getAllOrderItems()) {
             promotableItemMap.put(item.getOrderItem(), item);
         }
@@ -404,16 +435,16 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
     @Override
     public Map<Long, OrderItemPriceDetailAdjustment> buildItemDetailAdjustmentMap(OrderItemPriceDetail itemDetail) {
-        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = new HashMap<Long, OrderItemPriceDetailAdjustment>();
-        
-        List<OrderItemPriceDetailAdjustment> adjustmentsToRemove = new ArrayList<OrderItemPriceDetailAdjustment>();
+        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = new HashMap<>();
+
+        List<OrderItemPriceDetailAdjustment> adjustmentsToRemove = new ArrayList<>();
         for (OrderItemPriceDetailAdjustment adjustment : itemDetail.getOrderItemPriceDetailAdjustments()) {
             if (itemAdjustmentMap.containsKey(adjustment.getOffer().getId())) {
                 if (LOG.isDebugEnabled()) {
                     StringBuilder sb = new StringBuilder("Detected collisions for item adjustments with ids ")
-                        .append(itemAdjustmentMap.get(adjustment.getOffer().getId()).getId())
-                        .append(" and ")
-                        .append(adjustment.getId());
+                            .append(itemAdjustmentMap.get(adjustment.getOffer().getId()).getId())
+                            .append(" and ")
+                            .append(adjustment.getId());
                     LOG.debug(sb.toString());
                 }
                 adjustmentsToRemove.add(adjustment);
@@ -421,19 +452,17 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                 itemAdjustmentMap.put(adjustment.getOffer().getId(), adjustment);
             }
         }
-        
+
         for (OrderItemPriceDetailAdjustment adjustment : adjustmentsToRemove) {
             itemDetail.getOrderItemPriceDetailAdjustments().remove(adjustment);
         }
-        
+
         return itemAdjustmentMap;
     }
 
     @Override
-    public void updatePriceDetail(OrderItemPriceDetail itemDetail,
-            PromotableOrderItemPriceDetail promotableDetail) {
-        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap =
-                buildItemDetailAdjustmentMap(itemDetail);
+    public void updatePriceDetail(OrderItemPriceDetail itemDetail, PromotableOrderItemPriceDetail promotableDetail) {
+        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = buildItemDetailAdjustmentMap(itemDetail);
 
         if (itemDetail.getQuantity() != promotableDetail.getQuantity()) {
             itemDetail.setQuantity(promotableDetail.getQuantity());
@@ -459,7 +488,9 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
                     extensionManager.createOrderItemPriceDetailAdjustment(resultHolder, itemDetail);
                 }
                 if (resultHolder != null && resultHolder.getContextMap().containsKey("OrderItemPriceDetailAdjustment")) {
-                    newItemAdjustment = (OrderItemPriceDetailAdjustment) resultHolder.getContextMap().get("OrderItemPriceDetailAdjustment");
+                    newItemAdjustment = (OrderItemPriceDetailAdjustment) resultHolder.getContextMap().get(
+                            "OrderItemPriceDetailAdjustment"
+                    );
                 } else {
                     newItemAdjustment = offerDao.createOrderItemPriceDetailAdjustment();
                 }
@@ -471,7 +502,7 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
 
         if (itemAdjustmentMap.size() > 0) {
             // Remove adjustments that were on the order item but no longer needed.
-            List<Long> adjustmentIdsToRemove = new ArrayList<Long>();
+            List<Long> adjustmentIdsToRemove = new ArrayList<>();
             for (OrderItemPriceDetailAdjustment adjustmentToRemove : itemAdjustmentMap.values()) {
                 adjustmentIdsToRemove.add(adjustmentToRemove.getOffer().getId());
             }
@@ -487,8 +518,10 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         }
     }
 
-    protected void updateItemAdjustment(OrderItemPriceDetailAdjustment itemAdjustment,
-            PromotableOrderItemPriceDetailAdjustment promotableAdjustment) {
+    protected void updateItemAdjustment(
+            OrderItemPriceDetailAdjustment itemAdjustment,
+            PromotableOrderItemPriceDetailAdjustment promotableAdjustment
+    ) {
         itemAdjustment.setValue(promotableAdjustment.getAdjustmentValue());
         itemAdjustment.setSalesPriceValue(promotableAdjustment.getSaleAdjustmentValue());
         itemAdjustment.setRetailPriceValue(promotableAdjustment.getRetailAdjustmentValue());
@@ -496,8 +529,10 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public void removeUnmatchedPriceDetails(Map<Long, ? extends OrderItemPriceDetail> unmatchedDetailsMap,
-            Iterator<? extends OrderItemPriceDetail> pdIterator) {
+    public void removeUnmatchedPriceDetails(
+            Map<Long, ? extends OrderItemPriceDetail> unmatchedDetailsMap,
+            Iterator<? extends OrderItemPriceDetail> pdIterator
+    ) {
         while (pdIterator.hasNext()) {
             OrderItemPriceDetail currentDetail = pdIterator.next();
             if (unmatchedDetailsMap.containsKey(currentDetail.getId())) {
@@ -508,8 +543,10 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public void removeUnmatchedQualifiers(Map<Long, ? extends OrderItemQualifier> unmatchedQualifiersMap,
-            Iterator<? extends OrderItemQualifier> qIterator) {
+    public void removeUnmatchedQualifiers(
+            Map<Long, ? extends OrderItemQualifier> unmatchedQualifiersMap,
+            Iterator<? extends OrderItemQualifier> qIterator
+    ) {
         while (qIterator.hasNext()) {
             OrderItemQualifier currentQualifier = qIterator.next();
             if (unmatchedQualifiersMap.containsKey(currentQualifier.getId())) {
@@ -520,7 +557,11 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> qualifiersMap) {
+    public boolean orderMeetsQualifyingSubtotalRequirements(
+            PromotableOrder order,
+            Offer offer,
+            HashMap<OfferItemCriteria, List<PromotableOrderItem>> qualifiersMap
+    ) {
         Money qualifyingItemSubTotal = offer.getQualifyingItemSubTotal();
         if (qualifyingItemSubTotal == null || qualifyingItemSubTotal.lessThanOrEqual(Money.ZERO)) {
             return true;
@@ -529,7 +570,11 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     }
 
     @Override
-    public boolean orderMeetsTargetSubtotalRequirements(PromotableOrder order, Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> targetsMap) {
+    public boolean orderMeetsTargetSubtotalRequirements(
+            PromotableOrder order,
+            Offer offer,
+            HashMap<OfferItemCriteria, List<PromotableOrderItem>> targetsMap
+    ) {
         Money targetMinSubTotal = offer.getTargetMinSubTotal();
         if (targetMinSubTotal == null || targetMinSubTotal.lessThanOrEqual(Money.ZERO)) {
             return true;
@@ -537,7 +582,11 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
         return orderMeetsProvidedSubtotalRequirement(offer, targetsMap, targetMinSubTotal);
     }
 
-    protected boolean orderMeetsProvidedSubtotalRequirement(Offer offer, HashMap<OfferItemCriteria, List<PromotableOrderItem>> promotableOrderItems, Money minSubTotal) {
+    protected boolean orderMeetsProvidedSubtotalRequirement(
+            Offer offer,
+            HashMap<OfferItemCriteria, List<PromotableOrderItem>> promotableOrderItems,
+            Money minSubTotal
+    ) {
         Money subtotal = Money.ZERO;
 
         for (OfferItemCriteria itemCriteria : promotableOrderItems.keySet()) {
@@ -590,4 +639,5 @@ public class OfferServiceUtilitiesImpl implements OfferServiceUtilities {
     public void setGenericEntityService(GenericEntityService entityService) {
         this.entityService = entityService;
     }
+
 }

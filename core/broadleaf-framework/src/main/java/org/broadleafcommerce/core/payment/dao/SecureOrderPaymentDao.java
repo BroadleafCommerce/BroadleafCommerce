@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,20 +24,20 @@ import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 
 public interface SecureOrderPaymentDao {
 
-    public BankAccountPayment findBankAccountPayment(String referenceNumber);
+    BankAccountPayment findBankAccountPayment(String referenceNumber);
 
-    public CreditCardPayment findCreditCardPayment(String referenceNumber);
+    CreditCardPayment findCreditCardPayment(String referenceNumber);
 
-    public GiftCardPayment findGiftCardPayment(String referenceNumber);
+    GiftCardPayment findGiftCardPayment(String referenceNumber);
 
-    public Referenced save(Referenced securePaymentInfo);
+    Referenced save(Referenced securePaymentInfo);
 
-    public BankAccountPayment createBankAccountPayment();
+    BankAccountPayment createBankAccountPayment();
 
-    public GiftCardPayment createGiftCardPayment();
+    GiftCardPayment createGiftCardPayment();
 
-    public CreditCardPayment createCreditCardPayment();
+    CreditCardPayment createCreditCardPayment();
 
-    public void delete(Referenced securePayment);
+    void delete(Referenced securePayment);
 
 }

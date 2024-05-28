@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -64,14 +64,14 @@ public class CheckoutFormVariableExpression implements BroadleafVariableExpressi
 
     /**
      * Toggle the Payment Info Section based on what payments were applied to the order
-     *  (e.g. Third Party Account (i.e. PayPal Express) or Gift Cards/Customer Credit)
+     * (e.g. Third Party Account (i.e. PayPal Express) or Gift Cards/Customer Credit)
      */
     public boolean shouldShowAllPaymentMethods() {
         Money orderTotalAfterAppliedPayments = CartState.getCart().getTotalAfterAppliedPayments();
-        boolean totalCoveredByAppliedPayments = (orderTotalAfterAppliedPayments != null && orderTotalAfterAppliedPayments.isZero());
+        boolean totalCoveredByAppliedPayments = (orderTotalAfterAppliedPayments != null
+                && orderTotalAfterAppliedPayments.isZero());
 
-        return !cartStateService.cartHasThirdPartyPayment()
-                && !totalCoveredByAppliedPayments;
+        return !cartStateService.cartHasThirdPartyPayment() && !totalCoveredByAppliedPayments;
     }
 
 }

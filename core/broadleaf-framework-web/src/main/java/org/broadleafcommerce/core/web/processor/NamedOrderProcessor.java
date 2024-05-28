@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -28,9 +27,9 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Resource;
-
 import java.util.Map;
+
+import jakarta.annotation.Resource;
 
 /**
  * <p>
@@ -38,17 +37,16 @@ import java.util.Map;
  *
  * <p>
  * Example:
- * 
+ *
  * <pre>
  *  &lt;blc:named_order orderVar="wishlist" orderName="wishlist" /&gt;
- *  &lt;span th:text="${wishlist.customer.name}" /&gt; 
+ *  &lt;span th:text="${wishlist.customer.name}" /&gt;
  * </pre>
  *
- * @param orderVar the value that the order will be assigned to
+ * @param orderVar  the value that the order will be assigned to
  * @param orderName the name of the order, {@link Order#getName()}
- * 
- * @see {@link Order#getName()}
  * @author elbertbautista
+ * @see {@link Order#getName()}
  * @deprecated use {@link OrderVariableExpression#getNamedOrderForCurrentCustomer(String)} instead
  */
 @Deprecated
@@ -58,23 +56,24 @@ public class NamedOrderProcessor implements NamedOrderExpression {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
+
     @Override
     public String getName() {
         return "named_order";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 10000;
     }
-    
+
     @Override
     public Order getWishlist() {
         Customer customer = CustomerState.getCustomer();
         String orderName = "wishlist";
 
-        Map<String, Object> additionalProperties = BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties();
+        Map<String, Object> additionalProperties = BroadleafRequestContext.getBroadleafRequestContext()
+                .getAdditionalProperties();
         Object wishlist = additionalProperties.get("NAMED_ORDER_WISHLIST");
         if (wishlist != null) {
             return (Order) wishlist;
@@ -89,4 +88,5 @@ public class NamedOrderProcessor implements NamedOrderExpression {
         additionalProperties.put("NAMED_ORDER_WISHLIST", nullOrder);
         return nullOrder;
     }
+
 }

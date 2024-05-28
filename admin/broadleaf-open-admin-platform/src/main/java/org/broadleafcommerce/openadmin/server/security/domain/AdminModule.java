@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,32 +21,30 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author elbertbautista
- *
  */
 public interface AdminModule extends Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public String getModuleKey();
+    String getModuleKey();
 
-    public void setModuleKey(String moduleKey);
+    void setModuleKey(String moduleKey);
 
-    public String getIcon();
+    String getIcon();
 
-    public void setIcon(String icon);
+    void setIcon(String icon);
 
-    public List<AdminSection> getSections();
+    List<AdminSection> getSections();
 
-    public void setSections(List<AdminSection> sections);
+    void setSections(List<AdminSection> sections);
 
-    public Integer getDisplayOrder();
+    Integer getDisplayOrder();
 
-    public void setDisplayOrder(Integer displayOrder);
+    void setDisplayOrder(Integer displayOrder);
 
 }

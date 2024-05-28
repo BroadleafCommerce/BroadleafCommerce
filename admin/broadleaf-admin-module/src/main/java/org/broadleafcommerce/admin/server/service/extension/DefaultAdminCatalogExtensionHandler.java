@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,8 +34,8 @@ import jakarta.annotation.Resource;
 /**
  * Default implementation used by the core framework.
  *
- * @see org.broadleafcommerce.admin.server.service.extension.AdminCatalogServiceExtensionHandler
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.admin.server.service.extension.AdminCatalogServiceExtensionHandler
  */
 @Component("blDefaultAdminCatalogExtensionHandler")
 public class DefaultAdminCatalogExtensionHandler extends AbstractExtensionHandler implements AdminCatalogServiceExtensionHandler {
@@ -63,8 +63,11 @@ public class DefaultAdminCatalogExtensionHandler extends AbstractExtensionHandle
      * @return
      */
     @Override
-    public ExtensionResultStatusType persistSkuPermutation(Product product, List<List<ProductOptionValue>>
-            permutationsToGenerate, ExtensionResultHolder<Integer> erh) {
+    public ExtensionResultStatusType persistSkuPermutation(
+            Product product,
+            List<List<ProductOptionValue>> permutationsToGenerate,
+            ExtensionResultHolder<Integer> erh
+    ) {
         int numPermutationsCreated = 0;
         //For each permutation, I need them to map to a specific Sku
         for (List<ProductOptionValue> permutation : permutationsToGenerate) {
@@ -87,4 +90,5 @@ public class DefaultAdminCatalogExtensionHandler extends AbstractExtensionHandle
     public int getPriority() {
         return DEFAULT_PRIORITY;
     }
+
 }

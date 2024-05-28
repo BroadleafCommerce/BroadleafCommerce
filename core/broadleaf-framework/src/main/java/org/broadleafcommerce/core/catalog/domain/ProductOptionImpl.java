@@ -46,6 +46,7 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -70,12 +71,12 @@ import jakarta.persistence.Table;
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class ProductOptionImpl implements ProductOption, AdminMainEntity, ProductOptionAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -125,53 +126,24 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
             group = GroupName.Validation, order = FieldOrder.required,
             prominent = true, gridOrder = 3000)
     protected Boolean required;
-
-    @Column(name = "USE_IN_SKU_GENERATION")
-    @AdminPresentation(friendlyName = "productOption_UseInSKUGeneration",
-            group = GroupName.Details, order = FieldOrder.useInSkuGeneration,
-            tooltip = "productOption_useInSkuGenerationTip",
-            defaultValue = "false")
-    private Boolean useInSkuGeneration = Boolean.FALSE;
-
     @Column(name = "DISPLAY_ORDER")
     @AdminPresentation(friendlyName = "productOption_displayOrder",
             group = GroupName.Details, order = FieldOrder.displayOrder,
             tooltip = "productOption_displayOrderTip")
     protected Integer displayOrder;
-
-    @Column(name = "VALIDATION_STRATEGY_TYPE")
-    @AdminPresentation(friendlyName = "productOption_validationStrategyType",
-            group = GroupName.Validation, order = FieldOrder.validationStrategyType,
-            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType",
-            defaultValue = "NONE")
-    private String productOptionValidationStrategyType;
-
-    @Column(name = "VALIDATION_TYPE")
-    @AdminPresentation(friendlyName = "productOption_validationType",
-            group = GroupName.Validation, order = FieldOrder.validationType,
-            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType",
-            defaultValue = "REGEX",
-            visibility = VisibilityEnum.HIDDEN_ALL)
-    private String productOptionValidationType;
-
     @Column(name = "VALIDATION_STRING")
     @AdminPresentation(friendlyName = "productOption_validationSring",
             group = GroupName.Validation, order = FieldOrder.validationString)
     protected String validationString;
-
     @Column(name = "ERROR_CODE")
     @AdminPresentation(friendlyName = "productOption_errorCode",
             group = GroupName.Validation, order = FieldOrder.errorCode)
     protected String errorCode;
-
     @Column(name = "ERROR_MESSAGE")
     @AdminPresentation(friendlyName = "productOption_errorMessage",
             group = GroupName.Validation, order = FieldOrder.errorMessage,
             translatable = true)
     protected String errorMessage;
-
     @OneToMany(mappedBy = "productOption", targetEntity = ProductOptionValueImpl.class,
             cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
@@ -180,7 +152,6 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
             group = GroupName.General,
             addType = AddMethodType.PERSIST)
     protected List<ProductOptionValue> allowedValues = new ArrayList<>();
-
     @Lob
     @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
@@ -190,12 +161,32 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
             fieldType = SupportedFieldType.HTML_BASIC,
             translatable = true)
     protected String longDescription;
-
     @OneToMany(targetEntity = ProductOptionXrefImpl.class, mappedBy = "productOption")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
     @BatchSize(size = 50)
     @ClonePolicyCollectionOverride
     protected List<ProductOptionXref> products = new ArrayList<>();
+    @Column(name = "USE_IN_SKU_GENERATION")
+    @AdminPresentation(friendlyName = "productOption_UseInSKUGeneration",
+            group = GroupName.Details, order = FieldOrder.useInSkuGeneration,
+            tooltip = "productOption_useInSkuGenerationTip",
+            defaultValue = "false")
+    private Boolean useInSkuGeneration = Boolean.FALSE;
+    @Column(name = "VALIDATION_STRATEGY_TYPE")
+    @AdminPresentation(friendlyName = "productOption_validationStrategyType",
+            group = GroupName.Validation, order = FieldOrder.validationStrategyType,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType",
+            defaultValue = "NONE")
+    private String productOptionValidationStrategyType;
+    @Column(name = "VALIDATION_TYPE")
+    @AdminPresentation(friendlyName = "productOption_validationType",
+            group = GroupName.Validation, order = FieldOrder.validationType,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType",
+            defaultValue = "REGEX",
+            visibility = VisibilityEnum.HIDDEN_ALL)
+    private String productOptionValidationType;
 
     @Override
     public Long getId() {
@@ -374,20 +365,17 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     }
 
     @Override
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
-    }
-
-    ;
-
-    @Override
     public String getLongDescription() {
         return longDescription;
     }
 
     @Override
-    public <G extends ProductOption> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    @Override
+    public <G extends ProductOption> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -435,8 +423,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
                 .append(this.required, rhs.required)
                 .append(this.useInSkuGeneration, rhs.useInSkuGeneration)
                 .append(this.displayOrder, rhs.displayOrder)
-                .append(this.productOptionValidationStrategyType,
-                        rhs.productOptionValidationStrategyType)
+                .append(this.productOptionValidationStrategyType, rhs.productOptionValidationStrategyType)
                 .append(this.productOptionValidationType, rhs.productOptionValidationType)
                 .append(this.validationString, rhs.validationString)
                 .append(this.errorCode, rhs.errorCode)
@@ -462,4 +449,5 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
                 .append(errorMessage)
                 .toHashCode();
     }
+
 }

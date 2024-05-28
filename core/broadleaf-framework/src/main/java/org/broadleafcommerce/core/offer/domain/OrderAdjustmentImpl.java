@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,6 +42,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
@@ -71,14 +72,14 @@ import jakarta.persistence.Transient;
         friendlyName = "OrderAdjustmentImpl_baseOrderAdjustment")
 public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentifiable {
 
-    public static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "OrderAdjustmentId")
     @GenericGenerator(
             name = "OrderAdjustmentId",
-            type = IdOverrideTableGenerator.class
-            ,
+            type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "OrderAdjustmentImpl"),
                     @Parameter(name = "entity_name",
@@ -95,8 +96,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
 
     @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
-    @AdminPresentation(friendlyName = "OrderAdjustmentImpl_Offer", order = 1000,
-            prominent = true, gridOrder = 1000)
+    @AdminPresentation(friendlyName = "OrderAdjustmentImpl_Offer", order = 1000, prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup()
     protected Offer offer;
 
@@ -124,8 +124,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
         this.offer = offer;
         this.reason = reason;
         if (offer != null) {
-            this.isFutureCredit =
-                    OfferAdjustmentType.FUTURE_CREDIT.equals(offer.getAdjustmentType());
+            this.isFutureCredit = OfferAdjustmentType.FUTURE_CREDIT.equals(offer.getAdjustmentType());
         }
     }
 

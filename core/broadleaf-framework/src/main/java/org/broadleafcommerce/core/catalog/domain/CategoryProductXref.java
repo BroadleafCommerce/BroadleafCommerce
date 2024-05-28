@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,66 +29,65 @@ import java.math.BigDecimal;
  * You should implement this class if you want to make significant changes to the
  * relationship between Category and Product.  If you just want to add additional fields
  * then you should extend {@link CategoryProductXrefImpl}.
- * 
- *  @see {@link CategoryProductXrefImpl},{@link Category}, {@link Product}
- *  @author btaylor
- * 
+ *
+ * @author btaylor
+ * @see {@link CategoryProductXrefImpl},{@link Category}, {@link Product}
  */
-public interface CategoryProductXref extends Serializable,MultiTenantCloneable<CategoryProductXref> {
+public interface CategoryProductXref extends Serializable, MultiTenantCloneable<CategoryProductXref> {
 
     /**
      * Gets the category.
-     * 
+     *
      * @return the category
      */
     Category getCategory();
 
     /**
      * Sets the category.
-     * 
+     *
      * @param category the new category
      */
     void setCategory(Category category);
 
     /**
      * Gets the product.
-     * 
+     *
      * @return the product
      */
     Product getProduct();
 
     /**
      * Sets the product.
-     * 
+     *
      * @param product the new product
      */
     void setProduct(Product product);
 
     /**
      * Gets the display order.
-     * 
+     *
      * @return the display order
      */
     BigDecimal getDisplayOrder();
 
     /**
      * Sets the display order.
-     * 
+     *
      * @param displayOrder the new display order
      */
     void setDisplayOrder(BigDecimal displayOrder);
 
+    Long getId();
+
     void setId(Long id);
 
-    Long getId();
-    
     /**
      * Specifies the default reference between a category and a product. The default reference is used
      * to drive cononical urls and also drives inheritance of fulfillment types and inventory types from the category to
      * the product. This replaces the concept of {@link ProductImpl#getDefaultCategory()}
      *
-     * @see ProductImpl#getCategory()
      * @return the default reference between a product and a category
+     * @see ProductImpl#getCategory()
      */
     Boolean getDefaultReference();
 

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,10 +43,15 @@ import jakarta.servlet.http.HttpServletRequest;
 @Component("blMessagesResourceResolver")
 public class MessagesResourceResolver implements ResourceResolver {
 
-    protected static final String MESSAGES_JS_PATH="admin/ui/messages.js";
-    protected static final String OPEN_ADMIN_MESSAGES_PROPERTIES="messages/OpenAdminJavascriptMessages.properties";
+    protected static final String MESSAGES_JS_PATH = "admin/ui/messages.js";
+    protected static final String OPEN_ADMIN_MESSAGES_PROPERTIES = "messages/OpenAdminJavascriptMessages.properties";
 
-    public Resource resolveResource(HttpServletRequest request, String path, List<? extends Resource> locations, ResourceResolverChain chain) {
+    public Resource resolveResource(
+            HttpServletRequest request,
+            String path,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         if (!path.equalsIgnoreCase(getMessagesJsPath())) {
             return chain.resolveResource(request, path, locations);
         } else {
@@ -80,7 +85,7 @@ public class MessagesResourceResolver implements ResourceResolver {
             IOUtils.copy(resource.getInputStream(), writer, "UTF-8");
             contents = writer.toString();
         } finally {
-            if(writer != null) {
+            if (writer != null) {
                 writer.flush();
                 writer.close();
             }
@@ -108,16 +113,20 @@ public class MessagesResourceResolver implements ResourceResolver {
             propertiesObject.append("{");
 
             // get the property value and print it out
-            for(Map.Entry<Object,Object> property : prop.entrySet()) {
+            for (Map.Entry<Object, Object> property : prop.entrySet()) {
                 propertiesObject.append(property.getKey() + ": \"" + property.getValue() + "\", ");
             }
 
-            contents = contents.replace("//BLC-ADMIN-JS-MESSAGES", propertiesObject.getBuffer().toString().substring(0, propertiesObject.getBuffer().toString().length() - 2) + "}");
+            contents = contents.replace(
+                    "//BLC-ADMIN-JS-MESSAGES",
+                    propertiesObject.getBuffer().toString()
+                            .substring(0, propertiesObject.getBuffer().toString().length() - 2) + "}"
+            );
 
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            if(inputStream != null) {
+            if (inputStream != null) {
                 inputStream.close();
             }
         }
@@ -126,8 +135,8 @@ public class MessagesResourceResolver implements ResourceResolver {
 
     @Override
     public String resolveUrlPath(String resourcePath, List<? extends Resource> locations, ResourceResolverChain chain) {
-        if(!MESSAGES_JS_PATH.equals(resourcePath)){
-            return chain.resolveUrlPath(resourcePath,locations);
+        if (!MESSAGES_JS_PATH.equals(resourcePath)) {
+            return chain.resolveUrlPath(resourcePath, locations);
         }
         return MESSAGES_JS_PATH;
     }
@@ -139,4 +148,5 @@ public class MessagesResourceResolver implements ResourceResolver {
     public String getOpenAdminMessagesProperties() {
         return OPEN_ADMIN_MESSAGES_PROPERTIES;
     }
+
 }

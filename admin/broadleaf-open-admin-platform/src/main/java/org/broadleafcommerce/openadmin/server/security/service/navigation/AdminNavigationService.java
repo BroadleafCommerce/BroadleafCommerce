@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,7 +42,7 @@ public interface AdminNavigationService {
 
     /**
      * In some cases, a single class is served by more than one section.
-     * 
+     *
      * @param className
      * @param sectionId
      * @return
@@ -51,7 +51,7 @@ public interface AdminNavigationService {
 
     /**
      * In some cases, a single class is served by more than one section.
-     * 
+     *
      * @param className
      * @param sectionId
      * @return
@@ -60,6 +60,7 @@ public interface AdminNavigationService {
 
     /**
      * Gets all of the {@link AdminSection}s in the system, sorted by the {@link AdminSection#getDisplayOrder()}
+     *
      * @return the list of all {@link AdminSection}s sorted by {@link AdminSection#getDisplayOrder()}
      */
     public List<AdminSection> findAllAdminSections();

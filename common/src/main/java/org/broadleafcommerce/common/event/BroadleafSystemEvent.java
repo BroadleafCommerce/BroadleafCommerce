@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,8 +39,8 @@ import java.util.Map;
  * appCtx.publishEvent(new BroadleafSystemEvent("CONSUMER_TYPE", BroadleafEventScopeType.VM, BroadleafEventWorkerType.SITE, true);
  * </pre>
  *
- * @see ApplicationContext#publishEvent(org.springframework.context.ApplicationEvent)
  * @author Jay Aisenbrey (cja769)
+ * @see ApplicationContext#publishEvent(org.springframework.context.ApplicationEvent)
  */
 public class BroadleafSystemEvent extends BroadleafApplicationEvent {
 
@@ -53,13 +53,19 @@ public class BroadleafSystemEvent extends BroadleafApplicationEvent {
     protected boolean universal;
 
     /**
-     * @param type should match the com.broadleafcommerce.jobsevents.service.SystemEventConsumer#getType
-     * @param detailMap details passed to the event consumer
-     * @param scopeType how the event should be consumed
+     * @param type       should match the com.broadleafcommerce.jobsevents.service.SystemEventConsumer#getType
+     * @param detailMap  details passed to the event consumer
+     * @param scopeType  how the event should be consumed
      * @param workerType what type of workers should consume it
-     * @param universal used for a performance optimization when sending multiple events at the same time, usually <b>true</b>
+     * @param universal  used for a performance optimization when sending multiple events at the same time, usually <b>true</b>
      */
-    public BroadleafSystemEvent(String type, Map<String, BroadleafSystemEventDetail> detailMap, BroadleafEventScopeType scopeType, BroadleafEventWorkerType workerType, boolean universal) {
+    public BroadleafSystemEvent(
+            String type,
+            Map<String, BroadleafSystemEventDetail> detailMap,
+            BroadleafEventScopeType scopeType,
+            BroadleafEventWorkerType workerType,
+            boolean universal
+    ) {
         super(type);
         this.detailMap = detailMap;
         this.type = type;
@@ -71,7 +77,12 @@ public class BroadleafSystemEvent extends BroadleafApplicationEvent {
     /**
      * @see BroadleafSystemEvent#BroadleafSystemEvent(String, Map, BroadleafEventScopeType, BroadleafEventWorkerType, boolean)
      */
-    public BroadleafSystemEvent(String type, BroadleafEventScopeType scopeType, BroadleafEventWorkerType workerType, boolean universal) {
+    public BroadleafSystemEvent(
+            String type,
+            BroadleafEventScopeType scopeType,
+            BroadleafEventWorkerType workerType,
+            boolean universal
+    ) {
         super(type);
         this.type = type;
         this.scopeType = scopeType;
@@ -114,6 +125,7 @@ public class BroadleafSystemEvent extends BroadleafApplicationEvent {
     /**
      * If this event is constructed the exact same way with the exact same data, we can gain
      * a performance increase by combining multiple events into 1.
+     *
      * @return
      */
     public boolean isUniversal() {
@@ -129,7 +141,8 @@ public class BroadleafSystemEvent extends BroadleafApplicationEvent {
      *
      * @author Jay Aisenbrey (cja769)
      */
-    public static enum BroadleafEventScopeType {
+    public enum BroadleafEventScopeType {
+
         /**
          * All nodes will execute
          */
@@ -162,6 +175,7 @@ public class BroadleafSystemEvent extends BroadleafApplicationEvent {
          * events that need to 'catch up' to events that it might have missed
          */
         DURABLE_GLOBAL
+
     }
 
     /**
@@ -169,7 +183,12 @@ public class BroadleafSystemEvent extends BroadleafApplicationEvent {
      *
      * @author Jay Aisenbrey (cja769)
      */
-    public static enum BroadleafEventWorkerType {
-        SITE, ADMIN, ANY
+    public enum BroadleafEventWorkerType {
+
+        SITE,
+        ADMIN,
+        ANY
+
     }
+
 }

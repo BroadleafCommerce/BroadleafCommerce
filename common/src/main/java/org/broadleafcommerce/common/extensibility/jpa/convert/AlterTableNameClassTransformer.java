@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -104,8 +104,13 @@ public class AlterTableNameClassTransformer extends AbstractClassTransformer imp
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
+    public byte[] transform(
+            ClassLoader loader,
+            String className,
+            Class<?> classBeingRedefined,
+            ProtectionDomain protectionDomain,
+            byte[] classfileBuffer
+    ) throws TransformerException {
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null || StringUtils.isBlank(getTargetedClass()) || StringUtils.isBlank(getTableName())) {
             return null;
@@ -134,12 +139,12 @@ public class AlterTableNameClassTransformer extends AbstractClassTransformer imp
 
             } catch (Exception ex) {
                 ex.printStackTrace();
-                throw new TransformerException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + ex.getMessage());
+                throw new TransformerException("Unable to convert " + convertedClassName
+                        + " to a SingleTable inheritance strategy: " + ex.getMessage());
             }
         }
         return classBytes;
     }
-
 
     /**
      * Build class-level annotations from a template class
@@ -203,4 +208,5 @@ public class AlterTableNameClassTransformer extends AbstractClassTransformer imp
     public void setTargetedClass(String targetedClass) {
         this.targetedClass = targetedClass;
     }
+
 }

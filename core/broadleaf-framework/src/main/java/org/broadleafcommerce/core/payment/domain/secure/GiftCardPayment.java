@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,14 +19,13 @@ package org.broadleafcommerce.core.payment.domain.secure;
 
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 
-
 /**
  * Entity associated with sensitive, secured bank account data. This data is stored specifically in the blSecurePU persistence.
  * All fetches and creates should go through {@link SecureOrderPaymentService} in order to properly decrypt/encrypt the data
  * from/to the database.
  *
- * @see {@link Referenced}
  * @author Phillip Verheyden (phillipuniverse)
+ * @see {@link Referenced}
  */
 public interface GiftCardPayment extends Referenced {
 
@@ -34,31 +33,32 @@ public interface GiftCardPayment extends Referenced {
      * @return the id
      */
     @Override
-    public Long getId();
+    Long getId();
 
     /**
      * @param id the id to set
      */
     @Override
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * @return the pan
      */
-    public String getPan();
+    String getPan();
 
     /**
      * @param pan the pan to set
      */
-    public void setPan(String pan);
+    void setPan(String pan);
 
     /**
      * @return the pin
      */
-    public String getPin();
+    String getPin();
 
     /**
      * @param pin the pin to set
      */
-    public void setPin(String pin);
+    void setPin(String pin);
+
 }

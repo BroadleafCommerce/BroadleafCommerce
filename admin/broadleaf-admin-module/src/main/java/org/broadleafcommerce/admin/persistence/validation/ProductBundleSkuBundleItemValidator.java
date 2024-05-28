@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,8 +37,7 @@ import jakarta.annotation.Resource;
 
 /**
  * Validates that a ProductBundle cannot have its own Default Sku selected as a Sku Bundle Item
- * 
- * 
+ *
  * @author Chris Kittrell (ckittrell)
  */
 @Component("blProductBundleSkuBundleItemValidator")
@@ -50,19 +49,26 @@ public class ProductBundleSkuBundleItemValidator extends ValidationConfiguration
     @Resource(name = "blCatalogService")
     public CatalogService catalogService;
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
     @Override
-    public PropertyValidationResult validate(Entity entity, Serializable instance, Map<String, FieldMetadata> entityFieldMetadata,
-            Map<String, String> validationConfiguration, BasicFieldMetadata propertyMetadata, String propertyName,
-            String value) {
+    public PropertyValidationResult validate(
+            Entity entity,
+            Serializable instance,
+            Map<String, FieldMetadata> entityFieldMetadata,
+            Map<String, String> validationConfiguration,
+            BasicFieldMetadata propertyMetadata,
+            String propertyName,
+            String value
+    ) {
         String skuId = entity.findProperty("sku") == null ? null : entity.findProperty("sku").getValue();
         String bundleId = entity.findProperty("bundle") == null ? null : entity.findProperty("bundle").getValue();
 
         if (skuId != null && bundleId != null) {
             ProductBundle productBundle = (ProductBundle) catalogService.findProductById(Long.valueOf(bundleId));
-            Long defaultSkuOrigId = sandBoxHelper.getOriginalId(Sku.class, productBundle.getDefaultSku().getId()).getOriginalId();
+            Long defaultSkuOrigId = sandBoxHelper.getOriginalId(Sku.class, productBundle.getDefaultSku().getId())
+                    .getOriginalId();
 
             if (Long.valueOf(skuId).equals(defaultSkuOrigId)) {
                 return new PropertyValidationResult(false, ERROR_MESSAGE);
@@ -71,4 +77,5 @@ public class ProductBundleSkuBundleItemValidator extends ValidationConfiguration
 
         return new PropertyValidationResult(true);
     }
+
 }

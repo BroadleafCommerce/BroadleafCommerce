@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,14 +35,14 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * Wraps Spring's {@link VersionResourceResolver} but adds in support to disable with 
+ * Wraps Spring's {@link VersionResourceResolver} but adds in support to disable with
  * environment properties.
- * 
- * Before delegating to {@link VersionResourceResolver}, first checks to see if the request is for 
+ * <p>
+ * Before delegating to {@link VersionResourceResolver}, first checks to see if the request is for
  * a Broadleaf bundle.   If so, skips versioning since bundles are already versioned.
- * 
- *  {@code }
- * 
+ * <p>
+ * {@code }
+ *
  * @author Brian Polster
  * @since Broadleaf 4.0
  */
@@ -50,21 +50,21 @@ import jakarta.servlet.http.HttpServletRequest;
 public class BroadleafVersionResourceResolver extends VersionResourceResolver implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(BroadleafVersionResourceResolver.class);
-
-    private int order = BroadleafResourceResolverOrder.BLC_VERSION_RESOURCE_RESOLVER;
-
     @Value("${resource.versioning.enabled:true}")
     protected boolean resourceVersioningEnabled;
-
     @jakarta.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
-
     @jakarta.annotation.Resource(name = "blVersionResourceResolverStrategyMap")
     protected Map<String, VersionStrategy> versionStrategyMap;
+    private int order = BroadleafResourceResolverOrder.BLC_VERSION_RESOURCE_RESOLVER;
 
     @Override
-    protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
-            List<? extends Resource> locations, ResourceResolverChain chain) {
+    protected Resource resolveResourceInternal(
+            HttpServletRequest request,
+            String requestPath,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         if (resourceVersioningEnabled && !bundlingService.checkForRegisteredBundleFile(requestPath)) {
             return super.resolveResourceInternal(request, requestPath, locations, chain);
         } else {
@@ -73,8 +73,11 @@ public class BroadleafVersionResourceResolver extends VersionResourceResolver im
     }
 
     @Override
-    protected String resolveUrlPathInternal(String resourceUrlPath,
-            List<? extends Resource> locations, ResourceResolverChain chain) {
+    protected String resolveUrlPathInternal(
+            String resourceUrlPath,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         if (resourceVersioningEnabled && !bundlingService.checkForRegisteredBundleFile(resourceUrlPath)) {
             String result = super.resolveUrlPathInternal(resourceUrlPath, locations, chain);
 

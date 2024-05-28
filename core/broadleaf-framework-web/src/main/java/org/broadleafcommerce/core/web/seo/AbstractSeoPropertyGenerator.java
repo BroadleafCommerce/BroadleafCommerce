@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,7 +32,7 @@ import jakarta.annotation.Resource;
 
 /**
  * An {@link AbstractSeoPropertyGenerator} understands how to gather a specific set of SEO properties for the given domain object
- * 
+ *
  * @author Chris Kittrell (ckittrell)
  */
 public abstract class AbstractSeoPropertyGenerator implements SeoPropertyGenerator {
@@ -42,7 +42,6 @@ public abstract class AbstractSeoPropertyGenerator implements SeoPropertyGenerat
 
     @Resource(name = "blSeoDefaultPropertyService")
     protected SeoDefaultPropertyService defaultPropertyService;
-
 
     @Override
     public Map<String, String> gatherSeoProperties(Category category) {
@@ -58,7 +57,6 @@ public abstract class AbstractSeoPropertyGenerator implements SeoPropertyGenerat
     public Map<String, String> gatherSeoProperties(PageDTO page) {
         throw new UnsupportedOperationException("Not Implemented");
     }
-
 
     protected Map<String, String> getSimpleProperties(Category category) {
         Map<String, String> properties = new HashMap<>();

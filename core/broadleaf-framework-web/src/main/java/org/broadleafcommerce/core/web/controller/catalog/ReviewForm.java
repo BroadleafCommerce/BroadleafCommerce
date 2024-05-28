@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,10 +19,12 @@ package org.broadleafcommerce.core.web.controller.catalog;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class ReviewForm implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Product product;
@@ -32,20 +34,25 @@ public class ReviewForm implements Serializable {
     public Product getProduct() {
         return product;
     }
+
     public void setProduct(Product product) {
         this.product = product;
     }
+
     public Double getRating() {
         return rating;
     }
+
     public void setRating(Double rating) {
         this.rating = rating;
     }
+
     public String getReviewText() {
         return reviewText;
     }
+
     public void setReviewText(String reviewText) {
         this.reviewText = reviewText;
     }
-    
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,32 +19,28 @@ package org.broadleafcommerce.core.offer.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of offer types.
- *
  */
 public class OfferTimeZoneType implements Serializable, BroadleafEnumerationType {
-    
-    private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferTimeZoneType> TYPES = new LinkedHashMap<String, OfferTimeZoneType>();
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static final Map<String, OfferTimeZoneType> TYPES = new LinkedHashMap<>();
 
     public static final OfferTimeZoneType SERVER = new OfferTimeZoneType("SERVER", "Server");
     public static final OfferTimeZoneType APPLICATION = new OfferTimeZoneType("APPLICATION", "Application Supplied");
     public static final OfferTimeZoneType CST = new OfferTimeZoneType("CST", "CST", true);
     public static final OfferTimeZoneType UTC = new OfferTimeZoneType("UTC", "UTC", true);
-    public static OfferTimeZoneType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
     private Boolean javaStandardTimeZone;
-
 
     public OfferTimeZoneType() {
         //do nothing
@@ -59,15 +55,20 @@ public class OfferTimeZoneType implements Serializable, BroadleafEnumerationType
         setType(type);
         setJavaStandardTimeZone(javaStandardTimeZone);
     }
+
+    public static OfferTimeZoneType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getFriendlyType() {
@@ -81,6 +82,7 @@ public class OfferTimeZoneType implements Serializable, BroadleafEnumerationType
     public void setJavaStandardTimeZone(Boolean javaStandardTimeZone) {
         this.javaStandardTimeZone = javaStandardTimeZone;
     }
+
     @Override
     public int hashCode() {
         final int prime = 31;

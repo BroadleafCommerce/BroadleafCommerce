@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,45 +44,41 @@ import java.util.List;
 import java.util.Random;
 
 import jakarta.annotation.Resource;
+
 /**
  * Many components in the Broadleaf Framework can benefit from creating and manipulating temporary files as well
  * as storing and accessing files in a remote repository (such as AmazonS3).
- * 
+ * <p>
  * This service provides a pluggable way to provide those services via {@link FileServiceProvider} implementations.
- * 
+ * <p>
  * This service can be used by any component that needs to write files to an area shared by multiple application servers.
- * 
- * For example usage, see {@link SiteMapGenerator}.  The Broadleaf CMS module also uses this component to load, store, and 
- * manipulate images for the file-system.   
- * 
+ * <p>
+ * For example usage, see {@link SiteMapGenerator}.  The Broadleaf CMS module also uses this component to load, store, and
+ * manipulate images for the file-system.
+ * <p>
  * Generally, the process to create a new asset in the shared file system is ...
  * 1.  Call initializeWorkArea() to get a temporary directory
  * 2.  Create files, directories, etc. using the {@link FileWorkArea#filePathLocation} as the root directory.
  * 3.  Once your file processing is complete, call {@link #addOrUpdateResources(FileWorkArea, FileApplicationType)} to
  * 4.  Call {@link #closeWorkArea()} to clear out the temporary files
- * 
- * @author bpolster
  *
+ * @author bpolster
  */
 @Service("blFileService")
 public class BroadleafFileServiceImpl implements BroadleafFileService {
-    
-    private static final Log LOG = LogFactory.getLog(BroadleafFileServiceImpl.class);
 
+    private static final Log LOG = LogFactory.getLog(BroadleafFileServiceImpl.class);
+    private static final String DEFAULT_STORAGE_DIRECTORY = System.getProperty("java.io.tmpdir");
     @Resource(name = "blFileServiceProviders")
-    protected List<FileServiceProvider> fileServiceProviders = new ArrayList<FileServiceProvider>();
-    
+    protected List<FileServiceProvider> fileServiceProviders = new ArrayList<>();
     @Resource(name = "blDefaultFileServiceProvider")
     protected FileServiceProvider defaultFileServiceProvider;
-
-    private static final String DEFAULT_STORAGE_DIRECTORY = System.getProperty("java.io.tmpdir");
-    
     @Value("${file.service.temp.file.base.directory}")
-    protected String tempFileSystemBaseDirectory;    
-    
+    protected String tempFileSystemBaseDirectory;
+
     @Value("${asset.server.max.generated.file.system.directories}")
     protected int maxGeneratedDirectoryDepth = 2;
-    
+
     @Value("${asset.server.file.classpath.directory}")
     protected String fileServiceClasspathDirectory;
 
@@ -90,7 +86,8 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     protected BroadleafFileServiceExtensionManager extensionManager;
 
     /**
-     * Create a file work area that can be used for further operations. 
+     * Create a file work area that can be used for further operations.
+     *
      * @return
      */
     @Override
@@ -99,7 +96,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
         String tempDirectory = getTempDirectory(baseDirectory);
         FileWorkArea fw = new FileWorkArea();
         fw.setFilePathLocation(tempDirectory);
-        
+
         File tmpDir = new File(tempDirectory);
 
         if (!tmpDir.exists()) {
@@ -117,7 +114,8 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     /**
      * Closes the passed in work area.   This method will delete the work area (typically a directory on the file
      * system and all items it encloses).
-     * @param Work Area
+     *
+     * @param fwArea Area
      */
     @Override
     public void closeWorkArea(FileWorkArea fwArea) {
@@ -147,15 +145,17 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
             String filePath = FilenameUtils.normalize(baseDirectory + File.separator + systemResourcePath);
             return new File(filePath);
         } else {
-           String baseDirectory = getBaseDirectory(true);
-           ExtensionResultHolder<String> holder = new ExtensionResultHolder<String>();
-           if (extensionManager != null) {
-               ExtensionResultStatusType result = extensionManager.getProxy().processPathForSite(baseDirectory, resourceName, holder);
-               if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
-                   return new File(holder.getResult());
-               }
-           }
-           return getLocalResource(resourceName, true);
+            String baseDirectory = getBaseDirectory(true);
+            ExtensionResultHolder<String> holder = new ExtensionResultHolder<>();
+            if (extensionManager != null) {
+                ExtensionResultStatusType result = extensionManager.getProxy().processPathForSite(
+                        baseDirectory, resourceName, holder
+                );
+                if (!ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
+                    return new File(holder.getResult());
+                }
+            }
+            return getLocalResource(resourceName, true);
         }
     }
 
@@ -196,7 +196,9 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     protected ClassPathResource lookupResourceOnClassPath(String name) {
         if (fileServiceClasspathDirectory != null && !"".equals(fileServiceClasspathDirectory)) {
             try {
-                String resourceName = FilenameUtils.separatorsToUnix(FilenameUtils.normalize(fileServiceClasspathDirectory + '/' + name));
+                String resourceName = FilenameUtils.separatorsToUnix(
+                        FilenameUtils.normalize(fileServiceClasspathDirectory + '/' + name)
+                );
                 ClassPathResource resource = new ClassPathResource(resourceName);
                 if (resource.exists()) {
                     return resource;
@@ -216,10 +218,10 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
                 InputStream assetFile = resource.getInputStream();
                 BufferedInputStream bufferedStream = new BufferedInputStream(assetFile);
 
-                // Wrapping the buffered input stream with a globally shared stream allows us to 
-                // vary the way the file names are generated on the file system.    
+                // Wrapping the buffered input stream with a globally shared stream allows us to
+                // vary the way the file names are generated on the file system.
                 // This benefits us (mainly in our demo site but their could be other uses) when we
-                // have assets that are shared across sites that we also need to resize. 
+                // have assets that are shared across sites that we also need to resize.
                 GloballySharedInputStream globallySharedStream = new GloballySharedInputStream(bufferedStream);
                 globallySharedStream.mark(0);
                 return globallySharedStream;
@@ -255,15 +257,14 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     @Override
     public void addOrUpdateResource(FileWorkArea workArea, File file, boolean removeFilesFromWorkArea) {
         addOrUpdateResourcesForPaths(workArea, removeFilesFromWorkArea);
-        
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String addOrUpdateResourceForPath(FileWorkArea workArea, File file, boolean removeFilesFromWorkArea) {
-        List<File> files = new ArrayList<File>();
+        List<File> files = new ArrayList<>();
         files.add(file);
         return addOrUpdateResourcesForPaths(workArea, files, removeFilesFromWorkArea).get(0);
     }
@@ -275,22 +276,26 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     public void addOrUpdateResources(FileWorkArea workArea, boolean removeFilesFromWorkArea) {
         addOrUpdateResourcesForPaths(workArea, removeFilesFromWorkArea);
     }
-    
+
     @Override
     public List<String> addOrUpdateResourcesForPaths(FileWorkArea workArea, boolean removeFilesFromWorkArea) {
         File folder = new File(workArea.getFilePathLocation());
-        List<File> fileList = new ArrayList<File>();
+        List<File> fileList = new ArrayList<>();
         buildFileList(folder, fileList);
         return addOrUpdateResourcesForPaths(workArea, fileList, removeFilesFromWorkArea);
     }
-    
+
     @Override
     public void addOrUpdateResources(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea) {
         addOrUpdateResourcesForPaths(workArea, files, removeFilesFromWorkArea);
     }
 
     @Override
-    public List<String> addOrUpdateResourcesForPaths(FileWorkArea workArea, List<File> files, boolean removeFilesFromWorkArea) {
+    public List<String> addOrUpdateResourcesForPaths(
+            FileWorkArea workArea,
+            List<File> files,
+            boolean removeFilesFromWorkArea
+    ) {
         checkFiles(workArea, files);
         return selectFileServiceProvider().addOrUpdateResourcesForPaths(workArea, files, removeFilesFromWorkArea);
     }
@@ -318,10 +323,9 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
 
     /**
      * Returns the FileServiceProvider that can handle the passed in application type.
-     * 
+     * <p>
      * By default, this method returns the component configured at blFileServiceProvider
-     * 
-     * @param applicationType
+     *
      * @return
      */
     protected FileServiceProvider selectFileServiceProvider() {
@@ -343,8 +347,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
 
     /**
      * Returns the baseDirectory for writing and reading files as the property assetFileSystemPath if it
-     * exists or java.tmp.io if that property has not been set.   
-     * 
+     * exists or java.tmp.io if that property has not been set.
      */
     protected String getBaseDirectory(boolean skipSite) {
         String path = "";
@@ -369,8 +372,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     }
 
     /**
-     * Returns a directory that is unique for this work area. 
-     *   
+     * Returns a directory that is unique for this work area.
      */
     protected String getTempDirectory(String baseDirectory) {
         assert baseDirectory != null;
@@ -398,7 +400,8 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
 
     /**
      * Adds the file to the passed in Collection.
-     * If the file is a directory, adds its children recursively.   Otherwise, just adds the file to the list.    
+     * If the file is a directory, adds its children recursively.   Otherwise, just adds the file to the list.
+     *
      * @param file
      * @param fileList
      */
@@ -422,7 +425,7 @@ public class BroadleafFileServiceImpl implements BroadleafFileService {
     public String getTempFileSystemBaseDirectory() {
         return tempFileSystemBaseDirectory;
     }
-    
+
     public void setTempFileSystemBaseDirectory(String tempFileSystemBaseDirectory) {
         this.tempFileSystemBaseDirectory = tempFileSystemBaseDirectory;
     }

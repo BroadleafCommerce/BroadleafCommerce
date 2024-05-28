@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,58 +24,59 @@ import java.util.List;
 
 /**
  * Represents a field that gets stored in the search index
- * 
+ *
  * @author Chad Harchar (charchar)
  */
-public interface IndexField extends Serializable, MultiTenantCloneable<IndexField>  {
+public interface IndexField extends Serializable, MultiTenantCloneable<IndexField> {
 
     /**
      * Gets the id for this search field
      *
      * @return
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the id for this search field
      *
      * @param id
      */
-    public void setId(Long id);
-    
+    void setId(Long id);
+
     /**
      * Whether or not the user should see results for this field when typing in search terms in the omnibox, or if
      * this is just a field stored in the index (like margin or sorts)
      */
-    public Boolean getSearchable();
+    Boolean getSearchable();
 
-    public void setSearchable(Boolean searchable);
-    
+    void setSearchable(Boolean searchable);
+
     /**
      * Gets the field for this search field
      *
      * @return
      */
-    public Field getField();
+    Field getField();
 
     /**
      * Sets the field for this search field
      *
      * @param field
      */
-    public void setField(Field field);
+    void setField(Field field);
 
     /**
      * Gets the searchable field types for this search field
      *
      * @return
      */
-    public List<IndexFieldType> getFieldTypes();
+    List<IndexFieldType> getFieldTypes();
 
     /**
      * Sets the searchable field types for this search field
      *
      * @param fieldTypes
      */
-    public void setFieldTypes(List<IndexFieldType> fieldTypes);
+    void setFieldTypes(List<IndexFieldType> fieldTypes);
+
 }

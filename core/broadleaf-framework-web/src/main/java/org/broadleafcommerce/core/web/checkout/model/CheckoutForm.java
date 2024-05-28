@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,14 +23,16 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CheckoutForm implements Serializable {
-    
+
+    @Serial
     private static final long serialVersionUID = 8866879738364589339L;
-    
+
     private String emailAddress;
     private Address shippingAddress = new AddressImpl();
     private Address billingAddress = new AddressImpl();
@@ -53,8 +55,6 @@ public class CheckoutForm implements Serializable {
         shippingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
         billingAddress.setIsoCountryAlpha2(new ISOCountryImpl());
         isSameAddress = true;
-
-
     }
 
     public String getEmailAddress() {
@@ -94,7 +94,7 @@ public class CheckoutForm implements Serializable {
     }
 
     public void setBillingAddress(Address billingAddress) {
-       this.billingAddress = billingAddress;
+        this.billingAddress = billingAddress;
     }
 
     public String getCreditCardNumber() {

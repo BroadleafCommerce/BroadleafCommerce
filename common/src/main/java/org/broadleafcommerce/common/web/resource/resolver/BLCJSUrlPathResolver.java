@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.web.resource.resolver;
-
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,18 +34,17 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * A {@link ResourceResolver} that replaces the //BLC-SERVLET-CONTEXT and //BLC-SITE-BASEURL" 
+ * A {@link ResourceResolver} that replaces the //BLC-SERVLET-CONTEXT and //BLC-SITE-BASEURL"
  * tokens before serving the BLC.js file.
- * 
+ * <p>
  * This component modifies the path and works in conjunction with the {@link BLCJSResourceResolver}
  * which loads the modified file.
- * 
+ * <p>
  * The processes were split to allow for caching of the resource but not the URL path.
- * 
- * @since 4.0
- * 
+ *
  * @author Reggie Cole
  * @author Brian Polster
+ * @since 4.0
  * @since Broadleaf 4.0
  */
 @Component("blBLCJSUrlPathResolver")
@@ -59,22 +57,29 @@ public class BLCJSUrlPathResolver extends AbstractResourceResolver implements Or
     private int order = BroadleafResourceResolverOrder.BLC_JS_PATH_RESOLVER;
 
     @Override
-    protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
-            ResourceResolverChain chain) {
+    protected String resolveUrlPathInternal(
+            String resourceUrlPath,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         if (resourceUrlPath.contains(BLC_JS_NAME)) {
             Site site = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
             if (site != null && site.getId() != null) {
-                return addVersion(resourceUrlPath, "-"+site.getId());
+                return addVersion(resourceUrlPath, "-" + site.getId());
             } else {
                 return resourceUrlPath;
-            }                       
+            }
         }
         return chain.resolveUrlPath(resourceUrlPath, locations);
     }
-    
+
     @Override
-    protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
-            List<? extends Resource> locations, ResourceResolverChain chain) {
+    protected Resource resolveResourceInternal(
+            HttpServletRequest request,
+            String requestPath,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         return chain.resolveResource(request, requestPath, locations);
     }
 
@@ -92,4 +97,5 @@ public class BLCJSUrlPathResolver extends AbstractResourceResolver implements Or
     public void setOrder(int order) {
         this.order = order;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,20 +34,17 @@ import java.util.Map;
 @Service("blSkuMetadataCacheService")
 public class SkuMetadataCacheServiceImpl implements SkuMetadataCacheService {
 
+    protected static final Map<String, Map<String, FieldMetadata>> METADATA_CACHE = new EfficientLRUMap<>(1000);
     private static final Log LOG = LogFactory.getLog(SkuMetadataCacheServiceImpl.class);
-
     @Value("${cache.entity.dao.metadata.ttl}")
     protected int cacheEntityMetaDataTtl;
-
     protected long lastCacheFlushTime = System.currentTimeMillis();
-
-    protected static final Map<String, Map<String, FieldMetadata>> METADATA_CACHE = new EfficientLRUMap<>(1000);
 
     @Override
     public Map<String, Map<String, FieldMetadata>> getEntireCache() {
         return METADATA_CACHE;
     }
-    
+
     @Override
     public boolean useCache() {
         if (cacheEntityMetaDataTtl < 0) {
@@ -65,7 +62,7 @@ public class SkuMetadataCacheServiceImpl implements SkuMetadataCacheService {
             }
         }
     }
-    
+
     @Override
     public Map<String, FieldMetadata> getFromCache(String cacheKey) {
         if (useCache()) {
@@ -74,7 +71,7 @@ public class SkuMetadataCacheServiceImpl implements SkuMetadataCacheService {
             return null;
         }
     }
-    
+
     @Override
     public boolean addToCache(String cacheKey, Map<String, FieldMetadata> metadata) {
         if (useCache()) {
@@ -90,7 +87,7 @@ public class SkuMetadataCacheServiceImpl implements SkuMetadataCacheService {
         LOG.debug("Invalidating Sku metadata cache for: " + StringUtil.sanitize(cacheKey));
         METADATA_CACHE.remove(cacheKey);
     }
-    
+
     @Override
     public String buildCacheKey(String productId) {
         String key = SkuImpl.class.getName();

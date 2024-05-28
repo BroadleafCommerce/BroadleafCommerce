@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,28 +41,25 @@ import java.util.concurrent.locks.ReentrantLock;
  * The queue should only be accessed by a single thread at a time, and so accessors must first
  * obtain a lock. This is to prevent two threads, even across nodes, from issuing commands to Solr that might interfere with
  * one another (e.g. re-aliasing or committing).
- *
+ * <p>
  * This default implementation evaluates the {@link SolrClient} to determine whether to use a local {@link Queue}
  * and {@link Lock}, or whether to use a distributed {@link Queue} and {@link Lock}.  If the SolrClient is an
  * instance of {@link CloudSolrClient} then this will use the associated Zookeeper to manage the lock and the queue.
  * Otherwise, it will use a local (non-distributed) lock and queue.
- *
+ * <p>
  * This can be extended to provide different queue and lock implementations.  If you override them, then they both need
  * to be distributed or local.  Having a local lock and a distributed queue or vice versa will not work.
  *
  * @author Kelly Tisdell
- *
  */
 public class DefaultSolrIndexQueueProvider implements SolrIndexQueueProvider {
-
-    private static final Log LOG = LogFactory.getLog(DefaultSolrIndexQueueProvider.class);
-    protected static final Map<String, BlockingQueue<? super SolrUpdateCommand>> QUEUE_REGISTRY = Collections.synchronizedMap(new HashMap<String, BlockingQueue<? super SolrUpdateCommand>>());
-    protected static final Map<String, Lock> LOCK_REGISTRY = Collections.synchronizedMap(new HashMap<String, Lock>());
 
     public static final int MAX_QUEUE_SIZE = 500;
     public static final String LOCK_PATH = "/solr-index/command-lock";
     public static final String QUEUE_PATH = "/solr-index/command-queue";
-
+    protected static final Map<String, BlockingQueue<? super SolrUpdateCommand>> QUEUE_REGISTRY = Collections.synchronizedMap(new HashMap<>());
+    protected static final Map<String, Lock> LOCK_REGISTRY = Collections.synchronizedMap(new HashMap<>());
+    private static final Log LOG = LogFactory.getLog(DefaultSolrIndexQueueProvider.class);
     private final ZooKeeper zk;
     private final boolean distributed;
     private final Environment env;

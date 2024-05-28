@@ -21,7 +21,7 @@ package org.broadleafcommerce.browsertest.page
  * Common class shared between classes that are using an {@link EntityForm}-like representation for showing a form to a
  * user. Another consumer of this is an {@link AdornedTargetPage} which is not <i>really</i> a pure {@link EntityForm} but
  * has similar form capabilities nonetheless (specifically, how fields are resolved on the page)
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 class FieldConverterSupport {
@@ -37,5 +37,5 @@ class FieldConverterSupport {
         // not hardcoding input[] to work with textarea as well
         '[name="fields\\[\\\'' + fieldName.replaceAll('\\.', '__') + '\\\'\\].value"]'
     }
-    
+
 }

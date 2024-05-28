@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,16 +41,16 @@ import jakarta.persistence.EntityManager;
 @Component("blOracleRequiredFieldManagerModifier")
 public class OracleRequiredFieldManagerModifier implements FieldManagerModifier {
 
-    private static final String ORACLE_SINGLE_SPACE_DEFAULT = " ";
-
-    protected static final List<String> TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT = Arrays.asList(SupportedFieldType.STRING.toString(),
+    protected static final List<String> TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT = Arrays.asList(
+            SupportedFieldType.STRING.toString(),
             SupportedFieldType.HTML_BASIC.toString(),
             SupportedFieldType.HTML.toString(),
             SupportedFieldType.DESCRIPTION.toString(),
             SupportedFieldType.EMAIL.toString(),
             SupportedFieldType.CODE.toString(),
-            SupportedFieldType.COLOR.toString());
-
+            SupportedFieldType.COLOR.toString()
+    );
+    private static final String ORACLE_SINGLE_SPACE_DEFAULT = " ";
     @Resource(name = "blDialectHelper")
     protected DialectHelper dialectHelper;
 
@@ -62,19 +62,22 @@ public class OracleRequiredFieldManagerModifier implements FieldManagerModifier 
 
         Column column = field.getAnnotation(Column.class);
         AdminPresentation adminPresentation = field.getAnnotation(AdminPresentation.class);
-        return adminPresentation != null && isRequiredField(adminPresentation, column) && isStringFieldType(field, adminPresentation);
+        return adminPresentation != null && isRequiredField(adminPresentation, column)
+                && isStringFieldType(field, adminPresentation);
     }
 
     protected boolean isRequiredField(AdminPresentation adminPresentation, Column column) {
         RequiredOverride requiredOverride = adminPresentation.requiredOverride();
         String defaultValue = adminPresentation.defaultValue();
-        return ((column != null && !column.nullable()) || (requiredOverride.equals(RequiredOverride.REQUIRED))) && StringUtils.isEmpty(defaultValue);
+        return ((column != null && !column.nullable()) || (requiredOverride.equals(RequiredOverride.REQUIRED)))
+                && StringUtils.isEmpty(defaultValue);
     }
 
     protected boolean isStringFieldType(Field field, AdminPresentation adminPresentation) {
         SupportedFieldType fieldType = adminPresentation.fieldType();
         return TYPES_THAT_SUPPORT_SINGLE_SPACE_AS_DEFAULT.contains(fieldType.toString())
-            || (SupportedFieldType.UNKNOWN.toString().equals(fieldType.toString()) && String.class.isAssignableFrom(field.getType()));
+                || (SupportedFieldType.UNKNOWN.toString().equals(fieldType.toString())
+                && String.class.isAssignableFrom(field.getType()));
     }
 
     @Override
@@ -93,4 +96,5 @@ public class OracleRequiredFieldManagerModifier implements FieldManagerModifier 
     public int getOrder() {
         return 1000;
     }
+
 }

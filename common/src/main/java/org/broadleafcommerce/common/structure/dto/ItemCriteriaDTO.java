@@ -10,26 +10,28 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.structure.dto;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * StructuredContent data is converted into a DTO since it requires
  * pre-processing.   The data is fairly static so the desire is
  * to cache the value after it has been processed.
- *
+ * <p>
  * This DTO represents a compact version of StructuredContentItemCriteria
- *
+ * <p>
  * Created by bpolster.
  */
 public class ItemCriteriaDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Integer qty;
@@ -57,4 +59,5 @@ public class ItemCriteriaDTO implements Serializable {
         clonedDto.setMatchRule(matchRule);
         return clonedDto;
     }
+
 }

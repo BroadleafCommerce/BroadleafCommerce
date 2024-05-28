@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,7 @@ import jakarta.annotation.Nullable;
 /**
  * A structured content field template holds the structure for a
  * structured content.
- *
+ * <p>
  * For example, an 'Ad' template might describe the fields 'Ad URL' and
  * 'Target URL'.   The 'Ad' template might be used in multiple StructuredContentType
  * instances such as 'Home Page Banner Ad' or 'Cart Bottom Ad', etc.
@@ -44,15 +44,14 @@ public interface StructuredContentFieldTemplate extends Serializable, MultiTenan
      * @return the primary key
      */
     @Nullable
-    public Long getId();
-
+    Long getId();
 
     /**
      * Sets the primary key.
      *
      * @param id the new primary key
      */
-    public void setId(@Nullable Long id);
+    void setId(@Nullable Long id);
 
     /**
      * Gets the name.
@@ -69,18 +68,21 @@ public interface StructuredContentFieldTemplate extends Serializable, MultiTenan
 
     /**
      * Returns the list of the field groups for this template.
+     *
      * @return a list of FieldGroups associated with this template
      */
     @Nullable
     List<FieldGroup> getFieldGroups();
-    
-    List<StructuredContentFieldGroupXref> getFieldGroupXrefs();
-    
-    void setFieldGroupXrefs(List<StructuredContentFieldGroupXref> fieldGroupXrefs);
 
     /**
      * Sets the list of field groups for this template.
+     *
      * @param fieldGroups
      */
     void setFieldGroups(@Nullable List<FieldGroup> fieldGroups);
+
+    List<StructuredContentFieldGroupXref> getFieldGroupXrefs();
+
+    void setFieldGroupXrefs(List<StructuredContentFieldGroupXref> fieldGroupXrefs);
+
 }

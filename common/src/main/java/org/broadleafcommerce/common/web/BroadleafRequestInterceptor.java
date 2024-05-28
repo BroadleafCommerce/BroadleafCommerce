@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,13 +23,12 @@ import org.springframework.web.context.request.WebRequestInterceptor;
 
 import jakarta.annotation.Resource;
 
-
 /**
  * <p>Interceptor responsible for setting up the BroadleafRequestContext for the life of the request. This interceptor
  * should be the very first one in the list, as other interceptors might also use {@link BroadleafRequestContext}.</p>
- * 
+ *
  * <p>Note that in Servlet applications you should be using the {@link BroadleafRequestFilter}.</p>
- * 
+ *
  * @author Phillip Verheyden
  * @see {@link BroadleafRequestProcessor}
  * @see {@link BroadleafRequestContext}

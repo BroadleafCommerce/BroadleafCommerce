@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,11 +44,10 @@ import jakarta.annotation.Resource;
 @Component("blCrossSaleProductCustomPersistenceHandler")
 public class CrossSaleProductCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(CrossSaleProductCustomPersistenceHandler.class);
     protected static final String PRODUCT_ID = "product.id";
     protected static final String RELATED_SALE_PRODUCT_ID = "relatedSaleProduct.id";
     protected static final String PRODUCTS_SEPARATOR = " -> ";
-
+    private static final Log LOG = LogFactory.getLog(CrossSaleProductCustomPersistenceHandler.class);
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -88,16 +87,14 @@ public class CrossSaleProductCustomPersistenceHandler extends ClassCustomPersist
         }
     }
 
-    protected void validateSelfLink(final Entity entity, final String relatedSaleProductId, final String productId)
-            throws ValidationException {
+    protected void validateSelfLink(final Entity entity, final String relatedSaleProductId, final String productId) throws ValidationException {
         if (relatedSaleProductId.equals(productId)) {
             entity.addGlobalValidationError("validateProductSelfLink");
             throw new ValidationException(entity);
         }
     }
 
-    protected void validateDuplicateChild(final Entity entity, final Product relatedProduct, final Product product)
-            throws ValidationException {
+    protected void validateDuplicateChild(final Entity entity, final Product relatedProduct, final Product product) throws ValidationException {
         final List<Long> childProductIds = product.getCrossSaleProducts().stream()
                 .map(crossSaleProduct -> crossSaleProduct.getRelatedProduct().getId())
                 .collect(Collectors.toList());
@@ -107,16 +104,23 @@ public class CrossSaleProductCustomPersistenceHandler extends ClassCustomPersist
         }
     }
 
-    protected void validateRecursiveRelationship(final Entity entity, final Product relatedProduct,
-                                                 final Product product) throws ValidationException {
+    protected void validateRecursiveRelationship(
+            final Entity entity,
+            final Product relatedProduct,
+            final Product product
+    ) throws ValidationException {
         final StringBuilder productLinks = new StringBuilder();
         this.addProductLink(productLinks, product.getName());
         this.addProductLink(productLinks, relatedProduct.getName());
         this.validateCrossSaleProducts(entity, relatedProduct, product.getId(), productLinks);
     }
 
-    protected void validateCrossSaleProducts(final Entity entity, final Product product, final Long id,
-                                             final StringBuilder productLinks) throws ValidationException {
+    protected void validateCrossSaleProducts(
+            final Entity entity,
+            final Product product,
+            final Long id,
+            final StringBuilder productLinks
+    ) throws ValidationException {
         if (product != null) {
             for (RelatedProduct crossSaleProduct : product.getCrossSaleProducts()) {
                 final Product relatedProduct = crossSaleProduct.getRelatedProduct();

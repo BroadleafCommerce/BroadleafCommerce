@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.processor;
-
 
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
@@ -39,7 +38,7 @@ import jakarta.annotation.Resource;
 public class AdminUserProcessor implements AdminUserExpression {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
-    
+
     @Resource(name = "blAdminSecurityService")
     protected AdminSecurityService securityService;
 
@@ -47,10 +46,10 @@ public class AdminUserProcessor implements AdminUserExpression {
     public String getName() {
         return "admin_user";
     }
-    
+
     @Override
     public int getPrecedence() {
-        return 10000; 
+        return 10000;
     }
 
     @Override

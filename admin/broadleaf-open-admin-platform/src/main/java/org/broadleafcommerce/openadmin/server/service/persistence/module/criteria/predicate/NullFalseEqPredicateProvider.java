@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,23 +33,30 @@ import jakarta.persistence.criteria.Predicate;
  * This predicate provider is very similar to the {@link EqPredicateProvider}, except that it will treat
  * nulls equal to false. This implementation will provide an equality clause for the character 'N' and
  * {@link Boolean#FALSE}.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blNullFalseEqPredicateProvider")
 public class NullFalseEqPredicateProvider implements PredicateProvider<Serializable, Serializable> {
 
     @Override
-    public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root, String ceilingEntity,
-                                    String fullPropertyName, Path<Serializable> explicitPath, List<Serializable> directValues) {
+    public Predicate buildPredicate(
+            CriteriaBuilder builder,
+            FieldPathBuilder fieldPathBuilder,
+            From root,
+            String ceilingEntity,
+            String fullPropertyName,
+            Path<Serializable> explicitPath,
+            List<Serializable> directValues
+    ) {
         Path<Serializable> path;
         if (explicitPath != null) {
             path = explicitPath;
         } else {
             path = fieldPathBuilder.getPath(root, fullPropertyName, builder);
         }
-        
-        List<Predicate> predicates = new ArrayList<Predicate>();
+
+        List<Predicate> predicates = new ArrayList<>();
         for (Serializable directValue : directValues) {
             boolean attachNullClause = false;
             if (directValue instanceof Boolean) {
@@ -61,19 +68,20 @@ public class NullFalseEqPredicateProvider implements PredicateProvider<Serializa
                     attachNullClause = true;
                 }
             }
-            
+
             if (attachNullClause) {
                 predicates.add(
-                    builder.or( 
-                        builder.equal(path, directValue),
-                        builder.isNull(path)
-                    )
+                        builder.or(
+                                builder.equal(path, directValue),
+                                builder.isNull(path)
+                        )
                 );
             } else {
                 predicates.add(builder.equal(path, directValue));
             }
         }
-        
+
         return builder.or(predicates.toArray(new Predicate[predicates.size()]));
     }
+
 }

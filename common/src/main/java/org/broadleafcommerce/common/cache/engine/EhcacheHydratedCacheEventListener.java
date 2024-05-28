@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,20 +21,21 @@ import org.ehcache.event.CacheEvent;
 import org.ehcache.event.CacheEventListener;
 import org.ehcache.event.EventType;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * Ehcache 3 cache event listener for monitoring cache changes using the Ehcache hydrated cache.
- * 
+ * <p>
  * Cache changes need to be monitored so that if an entity's field is populated via the hydrated cache manager
  * and that entity is modified we need to evict that cached value for that entity's field from our cache so that
  * we don't return stale data.
- * 
- * @author Jay Aisenbrey (cja769)
  *
+ * @author Jay Aisenbrey (cja769)
  */
 public class EhcacheHydratedCacheEventListener extends EhcacheHydratedCacheManagerImpl implements CacheEventListener {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Override

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -82,7 +82,7 @@ public @interface AdminPresentationMap {
 
     /**
      * Optional - only required if you want to make the field immutable
-     *
+     * <p>
      * Explicityly specify whether or not this field is mutable.
      *
      * @return whether or not this field is read only
@@ -110,9 +110,9 @@ public @interface AdminPresentationMap {
 
     /**
      * Optional - only required if you want the field to appear under a different tab
-     * 
+     * <p>
      * Specify a GUI tab for this field
-     * 
+     *
      * @return the tab for this field
      */
     @Deprecated
@@ -120,12 +120,12 @@ public @interface AdminPresentationMap {
 
     /**
      * Optional - only required if you want to order the appearance of the tabs in the UI
-     * 
-     * Specify an order for this tab. Tabs will be sorted int he resulting form in 
+     * <p>
+     * Specify an order for this tab. Tabs will be sorted int he resulting form in
      * ascending order based on this parameter.
-     * 
+     * <p>
      * The default tab will render with an order of 99999.
-     * 
+     *
      * @return the order for this tab
      */
     @Deprecated
@@ -141,11 +141,11 @@ public @interface AdminPresentationMap {
      * @return The type for the key of this map
      */
     Class<?> keyClass() default void.class;
-    
+
     /**
      * <p>Optional - only required if you wish to specify a key different from the one on the
      * {@link MapKey} annotation for the same field.
-     * 
+     *
      * @return the property for the key
      */
     String mapKeyValueProperty() default "";
@@ -331,7 +331,10 @@ public @interface AdminPresentationMap {
      *
      * @return the operation type
      */
-    AdminPresentationOperationTypes operationTypes() default @AdminPresentationOperationTypes(addType = OperationType.MAP, fetchType = OperationType.MAP, inspectType = OperationType.MAP, removeType = OperationType.MAP, updateType = OperationType.MAP);
+    AdminPresentationOperationTypes operationTypes() default @AdminPresentationOperationTypes(
+            addType = OperationType.MAP, fetchType = OperationType.MAP, inspectType = OperationType.MAP,
+            removeType = OperationType.MAP, updateType = OperationType.MAP
+    );
 
     /**
      * <p>Optional - propertyName , only required if you want hide the field based on this property's value</p>
@@ -339,7 +342,7 @@ public @interface AdminPresentationMap {
      * <p>If the property is defined and found to be set to false, in the AppConfiguraionService, then this field will be excluded in the
      * admin presentation layer</p>
      *
-     * @return name of the property 
+     * @return name of the property
      */
     String showIfProperty() default "";
 
@@ -381,14 +384,14 @@ public @interface AdminPresentationMap {
 
     /**
      * Used to map the collection to a group defined in AdminPresentationClass using AdminGroupPresentation.
-     *
+     * <p>
      * If the group cannot be found in AdminPresentationClass, then the tab specified in AdminPresentationMap
      * is used to map the collection to a tab defined in AdminPresentationClass using AdminTabPresentation.
      * If the tab cannot be found, then the collection will be placed in a tab created using the information
      * specified in AdminPresentationMap.
-     *
+     * <p>
      * Optional - only required if you want the field to appear under a specific group
-     *
+     * <p>
      * Specify a GUI group for this collection
      *
      * @return the group for this collection

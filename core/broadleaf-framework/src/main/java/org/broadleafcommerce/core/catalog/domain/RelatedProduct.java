@@ -10,39 +10,39 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-
 import java.math.BigDecimal;
 
 public interface RelatedProduct extends PromotableProduct {
-    
-    public Long getId();
 
-    public Product getProduct();
-    
-    public Category getCategory();
+    Long getId();
 
-    public Product getRelatedProduct();
+    void setId(Long id);
 
-    public String getPromotionMessage();
+    Product getProduct();
 
-    public BigDecimal getSequence();
+    void setProduct(Product product);
 
-    public void setId(Long id);
+    Category getCategory();
 
-    public void setProduct(Product product);
-    
-    public void setCategory(Category category);
+    void setCategory(Category category);
 
-    public void setRelatedProduct(Product relatedProduct);
+    Product getRelatedProduct();
 
-    public void setPromotionMessage(String promotionMessage);
+    void setRelatedProduct(Product relatedProduct);
 
-    public void setSequence(BigDecimal sequence);
+    String getPromotionMessage();
+
+    void setPromotionMessage(String promotionMessage);
+
+    BigDecimal getSequence();
+
+    void setSequence(BigDecimal sequence);
+
 }

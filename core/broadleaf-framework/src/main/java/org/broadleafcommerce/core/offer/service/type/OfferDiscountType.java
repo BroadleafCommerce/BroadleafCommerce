@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,27 +19,23 @@ package org.broadleafcommerce.core.offer.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of discount types.
- *
  */
 public class OfferDiscountType implements Serializable, BroadleafEnumerationType {
-    
-    private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferDiscountType> TYPES = new LinkedHashMap<String, OfferDiscountType>();
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static final Map<String, OfferDiscountType> TYPES = new LinkedHashMap<>();
 
     public static final OfferDiscountType PERCENT_OFF = new OfferDiscountType("PERCENT_OFF", "Percent Off");
     public static final OfferDiscountType AMOUNT_OFF = new OfferDiscountType("AMOUNT_OFF", "Amount Off");
     public static final OfferDiscountType FIX_PRICE = new OfferDiscountType("FIX_PRICE", "Fixed Price");
-
-    public static OfferDiscountType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -53,15 +49,19 @@ public class OfferDiscountType implements Serializable, BroadleafEnumerationType
         setType(type);
     }
 
+    public static OfferDiscountType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getFriendlyType() {

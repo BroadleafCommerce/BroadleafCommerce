@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,25 +30,25 @@ import java.io.Serializable;
  * through the promotion engine.
  */
 public interface CandidateItemOffer extends Serializable, MultiTenantCloneable<CandidateItemOffer> {
-    
-    public Long getId();
 
-    public void setId(Long id);
+    Long getId();
 
-    public OrderItem getOrderItem();
+    void setId(Long id);
 
-    public void setOrderItem(OrderItem orderItem);
-    
-    public CandidateItemOffer clone();
-    
-    public void setOffer(Offer offer);
+    OrderItem getOrderItem();
 
-    public int getPriority();
+    void setOrderItem(OrderItem orderItem);
 
-    public Offer getOffer();
-    
-    public Money getDiscountedPrice();
-    
-    public void setDiscountedPrice(Money discountedPrice);
-    
+    CandidateItemOffer clone();
+
+    int getPriority();
+
+    Offer getOffer();
+
+    void setOffer(Offer offer);
+
+    Money getDiscountedPrice();
+
+    void setDiscountedPrice(Money discountedPrice);
+
 }

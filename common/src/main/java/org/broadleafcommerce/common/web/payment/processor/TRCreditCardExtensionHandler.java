@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.web.payment.processor;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
@@ -48,13 +47,13 @@ public interface TRCreditCardExtensionHandler extends ExtensionHandler {
      * @param requestDTO
      * @param configurationSettings
      */
-    public ExtensionResultStatusType createTransparentRedirectForm(
-            Map<String, Map<String,String>> formParameters,
+    ExtensionResultStatusType createTransparentRedirectForm(
+            Map<String, Map<String, String>> formParameters,
             PaymentRequestDTO requestDTO,
             Map<String, String> configurationSettings) throws PaymentException;
 
-    public ExtensionResultStatusType setFormActionKey(StringBuilder key);
+    ExtensionResultStatusType setFormActionKey(StringBuilder key);
 
-    public ExtensionResultStatusType setFormHiddenParamsKey(StringBuilder key);
+    ExtensionResultStatusType setFormHiddenParamsKey(StringBuilder key);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,8 +23,8 @@ import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import java.util.HashMap;
 
 /**
- * Convenient place to store the active date context and the related service on thread local. 
- * 
+ * Convenient place to store the active date context and the related service on thread local.
+ *
  * @author jfischer
  * @see {@link SkuImpl#getActiveStartDate()}
  * @see {@link SkuImpl#getActiveEndDate()}
@@ -33,6 +33,8 @@ public class SkuActiveDateConsiderationContext {
 
     private static final ThreadLocal<SkuActiveDateConsiderationContext> skuActiveDatesConsiderationContext =
             ThreadLocalManager.createThreadLocal(SkuActiveDateConsiderationContext.class);
+    protected DynamicSkuActiveDatesService service;
+    protected HashMap considerations;
 
     public static HashMap getSkuActiveDateConsiderationContext() {
         return SkuActiveDateConsiderationContext.skuActiveDatesConsiderationContext.get().considerations;
@@ -53,8 +55,5 @@ public class SkuActiveDateConsiderationContext {
     public static boolean hasDynamicActiveDates() {
         return (getSkuActiveDatesService() != null);
     }
-
-    protected DynamicSkuActiveDatesService service;
-    protected HashMap considerations;
 
 }

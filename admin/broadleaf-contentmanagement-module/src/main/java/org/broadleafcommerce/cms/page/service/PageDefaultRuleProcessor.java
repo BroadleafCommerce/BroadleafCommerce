@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,19 +33,19 @@ import java.util.Map;
  * into a single MVEL expression.
  *
  * @author bpolster.
- *
  */
 @Service("blPageDefaultRuleProcessor")
 public class PageDefaultRuleProcessor extends AbstractRuleProcessor<PageDTO> {
+
     private static final Log LOG = LogFactory.getLog(PageDefaultRuleProcessor.class);
 
     /**
      * Returns true if all of the rules associated with the passed in <code>Page</code>
      * item match based on the passed in vars.
-     *
+     * <p>
      * Also returns true if no rules are present for the passed in item.
      *
-     * @param sc - a page item to test
+     * @param page - a page item to test
      * @param vars - a map of objects used by the rule MVEL expressions
      * @return the result of the rule checks
      */
@@ -54,13 +54,15 @@ public class PageDefaultRuleProcessor extends AbstractRuleProcessor<PageDTO> {
         String ruleExpression = page.getRuleExpression();
 
         if (ruleExpression != null) {
-            if (LOG.isTraceEnabled())  {
-                LOG.trace("Processing content rule for page with id " + page.getId() +".   Value = " + StringUtil.sanitize(ruleExpression));
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing content rule for page with id " + page.getId() + ".   Value = "
+                        + StringUtil.sanitize(ruleExpression));
             }
             boolean result = executeExpression(ruleExpression, vars);
-            if (! result) {
+            if (!result) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Page failed to pass rule and will not be included for Page with id " + page.getId() +".   Value = " + StringUtil.sanitize(ruleExpression));
+                    LOG.debug("Page failed to pass rule and will not be included for Page with id " + page.getId()
+                            + ".   Value = " + StringUtil.sanitize(ruleExpression));
                 }
             }
 
@@ -70,14 +72,15 @@ public class PageDefaultRuleProcessor extends AbstractRuleProcessor<PageDTO> {
             return true;
         }
     }
-    
+
     @Override
     @SuppressWarnings("serial")
     public Map<String, String> getContextClassNames() {
-        return new HashMap<String, String>(){{
+        return new HashMap<>() {{
             put("customer", "org.broadleafcommerce.profile.core.domain.Customer");
             put("time", "org.broadleafcommerce.common.TimeDTO");
             put("request", "org.broadleafcommerce.common.RequestDTO");
         }};
-    }    
+    }
+
 }

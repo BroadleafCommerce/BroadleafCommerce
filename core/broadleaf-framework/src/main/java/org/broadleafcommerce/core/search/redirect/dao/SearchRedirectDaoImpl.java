@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,7 +39,6 @@ import jakarta.persistence.criteria.Root;
 /**
  * Created by ppatel.
  */
-
 @Repository("blSearchRedirectDao")
 public class SearchRedirectDaoImpl implements SearchRedirectDao {
 
@@ -78,7 +77,7 @@ public class SearchRedirectDaoImpl implements SearchRedirectDao {
         }
     }
 
-    private CriteriaQuery<SearchRedirect> buildFindSearchRedirectBySearchTermCriteria(String searchTerm) {
+    protected CriteriaQuery<SearchRedirect> buildFindSearchRedirectBySearchTermCriteria(String searchTerm) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<SearchRedirect> criteria = builder.createQuery(SearchRedirect.class);
         Root<SearchRedirectImpl> redirect = criteria.from(SearchRedirectImpl.class);

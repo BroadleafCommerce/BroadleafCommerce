@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,6 +24,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ import jakarta.persistence.Table;
 @Table(name = "BLC_OFFER_INFO")
 public class OfferInfoImpl implements OfferInfo {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -63,10 +65,9 @@ public class OfferInfoImpl implements OfferInfo {
     @ElementCollection
     @MapKeyColumn(name = "FIELD_NAME")
     @Column(name = "FIELD_VALUE")
-    @CollectionTable(name = "BLC_OFFER_INFO_FIELDS",
-            joinColumns = @JoinColumn(name = "OFFER_INFO_FIELDS_ID"))
+    @CollectionTable(name = "BLC_OFFER_INFO_FIELDS", joinColumns = @JoinColumn(name = "OFFER_INFO_FIELDS_ID"))
     @BatchSize(size = 50)
-    protected Map<String, String> fieldValues = new HashMap<String, String>();
+    protected Map<String, String> fieldValues = new HashMap<>();
 
     @Override
     public Long getId() {
@@ -120,7 +121,8 @@ public class OfferInfoImpl implements OfferInfo {
 
     @Override
     public <G extends OfferInfo> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -131,4 +133,5 @@ public class OfferInfoImpl implements OfferInfo {
         }
         return createResponse;
     }
+
 }

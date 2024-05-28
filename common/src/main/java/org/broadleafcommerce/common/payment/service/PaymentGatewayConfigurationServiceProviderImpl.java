@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,8 +25,6 @@ import java.util.List;
 import jakarta.annotation.Resource;
 
 /**
- * 
- * 
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Service("blPaymentGatewayConfigurationServiceProvider")
@@ -34,7 +32,7 @@ public class PaymentGatewayConfigurationServiceProviderImpl implements PaymentGa
 
     @Resource(name = "blPaymentGatewayConfigurationServices")
     protected List<PaymentGatewayConfigurationService> gatewayConfigurationServices;
-    
+
     @Override
     public PaymentGatewayConfigurationService getGatewayConfigurationService(PaymentGatewayType gatewayType) {
         if (gatewayType == null) {
@@ -45,17 +43,16 @@ public class PaymentGatewayConfigurationServiceProviderImpl implements PaymentGa
                 return config;
             }
         }
-        
+
         throw new IllegalArgumentException("There is no gateway configured for " + gatewayType.getFriendlyType());
     }
-    
+
     public List<PaymentGatewayConfigurationService> getGatewayConfigurationServices() {
         return gatewayConfigurationServices;
     }
-    
+
     public void setGatewayConfigurationServices(List<PaymentGatewayConfigurationService> gatewayConfigurationServices) {
         this.gatewayConfigurationServices = gatewayConfigurationServices;
     }
-
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,7 +36,7 @@ import jakarta.annotation.Resource;
  */
 @Component("blAdminProductTranslationExtensionHandler")
 public class AdminProductTranslationExtensionHandler extends AbstractAdminTranslationControllerExtensionHandler {
-    
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -63,15 +63,16 @@ public class AdminProductTranslationExtensionHandler extends AbstractAdminTransl
         if (getTranslationEnabled()) {
             String defaultSkuPrefix = "defaultSku.";
             String unencodedPropertyName = JSCompatibilityHelper.unencode(form.getPropertyName());
-            if (form.getCeilingEntity().equals(Product.class.getName()) && unencodedPropertyName.startsWith(defaultSkuPrefix)) {
+            if (form.getCeilingEntity().equals(Product.class.getName())
+                    && unencodedPropertyName.startsWith(defaultSkuPrefix)) {
                 Product p = catalogService.findProductById(Long.parseLong(form.getEntityId()));
                 form.setCeilingEntity(Sku.class.getName());
                 form.setEntityId(String.valueOf(p.getDefaultSku().getId()));
                 form.setPropertyName(unencodedPropertyName.substring(defaultSkuPrefix.length()));
             }
         }
-        
+
         return ExtensionResultStatusType.HANDLED;
     }
-    
+
 }

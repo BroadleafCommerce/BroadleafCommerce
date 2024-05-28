@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -70,7 +70,8 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
             }
             Map<String, BeanDefinition> overrideItemMap;
             if (overrideItemDefinition != null) {
-                overrideItemMap = (Map<String, BeanDefinition>) overrideItemDefinition.getPropertyValues().get("sourceMap");
+                overrideItemMap = (Map<String, BeanDefinition>) overrideItemDefinition.getPropertyValues()
+                        .get("sourceMap");
             } else {
                 overrideItemMap = new ManagedMap<>();
             }
@@ -82,12 +83,16 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 if (overrideItemMap.containsKey(fieldName)) {
                     metadataDefinition = overrideItemMap.get(fieldName);
                 } else {
-                    BeanDefinitionBuilder metadataBuilder = BeanDefinitionBuilder.rootBeanDefinition(FieldMetadataOverride.class);
+                    BeanDefinitionBuilder metadataBuilder = BeanDefinitionBuilder.rootBeanDefinition(
+                            FieldMetadataOverride.class
+                    );
                     metadataDefinition = metadataBuilder.getBeanDefinition();
                     overrideItemMap.put(fieldName, metadataDefinition);
                 }
                 {
-                    List<Element> propElements = DomUtils.getChildElementsByTagName(fieldElement, "property");
+                    List<Element> propElements = DomUtils.getChildElementsByTagName(
+                            fieldElement, "property"
+                    );
                     for (Element propElement : propElements) {
                         String propName = propElement.getAttribute("name");
                         String propValue = propElement.getAttribute("value");
@@ -96,11 +101,15 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 }
 
                 {
-                    List<Element> validationElements = DomUtils.getChildElementsByTagName(fieldElement, "validation");
+                    List<Element> validationElements = DomUtils.getChildElementsByTagName(
+                            fieldElement, "validation"
+                    );
                     Map<String, Map<String, String>> validationConfigMap = new ManagedMap<>();
                     for (Element validationElement : validationElements) {
                         Map<String, String> validationMap = new ManagedMap<>();
-                        List<Element> valPropElements = DomUtils.getChildElementsByTagName(validationElement, "property");
+                        List<Element> valPropElements = DomUtils.getChildElementsByTagName(
+                                validationElement, "property"
+                        );
                         for (Element valPropElement : valPropElements) {
                             String valPropName = valPropElement.getAttribute("name");
                             String valPropValue = valPropElement.getAttribute("value");
@@ -110,16 +119,22 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         validationConfigMap.put(className, validationMap);
                     }
                     if (!validationConfigMap.isEmpty()) {
-                        metadataDefinition.getPropertyValues().addPropertyValue("validationConfigurations", validationConfigMap);
+                        metadataDefinition.getPropertyValues().addPropertyValue(
+                                "validationConfigurations", validationConfigMap
+                        );
                     }
                 }
 
                 {
-                    List<Element> showIfFieldEqualsElements = DomUtils.getChildElementsByTagName(fieldElement, "showIfFieldEquals");
+                    List<Element> showIfFieldEqualsElements = DomUtils.getChildElementsByTagName(
+                            fieldElement, "showIfFieldEquals"
+                    );
                     Map<String, List<String>> valueConfigMap = new ManagedMap<>();
                     for (Element valueElement : showIfFieldEqualsElements) {
                         List<String> validationMap = new ArrayList<>();
-                        List<Element> valPropElements = DomUtils.getChildElementsByTagName(valueElement, "property");
+                        List<Element> valPropElements = DomUtils.getChildElementsByTagName(
+                                valueElement, "property"
+                        );
                         for (Element valPropElement : valPropElements) {
                             String valPropValue = valPropElement.getAttribute("value");
                             validationMap.add(valPropValue);
@@ -128,12 +143,16 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         valueConfigMap.put(className, validationMap);
                     }
                     if (!valueConfigMap.isEmpty()) {
-                        metadataDefinition.getPropertyValues().addPropertyValue("showIfFieldEquals", valueConfigMap);
+                        metadataDefinition.getPropertyValues().addPropertyValue(
+                                "showIfFieldEquals", valueConfigMap
+                        );
                     }
                 }
 
                 {
-                    List<Element> optionElements = DomUtils.getChildElementsByTagName(fieldElement, "optionFilterValue");
+                    List<Element> optionElements = DomUtils.getChildElementsByTagName(
+                            fieldElement, "optionFilterValue"
+                    );
                     String[][] optionFilterValues = new String[optionElements.size()][3];
                     int j = 0;
                     for (Element optionElement : optionElements) {
@@ -143,7 +162,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         j++;
                     }
                     if (!ArrayUtils.isEmpty(optionFilterValues)) {
-                        metadataDefinition.getPropertyValues().addPropertyValue("optionFilterValues", optionFilterValues);
+                        metadataDefinition.getPropertyValues().addPropertyValue(
+                                "optionFilterValues", optionFilterValues
+                        );
                     }
                 }
 
@@ -162,7 +183,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 }
 
                 {
-                    List<Element> children = DomUtils.getChildElementsByTagName(fieldElement, "customCriteria");
+                    List<Element> children = DomUtils.getChildElementsByTagName(
+                            fieldElement, "customCriteria"
+                    );
                     String[] values = new String[children.size()];
                     int j = 0;
                     for (Element childElem : children) {
@@ -175,7 +198,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 }
 
                 {
-                    List<Element> children = DomUtils.getChildElementsByTagName(fieldElement, "maintainedAdornedTargetField");
+                    List<Element> children = DomUtils.getChildElementsByTagName(
+                            fieldElement, "maintainedAdornedTargetField"
+                    );
                     String[] values = new String[children.size()];
                     int j = 0;
                     for (Element childElem : children) {
@@ -183,12 +208,16 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                         j++;
                     }
                     if (!ArrayUtils.isEmpty(values)) {
-                        metadataDefinition.getPropertyValues().addPropertyValue("maintainedAdornedTargetFields", values);
+                        metadataDefinition.getPropertyValues().addPropertyValue(
+                                "maintainedAdornedTargetFields", values
+                        );
                     }
                 }
 
                 {
-                    List<Element> children = DomUtils.getChildElementsByTagName(fieldElement, "gridVisibleField");
+                    List<Element> children = DomUtils.getChildElementsByTagName(
+                            fieldElement, "gridVisibleField"
+                    );
                     String[] values = new String[children.size()];
                     int j = 0;
                     for (Element childElem : children) {
@@ -201,10 +230,14 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 }
 
                 {
-                    List<Element> propElements = DomUtils.getChildElementsByTagName(fieldElement, "selectizeVisibleField");
+                    List<Element> propElements = DomUtils.getChildElementsByTagName(
+                            fieldElement, "selectizeVisibleField"
+                    );
                     for (Element propElement : propElements) {
                         String propValue = propElement.getAttribute("value");
-                        metadataDefinition.getPropertyValues().addPropertyValue("selectizeVisibleField", propValue);
+                        metadataDefinition.getPropertyValues().addPropertyValue(
+                                "selectizeVisibleField", propValue
+                        );
                     }
                 }
             }
@@ -216,7 +249,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 if (overrideItemMap.containsKey(overrideName)) {
                     metadataDefinition = overrideItemMap.get(overrideName);
                 } else {
-                    BeanDefinitionBuilder metadataBuilder = BeanDefinitionBuilder.rootBeanDefinition(MetadataOverride.class);
+                    BeanDefinitionBuilder metadataBuilder = BeanDefinitionBuilder.rootBeanDefinition(
+                            MetadataOverride.class
+                    );
                     metadataDefinition = metadataBuilder.getBeanDefinition();
                     overrideItemMap.put(overrideName, metadataDefinition);
                 }
@@ -238,7 +273,9 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
                 if (overrideItemMap.containsKey(overrideName)) {
                     metadataDefinition = overrideItemMap.get(overrideName);
                 } else {
-                    BeanDefinitionBuilder metadataBuilder = BeanDefinitionBuilder.rootBeanDefinition(GroupMetadataOverride.class);
+                    BeanDefinitionBuilder metadataBuilder = BeanDefinitionBuilder.rootBeanDefinition(
+                            GroupMetadataOverride.class
+                    );
                     metadataDefinition = metadataBuilder.getBeanDefinition();
                     overrideItemMap.put(overrideName, metadataDefinition);
                 }
@@ -267,4 +304,5 @@ public class MetadataOverrideBeanDefinitionParser extends AbstractBeanDefinition
 
         return response;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,7 +51,7 @@ public class TransactionUtils {
      * <pre>@Transactional(TransactionUtils.SECURE_TRANSACTION_MANAGER)</pre>
      */
     public static final String SECURE_TRANSACTION_MANAGER = "blTransactionManagerSecureInfo";
-    
+
     private static final Log LOG = LogFactory.getLog(TransactionUtils.class);
 
     public static Transaction createTransaction(Session session) {
@@ -62,11 +62,24 @@ public class TransactionUtils {
         return createTransaction(name, propagationBehavior, transactionManager, false);
     }
 
-    public static TransactionStatus createTransaction(String name, int propagationBehavior, PlatformTransactionManager transactionManager, boolean isReadOnly) {
-        return createTransaction(name, propagationBehavior, TransactionDefinition.ISOLATION_DEFAULT, transactionManager, isReadOnly);
+    public static TransactionStatus createTransaction(
+            String name,
+            int propagationBehavior,
+            PlatformTransactionManager transactionManager,
+            boolean isReadOnly
+    ) {
+        return createTransaction(
+                name, propagationBehavior, TransactionDefinition.ISOLATION_DEFAULT, transactionManager, isReadOnly
+        );
     }
 
-    public static TransactionStatus createTransaction(String name, int propagationBehavior, int isolationLevel, PlatformTransactionManager transactionManager, boolean isReadOnly) {
+    public static TransactionStatus createTransaction(
+            String name,
+            int propagationBehavior,
+            int isolationLevel,
+            PlatformTransactionManager transactionManager,
+            boolean isReadOnly
+    ) {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setName(name);
         def.setReadOnly(isReadOnly);
@@ -75,11 +88,22 @@ public class TransactionUtils {
         return transactionManager.getTransaction(def);
     }
 
-    public static TransactionStatus createTransaction(int propagationBehavior, PlatformTransactionManager transactionManager, boolean isReadOnly) {
-        return createTransaction(propagationBehavior, TransactionDefinition.ISOLATION_DEFAULT, transactionManager, isReadOnly);
+    public static TransactionStatus createTransaction(
+            int propagationBehavior,
+            PlatformTransactionManager transactionManager,
+            boolean isReadOnly
+    ) {
+        return createTransaction(
+                propagationBehavior, TransactionDefinition.ISOLATION_DEFAULT, transactionManager, isReadOnly
+        );
     }
 
-    public static TransactionStatus createTransaction(int propagationBehavior, int isolationLevel, PlatformTransactionManager transactionManager, boolean isReadOnly) {
+    public static TransactionStatus createTransaction(
+            int propagationBehavior,
+            int isolationLevel,
+            PlatformTransactionManager transactionManager,
+            boolean isReadOnly
+    ) {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setReadOnly(isReadOnly);
         def.setPropagationBehavior(propagationBehavior);
@@ -89,7 +113,8 @@ public class TransactionUtils {
 
     public static boolean isTransactionalEntityManager(EntityManager em) {
         EntityManager target = EntityManagerFactoryUtils.doGetTransactionalEntityManager(
-        					em.getEntityManagerFactory(), em.getProperties(), true);
+                em.getEntityManagerFactory(), em.getProperties(), true
+        );
         return target != null;
     }
 
@@ -105,7 +130,11 @@ public class TransactionUtils {
         }
     }
 
-    public static void finalizeTransaction(TransactionStatus status, PlatformTransactionManager transactionManager, boolean isError) {
+    public static void finalizeTransaction(
+            TransactionStatus status,
+            PlatformTransactionManager transactionManager,
+            boolean isError
+    ) {
         boolean isActive = false;
         try {
             if (!status.isRollbackOnly()) {

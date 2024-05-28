@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,7 +36,11 @@ public class ImportSQLConfig {
     @Bean
     @Conditional(DemoCondition.class)
     public AutoImportSql blProfileBasicData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_code_tables.sql", AutoImportStage.PRIMARY_PRE_BASIC_DATA);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/load_code_tables.sql",
+                AutoImportStage.PRIMARY_PRE_BASIC_DATA
+        );
     }
 
 }

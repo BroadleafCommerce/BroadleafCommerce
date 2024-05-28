@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,13 +36,15 @@ public class GreaterThanMinValueValidator extends ValidationConfigurationBasedPr
     protected final String INVALID_VALUE_MESSAGE = "Entered value must be greater than %s.";
 
     @Override
-    public PropertyValidationResult validate(Entity entity,
-                                             Serializable instance,
-                                             Map<String, FieldMetadata> entityFieldMetadata,
-                                             Map<String, String> validationConfiguration,
-                                             BasicFieldMetadata propertyMetadata,
-                                             String propertyName,
-                                             String value) {
+    public PropertyValidationResult validate(
+            Entity entity,
+            Serializable instance,
+            Map<String, FieldMetadata> entityFieldMetadata,
+            Map<String, String> validationConfiguration,
+            BasicFieldMetadata propertyMetadata,
+            String propertyName,
+            String value
+    ) {
         BigDecimal minValue = getMinValue(validationConfiguration);
 
         if (StringUtils.isBlank(value)) {
@@ -67,4 +69,5 @@ public class GreaterThanMinValueValidator extends ValidationConfigurationBasedPr
 
         return new BigDecimal(minValue);
     }
+
 }

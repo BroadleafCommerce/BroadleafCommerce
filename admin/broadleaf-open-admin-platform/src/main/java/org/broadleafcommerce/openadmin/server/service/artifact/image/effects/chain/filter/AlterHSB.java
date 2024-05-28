@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,7 +39,7 @@ public class AlterHSB extends BaseFilter {
     public AlterHSB() {
         //do nothing
     }
-    
+
     public AlterHSB(float hue, float saturation, float brightness, RenderingHints hints) {
         this.hints = hints;
         this.hue = hue;
@@ -57,11 +57,11 @@ public class AlterHSB extends BaseFilter {
         Operation operation = new Operation();
         operation.setName(key);
         String factor = parameterMap.get(key + "-factor");
-        operation.setFactor(factor==null?null:Double.valueOf(factor));
+        operation.setFactor(factor == null ? null : Double.valueOf(factor));
 
         UnmarshalledParameter hue = new UnmarshalledParameter();
         String hueApplyFactor = parameterMap.get(key + "-hue-apply-factor");
-        hue.setApplyFactor(hueApplyFactor==null?false:Boolean.valueOf(hueApplyFactor));
+        hue.setApplyFactor(hueApplyFactor == null ? false : Boolean.valueOf(hueApplyFactor));
         hue.setName("hue");
         hue.setType(ParameterTypeEnum.FLOAT.toString());
         hue.setValue(parameterMap.get(key + "-hue-amount"));
@@ -92,52 +92,49 @@ public class AlterHSB extends BaseFilter {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
-            throw new IllegalArgumentException("src image cannot be the "+
-                                               "same as the dst image");
+            throw new IllegalArgumentException("src image cannot be the " +
+                    "same as the dst image");
         }
-        
+
         boolean needToConvert = false;
         ColorModel srcCM = src.getColorModel();
         ColorModel dstCM;
         BufferedImage origDst = dst;
-        
+
         if (srcCM instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel) srcCM;
             src = icm.convertToIntDiscrete(src.getRaster(), false);
             srcCM = src.getColorModel();
         }
-        
+
         if (dst == null) {
             dst = createCompatibleDestImage(src, null);
             dstCM = srcCM;
             origDst = dst;
-        }
-        else {
+        } else {
             dstCM = dst.getColorModel();
             if (srcCM.getColorSpace().getType() !=
-                dstCM.getColorSpace().getType())
-            {
+                    dstCM.getColorSpace().getType()) {
                 needToConvert = true;
                 dst = createCompatibleDestImage(src, null);
                 dstCM = dst.getColorModel();
-            }
-            else if (dstCM instanceof IndexColorModel) {
+            } else if (dstCM instanceof IndexColorModel) {
                 dst = createCompatibleDestImage(src, null);
                 dstCM = dst.getColorModel();
             }
         }
-        
+
         int[] originalPixels = ImageConverter.getPixels(src);
         int imageWidth = dst.getWidth();
         int imageHeight = dst.getHeight();
-        
-        int r=0;
-        int g=0;
-        int b=0;
-        
-        int index=0;
-        for (int y=0;y<imageHeight;y++){
-            for (int x=0;x<imageWidth;x++){
+
+        int r = 0;
+        int g = 0;
+        int b = 0;
+
+        int index = 0;
+        for (int y = 0; y < imageHeight; y++) {
+            for (int x = 0; x < imageWidth; x++) {
                 r = (originalPixels[index] >> 16) & 0xff;
                 g = (originalPixels[index] >> 8) & 0xff;
                 b = (originalPixels[index] >> 0) & 0xff;
@@ -154,30 +151,29 @@ public class AlterHSB extends BaseFilter {
                 if (s < 0) s = 0;
                 if (br > 1) br = 1;
                 if (br < 0) br = 0;
-                
+
                 Color rgb = new Color(Color.HSBtoRGB(h, s, br));
                 r = rgb.getRed();
                 g = rgb.getGreen();
                 b = rgb.getBlue();
 
-                originalPixels[index] = (originalPixels[index] & 0xff000000)  | (r << 16) | (g << 8) | (b << 0);
+                originalPixels[index] = (originalPixels[index] & 0xff000000) | (r << 16) | (g << 8) | (b << 0);
                 index++;
             }
         }
-        
+
         dst = ImageConverter.getImage(originalPixels, imageWidth, imageHeight);
-         
+
         if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
-        }
-        else if (origDst != dst) {
+        } else if (origDst != dst) {
             java.awt.Graphics2D g2 = origDst.createGraphics();
-        try {
-            g2.drawImage(dst, 0, 0, null);
-        } finally {
-            g2.dispose();
-        }
+            try {
+                g2.drawImage(dst, 0, 0, null);
+            } finally {
+                g2.dispose();
+            }
         }
 
         return origDst;

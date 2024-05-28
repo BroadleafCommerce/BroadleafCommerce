@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -58,26 +58,27 @@ import jakarta.annotation.Resource;
 /**
  * This processor outputs a SCRIPT tag with JSON data that can be used to update a mostly cached page followed by
  * a call to a javascript function.  The function name is "updateUncacheableData()" by default.
- * 
+ * <p>
  * Broadleaf provides this example but most clients with typical customizations will need to create a similar processor
  * to meet their dynamic data caching needs.
- * 
- * The Broadleaf processor works with the sample javacript function in HeatClinic found in heatClinic-UncacheableData.js work 
- * together to update the "In Cart", "Out of Stock", "Welcome {name}", and "Cart Qty" messages.   By doing this, the 
- * category and product pages in HeatClinic can be aggressively cached using the {@link BroadleafCacheProcessor}. 
- * 
+ * <p>
+ * The Broadleaf processor works with the sample javacript function in HeatClinic found in heatClinic-UncacheableData.js work
+ * together to update the "In Cart", "Out of Stock", "Welcome {name}", and "Cart Qty" messages.   By doing this, the
+ * category and product pages in HeatClinic can be aggressively cached using the {@link BroadleafCacheProcessor}.
+ * <p>
  * Example usage on cached pages with dynamic data.   This would generally go after the footer for the page.
  * <pre>
  *  {@code
- *      <blc:uncacheableData />  
+ *      <blc:uncacheableData />
  *  }
  * </pre>
+ *
  * @author bpolster
  */
 @Component("blUncacheableDataProcessor")
 @ConditionalOnTemplating
 public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementProcessor {
-    
+
     @Resource(name = "blInventoryService")
     protected InventoryService inventoryService;
 
@@ -94,30 +95,34 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
 
     @Override
     public String getName() {
-        return "uncacheabledata"; 
+        return "uncacheabledata";
     }
 
     @Override
     public int getPrecedence() {
         return 100;
     }
-    
+
     @Override
-    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+    public BroadleafTemplateModel getReplacementModel(
+            String tagName,
+            Map<String, String> tagAttributes,
+            BroadleafTemplateContext context
+    ) {
         StringBuffer sb = new StringBuffer();
         sb.append("<SCRIPT>\n");
         sb.append("  var params = \n  ");
         sb.append(buildContentMap(context)).append(";\n  ");
         sb.append(getUncacheableDataFunction(context, tagAttributes));
         sb.append("</SCRIPT>");
-                
+
         // Add contentNode to the document
         BroadleafTemplateModel model = context.createModel();
         BroadleafTemplateElement script = context.createTextElement(sb.toString());
         model.addElement(script);
         return model;
     }
-    
+
     protected String buildContentMap(BroadleafTemplateContext context) {
         Map<String, Object> attrMap = new HashMap<>();
         addCartData(attrMap);
@@ -164,7 +169,11 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
         attrMap.put("outOfStockSkus", outOfStockSkus);
     }
 
-    protected void defineOutOfStockProducts(BroadleafTemplateContext context, Set<Product> allProducts, Set<Long> outOfStockProducts) {
+    protected void defineOutOfStockProducts(
+            BroadleafTemplateContext context,
+            Set<Product> allProducts,
+            Set<Long> outOfStockProducts
+    ) {
         Product baseProduct = (Product) context.getVariable("product");
         for (Product product : allProducts) {
             boolean isBundle = isBundle(product);
@@ -172,7 +181,8 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
                 boolean qtyAvailable = inventoryService.isAvailable(product.getDefaultSku(), 1);
                 if (!qtyAvailable) {
                     outOfStockProducts.add(product.getId());
-                    if (baseProduct != null && !baseProduct.getId().equals(product.getId()) && this.isBlockingAvailabilityOfProduct(baseProduct, product)) {
+                    if (baseProduct != null && !baseProduct.getId().equals(product.getId())
+                            && this.isBlockingAvailabilityOfProduct(baseProduct, product)) {
                         outOfStockProducts.add(baseProduct.getId());
                     }
                 } else if (isBundle) {
@@ -212,7 +222,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
         boolean isBundle = false;
         if (TypedEntity.class.isAssignableFrom(product.getClass())) {
             BroadleafEnumerationType type = ((TypedEntity) product).getType();
-            isBundle = type!=null && "BUNDLE".equals(type.getType());
+            isBundle = type != null && "BUNDLE".equals(type.getType());
         }
         return isBundle;
     }
@@ -246,7 +256,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
         attrMap.put("cartItemIdsWithOptions", cartItemIdsWithOptions);
         attrMap.put("cartItemIdsWithoutOptions", cartItemIdsWithoutOptions);
     }
-    
+
     protected void addCustomerData(Map<String, Object> attrMap) {
         Customer customer = CustomerState.getCustomer();
         String firstName = "";
@@ -266,12 +276,12 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
                 anonymous = true;
             }
         }
-        
+
         attrMap.put("firstName", firstName);
         attrMap.put("lastName", lastName);
         attrMap.put("anonymous", anonymous);
     }
-    
+
     public String getUncacheableDataFunction(BroadleafTemplateContext context, Map<String, String> tagAttributes) {
         if (tagAttributes.containsKey("callbackBlock")) {
             return tagAttributes.get("callbackBlock");
@@ -285,7 +295,7 @@ public class UncacheableDataProcessor extends AbstractBroadleafTagReplacementPro
     public String getDefaultCallbackFunction() {
         return defaultCallbackFunction;
     }
-    
+
     public void setDefaultCallbackFunction(String defaultCallbackFunction) {
         this.defaultCallbackFunction = defaultCallbackFunction;
     }

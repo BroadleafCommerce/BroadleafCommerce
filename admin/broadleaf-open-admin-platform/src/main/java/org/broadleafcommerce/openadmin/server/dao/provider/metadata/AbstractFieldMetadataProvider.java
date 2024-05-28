@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,11 +50,16 @@ public abstract class AbstractFieldMetadataProvider extends AbstractMetadataProv
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-    
+
     @Resource(name = "blBroadleafEnumerationUtility")
     protected BroadleafEnumerationUtility enumerationUtility;
 
-    protected void setClassOwnership(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes, FieldInfo field) {
+    protected void setClassOwnership(
+            Class<?> parentClass,
+            Class<?> targetClass,
+            Map<String, FieldMetadata> attributes,
+            FieldInfo field
+    ) {
         FieldMetadata metadata = attributes.get(field.getName());
         if (metadata != null) {
             AdminPresentationClass adminPresentationClass;
@@ -95,15 +100,20 @@ public abstract class AbstractFieldMetadataProvider extends AbstractMetadataProv
     }
 
     /**
-     * @deprecated use the overloaded method that takes DynamicEntityDao as well. This version does not always properly detect the override from xml.
      * @param configurationKey
      * @param ceilingEntityFullyQualifiedClassname
      * @return override value
+     * @deprecated use the overloaded method that takes DynamicEntityDao as well. This version does not always properly detect the override from xml.
      */
     @Deprecated
-    protected Map<String, MetadataOverride> getTargetedOverride(String configurationKey, String ceilingEntityFullyQualifiedClassname) {
+    protected Map<String, MetadataOverride> getTargetedOverride(
+            String configurationKey,
+            String ceilingEntityFullyQualifiedClassname
+    ) {
         if (metadataOverrides != null && (configurationKey != null || ceilingEntityFullyQualifiedClassname != null)) {
-            return metadataOverrides.containsKey(configurationKey)?metadataOverrides.get(configurationKey):metadataOverrides.get(ceilingEntityFullyQualifiedClassname);
+            return metadataOverrides.containsKey(configurationKey)
+                    ? metadataOverrides.get(configurationKey)
+                    : metadataOverrides.get(ceilingEntityFullyQualifiedClassname);
         }
         return null;
     }
@@ -141,35 +151,41 @@ public abstract class AbstractFieldMetadataProvider extends AbstractMetadataProv
         Object response;
         switch (type) {
             case BIGDECIMAL:
-               response = new BigDecimal(value);
-               break;
+                response = new BigDecimal(value);
+                break;
             case BOOLEAN:
-               response = Boolean.parseBoolean(value);
-               break;
+                response = Boolean.parseBoolean(value);
+                break;
             case DOUBLE:
-               response = Double.parseDouble(value);
-               break;
+                response = Double.parseDouble(value);
+                break;
             case FLOAT:
-               response = Float.parseFloat(value);
-               break;
+                response = Float.parseFloat(value);
+                break;
             case INTEGER:
-               response = Integer.parseInt(value);
-               break;
+                response = Integer.parseInt(value);
+                break;
             case LONG:
-               response = Long.parseLong(value);
-               break;
+                response = Long.parseLong(value);
+                break;
             default:
-               response = value;
-               break;
+                response = value;
+                break;
         }
 
         return response;
     }
 
-    protected void setupBroadleafEnumeration(String broadleafEnumerationClass, BasicFieldMetadata fieldMetadata, DynamicEntityDao dynamicEntityDao) {
+    protected void setupBroadleafEnumeration(
+            String broadleafEnumerationClass,
+            BasicFieldMetadata fieldMetadata,
+            DynamicEntityDao dynamicEntityDao
+    ) {
         try {
-            List<Tuple<String, String>> enumVals = enumerationUtility.getEnumerationValues(broadleafEnumerationClass, dynamicEntityDao);
-            
+            List<Tuple<String, String>> enumVals = enumerationUtility.getEnumerationValues(
+                    broadleafEnumerationClass, dynamicEntityDao
+            );
+
             String[][] enumerationValues = new String[enumVals.size()][2];
             int j = 0;
             for (Tuple<String, String> t : enumVals) {
@@ -177,7 +193,7 @@ public abstract class AbstractFieldMetadataProvider extends AbstractMetadataProv
                 enumerationValues[j][1] = t.getSecond();
                 j++;
             }
-            
+
             fieldMetadata.setEnumerationValues(enumerationValues);
             fieldMetadata.setEnumerationClass(broadleafEnumerationClass);
         } catch (Exception e) {
@@ -192,4 +208,5 @@ public abstract class AbstractFieldMetadataProvider extends AbstractMetadataProv
         }
         return response;
     }
+
 }

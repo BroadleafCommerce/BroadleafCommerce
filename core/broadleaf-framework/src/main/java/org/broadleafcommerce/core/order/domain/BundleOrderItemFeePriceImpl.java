@@ -10,22 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.order.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -43,34 +34,45 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BUND_ITEM_FEE_PRICE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-    {
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
-)
-public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
+public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice {
 
     public static final Log LOG = LogFactory.getLog(BundleOrderItemFeePriceImpl.class);
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "BundleOrderItemFeePriceId")
     @GenericGenerator(
-        name="BundleOrderItemFeePriceId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="BundleOrderItemFeePriceImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.BundleOrderItemFeePriceImpl")
-        }
+            name = "BundleOrderItemFeePriceId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "BundleOrderItemFeePriceImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.BundleOrderItemFeePriceImpl")
+            }
     )
     @Column(name = "BUND_ITEM_FEE_PRICE_ID")
     protected Long id;
@@ -79,20 +81,20 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
     @JoinColumn(name = "BUND_ORDER_ITEM_ID")
     protected BundleOrderItem bundleOrderItem;
 
-    @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Amount", order=2, prominent=true)
+    @Column(name = "AMOUNT", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Amount", order = 2, prominent = true)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Name", order=1, prominent=true)
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Name", order = 1, prominent = true)
     private String name;
 
     @Column(name = "REPORTING_CODE")
-    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Reporting_Code", order=3, prominent=true)
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Reporting_Code", order = 3, prominent = true)
     private String reportingCode;
 
     @Column(name = "IS_TAXABLE")
-    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Taxable", order=4)
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Taxable", order = 4)
     private Boolean isTaxable = Boolean.FALSE;
 
     @Override
@@ -157,7 +159,8 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
 
     public void checkCloneable(BundleOrderItemFeePrice bundleFeePrice) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = bundleFeePrice.getClass().getMethod("clone");
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !bundleFeePrice.getClass().getName().startsWith("org.broadleafcommerce")) {
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
+                && !bundleFeePrice.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
         }
@@ -176,7 +179,8 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
             try {
                 checkCloneable(clone);
             } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: "
+                        + clone.getClass().getName(), e);
             }
             clone.setAmount(convertToMoney(amount));
             clone.setName(name);
@@ -201,7 +205,7 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
         result = prime * result + ((reportingCode == null) ? 0 : reportingCode.hashCode());
         return result;
     }
-    
+
     @Override
     public CreateResponse<BundleOrderItemFeePrice> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<BundleOrderItemFeePrice> createResponse = context.createOrRetrieveCopyInstance(this);
@@ -209,12 +213,12 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
             return createResponse;
         }
         BundleOrderItemFeePrice cloned = createResponse.getClone();
-        cloned.setBundleOrderItem((BundleOrderItem)bundleOrderItem.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setBundleOrderItem((BundleOrderItem) bundleOrderItem.createOrRetrieveCopyInstance(context).getClone());
         cloned.setAmount(amount == null ? null : new Money(amount));
         cloned.setName(name);
         cloned.setReportingCode(reportingCode);
         cloned.setTaxable(isTaxable == null ? null : isTaxable);
-        return  createResponse;
+        return createResponse;
     }
 
     @Override
@@ -265,4 +269,5 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
         } else
             return reportingCode.equals(other.reportingCode);
     }
+
 }

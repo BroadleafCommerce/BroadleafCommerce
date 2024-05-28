@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,12 +25,12 @@ import org.broadleafcommerce.core.search.redirect.domain.SearchRedirect;
 @Deprecated
 public interface SearchIntercept {
 
-    public abstract String getTerm();
+    String getTerm();
 
-    public abstract void setTerm(String term);
+    void setTerm(String term);
 
-    public abstract String getRedirect();
+    String getRedirect();
 
-    public abstract void setRedirect(String redirect);
+    void setRedirect(String redirect);
 
 }

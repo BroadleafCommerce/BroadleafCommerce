@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -45,13 +45,14 @@ public interface ResourcePurgeService {
     /**
      * Generates delete statement and executes them
      * Originally was designed to purge orders and its dependencies
-     * @param rootType - entity type to start from to find all dependent entities
-     * @param rootTypeIdValue - id value to use, can be any string like '?' that you will want to replace with concrete id, or id itself
-     * @param depends - a map representing dependent tables that can't be navigated from a root type,
-     *               where key is a table name to depend on, value is structure representing a depending table name,
-     *                join column name(FK column that is in depending table) and id field name in table to depend on.
      *
+     * @param rootType        - entity type to start from to find all dependent entities
+     * @param rootTypeIdValue - id value to use, can be any string like '?' that you will want to replace with concrete id, or id itself
+     * @param depends         - a map representing dependent tables that can't be navigated from a root type,
+     *                        where key is a table name to depend on, value is structure representing a depending table name,
+     *                        join column name(FK column that is in depending table) and id field name in table to depend on.
      */
-    void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, List<DeleteStatementGeneratorImpl.PathElement>> depends, final Map<String, Integer> config);
+    void purgeOrderHistory(Class<?> rootType, String rootTypeIdValue, Map<String, List<DeleteStatementGeneratorImpl.PathElement>> depends,
+                           final Map<String, Integer> config);
 
 }

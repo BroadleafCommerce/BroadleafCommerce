@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -64,7 +64,11 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
     }
 
     @Override
-    protected BroadleafTemplateModel buildModelBundled(List<String> attributeFiles, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
+    protected BroadleafTemplateModel buildModelBundled(
+            List<String> attributeFiles,
+            ResourceTagAttributes resourceTagAttributes,
+            BroadleafTemplateContext context
+    ) {
         BroadleafTemplateModel model = context.createModel();
 
         final String bundleResourcePath = getBundlePath(resourceTagAttributes, attributeFiles);
@@ -77,7 +81,11 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
     }
 
     @Override
-    protected BroadleafTemplateModel buildModelUnbundled(List<String> attributeFiles, ResourceTagAttributes resourceTagAttributes, BroadleafTemplateContext context) {
+    protected BroadleafTemplateModel buildModelUnbundled(
+            List<String> attributeFiles,
+            ResourceTagAttributes resourceTagAttributes,
+            BroadleafTemplateContext context
+    ) {
         BroadleafTemplateModel model = context.createModel();
 
         final List<String> files = postProcessUnbundledFileList(attributeFiles, resourceTagAttributes, context);
@@ -92,7 +100,8 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
 
     /**
      * Builds a preload link for the given path
-     * @param href the path of the file to create the link with
+     *
+     * @param href    the path of the file to create the link with
      * @param context the context of the bundlepreload tag
      * @return a link element linking to the given resource
      */
@@ -105,8 +114,9 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
 
     /**
      * Builds a map of the attributes that should be put on the &lt;link&gt; tag.
+     *
      * @param href the href of the resource to preload
-     * @param as the value the "as" attribute should have or null if it shouldn't be included
+     * @param as   the value the "as" attribute should have or null if it shouldn't be included
      * @return a map of attributes to place on the link tag
      */
     protected Map<String, String> getPreloadAttributes(String href, String as) {
@@ -123,6 +133,7 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
 
     /**
      * Gets the "as" attribute for the link based off of the file name
+     *
      * @param file the name of the file
      * @return an appropriate "as" value or null if none was found
      */
@@ -135,4 +146,5 @@ public class ResourcePreloadProcessor extends AbstractResourceProcessor {
             return null;
         }
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,38 +50,38 @@ import javax.cache.CacheManager;
 import jakarta.annotation.Resource;
 
 /**
- * @deprecated Use {@link SolrSearchServiceImpl} 
+ * @deprecated Use {@link SolrSearchServiceImpl}
  */
 @Deprecated
 @Service("blSearchService")
 public class DatabaseSearchServiceImpl implements SearchService {
 
-    @Resource(name = "blCatalogService")
-    protected CatalogService catalogService;
-    
-    @Resource(name = "blSearchFacetDao")
-    protected SearchFacetDao searchFacetDao;
-    
-    @Resource(name = "blFieldDao")
-    protected FieldDao fieldDao;
-    
-    @Resource(name = "blCacheManager")
-    protected CacheManager cacheManager;
-    
     protected static String CACHE_NAME = "blStandardElements";
     protected static String CACHE_KEY_PREFIX = "facet:";
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
+    @Resource(name = "blSearchFacetDao")
+    protected SearchFacetDao searchFacetDao;
+    @Resource(name = "blFieldDao")
+    protected FieldDao fieldDao;
+    @Resource(name = "blCacheManager")
+    protected CacheManager cacheManager;
     protected Cache<String, List<SearchFacetDTO>> cache;
-    
+
     @Override
     public SearchResult findExplicitSearchResultsByCategory(Category category, SearchCriteria searchCriteria) throws ServiceException {
         throw new UnsupportedOperationException("See findProductsByCategory or use the SolrSearchService implementation");
     }
-    
+
     @Override
-    public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException {
+    public SearchResult findSearchResultsByCategoryAndQuery(
+            Category category,
+            String query,
+            SearchCriteria searchCriteria
+    ) throws ServiceException {
         throw new UnsupportedOperationException("This operation is only supported by the SolrSearchService by default");
     }
-    
+
     @Override
     public SearchResult findSearchResultsByCategory(Category category, SearchCriteria searchCriteria) {
         SearchResult result = new SearchResult();
@@ -121,7 +121,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
     public List<SearchFacetDTO> getSearchFacets() {
         String cacheKey = CACHE_KEY_PREFIX + "blc-search";
         List<SearchFacetDTO> facets = getCache().get(cacheKey);
-        
+
         if (facets == null) {
             facets = buildSearchFacetDtos(searchFacetDao.readAllSearchFacets(FieldEntity.PRODUCT));
             getCache().put(cacheKey, facets);
@@ -138,10 +138,10 @@ public class DatabaseSearchServiceImpl implements SearchService {
     public List<SearchFacetDTO> getCategoryFacets(Category category) {
         String cacheKey = CACHE_KEY_PREFIX + "category:" + category.getId();
         List<SearchFacetDTO> facets = getCache().get(cacheKey);
-        
+
         if (facets == null) {
             List<CategorySearchFacet> categorySearchFacets = category.getCumulativeSearchFacets();
-            List<SearchFacet> searchFacets = new ArrayList<SearchFacet>();
+            List<SearchFacet> searchFacets = new ArrayList<>();
             for (CategorySearchFacet categorySearchFacet : categorySearchFacets) {
                 searchFacets.add(categorySearchFacet.getSearchFacet());
             }
@@ -150,14 +150,15 @@ public class DatabaseSearchServiceImpl implements SearchService {
         }
         return facets;
     }
-    
+
     /**
      * Perform any necessary conversion of the key to be used by the search service
+     *
      * @param criteria
      */
     protected void setQualifiedKeys(SearchCriteria criteria) {
         // Convert the filter criteria url keys
-        Map<String, String[]> convertedFilterCriteria = new HashMap<String, String[]>();
+        Map<String, String[]> convertedFilterCriteria = new HashMap<>();
         for (Entry<String, String[]> entry : criteria.getFilterCriteria().entrySet()) {
             Field field = fieldDao.readFieldByAbbreviation(entry.getKey());
             if (field != null) {
@@ -166,7 +167,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
             }
         }
         criteria.setFilterCriteria(convertedFilterCriteria);
-        
+
         // Convert the sort criteria url keys
         if (StringUtils.isNotBlank(criteria.getSortQuery())) {
             StringBuilder convertedSortQuery = new StringBuilder();
@@ -176,23 +177,22 @@ public class DatabaseSearchServiceImpl implements SearchService {
                     String key = sort[0];
                     Field field = fieldDao.readFieldByAbbreviation(key);
                     String qualifiedFieldName = getDatabaseQualifiedFieldName(field.getQualifiedFieldName());
-                    
+
                     if (convertedSortQuery.length() > 0) {
                         convertedSortQuery.append(",");
                     }
-                    
+
                     convertedSortQuery.append(qualifiedFieldName).append(" ").append(sort[1]);
                 }
             }
             criteria.setSortQuery(convertedSortQuery.toString());
         }
-        
     }
-    
+
     /**
      * From the Field's qualifiedName, build out the qualified name to be used by the ProductDao
      * to find the requested products.
-     * 
+     *
      * @param qualifiedFieldName
      * @return the database qualified name
      */
@@ -205,11 +205,12 @@ public class DatabaseSearchServiceImpl implements SearchService {
             return qualifiedFieldName;
         }
     }
-    
-    
+
     protected void setActiveFacets(List<SearchFacetDTO> facets, SearchCriteria searchCriteria) {
         for (SearchFacetDTO facet : facets) {
-            String qualifiedFieldName = getDatabaseQualifiedFieldName(facet.getFacet().getField().getQualifiedFieldName());
+            String qualifiedFieldName = getDatabaseQualifiedFieldName(
+                    facet.getFacet().getField().getQualifiedFieldName()
+            );
             for (Entry<String, String[]> entry : searchCriteria.getFilterCriteria().entrySet()) {
                 if (qualifiedFieldName.equals(entry.getKey())) {
                     facet.setActive(true);
@@ -217,16 +218,16 @@ public class DatabaseSearchServiceImpl implements SearchService {
             }
         }
     }
-    
-    
+
     /**
      * Create the wrapper DTO around the SearchFacet
+     *
      * @param categoryFacets
      * @return the wrapper DTO
      */
     protected List<SearchFacetDTO> buildSearchFacetDtos(List<SearchFacet> categoryFacets) {
-        List<SearchFacetDTO> facets = new ArrayList<SearchFacetDTO>();
-        
+        List<SearchFacetDTO> facets = new ArrayList<>();
+
         for (SearchFacet facet : categoryFacets) {
             SearchFacetDTO dto = new SearchFacetDTO();
             dto.setFacet(facet);
@@ -235,10 +236,10 @@ public class DatabaseSearchServiceImpl implements SearchService {
             dto.setActive(false);
             facets.add(dto);
         }
-        
+
         return facets;
     }
-    
+
     protected List<SearchFacetResultDTO> getFacetValues(SearchFacet facet) {
         if (facet.getSearchFacetRanges().size() > 0) {
             return getRangeFacetValues(facet);
@@ -246,10 +247,10 @@ public class DatabaseSearchServiceImpl implements SearchService {
             return getMatchFacetValues(facet);
         }
     }
-    
+
     protected List<SearchFacetResultDTO> getRangeFacetValues(SearchFacet facet) {
-        List<SearchFacetResultDTO> results = new ArrayList<SearchFacetResultDTO>();
-        
+        List<SearchFacetResultDTO> results = new ArrayList<>();
+
         List<SearchFacetRange> ranges = facet.getSearchFacetRanges();
         Collections.sort(ranges, new Comparator<SearchFacetRange>() {
             @Override
@@ -257,7 +258,7 @@ public class DatabaseSearchServiceImpl implements SearchService {
                 return o1.getMinValue().compareTo(o2.getMinValue());
             }
         });
-        
+
         for (SearchFacetRange range : ranges) {
             SearchFacetResultDTO dto = new SearchFacetResultDTO();
             dto.setMinValue(range.getMinValue());
@@ -267,23 +268,23 @@ public class DatabaseSearchServiceImpl implements SearchService {
         }
         return results;
     }
-    
+
     protected List<SearchFacetResultDTO> getMatchFacetValues(SearchFacet facet) {
-        List<SearchFacetResultDTO> results = new ArrayList<SearchFacetResultDTO>();
-        
+        List<SearchFacetResultDTO> results = new ArrayList<>();
+
         String qualifiedFieldName = facet.getField().getQualifiedFieldName();
         qualifiedFieldName = getDatabaseQualifiedFieldName(qualifiedFieldName);
         List<String> values = searchFacetDao.readDistinctValuesForField(qualifiedFieldName, String.class);
-        
+
         Collections.sort(values);
-        
+
         for (String value : values) {
             SearchFacetResultDTO dto = new SearchFacetResultDTO();
             dto.setValue(value);
             dto.setFacet(facet);
             results.add(dto);
         }
-        
+
         return results;
     }
 
@@ -302,4 +303,5 @@ public class DatabaseSearchServiceImpl implements SearchService {
         }
         return cache;
     }
+
 }

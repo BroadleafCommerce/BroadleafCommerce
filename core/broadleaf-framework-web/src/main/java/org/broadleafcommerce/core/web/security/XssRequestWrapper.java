@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,16 +35,13 @@ import jakarta.validation.ValidationException;
 
 public class XssRequestWrapper extends HttpServletRequestWrapper {
 
-    protected final Environment environment;
-    private String[] whiteListParamNames;
-    private final int MAX_PARAMETER_LENGTH = 99999;
-
     private static final Log LOG = LogFactory.getLog(XssRequestWrapper.class);
-
+    protected final Environment environment;
+    private final int MAX_PARAMETER_LENGTH = 99999;
     protected Pattern parameterPatter = Pattern.compile("^[a-zA-Z0-9.\\-\\/+=@_ #']*$");
-
     @Value("${custom.strip.xss:false}")
     protected boolean customStripXssEnabled;
+    private String[] whiteListParamNames;
 
     public XssRequestWrapper(HttpServletRequest servletRequest, Environment environment, String[] whiteListParamNames) {
         super(servletRequest);
@@ -61,7 +58,7 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         if (values == null) {
             return null;
         }
-        if(checkWhitelist(parameter)){
+        if (checkWhitelist(parameter)) {
             return values;
         }
 
@@ -70,8 +67,8 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         for (int i = 0; i < count; i++) {
             try {
                 encodedValues[i] = stripXss(values[i]);
-            }catch (jakarta.validation.ValidationException ex){
-                if(values[i]!=null){
+            } catch (jakarta.validation.ValidationException ex) {
+                if (values[i] != null) {
                     encodedValues[i] = stripXss(values[i].substring(MAX_PARAMETER_LENGTH));
                 }
             }
@@ -81,7 +78,7 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
 
     protected boolean checkWhitelist(String parameter) {
         for (String whiteListParamName : whiteListParamNames) {
-            if(whiteListParamName.equals(parameter)){
+            if (whiteListParamName.equals(parameter)) {
                 return true;
             }
         }
@@ -94,7 +91,7 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
             return null;
         }
         String value = super.getParameter(parameter);
-        if(checkWhitelist(parameter)){
+        if (checkWhitelist(parameter)) {
             return value;
         }
         try {
@@ -116,7 +113,7 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
      * When {@link #customStripXssEnabled} is false, it will run ESAPI's logic based on the esapiInputType.
      * If esapiInputType is null or empty, it will run {@link #stripXssAsHTML(String)}.
      *
-     * @param value - value to be stripped
+     * @param value          - value to be stripped
      * @param esapiInputType - The name of the ESAPI validation rule defined in ESAPI validation configuration file.
      */
     protected String stripXss(String value, String esapiInputType) {
@@ -136,10 +133,12 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         value = scriptPattern.matcher(value).replaceAll("");
 
         // Avoid anything in a src='...' type of expression
-        scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+        scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'",
+                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
         value = scriptPattern.matcher(value).replaceAll("");
 
-        scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+        scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"",
+                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
         value = scriptPattern.matcher(value).replaceAll("");
 
         // Remove any lonesome </script> tag
@@ -191,7 +190,7 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
 
     protected String stripXssAsHTML(String value) {
         try {
-            if(value!=null && value.length()<MAX_PARAMETER_LENGTH) {
+            if (value != null && value.length() < MAX_PARAMETER_LENGTH) {
                 String canonicalize = ESAPIEncoder.getInstance().canonicalize(value);
                 AntisamyService instance = AntisamyServiceImpl.getInstance();
                 CleanResults scan = instance.getAntiSamy().scan(canonicalize, instance.getAntiSamyPolicy());
@@ -199,7 +198,7 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
                     throw new ValidationException("Input value failed validation against antisamy policy");
                 }
                 return scan.getCleanHTML().trim();
-            }else if(value!=null && value.length()>=MAX_PARAMETER_LENGTH){
+            } else if (value != null && value.length() >= MAX_PARAMETER_LENGTH) {
                 throw new ValidationException("Parameter value to long, max=" + MAX_PARAMETER_LENGTH);
             }
         } catch (Exception e2) {
@@ -207,4 +206,5 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
         }
         return value;
     }
+
 }

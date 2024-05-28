@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,12 +42,11 @@ import java.util.regex.Pattern;
 import jakarta.annotation.Resource;
 
 @Service("blProductOptionValidationService")
-public class ProductOptionValidationServiceImpl implements ProductOptionValidationService  {
+public class ProductOptionValidationServiceImpl implements ProductOptionValidationService {
 
-    private static final Log LOG = LogFactory.getLog(ProductOptionValidationServiceImpl.class);
     protected static final Integer ADD_TYPE_RANK = ProductOptionValidationStrategyType.ADD_ITEM.getRank();
     protected static final Integer SUBMIT_TYPE_RANK = ProductOptionValidationStrategyType.SUBMIT_ORDER.getRank();
-
+    private static final Log LOG = LogFactory.getLog(ProductOptionValidationServiceImpl.class);
     @Resource
     protected ProductOptionDao productOptionDao;
 
@@ -74,7 +73,9 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
             throw new RequiredAttributeNotProvidedException(message, attributeName);
         } else {
             String validationString = productOption.getValidationString();
-            validationString = xssExploitProtectionEnabled ? ESAPIEncoder.getInstance().decodeForHTML(validationString) : validationString;
+            validationString = xssExploitProtectionEnabled
+                    ? ESAPIEncoder.getInstance().decodeForHTML(validationString)
+                    : validationString;
             value = siteXssWrapperEnabled ? ESAPIEncoder.getInstance().decodeForHTML(value) : value;
 
             if (requiresValidation(productOption, value) && !validateRegex(validationString, value)) {
@@ -84,9 +85,14 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
                 }
 
                 LOG.error(errorMessage);
-                throw new ProductOptionValidationException(errorMessage, productOption.getErrorCode(),
-                                                           attributeName, value, validationString,
-                                                           errorMessage);
+                throw new ProductOptionValidationException(
+                        errorMessage,
+                        productOption.getErrorCode(),
+                        attributeName,
+                        value,
+                        validationString,
+                        errorMessage
+                );
             }
         }
 
@@ -148,7 +154,15 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
     }
 
     @Override
-    public List<Long> findSkuIdsForProductOptionValues(Long productId, String attributeName, String attributeValue, List<Long> possibleSkuIds) {
-        return productOptionDao.readSkuIdsForProductOptionValues(productId, attributeName, attributeValue, possibleSkuIds);
+    public List<Long> findSkuIdsForProductOptionValues(
+            Long productId,
+            String attributeName,
+            String attributeValue,
+            List<Long> possibleSkuIds
+    ) {
+        return productOptionDao.readSkuIdsForProductOptionValues(
+                productId, attributeName, attributeValue, possibleSkuIds
+        );
     }
+
 }

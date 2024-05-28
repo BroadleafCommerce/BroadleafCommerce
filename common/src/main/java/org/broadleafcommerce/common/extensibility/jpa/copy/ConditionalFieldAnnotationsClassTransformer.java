@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,15 +41,14 @@ import javassist.bytecode.annotation.Annotation;
 
 /**
  * The purpose of this class is to allow the conditional addition or removal of annotations to a target entity based on template class.
- * 
- * This does not add new fields or methods, nor does it remove fields or methods.  Rather, this class copies annotations from a 
+ * <p>
+ * This does not add new fields or methods, nor does it remove fields or methods.  Rather, this class copies annotations from a
  * template class' field(s) to a target class' fields.  It removes annotations from the target that are not on the template.
- * 
- * As a result, this class takes the annotations from fields of a template class and adds them to fields in a target class. 
+ * <p>
+ * As a result, this class takes the annotations from fields of a template class and adds them to fields in a target class.
  * If the template contains fields that are not on the target, then unexpected behavior such as NullPointerExceptions may occur.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 public class ConditionalFieldAnnotationsClassTransformer extends AbstractClassTransformer implements BroadleafClassTransformer {
 
@@ -77,8 +76,13 @@ public class ConditionalFieldAnnotationsClassTransformer extends AbstractClassTr
      * @throws IllegalClassFormatException
      */
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
+    public byte[] transform(
+            ClassLoader loader,
+            String className,
+            Class<?> classBeingRedefined,
+            ProtectionDomain protectionDomain,
+            byte[] classfileBuffer
+    ) throws TransformerException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -150,7 +154,7 @@ public class ConditionalFieldAnnotationsClassTransformer extends AbstractClassTr
                                 ((AnnotationsAttribute) attribute).setAnnotations(annotations);
                             } else {
                                 //If no annotations were found on the template, then remove them entirely from the target.
-                                ((AnnotationsAttribute) attribute).setAnnotations(new Annotation[] {});
+                                ((AnnotationsAttribute) attribute).setAnnotations(new Annotation[]{});
                             }
 
                             break;

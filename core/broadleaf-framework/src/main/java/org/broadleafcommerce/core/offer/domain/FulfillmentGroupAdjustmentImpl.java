@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,6 +42,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
@@ -64,15 +65,14 @@ import jakarta.persistence.Transient;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
-        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                booleanOverrideValue = true))
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY, booleanOverrideValue = true))
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
         friendlyName = "FulfillmentGroupAdjustmentImpl_baseFulfillmentGroupAdjustment")
-public class FulfillmentGroupAdjustmentImpl
-        implements FulfillmentGroupAdjustment, CurrencyCodeIdentifiable {
+public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustment, CurrencyCodeIdentifiable {
 
-    public static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "FGAdjustmentId")
@@ -101,8 +101,7 @@ public class FulfillmentGroupAdjustmentImpl
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable = false)
-    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Reason",
-            order = 2000)
+    @AdminPresentation(friendlyName = "FulfillmentGroupAdjustmentImpl_FG_Adjustment_Reason", order = 2000)
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable = false, precision = 19, scale = 5)
@@ -193,8 +192,7 @@ public class FulfillmentGroupAdjustmentImpl
     public Money getValue() {
         return value == null
                 ? null
-                : BroadleafCurrencyUtils.getMoney(value,
-                        getFulfillmentGroup().getOrder().getCurrency());
+                : BroadleafCurrencyUtils.getMoney(value, getFulfillmentGroup().getOrder().getCurrency());
     }
 
     @Override

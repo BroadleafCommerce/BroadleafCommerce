@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,16 +21,16 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableCandid
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 
-
 /**
  * This interface is used as a part of a template pattern in ItemOfferProcessor that allows reuse to other BLC modules.
- * 
+ * <p>
  * Changes here likely affect Subscription and AdvancedOffer modules.
- * @author bpolster
  *
+ * @author bpolster
  */
 public interface ItemOfferMarkTargets {
 
     boolean markTargets(PromotableCandidateItemOffer itemOffer, PromotableOrder order, OrderItem relatedQualifier,
-            boolean checkOnly);
+                        boolean checkOnly);
+
 }

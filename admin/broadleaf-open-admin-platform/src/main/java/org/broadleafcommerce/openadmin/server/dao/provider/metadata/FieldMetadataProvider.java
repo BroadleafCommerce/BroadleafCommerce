@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,7 +50,7 @@ public interface FieldMetadataProvider extends Ordered {
      * add values to the metadata parameter.
      *
      * @param addFieldMetadataRequest contains the requested field and support classes.
-     * @param metadata implementations should add metadata for the requested field here
+     * @param metadata                implementations should add metadata for the requested field here
      * @return whether or not this implementation adjusted metadata
      */
     MetadataProviderResponse addMetadata(AddFieldMetadataRequest addFieldMetadataRequest, Map<String, FieldMetadata> metadata);
@@ -58,13 +58,13 @@ public interface FieldMetadataProvider extends Ordered {
     /**
      * Contribute to metadata inspection for the {@link java.lang.reflect.Field} instance in the request. Implementations should
      * add values to the metadata parameter.
-     *
+     * <p>
      * This method differs from {@link #addMetadata(AddFieldMetadataRequest, Map)} in that it will be invoked after the cacheable
      * properties are assembled. It is therefore useful in scenarios where you may want to contribute properties to
      * metadata that are dynamic and should not be cached normally.
      *
      * @param lateStageAddMetadataRequest contains the requested field name and support classes.
-     * @param metadata implementations should add metadata for the requested field here
+     * @param metadata                    implementations should add metadata for the requested field here
      * @return whether or not this implementation adjusted metadata
      */
     MetadataProviderResponse lateStageAddMetadata(LateStageAddMetadataRequest lateStageAddMetadataRequest, Map<String, FieldMetadata> metadata);
@@ -74,7 +74,7 @@ public interface FieldMetadataProvider extends Ordered {
      * in the metadata parameter.
      *
      * @param overrideViaAnnotationRequest contains the requested entity and support classes.
-     * @param metadata implementations should override metadata here
+     * @param metadata                     implementations should override metadata here
      * @return whether or not this implementation adjusted metadata
      */
     MetadataProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata);
@@ -84,7 +84,7 @@ public interface FieldMetadataProvider extends Ordered {
      * values in the metadata parameter.
      *
      * @param overrideViaXmlRequest contains the requested config key, ceiling entity and support classes.
-     * @param metadata implementations should override metadata here
+     * @param metadata              implementations should override metadata here
      * @return whether or not this implementation adjusted metadata
      */
     MetadataProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata);
@@ -94,7 +94,7 @@ public interface FieldMetadataProvider extends Ordered {
      * in the metadata parameter.
      *
      * @param addMetadataFromMappingDataRequest contains the requested Hibernate type and support classes.
-     * @param metadata implementations should impact values for the metadata for the field here
+     * @param metadata                          implementations should impact values for the metadata for the field here
      * @return whether or not this implementation adjusted metadata
      */
     MetadataProviderResponse addMetadataFromMappingData(AddMetadataFromMappingDataRequest addMetadataFromMappingDataRequest, FieldMetadata metadata);
@@ -104,7 +104,7 @@ public interface FieldMetadataProvider extends Ordered {
      * add values to the metadata parameter. This is metadata based on the field type.
      *
      * @param addMetadataFromFieldTypeRequest contains the requested field, property name and support classes.
-     * @param metadata implementations should add values for the field here
+     * @param metadata                        implementations should add values for the field here
      * @return whether or not this implementation adjusted metadata
      */
     MetadataProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata);

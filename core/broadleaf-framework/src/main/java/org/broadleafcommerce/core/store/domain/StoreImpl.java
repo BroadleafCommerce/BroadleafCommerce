@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,6 +33,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import java.io.Serial;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -49,11 +51,11 @@ import jakarta.persistence.Table;
 @Table(name = "BLC_STORE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blStoreElements")
 @SQLDelete(sql = "UPDATE BLC_STORE SET ARCHIVED = 'Y' WHERE STORE_ID = ?")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
-        friendlyName = "StoreImpl_baseStore")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "StoreImpl_baseStore")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class StoreImpl implements Store {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -225,12 +227,10 @@ public class StoreImpl implements Store {
 
             }
 
-
             public static class Order {
                 public static final int Advanced = 7000;
             }
         }
-
 
         public static class Group {
             public static class Name {
@@ -239,14 +239,12 @@ public class StoreImpl implements Store {
                 public static final String Geocoding = "StoreImpl_Store_Geocoding";
             }
 
-
             public static class Order {
                 public static final int General = 1000;
                 public static final int Location = 2000;
                 public static final int Geocoding = 3000;
             }
         }
-
 
         public static class FieldOrder {
             public static final int NAME = 1000;

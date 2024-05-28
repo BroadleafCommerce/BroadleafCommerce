@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,18 +25,21 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 
 @Repository("blFeaturedProductDao")
-public class FeaturedProductDaoImpl implements FeaturedProductDao{
+public class FeaturedProductDaoImpl implements FeaturedProductDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-
     @Override
-    public boolean isFeaturedProduct(long productId){
-        TypedQuery<Long> query = em.createQuery("SELECT COUNT(p) FROM FeaturedProductImpl p WHERE p.product.id=:pId", Long.class);
-        query.setParameter("pId",productId);
+    public boolean isFeaturedProduct(long productId) {
+        TypedQuery<Long> query = em.createQuery(
+                "SELECT COUNT(p) FROM FeaturedProductImpl p WHERE p.product.id=:pId",
+                Long.class
+        );
+        query.setParameter("pId", productId);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         Long result = query.getSingleResult();
-        return result!=null && result>0;
+        return result != null && result > 0;
     }
+
 }

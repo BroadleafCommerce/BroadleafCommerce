@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,7 +32,6 @@ import java.util.Set;
 
 /**
  * Extension manager that holds the list of {@link EntityInformationServiceExtensionHandler}.
- * 
  */
 @Service("blEntityInformationServiceExtensionManager")
 public class EntityInformationServiceExtensionManager extends ExtensionManager<EntityInformationServiceExtensionHandler> implements EntityInformationServiceExtensionHandler {
@@ -40,7 +39,9 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
     public static final ExtensionManagerOperation getDefaultCatalogIdForSite = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((EntityInformationServiceExtensionHandler) handler).getDefaultCatalogIdForSite((Site) params[0], (ExtensionResultHolder<Long>) params[1]);
+            return ((EntityInformationServiceExtensionHandler) handler).getDefaultCatalogIdForSite(
+                    (Site) params[0], (ExtensionResultHolder<Long>) params[1]
+            );
         }
     };
 
@@ -54,49 +55,63 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
     public static final ExtensionManagerOperation updateBasicEntityInformationDto = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((EntityInformationServiceExtensionHandler) handler).updateBasicEntityInformationDto((EntityInformationDto) params[0], params[1]);
+            return ((EntityInformationServiceExtensionHandler) handler).updateBasicEntityInformationDto(
+                    (EntityInformationDto) params[0], params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation getBaseProfileIdForSite = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((EntityInformationServiceExtensionHandler) handler).getBaseProfileIdForSite((Site) params[0], (ExtensionResultHolder<Long>) params[1]);
+            return ((EntityInformationServiceExtensionHandler) handler).getBaseProfileIdForSite(
+                    (Site) params[0], (ExtensionResultHolder<Long>) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation getTypeForSite = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((EntityInformationServiceExtensionHandler) handler).getTypeForSite((Site) params[0], (ExtensionResultHolder<String>) params[1]);
+            return ((EntityInformationServiceExtensionHandler) handler).getTypeForSite(
+                    (Site) params[0], (ExtensionResultHolder<String>) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation getParentSiteForProfile = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((EntityInformationServiceExtensionHandler) handler).getParentSiteForProfile((Site) params[0], (ExtensionResultHolder<Site>) params[1]);
+            return ((EntityInformationServiceExtensionHandler) handler).getParentSiteForProfile(
+                    (Site) params[0], (ExtensionResultHolder<Site>) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation getOkayToUseSiteDiscriminator = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((EntityInformationServiceExtensionHandler) handler).getOkayToUseSiteDiscriminator(params[0], (ExtensionResultHolder<Boolean>) params[1]);
+            return ((EntityInformationServiceExtensionHandler) handler).getOkayToUseSiteDiscriminator(
+                    params[0], (ExtensionResultHolder<Boolean>) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation findAllCatalogs = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((EntityInformationServiceExtensionHandler) handler).findAllCatalogs((ExtensionResultHolder<List<Catalog>>) params[0]);
+            return ((EntityInformationServiceExtensionHandler) handler).findAllCatalogs(
+                    (ExtensionResultHolder<List<Catalog>>) params[0]
+            );
         }
     };
-    
+
     public static final ExtensionManagerOperation getChildSiteIdsForProfile = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((EntityInformationServiceExtensionHandler) handler).getChildSiteIdsForProfile((Site) params[0], (ExtensionResultHolder<Set<Long>>) params[1]);
+            return ((EntityInformationServiceExtensionHandler) handler).getChildSiteIdsForProfile(
+                    (Site) params[0], (ExtensionResultHolder<Set<Long>>) params[1]
+            );
         }
     };
 
@@ -154,4 +169,5 @@ public class EntityInformationServiceExtensionManager extends ExtensionManager<E
     public ExtensionResultStatusType getTypeForSite(Site site, ExtensionResultHolder<String> erh) {
         return execute(getTypeForSite, site, erh);
     }
+
 }

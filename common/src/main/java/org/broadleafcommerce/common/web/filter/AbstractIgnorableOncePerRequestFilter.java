@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,15 +37,19 @@ import jakarta.servlet.http.HttpServletResponse;
  * that this method will faithfully be called unless the logic here determines the filter should pass the request through without
  * processing.
  *
- * @see SecurityBasedIgnoreFilter
  * @author Jeff Fischer
+ * @see SecurityBasedIgnoreFilter
  */
 public abstract class AbstractIgnorableOncePerRequestFilter extends OncePerRequestFilter implements Ordered {
 
     private static final Log LOG = LogFactory.getLog(AbstractIgnorableOncePerRequestFilter.class);
 
     @Override
-    public void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+    public void doFilterInternal(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
         if (isIgnored(httpServletRequest, httpServletResponse)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(String.format("%s filtering is disabled for %s", this.getClass().getName(), httpServletRequest.getRequestURI()));
@@ -60,10 +64,16 @@ public abstract class AbstractIgnorableOncePerRequestFilter extends OncePerReque
     }
 
     protected boolean isIgnored(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(new ServletWebRequest(httpServletRequest, httpServletResponse));
+        boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(
+                new ServletWebRequest(httpServletRequest, httpServletResponse)
+        );
         return isUriSecurityIgnored;
     }
 
-    protected abstract void doFilterInternalUnlessIgnored(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException;
+    protected abstract void doFilterInternalUnlessIgnored(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain
+    ) throws IOException, ServletException;
 
 }

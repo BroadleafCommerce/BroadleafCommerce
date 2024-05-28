@@ -10,17 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldImpl;
@@ -45,21 +42,24 @@ import java.util.Objects;
 @Component("blFieldOnlyPropertiesCustomPersistenceHandler")
 public class FieldOnlyPropertiesCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(FieldOnlyPropertiesCustomPersistenceHandler.class);
-
     @Override
     public Boolean canHandleInspect(PersistencePackage persistencePackage) {
-        return ArrayUtils.isNotEmpty(persistencePackage.getCustomCriteria()) && Objects.equals(persistencePackage.getCustomCriteria()[0], "fieldImplOnly");
+        return ArrayUtils.isNotEmpty(persistencePackage.getCustomCriteria())
+                && Objects.equals(persistencePackage.getCustomCriteria()[0], "fieldImplOnly");
     }
 
     @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+    public DynamicResultSet inspect(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            InspectHelper helper
+    ) throws ServiceException {
 
         // Get all properties
         Map<String, FieldMetadata> properties = getMetadata(persistencePackage, helper);
         Iterator it = properties.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
+            Map.Entry pair = (Map.Entry) it.next();
             FieldMetadata md = (FieldMetadata) pair.getValue();
 
             // If this property was not inherited from Field, remove it
@@ -69,11 +69,12 @@ public class FieldOnlyPropertiesCustomPersistenceHandler extends CustomPersisten
         }
 
         // Merge changes back
-        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
         allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
         Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Field.class);
         ClassMetadata mergedMetadata = helper.buildClassMetadata(entityClasses, persistencePackage, allMergedProperties);
 
         return new DynamicResultSet(mergedMetadata, null, null);
     }
+
 }

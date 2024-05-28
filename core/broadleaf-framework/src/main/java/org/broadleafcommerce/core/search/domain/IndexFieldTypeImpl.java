@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,6 +40,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
@@ -55,7 +56,6 @@ import jakarta.persistence.Table;
 /**
  * @author Nick Crum (ncrum)
  */
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_INDEX_FIELD_TYPE")
@@ -69,14 +69,11 @@ import jakarta.persistence.Table;
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
                         booleanOverrideValue = false),
                 @AdminPresentationMergeEntry(
-                        propertyType = PropertyType.AdminPresentation.PROMINENT,
-                        booleanOverrideValue = true),
+                        propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
                 @AdminPresentationMergeEntry(
-                        propertyType = PropertyType.AdminPresentation.GRIDORDER,
-                        intOverrideValue = 3),
+                        propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
                 @AdminPresentationMergeEntry(
-                        propertyType = PropertyType.AdminPresentation.VISIBILITY,
-                        overrideValue = "FORM_HIDDEN"),
+                        propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
                 @AdminPresentationMergeEntry(
                         propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
                         overrideValue = "IndexFieldTypeImpl_indexField"),
@@ -88,23 +85,20 @@ import jakarta.persistence.Table;
                 @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
                         booleanOverrideValue = false),
                 @AdminPresentationMergeEntry(
-                        propertyType = PropertyType.AdminPresentation.PROMINENT,
-                        booleanOverrideValue = true),
+                        propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true),
                 @AdminPresentationMergeEntry(
-                        propertyType = PropertyType.AdminPresentation.GRIDORDER,
-                        intOverrideValue = 3),
+                        propertyType = PropertyType.AdminPresentation.GRIDORDER, intOverrideValue = 3),
                 @AdminPresentationMergeEntry(
-                        propertyType = PropertyType.AdminPresentation.VISIBILITY,
-                        overrideValue = "FORM_HIDDEN"),
+                        propertyType = PropertyType.AdminPresentation.VISIBILITY, overrideValue = "FORM_HIDDEN"),
                 @AdminPresentationMergeEntry(
                         propertyType = PropertyType.AdminPresentation.FRIENDLYNAME,
                         overrideValue = "IndexFieldTypeImpl_searchable")
         })
 })
-@AdminPresentationClass(friendlyName = "IndexFieldTypeImpl_friendly",
-        populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(friendlyName = "IndexFieldTypeImpl_friendly", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -173,7 +167,8 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
 
     @Override
     public <G extends IndexFieldType> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -189,4 +184,5 @@ public class IndexFieldTypeImpl implements IndexFieldType, Serializable {
         }
         return createResponse;
     }
+
 }

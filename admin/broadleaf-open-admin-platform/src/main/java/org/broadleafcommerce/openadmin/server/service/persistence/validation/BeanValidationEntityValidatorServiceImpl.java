@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,7 +35,7 @@ import jakarta.validation.Validator;
  * <p>Implementation of the {@link EntityValidatorService} that runs entities through JSR-303 validations. The default
  * behavior of this implementation is to use the out-of-the-box Broadleaf validations (through {@link ValidationConfiguration}
  * <i>in addition to</i> any JSR-303 annotations that you have configured on your entity.</p>
- * 
+ *
  * <p>In order to use this validator rather than the default, you will need to include an implementation of {@link Validator}
  * in your Spring root application context (not the servlet). For example, you would modify your applicationContext-admin.xml
  * to inject Spring's default implementation of {@link Validator} (the one used by Spring MVC):</p>
@@ -47,14 +47,13 @@ import jakarta.validation.Validator;
  * Then override the the blEntityValidatorService bean to use this class instead:
  * <code>
  * <pre>
- * &lt;bean id=&quotblEntityValidatorService&quot 
+ * &lt;bean id=&quotblEntityValidatorService&quot
  *        class=&quotorg.broadleafcommerce.openadmin.server.service.persistence.validation.BeanValidationEntityValidatorServiceImpl&quot/&gt;
  * </pre>
  * </code>
- * 
+ *
  * <p>For more information on the default Spring JSR-303 validator, check out the docs at
- * 
- * 
+ *
  * @author Phillip Verheyden
  * @see {@link EntityValidatorServiceImpl#validate(Entity, Serializable, Map)}
  * @see {@link Validator}
@@ -64,16 +63,16 @@ public class BeanValidationEntityValidatorServiceImpl extends EntityValidatorSer
 
     @Autowired
     protected Validator validator;
-    
+
     /**
      * If true (default behavior) this will invoke the default implementation to perform validations hooked up via
      * {@link ValidationConfiguration} from {@link AdminPresentation}.
      */
     protected boolean useDefaultEntityValidations = true;
-    
+
     @Override
     public void validate(Entity entity, Serializable instance, Map<String, FieldMetadata> mergedProperties,
-            RecordHelper recordHelper, boolean validateUnsubmittedProperties) {        
+                         RecordHelper recordHelper, boolean validateUnsubmittedProperties) {
         if (isUseDefaultEntityValidations()) {
             super.validate(entity, instance, mergedProperties, recordHelper, validateUnsubmittedProperties);
         }

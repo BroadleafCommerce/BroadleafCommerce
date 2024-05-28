@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,7 +30,7 @@ public interface Wrappable {
      * @param unwrapType The type to check.
      * @return True/false.
      */
-    public boolean isUnwrappableAs(Class unwrapType);
+    boolean isUnwrappableAs(Class unwrapType);
 
     /**
      * Get the wrapped delegate item
@@ -38,6 +38,6 @@ public interface Wrappable {
      * @param unwrapType The java type as which to unwrap this instance.
      * @return The unwrapped reference
      */
-    public <T> T unwrap(Class<T> unwrapType);
+    <T> T unwrap(Class<T> unwrapType);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.search.dao;
 
 import java.math.BigDecimal;
-
 
 /**
  * Container object for the results of a lightweight query that retrieves the product ids
@@ -35,7 +34,7 @@ public class ProductsByCategoryWithOrder {
         this.productId = productId;
         this.displayOrder = displayOrder;
     }
-    
+
     public Long getProductId() {
         return productId;
     }
@@ -43,7 +42,7 @@ public class ProductsByCategoryWithOrder {
     public void setProductId(Long productId) {
         this.productId = productId;
     }
-    
+
     public BigDecimal getDisplayOrder() {
         return displayOrder;
     }
@@ -51,5 +50,5 @@ public class ProductsByCategoryWithOrder {
     public void setDisplayOrder(BigDecimal displayOrder) {
         this.displayOrder = displayOrder;
     }
-    
+
 }

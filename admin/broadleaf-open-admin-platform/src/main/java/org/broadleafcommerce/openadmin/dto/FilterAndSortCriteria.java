@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.dto;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -29,8 +28,6 @@ import java.util.List;
 
 public class FilterAndSortCriteria {
 
-    private static final long serialVersionUID = 1L;
-
     public static final String SORT_PROPERTY_PARAMETER = "sortProperty";
     public static final String SORT_DIRECTION_PARAMETER = "sortDirection";
     public static final String START_INDEX_PARAMETER = "startIndex";
@@ -41,12 +38,11 @@ public class FilterAndSortCriteria {
     public static final String UPPER_COUNT_PARAMETER = "upperCount";
     public static final String LOWER_COUNT_PARAMETER = "lowerCount";
     public static final String PAGE_SIZE_PARAMETER = "pageSize";
-
     public static final String IS_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NULL").intern();
     public static final String IS_NOT_NULL_FILTER_VALUE = new String("BLC_SPECIAL_FILTER_VALUE:NOT_NULL").intern();
-
+    private static final long serialVersionUID = 1L;
     protected String propertyId;
-    protected List<String> filterValues = new ArrayList<String>();
+    protected List<String> filterValues = new ArrayList<>();
     protected RestrictionType restrictionType;
     /**
      * for "order", a null value is relevant, meaning that this field moves to the end of any sort order consideration
@@ -138,13 +134,13 @@ public class FilterAndSortCriteria {
         return BLCCollectionUtils.selectList(filterValues, getPredicateForSpecialValues(false));
     }
 
+    public void setFilterValues(List<String> filterValues) {
+        this.filterValues = filterValues;
+    }
+
     public List<String> getSpecialFilterValues() {
         // We want values that ARE special
         return BLCCollectionUtils.selectList(filterValues, getPredicateForSpecialValues(true));
-    }
-
-    public void setFilterValues(List<String> filterValues) {
-        this.filterValues = filterValues;
     }
 
     public Boolean getSortAscending() {

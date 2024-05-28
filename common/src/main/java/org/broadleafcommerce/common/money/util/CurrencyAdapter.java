@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,11 +24,10 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 /**
  * Unfortunately, JAXB doesn't know how to deal with java.util.Currency because it doesn't have a
  * default constructor.
- * 
+ * <p>
  * Source via: http://weblogs.java.net/blog/kohsuke/archive/2005/09/using_jaxb_20s.html
- * 
- * @author phillipverheyden
  *
+ * @author phillipverheyden
  */
 public class CurrencyAdapter extends XmlAdapter<String, Currency> {
 

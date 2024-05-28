@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -63,15 +63,18 @@ public class TimeDTO {
         this.cal = cal;
     }
 
-
     /**
-     * @return  int representing the hour of day as 0 - 23
+     * @return int representing the hour of day as 0 - 23
      */
     public HourOfDayType getHour() {
         if (hour == null) {
             hour = cal.get(Calendar.HOUR_OF_DAY);
         }
         return HourOfDayType.getInstance(hour.toString());
+    }
+
+    public void setHour(HourOfDayType hour) {
+        this.hour = Integer.valueOf(hour.getType());
     }
 
     /**
@@ -85,14 +88,22 @@ public class TimeDTO {
         return DayOfWeekType.getInstance(dayOfWeek.toString());
     }
 
+    public void setDayOfWeek(DayOfWeekType dayOfWeek) {
+        this.dayOfWeek = Integer.valueOf(dayOfWeek.getType());
+    }
+
     /**
      * @return the current day of the month (1-31).
      */
     public DayOfMonthType getDayOfMonth() {
         if (dayOfMonth == null) {
-            dayOfMonth =  cal.get(Calendar.DAY_OF_MONTH);
+            dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
         }
         return DayOfMonthType.getInstance(dayOfMonth.toString());
+    }
+
+    public void setDayOfMonth(DayOfMonthType dayOfMonth) {
+        this.dayOfMonth = Integer.valueOf(dayOfMonth.getType());
     }
 
     /**
@@ -105,11 +116,19 @@ public class TimeDTO {
         return MonthType.getInstance(month.toString());
     }
 
+    public void setMonth(MonthType month) {
+        this.month = Integer.valueOf(month.getType());
+    }
+
     public MinuteType getMinute() {
         if (minute == null) {
             minute = cal.get(Calendar.MINUTE);
         }
         return MinuteType.getInstance(minute.toString());
+    }
+
+    public void setMinute(MinuteType minute) {
+        this.minute = Integer.valueOf(minute.getType());
     }
 
     public Date getDate() {
@@ -119,33 +138,12 @@ public class TimeDTO {
         return date;
     }
 
-    public void setCal(Calendar cal) {
-        this.cal = cal;
-    }
-
-    public void setHour(HourOfDayType hour) {
-        this.hour = Integer.valueOf(hour.getType());
-        ;
-    }
-
-    public void setDayOfWeek(DayOfWeekType dayOfWeek) {
-        this.dayOfWeek = Integer.valueOf(dayOfWeek.getType());
-    }
-
-    public void setMonth(MonthType month) {
-        this.month = Integer.valueOf(month.getType());
-    }
-
-    public void setDayOfMonth(DayOfMonthType dayOfMonth) {
-        this.dayOfMonth = Integer.valueOf(dayOfMonth.getType());
-    }
-
     public void setDate(Date date) {
         this.date = date;
     }
 
-    public void setMinute(MinuteType minute) {
-        this.minute = Integer.valueOf(minute.getType());
-        ;
+    public void setCal(Calendar cal) {
+        this.cal = cal;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,16 +31,15 @@ import java.util.TimeZone;
 
 /**
  * Convenience class to facilitate date manipulation.
- * 
+ *
  * @author Chris Kittrell (ckittrell)
  */
 public class BLCDateUtils {
 
-    private static final Log LOG = LogFactory.getLog(BLCDateUtils.class);
-
     public static final String SIMPLE_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.s";
     public static final String DISPLAY_DATE_FORMAT = "MMM d, Y @ hh:mma";
+    private static final Log LOG = LogFactory.getLog(BLCDateUtils.class);
 
     public static String convertDateToUTC(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
@@ -59,7 +58,7 @@ public class BLCDateUtils {
     public static String formatDateAsString(Date date, TimeZone timeZone) {
         SimpleDateFormat formatter = new SimpleDateFormat(DISPLAY_DATE_FORMAT);
         DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-        symbols.setAmPmStrings(new String[] { "am", "pm" });
+        symbols.setAmPmStrings(new String[]{"am", "pm"});
         formatter.setDateFormatSymbols(symbols);
         formatter.setTimeZone(timeZone);
 
@@ -114,11 +113,12 @@ public class BLCDateUtils {
 
     /**
      * Method to solve problem with thymeleaf if you somehow have java.sql.Timestamp if will not allow call methods for this class
+     *
      * @param date1 - the first date to compare
      * @param date2 - the second date to compare
      * @return result of date1.compareTo(date2)
      */
-    public static int compareTo(Date date1, Date date2){
+    public static int compareTo(Date date1, Date date2) {
         return date1.compareTo(date2);
     }
 

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -61,11 +61,16 @@ public class DuplicationValidatorExtensionHandlerImpl implements EntityDuplicato
     @Override
     public ExtensionResultStatusType validateDuplicate(Object entity, ExtensionResultHolder<Boolean> resultHolder) {
         resultHolder.setResult(true);
-        return resultHolder.getResult() ? ExtensionResultStatusType.HANDLED_CONTINUE : ExtensionResultStatusType.HANDLED_STOP;
+        return resultHolder.getResult()
+                ? ExtensionResultStatusType.HANDLED_CONTINUE
+                : ExtensionResultStatusType.HANDLED_STOP;
     }
 
     @Override
-    public ExtensionResultStatusType setupDuplicate(Object entity, ExtensionResultHolder<MultiTenantCopyContext> resultHolder) {
+    public ExtensionResultStatusType setupDuplicate(
+            Object entity,
+            ExtensionResultHolder<MultiTenantCopyContext> resultHolder
+    ) {
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
 
@@ -80,12 +85,21 @@ public class DuplicationValidatorExtensionHandlerImpl implements EntityDuplicato
     }
 
     @Override
-    public ExtensionResultStatusType getCatalogsForPropagation(MultiTenantCopyContext context, ExtensionResultHolder<List<MultiTenantCopyContext>> resultHolder) {
+    public ExtensionResultStatusType getCatalogsForPropagation(
+            MultiTenantCopyContext context,
+            ExtensionResultHolder<List<MultiTenantCopyContext>> resultHolder
+    ) {
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
 
     @Override
-    public ExtensionResultStatusType getClonesByCatalogs(String tableName, Long id, MultiTenantCopyContext multiTenantCopyContext, ExtensionResultHolder<Map<Long, Map<Long, Long>>> resultHolder) {
+    public ExtensionResultStatusType getClonesByCatalogs(
+            String tableName,
+            Long id,
+            MultiTenantCopyContext multiTenantCopyContext,
+            ExtensionResultHolder<Map<Long, Map<Long, Long>>> resultHolder
+    ) {
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
+
 }

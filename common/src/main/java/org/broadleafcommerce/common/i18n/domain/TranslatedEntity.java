@@ -10,16 +10,16 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.i18n.domain;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,14 +28,14 @@ import java.util.Map.Entry;
 /**
  * An extensible enumeration of entities that have translatable fields. Any entity that wishes to have a translatable
  * field must register itself in this TYPES map.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class TranslatedEntity implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, TranslatedEntity> TYPES = new LinkedHashMap<String, TranslatedEntity>();
+    private static final Map<String, TranslatedEntity> TYPES = new LinkedHashMap<>();
 
     public static final TranslatedEntity PRODUCT = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.Product", "Product");
     public static final TranslatedEntity SKU = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.Sku", "Sku");
@@ -65,6 +65,18 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
     public static final TranslatedEntity UP_SALE_PRODUCT = new TranslatedEntity("org.broadleafcommerce.core.catalog.domain.UpSaleProduct", "UpSaleProduct");
     public static final TranslatedEntity MEDIA = new TranslatedEntity("org.broadleafcommerce.common.media.domain.Media", "Media");
 
+    private String type;
+    private String friendlyType;
+
+    public TranslatedEntity() {
+        //do nothing
+    }
+
+    public TranslatedEntity(final String type, final String friendlyType) {
+        this.friendlyType = friendlyType;
+        setType(type);
+    }
+
     public static TranslatedEntity getInstance(final String type) {
         return TYPES.get(type);
     }
@@ -79,16 +91,8 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
         return null;
     }
 
-    private String type;
-    private String friendlyType;
-
-    public TranslatedEntity() {
-        //do nothing
-    }
-
-    public TranslatedEntity(final String type, final String friendlyType) {
-        this.friendlyType = friendlyType;
-        setType(type);
+    public static Map<String, TranslatedEntity> getTypes() {
+        return TYPES;
     }
 
     @Override
@@ -96,20 +100,16 @@ public class TranslatedEntity implements Serializable, BroadleafEnumerationType 
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    public static Map<String, TranslatedEntity> getTypes() {
-        return TYPES;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

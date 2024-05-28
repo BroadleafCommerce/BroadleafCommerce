@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,15 +38,23 @@ public class ExtractValueRequest {
     protected final FieldManager fieldManager;
     protected final BasicFieldMetadata metadata;
     protected final Object requestedValue;
-    protected String displayVal;
     protected final PersistenceManager persistenceManager;
     protected final RecordHelper recordHelper;
     protected final Serializable entity;
     protected final String[] customCriteria;
+    protected String displayVal;
 
-    public ExtractValueRequest(List<Property> props, FieldManager fieldManager, BasicFieldMetadata metadata, 
-            Object requestedValue, String displayVal, PersistenceManager persistenceManager, 
-            RecordHelper recordHelper, Serializable entity, String[] customCriteria) {
+    public ExtractValueRequest(
+            List<Property> props,
+            FieldManager fieldManager,
+            BasicFieldMetadata metadata,
+            Object requestedValue,
+            String displayVal,
+            PersistenceManager persistenceManager,
+            RecordHelper recordHelper,
+            Serializable entity,
+            String[] customCriteria
+    ) {
         this.props = props;
         this.fieldManager = fieldManager;
         this.metadata = metadata;
@@ -78,6 +86,10 @@ public class ExtractValueRequest {
         return displayVal;
     }
 
+    public void setDisplayVal(String displayVal) {
+        this.displayVal = displayVal;
+    }
+
     public PersistenceManager getPersistenceManager() {
         return persistenceManager;
     }
@@ -85,15 +97,11 @@ public class ExtractValueRequest {
     public DataFormatProvider getDataFormatProvider() {
         return recordHelper;
     }
-    
+
     public RecordHelper getRecordHelper() {
         return recordHelper;
     }
 
-    public void setDisplayVal(String displayVal) {
-        this.displayVal = displayVal;
-    }
-    
     public Serializable getEntity() {
         return entity;
     }
@@ -101,4 +109,5 @@ public class ExtractValueRequest {
     public String[] getCustomCriteria() {
         return customCriteria;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,15 +31,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 /**
- * 
  * @author jfischer
- *
  */
 @JsonAutoDetect
 public class ClassMetadata implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     @JsonProperty
@@ -59,7 +56,7 @@ public class ClassMetadata implements Serializable {
 
     @JsonProperty
     private String currencyCode = "USD";
-    
+
     private Map<String, Property> pMap = null;
 
     public Map<String, Property> getPMap() {
@@ -78,16 +75,16 @@ public class ClassMetadata implements Serializable {
     public String getCeilingType() {
         return ceilingType;
     }
-    
+
     public void setCeilingType(String type) {
         this.ceilingType = type;
     }
 
     /**
-     * For dynamic forms, the type to check security permissions will be different than the type used to generate the 
-     * forms.   For example, a user with "ADD" or "UPDATE" permissions on STRUCTURE_CONTENT does not need 
-     * to have the same level of access to StructuredContentTemplate.   
-     * 
+     * For dynamic forms, the type to check security permissions will be different than the type used to generate the
+     * forms.   For example, a user with "ADD" or "UPDATE" permissions on STRUCTURE_CONTENT does not need
+     * to have the same level of access to StructuredContentTemplate.
+     *
      * @param type
      */
     public String getSecurityCeilingType() {
@@ -109,7 +106,7 @@ public class ClassMetadata implements Serializable {
     public Property[] getProperties() {
         return properties;
     }
-    
+
     public void setProperties(Property[] properties) {
         this.properties = properties;
     }
@@ -151,7 +148,7 @@ public class ClassMetadata implements Serializable {
         Iterator<TabMetadata> tabMetadataIterator = tabAndGroupMetadata.values().iterator();
         TabMetadata result = tabMetadataIterator.hasNext() ? tabMetadataIterator.next() : null;
 
-        while(tabMetadataIterator.hasNext()) {
+        while (tabMetadataIterator.hasNext()) {
             TabMetadata next = tabMetadataIterator.next();
             if (result.getTabOrder() == null) {
                 result = next;

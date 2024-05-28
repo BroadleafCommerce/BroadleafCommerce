@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,7 +33,7 @@ import jakarta.servlet.ServletException;
  * inspection of the X-Forwarded-Proto header to determine if the request is secure. This class is required when the
  * application is deployed to an environment where SSL termination happens at a layer above the servlet container
  * (like at a load balancer)</p>
- * 
+ *
  * <p>This is intended to be used in conjunction with the {@link ProtoChannelBeanPostProcessor}. See that class for
  * more information on how to configure.</p>
  *

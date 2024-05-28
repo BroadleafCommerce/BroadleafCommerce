@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,9 +24,9 @@ import org.hibernate.engine.jdbc.spi.SqlStatementLogger;
  * A customization of {@link JdbcServicesImpl} that allows further usage of the sql statement logging. This is useful
  * for tracking all sql executed during the lifecycle of a transaction.
  *
+ * @author Jeff Fischer
  * @see TransactionLifecycleAwareSqlStatementLogger
  * @see TransactionLifecycleMonitor
- * @author Jeff Fischer
  */
 public class LifecycleAwareJDBCServices extends JdbcServicesImpl {
 
@@ -35,4 +35,5 @@ public class LifecycleAwareJDBCServices extends JdbcServicesImpl {
         SqlStatementLogger defaultLogger = super.getSqlStatementLogger();
         return new TransactionLifecycleAwareSqlStatementLogger(defaultLogger.isLogToStdout(), defaultLogger.isFormat());
     }
+
 }

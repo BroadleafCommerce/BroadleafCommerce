@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,7 +41,7 @@ import jakarta.annotation.Resource;
 /**
  * The 2.0 implementation of merge cart service. Instead of merging items directly from one cart to another, we will
  * convert the previous cart to a named order that the customer is able to interact with as they see fit.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Service("blMergeCartService")
@@ -80,7 +80,7 @@ public class MergeCartServiceImpl implements MergeCartService {
         ReconstructCartResponse reconstructCartResponse = reconstructCart(customer, false);
         mergeCartResponse.setRemovedItems(reconstructCartResponse.getRemovedItems());
         Order customerCart = reconstructCartResponse.getOrder();
-        
+
         if (anonymousCart != null && customerCart != null && anonymousCart.equals(customerCart)) {
             // The carts are the same, use either ensuring it's owned by the current customer
             setNewCartOwnership(anonymousCart, customer);
@@ -88,20 +88,20 @@ public class MergeCartServiceImpl implements MergeCartService {
         } else if (anonymousCart == null || anonymousCart.getOrderItems().size() == 0) {
             // The anonymous cart is of no use, use the customer cart
             mergeCartResponse.setOrder(customerCart);
-            
+
             // The anonymous cart is owned by a different customer, so there is no chance for a single customer to have
             // multiple IN_PROCESS carts. We can go ahead and clean up this empty cart anyway since it's empty
             if (anonymousCart != null) {
                 orderService.cancelOrder(anonymousCart);
             }
-            
+
         } else if (customerCart == null || customerCart.getOrderItems().size() == 0) {
             // Delete the saved customer order since it is completely empty anyway. We do not want 2 IN_PROCESS orders
             // hanging around
             if (customerCart != null) {
                 orderService.cancelOrder(customerCart);
             }
-            
+
             // The customer cart is of no use, use the anonymous cart
             setNewCartOwnership(anonymousCart, customer);
             mergeCartResponse.setOrder(anonymousCart);
@@ -114,18 +114,17 @@ public class MergeCartServiceImpl implements MergeCartService {
             setNewCartOwnership(anonymousCart, customer);
             mergeCartResponse.setOrder(anonymousCart);
         }
-        
+
         if (mergeCartResponse.getOrder() != null) {
             Order savedCart = orderService.save(mergeCartResponse.getOrder(), priceOrder, priceOrder);
             mergeCartResponse.setOrder(savedCart);
         }
-        
+
         return mergeCartResponse;
     }
-    
+
     @Override
-    public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder)
-            throws PricingException, RemoveFromCartException {
+    public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException, RemoveFromCartException {
         ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
         Order customerCart = orderService.findCartForCustomerWithEnhancements(customer);
         if (customerCart != null) {
@@ -170,11 +169,11 @@ public class MergeCartServiceImpl implements MergeCartService {
         reconstructCartResponse.setOrder(customerCart);
         return reconstructCartResponse;
     }
-    
+
     protected void setSavedCartAttributes(Order cart) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, ''yy");
         Date cartLastUpdated = cart.getAuditable().getDateUpdated();
-        
+
         cart.setName("Previously saved cart - " + sdf.format(cartLastUpdated));
         cart.setStatus(OrderStatus.NAMED);
     }
@@ -186,7 +185,7 @@ public class MergeCartServiceImpl implements MergeCartService {
         if (cart != null && StringUtils.isNotBlank(customer.getEmailAddress())) {
             cart.setEmailAddress(customer.getEmailAddress());
         }
-        
+
         extensionManager.getProxy().setNewCartOwnership(cart, customer);
     }
 
@@ -201,7 +200,7 @@ public class MergeCartServiceImpl implements MergeCartService {
     /**
      * By default, Broadleaf does not provide an inventory check. This is set up as an extension point if your
      * application needs it.
-     * 
+     *
      * @param orderItem
      * @return whether or not the item is in stock
      */
@@ -212,7 +211,7 @@ public class MergeCartServiceImpl implements MergeCartService {
     /**
      * By default, Broadleaf does not provide additional validity checks. This is set up as an extension point if your
      * application needs it.
-     * 
+     *
      * @param orderItem
      * @return whether or not the orderItem is valid
      */

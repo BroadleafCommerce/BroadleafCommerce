@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,7 +34,7 @@ import jakarta.annotation.Resource;
  * Called during the pricing workflow to compute all of the fulfillment costs
  * for all of the FulfillmentGroups on an Order and updates Order with the
  * total price of all of the FufillmentGroups
- * 
+ *
  * @author Phillip Verheyden
  * @see {@link FulfillmentGroup}, {@link Order}
  */
@@ -42,14 +42,14 @@ import jakarta.annotation.Resource;
 public class FulfillmentGroupPricingActivity extends BaseActivity<ProcessContext<Order>> {
 
     public static final int ORDER = 5000;
-    
+
     @Resource(name = "blFulfillmentPricingService")
     private FulfillmentPricingService fulfillmentPricingService;
 
     public FulfillmentGroupPricingActivity() {
         setOrder(ORDER);
     }
-    
+
     public void setFulfillmentPricingService(FulfillmentPricingService fulfillmentPricingService) {
         this.fulfillmentPricingService = fulfillmentPricingService;
     }

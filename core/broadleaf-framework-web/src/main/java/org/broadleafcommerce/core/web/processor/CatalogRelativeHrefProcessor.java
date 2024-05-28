@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
@@ -37,13 +36,13 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * For use with category and product entities.   Creates a relative URL using the
  * current URI appended with the url-key (or last fragment of the url).
- * 
+ * <p>
  * Takes in a category or product object as a parameter.
- * 
+ * <p>
  * Uses the current request for the baseURI.
- * 
+ * <p>
  * This implementation will also a categoryId or productId to the end of the URL it generates.
- * 
+ *
  * @author bpolster
  */
 @Component("blCatalogRelativeHrefProcessor")
@@ -60,13 +59,19 @@ public class CatalogRelativeHrefProcessor extends AbstractBroadleafAttributeModi
     public String getName() {
         return "RHREF";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 0;
     }
 
-    protected String buildRelativeHref(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+    protected String buildRelativeHref(
+            String tagName,
+            Map<String, String> tagAttributes,
+            String attributeName,
+            String attributeValue,
+            BroadleafTemplateContext context
+    ) {
         Object result = context.parseExpression(attributeValue);
         HttpServletRequest request = BroadleafRequestContext.getBroadleafRequestContext().getRequest();
         String currentUrl = request.getRequestURI();
@@ -84,7 +89,13 @@ public class CatalogRelativeHrefProcessor extends AbstractBroadleafAttributeModi
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(
+            String tagName,
+            Map<String, String> tagAttributes,
+            String attributeName,
+            String attributeValue,
+            BroadleafTemplateContext context
+    ) {
         String relativeHref = buildRelativeHref(tagName, tagAttributes, attributeName, attributeValue, context);
         Map<String, String> newAttributes = new HashMap<>();
         newAttributes.put(HREF, relativeHref);

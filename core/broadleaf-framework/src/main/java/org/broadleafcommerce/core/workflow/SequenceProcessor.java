@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,17 +47,19 @@ public class SequenceProcessor<U, T> extends BaseProcessor<U, T> {
         if (LOG.isDebugEnabled()) {
             LOG.debug(getBeanName() + " processor is running..");
         }
-        ActivityStateManager activityStateManager = getBeanFactory().getBean(ActivityStateManager.class, "blActivityStateManager");
+        ActivityStateManager activityStateManager = getBeanFactory().getBean(
+                ActivityStateManager.class, "blActivityStateManager"
+        );
         if (activityStateManager == null) {
             throw new IllegalStateException("Unable to find an instance of ActivityStateManager registered under bean id blActivityStateManager");
         }
         ProcessContext<U> context = null;
-        
+
         RollbackStateLocal rollbackStateLocal = new RollbackStateLocal();
         rollbackStateLocal.setThreadId(String.valueOf(Thread.currentThread().getId()));
         rollbackStateLocal.setWorkflowId(getBeanName());
         RollbackStateLocal.setRollbackStateLocal(rollbackStateLocal);
-        
+
         try {
             //retrieve injected by Spring
             List<Activity<ProcessContext<U>>> activities = getActivities();
@@ -70,31 +72,34 @@ public class SequenceProcessor<U, T> extends BaseProcessor<U, T> {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
                     }
-    
+
                     try {
                         context = activity.execute(context);
                     } catch (Throwable activityException) {
                         RollbackFailureException rollbackFailure = null;
                         if (getAutoRollbackOnError()) {
-                            LOG.info(String.format("Exception ocurred in %s, executing rollback handlers", rollbackStateLocal.getWorkflowId()));
-                            
+                            LOG.info(String.format("Exception ocurred in %s, executing rollback handlers",
+                                    rollbackStateLocal.getWorkflowId()));
+
                             try {
                                 ActivityStateManagerImpl.getStateManager().rollbackAllState();
                             } catch (Throwable rollbackException) {
-                                LOG.fatal(String.format("There was an exception rolling back %s", rollbackStateLocal.getWorkflowId()), rollbackException);
-                                
+                                LOG.fatal(String.format("There was an exception rolling back %s",
+                                        rollbackStateLocal.getWorkflowId()), rollbackException);
+
                                 if (rollbackException instanceof RollbackFailureException) {
                                     rollbackFailure = (RollbackFailureException) rollbackException;
                                 } else {
                                     rollbackFailure = new RollbackFailureException(rollbackException);
                                 }
-                                
-                                LOG.error(String.format("The original cause of the rollback for %s was", rollbackStateLocal.getWorkflowId()), activityException);
+
+                                LOG.error(String.format("The original cause of the rollback for %s was",
+                                        rollbackStateLocal.getWorkflowId()), activityException);
                                 rollbackFailure.setOriginalWorkflowException(activityException);
                                 throw rollbackFailure;
                             }
                         }
-                        
+
                         ErrorHandler errorHandler = activity.getErrorHandler();
                         if (errorHandler == null) {
                             getDefaultErrorHandler().handleError(context, activityException);
@@ -103,15 +108,21 @@ public class SequenceProcessor<U, T> extends BaseProcessor<U, T> {
                             errorHandler.handleError(context, activityException);
                         }
                     }
-    
+
                     //ensure its ok to continue the process
                     if (processShouldStop(context, activity)) {
                         break;
                     }
-    
+
                     //register the RollbackHandler
                     if (activity.getRollbackHandler() != null && activity.getAutomaticallyRegisterRollbackHandler()) {
-                        ActivityStateManagerImpl.getStateManager().registerState(activity, context, activity.getRollbackRegion(), activity.getRollbackHandler(), activity.getStateConfiguration());
+                        ActivityStateManagerImpl.getStateManager().registerState(
+                                activity,
+                                context,
+                                activity.getRollbackRegion(),
+                                activity.getRollbackHandler(),
+                                activity.getStateConfiguration()
+                        );
                     }
                 } else {
                     LOG.debug("Not executing activity: " + activity.getBeanName() + " based on the context: " + context);
@@ -131,10 +142,8 @@ public class SequenceProcessor<U, T> extends BaseProcessor<U, T> {
     /**
      * Determine if the process should stop
      *
-     * @param context
-     *            the current process context
-     * @param activity
-     *            the current activity in the iteration
+     * @param context  the current process context
+     * @param activity the current activity in the iteration
      */
     protected boolean processShouldStop(ProcessContext<U> context, Activity<ProcessContext<U>> activity) {
         if (context == null || context.isStopped()) {

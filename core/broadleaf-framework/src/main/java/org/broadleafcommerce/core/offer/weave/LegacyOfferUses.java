@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,14 +21,14 @@ import org.broadleafcommerce.core.offer.domain.OfferAudit;
 
 /**
  * This interface represents an Offer instance that has some additional, deprecated fields related to uses and maxUses
- * 
+ * <p>
  * These fields may be showing up as required by the database as they were initially non-nullable.   If you don't have
  * custom logic using these fields, it is safe to remove the fields from your database.
- * 
- * If you do have these fields, this class supports weaving in the legacy fields back into the system.   This should 
+ * <p>
+ * If you do have these fields, this class supports weaving in the legacy fields back into the system.   This should
  * be done as a last resort with a preference being to remove the columns (or at least the Non-Null restriction) from your
- * DB and refactor any code you have referencing these fields. 
- * 
+ * DB and refactor any code you have referencing these fields.
+ * <p>
  * These fields are not currently used by the codebase and have been removed in version 5.0
  * of the framework. However, for backwards compatibility reasons related to the non-nullable "uses" database field,
  * we are allowing these fields to be dynamically re-introduced via a application property. To enable
@@ -42,49 +42,51 @@ public interface LegacyOfferUses {
      * @deprecated replaced by the {@link OfferAudit} table
      */
     @Deprecated
-    public int getUses() ;
+    int getUses();
 
     /**
      * @deprecated replaced by the {@link OfferAudit} table
      */
     @Deprecated
-    public void setUses(int uses) ;
+    void setUses(int uses);
 
     /**
      * Returns the maximum number of times that this offer
      * can be used in the current order.
-     *
+     * <p>
      * 0 indicates unlimited usage.
      *
      * @deprecated use {@link #getMaxUsesPerOrder()} directly instead
      */
     @Deprecated
-    public int getMaxUses() ;
+    int getMaxUses();
 
     /**
      * Sets the maximum number of times that this offer
      * can be used in the current order.
-     *
+     * <p>
      * 0 indicates unlimited usage.
      *
      * @deprecated use {@link #setMaxUsesPerOrder(int)} directly instead
      */
     @Deprecated
-    public void setMaxUses(int maxUses) ;
-    
-    
-    @Deprecated
-    /**
-     * This field is not used by BLC.
-     * @return
-     */
-    public boolean isApplyDiscountToMarkedItems();
+    void setMaxUses(int maxUses);
 
-    @Deprecated
     /**
      * This field is not used by BLC.
+     *
      * @return
      */
-    public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
+    @Deprecated
+    boolean isApplyDiscountToMarkedItems();
+
+
+    /**
+     * This field is not used by BLC.
+     *
+     * @return
+     */
+    @Deprecated
+    void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
 
 }

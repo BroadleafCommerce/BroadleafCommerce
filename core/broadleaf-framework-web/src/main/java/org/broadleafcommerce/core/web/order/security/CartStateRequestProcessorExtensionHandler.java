@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.order.security;
 
 import org.broadleafcommerce.common.extension.ExtensionHandler;
@@ -25,20 +24,19 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.web.context.request.WebRequest;
 
-
 /**
  * @author bpolster
  */
 public interface CartStateRequestProcessorExtensionHandler extends ExtensionHandler {
-    
+
     /**
      * Throws an exception if cart is invalid.
-     * 
-     * @param cart
-     * @param customer (the current customer)
+     *
+     * @param request
+     * @param customer     (the current customer)
      * @param resultHolder
      * @return
      */
-    public ExtensionResultStatusType lookupOrCreateCart(WebRequest request, Customer customer, ExtensionResultHolder<Order> resultHolder);
+    ExtensionResultStatusType lookupOrCreateCart(WebRequest request, Customer customer, ExtensionResultHolder<Order> resultHolder);
 
 }

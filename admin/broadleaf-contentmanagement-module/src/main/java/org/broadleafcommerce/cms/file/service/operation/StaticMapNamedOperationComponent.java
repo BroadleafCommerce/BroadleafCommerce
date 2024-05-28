@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,15 +29,25 @@ import jakarta.annotation.Resource;
  */
 public class StaticMapNamedOperationComponent implements NamedOperationComponent {
 
+    @Resource(name = "blStaticMapNamedOperations")
+    protected LinkedHashMap<String, LinkedHashMap<String, String>> namedOperations = new LinkedHashMap<>();
+
     @Override
-    public List<String> setOperationValues(Map<String, String> originalParameters, Map<String, String> derivedParameters) {
-        List<String> utilizedNames = new ArrayList<String>();
+    public List<String> setOperationValues(
+            Map<String, String> originalParameters,
+            Map<String, String> derivedParameters
+    ) {
+        List<String> utilizedNames = new ArrayList<>();
         expandFulfilledMap(originalParameters, derivedParameters, utilizedNames);
 
         return utilizedNames;
     }
 
-    protected void expandFulfilledMap(Map<String, String> originalParameters, Map<String, String> derivedParameters, List<String> utilizedNames) {
+    protected void expandFulfilledMap(
+            Map<String, String> originalParameters,
+            Map<String, String> derivedParameters,
+            List<String> utilizedNames
+    ) {
         for (Map.Entry<String, String> entry : originalParameters.entrySet()) {
             if (namedOperations.containsKey(entry.getKey())) {
                 expandFulfilledMap(namedOperations.get(entry.getKey()), derivedParameters, utilizedNames);
@@ -50,9 +60,6 @@ public class StaticMapNamedOperationComponent implements NamedOperationComponent
         }
     }
 
-    @Resource(name="blStaticMapNamedOperations")
-    protected LinkedHashMap<String, LinkedHashMap<String, String>> namedOperations = new LinkedHashMap<String, LinkedHashMap<String, String>>();
-
     public LinkedHashMap<String, LinkedHashMap<String, String>> getNamedOperations() {
         return namedOperations;
     }
@@ -60,4 +67,5 @@ public class StaticMapNamedOperationComponent implements NamedOperationComponent
     public void setNamedOperations(LinkedHashMap<String, LinkedHashMap<String, String>> namedOperations) {
         this.namedOperations = namedOperations;
     }
+
 }

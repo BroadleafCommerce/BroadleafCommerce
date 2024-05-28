@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,6 +34,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
+
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,28 +52,18 @@ import jakarta.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_OFFER_RULE_MAP")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOffers")
-@AdminPresentationClass(excludeFromPolymorphism = false,
-        populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(excludeFromPolymorphism = false, populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferOfferRuleXrefImpl implements OfferOfferRuleXref, SimpleRule {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    public OfferOfferRuleXrefImpl(Offer offer, OfferRule offerRule, String key) {
-        this.offer = offer;
-        this.offerRule = offerRule;
-        this.key = key;
-    }
-
-    public OfferOfferRuleXrefImpl() {
-        //support default constructor for Hibernate
-    }
-
     @Id
     @GeneratedValue(generator = "OfferOfferRuleId")
     @GenericGenerator(
@@ -85,22 +77,29 @@ public class OfferOfferRuleXrefImpl implements OfferOfferRuleXref, SimpleRule {
     )
     @Column(name = "OFFER_OFFER_RULE_ID")
     protected Long id;
-
     //for the collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
     @ManyToOne(targetEntity = OfferImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "BLC_OFFER_OFFER_ID")
     @AdminPresentation(excluded = true)
     protected Offer offer;
-
     //for the collection join entity - don't pre-instantiate the reference (i.e. don't do myField = new MyFieldImpl())
     @ManyToOne(targetEntity = OfferRuleImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "OFFER_RULE_ID")
     @ClonePolicy
     protected OfferRule offerRule;
-
     @Column(name = "MAP_KEY", nullable = false)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String key;
+
+    public OfferOfferRuleXrefImpl(Offer offer, OfferRule offerRule, String key) {
+        this.offer = offer;
+        this.offerRule = offerRule;
+        this.key = key;
+    }
+
+    public OfferOfferRuleXrefImpl() {
+        //support default constructor for Hibernate
+    }
 
     @Override
     public Long getId() {
@@ -162,7 +161,8 @@ public class OfferOfferRuleXrefImpl implements OfferOfferRuleXref, SimpleRule {
 
     @Override
     public <G extends OfferOfferRuleXref> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -177,4 +177,5 @@ public class OfferOfferRuleXrefImpl implements OfferOfferRuleXref, SimpleRule {
         }
         return createResponse;
     }
+
 }

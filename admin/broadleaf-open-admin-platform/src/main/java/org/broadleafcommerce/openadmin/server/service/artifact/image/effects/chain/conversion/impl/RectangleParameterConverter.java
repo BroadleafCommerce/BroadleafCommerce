@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,15 +32,15 @@ public class RectangleParameterConverter implements ParameterConverter {
     public Parameter convert(String value, Double factor, boolean applyFactor) throws ConversionException {
         StringTokenizer tokens = new StringTokenizer(value, ",");
         Rectangle rect = new Rectangle();
-        rect.x = (int) (applyFactor&&factor!=null?Integer.parseInt(tokens.nextToken())/factor:Integer.parseInt(tokens.nextToken()));
-        rect.y = (int) (applyFactor&&factor!=null?Integer.parseInt(tokens.nextToken())/factor:Integer.parseInt(tokens.nextToken()));
-        rect.width = (int) (applyFactor&&factor!=null?Integer.parseInt(tokens.nextToken())/factor:Integer.parseInt(tokens.nextToken()));
-        rect.height = (int) (applyFactor&&factor!=null?Integer.parseInt(tokens.nextToken())/factor:Integer.parseInt(tokens.nextToken()));
-        
+        rect.x = (int) (applyFactor && factor != null ? Integer.parseInt(tokens.nextToken()) / factor : Integer.parseInt(tokens.nextToken()));
+        rect.y = (int) (applyFactor && factor != null ? Integer.parseInt(tokens.nextToken()) / factor : Integer.parseInt(tokens.nextToken()));
+        rect.width = (int) (applyFactor && factor != null ? Integer.parseInt(tokens.nextToken()) / factor : Integer.parseInt(tokens.nextToken()));
+        rect.height = (int) (applyFactor && factor != null ? Integer.parseInt(tokens.nextToken()) / factor : Integer.parseInt(tokens.nextToken()));
+
         Parameter param = new Parameter();
         param.setParameterClass(Rectangle.class);
         param.setParameterInstance(rect);
-        
+
         return param;
     }
 

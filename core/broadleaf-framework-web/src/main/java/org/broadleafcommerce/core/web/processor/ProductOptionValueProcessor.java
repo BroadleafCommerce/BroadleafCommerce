@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.logging.Log;
@@ -46,14 +45,20 @@ public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModif
     public String getName() {
         return "product_option_value";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 10000;
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(
+            String tagName,
+            Map<String, String> tagAttributes,
+            String attributeName,
+            String attributeValue,
+            BroadleafTemplateContext context
+    ) {
         Map<String, String> newAttributes = new HashMap<>();
         ProductOptionValue productOptionValue = (ProductOptionValue) context.parseExpression(attributeValue);
         ProductOptionValueDTO dto = new ProductOptionValueDTO();
@@ -119,9 +124,11 @@ public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModif
         public String getRawValue() {
             return rawValue;
         }
+
         public void setRawValue(String rawValue) {
             this.rawValue = rawValue;
         }
+
         @SuppressWarnings("unused")
         public BigDecimal getPriceAdjustment() {
             return priceAdjustment;
@@ -131,4 +138,5 @@ public class ProductOptionValueProcessor extends AbstractBroadleafAttributeModif
             this.priceAdjustment = priceAdjustment;
         }
     }
+
 }

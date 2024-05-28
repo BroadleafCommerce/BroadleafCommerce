@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,7 +56,7 @@ public class UnsharpMask extends BaseFilter {
         Operation operation = new Operation();
         operation.setName(key);
         String factor = parameterMap.get(key + "-factor");
-        operation.setFactor(factor==null?null:Double.valueOf(factor));
+        operation.setFactor(factor == null ? null : Double.valueOf(factor));
 
         UnmarshalledParameter amount = new UnmarshalledParameter();
         String amountApplyFactor = parameterMap.get(key + "-value-apply-factor");
@@ -84,51 +84,48 @@ public class UnsharpMask extends BaseFilter {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
-            throw new IllegalArgumentException("src image cannot be the "+
-                                               "same as the dst image");
+            throw new IllegalArgumentException("src image cannot be the " +
+                    "same as the dst image");
         }
-        
+
         boolean needToConvert = false;
         ColorModel srcCM = src.getColorModel();
         ColorModel dstCM;
         BufferedImage origDst = dst;
-        
+
         if (srcCM instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel) srcCM;
             src = icm.convertToIntDiscrete(src.getRaster(), false);
             srcCM = src.getColorModel();
         }
-        
+
         if (dst == null) {
             dst = createCompatibleDestImage(src, null);
             dstCM = srcCM;
             origDst = dst;
-        }
-        else {
+        } else {
             dstCM = dst.getColorModel();
             if (srcCM.getColorSpace().getType() !=
-                dstCM.getColorSpace().getType())
-            {
+                    dstCM.getColorSpace().getType()) {
                 needToConvert = true;
                 dst = createCompatibleDestImage(src, null);
                 dstCM = dst.getColorModel();
-            }
-            else if (dstCM instanceof IndexColorModel) {
+            } else if (dstCM instanceof IndexColorModel) {
                 dst = createCompatibleDestImage(src, null);
                 dstCM = dst.getColorModel();
             }
         }
-        
+
         int[] originalPixels = ImageConverter.getPixels(src);
         GaussianBlur blur = new GaussianBlur(radius, 1, hints);
         dst = blur.filter(src, null);
         int[] uMaskBlur = ImageConverter.getPixels(dst);
         int imageWidth = dst.getWidth();
         int imageHeight = dst.getHeight();
-        
+
         int index = 0;
-        for (int y=0;y<imageHeight;y++){
-            for (int x=0;x<imageWidth;x++){
+        for (int y = 0; y < imageHeight; y++) {
+            for (int x = 0; x < imageWidth; x++) {
                 int R1 = (originalPixels[index] >> 16) & 0xff;
                 int G1 = (originalPixels[index] >> 8) & 0xff;
                 int B1 = (originalPixels[index] >> 0) & 0xff;
@@ -137,9 +134,9 @@ public class UnsharpMask extends BaseFilter {
                 int G2 = (uMaskBlur[index] >> 8) & 0xff;
                 int B2 = (uMaskBlur[index] >> 0) & 0xff;
 
-                int R3 = (int)(value *(float)R1 - (value -1F)*(float)R2);
-                int G3 = (int)(value *(float)G1 - (value -1F)*(float)G2);
-                int B3 = (int)(value *(float)B1- (value -1F)*(float)B2);
+                int R3 = (int) (value * (float) R1 - (value - 1F) * (float) R2);
+                int G3 = (int) (value * (float) G1 - (value - 1F) * (float) G2);
+                int B3 = (int) (value * (float) B1 - (value - 1F) * (float) B2);
 
                 // fix overflows
                 if (R3 > 255) R3 = 255;
@@ -149,24 +146,23 @@ public class UnsharpMask extends BaseFilter {
                 if (B3 > 255) B3 = 255;
                 if (B3 < 0) B3 = 0;
 
-                originalPixels[index] = (originalPixels[index] & 0xff000000)  | (R3<<16) | (G3 << 8) | (B3 <<0);
+                originalPixels[index] = (originalPixels[index] & 0xff000000) | (R3 << 16) | (G3 << 8) | (B3 << 0);
                 index++;
             }
         }
-        
+
         dst = ImageConverter.getImage(originalPixels, imageWidth, imageHeight);
-         
+
         if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
-        }
-        else if (origDst != dst) {
+        } else if (origDst != dst) {
             java.awt.Graphics2D g = origDst.createGraphics();
-        try {
-            g.drawImage(dst, 0, 0, null);
-        } finally {
-            g.dispose();
-        }
+            try {
+                g.drawImage(dst, 0, 0, null);
+            } finally {
+                g.dispose();
+            }
         }
 
         return origDst;

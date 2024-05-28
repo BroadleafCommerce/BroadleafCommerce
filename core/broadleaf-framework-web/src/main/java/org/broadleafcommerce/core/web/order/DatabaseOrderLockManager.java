@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,13 +32,13 @@ import jakarta.annotation.Resource;
  * An implementation of the {@link OrderLockManager} that relies on the database to provide synchronization
  * for locks on {@link Order}s. This class leverages the {@link OrderLock} domain object to provide this
  * functionality.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class DatabaseOrderLockManager implements OrderLockManager {
 
     protected static final Log LOG = LogFactory.getLog(DatabaseOrderLockManager.class);
-    
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
 
@@ -94,7 +94,7 @@ public class DatabaseOrderLockManager implements OrderLockManager {
             return order;
         }
 
-        boolean lockAcquired = orderService.acquireLock(order); 
+        boolean lockAcquired = orderService.acquireLock(order);
         return lockAcquired ? order : null;
     }
 
@@ -116,7 +116,7 @@ public class DatabaseOrderLockManager implements OrderLockManager {
     protected long getDatabaseLockPollingIntervalMs() {
         return BLCSystemProperty.resolveLongSystemProperty("order.lock.databaseLockPollingIntervalMs");
     }
-    
+
     protected int getDatabaseLockAcquisitionNumRetries() {
         return BLCSystemProperty.resolveIntSystemProperty("order.lock.databaseLockAcquisitionNumRetries", 5);
     }
@@ -125,4 +125,5 @@ public class DatabaseOrderLockManager implements OrderLockManager {
     public boolean isActive() {
         return true;
     }
+
 }

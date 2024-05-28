@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,15 +19,15 @@ package org.broadleafcommerce.common.email.service;
 
 import java.util.Map;
 
-
 /**
  * @author jfischer
- *
  */
 public interface EmailTrackingManager {
 
-    public Long createTrackedEmail(String emailAddress, String type, String extraValue);
-    public void recordOpen (Long emailId, Map<String, String> extraValues);
-    public void recordClick(Long emailId , Map<String, String> parameterMap, String customerId, Map<String, String> extraValues);
+    Long createTrackedEmail(String emailAddress, String type, String extraValue);
+
+    void recordOpen(Long emailId, Map<String, String> extraValues);
+
+    void recordClick(Long emailId, Map<String, String> parameterMap, String customerId, Map<String, String> extraValues);
 
 }

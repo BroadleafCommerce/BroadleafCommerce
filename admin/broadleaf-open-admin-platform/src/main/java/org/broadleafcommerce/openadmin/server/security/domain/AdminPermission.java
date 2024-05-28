@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,36 +24,44 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 
  * @author jfischer
- *
  */
 public interface AdminPermission extends Serializable {
 
-    public void setId(Long id);
-    public Long getId();
-    public String getName();
-    public void setName(String name);
-    public String getDescription();
-    public void setDescription(String description);
-    public PermissionType getType();
+    Long getId();
 
-    public void setType(PermissionType type);
+    void setId(Long id);
 
-    public List<AdminPermissionQualifiedEntity> getQualifiedEntities();
+    String getName();
 
-    public void setQualifiedEntities(List<AdminPermissionQualifiedEntity> qualifiedEntities);
+    void setName(String name);
 
-    public Set<AdminUser> getAllUsers();
+    String getDescription();
 
-    public void setAllUsers(Set<AdminUser> allUsers);
+    void setDescription(String description);
 
-    public AdminPermission clone();
-    
-    public Set<AdminRole> getAllRoles();
-    public void setAllRoles(Set<AdminRole> allRoles);
-    public List<AdminPermission> getAllChildPermissions();
+    PermissionType getType();
 
-    public List<AdminPermission> getAllParentPermissions();
-    public Boolean isFriendly();
+    void setType(PermissionType type);
+
+    List<AdminPermissionQualifiedEntity> getQualifiedEntities();
+
+    void setQualifiedEntities(List<AdminPermissionQualifiedEntity> qualifiedEntities);
+
+    Set<AdminUser> getAllUsers();
+
+    void setAllUsers(Set<AdminUser> allUsers);
+
+    AdminPermission clone();
+
+    Set<AdminRole> getAllRoles();
+
+    void setAllRoles(Set<AdminRole> allRoles);
+
+    List<AdminPermission> getAllChildPermissions();
+
+    List<AdminPermission> getAllParentPermissions();
+
+    Boolean isFriendly();
+
 }

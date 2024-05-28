@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,10 +37,9 @@ import jakarta.annotation.Resource;
 
 /**
  * Provides a simple breadcrumb or search, based solely on whether the "q" parameter is present.
- * Relies on the 
- * 
- * @author bpolster
+ * Relies on the
  *
+ * @author bpolster
  */
 @Service("blSearchBreadcrumbServiceExtensionHandler")
 public class SimpleSearchBreadcrumbServiceExtensionHandler extends AbstractBreadcrumbServiceExtensionHandler {
@@ -59,12 +58,14 @@ public class SimpleSearchBreadcrumbServiceExtensionHandler extends AbstractBread
     }
 
     @Override
-    public ExtensionResultStatusType modifyBreadcrumbList(String url, Map<String, String[]> params,
-            ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
+    public ExtensionResultStatusType modifyBreadcrumbList(
+            String url,
+            Map<String, String[]> params,
+            ExtensionResultHolder<List<BreadcrumbDTO>> holder
+    ) {
 
         String keyword = getSearchKeyword(url, params);
-        
-        
+
         url = getBreadcrumbUrl(url, holder);
         params = getBreadcrumbParams(params, holder);
 
@@ -91,29 +92,34 @@ public class SimpleSearchBreadcrumbServiceExtensionHandler extends AbstractBread
     }
 
     @SuppressWarnings("unchecked")
-    protected Map<String, String[]> getBreadcrumbParams(Map<String, String[]> params, ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
+    protected Map<String, String[]> getBreadcrumbParams(
+            Map<String, String[]> params,
+            ExtensionResultHolder<List<BreadcrumbDTO>> holder
+    ) {
         Map<String, Object> contextMap = holder.getContextMap();
         if (contextMap.containsKey(BreadcrumbServiceExtensionManager.CONTEXT_PARAM_STRIPPED_PARAMS)) {
-            return (Map<String, String[]>) contextMap.get(BreadcrumbServiceExtensionManager.CONTEXT_PARAM_STRIPPED_PARAMS);
+            return (Map<String, String[]>) contextMap.get(
+                    BreadcrumbServiceExtensionManager.CONTEXT_PARAM_STRIPPED_PARAMS
+            );
         } else {
             return params;
         }
     }
 
     /**
-     * This handler only manages keyword.   In a typical usage, we also want to get rid of 
-     * any facet parameters that may be on the URL.     
-     * 
+     * This handler only manages keyword.   In a typical usage, we also want to get rid of
+     * any facet parameters that may be on the URL.
+     *
      * @param params
      * @param holder
      */
     protected void updateContextMap(Map<String, String[]> params, ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
         if (params != null && params.containsKey(getKeywordParam())) {
             params.remove(getKeywordParam());
-            
+
             if (removeAllParamsExceptCategoryId) {
                 Iterator<Entry<String, String[]>> it = params.entrySet().iterator();
-                
+
                 while (it.hasNext()) {
                     Entry<String, String[]> entry = it.next();
                     if (!"categoryId".equals(entry.getKey())) {
@@ -121,7 +127,7 @@ public class SimpleSearchBreadcrumbServiceExtensionHandler extends AbstractBread
                     }
                 }
             }
-            
+
             Map<String, Object> contextMap = holder.getContextMap();
             contextMap.put(BreadcrumbServiceExtensionManager.CONTEXT_PARAM_STRIPPED_PARAMS, params);
         }

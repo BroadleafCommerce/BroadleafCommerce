@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,44 +20,43 @@ package org.broadleafcommerce.openadmin.web.form.entity;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
 /**
  * @author Andre Azzolini (apazzolini)
  */
 public class ComboField extends Field {
 
-    protected Map<String, String> options = new LinkedHashMap<String, String>();
+    protected Map<String, String> options = new LinkedHashMap<>();
 
     /* *********** */
     /* ADD METHODS */
     /* *********** */
-    
+
     public void putOption(String key, String value) {
         options.put(key, value);
     }
-    
+
     /* ************************** */
     /* CUSTOM GETTERS / SETTERS */
     /* ************************** */
-    
-    public void setOptions(String[][] options) {
-        if (options != null) {
-            for (String[] option : options) {
-                putOption(option[0], option[1]);
-            }
-        }
-    }
-    
+
     public String getOption(String optionKey) {
         return getOptions().get(optionKey);
+    }
+
+    public Map<String, String> getOptions() {
+        return options;
     }
 
     /* ************************** */
     /* STANDARD GETTERS / SETTERS */
     /* ************************** */
 
-    public Map<String, String> getOptions() {
-        return options;
+    public void setOptions(String[][] options) {
+        if (options != null) {
+            for (String[] option : options) {
+                putOption(option[0], option[1]);
+            }
+        }
     }
 
     public void setOptions(Map<String, String> options) {

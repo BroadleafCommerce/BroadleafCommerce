@@ -10,34 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.order.domain;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapKey;
-import jakarta.persistence.MapKeyClass;
-import jakarta.persistence.MapKeyJoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.audit.Auditable;
@@ -91,12 +70,35 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
+import jakarta.persistence.MapKeyClass;
+import jakarta.persistence.MapKeyJoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @EntityListeners(value = {AuditableListener.class, OrderPersistedEntityListener.class})
@@ -120,17 +122,18 @@ import java.util.Map;
 })
 public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiable, Previewable, OrderAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "OrderId")
     @GenericGenerator(
-        name="OrderId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="OrderImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderImpl")
-        }
+            name = "OrderId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OrderImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.OrderImpl")
+            }
     )
     @Column(name = "ORDER_ID")
     protected Long id;
@@ -142,142 +145,125 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     protected PreviewStatus previewable = new PreviewStatus();
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = GroupName.General,
-            order=FieldOrder.NAME)
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Name", group = GroupName.General, order = FieldOrder.NAME)
     protected String name;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional=false, cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = CustomerImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
-    @AdminPresentation(friendlyName = "OrderImpl_Customer", group = GroupName.Customer,
-            order=FieldOrder.CUSTOMER)
+    @AdminPresentation(friendlyName = "OrderImpl_Customer", group = GroupName.Customer, order = FieldOrder.CUSTOMER)
     @AdminPresentationToOneLookup()
     protected Customer customer;
 
     @Column(name = "ORDER_STATUS")
     @AdminPresentation(friendlyName = "OrderImpl_Order_Status", group = GroupName.General,
-            order=FieldOrder.STATUS, prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION,
-            broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderStatus",
+            order = FieldOrder.STATUS, prominent = true, fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.OrderStatus",
             gridOrder = 1000)
     protected String status;
 
-    @Column(name = "TOTAL_TAX", precision=19, scale=5)
+    @Column(name = "TOTAL_TAX", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Tax", group = GroupName.OrderTotals,
-            order=FieldOrder.TOTALTAX, fieldType=SupportedFieldType.MONEY)
+            order = FieldOrder.TOTALTAX, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
-    @Column(name = "TOTAL_SHIPPING", precision=19, scale=5)
+    @Column(name = "TOTAL_SHIPPING", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total_Shipping", group = GroupName.OrderTotals,
-            order=FieldOrder.TOTALFGCHARGES, fieldType=SupportedFieldType.MONEY)
+            order = FieldOrder.TOTALFGCHARGES, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal totalFulfillmentCharges;
 
-    @Column(name = "ORDER_SUBTOTAL", precision=19, scale=5)
+    @Column(name = "ORDER_SUBTOTAL", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Subtotal", group = GroupName.OrderTotals,
-            order=FieldOrder.SUBTOTAL, fieldType=SupportedFieldType.MONEY)
+            order = FieldOrder.SUBTOTAL, fieldType = SupportedFieldType.MONEY)
     protected BigDecimal subTotal;
 
-    @Column(name = "ORDER_TOTAL", precision=19, scale=5)
+    @Column(name = "ORDER_TOTAL", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "OrderImpl_Order_Total", group = GroupName.OrderTotals,
-            order=FieldOrder.TOTAL,
+            order = FieldOrder.TOTAL,
             fieldType = SupportedFieldType.MONEY,
-            prominent=true,
+            prominent = true,
             gridOrder = 4000)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
     @AdminPresentation(friendlyName = "OrderImpl_Order_Submit_Date", group = GroupName.General,
-            order=FieldOrder.SUBMITDATE,
+            order = FieldOrder.SUBMITDATE,
             prominent = true,
             gridOrder = 5000)
     protected Date submitDate;
-
+    @Column(name = "EMAIL_ADDRESS")
+    @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = GroupName.Customer,
+            order = FieldOrder.EMAILADDRESS)
+    protected String emailAddress;
+    @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName = "OrderImpl_Order_Items",
+            tab = TabName.General)
+    protected List<OrderItem> orderItems = new ArrayList<>();
+    @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName = "OrderImpl_Fulfillment_Groups",
+            tab = TabName.FulfillmentGroups)
+    protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<>();
+    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = {CascadeType.ALL},
+            orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName = "OrderImpl_Adjustments",
+            group = GroupName.Advanced,
+            order = FieldOrder.ADJUSTMENTS)
+    protected List<OrderAdjustment> orderAdjustments = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class, cascade = CascadeType.REFRESH)
+    @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "ORDER_ID",
+            referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_CODE_ID",
+            referencedColumnName = "OFFER_CODE_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName = "OrderImpl_Offer_Codes",
+            group = GroupName.Advanced,
+            manyToField = "orders", order = FieldOrder.OFFERCODES)
+    protected List<OfferCode> addedOfferCodes = new ArrayList<>();
+    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = {CascadeType.ALL},
+            orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    protected List<CandidateOrderOffer> candidateOrderOffers = new ArrayList<>();
+    @OneToMany(mappedBy = "order", targetEntity = OrderPaymentImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName = "OrderImpl_Payments", tab = TabName.Payment)
+    protected List<OrderPayment> payments = new ArrayList<>();
+    @ManyToMany(targetEntity = OfferInfoImpl.class, cascade = CascadeType.REFRESH)
+    @JoinTable(name = "BLC_ADDITIONAL_OFFER_INFO", joinColumns = @JoinColumn(name = "BLC_ORDER_ORDER_ID",
+            referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_INFO_ID",
+            referencedColumnName = "OFFER_INFO_ID"))
+    @MapKeyJoinColumn(name = "OFFER_ID")
+    @MapKeyClass(OfferImpl.class)
+    @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    @BatchSize(size = 50)
+    protected Map<Offer, OfferInfo> additionalOfferInformation = new HashMap<>();
+    @OneToMany(mappedBy = "order", targetEntity = OrderAttributeImpl.class, cascade = {CascadeType.ALL},
+            orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    @MapKey(name = "name")
+    @AdminPresentationMap(friendlyName = "OrderImpl_Attributes",
+            forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderImpl_Attributes_Key_Name",
+            group = GroupName.Advanced, order = FieldOrder.ATTRIBUTES)
+    protected Map<String, OrderAttribute> orderAttributes = new HashMap<>();
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @JoinColumn(name = "CURRENCY_CODE")
+    @AdminPresentation(excluded = true)
+    protected BroadleafCurrency currency;
+    @ManyToOne(targetEntity = LocaleImpl.class)
+    @JoinColumn(name = "LOCALE_CODE")
+    @AdminPresentation(excluded = true)
+    protected Locale locale;
+    @Column(name = "TAX_OVERRIDE")
+    protected Boolean taxOverride;
+    @Transient
+    protected List<ActivityMessageDTO> orderMessages;
     @Column(name = "ORDER_NUMBER")
     @AdminPresentation(friendlyName = "OrderImpl_Order_Number", group = GroupName.General,
             order = FieldOrder.ORDERNUMBER,
             prominent = true,
             gridOrder = 3000)
     private String orderNumber;
-
-    @Column(name = "EMAIL_ADDRESS")
-    @AdminPresentation(friendlyName = "OrderImpl_Order_Email_Address", group = GroupName.Customer,
-            order=FieldOrder.EMAILADDRESS)
-    protected String emailAddress;
-
-    @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderImpl_Order_Items",
-            tab = TabName.General)
-    protected List<OrderItem> orderItems = new ArrayList<>();
-
-    @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderImpl_Fulfillment_Groups",
-                tab = TabName.FulfillmentGroups)
-    protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<>();
-
-    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = { CascadeType.ALL },
-            orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderImpl_Adjustments",
-                group = GroupName.Advanced,
-                order = FieldOrder.ADJUSTMENTS)
-    protected List<OrderAdjustment> orderAdjustments = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class, cascade = CascadeType.REFRESH)
-    @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "ORDER_ID",
-            referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_CODE_ID",
-            referencedColumnName = "OFFER_CODE_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderImpl_Offer_Codes",
-                group = GroupName.Advanced,
-                manyToField = "orders", order = FieldOrder.OFFERCODES)
-    protected List<OfferCode> addedOfferCodes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = { CascadeType.ALL },
-            orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    protected List<CandidateOrderOffer> candidateOrderOffers = new ArrayList<>();
-
-    @OneToMany(mappedBy = "order", targetEntity = OrderPaymentImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderImpl_Payments",
-                tab = TabName.Payment)
-    protected List<OrderPayment> payments = new ArrayList<>();
-
-    @ManyToMany(targetEntity=OfferInfoImpl.class, cascade = CascadeType.REFRESH)
-    @JoinTable(name = "BLC_ADDITIONAL_OFFER_INFO", joinColumns = @JoinColumn(name = "BLC_ORDER_ORDER_ID",
-            referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_INFO_ID",
-            referencedColumnName = "OFFER_INFO_ID"))
-    @MapKeyJoinColumn(name = "OFFER_ID")
-    @MapKeyClass(OfferImpl.class)
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @BatchSize(size = 50)
-    protected Map<Offer, OfferInfo> additionalOfferInformation = new HashMap<>();
-
-    @OneToMany(mappedBy = "order", targetEntity = OrderAttributeImpl.class, cascade = { CascadeType.ALL },
-            orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @MapKey(name="name")
-    @AdminPresentationMap(friendlyName = "OrderImpl_Attributes",
-        forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderImpl_Attributes_Key_Name",
-        group = GroupName.Advanced, order = FieldOrder.ATTRIBUTES)
-    protected Map<String,OrderAttribute> orderAttributes = new HashMap<>();
-    
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
-    @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(excluded = true)
-    protected BroadleafCurrency currency;
-
-    @ManyToOne(targetEntity = LocaleImpl.class)
-    @JoinColumn(name = "LOCALE_CODE")
-    @AdminPresentation(excluded = true)
-    protected Locale locale;
-
-    @Column(name = "TAX_OVERRIDE")
-    protected Boolean taxOverride;
-
-    @Transient
-    protected List<ActivityMessageDTO> orderMessages;
 
     @Override
     public Long getId() {
@@ -331,6 +317,11 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
+    public void setTotal(Money orderTotal) {
+        this.total = Money.toAmount(orderTotal);
+    }
+
+    @Override
     public Money getTotalAfterAppliedPayments() {
         Money myTotal = getTotal();
         if (myTotal == null) {
@@ -339,17 +330,12 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         Money totalPayments = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         for (OrderPayment payment : getPayments()) {
             //add up all active payments that are not UNCONFIRMED Final Payments
-            if (payment.isActive() && payment.getAmount() != null && 
-                (!payment.isFinalPayment() || payment.isConfirmed())) {
+            if (payment.isActive() && payment.getAmount() != null
+                    && (!payment.isFinalPayment() || payment.isConfirmed())) {
                 totalPayments = totalPayments.add(payment.getAmount());
             }
         }
         return myTotal.subtract(totalPayments);
-    }
-
-    @Override
-    public void setTotal(Money orderTotal) {
-        this.total = Money.toAmount(orderTotal);
     }
 
     @Override
@@ -424,13 +410,13 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
-    public void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers) {
-        this.candidateOrderOffers = candidateOrderOffers;
+    public List<CandidateOrderOffer> getCandidateOrderOffers() {
+        return candidateOrderOffers;
     }
 
     @Override
-    public List<CandidateOrderOffer> getCandidateOrderOffers() {
-        return candidateOrderOffers;
+    public void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers) {
+        this.candidateOrderOffers = candidateOrderOffers;
     }
 
     @Override
@@ -465,8 +451,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
     @Override
     public Money getTotalFulfillmentCharges() {
-        return totalFulfillmentCharges == null ? null : BroadleafCurrencyUtils.getMoney(totalFulfillmentCharges,
-                getCurrency());
+        return totalFulfillmentCharges == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(totalFulfillmentCharges, getCurrency());
     }
 
     @Override
@@ -487,7 +474,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public boolean hasCategoryItem(String categoryName) {
         for (OrderItem orderItem : orderItems) {
-            if(orderItem.isInCategory(categoryName)) {
+            if (orderItem.isInCategory(categoryName)) {
                 return true;
             }
         }
@@ -497,6 +484,10 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public List<OrderAdjustment> getOrderAdjustments() {
         return orderAdjustments;
+    }
+
+    protected void setOrderAdjustments(List<OrderAdjustment> orderAdjustments) {
+        this.orderAdjustments = orderAdjustments;
     }
 
     @Override
@@ -513,9 +504,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @Override
     public List<Adjustment> getAllFutureCreditAdjustments() {
         List<Adjustment> adjustments = new ArrayList<>();
-        
+
         adjustments.addAll(getFutureCreditOrderAdjustments());
-        
+
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
             adjustments.addAll(fulfillmentGroup.getFutureCreditFulfillmentGroupAdjustments());
         }
@@ -527,16 +518,12 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         return adjustments;
     }
 
-    protected void setOrderAdjustments(List<OrderAdjustment> orderAdjustments) {
-        this.orderAdjustments = orderAdjustments;
-    }
-
     @Override
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem orderItem : orderItems) {
             if (orderItem instanceof BundleOrderItem) {
-                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
+                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl) orderItem;
                 for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
                     discreteOrderItems.add(discreteOrderItem);
                 }
@@ -574,7 +561,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -635,7 +622,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         }
         return itemAdjustmentsValue;
     }
-    
+
     @Override
     public Money getFulfillmentGroupAdjustmentsValue() {
         Money adjustmentValue = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
@@ -727,16 +714,17 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public void addAddedOfferCode(OfferCode offerCode) {
         addOfferCode(offerCode);
     }
-    
+
     @Override
     public void addOfferCode(OfferCode offerCode) {
         getAddedOfferCodes().add(offerCode);
     }
-    
+
     @Override
     public BroadleafCurrency getCurrency() {
         return currency;
     }
+
     @Override
     public void setCurrency(BroadleafCurrency currency) {
         this.currency = currency;
@@ -751,7 +739,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-    
+
     @Override
     public Boolean getTaxOverride() {
         return taxOverride != null && taxOverride;
@@ -868,7 +856,9 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
-    public <G extends Order> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends Order> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -886,34 +876,34 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
         cloned.setTotalFulfillmentCharges(getTotalFulfillmentCharges());
         cloned.setSubTotal(getSubTotal());
         cloned.setTaxOverride(taxOverride == null ? null : taxOverride);
-        for(OrderItem entry : orderItems){
+        for (OrderItem entry : orderItems) {
             OrderItem clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setOrder(cloned);
             cloned.getOrderItems().add(clonedEntry);
         }
-        for(Map.Entry<Offer, OfferInfo> entry : additionalOfferInformation.entrySet()){
+        for (Map.Entry<Offer, OfferInfo> entry : additionalOfferInformation.entrySet()) {
             Offer clonedOffer = entry.getKey().createOrRetrieveCopyInstance(context).getClone();
             OfferInfo clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
-            cloned.getAdditionalOfferInformation().put(clonedOffer,clonedEntry);
+            cloned.getAdditionalOfferInformation().put(clonedOffer, clonedEntry);
         }
-        for(Map.Entry<String,OrderAttribute> entry : orderAttributes.entrySet()){
+        for (Map.Entry<String, OrderAttribute> entry : orderAttributes.entrySet()) {
             OrderAttribute clonedAttribute = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
             clonedAttribute.setOrder(cloned);
-            cloned.getOrderAttributes().put(entry.getKey(),clonedAttribute);
+            cloned.getOrderAttributes().put(entry.getKey(), clonedAttribute);
         }
-        for(FulfillmentGroup fulfillmentGroup: fulfillmentGroups) {
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
             FulfillmentGroup fg = fulfillmentGroup.createOrRetrieveCopyInstance(context).getClone();
             fg.setOrder(cloned);
             cloned.getFulfillmentGroups().add(fg);
         }
-        for(OrderPayment orderPayment : payments) {
+        for (OrderPayment orderPayment : payments) {
             if (orderPayment.isActive()) {
                 OrderPayment payment = orderPayment.createOrRetrieveCopyInstance(context).getClone();
                 payment.setOrder(cloned);
                 cloned.getPayments().add(payment);
             }
         }
-        for(OfferCode entry : addedOfferCodes){
+        for (OfferCode entry : addedOfferCodes) {
             // We do not want to clone the offer code since that will cascade through offer. We only want to create
             // the new relationship between this cloned order and the existing offer code.
             cloned.getAddedOfferCodes().add(entry);
@@ -921,7 +911,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
 
         cloned.setTotal(total == null ? null : new Money(total));
 
-        return  createResponse;
+        return createResponse;
     }
 
     @Override
@@ -934,4 +924,5 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     public Boolean hasValidationErrors() {
         return getOrderItems().stream().anyMatch(OrderItem::getHasValidationError);
     }
+
 }

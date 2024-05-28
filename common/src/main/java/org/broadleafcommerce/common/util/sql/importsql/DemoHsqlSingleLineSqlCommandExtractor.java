@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,17 +34,18 @@ import java.util.List;
  */
 public class DemoHsqlSingleLineSqlCommandExtractor extends SingleLineSqlScriptExtractor {
 
-    private static final SupportLogger LOGGER = SupportLogManager.getLogger("UserOverride", DemoHsqlSingleLineSqlCommandExtractor.class);
-
     @Override
     public List<String> extractCommands(Reader reader, Dialect dialect) {
         List<String> commands = super.extractCommands(reader, dialect);
         List<String> newCommands = new ArrayList<>(commands.size());
         for (String command : commands) {
             String newCommand = command;
-            
+
             // Any MySQL-specific newlines replace with special character newlines
-            newCommand = newCommand.replaceAll(DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX, "' || CHAR(13) || CHAR(10) || '");
+            newCommand = newCommand.replaceAll(
+                    DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX,
+                    "' || CHAR(13) || CHAR(10) || '"
+            );
 
             //remove the double backslashes - hsql does not honor backslash as an escape character
             newCommand = newCommand.replaceAll(DemoSqlServerSingleLineSqlCommandExtractor.DOUBLEBACKSLASHMATCH, "\\\\");

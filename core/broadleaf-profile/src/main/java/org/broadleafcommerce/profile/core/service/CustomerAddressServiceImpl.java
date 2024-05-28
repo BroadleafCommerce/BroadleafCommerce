@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,10 +33,10 @@ import jakarta.annotation.Resource;
 @Service("blCustomerAddressService")
 public class CustomerAddressServiceImpl implements CustomerAddressService {
 
-    @Resource(name="blCustomerAddressDao")
+    @Resource(name = "blCustomerAddressDao")
     protected CustomerAddressDao customerAddressDao;
 
-    @Resource(name="blCustomerDao")
+    @Resource(name = "blCustomerDao")
     protected CustomerDao customerDao;
 
     @Override
@@ -78,7 +78,7 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
-    public void deleteCustomerAddressById(Long customerAddressId){
+    public void deleteCustomerAddressById(Long customerAddressId) {
         CustomerAddress customerAddress = customerAddressDao.readCustomerAddressById(customerAddressId);
         customerAddressDao.deleteCustomerAddressById(customerAddressId);
         customerDao.refreshCustomer(customerAddress.getCustomer());
@@ -103,4 +103,5 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     public Long readNumberOfAddresses() {
         return customerAddressDao.readNumberOfAddresses();
     }
+
 }

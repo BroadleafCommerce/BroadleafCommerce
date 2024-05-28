@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,19 +31,16 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is a straight copy of Spring's DefaultResourceResolverChain  (as of 4.1.6).
- * 
- * This had to be copied as Spring set the class scope as  "package" scope thus not 
+ * <p>
+ * This had to be copied as Spring set the class scope as  "package" scope thus not
  * allowing it to be used or extended.
- *  
- * @author bpolster
  *
+ * @author bpolster
  */
 public class BroadleafDefaultResourceResolverChain implements ResourceResolverChain {
 
-    private final List<ResourceResolver> resolvers = new ArrayList<ResourceResolver>();
-
     protected static final Log LOG = LogFactory.getLog(BroadleafDefaultResourceResolverChain.class);
-
+    private final List<ResourceResolver> resolvers = new ArrayList<>();
     private int index = -1;
 
     public BroadleafDefaultResourceResolverChain(List<? extends ResourceResolver> resolvers) {
@@ -68,14 +65,14 @@ public class BroadleafDefaultResourceResolverChain implements ResourceResolverCh
     @Override
     public String resolveUrlPath(String resourcePath, List<? extends Resource> locations) {
         ResourceResolver resolver = getNext();
-        if (resolver == null) {          
+        if (resolver == null) {
             return null;
         }
         try {
             String returnPath = resolver.resolveUrlPath(resourcePath, locations, this);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("The return path for " + resourcePath + " from resolver " + resolver + " is " + returnPath);
-            }            
+            }
             return returnPath;
         } finally {
             this.index--;

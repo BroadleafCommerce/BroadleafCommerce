@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.file.domain;
-
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,11 +26,12 @@ package org.broadleafcommerce.cms.file.domain;
  */
 public interface ImageStaticAsset extends StaticAsset {
 
-    public Integer getWidth();
+    Integer getWidth();
 
-    public void setWidth(Integer width);
+    void setWidth(Integer width);
 
-    public Integer getHeight();
+    Integer getHeight();
 
-    public void setHeight(Integer height);
+    void setHeight(Integer height);
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -49,16 +49,14 @@ import javassist.bytecode.annotation.IntegerMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class SingleTableInheritanceClassTransformer extends AbstractClassTransformer implements BroadleafClassTransformer {
-    
+
     public static final String SINGLE_TABLE_ENTITIES = "broadleaf.ejb.entities.override_single_table";
-    
+
     private static final Log LOG = LogFactory.getLog(SingleTableInheritanceClassTransformer.class);
-    protected List<SingleTableInheritanceInfo> infos = new ArrayList<SingleTableInheritanceInfo>();
+    protected List<SingleTableInheritanceInfo> infos = new ArrayList<>();
 
     @Override
     public void compileJPAProperties(Properties props, Object key) throws Exception {
@@ -74,14 +72,14 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
                 }
                 SingleTableInheritanceInfo info = new SingleTableInheritanceInfo();
                 info.setClassName(clazz);
-                String discriminatorName = props.getProperty("broadleaf.ejb."+keyName+".discriminator.name");
+                String discriminatorName = props.getProperty("broadleaf.ejb." + keyName + ".discriminator.name");
                 if (discriminatorName != null) {
                     info.setDiscriminatorName(discriminatorName);
-                    String type = props.getProperty("broadleaf.ejb."+keyName+".discriminator.type");
+                    String type = props.getProperty("broadleaf.ejb." + keyName + ".discriminator.type");
                     if (type != null) {
                         info.setDiscriminatorType(DiscriminatorType.valueOf(type));
                     }
-                    String length = props.getProperty("broadleaf.ejb."+keyName+".discriminator.length");
+                    String length = props.getProperty("broadleaf.ejb." + keyName + ".discriminator.length");
                     if (length != null) {
                         info.setDiscriminatorLength(Integer.parseInt(length));
                     }
@@ -93,13 +91,18 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
+    public byte[] transform(
+            ClassLoader loader,
+            String className,
+            Class<?> classBeingRedefined,
+            ProtectionDomain protectionDomain,
+            byte[] classfileBuffer
+    ) throws TransformerException {
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
             return null;
         }
-        
+
         if (infos.isEmpty()) {
             return null;
         }
@@ -110,15 +113,17 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
         if (pos >= 0) {
             try {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Converting " + convertedClassName + " to a SingleTable inheritance strategy."); 
+                    LOG.debug("Converting " + convertedClassName + " to a SingleTable inheritance strategy.");
                 }
                 SingleTableInheritanceInfo myInfo = infos.get(pos);
                 ClassFile classFile = new ClassFile(new DataInputStream(new ByteArrayInputStream(classfileBuffer)));
                 ConstPool constantPool = classFile.getConstPool();
-                AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
+                AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(
+                        constantPool, AnnotationsAttribute.visibleTag
+                );
                 List<?> attributes = classFile.getAttributes();
                 Iterator<?> itr = attributes.iterator();
-                while(itr.hasNext()) {
+                while (itr.hasNext()) {
                     Object object = itr.next();
                     if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
                         AnnotationsAttribute attr = (AnnotationsAttribute) object;
@@ -136,7 +141,9 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
                 ClassPool pool = ClassPool.getDefault();
                 pool.importPackage("jakarta.persistence");
                 pool.importPackage("java.lang");
-                EnumMemberValue strategy = (EnumMemberValue) Annotation.createMemberValue(constantPool, pool.makeClass("InheritanceType"));
+                EnumMemberValue strategy = (EnumMemberValue) Annotation.createMemberValue(
+                        constantPool, pool.makeClass("InheritanceType")
+                );
                 strategy.setType(InheritanceType.class.getName());
                 strategy.setValue(InheritanceType.SINGLE_TABLE.name());
                 inheritance.addMemberValue("strategy", strategy);
@@ -146,14 +153,16 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
                     StringMemberValue name = new StringMemberValue(constantPool);
                     name.setValue(myInfo.getDiscriminatorName());
                     discriminator.addMemberValue("name", name);
-                    EnumMemberValue discriminatorType = (EnumMemberValue) Annotation.createMemberValue(constantPool, pool.makeClass("DiscriminatorType"));
+                    EnumMemberValue discriminatorType = (EnumMemberValue) Annotation.createMemberValue(
+                            constantPool, pool.makeClass("DiscriminatorType")
+                    );
                     discriminatorType.setType(DiscriminatorType.class.getName());
                     discriminatorType.setValue(myInfo.getDiscriminatorType().name());
                     discriminator.addMemberValue("discriminatorType", discriminatorType);
                     IntegerMemberValue length = new IntegerMemberValue(constantPool);
                     length.setValue(myInfo.getDiscriminatorLength());
                     discriminator.addMemberValue("length", length);
-                    
+
                     annotationsAttribute.addAnnotation(discriminator);
                 }
                 classFile.addAttribute(annotationsAttribute);
@@ -163,13 +172,14 @@ public class SingleTableInheritanceClassTransformer extends AbstractClassTransfo
                 os.close();
 
                 return bos.toByteArray();
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
-                throw new TransformerException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + ex.getMessage());
+                throw new TransformerException("Unable to convert " + convertedClassName
+                        + " to a SingleTable inheritance strategy: " + ex.getMessage());
             }
         } else {
             return null;
         }
     }
-    
+
 }

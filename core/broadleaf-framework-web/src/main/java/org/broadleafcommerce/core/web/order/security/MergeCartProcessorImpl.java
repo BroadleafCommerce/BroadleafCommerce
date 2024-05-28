@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,7 +38,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * 
  * @deprecated this has been replaced by invoking {@link MergeCartService} explicitly within the
  * {@link CartStateRequestProcessor}
  */
@@ -48,28 +47,28 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
 
     protected String mergeCartResponseKey = "bl_merge_cart_response";
 
-    @Resource(name="blCustomerService")
+    @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
-    @Resource(name="blOrderService")
+    @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
-    @Resource(name="blMergeCartService")
+
+    @Resource(name = "blMergeCartService")
     protected MergeCartService mergeCartService;
-    
+
     @Resource(name = "blCustomerStateRequestProcessor")
     protected CustomerStateRequestProcessor customerStateRequestProcessor;
-    
+
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         execute(new ServletWebRequest(request, response), authResult);
     }
-    
+
     @Override
     public void execute(WebRequest request, Authentication authResult) {
         Customer loggedInCustomer = customerService.readCustomerByUsername(authResult.getName());
         Customer anonymousCustomer = customerStateRequestProcessor.getAnonymousCustomer(request);
-        
+
         Order cart = null;
         if (anonymousCustomer != null) {
             cart = orderService.findCartForCustomer(anonymousCustomer);

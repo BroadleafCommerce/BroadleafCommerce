@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,14 +31,14 @@ import java.util.Map;
  * {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexService#performCachedOperation(org.broadleafcommerce.core.search.service.solr.SolrIndexCachedOperation.CacheOperation)}.
  * This serves to boost performance while executing multiple calls to {@link org.broadleafcommerce.core.search.service.solr.index.SolrIndexService#buildIncrementalIndex(int, int, boolean)}.
  *
- * @see org.broadleafcommerce.core.search.service.solr.index.SolrIndexService
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.core.search.service.solr.index.SolrIndexService
  */
 public class SolrIndexCachedOperation {
 
-    public static final Long DEFAULT_CATALOG_CACHE_KEY = 0l;
-    
-    private static final ThreadLocal<Map<Long, CatalogStructure>> CACHE = new ThreadLocal<Map<Long, CatalogStructure>>();
+    public static final Long DEFAULT_CATALOG_CACHE_KEY = 0L;
+
+    private static final ThreadLocal<Map<Long, CatalogStructure>> CACHE = new ThreadLocal<>();
 
     /**
      * Retrieve the cache bound to the current thread.
@@ -93,6 +93,6 @@ public class SolrIndexCachedOperation {
          * @throws ServiceException
          */
         void execute() throws ServiceException;
-
     }
+
 }

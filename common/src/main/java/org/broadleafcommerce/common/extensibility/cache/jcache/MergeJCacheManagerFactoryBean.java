@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,44 +39,35 @@ import javax.cache.spi.CachingProvider;
 
 /**
  * Generic Spring Bean Factory to merge various XML files together and pass them to the JCache {@link CachingProvider} to create a {@link CacheManager}.
- * 
+ * <p>
  * The defaults assume you are using EhCache, but this could be used for other JCache implementations.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>, BeanClassLoaderAware, InitializingBean, DisposableBean {
-    
-    @Nullable
-    private Properties cacheManagerProperties;
-
-    @Nullable
-    private ClassLoader beanClassLoader;
-    
-    @Nullable
-    private CacheManager cacheManager;
 
     @Value("${jcache.disable.cache:false}")
     protected boolean disableCache;
-    
     @Autowired
     protected JCacheUriProvider uriProvider;
-
     @Autowired
     protected JCacheConfigurationBuilder configBuilder;
-
     @Autowired(required = false)
     protected List<JCacheRegionConfiguration> cacheConfiguration;
-
     @Value("${jcache.create.cache.ifMissing:true}")
     protected boolean createIfMissing;
-
     @Value("${jcache.create.cache.forceJavaConfig:false}")
     protected boolean overrideWithJavaConfig;
+    @Nullable
+    private Properties cacheManagerProperties;
+    @Nullable
+    private ClassLoader beanClassLoader;
+    @Nullable
+    private CacheManager cacheManager;
 
     @Override
     public void afterPropertiesSet() {
-        if(disableCache){
+        if (disableCache) {
             this.cacheManager = new NoOpCacheManager();
             return;
         }
@@ -84,12 +75,12 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
         if (getObject() != null && !getObject().isClosed() && getObject().getURI().equals(uriProvider.getJCacheUri())) {
             return;
         }
-        
+
         Caching.setDefaultClassLoader(getDefaultClassLoaderForProvider());
         CachingProvider provider = Caching.getCachingProvider();
-        
+
         //The ClassLoader needs to be the same as what Hibernate expects (see org.hibernate.cache.jcache.internal.JCacheRegionFactory).
-        this.cacheManager = provider.getCacheManager(uriProvider.getJCacheUri(), 
+        this.cacheManager = provider.getCacheManager(uriProvider.getJCacheUri(),
                 provider.getDefaultClassLoader(), cacheManagerProperties);
 
         if (createIfMissing) {
@@ -97,7 +88,6 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
                 createCacheIfNotExists(config);
             }
         }
-
     }
 
     @Override
@@ -122,30 +112,32 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
             this.cacheManager.close();
         }
     }
-    
+
     @Override
     public void setBeanClassLoader(ClassLoader classLoader) {
         this.beanClassLoader = classLoader;
     }
-    
+
     public void setCacheManagerProperties(@Nullable Properties cacheManagerProperties) {
         this.cacheManagerProperties = cacheManagerProperties;
     }
-    
+
     protected ClassLoader getDefaultClassLoaderForProvider() {
         if (beanClassLoader != null) {
             return beanClassLoader;
         }
         return getClass().getClassLoader();
     }
-    
+
     protected void createCacheIfNotExists(JCacheRegionConfiguration config) {
         boolean cacheMissing = cacheManager.getCache(config.getCacheName()) == null;
         if (cacheMissing || overrideWithJavaConfig) {
             if (!cacheMissing) {
                 cacheManager.destroyCache(config.getCacheName());
             }
-            Configuration configuration = config.getConfiguration() != null ? config.getConfiguration() : configBuilder.buildConfiguration(config);
+            Configuration configuration = config.getConfiguration() != null
+                    ? config.getConfiguration()
+                    : configBuilder.buildConfiguration(config);
             cacheManager.createCache(config.getCacheName(), configuration);
             if (config.getEnableManagement() != null) {
                 cacheManager.enableManagement(config.getCacheName(), config.getEnableManagement());
@@ -155,6 +147,5 @@ public class MergeJCacheManagerFactoryBean implements FactoryBean<CacheManager>,
             }
         }
     }
-
 
 }

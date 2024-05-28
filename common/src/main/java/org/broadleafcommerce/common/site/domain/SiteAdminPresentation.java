@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,35 +27,35 @@ import org.broadleafcommerce.common.presentation.AdminTabPresentation;
  * @author Jeff Fischer
  */
 @AdminPresentationClass(friendlyName = "baseSite",
-    tabs = {
-        @AdminTabPresentation(name = SiteAdminPresentation.TabName.General,
-            order = SiteAdminPresentation.TabOrder.General,
-            groups = {
-                @AdminGroupPresentation(name = SiteAdminPresentation.GroupName.General,
-                    order = SiteAdminPresentation.GroupOrder.General,
-                    untitled = true),
-                @AdminGroupPresentation(name = SiteAdminPresentation.GroupName.Security,
-                    order = SiteAdminPresentation.GroupOrder.Security)
-            }
-        )
-    }
+        tabs = {
+                @AdminTabPresentation(name = SiteAdminPresentation.TabName.General,
+                        order = SiteAdminPresentation.TabOrder.General,
+                        groups = {
+                                @AdminGroupPresentation(name = SiteAdminPresentation.GroupName.General,
+                                        order = SiteAdminPresentation.GroupOrder.General,
+                                        untitled = true),
+                                @AdminGroupPresentation(name = SiteAdminPresentation.GroupName.Security,
+                                        order = SiteAdminPresentation.GroupOrder.Security)
+                        }
+                )
+        }
 )
 public interface SiteAdminPresentation {
 
-    public static class TabName {
+    class TabName {
         public static final String General = "General";
     }
 
-    public static class TabOrder {
+    class TabOrder {
         public static final int General = 1000;
     }
 
-    public static class GroupName {
+    class GroupName {
         public static final String General = "General";
         public static final String Security = "SiteImpl_Security_Description";
     }
 
-    public static class GroupOrder {
+    class GroupOrder {
         public static final int General = 1000;
         public static final int Security = 4000;
     }

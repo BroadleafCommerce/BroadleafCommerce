@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,6 @@ import java.util.Map;
 
 import jakarta.annotation.Nonnull;
 
-
 /**
  * Validates all of the populated properties for entities
  *
@@ -43,10 +42,10 @@ public interface EntityValidatorService {
      * Validation is invoked after the entire instance has been populated according to
      * {@link BasicPersistenceModule#createPopulatedInstance(Serializable, Entity, Map, Boolean)}.
      *
-     * @param entity DTO representation of <b>instance</b>
-     * @param instance actual domain representation of <b>submittedEntity</b>. If this is null, all {@link PropertyValidator}s will be skipped, as this instance type is consulted
-     * to match whether or not the properties from <b>propertiesMetadata</b> are applicable and should be validated
-     * @param propertiesMetadata all of the merged properties metadata for the given {@link Entity}
+     * @param submittedEntity                        DTO representation of <b>instance</b>
+     * @param instance                      actual domain representation of <b>submittedEntity</b>. If this is null, all {@link PropertyValidator}s will be skipped, as this instance type is consulted
+     *                                      to match whether or not the properties from <b>propertiesMetadata</b> are applicable and should be validated
+     * @param propertiesMetadata            all of the merged properties metadata for the given {@link Entity}
      * @param recordHelper
      * @param validateUnsubmittedProperties if set to true, will ignore validation for properties that weren't submitted
      *                                      along with the entity
@@ -54,13 +53,13 @@ public interface EntityValidatorService {
      * @throws IllegalAccessException
      * @throws ClassNotFoundException
      */
-    public void validate(Entity submittedEntity, @Nonnull Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
-            RecordHelper recordHelper, boolean validateUnsubmittedProperties);
+    void validate(Entity submittedEntity, @Nonnull Serializable instance, Map<String, FieldMetadata> propertiesMetadata,
+                  RecordHelper recordHelper, boolean validateUnsubmittedProperties);
+
     /**
      * @return the global validators that will be executed for every {@link Entity}
      */
-    public List<GlobalPropertyValidator> getGlobalEntityValidators();
-
+    List<GlobalPropertyValidator> getGlobalEntityValidators();
 
     /**
      * <p>Set the global validators that will be run on every entity that is attempted to be saved in the admin. Global
@@ -70,8 +69,9 @@ public interface EntityValidatorService {
      *
      * <p>An example of a global validator in Broadleaf is the {@link RequiredPropertyValidator} which will ensure that every
      * property that is marked as required will fail validation if a value is unset.</p>
+     *
      * @param globalEntityValidators the globalEntityValidators to set
      */
-    public void setGlobalEntityValidators(List<GlobalPropertyValidator> globalEntityValidators);
+    void setGlobalEntityValidators(List<GlobalPropertyValidator> globalEntityValidators);
 
 }

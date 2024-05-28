@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,21 +35,21 @@ import jakarta.annotation.Resource;
 import jakarta.persistence.EntityManagerFactory;
 
 /**
- * @see ClassNameRequestParamValidationService
  * @author Jeff Fischer
+ * @see ClassNameRequestParamValidationService
  */
 @Service("blClassNameRequestParamValidationService")
 public class ClassNameRequestParamValidationServiceImpl implements ClassNameRequestParamValidationService {
 
     private static final Log LOG = LogFactory.getLog(ClassNameRequestParamValidationServiceImpl.class);
 
-    @Resource(name="entityManagerFactory")
+    @Resource(name = "entityManagerFactory")
     protected EntityManagerFactory factory;
 
-    @Resource(name="blAdminNavigationService")
+    @Resource(name = "blAdminNavigationService")
     protected AdminNavigationService adminNavigationService;
 
-    @Resource(name="blPersistenceService")
+    @Resource(name = "blPersistenceService")
     protected PersistenceService persistenceService;
 
     protected DynamicDaoHelper helper = new DynamicDaoHelperImpl();

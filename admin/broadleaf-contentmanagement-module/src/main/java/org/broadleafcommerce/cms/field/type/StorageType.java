@@ -10,38 +10,32 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.field.type;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * Used by StaticAssets to communicate where the asset is stored.   Broadleaf supports storing
  * images on the fileSystem or on in the database.
  *
  * @author bpolster
- *
  */
 public class StorageType implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, StorageType> TYPES = new HashMap<String, StorageType>();
+    private static final Map<String, StorageType> TYPES = new HashMap<>();
 
     public static final StorageType DATABASE = new StorageType("DATABASE", "Database");
     public static final StorageType FILESYSTEM = new StorageType("FILESYSTEM", "FileSystem");
-
-
-    public static StorageType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -55,19 +49,23 @@ public class StorageType implements Serializable {
         setType(type);
     }
 
+    public static StorageType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -92,4 +90,5 @@ public class StorageType implements Serializable {
         } else
             return type.equals(other.type);
     }
+
 }

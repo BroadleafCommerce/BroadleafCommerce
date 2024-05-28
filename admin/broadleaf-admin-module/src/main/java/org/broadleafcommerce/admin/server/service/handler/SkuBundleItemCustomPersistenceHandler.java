@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -86,13 +86,19 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
     }
 
     @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+    public DynamicResultSet inspect(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            InspectHelper helper
+    ) throws ServiceException {
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+            Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
 
             //retrieve the default properties for Inventory
-            Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(SkuBundleItem.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(
+                    SkuBundleItem.class.getName(), persistencePerspective
+            );
 
             //add in the consolidated product options field
             FieldMetadata options = skuPersistenceHandler.createConsolidatedOptionField(SkuBundleItemImpl.class);
@@ -101,7 +107,9 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
 
             allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(SkuBundleItem.class);
-            ClassMetadata mergedMetadata = helper.buildClassMetadata(entityClasses, persistencePackage, allMergedProperties);
+            ClassMetadata mergedMetadata = helper.buildClassMetadata(
+                    entityClasses, persistencePackage, allMergedProperties
+            );
 
             return new DynamicResultSet(mergedMetadata, null, null);
 
@@ -114,11 +122,17 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
     }
 
     @Override
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    public DynamicResultSet fetch(
+            PersistencePackage persistencePackage,
+            CriteriaTransferObject cto,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+            ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems()
+                    .get(PersistencePerspectiveItemType.FOREIGNKEY);
 
             // sort it
             if (foreignKey != null && foreignKey.getSortField() != null) {
@@ -127,19 +141,32 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
 
             }
             //get the default properties from Inventory and its subclasses
-            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(SkuBundleItem.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> originalProps = helper.getSimpleMergedProperties(
+                    SkuBundleItem.class.getName(), persistencePerspective
+            );
 
             //Pull back the Inventory based on the criteria from the client
-            List<FilterMapping> filterMappings = helper.getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, originalProps);
+            List<FilterMapping> filterMappings = helper.getFilterMappings(
+                    persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, originalProps
+            );
 
             //attach the product option criteria
-            skuPersistenceHandler.applyProductOptionValueCriteria(filterMappings, cto, persistencePackage, "sku");
+            skuPersistenceHandler.applyProductOptionValueCriteria(
+                    filterMappings, cto, persistencePackage, "sku"
+            );
 
-            List<Serializable> records = helper.getPersistentRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings, cto.getFirstResult(), cto.getMaxResults());
+            List<Serializable> records = helper.getPersistentRecords(
+                    persistencePackage.getCeilingEntityFullyQualifiedClassname(),
+                    filterMappings,
+                    cto.getFirstResult(),
+                    cto.getMaxResults()
+            );
             //Convert Skus into the client-side Entity representation
             Entity[] payload = helper.getRecords(originalProps, records);
 
-            int totalRecords = helper.getTotalRecords(persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings);
+            int totalRecords = helper.getTotalRecords(
+                    persistencePackage.getCeilingEntityFullyQualifiedClassname(), filterMappings
+            );
 
             for (int i = 0; i < payload.length; i++) {
                 Entity entity = payload[i];
@@ -147,7 +174,7 @@ public class SkuBundleItemCustomPersistenceHandler extends CustomPersistenceHand
                 Sku bundleSku = bundleItem.getSku();
                 entity.findProperty("sku").setDisplayValue(bundleSku.getName());
                 List<ProductOptionValue> productOptionValues = new ArrayList<>();
-                for(SkuProductOptionValueXref skuProductOptionValueXref : bundleSku.getProductOptionValueXrefs()) {
+                for (SkuProductOptionValueXref skuProductOptionValueXref : bundleSku.getProductOptionValueXrefs()) {
                     productOptionValues.add(skuProductOptionValueXref.getProductOptionValue());
                 }
                 Property optionsProperty = skuPersistenceHandler.getConsolidatedOptionProperty(productOptionValues);

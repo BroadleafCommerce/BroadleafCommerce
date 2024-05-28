@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,28 +19,24 @@ package org.broadleafcommerce.common.vendor.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of container shape types.
- * 
+ *
  * @author jfischer
  */
 public class ContainerShapeType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ContainerShapeType> TYPES = new LinkedHashMap<String, ContainerShapeType>();
-
-    public static ContainerShapeType getInstance(final String type) {
-        return TYPES.get(type);
-    }
-
+    private static final Map<String, ContainerShapeType> TYPES = new LinkedHashMap<>();
     private String type;
     private String friendlyType;
-
     public ContainerShapeType() {
         //do nothing
     }
@@ -50,21 +46,26 @@ public class ContainerShapeType implements Serializable, BroadleafEnumerationTyp
         setType(type);
     }
 
+    public static ContainerShapeType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via "
+                    + getInstance(type).getClass().getName());
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -91,4 +92,5 @@ public class ContainerShapeType implements Serializable, BroadleafEnumerationTyp
             return false;
         return true;
     }
+
 }

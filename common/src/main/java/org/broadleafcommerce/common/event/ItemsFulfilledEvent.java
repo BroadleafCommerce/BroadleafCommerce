@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,17 +19,18 @@ package org.broadleafcommerce.common.event;
 
 import org.springframework.util.Assert;
 
+import java.io.Serial;
 import java.util.Collections;
 import java.util.Map;
 
 /**
  * Event that may be raised to indicate that items have been fulfilled.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 public class ItemsFulfilledEvent extends BroadleafApplicationEvent {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected final Map<Long, Integer> itemsAndQuantitiesFulfilled;
@@ -48,4 +49,5 @@ public class ItemsFulfilledEvent extends BroadleafApplicationEvent {
     public Map<Long, Integer> getItemsAndQuantitiesFulfilled() {
         return itemsAndQuantitiesFulfilled;
     }
+
 }

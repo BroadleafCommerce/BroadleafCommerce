@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,11 +23,11 @@ package org.broadleafcommerce.common.cache;
  * should a missed cache item not be detected. Should return an instance of the cache miss item type retrieved
  * from the persistent store.
  *
- * @see org.broadleafcommerce.common.cache.AbstractCacheMissAware
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.common.cache.AbstractCacheMissAware
  */
 public interface PersistentRetrieval<T> {
 
-    public T retrievePersistentObject();
+    T retrievePersistentObject();
 
 }

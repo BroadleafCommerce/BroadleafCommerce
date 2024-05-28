@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,6 +25,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
- * 
  * @author Phillip Verheyden
  */
 @Entity
@@ -44,9 +44,10 @@ import jakarta.persistence.Table;
 @AdminPresentationClass(friendlyName = "Banded Price Fulfillment Option")
 public class BandedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl implements BandedPriceFulfillmentOption {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
-    @OneToMany(mappedBy="option", targetEntity=FulfillmentPriceBandImpl.class)
+
+    @OneToMany(mappedBy = "option", targetEntity = FulfillmentPriceBandImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blFulfillmentOptionElements")
     @AdminPresentationCollection(friendlyName = "BandedPriceFulfillmentOptionBands", excluded = true)
     protected List<FulfillmentPriceBand> bands = new ArrayList<FulfillmentPriceBand>();

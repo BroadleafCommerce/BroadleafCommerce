@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -36,9 +35,8 @@ import java.util.List;
  * with the same nodes from the patch document. Note, additional nodes
  * from the patch document that are not present in the source document
  * are simply appended to the source document.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class NodeReplaceInsert extends BaseHandler {
 
@@ -69,6 +67,7 @@ public class NodeReplaceInsert extends BaseHandler {
             return response;
         }
     };
+    private static String CEILING_ENTITY = "ceilingEntity";
 
     @Override
     public Node[] merge(List<Node> nodeList1, List<Node> nodeList2, List<Node> exhaustedNodes) {
@@ -92,7 +91,7 @@ public class NodeReplaceInsert extends BaseHandler {
         return response;
     }
 
-    private boolean exhaustedNodesContains(List<Node> exhaustedNodes, Node node) {
+    protected boolean exhaustedNodesContains(List<Node> exhaustedNodes, Node node) {
         boolean contains = false;
         for (Node exhaustedNode : exhaustedNodes) {
             if (NODE_COMPARATOR.compare(exhaustedNode, node) == 0) {
@@ -105,7 +104,7 @@ public class NodeReplaceInsert extends BaseHandler {
     }
 
     private List<Node> matchNodes(List<Node> exhaustedNodes, Node[] primaryNodes, ArrayList<Node> list) {
-        List<Node> usedNodes = new ArrayList<Node>(20);
+        List<Node> usedNodes = new ArrayList<>(20);
         Iterator<Node> itr = list.iterator();
         Node parentNode = primaryNodes[0].getParentNode();
         Document ownerDocument = parentNode.getOwnerDocument();
@@ -186,15 +185,13 @@ public class NodeReplaceInsert extends BaseHandler {
             return true;
         }
         return false;
-
     }
 
-    private static String CEILING_ENTITY = "ceilingEntity";
-
     /**
-     * special "replace" method for metatataOverride items having the "ceilingEntity" attribute specified. 
-     * Instead of just overwriting a previously specified item, successive overrideItems with the same ceilingEntity are "merged" into 
-     * the previous one; the resulting node contains the logical union of both old and new children  
+     * special "replace" method for metatataOverride items having the "ceilingEntity" attribute specified.
+     * Instead of just overwriting a previously specified item, successive overrideItems with the same ceilingEntity are "merged" into
+     * the previous one; the resulting node contains the logical union of both old and new children
+     *
      * @param primaryNodes
      * @param testNode
      * @param usedNodes
@@ -222,6 +219,6 @@ public class NodeReplaceInsert extends BaseHandler {
 
         }
         return false;
-
     }
+
 }

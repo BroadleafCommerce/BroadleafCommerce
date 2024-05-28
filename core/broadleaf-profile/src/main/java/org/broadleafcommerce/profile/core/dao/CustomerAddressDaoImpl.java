@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,7 +56,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
 
     @Override
     public CustomerAddress save(CustomerAddress customerAddress) {
-            return em.merge(customerAddress);
+        return em.merge(customerAddress);
     }
 
     @Override
@@ -79,7 +79,6 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
 
         return query.getResultList();
     }
-
 
     @Override
     public Long readNumberOfAddresses() {
@@ -158,10 +157,11 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     }
 
     @Override
-    public void hardDeleteCustomerAddressesForCustomer(Long customerId){
+    public void hardDeleteCustomerAddressesForCustomer(Long customerId) {
         Object entityInstance = entityConfiguration.createEntityInstance(CustomerAddress.class.getName());
         Query query = em.createQuery("DELETE FROM " + entityInstance.getClass().getName() + " T WHERE T.customer.id=:customerId");
         query.setParameter("customerId", customerId);
         query.executeUpdate();
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -45,13 +45,13 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     protected String staticAssetUrlPrefix;
 
     protected boolean canHandlePersistence(PopulateValueRequest populateValueRequest, Serializable instance) {
-        return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.HTML ||
-                populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.HTML_BASIC;
+        return populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.HTML
+                || populateValueRequest.getMetadata().getFieldType() == SupportedFieldType.HTML_BASIC;
     }
 
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
-        return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.HTML ||
-                extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.HTML_BASIC;
+        return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.HTML
+                || extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.HTML_BASIC;
     }
 
     @Override
@@ -73,8 +73,9 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
 
             populateValueRequest.getProperty().setIsDirty(dirty);
 
-            populateValueRequest.getFieldManager().setFieldValue(instance,
-                    populateValueRequest.getProperty().getName(), fixedValue);
+            populateValueRequest.getFieldManager().setFieldValue(
+                    instance, populateValueRequest.getProperty().getName(), fixedValue
+            );
 
         } catch (Exception e) {
             throw new PersistenceException(e);
@@ -102,7 +103,8 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     }
 
     /**
-     * Stores the image paths at the root (e.g. no Servlet Context).   
+     * Stores the image paths at the root (e.g. no Servlet Context).
+     *
      * @param val
      * @return
      */
@@ -118,24 +120,23 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
     }
 
     /**
-     * 
      * @param val
      * @return
      */
     public String fixAssetPathsForDisplay(String val) {
         String contextPath = "/";
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
-        if (brc != null) {                        
+        if (brc != null) {
             HttpServletRequest request = brc.getRequest();
             if (request != null) {
                 contextPath = request.getContextPath();
             }
         }
-        
+
         if (!contextPath.endsWith("/")) {
             contextPath = contextPath + "/";
         }
-        
+
         if (staticAssetUrlPrefix != null) {
             String tmpPrefix = staticAssetUrlPrefix;
             if (tmpPrefix.startsWith("/")) {
@@ -143,7 +144,7 @@ public class HTMLFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             }
             return val.replaceAll("(?<=src=\").*?(?=" + tmpPrefix + ")", contextPath);
         }
-        
+
         return val;
     }
 

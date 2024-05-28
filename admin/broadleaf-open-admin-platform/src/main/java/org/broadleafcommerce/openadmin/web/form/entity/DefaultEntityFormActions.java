@@ -10,30 +10,28 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.web.form.entity;
 
-
-
 public class DefaultEntityFormActions {
-    
+
     public static final EntityFormAction SAVE = new EntityFormAction(EntityFormAction.SAVE)
-        .withButtonType("submit")
-        .withButtonClass("submit-button primary")
-        .withDisplayText("Save");
+            .withButtonType("submit")
+            .withButtonClass("submit-button primary")
+            .withDisplayText("Save");
 
     public static final EntityFormAction DELETE = new EntityFormAction(EntityFormAction.DELETE)
-        .withButtonClass("delete-button")
-        .withDisplayText("Delete");
-    
+            .withButtonClass("delete-button")
+            .withDisplayText("Delete");
+
     public static final EntityFormAction PREVIEW = new EntityFormAction(EntityFormAction.PREVIEW)
-        .withButtonClass("preview-button")
-        .withDisplayText("Preview");
-    
+            .withButtonClass("preview-button")
+            .withDisplayText("Preview");
+
     public static final EntityFormAction DUPLICATE = new EntityFormAction(EntityFormAction.DUPLICATE)
             .withButtonClass("duplicate-button")
             .withDisplayText("Duplicate");

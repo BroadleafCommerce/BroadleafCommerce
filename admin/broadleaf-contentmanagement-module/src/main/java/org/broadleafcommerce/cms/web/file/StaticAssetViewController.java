@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -55,7 +55,7 @@ public class StaticAssetViewController extends AbstractController {
     protected String assetServerUrlPrefix;
     protected String viewResolverName;
 
-    @Resource(name="blStaticAssetStorageService")
+    @Resource(name = "blStaticAssetStorageService")
     protected StaticAssetStorageService staticAssetStorageService;
 
     @Resource(name = "blSiteResolver")
@@ -85,6 +85,7 @@ public class StaticAssetViewController extends AbstractController {
      * Converts the given request parameter map into a single key-value map. This will also strip parameters that do not
      * conform to existing application-configured named operations according to {@link #allowUnnamedImageManipulation} that
      * appear in {@link NamedOperationManager#getNamedOperationComponents()}
+     *
      * @param parameterMap
      * @return
      */
@@ -98,8 +99,8 @@ public class StaticAssetViewController extends AbstractController {
                 if (getAllowUnnamedImageManipulation()) {
                     convertedMap.put(entry.getKey(), StringUtils.join(entry.getValue(), ','));
                 } else {
-                    LOG.debug("Stripping URL image manipulation parameter " + entry.getKey() + " as it is not a known named"
-                            + " operation.");
+                    LOG.debug("Stripping URL image manipulation parameter " + entry.getKey()
+                            + " as it is not a known named operation.");
                 }
             }
         }
@@ -111,7 +112,8 @@ public class StaticAssetViewController extends AbstractController {
         boolean parameterWithinNamedOperations = false;
         for (NamedOperationComponent component : namedOperationManager.getNamedOperationComponents()) {
             if (component.getClass().isAssignableFrom(StaticMapNamedOperationComponent.class)) {
-                parameterWithinNamedOperations = ((StaticMapNamedOperationComponent) component).getNamedOperations().containsKey(parameter);
+                parameterWithinNamedOperations = ((StaticMapNamedOperationComponent) component).getNamedOperations()
+                        .containsKey(parameter);
             }
             if (parameterWithinNamedOperations) {
                 break;
@@ -124,12 +126,11 @@ public class StaticAssetViewController extends AbstractController {
      * Process the static asset request by determining the asset name.
      * Checks the current sandbox for a matching asset.   If not found, checks the
      * production sandbox.
-     *
+     * <p>
      * The view portion will be handled by a component with the name "blStaticAssetView" This is
      * intended to be the specific class StaticAssetView.
      *
      * @see StaticAssetView
-     *
      * @see #handleRequest
      */
     @Override
@@ -141,7 +142,9 @@ public class StaticAssetViewController extends AbstractController {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         context.setNonPersistentSite(siteResolver.resolveSite(new ServletWebRequest(request, response)));
         try {
-            Map<String, String> model = staticAssetStorageService.getCacheFileModel(fullUrl, convertParameterMap(request.getParameterMap()));
+            Map<String, String> model = staticAssetStorageService.getCacheFileModel(
+                    fullUrl, convertParameterMap(request.getParameterMap())
+            );
             View assetView = appCtx.getBean(viewResolverName, View.class);
             return new ModelAndView(assetView, model);
         } catch (AssetNotFoundException e) {
@@ -149,7 +152,8 @@ public class StaticAssetViewController extends AbstractController {
             return null;
         } catch (FileNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            LOG.error("Could not retrieve asset request " + fullUrl + " from the StaticAssetStorage. The underlying file path checked was " + e.getMessage());
+            LOG.error("Could not retrieve asset request " + fullUrl
+                    + " from the StaticAssetStorage. The underlying file path checked was " + e.getMessage());
             return null;
         } catch (Exception e) {
             LOG.error("Unable to retrieve static asset", e);
@@ -163,15 +167,14 @@ public class StaticAssetViewController extends AbstractController {
         String fileName = requestURI;
         if (assetServerUrlPrefix != null) {
             int pos = fileName.indexOf(assetServerUrlPrefix);
-            fileName = fileName.substring(pos+assetServerUrlPrefix.length());
+            fileName = fileName.substring(pos + assetServerUrlPrefix.length());
 
-            if (! fileName.startsWith("/")) {
-                fileName = "/"+fileName;
+            if (!fileName.startsWith("/")) {
+                fileName = "/" + fileName;
             }
         }
 
         return fileName;
-
     }
 
     public boolean getAllowUnnamedImageManipulation() {
@@ -193,4 +196,5 @@ public class StaticAssetViewController extends AbstractController {
     public void setViewResolverName(String viewResolverName) {
         this.viewResolverName = viewResolverName;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -45,7 +45,7 @@ public class GenericCookieUtilsImpl implements CookieUtils {
     public Boolean shouldUseSecureCookieIfApplicable() {
         return systemPropertiesService.resolveBooleanSystemProperty("cookies.use.secure", false);
     }
-    
+
     @Override
     public String getCookieValue(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
@@ -60,9 +60,16 @@ public class GenericCookieUtilsImpl implements CookieUtils {
 
         return null;
     }
-    
+
     @Override
-    public void setCookieValue(HttpServletResponse response, String cookieName, String cookieValue, String path, Integer maxAge, Boolean isSecure) {
+    public void setCookieValue(
+            HttpServletResponse response,
+            String cookieName,
+            String cookieValue,
+            String path,
+            Integer maxAge,
+            Boolean isSecure
+    ) {
         if (StringUtils.isBlank(cookieValue)) {
             cookieValue = COOKIE_INVALIDATION_PLACEHOLDER_VALUE;
             maxAge = 0;
@@ -73,7 +80,7 @@ public class GenericCookieUtilsImpl implements CookieUtils {
         if (maxAge != null) {
             cookie.setMaxAge(maxAge);
         }
-        
+
         if (shouldUseSecureCookieIfApplicable()) {
             cookie.setSecure(isSecure);
         } else {
@@ -82,16 +89,16 @@ public class GenericCookieUtilsImpl implements CookieUtils {
         }
 
         final StringBuffer sb = new StringBuffer();
-        ServerCookie.appendCookieValue
-        (sb, cookie.getVersion(), cookie.getName(), cookie.getValue(),
-                cookie.getPath(), cookie.getDomain(), cookie.getComment(),
-                cookie.getMaxAge(), cookie.getSecure(), true);
+        ServerCookie.appendCookieValue(
+                sb, cookie.getVersion(), cookie.getName(), cookie.getValue(), cookie.getPath(), cookie.getDomain(),
+                cookie.getComment(), cookie.getMaxAge(), cookie.getSecure(), true
+        );
         //if we reached here, no exception, cookie is valid
         // the header name is Set-Cookie for both "old" and v.1 ( RFC2109 )
         // RFC2965 is not supported by browsers and the Servlet spec
         // asks for 2109.
 
-        if (isSecure){
+        if (isSecure) {
             sb.append("; SameSite=None");
         }
 
@@ -101,13 +108,14 @@ public class GenericCookieUtilsImpl implements CookieUtils {
             if (cookieValuePattern.matcher(canonicalize).matches()) {
                 response.addHeader("Set-Cookie", canonicalize);
             } else {
-                LOG.warn("Attempt to set Cookie[" + cookieName + "]=" + string + " . It doesn't match allowed pattern and this is considered security rules violation");
+                LOG.warn("Attempt to set Cookie[" + cookieName + "]=" + string
+                        + " . It doesn't match allowed pattern and this is considered security rules violation");
             }
         } else {
             LOG.warn("Attempt to set Cookie name:" + cookieName + " cookie length exceeds 4096");
         }
     }
-    
+
     @Override
     public void setCookieValue(HttpServletResponse response, String cookieName, String cookieValue) {
         setCookieValue(response, cookieName, cookieValue, "/", null, false);

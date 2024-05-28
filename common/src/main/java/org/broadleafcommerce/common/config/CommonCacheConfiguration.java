@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,21 +23,28 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuration class for defining cache regions via Java config when either not using ehcache or when jcache.create.cache.forceJavaConfig is true
- * 
- * @author Jay Aisenbrey (cja769)
  *
+ * @author Jay Aisenbrey (cja769)
  */
 @Configuration
 public class CommonCacheConfiguration {
 
     @Bean
     public JCacheRegionConfiguration defaultUpdateTimestampsRegion() {
-        return new JCacheRegionConfiguration("default-update-timestamps-region", -1, 5000);
+        return new JCacheRegionConfiguration(
+                "default-update-timestamps-region",
+                -1,
+                5000
+        );
     }
 
     @Bean
     public JCacheRegionConfiguration defaultQueryResultsRegion() {
-        return new JCacheRegionConfiguration("default-query-results-region", 600, 1000);
+        return new JCacheRegionConfiguration(
+                "default-query-results-region",
+                600,
+                1000
+        );
     }
 
     @Bean
@@ -132,32 +139,56 @@ public class CommonCacheConfiguration {
 
     @Bean
     public JCacheRegionConfiguration blTranslationElements() {
-        return new JCacheRegionConfiguration("blTranslationElements", 3600, 10000000);
+        return new JCacheRegionConfiguration(
+                "blTranslationElements",
+                3600,
+                10000000
+        );
     }
 
     @Bean
     public JCacheRegionConfiguration blBatchTranslationCache() {
-        return new JCacheRegionConfiguration("blBatchTranslationCache", -1, 10000);
+        return new JCacheRegionConfiguration(
+                "blBatchTranslationCache",
+                -1,
+                10000
+        );
     }
 
     @Bean
     public JCacheRegionConfiguration blConfigurationModuleElements() {
-        return new JCacheRegionConfiguration("blConfigurationModuleElements", 600, 1000);
+        return new JCacheRegionConfiguration(
+                "blConfigurationModuleElements",
+                600,
+                1000
+        );
     }
 
     @Bean
     public JCacheRegionConfiguration queryConfigurationModuleElements() {
-        return new JCacheRegionConfiguration("query.ConfigurationModuleElements", 600, 1000);
+        return new JCacheRegionConfiguration(
+                "query.ConfigurationModuleElements",
+                600,
+                1000
+        );
     }
 
     @Bean
     public JCacheRegionConfiguration blSystemPropertyElements() {
-        return new JCacheRegionConfiguration("blSystemPropertyElements", 600, 1000);
+        return new JCacheRegionConfiguration(
+                "blSystemPropertyElements",
+                600,
+                1000
+        );
     }
 
     @Bean
     public JCacheRegionConfiguration blSystemPropertyNullCheckCache() {
-        return new JCacheRegionConfiguration("blSystemPropertyNullCheckCache", 600, 1000);
+        return new JCacheRegionConfiguration(
+                "blSystemPropertyNullCheckCache",
+                600,
+                1000
+        );
     }
 
     @Bean
@@ -167,12 +198,20 @@ public class CommonCacheConfiguration {
 
     @Bean
     public JCacheRegionConfiguration blResourceCacheElements() {
-        return new JCacheRegionConfiguration("blResourceCacheElements", 86400, 1000);
+        return new JCacheRegionConfiguration(
+                "blResourceCacheElements",
+                86400,
+                1000
+        );
     }
 
     @Bean
     public JCacheRegionConfiguration blResourceTransformerCacheElements() {
-        return new JCacheRegionConfiguration("blResourceTransformerCacheElements", 86400, 1000);
+        return new JCacheRegionConfiguration(
+                "blResourceTransformerCacheElements",
+                86400,
+                1000
+        );
     }
 
     @Bean
@@ -212,7 +251,11 @@ public class CommonCacheConfiguration {
 
     @Bean
     public JCacheRegionConfiguration blDataDrivenEnumeration() {
-        return new JCacheRegionConfiguration("blDataDrivenEnumeration", 86400, 1000);
+        return new JCacheRegionConfiguration(
+                "blDataDrivenEnumeration",
+                86400,
+                1000
+        );
     }
 
     @Bean

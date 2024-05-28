@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,8 +33,9 @@ import java.util.Map;
 
 public class PersistencePackage implements Serializable, StateDescriptor {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     protected String ceilingEntityFullyQualifiedClassname;
     protected String securityCeilingEntityFullyQualifiedClassname;
     protected String sectionEntityField;
@@ -43,10 +45,10 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     protected Entity entity;
     protected String csrfToken;
     protected String requestingEntityName;
-    protected Map<String, PersistencePackage> subPackages = new LinkedHashMap<String, PersistencePackage>();
+    protected Map<String, PersistencePackage> subPackages = new LinkedHashMap<>();
     protected boolean validateUnsubmittedProperties = true;
     protected SectionCrumb[] sectionCrumbs;
-    protected Map<ChangeType, List<PersistencePackage>> deferredOperations = new LinkedHashMap<ChangeType, List<PersistencePackage>>();
+    protected Map<ChangeType, List<PersistencePackage>> deferredOperations = new LinkedHashMap<>();
 
     //internalUsage
     protected boolean isProcessedInternal = false;
@@ -55,11 +57,31 @@ public class PersistencePackage implements Serializable, StateDescriptor {
 
     protected boolean isAddOperationInspect = false;
 
-    public PersistencePackage(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
-        this(ceilingEntityFullyQualifiedClassname, null, entity, persistencePerspective, customCriteria, csrfToken);
+    public PersistencePackage(
+            String ceilingEntityFullyQualifiedClassname,
+            Entity entity,
+            PersistencePerspective persistencePerspective,
+            String[] customCriteria,
+            String csrfToken
+    ) {
+        this(
+                ceilingEntityFullyQualifiedClassname,
+                null,
+                entity,
+                persistencePerspective,
+                customCriteria,
+                csrfToken
+        );
     }
-    
-    public PersistencePackage(String ceilingEntityFullyQualifiedClassname, String fetchTypeFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria, String csrfToken) {
+
+    public PersistencePackage(
+            String ceilingEntityFullyQualifiedClassname,
+            String fetchTypeFullyQualifiedClassname,
+            Entity entity,
+            PersistencePerspective persistencePerspective,
+            String[] customCriteria,
+            String csrfToken
+    ) {
         this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
         this.fetchTypeFullyQualifiedClassname = fetchTypeFullyQualifiedClassname;
         this.persistencePerspective = persistencePerspective;
@@ -67,7 +89,7 @@ public class PersistencePackage implements Serializable, StateDescriptor {
         this.customCriteria = customCriteria;
         this.csrfToken = csrfToken;
     }
-    
+
     public PersistencePackage() {
         //do nothing
     }
@@ -90,12 +112,12 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     public String getCeilingEntityFullyQualifiedClassname() {
         return ceilingEntityFullyQualifiedClassname;
     }
-    
+
     public void setCeilingEntityFullyQualifiedClassname(
             String ceilingEntityFullyQualifiedClassname) {
         this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
     }
-    
+
     public String getSecurityCeilingEntityFullyQualifiedClassname() {
         if (StringUtils.isBlank(securityCeilingEntityFullyQualifiedClassname)) {
             return ceilingEntityFullyQualifiedClassname;
@@ -111,16 +133,16 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     public PersistencePerspective getPersistencePerspective() {
         return persistencePerspective;
     }
-    
+
     public void setPersistencePerspective(
             PersistencePerspective persistencePerspective) {
         this.persistencePerspective = persistencePerspective;
     }
-    
+
     public String[] getCustomCriteria() {
         return customCriteria;
     }
-    
+
     public void setCustomCriteria(String[] customCriteria) {
         this.customCriteria = customCriteria;
     }
@@ -143,11 +165,11 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     public boolean containsCriteria(String criteria) {
         return ArrayUtils.contains(customCriteria, criteria);
     }
-    
+
     public Entity getEntity() {
         return entity;
     }
-    
+
     public void setEntity(Entity entity) {
         this.entity = entity;
     }
@@ -188,7 +210,7 @@ public class PersistencePackage implements Serializable, StateDescriptor {
         if (persistencePerspective != null) {
             return persistencePerspective.getPersistencePerspectiveItems();
         }
-        return new HashMap<PersistencePerspectiveItemType, PersistencePerspectiveItem>();
+        return new HashMap<>();
     }
 
     public Map<String, PersistencePackage> getSubPackages() {
@@ -219,7 +241,7 @@ public class PersistencePackage implements Serializable, StateDescriptor {
         if (ArrayUtils.isEmpty(sectionCrumbs)) {
             return new SectionCrumb();
         } else {
-            SectionCrumb previous = sectionCrumbs[sectionCrumbs.length-1];
+            SectionCrumb previous = sectionCrumbs[sectionCrumbs.length - 1];
             for (SectionCrumb sectionCrumb : sectionCrumbs) {
                 if (sectionCrumb.getSectionIdentifier().equals(myCeiling)) {
                     break;
@@ -235,7 +257,7 @@ public class PersistencePackage implements Serializable, StateDescriptor {
         if (ArrayUtils.isEmpty(sectionCrumbs)) {
             return new SectionCrumb();
         }
-        return sectionCrumbs[sectionCrumbs.length-1];
+        return sectionCrumbs[sectionCrumbs.length - 1];
     }
 
     public SectionCrumb getTopCrumb() {
@@ -262,7 +284,7 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     public void addDeferredOperation(ChangeType changeType, PersistencePackage persistencePackage) {
         List<PersistencePackage> changes;
         if (!deferredOperations.containsKey(changeType)) {
-            changes = new ArrayList<PersistencePackage>();
+            changes = new ArrayList<>();
             deferredOperations.put(changeType, changes);
         } else {
             changes = deferredOperations.get(changeType);
@@ -308,8 +330,8 @@ public class PersistencePackage implements Serializable, StateDescriptor {
     public String toString() {
         final StringBuilder sb = new StringBuilder("PersistencePackage{");
         sb.append("ceilingEntityFullyQualifiedClassname='").append(ceilingEntityFullyQualifiedClassname).append('\'');
-        sb.append(", securityCeilingEntityFullyQualifiedClassname='").append
-                (securityCeilingEntityFullyQualifiedClassname).append('\'');
+        sb.append(", securityCeilingEntityFullyQualifiedClassname='")
+                .append(securityCeilingEntityFullyQualifiedClassname).append('\'');
         sb.append(", sectionEntityField='").append(sectionEntityField).append('\'');
         sb.append(", fetchTypeFullyQualifiedClassname='").append(fetchTypeFullyQualifiedClassname).append('\'');
         sb.append(", persistencePerspective=").append(persistencePerspective);
@@ -363,4 +385,5 @@ public class PersistencePackage implements Serializable, StateDescriptor {
         result = 31 * result + (csrfToken != null ? csrfToken.hashCode() : 0);
         return result;
     }
+
 }

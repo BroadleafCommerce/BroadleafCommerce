@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,14 +29,13 @@ import java.util.Map;
 
 /**
  * Only the product is required to add an item to an order.
- *
+ * <p>
  * The category can be inferred from the product's default category.
- *
+ * <p>
  * The sku can be inferred from either the passed in attributes as they are compared to the product's options or
  * the sku can be determined from the product's default sku.
- *
+ * <p>
  * Personal message is optional.
- *
  */
 public abstract class AbstractOrderItemRequest {
 
@@ -48,8 +47,8 @@ public abstract class AbstractOrderItemRequest {
     protected Money salePriceOverride;
     protected Money retailPriceOverride;
     protected PersonalMessage personalMessage;
-    protected Map<String,String> itemAttributes = new HashMap<String,String>();
-    protected Map<String,String> additionalAttributes = new HashMap<String,String>();
+    protected Map<String, String> itemAttributes = new HashMap<>();
+    protected Map<String, String> additionalAttributes = new HashMap<>();
 
     public Sku getSku() {
         return sku;
@@ -74,13 +73,13 @@ public abstract class AbstractOrderItemRequest {
     public void setProduct(Product product) {
         this.product = product;
     }
-    
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-    
+
     public Order getOrder() {
         return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public int getQuantity() {
@@ -173,4 +172,5 @@ public abstract class AbstractOrderItemRequest {
     public void setPersonalMessage(PersonalMessage personalMessage) {
         this.personalMessage = personalMessage;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,16 +32,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-    private String defaultFailureUrl;
-
     /**
      * Maps the fully-qualified classname of an exception thrown during an authentication failure to a view
      * to use as the destination. If the exception is not mapped, the defaultFailureUrl will be used.
      * <p>
-     *     Example of what you can add in your app's security configuration to map 
-     *     {@link org.springframework.security.authentication.CredentialsExpiredException} to "/login/forcedPasswordChange":
-     *     
-     *     <pre>
+     * Example of what you can add in your app's security configuration to map
+     * {@link org.springframework.security.authentication.CredentialsExpiredException} to "/login/forcedPasswordChange":
+     *
+     * <pre>
      *      @Bean
      *      protected AuthenticationFailureHandler blAuthenticationFailureHandler(@Qualifier("blAuthenticationFailureRedirectStrategy") RedirectStrategy redirectStrategy) {
      *          final BroadleafAuthenticationFailureHandler response = new BroadleafAuthenticationFailureHandler("/login?error=true");
@@ -57,6 +55,7 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
      * </p>
      */
     private final Map<String, String> failureUrlMap = new HashMap<>();
+    private String defaultFailureUrl;
 
     public BroadleafAuthenticationFailureHandler() {
         super();
@@ -68,7 +67,11 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
     }
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException exception
+    ) throws IOException, ServletException {
         final String failureUrlParam = StringUtil.cleanseUrlString(request.getParameter("failureUrl"));
         String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
         String failureUrl = StringUtils.trimToNull(failureUrlParam);
@@ -82,11 +85,11 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
             final String exceptionClassname = exception.getClass().getName();
             failureUrl = StringUtils.trimToNull(failureUrlMap.get(exceptionClassname));
         }
-        
+
         if (failureUrl == null) {
             failureUrl = StringUtils.trimToNull(defaultFailureUrl);
         }
-        
+
         if (failureUrl != null) {
             if (StringUtils.isNotEmpty(successUrlParam)) {
                 if (!failureUrl.contains("?")) {
@@ -95,7 +98,7 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
                     failureUrl += "&successUrl=" + successUrlParam;
                 }
             }
-            
+
             saveException(request, exception);
             getRedirectStrategy().sendRedirect(request, response, failureUrl);
         } else {
@@ -109,7 +112,7 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
                 return null;
             }
         }
-        
+
         return url;
     }
 

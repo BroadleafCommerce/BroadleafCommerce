@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,7 +51,9 @@ public class NotificationForgotUsernameEventListener extends AbstractBroadleafAp
         Map<String, Object> context = createContext(event);
 
         try {
-            notificationDispatcher.dispatchNotification(new EmailNotification(event.getEmailAddress(), NotificationEventType.FORGOT_USERNAME, context));
+            notificationDispatcher.dispatchNotification(
+                    new EmailNotification(event.getEmailAddress(), NotificationEventType.FORGOT_USERNAME, context)
+            );
         } catch (ServiceException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Unable to send a forgot username email for " + event.getEmailAddress(), e);
@@ -59,7 +61,9 @@ public class NotificationForgotUsernameEventListener extends AbstractBroadleafAp
         }
 
         try {
-            notificationDispatcher.dispatchNotification(new SMSNotification(event.getPhoneNumber(), NotificationEventType.FORGOT_USERNAME, context));
+            notificationDispatcher.dispatchNotification(
+                    new SMSNotification(event.getPhoneNumber(), NotificationEventType.FORGOT_USERNAME, context)
+            );
         } catch (ServiceException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Unable to send a forgot username sms for " + event.getPhoneNumber(), e);
@@ -77,4 +81,5 @@ public class NotificationForgotUsernameEventListener extends AbstractBroadleafAp
     public boolean isAsynchronous() {
         return true;
     }
+
 }

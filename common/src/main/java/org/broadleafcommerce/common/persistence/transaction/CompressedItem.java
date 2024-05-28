@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,6 +33,18 @@ import java.util.zip.GZIPOutputStream;
  * @author Jeff Fischer
  */
 public class CompressedItem {
+
+    protected byte[] compressed;
+    protected boolean decompressInToString = true;
+
+    public CompressedItem(String start, boolean decompressInToString) throws IOException {
+        this.decompressInToString = decompressInToString;
+        this.compressed = compress(start);
+    }
+    public CompressedItem(byte[] compressed, boolean decompressInToString) {
+        this.decompressInToString = decompressInToString;
+        this.compressed = compressed;
+    }
 
     public static byte[] compress(final String str) throws IOException {
         if ((str == null) || (str.length() == 0)) {
@@ -58,19 +70,6 @@ public class CompressedItem {
             sb.append("\n");
         }
         return sb.toString();
-    }
-
-    protected byte[] compressed;
-    protected boolean decompressInToString = true;
-
-    public CompressedItem(String start, boolean decompressInToString) throws IOException {
-        this.decompressInToString = decompressInToString;
-        this.compressed = compress(start);
-    }
-
-    public CompressedItem(byte[] compressed, boolean decompressInToString) {
-        this.decompressInToString = decompressInToString;
-        this.compressed = compressed;
     }
 
     public String decompress() throws IOException {
@@ -99,8 +98,9 @@ public class CompressedItem {
                 //do nothing
             }
         } else {
-            response = compressed!=null?new String(Base64.encode(compressed)):"" + "\n";
+            response = compressed != null ? new String(Base64.encode(compressed)) : "" + "\n";
         }
         return response;
     }
+
 }

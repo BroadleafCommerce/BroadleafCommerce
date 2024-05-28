@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,9 +46,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
- *
  * @author jfischer
- *
  */
 public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
 
@@ -62,7 +60,7 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
         try {
             List<String> mappingFiles = new ArrayList<>(20);
             ResourceInputStream[] inMemoryStreams = new ResourceInputStream[sources.length];
-            for (int j=0;j<sources.length;j++){
+            for (int j = 0; j < sources.length; j++) {
                 byte[] sourceArray = buildArrayFromStream(sources[j]);
                 compileMappingFiles(mappingFiles, sourceArray);
                 inMemoryStreams[j] = new ResourceInputStream(new ByteArrayInputStream(sourceArray), sources[j].getName());
@@ -98,7 +96,9 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
             throw new FatalBeanException("Unable to merge source and patch locations", e);
         } finally {
             if (merged != null) {
-                try{ merged.close(); } catch (Throwable e) {
+                try {
+                    merged.close();
+                } catch (Throwable e) {
                     LOG.error("Unable to merge source and patch locations", e);
                 }
             }
@@ -107,7 +107,10 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
         return configResource;
     }
 
-    private void compileMappingFiles(List<String> mappingFiles, byte[] sourceArray) throws IOException, ParserConfigurationException, SAXException {
+    protected void compileMappingFiles(
+            List<String> mappingFiles,
+            byte[] sourceArray
+    ) throws IOException, ParserConfigurationException, SAXException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         // Disable DTDs to prevent XXE attack
@@ -121,10 +124,11 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
         NodeList nodes = dom.getElementsByTagName("/persistence/persistence-unit/mapping-file");
         if (nodes != null && nodes.getLength() > 0) {
             int length = nodes.getLength();
-            for (int j=0;j<length;j++){
+            for (int j = 0; j < length; j++) {
                 Node node = nodes.item(j);
                 mappingFiles.add(node.getNodeValue());
             }
         }
     }
+
 }

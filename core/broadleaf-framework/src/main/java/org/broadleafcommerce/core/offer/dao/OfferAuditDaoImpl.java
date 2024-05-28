@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,16 +50,16 @@ import jakarta.persistence.criteria.Root;
 
 @Repository("blOfferAuditDao")
 public class OfferAuditDaoImpl implements OfferAuditDao {
-    
+
     protected static final Log LOG = LogFactory.getLog(OfferAuditDaoImpl.class);
 
     private static final Long NULL_ACCOUNT_ID = null;
     private static final Long NULL_CUSTOMER_ID = null;
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     protected Long currentDateResolution = 3600000L;
@@ -83,11 +83,11 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Override
     public void delete(final OfferAudit offerAudit) {
         OfferAudit loa = offerAudit;
-        
+
         if (!em.contains(loa)) {
             loa = readAuditById(offerAudit.getId());
         }
-        
+
         em.remove(loa);
     }
 
@@ -121,7 +121,13 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         return countUsesByAccountOrCustomer(order, customerId, NULL_ACCOUNT_ID, offerId, minimumDaysPerUsage);
     }
 
-    protected Long countUsesByAccountOrCustomer(Order order, Long customerId, Long accountId, Long offerId, Long minimumDaysPerUsage) {
+    protected Long countUsesByAccountOrCustomer(
+            Order order,
+            Long customerId,
+            Long accountId,
+            Long offerId,
+            Long minimumDaysPerUsage
+    ) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<OfferAuditImpl> root = criteria.from(OfferAuditImpl.class);
@@ -145,19 +151,19 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
         List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(
-            builder.and(
-                customerOrAccountPredicate,
-                builder.equal(root.get("offerId"), offerId),
-                builder.or(
-                    builder.isNull(root.get("orderId")),
-                    builder.and(
-                        builder.notEqual(root.get("orderId"), getOrderId(order)),
-                        builder.notEqual(orderRoot.get("status"),OrderStatus.CANCELLED.getType()),
-                        builder.equal(orderRoot.get("id"),root.get("orderId"))
-                    )
-                ),
-                getOmsOrderPredicate(builder, orderRoot, parentOrder)
-            )
+                builder.and(
+                        customerOrAccountPredicate,
+                        builder.equal(root.get("offerId"), offerId),
+                        builder.or(
+                                builder.isNull(root.get("orderId")),
+                                builder.and(
+                                        builder.notEqual(root.get("orderId"), getOrderId(order)),
+                                        builder.notEqual(orderRoot.get("status"), OrderStatus.CANCELLED.getType()),
+                                        builder.equal(orderRoot.get("id"), root.get("orderId"))
+                                )
+                        ),
+                        getOmsOrderPredicate(builder, orderRoot, parentOrder)
+                )
         );
 
         if (minimumDaysPerUsage != null && minimumDaysPerUsage != 0L) {
@@ -181,7 +187,11 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         }
     }
 
-    protected Predicate getOmsOrderPredicate(CriteriaBuilder builder, Root<OrderImpl> orderRoot, Join<Object, Object> parentOrder) {
+    protected Predicate getOmsOrderPredicate(
+            CriteriaBuilder builder,
+            Root<OrderImpl> orderRoot,
+            Join<Object, Object> parentOrder
+    ) {
         if (ModulePresentUtil.isPresent(BroadleafModuleRegistration.BroadleafModuleEnum.OMS)) {
             return builder.or(
                     builder.isNull(orderRoot.get("embeddedOmsOrder").get("parentOrder")),
@@ -195,7 +205,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     protected Long getOrderId(Order order) {
         return order.getId();
     }
-    
+
     @Deprecated
     @Override
     public Long countUsesByCustomer(Long customerId, Long offerId) {
@@ -233,7 +243,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
             return null;
         }
     }
-    
+
     @Deprecated
     @Override
     public Long countOfferCodeUses(Long offerCodeId) {
@@ -249,7 +259,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         TypedQuery<OfferAudit> query = new TypedQueryBuilder<>(OfferAuditImpl.class, "offerAudit", OfferAudit.class)
                 .addRestriction("offerAudit.orderId", "=", orderId)
                 .toQuery(em);
-        
+
         return query.getResultList();
     }
 

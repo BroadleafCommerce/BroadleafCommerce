@@ -10,25 +10,22 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.file.service;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-
 /**
- * This class serves as a marker interface to indicate that the resource comes from a shared area of the 
+ * This class serves as a marker interface to indicate that the resource comes from a shared area of the
  * filesystem.    It allows multi-site implementations to only generate one copy of assets that are being
  * resized.
- * 
- * @author bpolster
  *
+ * @author bpolster
  */
 public class GloballySharedInputStream extends InputStream {
 

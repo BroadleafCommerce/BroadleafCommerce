@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.web.payment.expression;
 
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
@@ -45,11 +44,10 @@ import jakarta.annotation.Resource;
  * etc...
  * </code></pre>
  *
+ * @author Elbert Bautista (elbertbautista)
  * @see {@link org.broadleafcommerce.common.payment.dto.PaymentRequestDTO}
  * @see {@link org.broadleafcommerce.common.payment.dto.CreditCardDTO}
  * @see {@link org.broadleafcommerce.common.payment.dto.AddressDTO}
- *
- * @author Elbert Bautista (elbertbautista)
  */
 @Component("blpaymentGatewayFieldVariableExpression")
 @ConditionalOnTemplating
@@ -77,4 +75,5 @@ public class PaymentGatewayFieldVariableExpression implements BroadleafVariableE
     public void setExtensionManager(PaymentGatewayFieldExtensionManager extensionManager) {
         this.extensionManager = extensionManager;
     }
+
 }

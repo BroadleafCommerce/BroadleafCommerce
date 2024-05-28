@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,40 +22,36 @@ import java.io.IOException;
 import jakarta.servlet.ServletException;
 
 /**
- * @deprecated
- * 
- * This interface is intended for use by processors that will determine whether a given URL
+ * @deprecated This interface is intended for use by processors that will determine whether a given URL
  * requires special treatment.
- *
+ * <p>
  * Specifically, certain URLs refer to custom managed content pages.   Others are setup as
  * SEO friendly URLs for products.
- *
+ * <p>
  * The {@code ProcessURLFilter} will check it's internal cache to determine which URL processor
  * should be invoked for a passed in URL.  If it is unable to find a matching processor in cache,
  * then it will call each processor in turn to provide an attempt to process the URL.
- *
+ * <p>
  * Created by bpolster.
  */
 public interface URLProcessor {
 
-
     /**
      * Implementors of this interface will return true if they are able to process the
      * passed in request.
-     *
+     * <p>
      * Implementors of this method will need to rely on the BroadleafRequestContext class
      * which provides access to the current sandbox, locale, request, and response via a
      * threadlocal context
      *
      * @param key
-     *
      * @return true if the passed in key can be processed by this processor.
      */
     boolean canProcessURL(String key);
 
     /**
      * Implementers of this interface will process the passed in request.
-     *
+     * <p>
      * Implementors of this method will need to rely on the BroadleafRequestContext class
      * which provides access to the current sandbox, locale, request, and response via a
      * threadlocal context
@@ -65,4 +61,5 @@ public interface URLProcessor {
      * @throws ServletException
      */
     boolean processURL(String key) throws IOException, ServletException;
+
 }

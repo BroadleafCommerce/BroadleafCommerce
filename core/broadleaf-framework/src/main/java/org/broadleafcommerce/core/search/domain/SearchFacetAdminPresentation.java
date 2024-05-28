@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,57 +26,54 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
  * @author Jon Fleschler (jfleschler)
  */
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
-    tabs = {
-        @AdminTabPresentation(name = SearchFacetAdminPresentation.TabName.General,
-            order = SearchFacetAdminPresentation.TabOrder.General,
-                groups = {
-                        @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.General,
-                                order = SearchFacetAdminPresentation.GroupOrder.General,
-                                untitled = true),
-                        @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.Ranges,
-                                order = SearchFacetAdminPresentation.GroupOrder.Ranges),
-                        @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.Options,
-                                order = SearchFacetAdminPresentation.GroupOrder.Options,
-                                column = 1)
-                }
-        ),
-            @AdminTabPresentation(name = SearchFacetAdminPresentation.TabName.Dependent,
-            order = SearchFacetAdminPresentation.TabOrder.Dependent,
-            groups = {
-                    @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.Dependent,
-                            order = SearchFacetAdminPresentation.GroupOrder.Dependent,
-                            untitled = true)
-            }
-        )
-    }
+        tabs = {
+                @AdminTabPresentation(name = SearchFacetAdminPresentation.TabName.General,
+                        order = SearchFacetAdminPresentation.TabOrder.General,
+                        groups = {
+                                @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.General,
+                                        order = SearchFacetAdminPresentation.GroupOrder.General,
+                                        untitled = true),
+                                @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.Ranges,
+                                        order = SearchFacetAdminPresentation.GroupOrder.Ranges),
+                                @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.Options,
+                                        order = SearchFacetAdminPresentation.GroupOrder.Options,
+                                        column = 1)
+                        }
+                ),
+                @AdminTabPresentation(name = SearchFacetAdminPresentation.TabName.Dependent,
+                        order = SearchFacetAdminPresentation.TabOrder.Dependent,
+                        groups = {
+                                @AdminGroupPresentation(name = SearchFacetAdminPresentation.GroupName.Dependent,
+                                        order = SearchFacetAdminPresentation.GroupOrder.Dependent,
+                                        untitled = true)
+                        }
+                )
+        }
 )
-
 public interface SearchFacetAdminPresentation {
 
-    public static class TabName {
+    class TabName {
         public static final String General = "General";
         public static final String Dependent = "SearchFacetImpl_Dependent_Tab";
     }
 
-    public static class TabOrder {
+    class TabOrder {
         public static final int General = 1000;
         public static final int Dependent = 2000;
     }
 
-    public static class GroupName {
-
+    class GroupName {
         public static final String General = "General";
         public static final String Ranges = "SearchFacetImpl_ranges";
         public static final String Options = "SearchFacetImpl_options";
         public static final String Dependent = "SearchFacetImpl_dependent";
     }
 
-    public static class GroupOrder {
-
+    class GroupOrder {
         public static final int General = 1000;
         public static final int Ranges = 2000;
         public static final int Options = 3000;
         public static final int Dependent = 1000;
-
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,9 +41,9 @@ public interface TemplateOnlyQueryExtensionHandler extends ExtensionHandler {
     /**
      * Finish the query - possibly setting parameters
      *
-     * @param type the class type for the query
+     * @param type       the class type for the query
      * @param testObject supporting implementations may use this object to test for possible catalog query optimizations. This value can be null, in which case it is ignored.
-     * @param query the final Query instance to embellish
+     * @param query      the final Query instance to embellish
      * @return
      */
     ExtensionResultStatusType refineQuery(Class<?> type, Object testObject, TypedQuery query);
@@ -52,8 +52,8 @@ public interface TemplateOnlyQueryExtensionHandler extends ExtensionHandler {
      * Add additional restrictions to the fetch query. Use in conjunction with {@link #refineQuery(Class, Object, TypedQuery)} to set
      * actual parameter values before retrieving results.
      *
-     * @param type the class type for the query
-     * @param testObject supporting implementations may use this object to test for possible catalog query optimizations. This value can be null, in which case it is ignored.
+     * @param type         the class type for the query
+     * @param testObject   supporting implementations may use this object to test for possible catalog query optimizations. This value can be null, in which case it is ignored.
      * @param builder
      * @param criteria
      * @param root
@@ -61,7 +61,7 @@ public interface TemplateOnlyQueryExtensionHandler extends ExtensionHandler {
      * @return the status of the extension operation
      */
     ExtensionResultStatusType refineParameterRetrieve(Class<?> type, Object testObject, CriteriaBuilder builder,
-                                             CriteriaQuery criteria, Root root, List<Predicate> restrictions);
+                                                      CriteriaQuery criteria, Root root, List<Predicate> restrictions);
 
     /**
      * Perform any setup operations. This is usually done before executing the query and can serve to prepare the BroadleafRequestContext (if applicable).
@@ -82,11 +82,11 @@ public interface TemplateOnlyQueryExtensionHandler extends ExtensionHandler {
     /**
      * Add sorting to the fetch query
      *
-     * @param type the class type for the query
+     * @param type     the class type for the query
      * @param builder
      * @param criteria
      * @param root
-     * @param sorts any additional JPA order expressions should be added here
+     * @param sorts    any additional JPA order expressions should be added here
      * @return the status of the extension operation
      */
     ExtensionResultStatusType refineOrder(Class<?> type, CriteriaBuilder builder, CriteriaQuery criteria, Root root, List<Order> sorts);
@@ -109,11 +109,11 @@ public interface TemplateOnlyQueryExtensionHandler extends ExtensionHandler {
      * site. As a result, we filter here and check the translations based on catalog visibility (Translations are dual
      * discriminated). This is primarily to handle edge cases and will generally have no impact on the results.
      *
-     * @deprecated It's difficult to determine this efficiently at runtime. The current implementation will no longer check the use case described above.
      * @param type
      * @param testObject
      * @param results
      * @return
+     * @deprecated It's difficult to determine this efficiently at runtime. The current implementation will no longer check the use case described above.
      */
     @Deprecated
     ExtensionResultStatusType filterResults(Class<?> type, Object testObject, List results);

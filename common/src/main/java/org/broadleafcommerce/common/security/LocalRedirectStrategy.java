@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,13 +36,13 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class LocalRedirectStrategy implements RedirectStrategy {
 
-    private boolean contextRelative = false;
     private static final Log LOG = LogFactory.getLog(LocalRedirectStrategy.class);
+    private boolean contextRelative = false;
     private boolean enforcePortMatch = false;
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.springframework.security.web.RedirectStrategy#sendRedirect(javax.
      * servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse,
@@ -51,7 +51,8 @@ public class LocalRedirectStrategy implements RedirectStrategy {
     @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
         if (!url.startsWith("/")) {
-            if (StringUtils.equals(request.getParameter("successUrl"), url) || StringUtils.equals(request.getParameter("failureUrl"), url)) {
+            if (StringUtils.equals(request.getParameter("successUrl"), url)
+                    || StringUtils.equals(request.getParameter("failureUrl"), url)) {
                 validateRedirectUrl(request.getContextPath(), url, request.getServerName(), request.getServerPort());
             }
         }
@@ -97,18 +98,18 @@ public class LocalRedirectStrategy implements RedirectStrategy {
      * Insure the url is valid (must begin with http or https) and local to the
      * application
      *
-     * @param contextPath
-     *            the application context path
-     * @param url
-     *            the url to validate
-     * @param requestServerName
-     *            the server name of the request
-     * @param requestServerPort
-     *            the port of the request
-     * @throws MalformedURLException
-     *             if the url is invalid
+     * @param contextPath       the application context path
+     * @param url               the url to validate
+     * @param requestServerName the server name of the request
+     * @param requestServerPort the port of the request
+     * @throws MalformedURLException if the url is invalid
      */
-    private void validateRedirectUrl(String contextPath, String url, String requestServerName, int requestServerPort) throws MalformedURLException {
+    protected void validateRedirectUrl(
+            String contextPath,
+            String url,
+            String requestServerName,
+            int requestServerPort
+    ) throws MalformedURLException {
         URL urlObject = new URL(url);
         if (urlObject.getProtocol().equals("http") || urlObject.getProtocol().equals("https")) {
             if (StringUtils.equals(requestServerName, urlObject.getHost())) {

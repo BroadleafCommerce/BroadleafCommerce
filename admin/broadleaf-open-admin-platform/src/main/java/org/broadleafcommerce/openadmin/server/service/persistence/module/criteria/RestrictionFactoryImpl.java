@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,8 +30,8 @@ import jakarta.annotation.Resource;
 @Service("blRestrictionFactory")
 public class RestrictionFactoryImpl implements RestrictionFactory {
 
-    @Resource(name="blRestrictionFactoryMap")
-    protected Map<String, Restriction> restrictions = new LinkedHashMap<String, Restriction>();
+    @Resource(name = "blRestrictionFactoryMap")
+    protected Map<String, Restriction> restrictions = new LinkedHashMap<>();
 
     public Map<String, Restriction> getRestrictions() {
         return restrictions;
@@ -48,4 +48,5 @@ public class RestrictionFactoryImpl implements RestrictionFactory {
 
         return restriction;
     }
+
 }

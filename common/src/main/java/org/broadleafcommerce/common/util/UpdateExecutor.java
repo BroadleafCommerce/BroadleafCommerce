@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -67,15 +67,22 @@ public class UpdateExecutor {
      * </p>
      * An example looks like: 'UPDATE BLC_SNDBX_WRKFLW_ITEM SET SCHEDULED_DATE = ? WHERE WRKFLW_SNDBX_ITEM_ID IN (%s)'
      *
-     * @param em The entity manager to use for the persistence operation
-     * @param template the overall update sql template. The IN clause parameter should be written using 'IN (%s)'.
+     * @param em         The entity manager to use for the persistence operation
+     * @param template   the overall update sql template. The IN clause parameter should be written using 'IN (%s)'.
      * @param tableSpace optionally provide the table being impacted by this query. This value allows Hibernate to limit the scope of cache region invalidation. Otherwise, if left null, Hibernate will invalidate every cache region, which is generally not desirable. An empty String can be used to signify that no region should be invalidated.
-     * @param params any other params that are present in the sql template, other than the IN clause. Should be written using '?'. Should be in order. Can be null.
-     * @param types the {@link org.hibernate.type.Type} instances that identify the types for the params. Should be in order and match the length of params. Can be null.
-     * @param ids the ids to include in the IN clause.
+     * @param params     any other params that are present in the sql template, other than the IN clause. Should be written using '?'. Should be in order. Can be null.
+     * @param types      the {@link org.hibernate.type.Type} instances that identify the types for the params. Should be in order and match the length of params. Can be null.
+     * @param ids        the ids to include in the IN clause.
      * @return the total number of records updated in the database
      */
-    public static int executeUpdateQuery(EntityManager em, String template, String tableSpace, Object[] params, BasicTypeReference[] types, List<Long> ids) {
+    public static int executeUpdateQuery(
+            EntityManager em,
+            String template,
+            String tableSpace,
+            Object[] params,
+            BasicTypeReference[] types,
+            List<Long> ids
+    ) {
         int response = 0;
         List<Long[]> runs = buildRuns(ids);
         for (Long[] run : runs) {
@@ -108,7 +115,6 @@ public class UpdateExecutor {
     }
 
     /**
-     *
      * @param em
      * @param entityType
      * @param ids
@@ -173,4 +179,5 @@ public class UpdateExecutor {
         }
         return runs;
     }
+
 }

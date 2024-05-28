@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,6 +29,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
@@ -116,17 +117,18 @@ import java.util.Date;
 })
 public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, PromotionMessageAdminPresentation {
 
-    public static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "PromotionMessageId")
+    @GeneratedValue(generator = "PromotionMessageId")
     @GenericGenerator(
-        name="PromotionMessageId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="PromotionMessageImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl")
-        }
+            name = "PromotionMessageId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "PromotionMessageImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.promotionMessage.domain.PromotionMessageImpl")
+            }
     )
     @Column(name = "PROMOTION_MESSAGE_ID")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Id", visibility = VisibilityEnum.HIDDEN_ALL)
@@ -134,17 +136,17 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
 
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Name",
-        tab = TabName.General, tabOrder = TabOrder.General,
-        group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Name,
-        prominent = true, gridOrder = FieldOrder.Name,
-        requiredOverride = RequiredOverride.REQUIRED)
+            tab = TabName.General, tabOrder = TabOrder.General,
+            group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Name,
+            prominent = true, gridOrder = FieldOrder.Name,
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String name;
 
     @Column(name = "PROMOTION_MESSASGE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_message",
-        tab = TabName.General, tabOrder = TabOrder.General,
-        group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Message,
-        prominent = true, gridOrder = FieldOrder.Message)
+            tab = TabName.General, tabOrder = TabOrder.General,
+            group = GroupName.General, groupOrder = GroupOrder.General, order = FieldOrder.Message,
+            prominent = true, gridOrder = FieldOrder.Message)
     protected String message;
 
     @ManyToOne(targetEntity = MediaImpl.class, cascade = {CascadeType.ALL})
@@ -154,53 +156,52 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
 
     @Column(name = "PROMOTION_MESSAGE_PRIORITY")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Priority",
-        tab = TabName.General, tabOrder = TabOrder.General,
-        group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.Priority,
-        tooltip = "PromotionMessageImpl_Priority_Tooltip")
+            tab = TabName.General, tabOrder = TabOrder.General,
+            group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.Priority,
+            tooltip = "PromotionMessageImpl_Priority_Tooltip")
     protected Integer priority;
 
     @Column(name = "START_DATE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_StartDate",
-        tab = TabName.General, tabOrder = TabOrder.General,
-        group = GroupName.ActiveRange, groupOrder = GroupOrder.ActiveRange, order = FieldOrder.StartDate,
-        requiredOverride = RequiredOverride.REQUIRED,
-        defaultValue = "today")
+            tab = TabName.General, tabOrder = TabOrder.General,
+            group = GroupName.ActiveRange, groupOrder = GroupOrder.ActiveRange, order = FieldOrder.StartDate,
+            requiredOverride = RequiredOverride.REQUIRED,
+            defaultValue = "today")
     protected Date startDate;
 
     @Column(name = "END_DATE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_EndDate",
-        tab = TabName.General, tabOrder = TabOrder.General,
-        group = GroupName.ActiveRange, groupOrder = GroupOrder.ActiveRange, order = FieldOrder.EndDate,
-        validationConfigurations = {
-            @ValidationConfiguration(
-                validationImplementation = "blAfterStartDateValidator",
-                configurationItems = {
-                    @ConfigurationItem(itemName = "otherField", itemValue = "startDate")
-                })
-        })
+            tab = TabName.General, tabOrder = TabOrder.General,
+            group = GroupName.ActiveRange, groupOrder = GroupOrder.ActiveRange, order = FieldOrder.EndDate,
+            validationConfigurations = {
+                    @ValidationConfiguration(
+                            validationImplementation = "blAfterStartDateValidator",
+                            configurationItems = {
+                                    @ConfigurationItem(itemName = "otherField", itemValue = "startDate")
+                            })
+            })
     protected Date endDate;
 
     @Column(name = "MESSAGE_PLACEMENT")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_MessagePlacement",
-        tab = TabName.General, tabOrder = TabOrder.General,
-        group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.MessagePlacement,
-        fieldType= SupportedFieldType.BROADLEAF_ENUMERATION,
-        broadleafEnumeration="org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessagePlacementType",
-        defaultValue = "EVERYWHERE",
-        requiredOverride = RequiredOverride.REQUIRED)
+            tab = TabName.General, tabOrder = TabOrder.General,
+            group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.MessagePlacement,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.promotionMessage.domain.type.PromotionMessagePlacementType",
+            defaultValue = "EVERYWHERE",
+            requiredOverride = RequiredOverride.REQUIRED)
     protected String messagePlacement;
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "LOCALE_CODE")
     @AdminPresentation(friendlyName = "PromotionMessageImpl_Locale",
-        tab = TabName.General, tabOrder = TabOrder.General,
-        group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.Locale)
+            tab = TabName.General, tabOrder = TabOrder.General,
+            group = GroupName.Placement, groupOrder = GroupOrder.Placement, order = FieldOrder.Locale)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName")
     protected Locale locale;
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-
 
     @Override
     public Long getId() {
@@ -254,7 +255,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
 
     @Override
     public Date getStartDate() {
-        if ('Y'==getArchived()) {
+        if ('Y' == getArchived()) {
             return null;
         }
         return startDate;
@@ -295,13 +296,13 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
 
     @Override
     public Character getArchived() {
-       ArchiveStatus temp;
-       if (archiveStatus == null) {
-           temp = new ArchiveStatus();
-       } else {
-           temp = archiveStatus;
-       }
-       return temp.getArchived();
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
     }
 
     @Override
@@ -314,7 +315,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
 
     @Override
     public boolean isActive() {
-        return DateUtil.isActive(startDate, endDate, true) && 'Y'!=getArchived();
+        return DateUtil.isActive(startDate, endDate, true) && 'Y' != getArchived();
     }
 
     @Override
@@ -325,29 +326,31 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-            .append(name)
-            .append(message)
-            .append(startDate)
-            .build();
+                .append(name)
+                .append(message)
+                .append(startDate)
+                .build();
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (o != null && getClass().isAssignableFrom(o.getClass())) {
             PromotionMessageImpl that = (PromotionMessageImpl) o;
             return new EqualsBuilder()
-                .append(this.id, that.id)
-                .append(this.name, that.name)
-                .append(this.message, that.message)
-                .append(this.startDate, that.startDate)
-                .build();
+                    .append(this.id, that.id)
+                    .append(this.name, that.name)
+                    .append(this.message, that.message)
+                    .append(this.startDate, that.startDate)
+                    .build();
         }
-        
+
         return false;
     }
 
     @Override
-    public <G extends PromotionMessage> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends PromotionMessage> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -361,6 +364,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
         cloned.setArchived(getArchived());
         cloned.setMedia(getMedia());
 
-        return  createResponse;
+        return createResponse;
     }
+
 }
