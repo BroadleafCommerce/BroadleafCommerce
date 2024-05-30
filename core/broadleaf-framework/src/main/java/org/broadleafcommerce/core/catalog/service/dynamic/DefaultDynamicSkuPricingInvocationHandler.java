@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,10 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHandler {
 
+    protected static final ConcurrentHashMap<String, Field> FIELD_CACHE = new ConcurrentHashMap<>();
     protected Sku delegate;
     protected Money retailPrice;
     protected Money salePrice;
-    protected static final ConcurrentHashMap<String, Field> FIELD_CACHE = new ConcurrentHashMap<>();
 
     public DefaultDynamicSkuPricingInvocationHandler(Sku sku) {
         this.delegate = sku;
@@ -78,10 +78,10 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
 
     /**
      * Used to add ProductOptionValue price adjustments to the proxy Sku
-     * 
+     *
      * @param sku
      * @param adjustments - the sum total of the ProductOptionValue price adjustments. If null, this
-     * functions the same as the default constructor. This value is added to both the salePrice and retailPrice
+     *                    functions the same as the default constructor. This value is added to both the salePrice and retailPrice
      */
     public DefaultDynamicSkuPricingInvocationHandler(Sku sku, Money adjustments) {
         this(sku);
@@ -119,7 +119,7 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
         }
     }
 
-    public Sku unwrap(){
+    public Sku unwrap() {
         return delegate;
     }
 
@@ -128,4 +128,5 @@ public class DefaultDynamicSkuPricingInvocationHandler implements InvocationHand
         retailPrice = null;
         salePrice = null;
     }
+
 }

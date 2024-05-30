@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,43 +44,47 @@ import javassist.bytecode.annotation.Annotation;
 /**
  * This class transformer will copy fields, methods, and interface definitions from a source class to a target class,
  * based on the xformTemplates map. It will fail if it encouters any duplicate definitions.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  * @deprecated do not use this class, use {@link DirectCopyClassTransformer} instead
  */
 @Deprecated
 public class AnnotationsCopyClassTransformer implements BroadleafClassTransformer {
+
+    protected static List<String> transformedMethods = new ArrayList<>();
     protected SupportLogger logger;
-    
     protected String moduleName;
-    protected Map<String, String> xformTemplates = new HashMap<String, String>();
-    
-    protected static List<String> transformedMethods = new ArrayList<String>();
-    
+    protected Map<String, String> xformTemplates = new HashMap<>();
+
     public AnnotationsCopyClassTransformer(String moduleName) {
         this.moduleName = moduleName;
         logger = SupportLogManager.getLogger(moduleName, this.getClass());
     }
-    
+
     @Override
     public void compileJPAProperties(Properties props, Object key) throws Exception {
         // When simply copying properties over for Java class files, JPA properties do not need modification
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, 
-            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
+    public byte[] transform(
+            ClassLoader loader,
+            String className,
+            Class<?> classBeingRedefined,
+            ProtectionDomain protectionDomain,
+            byte[] classfileBuffer
+    ) throws TransformerException {
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
             return null;
         }
         String convertedClassName = className.replace('/', '.');
-        
+
         if (xformTemplates.containsKey(convertedClassName)) {
             String xformKey = convertedClassName;
             String[] xformVals = xformTemplates.get(xformKey).split(",");
-            logger.lifecycle(LifeCycleEvent.START, String.format("Transform - Copying annotations into [%s] from [%s]", xformKey,
-                    StringUtils.join(xformVals, ",")));
+            logger.lifecycle(LifeCycleEvent.START, String.format("Transform - Copying annotations into [%s] from [%s]",
+                    xformKey, StringUtils.join(xformVals, ",")));
             CtClass clazz = null;
             try {
                 // Load the destination class and defrost it so it is eligible for modifications
@@ -111,8 +115,10 @@ public class AnnotationsCopyClassTransformer implements BroadleafClassTransforme
                                 if (o instanceof AnnotationsAttribute) {
                                     AnnotationsAttribute templateAnnotations = (AnnotationsAttribute) o;
                                     //have to make a copy of the annotations from the target
-                                    AnnotationsAttribute copied = (AnnotationsAttribute) templateAnnotations.copy(constPool, null);
-                                    
+                                    AnnotationsAttribute copied = (AnnotationsAttribute) templateAnnotations.copy(
+                                            constPool, null
+                                    );
+
                                     //add all the copied annotations into the target class's field.
                                     for (Object attribute : fieldFromMainClass.getFieldInfo().getAttributes()) {
                                         if (attribute instanceof AnnotationsAttribute) {
@@ -126,9 +132,9 @@ public class AnnotationsCopyClassTransformer implements BroadleafClassTransforme
                         }
                     }
                 }
-                
-                logger.lifecycle(LifeCycleEvent.END, String.format("Transform - Copying annotations into [%s] from [%s]", xformKey,
-                                    StringUtils.join(xformVals, ",")));
+
+                logger.lifecycle(LifeCycleEvent.END, String.format("Transform - Copying annotations into [%s] from [%s]",
+                        xformKey, StringUtils.join(xformVals, ",")));
                 return clazz.toBytecode();
             } catch (Exception e) {
                 throw new TransformerException("Unable to transform class", e);
@@ -138,17 +144,17 @@ public class AnnotationsCopyClassTransformer implements BroadleafClassTransforme
                 }
             }
         }
-        
+
         return null;
     }
 
     /**
      * This method will do its best to return an implementation type for a given classname. This will allow weaving
      * template classes to have initialized values.
-     * 
+     * <p>
      * We provide default implementations for List, Map, and Set, and will attempt to utilize a default constructor for
      * other classes.
-     * 
+     * <p>
      * If the className contains an '[', we will return null.
      */
     protected String getImplementationType(String className) {
@@ -168,7 +174,7 @@ public class AnnotationsCopyClassTransformer implements BroadleafClassTransforme
     protected String methodDescription(CtMethod method) {
         return method.getDeclaringClass().getName() + "|" + method.getName() + "|" + method.getSignature();
     }
-    
+
     public Map<String, String> getXformTemplates() {
         return xformTemplates;
     }
@@ -176,5 +182,5 @@ public class AnnotationsCopyClassTransformer implements BroadleafClassTransforme
     public void setXformTemplates(Map<String, String> xformTemplates) {
         this.xformTemplates = xformTemplates;
     }
-    
+
 }

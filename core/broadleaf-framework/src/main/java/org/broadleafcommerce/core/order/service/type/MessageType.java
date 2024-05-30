@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,29 +20,26 @@ package org.broadleafcommerce.core.order.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.core.order.domain.Order;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of type of messages.
- *  <li><b>CART</b> - Represents a  wishlist</li>
- *  <li><b>PRODUCT_OPTION</b> - Represents a cart (non-submitted {@link Order}s)</li>
- * 
+ * <li><b>CART</b> - Represents a  wishlist</li>
+ * <li><b>PRODUCT_OPTION</b> - Represents a cart (non-submitted {@link Order}s)</li>
+ *
  * @author jfischer
  */
 public class MessageType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, MessageType> TYPES = new LinkedHashMap<String, MessageType>();
+    private static final Map<String, MessageType> TYPES = new LinkedHashMap<>();
 
     public static final MessageType CART = new MessageType("CART", "CART");
     public static final MessageType PRODUCT_OPTION = new MessageType("PRODUCT_OPTION", "PRODUCT_OPTION");
-
-    public static MessageType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -56,19 +53,23 @@ public class MessageType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static MessageType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

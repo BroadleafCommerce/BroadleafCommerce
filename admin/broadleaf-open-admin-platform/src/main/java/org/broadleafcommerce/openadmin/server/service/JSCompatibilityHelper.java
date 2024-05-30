@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,11 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 public class JSCompatibilityHelper {
 
     public static String encode(String name) {
-        return StringUtils.isEmpty(name)?name:name.replace(".", "__");
+        return StringUtils.isEmpty(name) ? name : name.replace(".", "__");
     }
 
     public static String unencode(String name) {
-        return StringUtils.isEmpty(name)?name:name.replace("__", ".");
+        return StringUtils.isEmpty(name) ? name : name.replace("__", ".");
     }
 
 }

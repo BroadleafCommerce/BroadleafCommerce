@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,8 +27,8 @@ import java.util.TimeZone;
 public class SystemTime {
 
     private static final TimeSource defaultTimeSource = new DefaultTimeSource();
-    private static TimeSource globalTimeSource = null;
     private static final ThreadLocal<TimeSource> localTimeSource = ThreadLocalManager.createThreadLocal(TimeSource.class, false);
+    private static TimeSource globalTimeSource = null;
 
     public static TimeSource getTimeSource() {
         TimeSource applicableTimeSource;
@@ -103,9 +103,9 @@ public class SystemTime {
     }
 
     /**
-     * Returns false if the current time source is a {@link FixedTimeSource} indicating that the 
+     * Returns false if the current time source is a {@link FixedTimeSource} indicating that the
      * time is being overridden.   For example to preview items in a later time.
-     * 
+     *
      * @return
      */
     public static boolean shouldCacheDate() {
@@ -119,11 +119,11 @@ public class SystemTime {
     /**
      * Many DAO objects in Broadleaf use a cached time concept.   Since most entities have an active
      * start and end date, the DAO may ask for a representation of "NOW" that is within some
-     * threshold.   
-     * 
+     * threshold.
+     * <p>
      * By default, most entities cache active-date queries to every 10 seconds.    These DAO
      * classes can be overridden to extend or decrease this default.
-     * 
+     *
      * @return
      */
     public static Date getCurrentDateWithinTimeResolution(Date cachedDate, Long dateResolutionMillis) {
@@ -150,4 +150,5 @@ public class SystemTime {
         }
         return calendar;
     }
+
 }

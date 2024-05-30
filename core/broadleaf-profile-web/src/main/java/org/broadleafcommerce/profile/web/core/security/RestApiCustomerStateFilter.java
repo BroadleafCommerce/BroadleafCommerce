@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,7 +31,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.Ordered;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -41,8 +40,6 @@ import java.util.Map;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -54,34 +51,35 @@ import jakarta.servlet.http.HttpServletResponse;
  * allowing the client consuming services to specify the customerId on whos behalf they are invoking the service.  It is assumed that services are invoked either
  * in a trusted, secured network where no additional security is required.  Or using OAuth or a similar trusted security model.  Whatever security model is used,
  * it should ensure that the caller has access to call the system, and that they have access to do so on behalf of the client whos ID is being determined by this class.
- *
+ * <p>
  * For RESTful services, this should be used instead of CustomerStateFilter since it does not look at or touch cookies or session.
- *
+ * <p>
  * <p/>
  * User: Kelly Tisdell
  * Date: 4/18/12
  */
 public class RestApiCustomerStateFilter extends OncePerRequestFilter implements Ordered {
 
+    public static final String CUSTOMER_ID_ATTRIBUTE = "customerId";
+    public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
     protected static final Log LOG = LogFactory.getLog(RestApiCustomerStateFilter.class);
-
     @Autowired
     @Qualifier("blCustomerService")
     protected CustomerService customerService;
-
     protected AntPathMatcher pathMatcher = new AntPathMatcher();
-
     protected List<String> excludeUrlPatterns;
-    public static final String CUSTOMER_ID_ATTRIBUTE = "customerId";
-    public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
 
         String customerId = null;
 
         //If someone already set the customer on the request then we don't need to do anything.
-        if (request.getAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName()) == null){
+        if (request.getAttribute(CustomerStateRequestProcessor.getCustomerRequestAttributeName()) == null) {
 
             //First check to see if someone already put the customerId on the request
             if (request.getAttribute(CUSTOMER_ID_ATTRIBUTE) != null) {
@@ -132,19 +130,19 @@ public class RestApiCustomerStateFilter extends OncePerRequestFilter implements 
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        if(CollectionUtils.isNotEmpty(excludeUrlPatterns)) {
+        if (CollectionUtils.isNotEmpty(excludeUrlPatterns)) {
             return excludeUrlPatterns.stream()
                     .anyMatch(p -> pathMatcher.match(p, request.getServletPath()));
         }
         return false;
     }
 
-    private void setupCustomerForRuleProcessing(Customer customer, HttpServletRequest request) {
+    protected void setupCustomerForRuleProcessing(Customer customer, HttpServletRequest request) {
         // Setup customer for content rule processing
         @SuppressWarnings("unchecked")
-        Map<String,Object> ruleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
+        Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
         if (ruleMap == null) {
-            ruleMap = new HashMap<String,Object>();
+            ruleMap = new HashMap<>();
         }
         ruleMap.put("customer", customer);
         request.setAttribute(BLC_RULE_MAP_PARAM, ruleMap);
@@ -166,4 +164,5 @@ public class RestApiCustomerStateFilter extends OncePerRequestFilter implements 
     public void setExcludeUrlPatterns(List<String> excludeUrlPatterns) {
         this.excludeUrlPatterns = excludeUrlPatterns;
     }
+
 }

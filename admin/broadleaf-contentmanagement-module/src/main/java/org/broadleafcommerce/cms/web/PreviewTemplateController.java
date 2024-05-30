@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,14 +25,14 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 @RequestMapping(PreviewTemplateController.REQUEST_MAPPING_PREFIX + "**")
 public class PreviewTemplateController {
-    private final String templatePathPrefix = "templates";
     public static final String REQUEST_MAPPING_PREFIX = "/preview/";
-    
+    private final String templatePathPrefix = "templates";
+
     @RequestMapping
     public String displayPreview(HttpServletRequest httpServletRequest) {
         String requestURIPrefix = httpServletRequest.getContextPath() + REQUEST_MAPPING_PREFIX;
         String templatePath = httpServletRequest.getRequestURI().substring(requestURIPrefix.length() - 1);
         return templatePathPrefix + templatePath;
     }
-    
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,15 +23,16 @@ import java.util.List;
 
 public interface CodeTypeDao {
 
-    public List<CodeType> readAllCodeTypes();
+    List<CodeType> readAllCodeTypes();
 
-    public CodeType readCodeTypeById(Long codeTypeId);
+    CodeType readCodeTypeById(Long codeTypeId);
 
-    public List<CodeType> readCodeTypeByKey(String key);
+    List<CodeType> readCodeTypeByKey(String key);
 
-    public CodeType save(CodeType codeType);
+    CodeType save(CodeType codeType);
 
-    public void delete(CodeType codeType);
+    void delete(CodeType codeType);
 
-    public CodeType create();
+    CodeType create();
+
 }

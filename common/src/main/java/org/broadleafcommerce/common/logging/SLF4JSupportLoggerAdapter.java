@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,9 +31,8 @@ import org.slf4j.MarkerFactory;
  */
 public class SLF4JSupportLoggerAdapter extends AbstractSupportLoggerAdapter implements SupportLoggerAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SLF4JSupportLoggerAdapter.class);
     public static final String DEFAULT_LEVEL_KEY = "SLF4JSupportLoggerAdapter.defaultLevel";
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SLF4JSupportLoggerAdapter.class);
     private String name;
 
     @Override
@@ -73,6 +72,7 @@ public class SLF4JSupportLoggerAdapter extends AbstractSupportLoggerAdapter impl
 
     /**
      * Mapping FATAL to ERROR as the SLF4J API does not contain a fatal level
+     *
      * @param message
      */
     @Override
@@ -82,6 +82,7 @@ public class SLF4JSupportLoggerAdapter extends AbstractSupportLoggerAdapter impl
 
     /**
      * Mapping FATAL to ERROR as the SLF4J API does not contain a fatal level
+     *
      * @param message
      * @param t
      */
@@ -129,11 +130,10 @@ public class SLF4JSupportLoggerAdapter extends AbstractSupportLoggerAdapter impl
             default:
                 LOGGER.warn(supportMarker, message, t);
         }
-
     }
 
     public int getSupportLevel() {
-        String systemProperty = System.getProperty(DEFAULT_LEVEL_KEY, LOG_LEVEL_WARN+"");
+        String systemProperty = System.getProperty(DEFAULT_LEVEL_KEY, LOG_LEVEL_WARN + "");
         return Integer.valueOf(systemProperty);
     }
 
@@ -146,4 +146,5 @@ public class SLF4JSupportLoggerAdapter extends AbstractSupportLoggerAdapter impl
     public void setName(String name) {
         this.name = name;
     }
+
 }

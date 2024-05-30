@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -66,7 +66,9 @@ public class SkuFieldsPersistenceProvider extends FieldPersistenceProviderAdapte
         }
         if (displayValue == null) {
             try {
-                displayValue = extractValueRequest.getRecordHelper().getStringValueFromGetter(extractValueRequest.getEntity(), property.getName());
+                displayValue = extractValueRequest.getRecordHelper().getStringValueFromGetter(
+                        extractValueRequest.getEntity(), property.getName()
+                );
                 ((BasicFieldMetadata) property.getMetadata()).setDerived(true);
             } catch (Exception e) {
                 //swallow all exceptions because null is fine for the display value

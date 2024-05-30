@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,25 +34,28 @@ import jakarta.servlet.http.HttpServletRequest;
  * Currently, it only generates breadcrumb structured data.
  * <p>
  * See <a href="http://schema.org/BreadcrumbList" target="_blank">http://schema.org/BreadcrumbList</a>.
- * 
  *
  * @author Jacob Mitash
  * @author Nathan Moore (nathanmoore).
  */
 @Service(value = "blDefaultLinkedDataGenerator")
 public class DefaultLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator {
+
     @Override
     public boolean canHandle(final HttpServletRequest request) {
         return true;
     }
 
     @Override
-    protected JSONArray getLinkedDataJsonInternal(String url, final HttpServletRequest request, 
-                                                  final JSONArray schemaObjects) throws JSONException {
+    protected JSONArray getLinkedDataJsonInternal(
+            String url,
+            final HttpServletRequest request,
+            final JSONArray schemaObjects
+    ) throws JSONException {
         schemaObjects.put(addBreadcrumbData(request));
-        
+
         extensionManager.getProxy().addDefaultData(request, schemaObjects);
-        
+
         return schemaObjects;
     }
 
@@ -87,17 +90,18 @@ public class DefaultLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator 
             extensionManager.getProxy().addBreadcrumbItemData(request, item);
 
             listItem.put("item", item);
-            
+
             extensionManager.getProxy().addBreadcrumbListItemData(request, listItem);
-            
+
             breadcrumbList.put(listItem);
             index++;
         }
-        
+
         extensionManager.getProxy().addBreadcrumbData(request, breadcrumbObjects);
 
         breadcrumbObjects.put("itemListElement", breadcrumbList);
 
         return breadcrumbObjects;
     }
+
 }

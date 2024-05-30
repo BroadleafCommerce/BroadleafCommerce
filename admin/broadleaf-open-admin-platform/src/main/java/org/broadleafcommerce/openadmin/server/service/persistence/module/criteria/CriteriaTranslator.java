@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,9 +29,17 @@ import jakarta.persistence.TypedQuery;
  */
 public interface CriteriaTranslator {
 
-    TypedQuery<Serializable> translateQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults);
+    TypedQuery<Serializable> translateQuery(
+            DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings,
+            Integer firstResult, Integer maxResults
+    );
 
-    TypedQuery<Serializable> translateCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings);
+    TypedQuery<Serializable> translateCountQuery(
+            DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings
+    );
 
-    TypedQuery<Serializable> translateMaxQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, String maxField);
+    TypedQuery<Serializable> translateMaxQuery(
+            DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, String maxField
+    );
+
 }

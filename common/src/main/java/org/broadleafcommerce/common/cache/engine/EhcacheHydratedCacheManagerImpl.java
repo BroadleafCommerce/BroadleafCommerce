@@ -10,18 +10,17 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.cache.engine;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.extensibility.cache.JCacheUtil;
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,19 +31,14 @@ import java.util.Map;
 import javax.cache.Cache;
 
 /**
- * 
  * @author jfischer
- *
  */
 public abstract class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManager {
 
-    private static final long serialVersionUID = 1L;
-    
-    private static final Log LOG = LogFactory.getLog(EhcacheHydratedCacheManagerImpl.class);
-    
     public static final String HYDRATED_CACHE_NAME = "hydrated-cache";
-
-    private Map<String, List<String>> cacheMembersByEntity = Collections.synchronizedMap(new HashMap<String, List<String>>(100));
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private Map<String, List<String>> cacheMembersByEntity = Collections.synchronizedMap(new HashMap<>(100));
     private Cache<String, Object> heap = null;
 
     private synchronized Cache<String, Object> getHeap() {
@@ -76,7 +70,7 @@ public abstract class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCa
         String heapKey = createHeapKey(cacheRegion, cacheName, elementItemName, elementKey);
         String nameKey = createNameKey(cacheRegion, cacheName, elementKey);
         if (!cacheMembersByEntity.containsKey(nameKey)) {
-            List<String> myMembers = new ArrayList<String>(50);
+            List<String> myMembers = new ArrayList<>(50);
             myMembers.add(elementItemName);
             cacheMembersByEntity.put(nameKey, myMembers);
         } else {
@@ -111,5 +105,5 @@ public abstract class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCa
             cacheMembersByEntity.remove(nameKey);
         }
     }
-    
+
 }

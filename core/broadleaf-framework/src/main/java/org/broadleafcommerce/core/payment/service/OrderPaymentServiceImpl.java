@@ -103,7 +103,11 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
 
     @Override
     @Transactional(value = TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
-    public OrderPayment createOrderPaymentFromCustomerPayment(Order order, CustomerPayment customerPayment, Money amount) {
+    public OrderPayment createOrderPaymentFromCustomerPayment(
+            Order order,
+            CustomerPayment customerPayment,
+            Money amount
+    ) {
         OrderPayment orderPayment = create();
         orderPayment.setOrder(order);
         orderPayment.setBillingAddress(addressService.copyAddress(customerPayment.getBillingAddress()));
@@ -133,7 +137,10 @@ public class OrderPaymentServiceImpl implements OrderPaymentService {
         unconfirmedTransaction.setAmount(amount);
         unconfirmedTransaction.setType(PaymentTransactionType.UNCONFIRMED);
         unconfirmedTransaction.setOrderPayment(orderPayment);
-        unconfirmedTransaction.getAdditionalFields().put(PaymentAdditionalFieldType.TOKEN.getType(), customerPayment.getPaymentToken());
+        unconfirmedTransaction.getAdditionalFields().put(
+                PaymentAdditionalFieldType.TOKEN.getType(),
+                customerPayment.getPaymentToken()
+        );
         unconfirmedTransaction.getAdditionalFields().putAll(customerPayment.getAdditionalFields());
 
         orderPayment.getTransactions().add(unconfirmedTransaction);

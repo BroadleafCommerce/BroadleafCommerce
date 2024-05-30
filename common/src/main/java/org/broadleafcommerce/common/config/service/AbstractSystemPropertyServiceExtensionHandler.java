@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,7 +20,6 @@ package org.broadleafcommerce.common.config.service;
 import org.broadleafcommerce.common.extension.AbstractExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-
 
 /**
  * @author bpolster
@@ -32,4 +31,5 @@ public abstract class AbstractSystemPropertyServiceExtensionHandler extends Abst
     public ExtensionResultStatusType resolveProperty(String propertyName, ExtensionResultHolder resultHolder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
 }

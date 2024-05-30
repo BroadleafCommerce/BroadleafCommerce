@@ -10,13 +10,10 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
- */
-/**
- *
  */
 package org.broadleafcommerce.cms.admin.web.controller;
 
@@ -59,11 +56,14 @@ public class AdminMultipartUploadConfig {
         String blcAssetUploadSizeProperty = "asset.server.max.uploadable.file.size";
         Long blcMaxFileSize = env.getProperty(blcAssetUploadSizeProperty, Long.class);
         if (blcMaxFileSize != null) {
-            LOG.info(String.format("The %s has been set to %s, using this as the file upload limit and ignoring the Spring Boot settings", blcAssetUploadSizeProperty, blcMaxFileSize));
+            LOG.info(String.format(
+                    "The %s has been set to %s, using this as the file upload limit and ignoring the Spring Boot settings",
+                    blcAssetUploadSizeProperty, blcMaxFileSize
+            ));
             multipartConfig = new MultipartConfigElement(multipartConfig.getLocation(),
-                multipartConfig.getMaxRequestSize(),
-                blcMaxFileSize,
-                multipartConfig.getFileSizeThreshold());
+                    multipartConfig.getMaxRequestSize(),
+                    blcMaxFileSize,
+                    multipartConfig.getFileSizeThreshold());
         }
         return multipartConfig;
     }

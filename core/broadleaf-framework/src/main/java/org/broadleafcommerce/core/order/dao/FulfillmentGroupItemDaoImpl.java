@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,10 +33,10 @@ import jakarta.persistence.Query;
 @Repository("blFulfillmentGroupItemDao")
 public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public void delete(FulfillmentGroupItem fulfillmentGroupItem) {
@@ -55,13 +55,18 @@ public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
     }
 
     @SuppressWarnings("unchecked")
-    public List<FulfillmentGroupItem> readFulfillmentGroupItemsForFulfillmentGroup(final FulfillmentGroup fulfillmentGroup) {
+    public List<FulfillmentGroupItem> readFulfillmentGroupItemsForFulfillmentGroup(
+            final FulfillmentGroup fulfillmentGroup
+    ) {
         final Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_ITEM_BY_FULFILLMENT_GROUP_ID");
         query.setParameter("fulfillmentGroupId", fulfillmentGroup.getId());
         return query.getResultList();
     }
 
     public FulfillmentGroupItem create() {
-        return ((FulfillmentGroupItem) entityConfiguration.createEntityInstance("org.broadleafcommerce.core.order.domain.FulfillmentGroupItem"));
+        return ((FulfillmentGroupItem) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.core.order.domain.FulfillmentGroupItem"
+        ));
     }
+
 }

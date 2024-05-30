@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,14 +39,14 @@ import java.util.Map;
 
 /**
  * @author Andre Azzolini (apazzolini), bpolster
- */                                      
+ */
 public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
 
     /**
-     * Returns a prefix if required for the passed in searchable field. 
+     * Returns a prefix if required for the passed in searchable field.
      */
     ExtensionResultStatusType buildPrefixListForIndexField(IndexField field, FieldType fieldType,
-            List<String> prefixList);
+                                                           List<String> prefixList);
 
     /**
      * Builds the search facet ranges for the provided dto.
@@ -66,10 +66,11 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param defaultSort
      */
     ExtensionResultStatusType modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
-            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
+                                              List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort);
 
     /**
      * Provides an extension point to modify the SolrQuery.
+     *
      * @param context
      * @param query
      * @param qualifiedSolrQuery
@@ -84,7 +85,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * In certain scenarios, the requested category id might not be the one that should be used in Solr.
      * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
      * in the returnContainer should be used.
-     * 
+     *
      * @param category
      * @param returnContainer
      * @return the extension result status type
@@ -101,14 +102,14 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * in order to return the right value to populate in the <b>queryFieldsResult</b>. If the returned result is
      * {@link ExtensionResultStatusType#NOT_HANDLED} then the default behavior is to only do that.
      *
-     *
      * @param query
      * @param searchCriteria
-     *@param indexFieldType the field type of the field
+     * @param indexFieldType    the field type of the field
      * @param queryFieldsResult the binding result that contains the list of query fields, only add to this   @return the result of the handler, if NOT_HANDLED, then no query fields were added
      * @see {@link SolrHelperService#getPropertyNameForIndexField(IndexField, FieldType)}
      */
-    ExtensionResultStatusType getQueryField(SolrQuery query, SearchCriteria searchCriteria, IndexFieldType indexFieldType, ExtensionResultHolder<List<String>> queryFieldsResult);
+    ExtensionResultStatusType getQueryField(SolrQuery query, SearchCriteria searchCriteria, IndexFieldType indexFieldType,
+                                            ExtensionResultHolder<List<String>> queryFieldsResult);
 
     /**
      * <p>Modifies the product search results from a Solr query</p>
@@ -116,7 +117,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * <p>The parameters passed into this method should be assumed to be sorted identically and match one to one.</p>
      *
      * @param responseDocuments the response documents from Solr
-     * @param products the products that tie to the response documents
+     * @param products          the products that tie to the response documents
      * @return the result of the handler, if NOT_HANDLED, then no changes where made
      */
     ExtensionResultStatusType modifySearchResults(List<SolrDocument> responseDocuments, List<Product> products);
@@ -143,7 +144,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
     /**
      * Attaches the given dto to the given query, if possible
      *
-     * @param query the SolrQuery to attach the facet to
+     * @param query          the SolrQuery to attach the facet to
      * @param dto
      * @param searchCriteria
      * @return the result of the handler
@@ -168,10 +169,11 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param solrKey
      * @param selectedValues
      * @param valueStrings
-     * @deprecated use {@link SolrSearchServiceExtensionHandler#buildActiveFacetFilter(SearchFacet, String[], List)}
      * @return
+     * @deprecated use {@link SolrSearchServiceExtensionHandler#buildActiveFacetFilter(SearchFacet, String[], List)}
      */
-    ExtensionResultStatusType buildActiveFacetFilter(FieldEntity entityType, String solrKey, String[] selectedValues, List<String> valueStrings);
+    ExtensionResultStatusType buildActiveFacetFilter(FieldEntity entityType, String solrKey, String[] selectedValues,
+                                                     List<String> valueStrings);
 
     /**
      * Builds the active facet filter query string for the given entity type and values. Typically this is only used when you
@@ -187,9 +189,9 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
     /**
      * Adds any additional category ids to filter by when category browsing or searching.
      *
-     * @param category the current Category we are browsing or searching on
+     * @param category       the current Category we are browsing or searching on
      * @param searchCriteria the criteria for the current query
-     * @param categoryIds the category IDs we are going to filter on (this already includes the current category's ID)
+     * @param categoryIds    the category IDs we are going to filter on (this already includes the current category's ID)
      * @return NOT_HANDLED if no IDs were added, and HANDLED_CONTINUE if there were
      */
     ExtensionResultStatusType addAdditionalCategoryIds(Category category, SearchCriteria searchCriteria, List<Long> categoryIds);
@@ -242,5 +244,7 @@ public interface SolrSearchServiceExtensionHandler extends ExtensionHandler {
      * @param erh
      * @return
      */
-    ExtensionResultStatusType getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix, ExtensionResultHolder<String> erh);
+    ExtensionResultStatusType getPropertyNameForIndexField(IndexField field, FieldType fieldType, String prefix,
+                                                           ExtensionResultHolder<String> erh);
+
 }

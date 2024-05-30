@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,15 +26,16 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
  */
 public interface CatalogServiceExtensionHandler extends ExtensionHandler {
 
-    public ExtensionResultStatusType findCategoryByURI(String uri, ExtensionResultHolder resultHolder);
+    ExtensionResultStatusType findCategoryByURI(String uri, ExtensionResultHolder resultHolder);
 
-    public ExtensionResultStatusType findProductByURI(String uri, ExtensionResultHolder resultHolder);
+    ExtensionResultStatusType findProductByURI(String uri, ExtensionResultHolder resultHolder);
 
-    public ExtensionResultStatusType findSkuByURI(String uri, ExtensionResultHolder resultHolder);
+    ExtensionResultStatusType findSkuByURI(String uri, ExtensionResultHolder resultHolder);
 
-    public ExtensionResultStatusType findProductByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
+    ExtensionResultStatusType findProductByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
 
-    public ExtensionResultStatusType findCategoryByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
+    ExtensionResultStatusType findCategoryByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
 
-    public ExtensionResultStatusType findSkuByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
+    ExtensionResultStatusType findSkuByURI(CatalogContextDTO context, String uri, ExtensionResultHolder resultHolder);
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,7 +30,7 @@ public interface PromotableItemFactory {
     PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(PromotableOrder promotableOrder, Offer offer);
 
     PromotableCandidateOrderOffer createPromotableCandidateOrderOffer(PromotableOrder promotableOrder,
-            Offer offer, Money potentialSavings);
+                                                                      Offer offer, Money potentialSavings);
 
     PromotableOrderAdjustment createPromotableOrderAdjustment(
             PromotableCandidateOrderOffer promotableCandidateOrderOffer,
@@ -41,10 +41,10 @@ public interface PromotableItemFactory {
             PromotableOrder order, Money value);
 
     PromotableOrderItem createPromotableOrderItem(OrderItem orderItem, PromotableOrder order,
-            boolean includeAdjustments);
+                                                  boolean includeAdjustments);
 
     PromotableOrderItemPriceDetail createPromotableOrderItemPriceDetail(PromotableOrderItem promotableOrderItem,
-            int quantity);
+                                                                        int quantity);
 
     PromotableCandidateItemOffer createPromotableCandidateItemOffer(PromotableOrder promotableOrder, Offer offer);
 
@@ -57,8 +57,9 @@ public interface PromotableItemFactory {
     PromotableCandidateFulfillmentGroupOffer createPromotableCandidateFulfillmentGroupOffer(
             PromotableFulfillmentGroup fulfillmentGroup,
             Offer offer);
-    
+
     PromotableFulfillmentGroupAdjustment createPromotableFulfillmentGroupAdjustment(
             PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer,
             PromotableFulfillmentGroup fulfillmentGroup);
+
 }

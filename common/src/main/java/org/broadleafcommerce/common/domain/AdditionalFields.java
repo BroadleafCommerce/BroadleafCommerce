@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.domain;
 
 import java.util.Map;
@@ -23,13 +22,13 @@ import java.util.Map;
 /**
  * this interface indicates if the domain objects use additional fields
  * It is not mandatory,  but it is useful in order to process those fields in a generic way when generating JAXB Wrappers
- * @author gdiaz
  *
+ * @author gdiaz
  */
 public interface AdditionalFields {
 
-    public Map<String, String> getAdditionalFields();
+    Map<String, String> getAdditionalFields();
 
-    public void setAdditionalFields(Map<String, String> additionalFields);
+    void setAdditionalFields(Map<String, String> additionalFields);
 
 }

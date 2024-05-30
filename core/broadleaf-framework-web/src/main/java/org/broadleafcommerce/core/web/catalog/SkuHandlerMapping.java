@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,15 +27,15 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This handler mapping works with the Sku entity to determine if a sku has been configured for
- * the passed in URL.   
- * 
- * If the URL matches a valid Sku then this mapping returns the handler configured via the 
- * controllerName property or blSkuController by default. 
+ * the passed in URL.
+ * <p>
+ * If the URL matches a valid Sku then this mapping returns the handler configured via the
+ * controllerName property or blSkuController by default.
  *
  * @author Joshua Skorton (jskorton)
- * @since 3.2
  * @see org.broadleafcommerce.core.catalog.domain.Sku
  * @see CatalogService
+ * @since 3.2
  */
 public class SkuHandlerMapping extends BLCAbstractHandlerMapping {
 
@@ -43,7 +43,7 @@ public class SkuHandlerMapping extends BLCAbstractHandlerMapping {
 
     protected String defaultTemplateName = "catalog/sku";
 
-    private String controllerName="blSkuController";
+    private String controllerName = "blSkuController";
 
     @Resource(name = "blCatalogService")
     private CatalogService catalogService;

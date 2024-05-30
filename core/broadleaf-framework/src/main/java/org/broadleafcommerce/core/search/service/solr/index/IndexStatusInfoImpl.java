@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,9 +27,9 @@ import java.util.Map;
 public class IndexStatusInfoImpl implements IndexStatusInfo {
 
     private Date lastIndexDate;
-    private Map<String, String> additionalInfo = new HashMap<String, String>();
-    private Map<Long, Integer> indexErrors = new HashMap<Long, Integer>();
-    private Map<Long, Date> deadIndexEvents = new HashMap<Long, Date>();
+    private Map<String, String> additionalInfo = new HashMap<>();
+    private Map<Long, Integer> indexErrors = new HashMap<>();
+    private Map<Long, Date> deadIndexEvents = new HashMap<>();
 
     @Override
     public Date getLastIndexDate() {
@@ -70,5 +70,5 @@ public class IndexStatusInfoImpl implements IndexStatusInfo {
     public void setDeadIndexEvents(Map<Long, Date> deadIndexEvents) {
         this.deadIndexEvents = deadIndexEvents;
     }
-    
+
 }

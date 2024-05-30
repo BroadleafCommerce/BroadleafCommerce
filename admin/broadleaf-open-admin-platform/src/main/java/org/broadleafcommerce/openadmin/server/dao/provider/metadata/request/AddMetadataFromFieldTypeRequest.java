@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -54,15 +54,24 @@ public class AddMetadataFromFieldTypeRequest {
     private final Class<?> returnedClass;
     private final DynamicEntityDao dynamicEntityDao;
 
-    public AddMetadataFromFieldTypeRequest(Field requestedField, Class<?> targetClass, ForeignKey foreignField,
-                                           ForeignKey[] additionalForeignFields,
-                                           MergedPropertyType mergedPropertyType, List<Property> componentProperties,
-                                           String idProperty,
-                                           String prefix, String requestedPropertyName, Type type,
-                                           boolean propertyForeignKey, int additionalForeignKeyIndexPosition,
-                                           Map<String, FieldMetadata> presentationAttributes,
-                                           FieldMetadata presentationAttribute, SupportedFieldType explicitType, 
-                                           Class<?> returnedClass, DynamicEntityDao dynamicEntityDao) {
+    public AddMetadataFromFieldTypeRequest(
+            Field requestedField,
+            Class<?> targetClass,
+            ForeignKey foreignField,
+            ForeignKey[] additionalForeignFields,
+            MergedPropertyType mergedPropertyType,
+            List<Property> componentProperties,
+            String idProperty,
+            String prefix,
+            String requestedPropertyName, Type type,
+            boolean propertyForeignKey,
+            int additionalForeignKeyIndexPosition,
+            Map<String, FieldMetadata> presentationAttributes,
+            FieldMetadata presentationAttribute,
+            SupportedFieldType explicitType,
+            Class<?> returnedClass,
+            DynamicEntityDao dynamicEntityDao
+    ) {
         this.requestedField = requestedField;
         this.targetClass = targetClass;
         this.foreignField = foreignField;
@@ -149,4 +158,5 @@ public class AddMetadataFromFieldTypeRequest {
     public DynamicEntityDao getDynamicEntityDao() {
         return dynamicEntityDao;
     }
+
 }

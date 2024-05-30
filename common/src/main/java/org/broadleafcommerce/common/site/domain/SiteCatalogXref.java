@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,20 +21,20 @@ import java.io.Serializable;
 
 /**
  * Defines the explicit join between a {@link Site} and {@link Catalog}
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link Site#getCatalogXrefs()}
  * @see {@link Catalog#getSiteXrefs()}
  */
 public interface SiteCatalogXref extends Serializable {
-    
-    public Site getSite();
-    
-    public void setSite(Site site);
-    
-    public Catalog getCatalog();
-    
-    public void setCatalog(Catalog catalog);
+
+    Site getSite();
+
+    void setSite(Site site);
+
+    Catalog getCatalog();
+
+    void setCatalog(Catalog catalog);
 
     Long getId();
 

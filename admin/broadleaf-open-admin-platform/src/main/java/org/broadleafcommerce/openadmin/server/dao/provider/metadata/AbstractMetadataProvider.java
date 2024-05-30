@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,20 +31,24 @@ public abstract class AbstractMetadataProvider {
 
     protected Map<String, Map<String, MetadataOverride>> metadataOverrides;
 
-    @Resource(name="blMetadataOverrides")
+    @Resource(name = "blMetadataOverrides")
     public void setMetadataOverrides(Map metadataOverrides) {
         try {
             this.metadataOverrides = metadataOverrides;
         } catch (Throwable e) {
             throw new IllegalArgumentException(
                     "Unable to assign metadataOverrides. You are likely using an obsolete spring application context " +
-                    "configuration for this value. Please utilize the xmlns:mo=\"http://schema.broadleafcommerce.org/mo\" namespace " +
-                    "and http://schema.broadleafcommerce.org/mo http://schema.broadleafcommerce.org/mo/mo.xsd schemaLocation " +
-                    "in the xml schema config for your app context. This will allow you to use the appropriate <mo:override> element to configure your overrides.", e);
+                            "configuration for this value. Please utilize the xmlns:mo=\"http://schema.broadleafcommerce.org/mo\" namespace " +
+                            "and http://schema.broadleafcommerce.org/mo http://schema.broadleafcommerce.org/mo/mo.xsd schemaLocation " +
+                            "in the xml schema config for your app context. This will allow you to use the appropriate <mo:override> element to configure your overrides.", e);
         }
     }
 
-    protected Map<String, MetadataOverride> getTargetedOverride(DynamicEntityDao dynamicEntityDao, String configurationKey, String ceilingEntityFullyQualifiedClassname) {
+    protected Map<String, MetadataOverride> getTargetedOverride(
+            DynamicEntityDao dynamicEntityDao,
+            String configurationKey,
+            String ceilingEntityFullyQualifiedClassname
+    ) {
         if (metadataOverrides != null && (configurationKey != null || ceilingEntityFullyQualifiedClassname != null)) {
             if (metadataOverrides.containsKey(configurationKey)) {
                 return metadataOverrides.get(configurationKey);
@@ -61,7 +65,7 @@ public abstract class AbstractMetadataProvider {
             if (test.isInterface()) {
                 //if it's an interface, get the least derive polymorphic concrete implementation
                 Class<?>[] types = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(test);
-                return metadataOverrides.get(types[types.length-1].getName());
+                return metadataOverrides.get(types[types.length - 1].getName());
             } else {
                 //if it's a concrete implementation, try the interfaces
                 Class<?>[] types = test.getInterfaces();
@@ -74,4 +78,5 @@ public abstract class AbstractMetadataProvider {
         }
         return null;
     }
+
 }

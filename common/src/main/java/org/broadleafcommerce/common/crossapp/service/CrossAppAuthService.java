@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,18 +24,18 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A service responsible for allowing secure authentication for a user between the admin and site applications.
- * 
+ * <p>
  * This service generates a single use and time sensitive token for a user from the admin application. This token is sent
  * to the user and he must present it in a timely manner to the site application to associate his session as authenticated
  * from the admin applicaiton.
- * 
- * @see CrossAppAdminAuthService
+ *
  * @author Andre Azzolini (apazzolini)
+ * @see CrossAppAdminAuthService
  */
 public interface CrossAppAuthService {
 
-    public static String AUTH_FROM_ADMIN_URL_PARAM = "blAuthToken";
-    public static String AUTH_FROM_ADMIN_SESSION_VAR = "blAuthedFromAdmin";
+    String AUTH_FROM_ADMIN_URL_PARAM = "blAuthToken";
+    String AUTH_FROM_ADMIN_SESSION_VAR = "blAuthedFromAdmin";
 
     /**
      * Consumes an authentication token for the given user id and token. This method will additionally register the
@@ -49,23 +49,22 @@ public interface CrossAppAuthService {
      * @param response
      * @throws IllegalArgumentException
      */
-    public void useSiteAuthToken(Long adminUserId, String token, HttpServletRequest request, HttpServletResponse response) throws IllegalArgumentException;
+    void useSiteAuthToken(Long adminUserId, String token, HttpServletRequest request, HttpServletResponse response) throws IllegalArgumentException;
 
     /**
      * @return whether or not the user is currently authenticated from the admin
      */
-    public boolean isAuthedFromAdmin();
-
+    boolean isAuthedFromAdmin();
 
     /**
      * @return the id of the currently authenticated admin user. Returns null if there is no currently authenticated user
      */
-    public Long getCurrentAuthedAdminId();
+    Long getCurrentAuthedAdminId();
 
     /**
      * @return whether or not the user is currently authenticated from the admin and also has the CSR role
      */
-    public boolean hasCsrPermission();
+    boolean hasCsrPermission();
 
     /**
      * @return whether or not the user is currently authenticated from the admin and also has the CSR Quote role

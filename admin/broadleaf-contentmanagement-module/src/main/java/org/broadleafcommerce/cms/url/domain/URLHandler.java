@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,21 +24,21 @@ import java.io.Serializable;
 
 public interface URLHandler extends Serializable, MultiTenantCloneable<URLHandler> {
 
-    public abstract Long getId();
+    Long getId();
 
-    public abstract void setId(Long id);
+    void setId(Long id);
 
-    public abstract String getIncomingURL();
+    String getIncomingURL();
 
-    public abstract void setIncomingURL(String incomingURL);
+    void setIncomingURL(String incomingURL);
 
-    public abstract String getNewURL();
+    String getNewURL();
 
-    public abstract void setNewURL(String newURL);
+    void setNewURL(String newURL);
 
-    public abstract URLRedirectType getUrlRedirectType();
+    URLRedirectType getUrlRedirectType();
 
-    public abstract void setUrlRedirectType(URLRedirectType redirectType);
+    void setUrlRedirectType(URLRedirectType redirectType);
 
     /**
      * Indicates if the value returned by <code>getIncomingURL()</code> is a regex expression
@@ -46,7 +46,7 @@ public interface URLHandler extends Serializable, MultiTenantCloneable<URLHandle
      *
      * @return
      */
-    public abstract boolean isRegexHandler();
+    boolean isRegexHandler();
 
     /**
      * Indicates if the value set by the method <code>setIncomingURL(String)</code> should be treated as a regex
@@ -54,11 +54,12 @@ public interface URLHandler extends Serializable, MultiTenantCloneable<URLHandle
      *
      * @param regexHandler
      */
-    public abstract void setRegexHandler(Boolean regexHandler);
+    void setRegexHandler(Boolean regexHandler);
 
     /**
-     * @Deprecated use {@link #setRegexHandler(Boolean regexHandler)} 
+     * @Deprecated use {@link #setRegexHandler(Boolean regexHandler)}
      */
     @Deprecated
-    public abstract void setRegexHandler(boolean regexHandler);
+    void setRegexHandler(boolean regexHandler);
+
 }

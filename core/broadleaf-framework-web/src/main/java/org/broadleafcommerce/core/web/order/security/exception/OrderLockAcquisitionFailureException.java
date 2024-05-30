@@ -10,30 +10,32 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.web.order.security.exception;
 
+import java.io.Serial;
 
 public class OrderLockAcquisitionFailureException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = -7826614694387239003L;
 
     protected OrderLockAcquisitionFailureException() {
         super();
     }
-    
+
     public OrderLockAcquisitionFailureException(String message, Throwable cause) {
         super(message, cause);
     }
-    
+
     public OrderLockAcquisitionFailureException(String message) {
         super(message);
     }
-    
+
     public OrderLockAcquisitionFailureException(Throwable cause) {
         super(cause);
     }

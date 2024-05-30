@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,10 +46,8 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 
 /**
- * 
  * @author Jeff Fischer
  */
-
 @Repository("blCategoryDao")
 public class CategoryDaoImpl implements CategoryDao {
 
@@ -57,6 +55,14 @@ public class CategoryDaoImpl implements CategoryDao {
     protected Long currentDateResolution;
 
     protected Date cachedDate = SystemTime.asDate();
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+    @Resource(name = "blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
+    @Resource(name = "blSandBoxHelper")
+    protected SandBoxHelper sandBoxHelper;
+    @Resource(name = "blCategoryDaoExtensionManager")
+    protected CategoryDaoExtensionManager extensionManager;
 
     protected Date getCurrentDateAfterFactoringInDateResolution() {
         Date returnDate = SystemTime.getCurrentDateWithinTimeResolution(cachedDate, getCurrentDateResolution());
@@ -67,18 +73,6 @@ public class CategoryDaoImpl implements CategoryDao {
         }
         return returnDate;
     }
-
-    @PersistenceContext(unitName="blPU")
-    protected EntityManager em;
-
-    @Resource(name="blEntityConfiguration")
-    protected EntityConfiguration entityConfiguration;
-
-    @Resource(name = "blSandBoxHelper")
-    protected SandBoxHelper sandBoxHelper;
-
-    @Resource(name = "blCategoryDaoExtensionManager")
-    protected CategoryDaoExtensionManager extensionManager;
 
     @Override
     public Category save(Category category) {
@@ -323,13 +317,15 @@ public class CategoryDaoImpl implements CategoryDao {
         return query.getSingleResult();
     }
 
-
     @Override
-    public List<CategoryProductXref> findXrefByCategoryWithDefaultReference(Long categoryId){
-        TypedQuery<CategoryProductXref> query = em.createQuery("SELECT xref FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl xref" +
-                " WHERE xref.category.id = :categoryId AND xref.defaultReference=TRUE", CategoryProductXref.class);
+    public List<CategoryProductXref> findXrefByCategoryWithDefaultReference(Long categoryId) {
+        TypedQuery<CategoryProductXref> query = em.createQuery(
+                "SELECT xref FROM org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl xref" +
+                        " WHERE xref.category.id = :categoryId AND xref.defaultReference=TRUE",
+                CategoryProductXref.class
+        );
         query.setParameter("categoryId", categoryId);
         return query.getResultList();
-
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,6 +32,8 @@ import java.util.List;
  */
 public interface SkuCustomPersistenceHandlerExtensionHandler extends ExtensionHandler {
 
+    int DEFAULT_PRIORITY = Integer.MAX_VALUE;
+
     /**
      * Hook for the before and after save state of the sku
      *
@@ -42,5 +44,4 @@ public interface SkuCustomPersistenceHandlerExtensionHandler extends ExtensionHa
 
     ExtensionResultStatusType getAdditionalSkusCollection(Product product, ExtensionResultHolder<List<Sku>> erh);
 
-    public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 }

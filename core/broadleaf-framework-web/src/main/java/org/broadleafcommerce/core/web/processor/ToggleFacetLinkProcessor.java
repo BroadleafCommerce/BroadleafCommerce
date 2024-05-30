@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -39,8 +38,8 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * A Thymeleaf processor that processes the value attribute on the element it's tied to
  * with a predetermined value based on the SearchFacetResultDTO object that is passed into this
- * processor. 
- * 
+ * processor.
+ *
  * @author apazzolini
  */
 @Component("blToggleFacetLinkProcessor")
@@ -54,14 +53,20 @@ public class ToggleFacetLinkProcessor extends AbstractBroadleafAttributeModifier
     public String getName() {
         return "togglefacetlink";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 10000;
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(
+            String tagName,
+            Map<String, String> tagAttributes,
+            String attributeName,
+            String attributeValue,
+            BroadleafTemplateContext context
+    ) {
         BroadleafRequestContext blcContext = BroadleafRequestContext.getBroadleafRequestContext();
         HttpServletRequest request = blcContext.getRequest();
 

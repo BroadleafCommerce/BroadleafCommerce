@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,16 +40,16 @@ import jakarta.persistence.criteria.Root;
  * for template site catalog or profile (also a multitenant concept). In the absence of the multitenant module, ExtensionManager
  * instance of this type should have no effect.
  *
- * @see org.broadleafcommerce.common.extension.ResultType
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.common.extension.ResultType
  */
 public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler {
 
     /**
      * Add additional restrictions to the fetch query
      *
-     * @param type the class type for the query
-     * @param resultType pass a ResultType of IGNORE to explicitly ignore refineRetrieve, even if the multitenant module is loaded
+     * @param type         the class type for the query
+     * @param resultType   pass a ResultType of IGNORE to explicitly ignore refineRetrieve, even if the multitenant module is loaded
      * @param builder
      * @param criteria
      * @param root
@@ -64,8 +64,8 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      * {@link #refineQuery(Class, ResultType, TypedQuery)} to pass the actual parameter values before retrieving the query
      * results.
      *
-     * @param type the class type for the query
-     * @param resultType pass a ResultType of IGNORE to explicitly ignore refineRetrieve, even if the multitenant module is loaded
+     * @param type         the class type for the query
+     * @param resultType   pass a ResultType of IGNORE to explicitly ignore refineRetrieve, even if the multitenant module is loaded
      * @param builder
      * @param criteria
      * @param root
@@ -77,9 +77,9 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
     /**
      * Finish the query - possibly setting parameters
      *
-     * @param type the class type for the query
+     * @param type       the class type for the query
      * @param resultType pass a ResultType of IGNORE to explicitly ignore refineQuery, even if the multitenant module is loaded
-     * @param query the final Query instance to embellish
+     * @param query      the final Query instance to embellish
      * @return
      */
     ExtensionResultStatusType refineQuery(Class<?> type, ResultType resultType, TypedQuery query);
@@ -87,7 +87,7 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
     /**
      * Perform any setup operations. This is usually done before executing the query and can serve to prepare the BroadleafRequestContext (if applicable).
      *
-     * @param type the class type for the query
+     * @param type       the class type for the query
      * @param resultType pass a ResultType of IGNORE to explicitly ignore setup, even if the multitenant module is loaded
      * @return the status of the extension operation
      */
@@ -96,7 +96,7 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
     /**
      * Perform any breakdown operations. This is usually done after executing the query and can serve to reset the BroadleafRequestContext (if applicable)
      *
-     * @param type the class type for the query
+     * @param type       the class type for the query
      * @param resultType pass a ResultType of IGNORE to explicitly ignore breakdown, even if the multitenant module is loaded
      * @return the status of the extension operation
      */
@@ -105,12 +105,12 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
     /**
      * Add sorting to the fetch query
      *
-     * @param type the class type for the query
+     * @param type       the class type for the query
      * @param resultType
      * @param builder
      * @param criteria
      * @param root
-     * @param sorts any additional JPA order expressions should be added here
+     * @param sorts      any additional JPA order expressions should be added here
      * @return the status of the extension operation
      */
     ExtensionResultStatusType refineOrder(Class<?> type, ResultType resultType, CriteriaBuilder builder, CriteriaQuery criteria, Root root, List<Order> sorts);
@@ -118,10 +118,10 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
     /**
      * Filter the results from the database in Java
      *
-     * @param type the class type for the query
+     * @param type         the class type for the query
      * @param resultType
      * @param queryResults the results of the fetch query from the database
-     * @param response the container for the filtered results
+     * @param response     the container for the filtered results
      * @return the status of the extension operation
      */
     ExtensionResultStatusType refineResults(Class<?> type, ResultType resultType, List queryResults, ExtensionResultHolder<List> response);
@@ -131,7 +131,7 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      * site, or a template profile or catalog, if applicable.
      *
      * @param testObject the multitenant object to test
-     * @param response the response container
+     * @param response   the response container
      * @return the status of the extension operation
      */
     ExtensionResultStatusType getResultType(Object testObject, ExtensionResultHolder<ResultType> response);
@@ -140,9 +140,9 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      * Build the cache key to be used for either the STANDARD or TEMPLATE style cache, driven by the resultType.
      *
      * @param testObject object to examine for a portion of the cache key
-     * @param qualifier the suffix for the cache key
+     * @param qualifier  the suffix for the cache key
      * @param resultType the type of cache key to create (STANDARD or TEMPLATE)
-     * @param response the response container
+     * @param response   the response container
      * @return the status of the extension operation
      */
     ExtensionResultStatusType getCacheKey(Object testObject, String qualifier, ResultType resultType, ExtensionResultHolder<String> response);
@@ -150,9 +150,9 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
     /**
      * Build the cache key to be used for either the STANDARD or TEMPLATE style cache, driven by the resultType.
      *
-     * @param qualifier the suffix for the cache key
+     * @param qualifier  the suffix for the cache key
      * @param resultType the type of cache key to create (STANDARD or TEMPLATE)
-     * @param response the response container
+     * @param response   the response container
      * @return the status of the extension operation
      */
     ExtensionResultStatusType getCacheKey(String qualifier, ResultType resultType, ExtensionResultHolder<String> response);
@@ -163,9 +163,9 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      * And use them to construct a list of keys. This can be helpful when you do a change on a template site and
      * need to invalidate cached items for standard sites.
      *
-     * @param qualifier the suffix for the cache key
+     * @param qualifier  the suffix for the cache key
      * @param resultType the type of cache key to create (STANDARD or TEMPLATE)
-     * @param response the response container
+     * @param response   the response container
      * @return the status of the extension operation
      */
     ExtensionResultStatusType getCacheKeys(String qualifier, ResultType resultType, ExtensionResultHolder<List<String>> response);
@@ -174,7 +174,7 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      * Build a list of cache keys that are related to a TEMPLATE template site
      *
      * @param qualifier the suffix for the cache key
-     * @param response the response container
+     * @param response  the response container
      * @return the status of the extension operation
      */
     ExtensionResultStatusType getCacheKeyListForTemplateSite(String qualifier, ExtensionResultHolder<List<String>> response);
@@ -183,9 +183,9 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      * Convert the list of query results into a list that denotes not only the query results, but also whether or not each member
      * represents a deleted/archived item, or an active/normal item.
      *
-     * @param type the class type for the query
+     * @param type         the class type for the query
      * @param queryResults the results of the fetch query from the database
-     * @param response the response container - the list is sorted with deleted item appearing first
+     * @param response     the response container - the list is sorted with deleted item appearing first
      * @return the status of the extension operation
      */
     ExtensionResultStatusType buildStatus(Class<?> type, List queryResults, ExtensionResultHolder<List<StandardCacheItem>> response);
@@ -202,7 +202,7 @@ public interface SparselyPopulatedQueryExtensionHandler extends ExtensionHandler
      * Get a common id for an object that is consistent for a standard site (whether or not the test object is overridden in the standard site)
      *
      * @param testObject the object whose id is normalized
-     * @param response the container for the normalized id
+     * @param response   the container for the normalized id
      * @return the status of the extension operation
      */
     ExtensionResultStatusType getNormalizedId(Object testObject, ExtensionResultHolder<Long> response);

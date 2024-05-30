@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -67,9 +67,7 @@ import jakarta.annotation.Resource;
 
 import static org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote.ANONYMOUS_USER_NAME;
 
-
 /**
- * 
  * @author Phillip Verheyden
  * @see {@link org.broadleafcommerce.common.web.BroadleafRequestFilter}
  */
@@ -89,10 +87,10 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
 
     @Resource(name = "messageSource")
     protected MessageSource messageSource;
-    
+
     @Resource(name = "blLocaleResolver")
     protected BroadleafLocaleResolver localeResolver;
-    
+
     @Resource(name = "blAdminTimeZoneResolver")
     protected BroadleafTimeZoneResolver broadleafTimeZoneResolver;
 
@@ -107,17 +105,17 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
 
     @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
-    
+
     @Resource(name = "blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
 
     @Resource(name = "blDeployBehaviorUtil")
     protected DeployBehaviorUtil deployBehaviorUtil;
-    
+
     @Value("${" + ADMIN_STRICT_VALIDATE_PRODUCTION_CHANGES_KEY + ":true}")
     protected boolean adminStrictValidateProductionChanges = true;
-    
-    @Resource(name="blEntityExtensionManagers")
+
+    @Resource(name = "blEntityExtensionManagers")
     protected Map<String, ExtensionManager<?>> entityExtensionManagers;
 
     @Resource(name = "blAdminRequestProcessorExtensionManager")
@@ -149,12 +147,12 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         } else {
             brc.setValidateProductionChangesState(ValidateProductionChangesState.UNDEFINED);
         }
-        
+
         Locale locale = localeResolver.resolveLocale(request);
         brc.setLocale(locale);
-        
+
         brc.setMessageSource(messageSource);
-        
+
         TimeZone timeZone = broadleafTimeZoneResolver.resolveTimeZone(request);
         brc.setTimeZone(timeZone);
 
@@ -169,7 +167,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
 
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (adminUser != null && authentication!=null && !authentication.getName().equals(ANONYMOUS_USER_NAME)) {
+        if (adminUser != null && authentication != null && !authentication.getName().equals(ANONYMOUS_USER_NAME)) {
             AdminUserDetails principal = (AdminUserDetails) authentication.getPrincipal();
             if (principal.getId().equals(adminUser.getId())) {
                 brc.setAdminUserId(adminUser.getId());
@@ -189,7 +187,10 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         prepareProfile(request, brc);
         prepareCatalog(request, brc);
 
-        brc.getAdditionalProperties().put(staleStateProtectionService.getStateVersionTokenParameter(), staleStateProtectionService.getStateVersionToken());
+        brc.getAdditionalProperties().put(
+                staleStateProtectionService.getStateVersionTokenParameter(),
+                staleStateProtectionService.getStateVersionToken()
+        );
     }
 
     protected void prepareProfile(WebRequest request, BroadleafRequestContext brc) {
@@ -202,7 +203,8 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
         }
         //special case for AdvancedCMS EmailTemplate that will require profile in BRC to read EmailTemplate correctly
         //well in theory we can do that on every request, but just to minimize DB calls
-        if (adminUser != null || ((ServletWebRequest) request).getRequest().getRequestURL().toString().contains("sendResetPassword")) {
+        if (adminUser != null
+                || ((ServletWebRequest) request).getRequest().getRequestURL().toString().contains("sendResetPassword")) {
             Site profile = null;
             if (StringUtils.isNotBlank(request.getParameter(PROFILE_REQ_PARAM))) {
                 Long profileId = Long.parseLong(request.getParameter(PROFILE_REQ_PARAM));
@@ -219,7 +221,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 Long previouslySetProfileId = null;
                 if (BLCRequestUtils.isOKtoUseSession(request)) {
                     previouslySetProfileId = (Long) request.getAttribute(PROFILE_REQ_PARAM,
-                        WebRequest.SCOPE_SESSION);
+                            WebRequest.SCOPE_SESSION);
                 }
                 if (previouslySetProfileId != null) {
                     profile = siteService.retrievePersistentSiteById(previouslySetProfileId);
@@ -227,11 +229,11 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             }
 
             if (profile == null) {
-                List<Site> profiles = new ArrayList<Site>();
+                List<Site> profiles = new ArrayList<>();
                 if (brc.getNonPersistentSite() != null) {
                     Site currentSite = siteService.retrievePersistentSiteById(brc.getNonPersistentSite().getId());
                     if (extensionManager != null) {
-                        ExtensionResultHolder<Set<Site>> profilesResult = new ExtensionResultHolder<Set<Site>>();
+                        ExtensionResultHolder<Set<Site>> profilesResult = new ExtensionResultHolder<>();
                         extensionManager.retrieveProfiles(currentSite, profilesResult);
                         if (!CollectionUtils.isEmpty(profilesResult.getResult())) {
                             profiles.addAll(profilesResult.getResult());
@@ -270,7 +272,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 String token = request.getParameter(staleStateProtectionService.getStateVersionTokenParameter());
                 staleStateProtectionService.compareToken(token);
                 staleStateProtectionService.invalidateState(true);
-            }else if(StringUtils.isNotBlank(request.getParameter("catalogEntityCatalogDiscriminatorId"))){
+            } else if (StringUtils.isNotBlank(request.getParameter("catalogEntityCatalogDiscriminatorId"))) {
                 Long catalogId = Long.parseLong(request.getParameter("catalogEntityCatalogDiscriminatorId"));
                 catalog = siteService.findCatalogById(catalogId);
                 if (catalog == null) {
@@ -283,7 +285,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 Long previouslySetCatalogId = null;
                 if (BLCRequestUtils.isOKtoUseSession(request)) {
                     previouslySetCatalogId = (Long) request.getAttribute(CATALOG_REQ_PARAM,
-                        WebRequest.SCOPE_SESSION);
+                            WebRequest.SCOPE_SESSION);
                 }
                 if (previouslySetCatalogId != null) {
                     catalog = siteService.findCatalogById(previouslySetCatalogId);
@@ -291,11 +293,11 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             }
 
             if (catalog == null) {
-                List<Catalog> catalogs = new ArrayList<Catalog>();
+                List<Catalog> catalogs = new ArrayList<>();
                 if (brc.getNonPersistentSite() != null) {
                     Site currentSite = siteService.retrievePersistentSiteById(brc.getNonPersistentSite().getId());
                     if (extensionManager != null) {
-                        ExtensionResultHolder<Set<Catalog>> catalogResult = new ExtensionResultHolder<Set<Catalog>>();
+                        ExtensionResultHolder<Set<Catalog>> catalogResult = new ExtensionResultHolder<>();
                         extensionManager.retrieveCatalogs(currentSite, catalogResult);
                         if (!CollectionUtils.isEmpty(catalogResult.getResult())) {
                             catalogs.addAll(catalogResult.getResult());
@@ -316,13 +318,13 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             if (extensionManager != null) {
                 if (brc.getNonPersistentSite() != null) {
                     Site currentSite = siteService.retrievePersistentSiteById(brc.getNonPersistentSite().getId());
-                    ExtensionResultHolder<Catalog> catalogResult = new ExtensionResultHolder<Catalog>();
+                    ExtensionResultHolder<Catalog> catalogResult = new ExtensionResultHolder<>();
                     extensionManager.overrideCurrentCatalog(request, currentSite, catalogResult);
                     if (catalogResult.getResult() != null) {
                         brc.setCurrentCatalog(catalogResult.getResult());
                     }
 
-                    ExtensionResultHolder<Site> profileResult = new ExtensionResultHolder<Site>();
+                    ExtensionResultHolder<Site> profileResult = new ExtensionResultHolder<>();
                     extensionManager.overrideCurrentProfile(request, currentSite, profileResult);
                     if (profileResult.getResult() != null) {
                         brc.setCurrentProfile(profileResult.getResult());
@@ -365,7 +367,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
                 Long previouslySetSandBoxId = null;
                 if (BLCRequestUtils.isOKtoUseSession(request)) {
                     previouslySetSandBoxId = (Long) request.getAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR,
-                        WebRequest.SCOPE_SESSION);
+                            WebRequest.SCOPE_SESSION);
                 }
                 if (previouslySetSandBoxId != null) {
                     sandBox = sandBoxService.retrieveSandBoxManagementById(previouslySetSandBoxId);
@@ -394,7 +396,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             // If the user just changed sandboxes, we want to update the database record.
             Long previouslySetSandBoxId = null;
             if (BLCRequestUtils.isOKtoUseSession(request)) {
-                previouslySetSandBoxId = (Long) request.getAttribute(BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_SESSION);
+                previouslySetSandBoxId = (Long) request.getAttribute(
+                        BroadleafSandBoxResolver.SANDBOX_ID_VAR, WebRequest.SCOPE_SESSION
+                );
             }
             if (previouslySetSandBoxId != null && !sandBox.getId().equals(previouslySetSandBoxId)) {
                 adminUser.setLastUsedSandBoxId(sandBox.getId());
@@ -406,11 +410,13 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             }
             //We do this to prevent lazy init exceptions when this context/sandbox combination
             // is used in a different session that it was initiated in. see QA#2576
-            if(sandBox != null && sandBox.getChildSandBoxes() != null) {
+            if (sandBox != null && sandBox.getChildSandBoxes() != null) {
                 sandBox.getChildSandBoxes().size();
             }
             brc.setSandBox(sandBox);
-            brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode() ? DeployBehavior.CLONE_PARENT : DeployBehavior.OVERWRITE_PARENT);
+            brc.setDeployBehavior(deployBehaviorUtil.isProductionSandBoxMode()
+                    ? DeployBehavior.CLONE_PARENT
+                    : DeployBehavior.OVERWRITE_PARENT);
             brc.getAdditionalProperties().put("adminUser", adminUser);
         }
     }

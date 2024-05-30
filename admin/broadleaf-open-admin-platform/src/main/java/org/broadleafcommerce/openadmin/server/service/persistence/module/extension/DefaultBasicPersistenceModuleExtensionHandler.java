@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,8 +47,8 @@ import jakarta.annotation.Resource;
 /**
  * Default implementation for the core framework.
  *
- * @see org.broadleafcommerce.openadmin.server.service.persistence.module.extension.BasicPersistenceModuleExtensionHandler
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.openadmin.server.service.persistence.module.extension.BasicPersistenceModuleExtensionHandler
  */
 @Service("blDefaultBasicPersistenceModuleExtensionHandler")
 public class DefaultBasicPersistenceModuleExtensionHandler extends AbstractBasicPersistenceModuleExtensionHandler {
@@ -65,26 +65,38 @@ public class DefaultBasicPersistenceModuleExtensionHandler extends AbstractBasic
     }
 
     @Override
-    public ExtensionResultStatusType rebalanceForAdd(BasicPersistenceModule basicPersistenceModule,
-                                                     PersistencePackage persistencePackage, Serializable instance,
-                                                     Map<String, FieldMetadata> mergedProperties,
-                                                     ExtensionResultHolder<Serializable> resultHolder) {
+    public ExtensionResultStatusType rebalanceForAdd(
+            BasicPersistenceModule basicPersistenceModule,
+            PersistencePackage persistencePackage,
+            Serializable instance,
+            Map<String, FieldMetadata> mergedProperties,
+            ExtensionResultHolder<Serializable> resultHolder
+    ) {
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get
-                    (PersistencePerspectiveItemType.FOREIGNKEY);
+            ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems()
+                    .get(PersistencePerspectiveItemType.FOREIGNKEY);
             CriteriaTransferObject cto = new CriteriaTransferObject();
             FilterAndSortCriteria sortCriteria = cto.get(foreignKey.getSortField());
             sortCriteria.setSortAscending(foreignKey.getSortAscending());
-            List<FilterMapping> filterMappings = basicPersistenceModule.getFilterMappings(persistencePerspective,
-                    cto, persistencePackage.getCeilingEntityFullyQualifiedClassname(), mergedProperties);
-            int totalRecords = basicPersistenceModule.getTotalRecords(persistencePackage
-                    .getCeilingEntityFullyQualifiedClassname(), filterMappings);
-            Class<?> type = basicPersistenceModule.getFieldManager().getField(instance.getClass(),
-                    foreignKey.getSortField()).getType();
+            List<FilterMapping> filterMappings = basicPersistenceModule.getFilterMappings(
+                    persistencePerspective,
+                    cto,
+                    persistencePackage.getCeilingEntityFullyQualifiedClassname(),
+                    mergedProperties
+            );
+            int totalRecords = basicPersistenceModule.getTotalRecords(
+                    persistencePackage.getCeilingEntityFullyQualifiedClassname(),
+                    filterMappings
+            );
+            Class<?> type = basicPersistenceModule.getFieldManager()
+                    .getField(instance.getClass(), foreignKey.getSortField())
+                    .getType();
             boolean isBigDecimal = BigDecimal.class.isAssignableFrom(type);
-            basicPersistenceModule.getFieldManager().setFieldValue(instance, foreignKey.getSortField(),
-                    isBigDecimal ? new BigDecimal(totalRecords + 1) : Long.valueOf(totalRecords + 1));
+            basicPersistenceModule.getFieldManager().setFieldValue(
+                    instance, foreignKey.getSortField(),
+                    isBigDecimal ? new BigDecimal(totalRecords + 1) : Long.valueOf(totalRecords + 1)
+            );
 
             resultHolder.setResult(instance);
 
@@ -98,28 +110,39 @@ public class DefaultBasicPersistenceModuleExtensionHandler extends AbstractBasic
     }
 
     @Override
-    public ExtensionResultStatusType rebalanceForUpdate(final BasicPersistenceModule basicPersistenceModule,
-                                                        PersistencePackage persistencePackage, Serializable instance,
-                                                        Map<String, FieldMetadata> mergedProperties,
-                                                        Object primaryKey, ExtensionResultHolder<Serializable> resultHolder) {
+    public ExtensionResultStatusType rebalanceForUpdate(
+            final BasicPersistenceModule basicPersistenceModule,
+            PersistencePackage persistencePackage,
+            Serializable instance,
+            Map<String, FieldMetadata> mergedProperties,
+            Object primaryKey,
+            ExtensionResultHolder<Serializable> resultHolder
+    ) {
         try {
             Entity entity = persistencePackage.getEntity();
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get
-                    (PersistencePerspectiveItemType.FOREIGNKEY);
+            ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems()
+                    .get(PersistencePerspectiveItemType.FOREIGNKEY);
             Integer requestedSequence = Integer.valueOf(entity.findProperty(foreignKey.getSortField()).getValue());
-            Integer previousSequence = new BigDecimal(String.valueOf(basicPersistenceModule.getFieldManager()
-                    .getFieldValue(instance, foreignKey.getSortField()))).intValue();
+            Integer previousSequence = new BigDecimal(String.valueOf(
+                    basicPersistenceModule.getFieldManager().getFieldValue(instance, foreignKey.getSortField())
+            )).intValue();
             final String idPropertyName = basicPersistenceModule.getIdPropertyName(mergedProperties);
             final Object pKey = primaryKey;
 
-            instance = basicPersistenceModule.createPopulatedInstance(instance, entity, mergedProperties, false,
-                    persistencePackage.isValidateUnsubmittedProperties());
+            instance = basicPersistenceModule.createPopulatedInstance(
+                    instance,
+                    entity,
+                    mergedProperties,
+                    false,
+                    persistencePackage.isValidateUnsubmittedProperties()
+            );
 
             if (!previousSequence.equals(requestedSequence)) {
                 // Sequence has changed. Rebalance the list
-                Serializable manyToField = (Serializable) basicPersistenceModule.getFieldManager().getFieldValue
-                        (instance, foreignKey.getManyToField());
+                Serializable manyToField = (Serializable) basicPersistenceModule.getFieldManager().getFieldValue(
+                        instance, foreignKey.getManyToField()
+                );
                 List<Serializable> records = (List<Serializable>) basicPersistenceModule.getFieldManager()
                         .getFieldValue(manyToField, foreignKey.getOriginatingField());
 
@@ -150,12 +173,16 @@ public class DefaultBasicPersistenceModuleExtensionHandler extends AbstractBasic
                 }
 
                 int index = 1;
-                Class<?> type = basicPersistenceModule.getFieldManager().getField(myRecord.getClass(),
-                        foreignKey.getSortField()).getType();
+                Class<?> type = basicPersistenceModule.getFieldManager().getField(
+                        myRecord.getClass(), foreignKey.getSortField()
+                ).getType();
                 boolean isBigDecimal = BigDecimal.class.isAssignableFrom(type);
                 for (Serializable record : records) {
-                    basicPersistenceModule.getFieldManager().setFieldValue(record, foreignKey.getSortField(),
-                            isBigDecimal ? new BigDecimal(index) : Long.valueOf(index));
+                    basicPersistenceModule.getFieldManager().setFieldValue(
+                            record,
+                            foreignKey.getSortField(),
+                            isBigDecimal ? new BigDecimal(index) : Long.valueOf(index)
+                    );
                     index++;
                 }
             }

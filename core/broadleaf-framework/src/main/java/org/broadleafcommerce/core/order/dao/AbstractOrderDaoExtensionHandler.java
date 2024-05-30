@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,12 +24,11 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 
 import java.util.List;
 
-
 /**
  * @author Andre Azzolini (apazzolini), bpolster
  */
 public class AbstractOrderDaoExtensionHandler extends AbstractExtensionHandler implements OrderDaoExtensionHandler {
-    
+
     public ExtensionResultStatusType attachAdditionalDataToNewCart(Customer customer, Order cart) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
@@ -37,8 +36,12 @@ public class AbstractOrderDaoExtensionHandler extends AbstractExtensionHandler i
     public ExtensionResultStatusType processPostSaveNewCart(Customer customer, Order cart) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-    
-    public ExtensionResultStatusType applyAdditionalOrderLookupFilter(Customer customer, String name, List<Order> orders) {
+
+    public ExtensionResultStatusType applyAdditionalOrderLookupFilter(
+            Customer customer,
+            String name,
+            List<Order> orders
+    ) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 

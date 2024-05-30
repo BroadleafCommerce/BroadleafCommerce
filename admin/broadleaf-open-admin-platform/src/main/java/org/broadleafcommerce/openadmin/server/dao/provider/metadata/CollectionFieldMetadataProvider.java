@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,7 +51,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,41 +62,62 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
 
     private static final Log LOG = LogFactory.getLog(CollectionFieldMetadataProvider.class);
 
-    protected boolean canHandleFieldForConfiguredMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
-        AdminPresentationCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationCollection.class);
+    protected boolean canHandleFieldForConfiguredMetadata(
+            AddFieldMetadataRequest addMetadataRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
+        AdminPresentationCollection annot = addMetadataRequest.getRequestedField()
+                .getAnnotation(AdminPresentationCollection.class);
         return annot != null;
     }
 
-    protected boolean canHandleAnnotationOverride(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
-        return overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationMergeOverrides.class) != null;
+    protected boolean canHandleAnnotationOverride(
+            OverrideViaAnnotationRequest overrideViaAnnotationRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
+        return overrideViaAnnotationRequest.getRequestedEntity()
+                .getAnnotation(AdminPresentationMergeOverrides.class) != null;
     }
 
     @Override
-    public MetadataProviderResponse addMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse addMetadata(
+            AddFieldMetadataRequest addMetadataRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
-        AdminPresentationCollection annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationCollection
-                .class);
+        AdminPresentationCollection annot = addMetadataRequest.getRequestedField()
+                .getAnnotation(AdminPresentationCollection.class);
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
         FieldMetadataOverride override = constructBasicCollectionMetadataOverride(annot);
-        buildCollectionMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(),
-                metadata, info, override, addMetadataRequest.getPrefix());
+        buildCollectionMetadata(
+                addMetadataRequest.getParentClass(),
+                addMetadataRequest.getTargetClass(),
+                metadata,
+                info,
+                override,
+                addMetadataRequest.getPrefix()
+        );
         setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
         return MetadataProviderResponse.HANDLED;
     }
 
     @Override
-    public MetadataProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse overrideViaAnnotation(
+            OverrideViaAnnotationRequest overrideViaAnnotationRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         if (!canHandleAnnotationOverride(overrideViaAnnotationRequest, metadata)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
 
-        AdminPresentationMergeOverrides myMergeOverrides = overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationMergeOverrides.class);
+        AdminPresentationMergeOverrides myMergeOverrides = overrideViaAnnotationRequest.getRequestedEntity()
+                .getAnnotation(AdminPresentationMergeOverrides.class);
         if (myMergeOverrides != null) {
             for (AdminPresentationMergeOverride override : myMergeOverrides.value()) {
                 String propertyName = override.name();
-                Map<String, FieldMetadata> loopMap = new HashMap<String, FieldMetadata>();
+                Map<String, FieldMetadata> loopMap = new HashMap<>();
                 loopMap.putAll(metadata);
                 for (Map.Entry<String, FieldMetadata> entry : loopMap.entrySet()) {
                     if (entry.getKey().startsWith(propertyName) || StringUtils.isEmpty(propertyName)) {
@@ -113,16 +133,23 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                                     }
                                     String fieldName = serverMetadata.getFieldName();
                                     Field field = overrideViaAnnotationRequest.getDynamicEntityDao().getFieldManager()
-                                                .getField(targetClass, fieldName);
-                                    Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                            .getField(targetClass, fieldName);
+                                    Map<String, FieldMetadata> temp = new HashMap<>(1);
                                     temp.put(field.getName(), serverMetadata);
                                     FieldInfo info = buildFieldInfo(field);
                                     FieldMetadataOverride fieldMetadataOverride = overrideCollectionMergeMetadata(override);
-                                    if (serverMetadata.getExcluded() != null && serverMetadata.getExcluded() &&
-                                            (fieldMetadataOverride.getExcluded() == null || fieldMetadataOverride.getExcluded())) {
+                                    if (serverMetadata.getExcluded() != null && serverMetadata.getExcluded()
+                                            && (fieldMetadataOverride.getExcluded() == null || fieldMetadataOverride.getExcluded())) {
                                         continue;
                                     }
-                                    buildCollectionMetadata(parentClass, targetClass, temp, info, fieldMetadataOverride, overrideViaAnnotationRequest.getPrefix());
+                                    buildCollectionMetadata(
+                                            parentClass,
+                                            targetClass,
+                                            temp,
+                                            info,
+                                            fieldMetadataOverride,
+                                            overrideViaAnnotationRequest.getPrefix()
+                                    );
                                     serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
                                     metadata.put(entry.getKey(), serverMetadata);
                                 } catch (Exception e) {
@@ -139,8 +166,15 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
     }
 
     @Override
-    public MetadataProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
-        Map<String, MetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getDynamicEntityDao(), overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
+    public MetadataProviderResponse overrideViaXml(
+            OverrideViaXmlRequest overrideViaXmlRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
+        Map<String, MetadataOverride> overrides = getTargetedOverride(
+                overrideViaXmlRequest.getDynamicEntityDao(),
+                overrideViaXmlRequest.getRequestedConfigKey(),
+                overrideViaXmlRequest.getRequestedCeilingEntity()
+        );
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
                 MetadataOverride localMetadata = overrides.get(propertyName);
@@ -158,11 +192,19 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                                             parentClass = Class.forName(serverMetadata.getOwningClass());
                                         }
                                         String fieldName = serverMetadata.getFieldName();
-                                        Field field = overrideViaXmlRequest.getDynamicEntityDao().getFieldManager().getField(targetClass, fieldName);
-                                        Map<String, FieldMetadata> temp = new HashMap<String, FieldMetadata>(1);
+                                        Field field = overrideViaXmlRequest.getDynamicEntityDao().getFieldManager()
+                                                .getField(targetClass, fieldName);
+                                        Map<String, FieldMetadata> temp = new HashMap<>(1);
                                         temp.put(field.getName(), serverMetadata);
                                         FieldInfo info = buildFieldInfo(field);
-                                        buildCollectionMetadata(parentClass, targetClass, temp, info, localFieldMetadata, overrideViaXmlRequest.getPrefix());
+                                        buildCollectionMetadata(
+                                                parentClass,
+                                                targetClass,
+                                                temp,
+                                                info,
+                                                localFieldMetadata,
+                                                overrideViaXmlRequest.getPrefix()
+                                        );
                                         serverMetadata = (BasicCollectionMetadata) temp.get(field.getName());
                                         metadata.put(key, serverMetadata);
                                         if (overrideViaXmlRequest.getParentExcluded()) {
@@ -198,9 +240,10 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.CUSTOMCRITERIA)) {
                 fieldMetadataOverride.setCustomCriteria(entry.getValue().stringArrayOverrideValue());
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.EXCLUDED)) {
-                fieldMetadataOverride.setExcluded(StringUtils.isEmpty(stringValue) ? entry.getValue()
-                        .booleanOverrideValue() :
-                        Boolean.parseBoolean(stringValue));
+                fieldMetadataOverride.setExcluded(StringUtils.isEmpty(stringValue)
+                        ? entry.getValue().booleanOverrideValue()
+                        : Boolean.parseBoolean(stringValue)
+                );
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.FRIENDLYNAME)) {
                 fieldMetadataOverride.setFriendlyName(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.ADDFRIENDLYNAME)) {
@@ -217,14 +260,17 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                 fieldMetadataOverride.setFetchType(operationType.fetchType());
                 fieldMetadataOverride.setInspectType(operationType.inspectType());
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.ORDER)) {
-                fieldMetadataOverride.setOrder(StringUtils.isEmpty(stringValue) ? entry.getValue().intOverrideValue() :
-                        Integer.parseInt(stringValue));
+                fieldMetadataOverride.setOrder(StringUtils.isEmpty(stringValue)
+                        ? entry.getValue().intOverrideValue()
+                        : Integer.parseInt(stringValue)
+                );
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.MANYTOFIELD)) {
                 fieldMetadataOverride.setManyToField(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.READONLY)) {
-                fieldMetadataOverride.setReadOnly(StringUtils.isEmpty(stringValue) ? entry.getValue()
-                        .booleanOverrideValue() :
-                        Boolean.parseBoolean(stringValue));
+                fieldMetadataOverride.setReadOnly(StringUtils.isEmpty(stringValue)
+                        ? entry.getValue().booleanOverrideValue()
+                        : Boolean.parseBoolean(stringValue)
+                );
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SECURITYLEVEL)) {
                 fieldMetadataOverride.setSecurityLevel(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SHOWIFPROPERTY)) {
@@ -232,21 +278,24 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SHOWIFFIELDEQUALS)) {
                 processShowIfFieldEqualsAnnotations(entry.getValue().showIfFieldEquals(), fieldMetadataOverride);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SORTASCENDING)) {
-                fieldMetadataOverride.setSortAscending(StringUtils.isEmpty(stringValue) ? entry.getValue()
-                            .booleanOverrideValue() :
-                            Boolean.parseBoolean(stringValue));
+                fieldMetadataOverride.setSortAscending(StringUtils.isEmpty(stringValue)
+                        ? entry.getValue().booleanOverrideValue()
+                        : Boolean.parseBoolean(stringValue)
+                );
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.SORTPROPERTY)) {
                 fieldMetadataOverride.setSortProperty(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.TAB)) {
                 fieldMetadataOverride.setTab(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.TABORDER)) {
-                fieldMetadataOverride.setTabOrder(StringUtils.isEmpty(stringValue) ? entry.getValue()
-                        .intOverrideValue() :
-                        Integer.parseInt(stringValue));
+                fieldMetadataOverride.setTabOrder(StringUtils.isEmpty(stringValue)
+                        ? entry.getValue().intOverrideValue()
+                        : Integer.parseInt(stringValue)
+                );
             } else if (entry.getKey().equals(PropertyType.AdminPresentationCollection.USESERVERSIDEINSPECTIONCACHE)) {
-                fieldMetadataOverride.setUseServerSideInspectionCache(StringUtils.isEmpty(stringValue) ? entry
-                        .getValue().booleanOverrideValue() :
-                        Boolean.parseBoolean(stringValue));
+                fieldMetadataOverride.setUseServerSideInspectionCache(StringUtils.isEmpty(stringValue)
+                        ? entry.getValue().booleanOverrideValue()
+                        : Boolean.parseBoolean(stringValue)
+                );
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Unrecognized type: " + entry.getKey() + ". Not setting on collection field.");
@@ -293,15 +342,17 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         throw new IllegalArgumentException("AdminPresentationCollection annotation not found on Field");
     }
 
-    protected void buildCollectionMetadata(Class<?> parentClass, 
+    protected void buildCollectionMetadata(
+            Class<?> parentClass,
             Class<?> targetClass,
             Map<String, FieldMetadata> attributes,
             FieldInfo field,
             FieldMetadataOverride collectionMetadata,
-            String prefix) {
+            String prefix
+    ) {
         BasicCollectionMetadata serverMetadata = (BasicCollectionMetadata) attributes.get(field.getName());
 
-        Class<?> resolvedClass = parentClass==null?targetClass:parentClass;
+        Class<?> resolvedClass = parentClass == null ? targetClass : parentClass;
         BasicCollectionMetadata metadata;
         if (serverMetadata != null) {
             metadata = serverMetadata;
@@ -316,13 +367,20 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         if (collectionMetadata.getAddMethodType() != null) {
             metadata.setAddMethodType(collectionMetadata.getAddMethodType());
         }
-        if (collectionMetadata.getShowIfProperty()!=null) {
+        if (collectionMetadata.getShowIfProperty() != null) {
             metadata.setShowIfProperty(collectionMetadata.getShowIfProperty());
         }
         if (collectionMetadata.getShowIfFieldEquals() != null) {
             metadata.setShowIfFieldEquals(collectionMetadata.getShowIfFieldEquals());
         }
-        org.broadleafcommerce.openadmin.dto.OperationTypes dtoOperationTypes = new org.broadleafcommerce.openadmin.dto.OperationTypes(OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC, OperationType.BASIC);
+        org.broadleafcommerce.openadmin.dto.OperationTypes dtoOperationTypes =
+                new org.broadleafcommerce.openadmin.dto.OperationTypes(
+                        OperationType.BASIC,
+                        OperationType.BASIC,
+                        OperationType.BASIC,
+                        OperationType.BASIC,
+                        OperationType.BASIC
+                );
         if (collectionMetadata.getAddType() != null) {
             dtoOperationTypes.setAddType(collectionMetadata.getAddType());
         }
@@ -369,12 +427,13 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             foreignKeyName = field.getManyToManyMappedBy();
         }
         if (StringUtils.isEmpty(foreignKeyName)) {
-            throw new IllegalArgumentException("Unable to infer a ManyToOne field name for the @AdminPresentationCollection annotated field("+field.getName()+"). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the manyToField property");
+            throw new IllegalArgumentException("Unable to infer a ManyToOne field name for the @AdminPresentationCollection annotated field(" + field.getName() + "). If not using the mappedBy property of @OneToMany or @ManyToMany, please make sure to explicitly define the manyToField property");
         }
 
         String sortProperty = null;
         if (serverMetadata != null) {
-            sortProperty = ((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getSortField();
+            sortProperty = ((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems()
+                    .get(PersistencePerspectiveItemType.FOREIGNKEY)).getSortField();
         }
         if (!StringUtils.isEmpty(collectionMetadata.getSortProperty())) {
             sortProperty = collectionMetadata.getSortProperty();
@@ -382,14 +441,16 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
 
         Boolean isAscending = true;
         if (serverMetadata != null) {
-            isAscending = ((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY)).getSortAscending();
+            isAscending = ((ForeignKey) serverMetadata.getPersistencePerspective().getPersistencePerspectiveItems()
+                    .get(PersistencePerspectiveItemType.FOREIGNKEY)).getSortAscending();
         }
-        if (collectionMetadata.isSortAscending()!=null) {
+        if (collectionMetadata.isSortAscending() != null) {
             isAscending = collectionMetadata.isSortAscending();
         }
 
         if (serverMetadata != null) {
-            ForeignKey foreignKey = (ForeignKey) metadata.getPersistencePerspective().getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+            ForeignKey foreignKey = (ForeignKey) metadata.getPersistencePerspective().getPersistencePerspectiveItems()
+                    .get(PersistencePerspectiveItemType.FOREIGNKEY);
             foreignKey.setManyToField(foreignKeyName);
             foreignKey.setForeignKeyClass(resolvedClass.getName());
             foreignKey.setMutable(metadata.isMutable());
@@ -397,7 +458,9 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             foreignKey.setSortField(sortProperty);
             foreignKey.setSortAscending(isAscending);
         } else {
-            ForeignKey foreignKey = new ForeignKey(foreignKeyName, resolvedClass.getName(), null, ForeignKeyRestrictionType.ID_EQ);
+            ForeignKey foreignKey = new ForeignKey(
+                    foreignKeyName, resolvedClass.getName(), null, ForeignKeyRestrictionType.ID_EQ
+            );
             foreignKey.setMutable(metadata.isMutable());
             foreignKey.setOriginatingField(prefix + field.getName());
             foreignKey.setSortField(sortProperty);
@@ -406,7 +469,8 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
         }
 
         String ceiling = null;
-        checkCeiling: {
+        checkCeiling:
+        {
             if (field.getGenericType() instanceof ParameterizedType) {
                 try {
                     ParameterizedType pt = (ParameterizedType) field.getGenericType();
@@ -419,11 +483,13 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
                     // We will continue and attempt to find it via the Hibernate annotations
                 }
             }
-            if (!StringUtils.isEmpty(field.getOneToManyTargetEntity()) && !void.class.getName().equals(field.getOneToManyTargetEntity())) {
+            if (!StringUtils.isEmpty(field.getOneToManyTargetEntity())
+                    && !void.class.getName().equals(field.getOneToManyTargetEntity())) {
                 ceiling = field.getOneToManyTargetEntity();
                 break checkCeiling;
             }
-            if (!StringUtils.isEmpty(field.getManyToManyTargetEntity()) && !void.class.getName().equals(field.getManyToManyTargetEntity())) {
+            if (!StringUtils.isEmpty(field.getManyToManyTargetEntity())
+                    && !void.class.getName().equals(field.getManyToManyTargetEntity())) {
                 ceiling = field.getManyToManyTargetEntity();
                 break checkCeiling;
             }
@@ -487,20 +553,23 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
             persistencePerspective.setUseServerSideInspectionCache(collectionMetadata.getUseServerSideInspectionCache());
         }
 
-        if (collectionMetadata.getCurrencyCodeField()!=null) {
+        if (collectionMetadata.getCurrencyCodeField() != null) {
             metadata.setCurrencyCodeField(collectionMetadata.getCurrencyCodeField());
         }
 
-        if (collectionMetadata.getSelectizeVisibleField()!=null) {
+        if (collectionMetadata.getSelectizeVisibleField() != null) {
             metadata.setSelectizeVisibleField(collectionMetadata.getSelectizeVisibleField());
         }
 
         attributes.put(field.getName(), metadata);
     }
 
-    protected void processShowIfFieldEqualsAnnotations(FieldValueConfiguration[] configurations, FieldMetadataOverride override) {
+    protected void processShowIfFieldEqualsAnnotations(
+            FieldValueConfiguration[] configurations,
+            FieldMetadataOverride override
+    ) {
         if (override.getShowIfFieldEquals() == null) {
-            override.setShowIfFieldEquals(new HashMap<String, List<String>>());
+            override.setShowIfFieldEquals(new HashMap<>());
         }
         for (FieldValueConfiguration configuration : configurations) {
             override.getShowIfFieldEquals().put(configuration.fieldName(), Arrays.asList(configuration.fieldValues()));
@@ -511,4 +580,5 @@ public class CollectionFieldMetadataProvider extends AdvancedCollectionFieldMeta
     public int getOrder() {
         return FieldMetadataProvider.COLLECTION;
     }
+
 }

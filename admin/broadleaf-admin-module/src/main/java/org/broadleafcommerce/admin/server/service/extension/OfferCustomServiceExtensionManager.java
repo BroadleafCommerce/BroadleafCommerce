@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,14 +24,9 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.springframework.stereotype.Service;
 
-
 @Service("blOfferCustomServiceExtensionManager")
-public class OfferCustomServiceExtensionManager extends ExtensionManager<OfferCustomServiceExtensionHandler> implements OfferCustomServiceExtensionHandler {
-
-
-    public OfferCustomServiceExtensionManager() {
-        super(OfferCustomServiceExtensionHandler.class);
-    }
+public class OfferCustomServiceExtensionManager extends ExtensionManager<OfferCustomServiceExtensionHandler>
+        implements OfferCustomServiceExtensionHandler {
 
     public static final ExtensionManagerOperation clearHiddenQualifiers = new ExtensionManagerOperation() {
         @Override
@@ -39,6 +34,10 @@ public class OfferCustomServiceExtensionManager extends ExtensionManager<OfferCu
             return ((OfferCustomServiceExtensionHandler) handler).clearHiddenQualifiers((Entity) params[0]);
         }
     };
+
+    public OfferCustomServiceExtensionManager() {
+        super(OfferCustomServiceExtensionHandler.class);
+    }
 
     @Override
     public ExtensionResultStatusType clearHiddenQualifiers(Entity entity) {
@@ -50,4 +49,5 @@ public class OfferCustomServiceExtensionManager extends ExtensionManager<OfferCu
         //not used - fulfills interface contract
         return true;
     }
+
 }

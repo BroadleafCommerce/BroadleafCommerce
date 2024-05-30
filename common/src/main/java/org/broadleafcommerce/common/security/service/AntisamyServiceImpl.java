@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,17 +21,17 @@ import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.Policy;
 import org.springframework.core.io.ClassPathResource;
 
-public class AntisamyServiceImpl implements AntisamyService{
-    private static final String DEFAULT_ANTI_SAMY_POLICY_FILE_LOCATION = "antisamy-myspace.xml";
-    protected String antiSamyPolicyFileLocation = DEFAULT_ANTI_SAMY_POLICY_FILE_LOCATION;
+public class AntisamyServiceImpl implements AntisamyService {
 
-    //this is thread safe
-    private Policy antiSamyPolicy = getAntiSamyPolicy(antiSamyPolicyFileLocation);
+    private static final String DEFAULT_ANTI_SAMY_POLICY_FILE_LOCATION = "antisamy-myspace.xml";
+    private static AntisamyServiceImpl instance = new AntisamyServiceImpl();
     //this is thread safe for the usage of scan()
     private final AntiSamy as = new AntiSamy();
+    protected String antiSamyPolicyFileLocation = DEFAULT_ANTI_SAMY_POLICY_FILE_LOCATION;
+    //this is thread safe
+    private Policy antiSamyPolicy = getAntiSamyPolicy(antiSamyPolicyFileLocation);
 
-    private static AntisamyServiceImpl instance = new AntisamyServiceImpl();
-    public static AntisamyService getInstance(){
+    public static AntisamyService getInstance() {
         return instance;
     }
 
@@ -42,7 +42,6 @@ public class AntisamyServiceImpl implements AntisamyService{
             throw new RuntimeException("Unable to create URL", e);
         }
     }
-
 
     @Override
     public String getAntiSamyPolicyFileLocation() {
@@ -56,12 +55,12 @@ public class AntisamyServiceImpl implements AntisamyService{
     }
 
     @Override
-    public AntiSamy getAntiSamy(){
+    public AntiSamy getAntiSamy() {
         return as;
     }
 
     @Override
-    public Policy getAntiSamyPolicy(){
+    public Policy getAntiSamyPolicy() {
         return antiSamyPolicy;
     }
 

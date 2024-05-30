@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,6 +26,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
@@ -38,10 +39,10 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 /**
- * 
  * @author Phillip Verheyden
  */
 @Entity
@@ -54,31 +55,35 @@ import java.math.BigDecimal;
 })
 public class FulfillmentWeightBandImpl extends FulfillmentBandImpl implements FulfillmentWeightBand {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "FulfillmentWeightBandId")
+    @GeneratedValue(generator = "FulfillmentWeightBandId")
     @GenericGenerator(
-        name="FulfillmentWeightBandId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="FulfillmentWeightBandImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl")
-        }
+            name = "FulfillmentWeightBandId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FulfillmentWeightBandImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl")
+            }
     )
     @Column(name = "FULFILLMENT_WEIGHT_BAND_ID")
     protected Long id;
-    
+
     @Column(name = "MINIMUM_WEIGHT", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "FulfillmentWeightBandImpl_Weight")
     protected BigDecimal minimumWeight;
-    
+
     @Column(name = "WEIGHT_UNIT_OF_MEASURE")
-    @AdminPresentation(friendlyName = "FulfillmentWeightBandImpl_Weight_Units", fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType")
+    @AdminPresentation(friendlyName = "FulfillmentWeightBandImpl_Weight_Units",
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.util.WeightUnitOfMeasureType")
     protected String weightUnitOfMeasure;
-    
-    @ManyToOne(targetEntity=BandedWeightFulfillmentOptionImpl.class)
-    @JoinColumn(name="FULFILLMENT_OPTION_ID")
+
+    @ManyToOne(targetEntity = BandedWeightFulfillmentOptionImpl.class)
+    @JoinColumn(name = "FULFILLMENT_OPTION_ID")
     protected BandedWeightFulfillmentOption option;
 
     @Override
@@ -90,17 +95,17 @@ public class FulfillmentWeightBandImpl extends FulfillmentBandImpl implements Fu
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public BigDecimal getMinimumWeight() {
         return minimumWeight;
     }
-    
+
     @Override
     public void setMinimumWeight(BigDecimal minimumWeight) {
         this.minimumWeight = minimumWeight;
     }
-    
+
     @Override
     public BandedWeightFulfillmentOption getOption() {
         return option;

@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.cms.web.processor;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,20 +30,19 @@ import java.util.Map;
 import jakarta.annotation.Resource;
 
 /**
- * Similar to {@link UrlRewriteProcessor} but handles href tags.   
+ * Similar to {@link UrlRewriteProcessor} but handles href tags.
  * Mainly those that have a useCdn=true attribute or those that are inside a script tag.
- * 
+ *
  * @author bpolster
  */
 @Component("blHrefUrlRewriteProcessor")
 @ConditionalOnTemplating
 public class HrefUrlRewriteProcessor extends UrlRewriteProcessor {
 
-    @Resource(name = "blStaticAssetPathService")
-    protected StaticAssetPathService staticAssetPathService;
-
     private static final String LINK = "link";
     private static final String HREF = "href";
+    @Resource(name = "blStaticAssetPathService")
+    protected StaticAssetPathService staticAssetPathService;
 
     @Override
     public String getName() {
@@ -52,8 +50,13 @@ public class HrefUrlRewriteProcessor extends UrlRewriteProcessor {
     }
 
     @Override
-    public BroadleafAttributeModifier getModifiedAttributes(String tagName, Map<String, String> tagAttributes, String attributeName,
-            String attributeValue, BroadleafTemplateContext context) {
+    public BroadleafAttributeModifier getModifiedAttributes(
+            String tagName,
+            Map<String, String> tagAttributes,
+            String attributeName,
+            String attributeValue,
+            BroadleafTemplateContext context
+    ) {
         String useCDN = tagAttributes.get("useCDN");
         String hrefValue = attributeValue;
         if (LINK.equals(tagName) || StringUtils.equals("true", useCDN)) {

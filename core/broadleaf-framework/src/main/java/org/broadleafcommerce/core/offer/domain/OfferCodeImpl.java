@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -45,6 +45,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -76,13 +77,13 @@ import jakarta.persistence.Transient;
         friendlyName = "OfferCodeImpl_baseOfferCode")
 @SQLDelete(sql = "UPDATE BLC_OFFER_CODE SET ARCHIVED = 'Y' WHERE OFFER_CODE_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class OfferCodeImpl implements OfferCode {
 
-    public static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "OfferCodeId")
@@ -101,14 +102,12 @@ public class OfferCodeImpl implements OfferCode {
 
     @ManyToOne(targetEntity = OfferImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "OFFER_ID")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", order = 2000,
-            prominent = true, gridOrder = 2000)
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer", order = 2000, prominent = true, gridOrder = 2000)
     @AdminPresentationToOneLookup()
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable = false)
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 1000, prominent = true,
-            gridOrder = 1000,
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Offer_Code", order = 1000, prominent = true, gridOrder = 1000,
             validationConfigurations = {
                     @ValidationConfiguration(validationImplementation = "blRegexPropertyValidator",
                             configurationItems = {
@@ -119,8 +118,7 @@ public class OfferCodeImpl implements OfferCode {
     protected String offerCode;
 
     @Column(name = "START_DATE")
-    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date", order = 3000,
-            defaultValue = "today")
+    @AdminPresentation(friendlyName = "OfferCodeImpl_Code_Start_Date", order = 3000, defaultValue = "today")
     protected Date offerCodeStartDate;
 
     @Column(name = "END_DATE")
@@ -129,8 +127,7 @@ public class OfferCodeImpl implements OfferCode {
                     @ValidationConfiguration(
                             validationImplementation = "blAfterStartDateValidator",
                             configurationItems = {
-                                    @ConfigurationItem(itemName = "otherField",
-                                            itemValue = "offerCodeStartDate")
+                                    @ConfigurationItem(itemName = "otherField", itemValue = "offerCodeStartDate")
                             })
             })
     protected Date offerCodeEndDate;
@@ -151,8 +148,7 @@ public class OfferCodeImpl implements OfferCode {
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "addedOfferCodes",
-            targetEntity = OrderImpl.class)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "addedOfferCodes", targetEntity = OrderImpl.class)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     protected List<Order> orders = new ArrayList<>();
 
@@ -303,8 +299,7 @@ public class OfferCodeImpl implements OfferCode {
         // If the start date for this offer code has not been set, just delegate to the offer to determine if the code is
         // active rather than requiring the user to set offer code dates as well
         if (offerCodeStartDate == null) {
-            datesActive =
-                    DateUtil.isActive(getOffer().getStartDate(), getOffer().getEndDate(), true);
+            datesActive = DateUtil.isActive(getOffer().getStartDate(), getOffer().getEndDate(), true);
         } else {
             datesActive = DateUtil.isActive(offerCodeStartDate, offerCodeEndDate, true);
         }
@@ -335,10 +330,8 @@ public class OfferCodeImpl implements OfferCode {
         return false;
     }
 
-
     @Override
-    public <G extends OfferCode> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OfferCode> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -356,4 +349,5 @@ public class OfferCodeImpl implements OfferCode {
         cloned.setEmailAddress(emailAddress);
         return createResponse;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,40 +31,40 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  *
  * @author Nathan Moore (nathanmoore).
  */
-@ManagedResource(objectName="org.broadleafcommerce:name=Log4J2Manangement", description="Logging Management", currencyTimeLimit=15)
+@ManagedResource(objectName = "org.broadleafcommerce:name=Log4J2Manangement", description = "Logging Management", currencyTimeLimit = 15)
 public class Log4j2ManagementBean {
 
-    @ManagedOperation(description="Activate info level")
+    @ManagedOperation(description = "Activate info level")
     @ManagedOperationParameters({@ManagedOperationParameter(name = "category", description = "the log4j2 category to set")})
     public void activateInfo(String category) {
         Configurator.setLevel(category, Level.INFO);
     }
 
-    @ManagedOperation(description="Activate debug level")
+    @ManagedOperation(description = "Activate debug level")
     @ManagedOperationParameters({@ManagedOperationParameter(name = "category", description = "the log4j2 category to set")})
     public void activateDebug(String category) {
         Configurator.setLevel(category, Level.DEBUG);
     }
 
-    @ManagedOperation(description="Activate warn level")
+    @ManagedOperation(description = "Activate warn level")
     @ManagedOperationParameters({@ManagedOperationParameter(name = "category", description = "the log4j2 category to set")})
     public void activateWarn(String category) {
         Configurator.setLevel(category, Level.WARN);
     }
 
-    @ManagedOperation(description="Activate error level")
+    @ManagedOperation(description = "Activate error level")
     @ManagedOperationParameters({@ManagedOperationParameter(name = "category", description = "the log4j2 category to set")})
     public void activateError(String category) {
         Configurator.setLevel(category, Level.ERROR);
     }
 
-    @ManagedOperation(description="Activate fatal level")
+    @ManagedOperation(description = "Activate fatal level")
     @ManagedOperationParameters({@ManagedOperationParameter(name = "category", description = "the log4j2 category to set")})
     public void activateFatal(String category) {
         Configurator.setLevel(category, Level.FATAL);
     }
 
-    @ManagedOperation(description="Retrieve the category log level")
+    @ManagedOperation(description = "Retrieve the category log level")
     @ManagedOperationParameters({@ManagedOperationParameter(name = "category", description = "the log4j2 category")})
     public String getLevel(String category) {
         return LogManager.getLogger(category).getLevel().toString();

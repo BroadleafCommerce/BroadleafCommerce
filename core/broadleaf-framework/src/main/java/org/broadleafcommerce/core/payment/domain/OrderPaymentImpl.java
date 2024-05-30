@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,6 +56,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.context.ApplicationContext;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,6 +114,7 @@ import jakarta.persistence.Table;
 })
 public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -407,7 +409,8 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
 
     @Override
     public <G extends OrderPayment> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

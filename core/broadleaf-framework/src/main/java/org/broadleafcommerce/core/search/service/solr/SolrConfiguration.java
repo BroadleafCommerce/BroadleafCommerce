@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,10 +40,10 @@ import java.util.Objects;
 /**
  * <p>
  * Provides a class that will statically hold the Solr server.
- * 
+ *
  * <p>
  * This is initialized in {@link SolrSearchServiceImpl} and used in {@link SolrIndexServiceImpl}
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class SolrConfiguration implements InitializingBean {
@@ -70,7 +70,7 @@ public class SolrConfiguration implements InitializingBean {
     protected Integer solrCloudNumReplicas = 1;
 
     protected String solrHomePath = null;
-    
+
     @Value("${solr.index.site.collections:false}")
     protected boolean siteCollections;
 
@@ -79,7 +79,243 @@ public class SolrConfiguration implements InitializingBean {
 
     @Value("${solr.index.site.collection.name:blcSite}")
     protected String siteCollectionBase;
-    
+
+    /**
+     * Sets up Solr using multiple clients, one primary, one for reindexing, and one admin to reduce down time during
+     * indexing.  This constructor should be used when setting up HttpSolrClient since no collection names are
+     * being provided.
+     * <p>
+     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
+     * versions of Solr, 4.4 and beyond, auto discovery of cores is
+     * provided.  When using a stand-alone server or server cluster,
+     * the admin server, for swapping cores, is a different URL. For example,
+     * one needs to use http://solrserver:8983/solr, which formerly acted as the admin server
+     * AND as the primary core.  As of Solr 4.4, one needs to specify the cores separately:
+     * http://solrserver:8983/solr/primary and http://solrserver:8983/solr/reindex,
+     * and use http://solrserver:8983/solr for swapping cores.
+     *
+     * @param solrServer
+     * @param reindexServer
+     * @param adminServer
+     * @throws IllegalStateException
+     */
+    public SolrConfiguration(SolrClient solrServer, SolrClient reindexServer, SolrClient adminServer) throws IllegalStateException {
+        //get primary and reindex names from http urls
+
+        if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
+            this.setPrimaryName(determineCoreName((HttpSolrClient) solrServer));
+        } else if (DelegatingHttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
+            this.setPrimaryName(((DelegatingHttpSolrClient) solrServer).getDefaultCollection());
+        }
+
+        if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
+            this.setReindexName(determineCoreName((HttpSolrClient) reindexServer));
+        } else if (DelegatingHttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
+            this.setReindexName(((DelegatingHttpSolrClient) reindexServer).getDefaultCollection());
+        }
+
+        this.setServer(solrServer);
+        this.setReindexServer(reindexServer);
+        this.setAdminServer(adminServer);
+    }
+
+    /**
+     * Sets up Solr using multiple clients, one primary, one for reindexing, and one admin to reduce down time during
+     * indexing.  This constructor should be used when setting up HttpSolrClient since no collection names are
+     * being provided.  Namespace can be specified if managing multiple document sets within the same cores.
+     * <p>
+     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
+     * versions of Solr, 4.4 and beyond, auto discovery of cores is
+     * provided.  When using a stand-alone server or server cluster,
+     * the admin server, for swapping cores, is a different URL. For example,
+     * one needs to use http://solrserver:8983/solr, which formerly acted as the admin server
+     * AND as the primary core.  As of Solr 4.4, one needs to specify the cores separately:
+     * http://solrserver:8983/solr/primary and http://solrserver:8983/solr/reindex,
+     * and use http://solrserver:8983/solr for swapping cores.
+     *
+     * @param solrServer
+     * @param reindexServer
+     * @param adminServer
+     * @param namespace
+     * @throws IllegalStateException
+     */
+    public SolrConfiguration(
+            SolrClient solrServer,
+            SolrClient reindexServer,
+            SolrClient adminServer,
+            String namespace
+    ) throws IllegalStateException {
+        this.setNamespace(namespace);
+        if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
+            this.setPrimaryName(determineCoreName((HttpSolrClient) solrServer));
+        } else if (DelegatingHttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
+            if (((DelegatingHttpSolrClient) solrServer).getDefaultCollection() == null) {
+                this.setReindexName(determineCoreName(((DelegatingHttpSolrClient) solrServer).getDelegate()));
+            } else {
+                this.setReindexName(((DelegatingHttpSolrClient) solrServer).getDefaultCollection());
+            }
+        }
+
+        if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
+            this.setReindexName(determineCoreName((HttpSolrClient) reindexServer));
+        } else if (DelegatingHttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
+            if (((DelegatingHttpSolrClient) reindexServer).getDefaultCollection() == null) {
+                this.setReindexName(determineCoreName(((DelegatingHttpSolrClient) reindexServer).getDelegate()));
+            } else {
+                this.setReindexName(((DelegatingHttpSolrClient) reindexServer).getDefaultCollection());
+            }
+        }
+
+        this.setServer(solrServer);
+        this.setReindexServer(reindexServer);
+        this.setAdminServer(adminServer);
+    }
+
+    /**
+     * Sets up Solr using multiple clients, one primary, one for reindexing, and one admin to reduce down time during
+     * indexing. This constructor should be used when setting up LBHttpSolrClients because primaryCoreName and
+     * reindexCoreName need to be provided to SolrConfiguration.
+     * <p>
+     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
+     * versions of Solr, 4.4 and beyond, auto discovery of cores is
+     * provided.  When using a stand-alone server or server cluster,
+     * the admin server, for swapping cores, is a different URL. For example,
+     * one needs to use http://solrserver:8983/solr, which formerly acted as the admin server
+     * AND as the primary core.  As of Solr 4.4, one needs to specify the cores separately:
+     * http://solrserver:8983/solr/primary and http://solrserver:8983/solr/reindex,
+     * and use http://solrserver:8983/solr for swapping cores.
+     *
+     * @param solrServer
+     * @param reindexServer
+     * @param adminServer
+     * @param primaryCoreName
+     * @param reindexCoreName
+     * @throws IllegalStateException
+     */
+    public SolrConfiguration(
+            SolrClient solrServer,
+            SolrClient reindexServer,
+            SolrClient adminServer,
+            String primaryCoreName,
+            String reindexCoreName
+    ) throws IllegalStateException {
+        this.setPrimaryName(primaryCoreName);
+        this.setReindexName(reindexCoreName);
+        this.setServer(solrServer);
+        this.setReindexServer(reindexServer);
+        this.setAdminServer(adminServer);
+    }
+
+    /**
+     * Sets up Solr using multiple clients, one primary, one for reindexing, and one admin to reduce down time during
+     * indexing. This constructor should be used when setting up LBHttpSolrClients because primaryCoreName and
+     * reindexCoreName need to be provided to SolrConfiguration. Namespace can be specified if managing multiple
+     * document sets within the same cores.
+     * <p>
+     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
+     * versions of Solr, 4.4 and beyond, auto discovery of cores is
+     * provided.  When using a stand-alone server or server cluster,
+     * the admin server, for swapping cores, is a different URL. For example,
+     * one needs to use http://solrserver:8983/solr, which formerly acted as the admin server
+     * AND as the primary core.  As of Solr 4.4, one needs to specify the cores separately:
+     * http://solrserver:8983/solr/primary and http://solrserver:8983/solr/reindex,
+     * and use http://solrserver:8983/solr for swapping cores.
+     *
+     * @param solrServer
+     * @param reindexServer
+     * @param adminServer
+     * @param primaryCoreName
+     * @param reindexCoreName
+     * @param namespace
+     * @throws IllegalStateException
+     */
+    public SolrConfiguration(
+            SolrClient solrServer,
+            SolrClient reindexServer,
+            SolrClient adminServer,
+            String primaryCoreName,
+            String reindexCoreName,
+            String namespace
+    ) throws IllegalStateException {
+        this.setPrimaryName(primaryCoreName);
+        this.setReindexName(reindexCoreName);
+        this.setNamespace(namespace);
+        this.setServer(solrServer);
+        this.setReindexServer(reindexServer);
+        this.setAdminServer(adminServer);
+    }
+
+    /**
+     * This constructor should be used to set up Solr Cloud using solr cloud config name, number of cloud shards, and
+     * multiple clients, one primary, and one for reindexing to reduce down time during indexing.  Be sure to set the
+     * defaultCollection on the SolrClients correctly before passing them to this constructor.
+     *
+     * @param solrServer
+     * @param reindexServer
+     * @param solrCloudConfigName
+     * @param solrCloudNumShards
+     * @throws IllegalStateException
+     */
+    public SolrConfiguration(
+            SolrClient solrServer,
+            SolrClient reindexServer,
+            String solrCloudConfigName,
+            int solrCloudNumShards
+    ) throws IllegalStateException {
+        this.setSolrCloudConfigName(solrCloudConfigName);
+        this.setSolrCloudNumShards(solrCloudNumShards);
+        this.setServer(solrServer);
+        this.setReindexServer(reindexServer);
+    }
+
+    /**
+     * @param solrServer
+     * @param reindexServer
+     * @param solrCloudConfigName
+     * @param solrCloudNumShards
+     * @throws IllegalStateException
+     */
+    public SolrConfiguration(
+            CloudSolrClient solrServer,
+            CloudSolrClient reindexServer,
+            String solrCloudConfigName,
+            int solrCloudNumShards,
+            int replicationFactor
+    ) throws IllegalStateException {
+        this.setSolrCloudConfigName(solrCloudConfigName);
+        this.setSolrCloudNumShards(solrCloudNumShards);
+        this.setSolrCloudNumReplicas(replicationFactor);
+        this.setServer(solrServer);
+        this.setReindexServer(reindexServer);
+    }
+
+    /**
+     * This constructor should be used to set up Solr Cloud using solr cloud config name, number of cloud shards, and
+     * multiple clients, one primary, and one for reindexing to reduce down time during indexing.  Be sure to set the
+     * defaultCollection on the SolrClients correctly before passing them to this constructor.  Namespace can be specified
+     * if managing multiple document sets within the same collections.
+     *
+     * @param solrServer
+     * @param reindexServer
+     * @param solrCloudConfigName
+     * @param solrCloudNumShards
+     * @param namespace
+     * @throws IllegalStateException
+     */
+    public SolrConfiguration(
+            SolrClient solrServer,
+            SolrClient reindexServer,
+            String solrCloudConfigName,
+            int solrCloudNumShards,
+            String namespace
+    ) throws IllegalStateException {
+        this.setSolrCloudConfigName(solrCloudConfigName);
+        this.setSolrCloudNumShards(solrCloudNumShards);
+        this.setNamespace(namespace);
+        this.setServer(solrServer);
+        this.setReindexServer(reindexServer);
+    }
+
     public String getPrimaryName() {
         return primaryName;
     }
@@ -111,11 +347,15 @@ public class SolrConfiguration implements InitializingBean {
     public void setSolrCloudNumShards(Integer solrCloudNumShards) {
         this.solrCloudNumShards = solrCloudNumShards;
     }
-    
+
+    public void setSolrCloudNumShards(int solrCloudNumShards) {
+        this.solrCloudNumShards = solrCloudNumShards;
+    }
+
     public Integer getSolrCloudNumReplicas() {
         return solrCloudNumReplicas;
     }
-    
+
     public void setSolrCloudNumReplicas(Integer solrCloudNumReplicas) {
         this.solrCloudNumReplicas = solrCloudNumReplicas;
     }
@@ -137,14 +377,66 @@ public class SolrConfiguration implements InitializingBean {
     }
 
     /**
+     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
+     * versions of Solr, 4.4 and beyond, auto discovery of cores is
+     * provided.  When using a stand-alone server or server cluster,
+     * the admin server, for swapping cores, is a different URL. For example,
+     * one needs to use http://solrserver:8983/solr, which formerly acted as the admin server
+     * AND as the primary core.  As of Solr 4.4, one needs to specify the cores separately:
+     * http://solrserver:8983/solr/primary and http://solrserver:8983/solr/reindex,
+     * and use http://solrserver:8983/solr for swapping cores.
+     * <p>
+     * By default, this method attempts to return an admin server if configured. Otherwise,
+     * it returns the primary server if the admin server is null, which is backwards compatible
+     * with the way that BLC worked prior to this change.
+     *
+     * @return
+     */
+    public SolrClient getAdminServer() {
+        if (adminServer != null) {
+            return adminServer;
+        }
+        //If the admin server hasn't been set, return the primary server.
+        return getServer();
+    }
+
+    /**
+     * Sets the admin SolrClient instance to communicate with Solr for administrative reasons, like swapping cores.
+     * This is typically one of the following:
+     * <code>org.apache.solr.client.solrj.embedded.EmbeddedSolrServer</code>,
+     * <code>org.apache.solr.client.solrj.impl.HttpSolrServer</code>,
+     * <code>org.apache.solr.client.solrj.impl.LBHttpSolrServer</code>,
+     * or <code>org.apache.solr.client.solrj.impl.CloudSolrClient</code>
+     * <p>
+     * This should not typically need to be set unless using a stand-alone configuration, where the path to the
+     * /admin URI is different than the core URI.  This should not typically be set for EmbeddedSolrServer or
+     * CloudSolrClient.
+     *
+     * @param server
+     */
+    public void setAdminServer(SolrClient server) {
+        adminServer = server;
+    }
+
+    /**
+     * @return the primary Solr server
+     */
+    public SolrClient getServer() {
+        if (isSiteCollections() && isSolrCloudMode()) {
+            return getSiteServer();
+        }
+        return primaryServer;
+    }
+
+    /**
      * Sets the primary SolrClient instance to communicate with Solr.  This is typically one of the following:
      * <code>org.apache.solr.client.solrj.embedded.EmbeddedSolrClient</code>,
      * <code>org.apache.solr.client.solrj.impl.HttpSolrClient</code>,
      * <code>org.apache.solr.client.solrj.impl.LBHttpSolrClient</code>,
      * or <code>org.apache.solr.client.solrj.impl.CloudSolrClient</code>
-     * 
+     *
      * @param server SolrClient
-     * @throws IllegalStateException 
+     * @throws IllegalStateException
      */
     public void setServer(SolrClient server) throws IllegalStateException {
         if (server != null && CloudSolrClient.class.isAssignableFrom(server.getClass())) {
@@ -160,7 +452,7 @@ public class SolrConfiguration implements InitializingBean {
                             + "They must be different instances. Each instance must have a different defaultCollection or "
                             + "the defaultCollection must be unspecified and Broadleaf will set it.");
                 }
-                
+
                 if (CloudSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
                     //Make sure that the primary and reindex servers are not using the same default collection name
                     if (Objects.equals(cs.getDefaultCollection(), ((CloudSolrClient) reindexServer).getDefaultCollection())) {
@@ -175,15 +467,26 @@ public class SolrConfiguration implements InitializingBean {
     }
 
     /**
+     * @return the primary server if {@link #isSingleCoreMode()}, else the reindex server
+     */
+    public SolrClient getReindexServer() {
+        if (isSiteCollections() && isSolrCloudMode()) {
+            return getSiteReindexServer();
+        }
+
+        return isSingleCoreMode() ? primaryServer : reindexServer;
+    }
+
+    /**
      * Sets the SolrClient instance that points to the reindex core for the purpose of doing a full reindex, while the
-     * primary core is still serving serving requests.  This is typically one of the following: 
-     * <code>org.apache.solr.client.solrj.embedded.EmbeddedSolrServer</code>, 
-     * <code>org.apache.solr.client.solrj.impl.HttpSolrServer</code>, 
-     * <code>org.apache.solr.client.solrj.impl.LBHttpSolrServer</code>, 
+     * primary core is still serving serving requests.  This is typically one of the following:
+     * <code>org.apache.solr.client.solrj.embedded.EmbeddedSolrServer</code>,
+     * <code>org.apache.solr.client.solrj.impl.HttpSolrServer</code>,
+     * <code>org.apache.solr.client.solrj.impl.LBHttpSolrServer</code>,
      * or <code>org.apache.solr.client.solrj.impl.CloudSolrClient</code>
-     * 
+     *
      * @param server
-     * @throws IllegalStateException 
+     * @throws IllegalStateException
      */
     public void setReindexServer(SolrClient server) throws IllegalStateException {
         if (server != null && CloudSolrClient.class.isAssignableFrom(server.getClass())) {
@@ -213,280 +516,14 @@ public class SolrConfiguration implements InitializingBean {
     }
 
     /**
-     * Sets the admin SolrClient instance to communicate with Solr for administrative reasons, like swapping cores.
-     * This is typically one of the following: 
-     * <code>org.apache.solr.client.solrj.embedded.EmbeddedSolrServer</code>, 
-     * <code>org.apache.solr.client.solrj.impl.HttpSolrServer</code>, 
-     * <code>org.apache.solr.client.solrj.impl.LBHttpSolrServer</code>, 
-     * or <code>org.apache.solr.client.solrj.impl.CloudSolrClient</code>
-     * 
-     * This should not typically need to be set unless using a stand-alone configuration, where the path to the 
-     * /admin URI is different than the core URI.  This should not typically be set for EmbeddedSolrServer or 
-     * CloudSolrClient.
-     * 
-     * @param server
-     */
-    public void setAdminServer(SolrClient server) {
-        adminServer = server;
-    }
-
-    /**
-     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
-     * versions of Solr, 4.4 and beyond, auto discovery of cores is  
-     * provided.  When using a stand-alone server or server cluster, 
-     * the admin server, for swapping cores, is a different URL. For example, 
-     * one needs to use http://solrserver:8983/solr, which formerly acted as the admin server 
-     * AND as the primary core.  As of Solr 4.4, one needs to specify the cores separately: 
-     * http://solrserver:8983/solr/primary and http://solrserver:8983/solr/reindex, 
-     * and use http://solrserver:8983/solr for swapping cores.
-     * 
-     * By default, this method attempts to return an admin server if configured. Otherwise, 
-     * it returns the primary server if the admin server is null, which is backwards compatible 
-     * with the way that BLC worked prior to this change.
-     * 
-     * @return
-     */
-    public SolrClient getAdminServer() {
-        if (adminServer != null) {
-            return adminServer;
-        }
-        //If the admin server hasn't been set, return the primary server.
-        return getServer();
-    }
-
-    /**
-     * @return the primary Solr server
-     */
-    public SolrClient getServer() {
-        if (isSiteCollections() && isSolrCloudMode()) {
-            return getSiteServer();
-        }
-        return primaryServer;
-    }
-
-    /**
-     * @return the primary server if {@link #isSingleCoreMode()}, else the reindex server
-     */
-    public SolrClient getReindexServer() {
-        if (isSiteCollections() && isSolrCloudMode()) {
-            return getSiteReindexServer();
-        }
-        
-        return isSingleCoreMode() ? primaryServer : reindexServer;
-    }
-
-    /**
      * @return if this Solr context has a reindex server set not
      */
     public boolean isSingleCoreMode() {
         return reindexServer == null;
     }
-    
+
     public boolean isSolrCloudMode() {
         return CloudSolrClient.class.isAssignableFrom(primaryServer.getClass());
-    }
-
-    /**
-     * Sets up Solr using multiple clients, one primary, one for reindexing, and one admin to reduce down time during
-     * indexing.  This constructor should be used when setting up HttpSolrClient since no collection names are
-     * being provided.
-     * 
-     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
-     * versions of Solr, 4.4 and beyond, auto discovery of cores is  
-     * provided.  When using a stand-alone server or server cluster, 
-     * the admin server, for swapping cores, is a different URL. For example, 
-     * one needs to use http://solrserver:8983/solr, which formerly acted as the admin server 
-     * AND as the primary core.  As of Solr 4.4, one needs to specify the cores separately: 
-     * http://solrserver:8983/solr/primary and http://solrserver:8983/solr/reindex, 
-     * and use http://solrserver:8983/solr for swapping cores.
-     * 
-     * @param solrServer
-     * @param reindexServer
-     * @param adminServer
-     * @throws IllegalStateException
-     */
-    public SolrConfiguration(SolrClient solrServer, SolrClient reindexServer, SolrClient adminServer) throws IllegalStateException {
-        //get primary and reindex names from http urls
-
-        if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
-            this.setPrimaryName(determineCoreName((HttpSolrClient) solrServer));
-        } else if (DelegatingHttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
-            this.setPrimaryName(((DelegatingHttpSolrClient) solrServer).getDefaultCollection());
-        }
-
-        if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
-            this.setReindexName(determineCoreName((HttpSolrClient) reindexServer));
-        } else if (DelegatingHttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
-            this.setReindexName(((DelegatingHttpSolrClient) reindexServer).getDefaultCollection());
-        }
-
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
-        this.setAdminServer(adminServer);
-    }
-
-    /**
-     * Sets up Solr using multiple clients, one primary, one for reindexing, and one admin to reduce down time during 
-     * indexing.  This constructor should be used when setting up HttpSolrClient since no collection names are 
-     * being provided.  Namespace can be specified if managing multiple document sets within the same cores.
-     * 
-     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
-     * versions of Solr, 4.4 and beyond, auto discovery of cores is  
-     * provided.  When using a stand-alone server or server cluster, 
-     * the admin server, for swapping cores, is a different URL. For example, 
-     * one needs to use http://solrserver:8983/solr, which formerly acted as the admin server 
-     * AND as the primary core.  As of Solr 4.4, one needs to specify the cores separately: 
-     * http://solrserver:8983/solr/primary and http://solrserver:8983/solr/reindex, 
-     * and use http://solrserver:8983/solr for swapping cores.
-     * 
-     * @param solrServer
-     * @param reindexServer
-     * @param adminServer
-     * @param namespace
-     * @throws IllegalStateException
-     */
-    public SolrConfiguration(SolrClient solrServer, SolrClient reindexServer, SolrClient adminServer, String namespace) throws IllegalStateException {
-        this.setNamespace(namespace);
-        if (HttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
-            this.setPrimaryName(determineCoreName((HttpSolrClient) solrServer));
-        } else if (DelegatingHttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
-            if (((DelegatingHttpSolrClient)solrServer).getDefaultCollection() == null) {
-                this.setReindexName(determineCoreName(((DelegatingHttpSolrClient)solrServer).getDelegate()));
-            } else {
-                this.setReindexName(((DelegatingHttpSolrClient)solrServer).getDefaultCollection());
-            }
-        }
-        
-        if (HttpSolrClient.class.isAssignableFrom(reindexServer.getClass())) {
-            this.setReindexName(determineCoreName((HttpSolrClient) reindexServer));
-        } else if (DelegatingHttpSolrClient.class.isAssignableFrom(solrServer.getClass())) {
-            if (((DelegatingHttpSolrClient)reindexServer).getDefaultCollection() == null) {
-                this.setReindexName(determineCoreName(((DelegatingHttpSolrClient)reindexServer).getDelegate()));
-            } else {
-                this.setReindexName(((DelegatingHttpSolrClient)reindexServer).getDefaultCollection());
-            }
-        }
-
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
-        this.setAdminServer(adminServer);
-    }
-
-    /**
-     * Sets up Solr using multiple clients, one primary, one for reindexing, and one admin to reduce down time during 
-     * indexing. This constructor should be used when setting up LBHttpSolrClients because primaryCoreName and 
-     * reindexCoreName need to be provided to SolrConfiguration.
-     * 
-     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
-     * versions of Solr, 4.4 and beyond, auto discovery of cores is  
-     * provided.  When using a stand-alone server or server cluster, 
-     * the admin server, for swapping cores, is a different URL. For example, 
-     * one needs to use http://solrserver:8983/solr, which formerly acted as the admin server 
-     * AND as the primary core.  As of Solr 4.4, one needs to specify the cores separately: 
-     * http://solrserver:8983/solr/primary and http://solrserver:8983/solr/reindex, 
-     * and use http://solrserver:8983/solr for swapping cores.
-     * 
-     * @param solrServer
-     * @param reindexServer
-     * @param adminServer
-     * @param primaryCoreName
-     * @param reindexCoreName
-     * @throws IllegalStateException
-     */
-    public SolrConfiguration(SolrClient solrServer, SolrClient reindexServer, SolrClient adminServer, String primaryCoreName, String reindexCoreName) throws IllegalStateException {
-        this.setPrimaryName(primaryCoreName);
-        this.setReindexName(reindexCoreName);
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
-        this.setAdminServer(adminServer);
-    }
-
-    /**
-     * Sets up Solr using multiple clients, one primary, one for reindexing, and one admin to reduce down time during 
-     * indexing. This constructor should be used when setting up LBHttpSolrClients because primaryCoreName and 
-     * reindexCoreName need to be provided to SolrConfiguration. Namespace can be specified if managing multiple 
-     * document sets within the same cores.
-     * 
-     * The adminServer is just a reference to a SolrClient component for connecting to Solr.  In newer
-     * versions of Solr, 4.4 and beyond, auto discovery of cores is  
-     * provided.  When using a stand-alone server or server cluster, 
-     * the admin server, for swapping cores, is a different URL. For example, 
-     * one needs to use http://solrserver:8983/solr, which formerly acted as the admin server 
-     * AND as the primary core.  As of Solr 4.4, one needs to specify the cores separately: 
-     * http://solrserver:8983/solr/primary and http://solrserver:8983/solr/reindex, 
-     * and use http://solrserver:8983/solr for swapping cores.
-     * 
-     * @param solrServer
-     * @param reindexServer
-     * @param adminServer
-     * @param primaryCoreName
-     * @param reindexCoreName
-     * @param namespace
-     * @throws IllegalStateException
-     */
-    public SolrConfiguration(SolrClient solrServer, SolrClient reindexServer, SolrClient adminServer, String primaryCoreName, String reindexCoreName, String namespace) throws IllegalStateException {
-        this.setPrimaryName(primaryCoreName);
-        this.setReindexName(reindexCoreName);
-        this.setNamespace(namespace);
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
-        this.setAdminServer(adminServer);
-    }
-
-    /**
-     * This constructor should be used to set up Solr Cloud using solr cloud config name, number of cloud shards, and 
-     * multiple clients, one primary, and one for reindexing to reduce down time during indexing.  Be sure to set the 
-     * defaultCollection on the SolrClients correctly before passing them to this constructor.
-     * 
-     * @param solrServer
-     * @param reindexServer
-     * @param solrCloudConfigName
-     * @param solrCloudNumShards
-     * @throws IllegalStateException
-     */
-    public SolrConfiguration(SolrClient solrServer, SolrClient reindexServer, String solrCloudConfigName, int solrCloudNumShards) throws IllegalStateException {
-        this.setSolrCloudConfigName(solrCloudConfigName);
-        this.setSolrCloudNumShards(solrCloudNumShards);
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
-    }
-
-    /**
-     *
-     * @param solrServer
-     * @param reindexServer
-     * @param solrCloudConfigName
-     * @param solrCloudNumShards
-     * @throws IllegalStateException
-     */
-    public SolrConfiguration(CloudSolrClient solrServer, CloudSolrClient reindexServer, String solrCloudConfigName,
-                             int solrCloudNumShards, int replicationFactor) throws IllegalStateException {
-        this.setSolrCloudConfigName(solrCloudConfigName);
-        this.setSolrCloudNumShards(solrCloudNumShards);
-        this.setSolrCloudNumReplicas(replicationFactor);
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
-    }
-
-    /**
-     * This constructor should be used to set up Solr Cloud using solr cloud config name, number of cloud shards, and 
-     * multiple clients, one primary, and one for reindexing to reduce down time during indexing.  Be sure to set the 
-     * defaultCollection on the SolrClients correctly before passing them to this constructor.  Namespace can be specified 
-     * if managing multiple document sets within the same collections.
-     * 
-     * @param solrServer
-     * @param reindexServer
-     * @param solrCloudConfigName
-     * @param solrCloudNumShards
-     * @param namespace
-     * @throws IllegalStateException
-     */
-    public SolrConfiguration(SolrClient solrServer, SolrClient reindexServer, String solrCloudConfigName, int solrCloudNumShards, String namespace) throws IllegalStateException {
-        this.setSolrCloudConfigName(solrCloudConfigName);
-        this.setSolrCloudNumShards(solrCloudNumShards);
-        this.setNamespace(namespace);
-        this.setServer(solrServer);
-        this.setReindexServer(reindexServer);
     }
 
     @Override
@@ -552,7 +589,7 @@ public class SolrConfiguration implements InitializingBean {
 
     protected void reloadCollectionNames(CloudSolrClient primary, CloudSolrClient reindex) throws SolrServerException, IOException {
         List<String> collectionNames = CollectionAdminRequest.listCollections(primary);
-        Map<String, String> aliasCollectionMap  = this.aliasCollectionMap(primary);
+        Map<String, String> aliasCollectionMap = this.aliasCollectionMap(primary);
         if (aliasCollectionMap == null || !aliasCollectionMap.containsKey(reindex.getDefaultCollection())) {
             //Create a completely new collection
             String collectionName = null;
@@ -568,7 +605,7 @@ public class SolrConfiguration implements InitializingBean {
             this.createAlias(primary, collectionName, reindex.getDefaultCollection());
         } else {
             //Aliases can be mapped to collections that don't exist.... Make sure the collection exists
-            String collectionName = aliasCollectionMap .get(reindex.getDefaultCollection());
+            String collectionName = aliasCollectionMap.get(reindex.getDefaultCollection());
             collectionName = collectionName.split(",")[0];
             if (!collectionNames.contains(collectionName)) {
                 this.createCollection(primary, collectionName);
@@ -588,7 +625,7 @@ public class SolrConfiguration implements InitializingBean {
 
         CloudSolrClient client = (CloudSolrClient) primaryServer;
         client.connect();
-        
+
         String aliasName = getSiteAliasName(site);
         if (aliasName != null) {
             String collectionName = getSiteCollectionName(site);
@@ -599,14 +636,14 @@ public class SolrConfiguration implements InitializingBean {
 
         return client;
     }
-    
+
     public SolrClient getSiteReindexServer() {
         BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
         Site site = ctx.getNonPersistentSite();
 
         CloudSolrClient client = (CloudSolrClient) primaryServer;
         client.connect();
-        
+
         String aliasName = getSiteReindexAliasName(site);
         if (aliasName != null) {
             String collectionName = getSiteReindexCollectionName(site);
@@ -657,7 +694,7 @@ public class SolrConfiguration implements InitializingBean {
             throw ExceptionHelper.refineException(e);
         }
     }
-    
+
     /**
      * @param site the Site
      * @return the alias name for the given Site
@@ -710,8 +747,16 @@ public class SolrConfiguration implements InitializingBean {
         return siteAliasBase;
     }
 
+    public void setSiteAliasBase(String siteAliasBase) {
+        this.siteAliasBase = siteAliasBase;
+    }
+
     protected String getSiteCollectionBase() {
         return siteCollectionBase;
+    }
+
+    public void setSiteCollectionBase(String siteCollectionBase) {
+        this.siteCollectionBase = siteCollectionBase;
     }
 
     /**
@@ -721,20 +766,8 @@ public class SolrConfiguration implements InitializingBean {
         return siteCollections;
     }
 
-    public void setSiteAliasBase(String siteAliasBase) {
-        this.siteAliasBase = siteAliasBase;
-    }
-
-    public void setSiteCollectionBase(String siteCollectionBase) {
-        this.siteCollectionBase = siteCollectionBase;
-    }
-
     public void setSiteCollections(boolean siteCollections) {
         this.siteCollections = siteCollections;
-    }
-
-    public void setSolrCloudNumShards(int solrCloudNumShards) {
-        this.solrCloudNumShards = solrCloudNumShards;
     }
 
     public String getQueryCollectionName() {
@@ -768,7 +801,8 @@ public class SolrConfiguration implements InitializingBean {
         //Make sure we shut down each of the SolrClient references (these is really the Solr clients despite the name)
         try {
             if (getServer() != null) {
-                getServer().close();;
+                getServer().close();
+                ;
             }
         } catch (Exception e) {
             LOG.error("Error shutting down primary SolrClient (client).", e);
@@ -793,4 +827,5 @@ public class SolrConfiguration implements InitializingBean {
             LOG.error("Error shutting down admin SolrClient (client).", e);
         }
     }
+
 }

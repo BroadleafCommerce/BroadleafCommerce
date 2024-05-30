@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,13 +36,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Responsible for setting the necessary attributes on the {@link TranslationConsiderationContext}.
- * 
+ *
  * @author Andre Azzolini (apazzolini), bpolster
  */
 @Component("blTranslationFilter")
 @ConditionalOnNotAdmin
 public class TranslationFilter extends AbstractIgnorableFilter {
-    
+
     @Autowired
     @Qualifier("blTranslationRequestProcessor")
     protected TranslationRequestProcessor translationRequestProcessor;
@@ -54,13 +54,17 @@ public class TranslationFilter extends AbstractIgnorableFilter {
     public void doFilterUnlessIgnored(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
             if (areTranslationsEnabled()) {
-                translationRequestProcessor.process(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
+                translationRequestProcessor.process(
+                        new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response)
+                );
             }
 
             filterChain.doFilter(request, response);
         } finally {
             if (areTranslationsEnabled()) {
-                translationRequestProcessor.postProcess(new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response));
+                translationRequestProcessor.postProcess(
+                        new ServletWebRequest((HttpServletRequest) request, (HttpServletResponse) response)
+                );
             }
         }
     }
@@ -73,4 +77,5 @@ public class TranslationFilter extends AbstractIgnorableFilter {
     public int getOrder() {
         return FilterOrdered.POST_SECURITY_LOW;
     }
+
 }

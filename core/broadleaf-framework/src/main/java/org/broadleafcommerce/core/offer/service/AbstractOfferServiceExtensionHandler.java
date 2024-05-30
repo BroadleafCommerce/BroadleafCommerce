@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,12 +33,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * @author Andre Azzolini (apazzolini), bpolster
  */
 public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandler implements OfferServiceExtensionHandler {
-    
+
     @Override
     public ExtensionResultStatusType applyAdditionalFilters(List<Offer> offers, Order order) {
         return ExtensionResultStatusType.NOT_HANDLED;
@@ -50,8 +49,12 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
     }
 
     @Override
-    public ExtensionResultStatusType calculatePotentialSavings(PromotableCandidateItemOffer itemOffer,
-            PromotableOrderItem item, int quantity, Map<String, Object> contextMap) {
+    public ExtensionResultStatusType calculatePotentialSavings(
+            PromotableCandidateItemOffer itemOffer,
+            PromotableOrderItem item,
+            int quantity,
+            Map<String, Object> contextMap
+    ) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -61,8 +64,11 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
     }
 
     @Override
-    public ExtensionResultStatusType applyItemOffer(PromotableOrder order, PromotableCandidateItemOffer itemOffer,
-            Map<String, Object> contextMap) {
+    public ExtensionResultStatusType applyItemOffer(
+            PromotableOrder order,
+            PromotableCandidateItemOffer itemOffer,
+            Map<String, Object> contextMap
+    ) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -77,13 +83,18 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
     }
 
     @Override
-    public ExtensionResultStatusType createOrderItemPriceDetailAdjustment(ExtensionResultHolder<?> resultHolder,
-            OrderItemPriceDetail itemDetail) {
+    public ExtensionResultStatusType createOrderItemPriceDetailAdjustment(
+            ExtensionResultHolder<?> resultHolder,
+            OrderItemPriceDetail itemDetail
+    ) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType applyAdditionalRuleVariablesForItemOfferEvaluation(PromotableOrderItem orderItem, HashMap<String, Object> vars) {
+    public ExtensionResultStatusType applyAdditionalRuleVariablesForItemOfferEvaluation(
+            PromotableOrderItem orderItem,
+            HashMap<String, Object> vars
+    ) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -96,6 +107,5 @@ public class AbstractOfferServiceExtensionHandler extends AbstractExtensionHandl
     public ExtensionResultStatusType removeOfferCodeFromOrder(OfferCode offerCode, Order order) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-
 
 }

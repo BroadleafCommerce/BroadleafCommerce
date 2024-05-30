@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,10 +41,25 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_RATING_DETAIL",
-        indexes = {@Index(name = "RATING_CUSTOMER_INDEX", columnList = "CUSTOMER_ID")})
+@Table(name = "BLC_RATING_DETAIL", indexes = {@Index(name = "RATING_CUSTOMER_INDEX", columnList = "CUSTOMER_ID")})
 public class RatingDetailImpl implements RatingDetail, Serializable {
 
+    @Column(name = "RATING", nullable = false)
+    @AdminPresentation(friendlyName = "RatingDetail_rating", prominent = true)
+    protected Double rating;
+    @Column(name = "RATING_SUBMITTED_DATE", nullable = false)
+    @AdminPresentation(friendlyName = "RatingDetail_submittedDate", prominent = true)
+    protected Date ratingSubmittedDate;
+    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
+    @JoinColumn(name = "CUSTOMER_ID")
+    @AdminPresentation(friendlyName = "RatingDetail_customer", prominent = true)
+    @AdminPresentationToOneLookup
+    protected Customer customer;
+    @ManyToOne(optional = false, targetEntity = RatingSummaryImpl.class)
+    @JoinColumn(name = "RATING_SUMMARY_ID")
+    @AdminPresentation(friendlyName = "RatingDetail_summary")
+    @AdminPresentationToOneLookup
+    protected RatingSummary ratingSummary;
     @Id
     @GeneratedValue(generator = "RatingDetailId")
     @GenericGenerator(
@@ -58,26 +73,6 @@ public class RatingDetailImpl implements RatingDetail, Serializable {
     )
     @Column(name = "RATING_DETAIL_ID")
     private Long id;
-
-    @Column(name = "RATING", nullable = false)
-    @AdminPresentation(friendlyName = "RatingDetail_rating", prominent = true)
-    protected Double rating;
-
-    @Column(name = "RATING_SUBMITTED_DATE", nullable = false)
-    @AdminPresentation(friendlyName = "RatingDetail_submittedDate", prominent = true)
-    protected Date ratingSubmittedDate;
-
-    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
-    @JoinColumn(name = "CUSTOMER_ID")
-    @AdminPresentation(friendlyName = "RatingDetail_customer", prominent = true)
-    @AdminPresentationToOneLookup
-    protected Customer customer;
-
-    @ManyToOne(optional = false, targetEntity = RatingSummaryImpl.class)
-    @JoinColumn(name = "RATING_SUMMARY_ID")
-    @AdminPresentation(friendlyName = "RatingDetail_summary")
-    @AdminPresentationToOneLookup
-    protected RatingSummary ratingSummary;
 
     @Override
     public Long getId() {
@@ -128,6 +123,5 @@ public class RatingDetailImpl implements RatingDetail, Serializable {
     public void setRatingSummary(RatingSummary ratingSummary) {
         this.ratingSummary = ratingSummary;
     }
-
 
 }

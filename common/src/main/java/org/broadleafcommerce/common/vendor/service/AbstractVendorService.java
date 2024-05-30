@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,7 +34,7 @@ public abstract class AbstractVendorService {
     private static final Log LOG = LogFactory.getLog(AbstractVendorService.class);
     private static final String POST_METHOD = "POST";
 
-    protected InputStream postMessage(Map<String, String>content, URL destination, String encodeCharset) throws IOException {
+    protected InputStream postMessage(Map<String, String> content, URL destination, String encodeCharset) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) destination.openConnection();
         connection.setDoInput(true);
         connection.setDoOutput(true);
@@ -61,10 +61,14 @@ public abstract class AbstractVendorService {
             LOG.error("Problem closing the OuputStream to destination: " + destination.toExternalForm(), e);
         } finally {
             if (osw != null) {
-                try { osw.close(); } catch (Throwable e) {}
+                try {
+                    osw.close();
+                } catch (Throwable e) {
+                }
             }
         }
 
         return new BufferedInputStream(connection.getInputStream());
     }
+
 }

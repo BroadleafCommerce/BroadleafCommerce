@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,7 @@ import java.util.Map;
 public class EmailNotification extends Notification {
 
     protected String emailAddress;
-    protected List<Attachment> attachments = new ArrayList<Attachment>();
+    protected List<Attachment> attachments = new ArrayList<>();
 
     public EmailNotification() {
         super();
@@ -39,7 +39,11 @@ public class EmailNotification extends Notification {
         super(notificationEventType, context);
     }
 
-    public EmailNotification(String emailAddress, NotificationEventType notificationEventType, Map<String, Object> context) {
+    public EmailNotification(
+            String emailAddress,
+            NotificationEventType notificationEventType,
+            Map<String, Object> context
+    ) {
         super(notificationEventType, context);
         this.emailAddress = emailAddress;
     }
@@ -59,4 +63,5 @@ public class EmailNotification extends Notification {
     public void setAttachments(List<Attachment> attachments) {
         this.attachments = attachments;
     }
+
 }

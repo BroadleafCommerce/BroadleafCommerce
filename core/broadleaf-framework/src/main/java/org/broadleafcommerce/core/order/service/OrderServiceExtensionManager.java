@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
 /**
  * @author Andre Azzolini (apazzolini), bpolster
  */
@@ -40,49 +39,63 @@ public class OrderServiceExtensionManager extends ExtensionManager<OrderServiceE
     public static final ExtensionManagerOperation attachAdditionalDataToNewNamedCart = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OrderServiceExtensionHandler) handler).attachAdditionalDataToNewNamedCart((Customer) params[0], (Order) params[1]);
+            return ((OrderServiceExtensionHandler) handler).attachAdditionalDataToNewNamedCart(
+                    (Customer) params[0], (Order) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation preValidateCartOperation = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OrderServiceExtensionHandler) handler).preValidateCartOperation((Order) params[0], (ExtensionResultHolder) params[1]);
+            return ((OrderServiceExtensionHandler) handler).preValidateCartOperation(
+                    (Order) params[0], (ExtensionResultHolder) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation preValidateUpdateQuantityOperation = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OrderServiceExtensionHandler) handler).preValidateUpdateQuantityOperation((Order) params[0], (OrderItemRequestDTO) params[1], (ExtensionResultHolder) params[2]);
+            return ((OrderServiceExtensionHandler) handler).preValidateUpdateQuantityOperation(
+                    (Order) params[0], (OrderItemRequestDTO) params[1], (ExtensionResultHolder) params[2]
+            );
         }
     };
 
     public static final ExtensionManagerOperation attachAdditionalDataToOrder = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OrderServiceExtensionHandler) handler).attachAdditionalDataToOrder((Order) params[0], (Boolean) params[1]);
+            return ((OrderServiceExtensionHandler) handler).attachAdditionalDataToOrder(
+                    (Order) params[0], (Boolean) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation addOfferCodes = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OrderServiceExtensionHandler) handler).addOfferCodes((Order) params[0], (List<OfferCode>) params[1], (Boolean) params[2]);
+            return ((OrderServiceExtensionHandler) handler).addOfferCodes(
+                    (Order) params[0], (List<OfferCode>) params[1], (Boolean) params[2]
+            );
         }
     };
 
     public static final ExtensionManagerOperation findStaleCacheAwareCartForCustomer = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OrderServiceExtensionHandler) handler).findCartForCustomerWithEnhancements((Customer) params[0], (ExtensionResultHolder) params[1]);
+            return ((OrderServiceExtensionHandler) handler).findCartForCustomerWithEnhancements(
+                    (Customer) params[0], (ExtensionResultHolder) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation findStaleCacheAwareCartForCustomer2 = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((OrderServiceExtensionHandler) handler).findCartForCustomerWithEnhancements((Customer) params[0], (Order) params[1], (ExtensionResultHolder) params[2]);
+            return ((OrderServiceExtensionHandler) handler).findCartForCustomerWithEnhancements(
+                    (Customer) params[0], (Order) params[1], (ExtensionResultHolder) params[2]
+            );
         }
     };
 
@@ -108,7 +121,11 @@ public class OrderServiceExtensionManager extends ExtensionManager<OrderServiceE
     }
 
     @Override
-    public ExtensionResultStatusType preValidateUpdateQuantityOperation(Order cart, OrderItemRequestDTO dto, ExtensionResultHolder erh) {
+    public ExtensionResultStatusType preValidateUpdateQuantityOperation(
+            Order cart,
+            OrderItemRequestDTO dto,
+            ExtensionResultHolder erh
+    ) {
         return execute(preValidateUpdateQuantityOperation, cart, dto, erh);
     }
 
@@ -128,7 +145,11 @@ public class OrderServiceExtensionManager extends ExtensionManager<OrderServiceE
     }
 
     @Override
-    public ExtensionResultStatusType findCartForCustomerWithEnhancements(Customer customer, Order candidateCart, ExtensionResultHolder erh) {
+    public ExtensionResultStatusType findCartForCustomerWithEnhancements(
+            Customer customer,
+            Order candidateCart,
+            ExtensionResultHolder erh
+    ) {
         return execute(findStaleCacheAwareCartForCustomer2, customer, candidateCart, erh);
     }
 
@@ -137,4 +158,5 @@ public class OrderServiceExtensionManager extends ExtensionManager<OrderServiceE
         //Not used
         return true;
     }
+
 }

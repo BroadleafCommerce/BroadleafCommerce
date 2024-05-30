@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,6 +30,8 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,7 +43,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /**
- * 
  * @author Joshua Skorton (jskorton)
  */
 @Entity
@@ -50,10 +51,11 @@ import jakarta.persistence.Table;
 //@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blConfigurationModuleElements")
 @AdminPresentationClass(friendlyName = "SiteMapGeneratorConfigurationImpl")
 @DirectCopyTransform({
-    @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfiguration {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -71,7 +73,7 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     @Column(name = "DISABLED", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapGeneratorConfigurationImpl_Disabled", gridOrder = 2, prominent = true)
     protected Boolean disabled = false;
-    
+
     @Column(name = "CHANGE_FREQ", nullable = false)
     @AdminPresentation(friendlyName = "SiteMapGeneratorConfigurationImpl_Change_Freq", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType", gridOrder = 3, prominent = true)
@@ -86,11 +88,11 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     @AdminPresentation(friendlyName = "SiteMapGeneratorConfigurationImpl_Generator_Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType", gridOrder = 1, prominent = true)
     protected String generatorType;
-    
+
     @ManyToOne(targetEntity = SiteMapConfigurationImpl.class, optional = false)
     @JoinColumn(name = "MODULE_CONFIG_ID")
     protected SiteMapConfiguration siteMapConfiguration;
-    
+
     @Override
     public Long getId() {
         return id;
@@ -174,4 +176,5 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     public void setSiteMapConfiguration(SiteMapConfiguration siteMapConfiguration) {
         this.siteMapConfiguration = siteMapConfiguration;
     }
+
 }

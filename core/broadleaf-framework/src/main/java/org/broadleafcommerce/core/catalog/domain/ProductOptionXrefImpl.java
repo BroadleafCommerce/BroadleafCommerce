@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,6 +30,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -53,13 +55,15 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
 @AdminPresentationClass(excludeFromPolymorphism = false)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductOptions")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class ProductOptionXrefImpl implements ProductOptionXref {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -116,7 +120,8 @@ public class ProductOptionXrefImpl implements ProductOptionXref {
 
     @Override
     public <G extends ProductOptionXref> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -136,7 +141,6 @@ public class ProductOptionXrefImpl implements ProductOptionXref {
         }
         return createResponse;
     }
-
 
     @Override
     public boolean equals(Object obj) {
@@ -162,4 +166,5 @@ public class ProductOptionXrefImpl implements ProductOptionXref {
                 .append(productOption)
                 .toHashCode();
     }
+
 }

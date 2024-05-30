@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.StringUtils;
@@ -46,8 +45,6 @@ import java.util.TreeSet;
 
 public class EntityForm {
 
-    protected static final Log LOG = LogFactory.getLog(EntityForm.class);
-
     public static final String HIDDEN_GROUP = "hiddenGroup";
     public static final String MAP_KEY_GROUP = "keyGroup";
     public static final String DEFAULT_GROUP_NAME = "General";
@@ -55,7 +52,7 @@ public class EntityForm {
     public static final Integer DEFAULT_COLUMN = 0;
     public static final String DEFAULT_TAB_NAME = "General";
     public static final Integer DEFAULT_TAB_ORDER = 99999;
-
+    protected static final Log LOG = LogFactory.getLog(EntityForm.class);
     protected String id;
     protected String parentId;
     protected String idProperty = "id";
@@ -92,7 +89,8 @@ public class EntityForm {
                     .toComparison();
         }
     });
-    protected List<SectionCrumb> sectionCrumbs = new ArrayList<SectionCrumb>();
+
+    protected List<SectionCrumb> sectionCrumbs = new ArrayList<>();
 
     // This is used to data-bind when this entity form is submitted
     protected Map<String, Field> fields = null;
@@ -100,30 +98,29 @@ public class EntityForm {
     // This is used in cases where there is a sub-form on this page that is dynamically
     // rendered based on other values on this entity form. It is keyed by the name of the
     // property that drives the dynamic form.
-    protected Map<String, EntityForm> dynamicForms = new LinkedHashMap<String, EntityForm>();
+    protected Map<String, EntityForm> dynamicForms = new LinkedHashMap<>();
 
     // These values are used when dynamic forms are in play. They are not rendered to the client,
     // but they can be used when performing actions on the submit event
-    protected Map<String, DynamicEntityFormInfo> dynamicFormInfos = new LinkedHashMap<String, DynamicEntityFormInfo>();
+    protected Map<String, DynamicEntityFormInfo> dynamicFormInfos = new LinkedHashMap<>();
 
-    protected List<EntityFormAction> actions = new ArrayList<EntityFormAction>();
+    protected List<EntityFormAction> actions = new ArrayList<>();
 
-    protected Map<String, Object> attributes = new HashMap<String, Object>();
+    protected Map<String, Object> attributes = new HashMap<>();
 
     /**
      * @return a flattened, field name keyed representation of all of
      * the fields in all of the groups for this form. This set will also includes all of the dynamic form
      * fields.
-     *
+     * <p>
      * Note that if there collisions between the dynamic form fields and the fields on this form (meaning that they
      * have the same name), then the dynamic form field will be excluded from the map and the preference will be given
      * to first-level entities
-     *
      * @see {@link #getFields(boolean)}
      */
     public Map<String, Field> getFields() {
         if (fields == null) {
-            Map<String, Field> map = new LinkedHashMap<String, Field>();
+            Map<String, Field> map = new LinkedHashMap<>();
             for (Tab tab : tabs) {
                 for (FieldGroup group : tab.getFieldGroups()) {
                     for (Field field : group.getFields()) {
@@ -141,7 +138,7 @@ public class EntityForm {
                     fields.put(dynamicField.getKey(), dynamicField.getValue());
                 } else if (LOG.isDebugEnabled()) {
                     LOG.debug("Excluding dynamic field " + StringUtil.sanitize(dynamicField.getKey()) +
-                                " as there is already an occurrence in this entityForm");
+                            " as there is already an occurrence in this entityForm");
                 }
             }
         }
@@ -164,7 +161,7 @@ public class EntityForm {
             for (ListGrid lg : tab.getListGrids()) {
                 list.add(lg);
             }
-            for (FieldGroup group : tab.getFieldGroups()){
+            for (FieldGroup group : tab.getFieldGroups()) {
                 for (ListGrid lg : group.getListGrids()) {
                     list.add(lg);
                 }
@@ -232,6 +229,7 @@ public class EntityForm {
     /**
      * Since this field name could come from the frontend (where all fields are referenced like fields[name].value,
      * we need to strip that part out to look up the real field name in this entity
+     *
      * @param fieldName
      * @return
      */
@@ -246,7 +244,8 @@ public class EntityForm {
         Field fieldToRemove = null;
         FieldGroup containingGroup = null;
 
-        findField: {
+        findField:
+        {
             for (Tab tab : tabs) {
                 for (FieldGroup fieldGroup : tab.getFieldGroups()) {
                     for (Field field : fieldGroup.getFields()) {
@@ -352,7 +351,14 @@ public class EntityForm {
         addField(cmd, field, MAP_KEY_GROUP, 0, DEFAULT_TAB_NAME, DEFAULT_TAB_ORDER);
     }
 
-    public void addField(ClassMetadata cmd, Field field, String groupName, Integer groupOrder, String tabName, Integer tabOrder) {
+    public void addField(
+            ClassMetadata cmd,
+            Field field,
+            String groupName,
+            Integer groupOrder,
+            String tabName,
+            Integer tabOrder
+    ) {
         // Note: If a field creates a new tab/group (expected to be a rare occurrence), the firstTab/firstGroup may change
         //      as fields are added for a given EntityForm.
         Tab firstTab = tabs.isEmpty() ? null : tabs.first();
@@ -419,7 +425,14 @@ public class EntityForm {
         }
     }
 
-    public void addListGrid(ClassMetadata cmd, ListGrid listGrid, String tabName, Integer tabOrder, String groupName, boolean isTabPresent) {
+    public void addListGrid(
+            ClassMetadata cmd,
+            ListGrid listGrid,
+            String tabName,
+            Integer tabOrder,
+            String groupName,
+            boolean isTabPresent
+    ) {
         tabName = tabName == null ? DEFAULT_TAB_NAME : tabName;
         tabOrder = tabOrder == null ? DEFAULT_TAB_ORDER : tabOrder;
 
@@ -462,6 +475,7 @@ public class EntityForm {
 
     /**
      * Uses a zero based position.   Use 0 to add to the top of the list.
+     *
      * @param position
      * @param action
      */
@@ -505,18 +519,6 @@ public class EntityForm {
         return readOnly;
     }
 
-    public Boolean getPreventSubmit() {
-        return preventSubmit;
-    }
-
-    public void setPreventSubmit() {
-        this.preventSubmit = true;
-    }
-
-    public void setReadOnly() {
-        setReadOnly(true);
-    }
-
     public void setReadOnly(boolean readOnly) {
         if (getFields() != null) {
             for (Entry<String, Field> entry : getFields().entrySet()) {
@@ -540,10 +542,26 @@ public class EntityForm {
         this.readOnly = readOnly;
     }
 
+    public Boolean getPreventSubmit() {
+        return preventSubmit;
+    }
+
+    public void setPreventSubmit() {
+        this.preventSubmit = true;
+    }
+
+    public void setReadOnly() {
+        setReadOnly(true);
+    }
+
     public List<EntityFormAction> getActions() {
-        List<EntityFormAction> clonedActions = new ArrayList<EntityFormAction>(actions);
+        List<EntityFormAction> clonedActions = new ArrayList<>(actions);
         Collections.reverse(clonedActions);
         return Collections.unmodifiableList(clonedActions);
+    }
+
+    public void setActions(List<EntityFormAction> actions) {
+        this.actions = actions;
     }
 
     public EntityFormAction findActionById(String id) {
@@ -587,13 +605,13 @@ public class EntityForm {
         return translationId == null ? id : translationId;
     }
 
-    public void setTranslationId(String translationId) {
-        this.translationId = translationId;
-    }
-
     /* *********************** */
     /* GENERIC GETTERS/SETTERS */
     /* *********************** */
+
+    public void setTranslationId(String translationId) {
+        this.translationId = translationId;
+    }
 
     public String getId() {
         return id;
@@ -688,10 +706,6 @@ public class EntityForm {
 
     public void setDynamicFormInfos(Map<String, DynamicEntityFormInfo> dynamicFormInfos) {
         this.dynamicFormInfos = dynamicFormInfos;
-    }
-
-    public void setActions(List<EntityFormAction> actions) {
-        this.actions = actions;
     }
 
     public List<SectionCrumb> getSectionCrumbsImpl() {

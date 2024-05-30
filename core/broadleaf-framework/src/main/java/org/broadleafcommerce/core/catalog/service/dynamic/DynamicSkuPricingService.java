@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,13 +28,13 @@ import java.util.HashMap;
 import jakarta.annotation.Nonnull;
 
 /**
- * <p>Interface for calculating dynamic pricing for a {@link Sku}. This should be hooked up via a custom subclass of 
+ * <p>Interface for calculating dynamic pricing for a {@link Sku}. This should be hooked up via a custom subclass of
  * {@link org.broadleafcommerce.core.web.catalog.DefaultDynamicSkuPricingFilter} where an implementation of this class
  * should be injected and returned in the getPricing() method.</p>
- * 
+ *
  * <p>Rather than implementing this interface directly, consider subclassing the {@link DefaultDynamicSkuPricingServiceImpl}
  * and providing overrides to methods there.</p>
- * 
+ *
  * @author jfischer
  * @see {@link DefaultDynamicSkuPricingServiceImpl}
  * @see {@link org.broadleafcommerce.core.web.catalog.DefaultDynamicSkuPricingFilter}
@@ -45,7 +45,7 @@ public interface DynamicSkuPricingService {
     /**
      * While this method should return a {@link DynamicSkuPrices} (and not just null) the members of the result can all
      * be null; they do not have to be set
-     * 
+     *
      * @param skuWrapper
      * @param skuPricingConsiderations
      * @return
@@ -56,7 +56,7 @@ public interface DynamicSkuPricingService {
 
     /**
      * Used for t
-     * 
+     *
      * @param sku
      * @param skuPricingConsiderations
      * @return
@@ -65,7 +65,8 @@ public interface DynamicSkuPricingService {
     DynamicSkuPrices getSkuBundleItemPrice(SkuBundleItem sku, HashMap skuPricingConsiderations);
 
     /**
-     * Execute dynamic pricing on the price of a product option value. 
+     * Execute dynamic pricing on the price of a product option value.
+     *
      * @param productOptionValueImpl
      * @param priceAdjustment
      * @param skuPricingConsiderationContext

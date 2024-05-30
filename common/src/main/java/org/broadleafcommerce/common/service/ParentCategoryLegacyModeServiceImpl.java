@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,6 +36,18 @@ public class ParentCategoryLegacyModeServiceImpl implements ApplicationContextAw
     @Value("${" + USE_LEGACY_DEFAULT_CATEGORY_MODE + ":false}")
     protected boolean useLegacyDefaultCategoryMode = false;
 
+    public static ParentCategoryLegacyModeService getLegacyModeService() {
+        if (applicationContext == null) {
+            return null;
+        }
+        if (service == null) {
+            service = (ParentCategoryLegacyModeService) applicationContext.getBean(
+                    "blParentCategoryLegacyModeService"
+            );
+        }
+        return service;
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -46,13 +58,4 @@ public class ParentCategoryLegacyModeServiceImpl implements ApplicationContextAw
         return useLegacyDefaultCategoryMode;
     }
 
-    public static ParentCategoryLegacyModeService getLegacyModeService() {
-        if (applicationContext == null) {
-            return null;
-        }
-        if (service == null) {
-            service = (ParentCategoryLegacyModeService) applicationContext.getBean("blParentCategoryLegacyModeService");
-        }
-        return service;
-    }
 }

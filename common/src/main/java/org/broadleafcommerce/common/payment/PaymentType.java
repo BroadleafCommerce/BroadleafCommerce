@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.payment;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,15 +27,15 @@ import java.util.Map;
 /**
  * <p>This represents types of payments that can be applied to an order. There might be multiple order payments with the
  * same type on an order if the customer can pay with multiple cards (like 2 credit cards or 3 gift cards).</p>
- * 
- * @see {@link OrderPayment}
+ *
  * @author Phillip Verheyden (phillipuniverse)
+ * @see {@link OrderPayment}
  */
 public class PaymentType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, PaymentType> TYPES = new LinkedHashMap<String, PaymentType>();
+    private static final Map<String, PaymentType> TYPES = new LinkedHashMap<>();
 
     public static final PaymentType GIFT_CARD = new PaymentType("GIFT_CARD", "Gift Card", false);
     public static final PaymentType CREDIT_CARD = new PaymentType("CREDIT_CARD", "Credit Card", true, true);
@@ -51,19 +52,17 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
     public static final PaymentType GOOGLE_PAY = new PaymentType("GOOGLE_PAY", "Google Pay", true, true);
     /**
      * Intended for modules like PayPal Express Checkout
-     *
+     * <p>
      * It is important to note that in this system an `UNCONFIRMED` `THIRD_PARTY_ACCOUNT` has a specific use case.
      * The Order Payment amount can be variable. That means, when you confirm that `UNCONFIRMED` transaction, you can pass in a different amount
      * than what was sent as the initial transaction amount. see (AdjustOrderPaymentsActivity)
-     *
+     * <p>
      * Note that not all third party gateways support this feature described above.
      * Make sure to the gateway does before assigning this type to your Order Payment.
      */
-    public static final PaymentType THIRD_PARTY_ACCOUNT = new PaymentType("THIRD_PARTY_ACCOUNT", "3rd-Party Account", true);
-
-    public static PaymentType getInstance(final String type) {
-        return TYPES.get(type);
-    }
+    public static final PaymentType THIRD_PARTY_ACCOUNT = new PaymentType(
+            "THIRD_PARTY_ACCOUNT", "3rd-Party Account", true
+    );
 
     private String type;
     private String friendlyType;
@@ -80,7 +79,7 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
         this.isFinalPayment = false;
         this.isCreditCardType = false;
     }
-    
+
     public PaymentType(final String type, final String friendlyType, final boolean isFinalPayment) {
         this.friendlyType = friendlyType;
         this.isFinalPayment = isFinalPayment;
@@ -88,13 +87,22 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
-    public PaymentType(final String type, final String friendlyType, final boolean isFinalPayment, final boolean isCreditCardType) {
+    public PaymentType(
+            final String type,
+            final String friendlyType,
+            final boolean isFinalPayment,
+            final boolean isCreditCardType
+    ) {
         this.friendlyType = friendlyType;
         this.isFinalPayment = isFinalPayment;
         this.isCreditCardType = isCreditCardType;
         setType(type);
     }
-    
+
+    public static PaymentType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public boolean getIsFinalPayment() {
         return isFinalPayment;
     }
@@ -108,16 +116,16 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -144,4 +152,5 @@ public class PaymentType implements Serializable, BroadleafEnumerationType {
             return false;
         return true;
     }
+
 }

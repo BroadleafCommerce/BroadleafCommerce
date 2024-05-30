@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,11 +44,9 @@ import jakarta.annotation.Resource;
 @ConditionalOnTemplating
 public class PromotionMessageVariableExpression extends BLCVariableExpression {
 
-    private static final Log LOG = LogFactory.getLog(PromotionMessageVariableExpression.class);
-
     public static final String PRODUCT = "product";
     public static final String PLACEMENT = "placement";
-
+    private static final Log LOG = LogFactory.getLog(PromotionMessageVariableExpression.class);
     @Resource(name = "blPromotionMessageGenerators")
     protected List<PromotionMessageGenerator> generators;
 
@@ -56,24 +54,26 @@ public class PromotionMessageVariableExpression extends BLCVariableExpression {
     public String getName() {
         return "promotion_messages";
     }
-    
+
     public List<PromotionMessageDTO> getProductPromotionMessages(Product product, String... placements) {
         List<String> filteredPlacements = filterInvalidPlacements(placements);
         if (!filteredPlacements.contains(PromotionMessagePlacementType.EVERYWHERE.getType())) {
             filteredPlacements.add(PromotionMessagePlacementType.EVERYWHERE.getType());
         }
-        
+
         Map<String, List<PromotionMessageDTO>> promotionMessages = new MultiValueMap();
         for (PromotionMessageGenerator generator : generators) {
             promotionMessages.putAll(generator.generatePromotionMessages(product));
         }
 
-        List<PromotionMessageDTO> filteredMessages = BLCPromotionMessageUtils.filterPromotionMessageDTOsByTypes(promotionMessages, filteredPlacements);
+        List<PromotionMessageDTO> filteredMessages = BLCPromotionMessageUtils.filterPromotionMessageDTOsByTypes(
+                promotionMessages, filteredPlacements
+        );
         BLCPromotionMessageUtils.sortMessagesByPriority(filteredMessages);
 
         return filteredMessages;
     }
-    
+
     public List<String> getItemPromotionMessages(OrderItem orderItem) {
         List<String> appliedOfferNames = getAppliedOfferNamesForOrderItem(orderItem);
         for (OrderItem child : orderItem.getChildOrderItems()) {
@@ -81,7 +81,7 @@ public class PromotionMessageVariableExpression extends BLCVariableExpression {
         }
         return appliedOfferNames;
     }
-    
+
     protected List<String> getAppliedOfferNamesForOrderItem(OrderItem orderItem) {
         List<String> appliedOfferNames = new ArrayList<>();
         for (OrderItemPriceDetail oipd : orderItem.getOrderItemPriceDetails()) {
@@ -91,7 +91,7 @@ public class PromotionMessageVariableExpression extends BLCVariableExpression {
         }
         return appliedOfferNames;
     }
-    
+
     protected List<String> filterInvalidPlacements(String[] placements) {
         List<String> requestedPlacement = new ArrayList<>();
         for (String placement : placements) {
@@ -99,7 +99,8 @@ public class PromotionMessageVariableExpression extends BLCVariableExpression {
             if (isValidPlacementType(placement)) {
                 requestedPlacement.add(placement);
             } else {
-                LOG.warn("Stripping out invalid promotion message placement " + placement + ". See PromotionMessagePlacementType for valid placements");
+                LOG.warn("Stripping out invalid promotion message placement " + placement
+                        + ". See PromotionMessagePlacementType for valid placements");
             }
         }
         return requestedPlacement;

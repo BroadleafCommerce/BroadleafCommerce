@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,7 +43,10 @@ import java.util.Map;
 public class FieldPersistenceProviderAdapter extends AbstractFieldPersistenceProvider {
 
     @Override
-    public MetadataProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest, List<FilterMapping> filterMappings) {
+    public MetadataProviderResponse addSearchMapping(
+            AddSearchMappingRequest addSearchMappingRequest,
+            List<FilterMapping> filterMappings
+    ) {
         return MetadataProviderResponse.NOT_HANDLED;
     }
 
@@ -58,7 +61,10 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
     }
 
     @Override
-    public MetadataProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
+    public MetadataProviderResponse filterProperties(
+            AddFilterPropertiesRequest addFilterPropertiesRequest,
+            Map<String, FieldMetadata> properties
+    ) {
         return MetadataProviderResponse.NOT_HANDLED;
     }
 
@@ -79,10 +85,10 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
         if (!dirty) {
             Object value = request.getFieldManager().getFieldValue(instance, request.getProperty().getName());
             if (checkValue instanceof String) {
-                checkValue = ((String) checkValue).replaceAll("\\s+[</]|\\r\\n+[</]","</").trim();
+                checkValue = ((String) checkValue).replaceAll("\\s+[</]|\\r\\n+[</]", "</").trim();
             }
             if (value instanceof String) {
-                value = ((String) value).replaceAll("\\s+[</]|\\r\\n+[</]","</").trim();
+                value = ((String) value).replaceAll("\\s+[</]|\\r\\n+[</]", "</").trim();
             }
             if (value instanceof BigDecimal) {
                 BigDecimal origValue = (BigDecimal) value;
@@ -102,8 +108,10 @@ public class FieldPersistenceProviderAdapter extends AbstractFieldPersistencePro
     protected void setNonDisplayableValues(PopulateValueRequest request) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         MessageSource messages = context.getMessageSource();
-        String label = "(" + messages.getMessage("Workflow_not_displayable", null, "Not Displayable", context.getJavaLocale()) + ")";
+        String label = "(" + messages.getMessage("Workflow_not_displayable", null,
+                "Not Displayable", context.getJavaLocale()) + ")";
         request.getProperty().setDisplayValue(label);
         request.getProperty().setOriginalDisplayValue(label);
     }
+
 }

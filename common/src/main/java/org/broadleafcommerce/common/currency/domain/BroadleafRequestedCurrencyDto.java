@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,15 +18,14 @@
 package org.broadleafcommerce.common.currency.domain;
 
 /**
- * The BroadleafCurrencyResolver can be implemented to set the currency (e.g. CurrencyToUse).   
- * 
- * This may differ from the currency that was requested (e.g. from the locale, etc.)   
- * 
- * By storing the desired currency, we have the opportunity for a later module (like PriceLists) to 
- * check the DesiredCurrency and possibly alter the currency for the request. 
- * 
- * @author bpolster
+ * The BroadleafCurrencyResolver can be implemented to set the currency (e.g. CurrencyToUse).
+ * <p>
+ * This may differ from the currency that was requested (e.g. from the locale, etc.)
+ * <p>
+ * By storing the desired currency, we have the opportunity for a later module (like PriceLists) to
+ * check the DesiredCurrency and possibly alter the currency for the request.
  *
+ * @author bpolster
  */
 public class BroadleafRequestedCurrencyDto {
 

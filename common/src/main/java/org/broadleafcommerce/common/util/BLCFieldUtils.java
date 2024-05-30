@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,10 +38,9 @@ import java.util.Map;
  */
 public class BLCFieldUtils {
 
-    private static final Log LOG = LogFactory.getLog(BLCFieldUtils.class);
-    public static final Map<String,Object> FIELD_CACHE = new LRUMap<>(100000);
+    public static final Map<String, Object> FIELD_CACHE = new LRUMap<>(100000);
     public static final Object NULL_FIELD = new Object();
-
+    private static final Log LOG = LogFactory.getLog(BLCFieldUtils.class);
     protected boolean includeUnqualifiedPolymorphicEntities;
     protected boolean useCache;
     protected EntityConfiguration entityConfiguration;
@@ -50,14 +49,17 @@ public class BLCFieldUtils {
     /**
      * Initialize the utility with required resources
      *
-     * @param sessionFactory provides metadata about a domain class
      * @param includeUnqualifiedPolymorphicEntities include polymorphic variations that were excluded with {@link org.broadleafcommerce.common.presentation.AdminPresentationClass#excludeFromPolymorphism()}
-     * @param useCache use the polymorphic type list cache in {@link org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl}
-     * @param entityConfiguration contains any explicitly defined entity types for the system
-     * @param helper helper class for retrieving polymorphic types for a ceiling domain class
+     * @param useCache                              use the polymorphic type list cache in {@link org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl}
+     * @param entityConfiguration                   contains any explicitly defined entity types for the system
+     * @param helper                                helper class for retrieving polymorphic types for a ceiling domain class
      */
-    public BLCFieldUtils(boolean includeUnqualifiedPolymorphicEntities,
-                         boolean useCache, EntityConfiguration entityConfiguration, DynamicDaoHelper helper) {
+    public BLCFieldUtils(
+            boolean includeUnqualifiedPolymorphicEntities,
+            boolean useCache,
+            EntityConfiguration entityConfiguration,
+            DynamicDaoHelper helper
+    ) {
         this.includeUnqualifiedPolymorphicEntities = includeUnqualifiedPolymorphicEntities;
         this.useCache = useCache;
         this.entityConfiguration = entityConfiguration;
@@ -119,7 +121,7 @@ public class BLCFieldUtils {
         String[] tokens = fieldName.split("\\.");
         Field field = null;
 
-        for (int j=0;j<tokens.length;j++) {
+        for (int j = 0; j < tokens.length; j++) {
             String propertyName = tokens[j];
             Class<?>[] myEntities = helper.getUpDownInheritance(clazz, includeUnqualifiedPolymorphicEntities, useCache);
             Class<?> myClass;
@@ -129,7 +131,8 @@ public class BLCFieldUtils {
                 myClass = getClassForField(helper, propertyName, null, myEntities);
             }
             if (myClass == null) {
-                String message = String.format("Unable to find the field (%s) anywhere in the inheritance hierarchy for (%s)", StringUtil.sanitize(propertyName), StringUtil.sanitize(clazz.getName()));
+                String message = String.format("Unable to find the field (%s) anywhere in the inheritance hierarchy for (%s)",
+                        StringUtil.sanitize(propertyName), StringUtil.sanitize(clazz.getName()));
                 LOG.debug(message);
                 return null;
             }
@@ -158,7 +161,7 @@ public class BLCFieldUtils {
 
     protected Class<?> getClassForField(DynamicDaoHelper helper, String token, Field field, Class<?>[] entities) {
         Class<?> clazz;
-        List<Class<?>> matchedClasses = new ArrayList<Class<?>>();
+        List<Class<?>> matchedClasses = new ArrayList<>();
         for (Class<?> entity : entities) {
             Field peekAheadField = null;
             try {
@@ -181,7 +184,7 @@ public class BLCFieldUtils {
             //probably an artificial field (i.e. passwordConfirm on AdminUserImpl)
             return null;
         }
-        Class<?> myClass = field != null?field.getType():entities[0];
+        Class<?> myClass = field != null ? field.getType() : entities[0];
         if (getSingleField(matchedClasses.get(0), token) != null) {
             clazz = matchedClasses.get(0);
             Class<?>[] entities2 = helper.getUpDownInheritance(clazz, includeUnqualifiedPolymorphicEntities, useCache);
@@ -197,4 +200,5 @@ public class BLCFieldUtils {
         }
         return clazz;
     }
+
 }

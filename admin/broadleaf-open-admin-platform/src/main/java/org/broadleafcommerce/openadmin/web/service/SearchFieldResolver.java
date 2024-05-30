@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -23,18 +22,18 @@ import org.broadleafcommerce.common.exception.ServiceException;
 /**
  * Resolves which field of an entity should be used for searching when targeting
  * an entity directly and not a specific field on that entity.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public interface SearchFieldResolver {
 
     /**
      * Returns the name of the field to use for searching for the given entity classname.
-     * 
+     *
      * @param className
      * @return the field name
      * @throws ServiceException
      */
-    public String resolveField(String className) throws ServiceException;
+    String resolveField(String className) throws ServiceException;
 
 }

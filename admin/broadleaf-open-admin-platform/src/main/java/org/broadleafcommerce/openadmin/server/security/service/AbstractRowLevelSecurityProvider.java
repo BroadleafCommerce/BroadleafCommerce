@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,19 +35,31 @@ import jakarta.persistence.criteria.Root;
 
 /**
  * Dummy implementation of a {@link RowLevelSecurityProvider}. Implementors should extend this class
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  * @author Jeff Fischer
  */
 public class AbstractRowLevelSecurityProvider implements RowLevelSecurityProvider {
 
     @Override
-    public void addFetchRestrictions(AdminUser currentUser, String ceilingEntity, List<Predicate> restrictions, List<Order> sorts, Root entityRoot, CriteriaQuery criteria, CriteriaBuilder criteriaBuilder) {
+    public void addFetchRestrictions(
+            AdminUser currentUser,
+            String ceilingEntity,
+            List<Predicate> restrictions,
+            List<Order> sorts,
+            Root entityRoot,
+            CriteriaQuery criteria,
+            CriteriaBuilder criteriaBuilder
+    ) {
         // intentionally unimplemented
     }
 
     @Override
-    public Class<Serializable> getFetchRestrictionRoot(AdminUser currentUser, Class<Serializable> ceilingEntity, List<FilterMapping> filterMappings) {
+    public Class<Serializable> getFetchRestrictionRoot(
+            AdminUser currentUser,
+            Class<Serializable> ceilingEntity,
+            List<FilterMapping> filterMappings
+    ) {
         return null;
     }
 
@@ -67,17 +79,29 @@ public class AbstractRowLevelSecurityProvider implements RowLevelSecurityProvide
     }
 
     @Override
-    public GlobalValidationResult validateAddRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage) {
+    public GlobalValidationResult validateAddRequest(
+            AdminUser currentUser,
+            Entity entity,
+            PersistencePackage persistencePackage
+    ) {
         return new GlobalValidationResult(true);
     }
 
     @Override
-    public GlobalValidationResult validateUpdateRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage) {
+    public GlobalValidationResult validateUpdateRequest(
+            AdminUser currentUser,
+            Entity entity,
+            PersistencePackage persistencePackage
+    ) {
         return new GlobalValidationResult(true);
     }
 
     @Override
-    public GlobalValidationResult validateRemoveRequest(AdminUser currentUser, Entity entity, PersistencePackage persistencePackage) {
+    public GlobalValidationResult validateRemoveRequest(
+            AdminUser currentUser,
+            Entity entity,
+            PersistencePackage persistencePackage
+    ) {
         return new GlobalValidationResult(true);
     }
 

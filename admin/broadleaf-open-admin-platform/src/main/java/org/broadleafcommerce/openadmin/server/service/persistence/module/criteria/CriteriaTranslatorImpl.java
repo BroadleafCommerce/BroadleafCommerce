@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -55,7 +55,7 @@ import jakarta.persistence.criteria.Root;
 public class CriteriaTranslatorImpl implements CriteriaTranslator {
 
     @Resource(name = "blCriteriaTranslatorEventHandlers")
-    protected List<CriteriaTranslatorEventHandler> eventHandlers = new ArrayList<CriteriaTranslatorEventHandler>();
+    protected List<CriteriaTranslatorEventHandler> eventHandlers = new ArrayList<>();
 
     @Resource(name = "blRowLevelSecurityService")
     protected RowLevelSecurityService rowSecurityService;
@@ -64,7 +64,11 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
     protected SecurityVerifier adminSecurityService;
 
     @Override
-    public TypedQuery<Serializable> translateCountQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings) {
+    public TypedQuery<Serializable> translateCountQuery(
+            DynamicEntityDao dynamicEntityDao,
+            String ceilingEntity,
+            List<FilterMapping> filterMappings
+    ) {
         CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
         Class<Serializable> ceilingMarker = this.ceilingMarker(ceilingEntity, filterMappings);
         Class<Serializable> resultType = this.classByName(Long.class.getName());
@@ -72,13 +76,20 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         Class<Serializable> ceilingClass = this.determineRoot(dynamicEntityDao, ceilingMarker, filterMappings);
         Root<Serializable> original = criteria.from(ceilingClass);
         criteria.select(criteriaBuilder.count(original));
-        List<Predicate> restrictions = this.restrictions(ceilingEntity, filterMappings, criteriaBuilder, original, new ArrayList<>(), criteria);
+        List<Predicate> restrictions = this.restrictions(
+                ceilingEntity, filterMappings, criteriaBuilder, original, new ArrayList<>(), criteria
+        );
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         return dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
     }
 
     @Override
-    public TypedQuery<Serializable> translateMaxQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, String maxField) {
+    public TypedQuery<Serializable> translateMaxQuery(
+            DynamicEntityDao dynamicEntityDao,
+            String ceilingEntity,
+            List<FilterMapping> filterMappings,
+            String maxField
+    ) {
         CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
         Class<Serializable> ceilingMarker = this.ceilingMarker(ceilingEntity, filterMappings);
         Class<Serializable> resultType = this.classByName(BigDecimal.class.getName());
@@ -86,13 +97,21 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         Class<Serializable> ceilingClass = this.determineRoot(dynamicEntityDao, ceilingMarker, filterMappings);
         Root<Serializable> original = criteria.from(ceilingClass);
         criteria.select(criteriaBuilder.max((Path<Number>) ((Object) original.get(maxField))));
-        List<Predicate> restrictions = this.restrictions(ceilingEntity, filterMappings, criteriaBuilder, original, new ArrayList<>(), criteria);
+        List<Predicate> restrictions = this.restrictions(
+                ceilingEntity, filterMappings, criteriaBuilder, original, new ArrayList<>(), criteria
+        );
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         return dynamicEntityDao.getStandardEntityManager().createQuery(criteria);
     }
 
     @Override
-    public TypedQuery<Serializable> translateQuery(DynamicEntityDao dynamicEntityDao, String ceilingEntity, List<FilterMapping> filterMappings, Integer firstResult, Integer maxResults) {
+    public TypedQuery<Serializable> translateQuery(
+            DynamicEntityDao dynamicEntityDao,
+            String ceilingEntity,
+            List<FilterMapping> filterMappings,
+            Integer firstResult,
+            Integer maxResults
+    ) {
         CriteriaBuilder criteriaBuilder = dynamicEntityDao.getStandardEntityManager().getCriteriaBuilder();
         Class<Serializable> ceilingMarker = this.ceilingMarker(ceilingEntity, filterMappings);
         CriteriaQuery<Serializable> criteria = criteriaBuilder.createQuery(ceilingMarker);
@@ -100,7 +119,9 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         Root<Serializable> original = criteria.from(ceilingClass);
         criteria.select(original);
         List<Order> sorts = new ArrayList<>();
-        List<Predicate> restrictions = this.restrictions(ceilingEntity, filterMappings, criteriaBuilder, original, sorts, criteria);
+        List<Predicate> restrictions = this.restrictions(
+                ceilingEntity, filterMappings, criteriaBuilder, original, sorts, criteria
+        );
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
         criteria.orderBy(sorts.toArray(new Order[sorts.size()]));
 
@@ -127,16 +148,19 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
      * Determines the appropriate entity in this current class tree to use as the ceiling entity for the query. Because
      * we filter with AND instead of OR, we throw an exception if an attempt to utilize properties from mutually exclusive
      * class trees is made as it would be impossible for such a query to return results.
-     * 
+     *
      * @param dynamicEntityDao
      * @param ceilingMarker
      * @param filterMappings
      * @return the root class
-     * @throws NoPossibleResultsException 
+     * @throws NoPossibleResultsException
      */
     @SuppressWarnings("unchecked")
-    protected Class<Serializable> determineRoot(DynamicEntityDao dynamicEntityDao, Class<Serializable> ceilingMarker,
-                                                List<FilterMapping> filterMappings) throws NoPossibleResultsException {
+    protected Class<Serializable> determineRoot(
+            DynamicEntityDao dynamicEntityDao,
+            Class<Serializable> ceilingMarker,
+            List<FilterMapping> filterMappings
+    ) throws NoPossibleResultsException {
 
         Class<?>[] polyEntities = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingMarker);
         ClassTree root = dynamicEntityDao.getClassTree(polyEntities);
@@ -239,8 +263,14 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         }
     }
 
-    protected List<Predicate> restrictions(String ceilingEntity, List<FilterMapping> filterMappings, CriteriaBuilder criteriaBuilder,
-                                           Root<?> original, List<Order> sorts, CriteriaQuery<?> criteria) {
+    protected List<Predicate> restrictions(
+            String ceilingEntity,
+            List<FilterMapping> filterMappings,
+            CriteriaBuilder criteriaBuilder,
+            Root<?> original,
+            List<Order> sorts,
+            CriteriaQuery<?> criteria
+    ) {
         List<Predicate> restrictions = new ArrayList<>();
 
         filterMappings.sort(new FilterMapping.ComparatorByOrder());
@@ -290,10 +320,20 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         }
 
         // add in the row-level security handlers to this as well
-        rowSecurityService.addFetchRestrictions(adminSecurityService.getPersistentAdminUser(), ceilingEntity, restrictions, sorts, original, criteria, criteriaBuilder);
+        rowSecurityService.addFetchRestrictions(
+                adminSecurityService.getPersistentAdminUser(),
+                ceilingEntity,
+                restrictions,
+                sorts,
+                original,
+                criteria,
+                criteriaBuilder
+        );
 
         for (CriteriaTranslatorEventHandler eventHandler : eventHandlers) {
-            eventHandler.addRestrictions(ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, criteria);
+            eventHandler.addRestrictions(
+                    ceilingEntity, filterMappings, criteriaBuilder, original, restrictions, sorts, criteria
+            );
         }
         return restrictions;
     }
@@ -308,7 +348,12 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         return explicitPath;
     }
 
-    protected void addSorting(CriteriaBuilder criteriaBuilder, List<Order> sorts, FilterMapping filterMapping, Path<?> path) {
+    protected void addSorting(
+            CriteriaBuilder criteriaBuilder,
+            List<Order> sorts,
+            FilterMapping filterMapping,
+            Path<?> path
+    ) {
         Expression<?> exp = path;
         if (filterMapping.getNullsLast() != null && filterMapping.getNullsLast()) {
             Object largeValue = getAppropriateLargeSortingValue(path.getJavaType());
@@ -338,4 +383,5 @@ public class CriteriaTranslatorImpl implements CriteriaTranslator {
         }
         return response;
     }
+
 }

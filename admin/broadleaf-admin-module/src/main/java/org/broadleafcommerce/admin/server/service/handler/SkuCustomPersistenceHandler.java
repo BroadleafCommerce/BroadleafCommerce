@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,8 +23,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.server.service.SkuMetadataCacheService;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -104,28 +102,12 @@ import jakarta.persistence.criteria.Subquery;
 
 /**
  * @author Phillip Verheyden
- *
  */
 @Component("blSkuCustomPersistenceHandler")
 public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(SkuCustomPersistenceHandler.class);
-
     public static String PRODUCT_OPTION_FIELD_PREFIX = "productOption";
     public static String INVENTORY_ONLY_CRITERIA = "onlyInventoryProperties";
-
-    @Value("${use.to.one.lookup.sku.product.option.value:false}")
-    protected boolean useToOneLookupSkuProductOptionValue = false;
-
-    @Resource(name ="blSkuMetadataCacheService")
-    protected SkuMetadataCacheService skuMetadataCacheService;
-
-    @Resource(name="blAdornedTargetListPersistenceModule")
-    protected PersistenceModule adornedPersistenceModule;
-
-    @Resource(name = "blSkuCustomPersistenceHandlerExtensionManager")
-    protected SkuCustomPersistenceHandlerExtensionManager extensionManager;
-
     /**
      * This represents the field that all of the product option values will be stored in. This would be used in the case
      * where there are a bunch of product options and displaying each option as a grid header would have everything
@@ -133,8 +115,15 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      */
     public static String CONSOLIDATED_PRODUCT_OPTIONS_FIELD_NAME = "consolidatedProductOptions";
     public static String CONSOLIDATED_PRODUCT_OPTIONS_DELIMETER = "; ";
-
-    @Resource(name="blCatalogService")
+    @Value("${use.to.one.lookup.sku.product.option.value:false}")
+    protected boolean useToOneLookupSkuProductOptionValue = false;
+    @Resource(name = "blSkuMetadataCacheService")
+    protected SkuMetadataCacheService skuMetadataCacheService;
+    @Resource(name = "blAdornedTargetListPersistenceModule")
+    protected PersistenceModule adornedPersistenceModule;
+    @Resource(name = "blSkuCustomPersistenceHandlerExtensionManager")
+    protected SkuCustomPersistenceHandlerExtensionManager extensionManager;
+    @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
     @PersistenceContext(unitName = "blPU")
@@ -177,7 +166,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * exception to this rule is when we are pulling back Media, since the admin actually uses Sku for the ceiling entity
      * class name. That should be handled by the map structure module though, so only handle things in the Sku custom
      * persistence handler for OperationType.BASIC
-     *
      */
     protected Boolean canHandle(PersistencePackage persistencePackage, OperationType operationType) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -256,7 +244,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
 
             //allow the adorned list to contribute properties as well in the case of Sku bundle items
-            adornedPersistenceModule.setPersistenceManager((PersistenceManager)helper);
+            adornedPersistenceModule.setPersistenceManager((PersistenceManager) helper);
             adornedPersistenceModule.updateMergedProperties(persistencePackage, allMergedProperties);
 
             Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(SkuImpl.class);
@@ -302,13 +290,13 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * Creates the metadata necessary for displaying all of the product option values in a single field. The display of this
      * field is a single string with every product option value appended to it separated by a semicolon. This method should
      * be invoked on an inspect for whatever is utilizing this so that the property will be ready to be populated on fetch.
-     *
+     * <p>
      * The metadata that is returned will also be set to prominent by default so that it will be ready to display on whatever
      * grid is being inspected. If you do not want this behavior you will need to override this functionality in the metadata
      * that is returned.
      *
      * @param inheritedFromType which type this should appear on. This would normally be SkuImpl.class, but if you want to
-     * display this field with a different entity then this should be that entity
+     *                          display this field with a different entity then this should be that entity
      * @return
      */
     public FieldMetadata createConsolidatedOptionField(Class<?> inheritedFromType) {
@@ -448,13 +436,13 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
         FilterMapping filterMapping = new FilterMapping().withDirectFilterValues(
                 sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, option.getId())).withRestriction(new Restriction()
-            .withPredicateProvider(new PredicateProvider() {
-                @Override
-                public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
-                                                String ceilingEntity, String fullPropertyName, Path explicitPath, List directValues) {
-                    return root.get("productOption").get("id").in(directValues);
-            }
-        }));
+                .withPredicateProvider(new PredicateProvider() {
+                    @Override
+                    public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
+                                                    String ceilingEntity, String fullPropertyName, Path explicitPath, List directValues) {
+                        return root.get("productOption").get("id").in(directValues);
+                    }
+                }));
         List<FilterMapping> mappings = new ArrayList<>();
         mappings.add(filterMapping);
         TypedQuery<Serializable> countQuery = criteriaTranslator.translateCountQuery(persistenceManager.getDynamicEntityDao(),
@@ -610,7 +598,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     /**
      * Add filter restriction such that a ProductBundle cannot add its own default sku as a Sku Bundle Item
      */
-    private void applySkuBundleItemValueCriteria(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
+    protected void applySkuBundleItemValueCriteria(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
         SectionCrumb[] sectionCrumbs = persistencePackage.getSectionCrumbs();
         if (isSkuBundleItemLookup(persistencePackage, sectionCrumbs)) {
             final Long defaultSkuId = getOwningProductBundlesDefaultSkuId(sectionCrumbs[0]);
@@ -618,21 +606,21 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             filterMappings.add(new FilterMapping()
                     .withDirectFilterValues(Collections.singletonList(defaultSkuId))
                     .withRestriction(new Restriction()
-                                    .withPredicateProvider(new PredicateProvider() {
-                                        @Override
-                                        public Predicate buildPredicate(CriteriaBuilder builder,
-                                                FieldPathBuilder fieldPathBuilder,
-                                                From root, String ceilingEntity,
-                                                String fullPropertyName, Path explicitPath,
-                                                List directValues) {
-                                            return builder.notEqual(root, directValues.get(0));
-                                        }
-                                    })
+                            .withPredicateProvider(new PredicateProvider() {
+                                @Override
+                                public Predicate buildPredicate(CriteriaBuilder builder,
+                                                                FieldPathBuilder fieldPathBuilder,
+                                                                From root, String ceilingEntity,
+                                                                String fullPropertyName, Path explicitPath,
+                                                                List directValues) {
+                                    return builder.notEqual(root, directValues.get(0));
+                                }
+                            })
                     ));
         }
     }
 
-    private boolean isSkuBundleItemLookup(PersistencePackage pkg, SectionCrumb[] sectionCrumbs) {
+    protected boolean isSkuBundleItemLookup(PersistencePackage pkg, SectionCrumb[] sectionCrumbs) {
         boolean owningClassMatch = false;
         boolean requestingFieldMatch = false;
 
@@ -653,7 +641,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         return owningClassMatch && requestingFieldMatch && sectionCrumbMatch;
     }
 
-    private Long getOwningProductBundlesDefaultSkuId(SectionCrumb sectionCrumb) {
+    protected Long getOwningProductBundlesDefaultSkuId(SectionCrumb sectionCrumb) {
         if (ProductImpl.class.getCanonicalName().equals(sectionCrumb.getSectionIdentifier())
                 && sectionCrumb.getSectionId() != null) {
             ProductBundle productBundle = (ProductBundle) catalogService.findProductById(Long.valueOf(sectionCrumb.getSectionId()));
@@ -683,34 +671,34 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
         if (productOptionValueFilterIDs.size() > 0) {
             FilterMapping filterMapping = new FilterMapping()
-                .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + ".productOptionValueXrefs.productOptionValue.id"))
-                .withDirectFilterValues(productOptionValueFilterIDs)
-                .withRestriction(new Restriction()
-                    .withPredicateProvider(new PredicateProvider() {
-                        @Override
-                        public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
-                                                        From root, String ceilingEntity,
-                                                        String fullPropertyName, Path explicitPath, List directValues) {
-                            return explicitPath.as(Long.class).in(directValues);
-                        }
-                    })
-                );
+                    .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix) ? "" : skuPropertyPrefix + ".productOptionValueXrefs.productOptionValue.id"))
+                    .withDirectFilterValues(productOptionValueFilterIDs)
+                    .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider() {
+                                @Override
+                                public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
+                                                                From root, String ceilingEntity,
+                                                                String fullPropertyName, Path explicitPath, List directValues) {
+                                    return explicitPath.as(Long.class).in(directValues);
+                                }
+                            })
+                    );
             filterMappings.add(filterMapping);
         }
         if (productOptionValueFilterValues.size() > 0) {
             FilterMapping filterMapping = new FilterMapping()
-                .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix)?"":skuPropertyPrefix + ".productOptionValueXrefs.productOptionValue.attributeValue"))
-                .withDirectFilterValues(productOptionValueFilterValues)
-                .withRestriction(new Restriction()
-                    .withPredicateProvider(new PredicateProvider() {
-                        @Override
-                        public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
-                                                        From root, String ceilingEntity,
-                                                        String fullPropertyName, Path explicitPath, List directValues) {
-                            return explicitPath.as(String.class).in(directValues);
-                        }
-                    })
-                );
+                    .withFieldPath(new FieldPath().withTargetProperty(StringUtils.isEmpty(skuPropertyPrefix) ? "" : skuPropertyPrefix + ".productOptionValueXrefs.productOptionValue.attributeValue"))
+                    .withDirectFilterValues(productOptionValueFilterValues)
+                    .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider() {
+                                @Override
+                                public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder,
+                                                                From root, String ceilingEntity,
+                                                                String fullPropertyName, Path explicitPath, List directValues) {
+                                    return explicitPath.as(String.class).in(directValues);
+                                }
+                            })
+                    );
             filterMappings.add(filterMapping);
         }
     }
@@ -721,7 +709,6 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * override from there as well.</p>
      * <p>Subclasses that choose to override this should also call this super method so that correct filter criteria
      * can be applied for product option values</p>
-     *
      */
     public void applyAdditionalFetchCriteria(List<FilterMapping> filterMappings, CriteriaTransferObject cto, PersistencePackage persistencePackage) {
         //unimplemented
@@ -840,6 +827,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     /**
      * This initially removes all of the product option values that are currently related to the Sku and then re-associates
      * the {@link ProductOptionValue}s
+     *
      * @param entity
      * @param adminInstance
      */
@@ -886,15 +874,15 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
 
     /**
      * Ensures that the given list of {@link ProductOptionValue} IDs is unique for the given {@link Product}.
-     *
+     * <p>
      * If sku browsing is enabled, then it is assumed that a single combination of {@link ProductOptionValue} IDs
      * is not unique and more than one {@link Sku} could have the exact same combination of {@link ProductOptionValue} IDs.
      * In this case, the following validation is skipped.
      *
      * @param product
      * @param productOptionProperties
-     * @param currentSku - for update operations, this is the current Sku that is being updated; should be excluded from
-     * attempting validation
+     * @param currentSku              - for update operations, this is the current Sku that is being updated; should be excluded from
+     *                                attempting validation
      * @return <b>null</b> if successfully validation, the error entity otherwise
      */
     protected Entity validateUniqueProductOptionValueCombination(Product product, List<Property> productOptionProperties, Sku currentSku) {
@@ -909,12 +897,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             ExtensionResultHolder<List<Sku>> holder = new ExtensionResultHolder<>();
             ExtensionResultStatusType result = extensionManager.getProxy().getAdditionalSkusCollection(product, holder);
             List<Sku> additionalSkus;
-            if(result.equals(ExtensionResultStatusType.HANDLED)){
+            if (result.equals(ExtensionResultStatusType.HANDLED)) {
                 additionalSkus = holder.getResult();
-                if(CollectionUtils.isEmpty(additionalSkus)){
+                if (CollectionUtils.isEmpty(additionalSkus)) {
                     additionalSkus = product.getAdditionalSkus();
                 }
-            }else {
+            } else {
                 additionalSkus = product.getAdditionalSkus();
             }
             for (Sku sku : additionalSkus) {
@@ -947,10 +935,11 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
     /**
      * Verify that none of the selected options is null.
      * If one of the option's value is null, means that the option in the combo box wasn't correctly selected.
+     *
      * @param productOptionProperties
      * @return <b>null</b> if successfully validation, the error entity otherwise
      */
-    private Entity validateNotNullProductOptions(List<Property> productOptionProperties) {
+    protected Entity validateNotNullProductOptions(List<Property> productOptionProperties) {
         List<Property> nullValueProps = new ArrayList<>();
 
         for (Property property : productOptionProperties) {
@@ -966,7 +955,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             }
             return errorEntity;
         }
-        return  null;
+        return null;
     }
 
 }

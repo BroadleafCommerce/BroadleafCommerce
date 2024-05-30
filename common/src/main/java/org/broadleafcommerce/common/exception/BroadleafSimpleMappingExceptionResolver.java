@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,14 +30,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * This exception resolver can be used to handle exceptions in a user friendly way by displaying an error template.  
- * It also serves a security purpose of not showing stack traces to users.  This is disabled by default and should 
- * only be enabled when there is not already a way to handle exceptions in the current project.  
- * 
- * This can be enabled by setting exception.handler.enabled=true in your properties file.  You will need to create 
- * a template file at path "utility/error" or override the method getDefaultErrorView() to return a different path 
+ * This exception resolver can be used to handle exceptions in a user friendly way by displaying an error template.
+ * It also serves a security purpose of not showing stack traces to users.  This is disabled by default and should
+ * only be enabled when there is not already a way to handle exceptions in the current project.
+ * <p>
+ * This can be enabled by setting exception.handler.enabled=true in your properties file.  You will need to create
+ * a template file at path "utility/error" or override the method getDefaultErrorView() to return a different path
  * to an error file.
- * 
+ *
  * @author Chad Harchar (charchar)
  */
 @Component("blSimpleMappingExceptionResolver")
@@ -52,7 +52,7 @@ public class BroadleafSimpleMappingExceptionResolver extends SimpleMappingExcept
 
     @Override
     protected ModelAndView doResolveException(HttpServletRequest request,
-            HttpServletResponse response, Object handler, Exception ex) {
+                                              HttpServletResponse response, Object handler, Exception ex) {
 
         String viewName = getDefaultErrorView();
 
@@ -72,7 +72,7 @@ public class BroadleafSimpleMappingExceptionResolver extends SimpleMappingExcept
 
     @Override
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response,
-            Object handler, Exception ex) {
+                                         Object handler, Exception ex) {
 
         if (exceptionHandlerEnabled) {
             String uuid = UUID.randomUUID().toString();
@@ -86,7 +86,7 @@ public class BroadleafSimpleMappingExceptionResolver extends SimpleMappingExcept
         }
     }
 
-    public String getDefaultErrorView(){
+    public String getDefaultErrorView() {
         return DEFAULT_ERROR_VIEW;
     }
 

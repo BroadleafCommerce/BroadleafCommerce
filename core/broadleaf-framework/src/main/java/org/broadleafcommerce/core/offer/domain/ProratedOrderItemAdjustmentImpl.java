@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,6 +37,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
@@ -62,10 +63,10 @@ import jakarta.persistence.Table;
 })
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
         friendlyName = "OrderItemAdjustmentImpl_baseProratedOrderItemAdjustment")
-public class ProratedOrderItemAdjustmentImpl
-        implements ProratedOrderItemAdjustment, CurrencyCodeIdentifiable {
+public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustment, CurrencyCodeIdentifiable {
 
-    public static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "ProratedOrderItemAdjustmentId")
@@ -94,8 +95,7 @@ public class ProratedOrderItemAdjustmentImpl
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable = false)
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason",
-            order = 2000)
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason", order = 2000)
     protected String reason;
 
     @Column(name = "PRORATED_ADJUSTMENT_VALUE", nullable = false, precision = 19, scale = 5)
@@ -105,8 +105,7 @@ public class ProratedOrderItemAdjustmentImpl
     protected BigDecimal value = Money.ZERO.getAmount();
 
     @Column(name = "PRORATED_QUANTITY", nullable = false)
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Quantity",
-            order = 4000,
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Quantity", order = 4000,
             gridOrder = 3000, prominent = true)
     protected int quantity;
 
@@ -133,8 +132,17 @@ public class ProratedOrderItemAdjustmentImpl
     }
 
     @Override
+    public void setOrderItem(OrderItem orderItem) {
+        this.orderItem = orderItem;
+    }
+
+    @Override
     public Offer getOffer() {
         return offer;
+    }
+
+    public void setOffer(Offer offer) {
+        this.offer = offer;
     }
 
     @Override
@@ -145,15 +153,6 @@ public class ProratedOrderItemAdjustmentImpl
     @Override
     public void setReason(String reason) {
         this.reason = reason;
-    }
-
-    @Override
-    public void setOrderItem(OrderItem orderItem) {
-        this.orderItem = orderItem;
-    }
-
-    public void setOffer(Offer offer) {
-        this.offer = offer;
     }
 
     @Override
@@ -241,4 +240,5 @@ public class ProratedOrderItemAdjustmentImpl
         }
         return true;
     }
+
 }

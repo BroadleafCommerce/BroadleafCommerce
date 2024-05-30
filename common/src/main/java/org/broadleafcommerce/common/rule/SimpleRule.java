@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,13 +33,13 @@ public interface SimpleRule extends Serializable {
      *
      * @return the rule as an MVEL string
      */
-    public String getMatchRule();
+    String getMatchRule();
 
     /**
      * Sets the match rule used to test this item.
      *
      * @param matchRule the rule as an MVEL string
      */
-    public void setMatchRule(@Nonnull String matchRule);
+    void setMatchRule(@Nonnull String matchRule);
 
 }

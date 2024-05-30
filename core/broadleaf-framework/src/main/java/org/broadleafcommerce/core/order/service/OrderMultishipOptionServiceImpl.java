@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,26 +35,21 @@ import java.util.Map.Entry;
 import jakarta.annotation.Resource;
 
 /**
- * 
  * @author Andre Azzolini (apazzolini)
  */
 @Service("blOrderMultishipOptionService")
 public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionService {
 
-    @Resource(name = "blOrderMultishipOptionDao")
-    OrderMultishipOptionDao orderMultishipOptionDao;
-    
     @Resource(name = "blAddressService")
     protected AddressService addressService;
-    
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-    
     @Resource(name = "blFulfillmentOptionService")
     protected FulfillmentOptionService fulfillmentOptionService;
-    
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
+    @Resource(name = "blOrderMultishipOptionDao")
+    OrderMultishipOptionDao orderMultishipOptionDao;
 
     @Override
     public OrderMultishipOption save(OrderMultishipOption orderMultishipOption) {
@@ -65,23 +60,23 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
     public List<OrderMultishipOption> findOrderMultishipOptions(Long orderId) {
         return orderMultishipOptionDao.readOrderMultishipOptions(orderId);
     }
-    
+
     @Override
     public List<OrderMultishipOption> findOrderItemOrderMultishipOptions(Long orderItemId) {
         return orderMultishipOptionDao.readOrderItemOrderMultishipOptions(orderItemId);
     }
-    
+
     @Override
     public OrderMultishipOption create() {
         return orderMultishipOptionDao.create();
     }
-    
+
     @Override
     public void deleteOrderItemOrderMultishipOptions(Long orderItemId) {
         List<OrderMultishipOption> options = findOrderItemOrderMultishipOptions(orderItemId);
         orderMultishipOptionDao.deleteAll(options);
     }
-    
+
     @Override
     public void deleteOrderItemOrderMultishipOptions(Long orderItemId, int numToDelete) {
         List<OrderMultishipOption> options = findOrderItemOrderMultishipOptions(orderItemId);
@@ -89,64 +84,66 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
         options = options.subList(0, numToDelete);
         orderMultishipOptionDao.deleteAll(options);
     }
-    
+
     @Override
     public void deleteAllOrderMultishipOptions(Order order) {
         List<OrderMultishipOption> options = findOrderMultishipOptions(order.getId());
         orderMultishipOptionDao.deleteAll(options);
     }
-    
+
     @Override
     public void saveOrderMultishipOptions(Order order, List<OrderMultishipOptionDTO> optionDTOs) {
-        Map<Long, OrderMultishipOption> currentOptions = new HashMap<Long, OrderMultishipOption>();
+        Map<Long, OrderMultishipOption> currentOptions = new HashMap<>();
         for (OrderMultishipOption option : findOrderMultishipOptions(order.getId())) {
             currentOptions.put(option.getId(), option);
         }
-        
+
         List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
-        for (OrderMultishipOptionDTO dto: optionDTOs) {
+        for (OrderMultishipOptionDTO dto : optionDTOs) {
             OrderMultishipOption option = currentOptions.get(dto.getId());
             if (option == null) {
                 option = orderMultishipOptionDao.create();
             }
-            
+
             option.setOrder(order);
             option.setOrderItem(orderItemService.readOrderItemById(dto.getOrderItemId()));
-            
+
             if (dto.getAddressId() != null) {
                 option.setAddress(addressService.readAddressById(dto.getAddressId()));
             } else {
                 option.setAddress(null);
             }
-            
+
             if (dto.getFulfillmentOptionId() != null) {
-                option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(dto.getFulfillmentOptionId()));
+                option.setFulfillmentOption(
+                        fulfillmentOptionService.readFulfillmentOptionById(dto.getFulfillmentOptionId())
+                );
             } else {
                 option.setFulfillmentOption(null);
             }
-            
+
             orderMultishipOptions.add(option);
         }
-        
+
         for (OrderMultishipOption option : orderMultishipOptions) {
             save(option);
         }
     }
-    
+
     @Override
     public List<OrderMultishipOption> getOrGenerateOrderMultishipOptions(Order order) {
         List<OrderMultishipOption> orderMultishipOptions = findOrderMultishipOptions(order.getId());
         if (orderMultishipOptions == null || orderMultishipOptions.size() == 0) {
             orderMultishipOptions = generateOrderMultishipOptions(order);
         }
-        
+
         // Create a map representing the current discrete order item counts for the order
-        Map<Long, Integer> orderDiscreteOrderItemCounts = new HashMap<Long, Integer>();
+        Map<Long, Integer> orderDiscreteOrderItemCounts = new HashMap<>();
         for (DiscreteOrderItem item : order.getDiscreteOrderItems()) {
             orderDiscreteOrderItemCounts.put(item.getId(), item.getQuantity());
         }
-        
-        List<OrderMultishipOption> optionsToRemove = new ArrayList<OrderMultishipOption>();
+
+        List<OrderMultishipOption> optionsToRemove = new ArrayList<>();
         for (OrderMultishipOption option : orderMultishipOptions) {
             Integer count = orderDiscreteOrderItemCounts.get(option.getOrderItem().getId());
             if (count == null || count == 0) {
@@ -156,28 +153,33 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
                 orderDiscreteOrderItemCounts.put(option.getOrderItem().getId(), count);
             }
         }
-        
+
         for (Entry<Long, Integer> entry : orderDiscreteOrderItemCounts.entrySet()) {
             DiscreteOrderItem item = (DiscreteOrderItem) orderItemService.readOrderItemById(entry.getKey());
             orderMultishipOptions.addAll(createPopulatedOrderMultishipOption(order, item, entry.getValue()));
         }
-        
+
         orderMultishipOptions.removeAll(optionsToRemove);
         orderMultishipOptionDao.deleteAll(optionsToRemove);
-        
+
         return orderMultishipOptions;
     }
-    
+
     @Override
-    public List<OrderMultishipOption> getOrderMultishipOptionsFromDTOs(Order order, List<OrderMultishipOptionDTO> optionDtos) {
-        List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
+    public List<OrderMultishipOption> getOrderMultishipOptionsFromDTOs(
+            Order order,
+            List<OrderMultishipOptionDTO> optionDtos
+    ) {
+        List<OrderMultishipOption> orderMultishipOptions = new ArrayList<>();
         for (OrderMultishipOptionDTO optionDto : optionDtos) {
             OrderMultishipOption option = new OrderMultishipOptionImpl();
             if (optionDto.getAddressId() != null) {
                 option.setAddress(addressService.readAddressById(optionDto.getAddressId()));
-            }   
+            }
             if (optionDto.getFulfillmentOptionId() != null) {
-                option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(optionDto.getFulfillmentOptionId()));
+                option.setFulfillmentOption(fulfillmentOptionService.readFulfillmentOptionById(
+                        optionDto.getFulfillmentOptionId()
+                ));
             }
             option.setId(optionDto.getId());
             option.setOrder(order);
@@ -186,28 +188,35 @@ public class OrderMultishipOptionServiceImpl implements OrderMultishipOptionServ
         }
         return orderMultishipOptions;
     }
-    
+
     @Override
     public List<OrderMultishipOption> generateOrderMultishipOptions(Order order) {
-        List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
+        List<OrderMultishipOption> orderMultishipOptions = new ArrayList<>();
         for (DiscreteOrderItem discreteOrderItem : order.getDiscreteOrderItems()) {
-            orderMultishipOptions.addAll(createPopulatedOrderMultishipOption(order, discreteOrderItem, discreteOrderItem.getQuantity()));
+            orderMultishipOptions.addAll(createPopulatedOrderMultishipOption(
+                    order, discreteOrderItem, discreteOrderItem.getQuantity()
+            ));
         }
-        
+
         return orderMultishipOptions;
     }
-    
-    protected List<OrderMultishipOption> createPopulatedOrderMultishipOption(Order order, DiscreteOrderItem item, Integer quantity) {
-        List<OrderMultishipOption> orderMultishipOptions = new ArrayList<OrderMultishipOption>();
+
+    protected List<OrderMultishipOption> createPopulatedOrderMultishipOption(
+            Order order,
+            DiscreteOrderItem item,
+            Integer quantity
+    ) {
+        List<OrderMultishipOption> orderMultishipOptions = new ArrayList<>();
         if (!fulfillmentGroupService.isShippable(item.getSku().getFulfillmentType()) || quantity == 0) {
             return orderMultishipOptions;
         }
 //        for (int i = 0; i < quantity; i++) {
-            OrderMultishipOption orderMultishipOption = new OrderMultishipOptionImpl();
-            orderMultishipOption.setOrder(order);
-            orderMultishipOption.setOrderItem(item);
-            orderMultishipOptions.add(orderMultishipOption);
+        OrderMultishipOption orderMultishipOption = new OrderMultishipOptionImpl();
+        orderMultishipOption.setOrder(order);
+        orderMultishipOption.setOrderItem(item);
+        orderMultishipOptions.add(orderMultishipOption);
 //        }
         return orderMultishipOptions;
     }
+
 }

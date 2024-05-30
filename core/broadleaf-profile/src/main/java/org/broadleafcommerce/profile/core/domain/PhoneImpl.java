@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,6 +40,7 @@ import jakarta.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 public class PhoneImpl implements Phone {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -47,21 +50,18 @@ public class PhoneImpl implements Phone {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "PhoneImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.profile.core.domain.PhoneImpl")
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.PhoneImpl")
             }
     )
     @Column(name = "PHONE_ID")
     protected Long id;
 
     @Column(name = "COUNTRY_CODE")
-    @AdminPresentation(friendlyName = "PhoneImpl_Country_Code", order = 1,
-            group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Country_Code", order = 1, group = "PhoneImpl_Phone")
     protected String countryCode;
 
     @Column(name = "PHONE_NUMBER", nullable = false)
-    @AdminPresentation(friendlyName = "PhoneImpl_Phone_Number", order = 2,
-            group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Phone_Number", order = 2, group = "PhoneImpl_Phone")
     protected String phoneNumber;
 
     @Column(name = "EXTENSION")
@@ -69,13 +69,11 @@ public class PhoneImpl implements Phone {
     protected String extension;
 
     @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName = "PhoneImpl_Default_Phone", order = 4,
-            group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Default_Phone", order = 4, group = "PhoneImpl_Phone")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order = 5,
-            group = "PhoneImpl_Phone")
+    @AdminPresentation(friendlyName = "PhoneImpl_Active_Phone", order = 5, group = "PhoneImpl_Phone")
     protected boolean isActive = true;
 
     @Override
@@ -186,4 +184,5 @@ public class PhoneImpl implements Phone {
             return false;
         return true;
     }
+
 }

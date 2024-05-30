@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.util.tenant;
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 import org.broadleafcommerce.common.site.domain.Site;
 
+import java.io.Serial;
 import java.util.Stack;
 
 /**
@@ -29,12 +30,13 @@ import java.util.Stack;
  */
 public class IdentityUtilContext extends Stack<IdentityUtilContext> {
 
+    @Serial
     private static final long serialVersionUID = 1819548808605962648L;
 
     private static final ThreadLocal<IdentityUtilContext> IDENTITYUTILCONTEXT = ThreadLocalManager.createThreadLocal(IdentityUtilContext.class);
 
     protected Site identifier;
-    
+
     public static IdentityUtilContext getUtilContext() {
         IdentityUtilContext anyIdentityUtilContext = IDENTITYUTILCONTEXT.get();
         if (anyIdentityUtilContext != null) {
@@ -69,4 +71,5 @@ public class IdentityUtilContext extends Stack<IdentityUtilContext> {
     public void setIdentifier(Site identifier) {
         this.identifier = identifier;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,41 +33,41 @@ import jakarta.annotation.Resource;
 /**
  * This class is responsible for determining which OrderItems should be removed from the order, taking into account
  * the fact that removing an OrderItem should also remove all of its child order items.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blRemoveOrderItemActivity")
 public class RemoveOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
 
     public static final int ORDER = 4000;
-    
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
+
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-    
+
     public RemoveOrderItemActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
 
         OrderItem orderItem = request.getOrderItem();
         removeItemAndChildren(request.getOisToDelete(), orderItem);
-        
+
         return context;
     }
-    
+
     protected void removeItemAndChildren(List<OrderItem> oisToDelete, OrderItem orderItem) {
         if (CollectionUtils.isNotEmpty(orderItem.getChildOrderItems())) {
             for (OrderItem childOrderItem : orderItem.getChildOrderItems()) {
                 removeItemAndChildren(oisToDelete, childOrderItem);
             }
         }
-        
+
         oisToDelete.add(orderItem);
     }
 

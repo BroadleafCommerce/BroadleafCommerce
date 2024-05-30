@@ -10,13 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.media.domain;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
@@ -27,7 +28,11 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "BLC_CATEGORY_MEDIA_MAP")
 public class CategoryMediaMap implements Serializable {
-    /** The Constant serialVersionUID. */
+
+    /**
+     * The Constant serialVersionUID.
+     */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
@@ -36,12 +41,12 @@ public class CategoryMediaMap implements Serializable {
     @Column(name = "KEY", nullable = false)
     private String key;
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
     public String getKey() {
         return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public CategoryMediaMapPK getCategoryMediaMapPK() {
@@ -49,7 +54,11 @@ public class CategoryMediaMap implements Serializable {
     }
 
     public static class CategoryMediaMapPK implements Serializable {
-        /** The Constant serialVersionUID. */
+
+        /**
+         * The Constant serialVersionUID.
+         */
+        @Serial
         private static final long serialVersionUID = 1L;
 
         @Column(name = "CATEGORY_ID", nullable = false)
@@ -79,8 +88,8 @@ public class CategoryMediaMap implements Serializable {
             if (obj == null) return false;
             else if (!getClass().isAssignableFrom(obj.getClass())) return false;
 
-            return categoryId.equals(((CategoryMediaMapPK) obj).getCategoryId()) &&
-            mediaId.equals(((CategoryMediaMapPK) obj).getMediaId());
+            return categoryId.equals(((CategoryMediaMapPK) obj).getCategoryId())
+                    && mediaId.equals(((CategoryMediaMapPK) obj).getMediaId());
         }
 
         @Override
@@ -88,4 +97,5 @@ public class CategoryMediaMap implements Serializable {
             return categoryId.hashCode() + mediaId.hashCode();
         }
     }
+
 }

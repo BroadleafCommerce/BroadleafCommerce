@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,14 +20,14 @@ package org.broadleafcommerce.admin.server.service.persistence.module.provider.e
 import org.broadleafcommerce.common.extension.ExtensionManager;
 import org.springframework.stereotype.Service;
 
-
 /**
  * Extension manager for {@link org.broadleafcommerce.admin.server.service.persistence.module.provider.ProductParentCategoryFieldPersistenceProvider}
  *
  * @author Jeff Fischer
  */
 @Service("blProductParentCategoryFieldPersistenceProviderExtensionManager")
-public class ProductParentCategoryFieldPersistenceProviderExtensionManager extends ExtensionManager<ProductParentCategoryFieldPersistenceProviderExtensionHandler> {
+public class ProductParentCategoryFieldPersistenceProviderExtensionManager
+        extends ExtensionManager<ProductParentCategoryFieldPersistenceProviderExtensionHandler> {
 
     public ProductParentCategoryFieldPersistenceProviderExtensionManager() {
         super(ProductParentCategoryFieldPersistenceProviderExtensionHandler.class);

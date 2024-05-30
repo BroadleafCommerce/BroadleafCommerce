@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,8 +26,8 @@ import org.springframework.core.Ordered;
  * commonly used is the {@link org.broadleafcommerce.common.extensibility.context.merge.EarlyStageRemoveBeanPostProcessor}. See {@link org.broadleafcommerce.common.extensibility.context.merge.AbstractRemoveBeanPostProcessor} for
  * usage information.
  *
- * @see org.broadleafcommerce.common.extensibility.context.merge.AbstractRemoveBeanPostProcessor
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.common.extensibility.context.merge.AbstractRemoveBeanPostProcessor
  */
 public class LateStageRemoveBeanPostProcessor extends AbstractRemoveBeanPostProcessor implements Ordered {
 

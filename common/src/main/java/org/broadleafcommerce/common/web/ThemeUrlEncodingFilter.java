@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,12 +39,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 
 /**
- * Filter that wraps the HttpServletResponse allowing the encodeURL method to be 
+ * Filter that wraps the HttpServletResponse allowing the encodeURL method to be
  * overwritten in order to append a Theme reference to the URL.
- * 
+ *
  * @author Stanislav Fedorov
  * @author dcolgrove
- *
  */
 @Component
 @ConditionalOnNotAdmin
@@ -57,18 +56,21 @@ public class ThemeUrlEncodingFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
-            HttpServletRequest httpRequest = (HttpServletRequest)request;
-            HttpServletResponse httpResponse = (HttpServletResponse)response;
-            filterChain.doFilter(httpRequest, new ThemeUrlEncodingFilter.ResourceUrlEncodingResponseWrapper(httpResponse, themeResolver));
+            HttpServletRequest httpRequest = (HttpServletRequest) request;
+            HttpServletResponse httpResponse = (HttpServletResponse) response;
+            filterChain.doFilter(
+                    httpRequest,
+                    new ThemeUrlEncodingFilter.ResourceUrlEncodingResponseWrapper(httpResponse, themeResolver)
+            );
         } else {
             throw new ServletException("ThemeUrlEncodingFilter just supports HTTP requests");
         }
     }
 
-    private static class ResourceUrlEncodingResponseWrapper extends HttpServletResponseWrapper {
+    protected static class ResourceUrlEncodingResponseWrapper extends HttpServletResponseWrapper {
 
         private final Log LOG = LogFactory.getLog(ResourceUrlEncodingResponseWrapper.class);
-        
+
         private final BroadleafThemeResolver themeResolver;
         private final HttpServletResponse wrappedResponse;
 
@@ -79,7 +81,7 @@ public class ThemeUrlEncodingFilter extends GenericFilterBean {
         }
 
         /**
-         * Provide special encoding of .js and .css files - specifically providing the themeConfigId so that 
+         * Provide special encoding of .js and .css files - specifically providing the themeConfigId so that
          * subsequent requests can use the correct theme
          */
         @Override
@@ -91,13 +93,16 @@ public class ThemeUrlEncodingFilter extends GenericFilterBean {
                     //WebRequest request = brc.getWebRequest();
                     Theme theme = brc.getTheme();
                     try {
-                        url = new URIBuilder(url).addParameter("themeConfigId", theme.getId().toString()).build().toString();
+                        url = new URIBuilder(url).addParameter("themeConfigId",
+                                theme.getId().toString()).build().toString();
                     } catch (URISyntaxException e) {
-                        LOG.error(String.format("URI syntax error building %s with parameter %s and themeId %s", url, "themeConfigId", theme.getId().toString()));
+                        LOG.error(String.format("URI syntax error building %s with parameter %s and themeId %s",
+                                url, "themeConfigId", theme.getId().toString()));
                     }
                 }
             }
             return wrappedResponse.encodeURL(url);
         }
     }
+
 }

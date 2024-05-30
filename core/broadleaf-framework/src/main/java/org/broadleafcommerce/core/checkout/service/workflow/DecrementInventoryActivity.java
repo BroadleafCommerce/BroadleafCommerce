@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,19 +35,21 @@ import jakarta.annotation.Resource;
 
 /**
  * Decrements inventory
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blDecrementInventoryActivity")
 public class DecrementInventoryActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
     public static final int ORDER = 6000;
-    
+
     @Resource(name = "blInventoryService")
     protected ContextualInventoryService inventoryService;
-    
+
     @Autowired
-    public DecrementInventoryActivity(@Qualifier("blDecrementInventoryRollbackHandler") DecrementInventoryRollbackHandler rollbackHandler) {
+    public DecrementInventoryActivity(
+            @Qualifier("blDecrementInventoryRollbackHandler") DecrementInventoryRollbackHandler rollbackHandler
+    ) {
         super();
         super.setAutomaticallyRegisterRollbackHandler(false);
         setOrder(ORDER);
@@ -68,22 +70,26 @@ public class DecrementInventoryActivity extends BaseActivity<ProcessContext<Chec
             }
             // Register the map with the rollback state object early on; this allows the extension handlers to incrementally
             // add state while decrementing but still throw an exception
-            ActivityStateManagerImpl.getStateManager().registerState(this, context, getRollbackRegion(), getRollbackHandler(), rollbackState);
+            ActivityStateManagerImpl.getStateManager().registerState(
+                    this, context, getRollbackRegion(), getRollbackHandler(), rollbackState
+            );
         }
-            
+
         if (!skuInventoryMap.isEmpty()) {
             Map<String, Object> contextualInfo = new HashMap<>();
             contextualInfo.put(ContextualInventoryService.ORDER_KEY, context.getSeedData().getOrder());
             contextualInfo.put(ContextualInventoryService.ROLLBACK_STATE_KEY, new HashMap<String, Object>());
             inventoryService.decrementInventory(skuInventoryMap, contextualInfo);
-            
+
             if (getRollbackHandler() != null && !getAutomaticallyRegisterRollbackHandler()) {
                 rollbackState.put(DecrementInventoryRollbackHandler.ROLLBACK_BLC_INVENTORY_DECREMENTED, skuInventoryMap);
                 rollbackState.put(DecrementInventoryRollbackHandler.ROLLBACK_BLC_ORDER_ID, seed.getOrder().getId());
             }
-            
+
             // add the rollback state that was used in the rollback handler
-            rollbackState.put(DecrementInventoryRollbackHandler.EXTENDED_ROLLBACK_STATE, contextualInfo.get(ContextualInventoryService.ROLLBACK_STATE_KEY));
+            rollbackState.put(DecrementInventoryRollbackHandler.EXTENDED_ROLLBACK_STATE, contextualInfo.get(
+                    ContextualInventoryService.ROLLBACK_STATE_KEY
+            ));
         }
 
         return context;

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -106,7 +106,7 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
                     referencedColumnName = "ADMIN_USER_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
     @BatchSize(size = 50)
-    protected Set<AdminUser> allUsers = new HashSet<AdminUser>();
+    protected Set<AdminUser> allUsers = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF",
@@ -123,12 +123,15 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
             customCriteria = "includeFriendlyOnly",
             operationTypes = @AdminPresentationOperationTypes(
                     removeType = OperationType.NONDESTRUCTIVEREMOVE))
-    protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
-
+    protected Set<AdminPermission> allPermissions = new HashSet<>();
 
     @Override
     public Set<AdminPermission> getAllPermissions() {
         return allPermissions;
+    }
+
+    public void setAllPermissions(Set<AdminPermission> allPermissions) {
+        this.allPermissions = allPermissions;
     }
 
     @Override
@@ -146,13 +149,13 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
         return name;
     }
 
-    public Set<AdminUser> getAllUsers() {
-        return allUsers;
-    }
-
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<AdminUser> getAllUsers() {
+        return allUsers;
     }
 
     @Override
@@ -165,13 +168,9 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
         this.description = description;
     }
 
-    public void setAllPermissions(Set<AdminPermission> allPermissions) {
-        this.allPermissions = allPermissions;
-    }
-
     public void checkCloneable(AdminRole adminRole)
             throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = adminRole.getClass().getMethod("clone", new Class[] {});
+        Method cloneMethod = adminRole.getClass().getMethod("clone", new Class[]{});
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
                 && !adminRole.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method

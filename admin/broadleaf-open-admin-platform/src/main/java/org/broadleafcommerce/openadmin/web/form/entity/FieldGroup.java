@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -45,7 +44,7 @@ public class FieldGroup {
     protected Boolean collapsed;
     protected String toolTip;
     protected String customTemplate;
-    protected Map<String, Object> groupAttributes = new HashMap<String, Object>();
+    protected Map<String, Object> groupAttributes = new HashMap<>();
 
     public void removeListGrid(ListGrid listGrid) {
         FieldGroupItem groupItem = findFieldGroupItemByListGrid(listGrid);
@@ -161,7 +160,7 @@ public class FieldGroup {
         setTitle(title);
         return this;
     }
-    
+
     public FieldGroup withOrder(Integer order) {
         setOrder(order);
         return this;
@@ -205,10 +204,10 @@ public class FieldGroup {
             @Override
             public int compare(FieldGroupItem o1, FieldGroupItem o2) {
                 return new CompareToBuilder()
-                    .append(o1.getOrder(), o2.getOrder())
-                    .append(o1.getFriendlyName(), o2.getFriendlyName())
-                    .append(o1.getName(), o2.getName())
-                    .toComparison();
+                        .append(o1.getOrder(), o2.getOrder())
+                        .append(o1.getFriendlyName(), o2.getFriendlyName())
+                        .append(o1.getName(), o2.getName())
+                        .toComparison();
             }
         });
         if (!alternateOrderedGroupItems.isEmpty()) {
@@ -217,10 +216,10 @@ public class FieldGroup {
                 @Override
                 public int compare(FieldGroupItem o1, FieldGroupItem o2) {
                     return new CompareToBuilder()
-                        .append(o1.getOrder(), o2.getOrder())
-                        .append(o1.getFriendlyName(), o2.getFriendlyName())
-                        .append(o1.getName(), o2.getName())
-                        .toComparison();
+                            .append(o1.getOrder(), o2.getOrder())
+                            .append(o1.getFriendlyName(), o2.getFriendlyName())
+                            .append(o1.getName(), o2.getName())
+                            .toComparison();
                 }
             });
             /*
@@ -320,4 +319,5 @@ public class FieldGroup {
         }
         return listGrids;
     }
+
 }

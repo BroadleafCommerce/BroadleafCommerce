@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,11 +25,11 @@ import java.util.Map;
  */
 public class RuleIdentifier {
 
-    public static final String CUSTOMER  = "CUSTOMER_FIELDS";
-    public static final String FULFILLMENTGROUP  = "FULFILLMENT_GROUP_FIELDS";
-    public static final String LOCALE  = "LOCALE_FIELDS";
-    public static final String ORDER  = "ORDER_FIELDS";
-    public static final String ORDERITEM  = "ORDER_ITEM_FIELDS";
+    public static final String CUSTOMER = "CUSTOMER_FIELDS";
+    public static final String FULFILLMENTGROUP = "FULFILLMENT_GROUP_FIELDS";
+    public static final String LOCALE = "LOCALE_FIELDS";
+    public static final String ORDER = "ORDER_FIELDS";
+    public static final String ORDERITEM = "ORDER_ITEM_FIELDS";
     public static final String SKU = "SKU_FIELDS";
     public static final String TIME = "TIME_FIELDS";
     public static final String REQUEST = "REQUEST_FIELDS";
@@ -61,7 +61,8 @@ public class RuleIdentifier {
     public static final String PRODUCT_FIELD_KEY = "PRODUCT";
     public static final String CATEGORY_FIELD_KEY = "CATEGORY";
 
-    public static Map<String, String> ENTITY_KEY_MAP = new HashMap<String, String>();
+    public static Map<String, String> ENTITY_KEY_MAP = new HashMap<>();
+
     static {
         ENTITY_KEY_MAP.put(CUSTOMER, CUSTOMER_ENTITY_KEY);
         ENTITY_KEY_MAP.put(FULFILLMENTGROUP, FULFILLMENTGROUP_ENTITY_KEY);
@@ -76,4 +77,5 @@ public class RuleIdentifier {
         ENTITY_KEY_MAP.put(PRICING_CONTEXT, PRICING_CONTEXT_ENTITY_KEY);
         ENTITY_KEY_MAP.put(TRANSACTION, TRANSACTION_KEY);
     }
+
 }

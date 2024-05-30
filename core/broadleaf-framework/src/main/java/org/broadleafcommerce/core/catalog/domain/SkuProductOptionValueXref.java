@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,21 +23,21 @@ import java.io.Serializable;
 
 /**
  * Join entity between {@link Sku} and {@link ProductOptionValue}.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public interface SkuProductOptionValueXref extends Serializable, MultiTenantCloneable<SkuProductOptionValueXref> {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public Sku getSku();
+    Sku getSku();
 
-    public void setSku(Sku sku);
+    void setSku(Sku sku);
 
-    public ProductOptionValue getProductOptionValue();
+    ProductOptionValue getProductOptionValue();
 
-    public void setProductOptionValue(ProductOptionValue productOptionValue);
+    void setProductOptionValue(ProductOptionValue productOptionValue);
 
 }

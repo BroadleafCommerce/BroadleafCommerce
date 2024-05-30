@@ -10,22 +10,22 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.security.util;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class PasswordReset implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String username;
@@ -80,4 +80,5 @@ public class PasswordReset implements Serializable {
     public void setSendResetEmailReliableAsync(boolean sendResetEmailReliableAsync) {
         this.sendResetEmailReliableAsync = sendResetEmailReliableAsync;
     }
+
 }

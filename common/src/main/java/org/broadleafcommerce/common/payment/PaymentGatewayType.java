@@ -10,57 +10,52 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 
 /**
  * <p>This is designed such that individual payment modules will extend this to add their own type. For instance, while
  * this class does not explicitly have a 'Braintree' payment gateway type, the Braintree module will provide an extension
  * to this class and add itself in the list of types. For instance:</p>
- * 
+ *
  * <pre>
  * {@code
  * public class BraintreeGatewayType extends PaymentGatewayType {
  *     public static final BRAINTREE = new PaymentGatewayType("BRAINTREE", "Braintree");
  * }
  * </pre>
- * 
+ * <p>
  * And then in your application context:
  * <pre>
  * {@code
  * <bean class="org.broadleafcommerce.vendor.braintree.BraintreeGatewayType" />
  * }
  * </pre>
- * 
+ *
  * <p>This is especially useful in auditing scenarios so that, at a glance, you can easily see what gateway a particular
  * order payment was processed by.</p>
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 public class PaymentGatewayType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, PaymentGatewayType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, PaymentGatewayType> TYPES = new LinkedHashMap<String, PaymentGatewayType>();
-
-    public static final PaymentGatewayType TEMPORARY  = new PaymentGatewayType("Temporary", "This is a temporary Order Payment");
-    public static final PaymentGatewayType PASSTHROUGH  = new PaymentGatewayType("Passthrough", "Passthrough Payment");
-
-    public static PaymentGatewayType getInstance(final String type) {
-        return TYPES.get(type);
-    }
+    public static final PaymentGatewayType TEMPORARY = new PaymentGatewayType("Temporary", "This is a temporary Order Payment");
+    public static final PaymentGatewayType PASSTHROUGH = new PaymentGatewayType("Passthrough", "Passthrough Payment");
 
     private String type;
     private String friendlyType;
@@ -74,21 +69,25 @@ public class PaymentGatewayType implements Serializable, BroadleafEnumerationTyp
         setType(type);
     }
 
-   @Override
-     public String getType() {
+    public static PaymentGatewayType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    @Override
+    public String getType() {
         return type;
     }
 
-   @Override
-     public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
-        if (!TYPES.containsKey(type)){
+        if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -115,4 +114,5 @@ public class PaymentGatewayType implements Serializable, BroadleafEnumerationTyp
             return false;
         return true;
     }
+
 }

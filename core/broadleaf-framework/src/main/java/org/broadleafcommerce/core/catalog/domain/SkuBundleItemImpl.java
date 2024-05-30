@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,6 +43,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.CascadeType;
@@ -67,15 +68,17 @@ import jakarta.persistence.Transient;
 @Table(name = "BLC_SKU_BUNDLE_ITEM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    /** The id. */
+    /**
+     * The id.
+     */
     @Id
     @GeneratedValue(generator = "SkuBundleItemId")
     @GenericGenerator(
@@ -122,7 +125,9 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @AdminPresentationToOneLookup()
     protected Sku sku;
 
-    /** The display order. */
+    /**
+     * The display order.
+     */
     @Column(name = "SEQUENCE", precision = 10, scale = 6)
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected BigDecimal sequence;
@@ -180,21 +185,20 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     }
 
     @Override
-    public void setSalePrice(Money salePrice) {
-        if (salePrice != null) {
-            this.itemSalePrice = salePrice.getAmount();
-        } else {
-            this.itemSalePrice = null;
-        }
-    }
-
-
-    @Override
     public Money getSalePrice() {
         if (itemSalePrice == null) {
             return getSku().getSalePrice();
         } else {
             return getDynamicSalePrice(getSku(), itemSalePrice);
+        }
+    }
+
+    @Override
+    public void setSalePrice(Money salePrice) {
+        if (salePrice != null) {
+            this.itemSalePrice = salePrice.getAmount();
+        } else {
+            this.itemSalePrice = null;
         }
     }
 
@@ -324,4 +328,5 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
                 .append(deproxiedSku)
                 .toHashCode();
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,8 +24,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 
 import java.util.HashMap;
 import java.util.Map;
-
-
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -74,22 +72,22 @@ public class Field {
     protected Boolean canLinkToExternalEntity = true;
     protected String associatedFieldName;
     protected Boolean shouldRender = true;
-    protected Map<String, Object> attributes = new HashMap<String, Object>();
+    protected Map<String, Object> attributes = new HashMap<>();
 
     /* ************ */
     /* WITH METHODS */
     /* ************ */
-    
+
     public Field withName(String name) {
         setName(name);
         return this;
     }
-    
+
     public Field withFriendlyName(String friendlyName) {
         setFriendlyName(friendlyName);
         return this;
     }
-    
+
     public Field withFieldType(String fieldType) {
         setFieldType(fieldType);
         return this;
@@ -109,17 +107,17 @@ public class Field {
         setGridFieldComponentRenderer(gridFieldComponentRenderer);
         return this;
     }
-    
+
     public Field withValue(String value) {
         setValue(value);
         return this;
     }
-    
+
     public Field withDisplayValue(String displayValue) {
         setDisplayValue(displayValue);
         return this;
     }
-    
+
     public Field withForeignKeyDisplayValueProperty(String foreignKeyDisplayValueProperty) {
         setForeignKeyDisplayValueProperty(foreignKeyDisplayValueProperty);
         return this;
@@ -139,7 +137,7 @@ public class Field {
         setOwningEntityClass(owningEntityClass);
         return this;
     }
-    
+
     public Field withIdOverride(String idOverride) {
         setIdOverride(idOverride);
         return this;
@@ -154,17 +152,17 @@ public class Field {
         setAlternateOrdering(alternateOrdering);
         return this;
     }
-    
+
     public Field withRequired(Boolean required) {
         setRequired(required);
         return this;
     }
-    
+
     public Field withColumnWidth(String columnWidth) {
         setColumnWidth(columnWidth);
         return this;
     }
-    
+
     public Field withReadOnly(Boolean isReadOnly) {
         setReadOnly(isReadOnly);
         return this;
@@ -174,32 +172,32 @@ public class Field {
         setDisabled(isDisabled);
         return this;
     }
-    
+
     public Field withTranslatable(Boolean isTranslatable) {
         setTranslatable(isTranslatable);
         return this;
     }
-    
+
     public Field withMainEntityLink(Boolean isMainEntityLink) {
         setMainEntityLink(isMainEntityLink);
         return this;
     }
-    
+
     public Field withFilterSortDisabled(Boolean isFilterSortDisabled) {
         setFilterSortDisabled(isFilterSortDisabled);
         return this;
     }
-    
+
     public Field withDerived(Boolean isDerived) {
         setDerived(isDerived);
         return this;
     }
-    
+
     public Field withLargeEntry(Boolean isLargeEntry) {
         setLargeEntry(isLargeEntry);
         return this;
     }
-    
+
     public Field withHint(String hint) {
         setHint(hint);
         return this;
@@ -214,17 +212,17 @@ public class Field {
         setTooltip(tooltip);
         return this;
     }
-    
+
     public Field withAttribute(String key, Object value) {
         getAttributes().put(key, value);
         return this;
     }
-    
+
     public Field withTypeaheadEnabled(Boolean isTypeaheadEnabled) {
         setIsTypeaheadEnabled(isTypeaheadEnabled);
         return this;
     }
-    
+
     public Field withTranslationFieldName(String translationFieldName) {
         setTranslationFieldName(translationFieldName);
         return this;
@@ -245,7 +243,7 @@ public class Field {
     /* ************************ */
 
     public Boolean getIsVisible() {
-        String[] invisibleTypes = new String[] {
+        String[] invisibleTypes = new String[]{
                 SupportedFieldType.ID.toString(),
                 SupportedFieldType.ID.toString().toLowerCase(),
                 SupportedFieldType.HIDDEN.toString(),
@@ -253,19 +251,20 @@ public class Field {
                 SupportedFieldType.FOREIGN_KEY.toString(),
                 SupportedFieldType.FOREIGN_KEY.toString().toLowerCase()
         };
-        
+
         return isVisible == null ? !ArrayUtils.contains(invisibleTypes, fieldType) : isVisible;
     }
-    
-    public void setColumnWidth(String columnWidth) {
-        if ("*".equals(columnWidth)) {
-            columnWidth = null;
-        }
-        this.columnWidth = columnWidth;
+
+    public void setIsVisible(Boolean isVisible) {
+        this.isVisible = isVisible;
     }
 
     public String getDisplayValue() {
         return displayValue == null ? value : displayValue;
+    }
+
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
     }
 
     public String getRawDisplayValue() {
@@ -283,45 +282,89 @@ public class Field {
     public Boolean getReadOnly() {
         return isReadOnly == null ? false : isReadOnly;
     }
-    
+
+    public void setReadOnly(Boolean readOnly) {
+        this.isReadOnly = readOnly;
+    }
+
     public Boolean getDisabled() {
         return isDisabled == null ? false : isDisabled;
     }
-    
+
+    public void setDisabled(Boolean isDisabled) {
+        this.isDisabled = isDisabled;
+    }
+
     public Boolean getAlternateOrdering() {
         return isAlternateOrdering == null ? false : isAlternateOrdering;
     }
-    
+
+    public void setAlternateOrdering(Boolean alternateOrdering) {
+        this.isAlternateOrdering = alternateOrdering;
+    }
+
     public Boolean getTranslatable() {
         return isTranslatable == null ? false : isTranslatable;
     }
-    
+
+    public void setTranslatable(Boolean translatable) {
+        this.isTranslatable = translatable;
+    }
+
     public Boolean getMainEntityLink() {
         return isMainEntityLink == null ? false : isMainEntityLink;
     }
-    
+
+    public void setMainEntityLink(Boolean isMainEntityLink) {
+        this.isMainEntityLink = isMainEntityLink;
+    }
+
     public Boolean getFilterSortDisabled() {
         return isFilterSortDisabled == null ? false : isFilterSortDisabled;
     }
-    
+
+    public void setFilterSortDisabled(Boolean isFilterSortDisabled) {
+        this.isFilterSortDisabled = isFilterSortDisabled;
+    }
+
     public Boolean getResizeDisabled() {
         return isResizeDisabled == null ? false : isResizeDisabled;
+    }
+
+    public void setResizeDisabled(Boolean isResizeDisabled) {
+        this.isResizeDisabled = isResizeDisabled;
     }
 
     public Boolean getContentOverflowAllowed() {
         return isContentOverflowAllowed == null ? false : isContentOverflowAllowed;
     }
-    
+
+    public void setContentOverflowAllowed(Boolean isContentOverflowAllowed) {
+        this.isContentOverflowAllowed = isContentOverflowAllowed;
+    }
+
+    /* ************************** */
+    /* STANDARD GETTERS / SETTERS */
+    /* ************************** */
+
     public Object getAttribute(String key) {
         return getAttributes().get(key);
     }
-    
+
     public Boolean getIsTypeaheadEnabled() {
         return isTypeaheadEnabled == null ? false : isTypeaheadEnabled;
     }
-    
+
+    public void setIsTypeaheadEnabled(Boolean isTypeaheadEnabled) {
+        this.isTypeaheadEnabled = isTypeaheadEnabled;
+    }
+
     public String getTranslationFieldName() {
         return translationFieldName == null ? name : translationFieldName;
+    }
+
+    public void setTranslationFieldName(String translationFieldName) {
+        this.translationFieldName = translationFieldName;
     }
 
     public Boolean getIsConfirmEnabled() {
@@ -347,10 +390,6 @@ public class Field {
     public void setConfirmEnabledText(String confirmEnabledText) {
         this.confirmEnabledText = confirmEnabledText;
     }
-
-    /* ************************** */
-    /* STANDARD GETTERS / SETTERS */
-    /* ************************** */
 
     public String getName() {
         return name;
@@ -408,10 +447,6 @@ public class Field {
         this.value = value;
     }
 
-    public void setDisplayValue(String displayValue) {
-        this.displayValue = displayValue;
-    }
-
     public String getForeignKeyDisplayValueProperty() {
         return foreignKeyDisplayValueProperty;
     }
@@ -439,7 +474,7 @@ public class Field {
     public String getOnChangeTrigger() {
         return onChangeTrigger;
     }
-    
+
     public void setOnChangeTrigger(String onChangeTrigger) {
         this.onChangeTrigger = onChangeTrigger;
     }
@@ -447,33 +482,20 @@ public class Field {
     public Boolean getRequired() {
         return required == null ? false : required;
     }
-    
+
     public void setRequired(Boolean required) {
         this.required = required;
     }
-    
+
     public String getColumnWidth() {
         return columnWidth;
     }
 
-    public void setIsVisible(Boolean isVisible) {
-        this.isVisible = isVisible;
-    }
-
-    public void setAlternateOrdering(Boolean alternateOrdering) {
-        this.isAlternateOrdering = alternateOrdering;
-    }
-    
-    public void setReadOnly(Boolean readOnly) {
-        this.isReadOnly = readOnly;
-    }
-
-    public void setDisabled(Boolean isDisabled) {
-        this.isDisabled = isDisabled;
-    }
-    
-    public void setTranslatable(Boolean translatable) {
-        this.isTranslatable = translatable;
+    public void setColumnWidth(String columnWidth) {
+        if ("*".equals(columnWidth)) {
+            columnWidth = null;
+        }
+        this.columnWidth = columnWidth;
     }
 
     public String getForeignKeyClass() {
@@ -500,34 +522,18 @@ public class Field {
         this.owningEntityClass = owningEntityClass;
     }
 
-    public void setMainEntityLink(Boolean isMainEntityLink) {
-        this.isMainEntityLink = isMainEntityLink;
-    }
-
-    public void setFilterSortDisabled(Boolean isFilterSortDisabled) {
-        this.isFilterSortDisabled = isFilterSortDisabled;
-    }
-
-    public void setResizeDisabled(Boolean isResizeDisabled) {
-        this.isResizeDisabled = isResizeDisabled;
-    }
-
-    public void setContentOverflowAllowed(Boolean isContentOverflowAllowed) {
-            this.isContentOverflowAllowed = isContentOverflowAllowed;
-        }
-    
     public Boolean getIsDerived() {
         return isDerived == null ? false : isDerived;
     }
-    
+
     public void setDerived(Boolean isDerived) {
         this.isDerived = isDerived;
     }
-    
+
     public Boolean getIsLargeEntry() {
         return isLargeEntry == null ? false : isLargeEntry;
     }
-    
+
     public void setLargeEntry(Boolean isLargeEntry) {
         this.isLargeEntry = isLargeEntry;
     }
@@ -543,41 +549,33 @@ public class Field {
     public String getHint() {
         return StringUtils.isBlank(hint) ? null : hint;
     }
-    
+
     public void setHint(String hint) {
         this.hint = hint;
     }
-    
+
     public String getTooltip() {
         return StringUtils.isBlank(tooltip) ? null : tooltip;
     }
-    
+
     public void setTooltip(String tooltip) {
         this.tooltip = tooltip;
     }
-    
+
     public String getHelp() {
         return StringUtils.isBlank(help) ? null : help;
     }
-    
+
     public void setHelp(String help) {
         this.help = help;
     }
-    
+
     public Map<String, Object> getAttributes() {
         return attributes;
     }
 
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
-    }
-
-    public void setIsTypeaheadEnabled(Boolean isTypeaheadEnabled) {
-        this.isTypeaheadEnabled = isTypeaheadEnabled;
-    }
-
-    public void setTranslationFieldName(String translationFieldName) {
-        this.translationFieldName = translationFieldName;
     }
 
     public String getAssociatedFieldName() {
@@ -609,4 +607,5 @@ public class Field {
     public void setCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {
         this.canLinkToExternalEntity = canLinkToExternalEntity;
     }
+
 }

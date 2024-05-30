@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,13 +31,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPriceDetail {
 
     protected PromotableOrderItem promotableOrderItem;
-    protected List<PromotableOrderItemPriceDetailAdjustment> promotableOrderItemPriceDetailAdjustments = new ArrayList<PromotableOrderItemPriceDetailAdjustment>();
-    protected List<PromotionDiscount> promotionDiscounts = new ArrayList<PromotionDiscount>();
-    protected List<PromotionQualifier> promotionQualifiers = new ArrayList<PromotionQualifier>();
+    protected List<PromotableOrderItemPriceDetailAdjustment> promotableOrderItemPriceDetailAdjustments = new ArrayList<>();
+    protected List<PromotionDiscount> promotionDiscounts = new ArrayList<>();
+    protected List<PromotionQualifier> promotionQualifiers = new ArrayList<>();
     protected int quantity;
     protected boolean useSaleAdjustments = false;
     protected boolean adjustmentsFinalized = false;
@@ -47,12 +46,12 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         this.promotableOrderItem = promotableOrderItem;
         this.quantity = quantity;
     }
-    
+
     @Override
     public boolean isAdjustmentsFinalized() {
         return adjustmentsFinalized;
     }
-    
+
     @Override
     public void setAdjustmentsFinalized(boolean adjustmentsFinalized) {
         this.adjustmentsFinalized = adjustmentsFinalized;
@@ -101,40 +100,37 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         }
         return false;
     }
-    
+
     public Money calculateSaleAdjustmentUnitPrice() {
         Money returnPrice = promotableOrderItem.getSalePriceBeforeAdjustments();
         if (returnPrice == null) {
             returnPrice = promotableOrderItem.getRetailPriceBeforeAdjustments();
         }
         for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableOrderItemPriceDetailAdjustments) {
-            returnPrice = buildPreciseMoneyFromAdjustment(returnPrice,
-                    adjustment.getSaleAdjustmentValue());
+            returnPrice = buildPreciseMoneyFromAdjustment(returnPrice, adjustment.getSaleAdjustmentValue());
             returnPrice = returnPrice.subtract(adjustment.getSaleAdjustmentValue());
         }
         return returnPrice;
     }
-    
+
     public Money calculateRetailAdjustmentUnitPrice() {
         Money returnPrice = promotableOrderItem.getRetailPriceBeforeAdjustments();
         for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableOrderItemPriceDetailAdjustments) {
-            returnPrice = buildPreciseMoneyFromAdjustment(returnPrice,
-                    adjustment.getRetailAdjustmentValue());
+            returnPrice = buildPreciseMoneyFromAdjustment(returnPrice, adjustment.getRetailAdjustmentValue());
             returnPrice = returnPrice.subtract(adjustment.getRetailAdjustmentValue());
         }
         return returnPrice;
     }
 
-    protected Money buildPreciseMoneyFromAdjustment(Money original,
-                                                    Money adjustment) {
-        return new Money(original.getAmount(), original.getCurrency(),
-                adjustment.getAmount().scale());
+    protected Money buildPreciseMoneyFromAdjustment(Money original, Money adjustment) {
+        return new Money(original.getAmount(), original.getCurrency(), adjustment.getAmount().scale());
     }
 
     /**
      * This method will check to see if the salePriceAdjustments or retailPriceAdjustments are better
      * and remove those that should not apply.
-     * @return 
+     *
+     * @return
      */
     public void chooseSaleOrRetailAdjustments() {
         adjustmentsFinalized = true;
@@ -146,7 +142,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         if (hasOrderItemAdjustments()) {
             Money saleAdjustmentPrice = calculateSaleAdjustmentUnitPrice();
             Money retailAdjustmentPrice = calculateRetailAdjustmentUnitPrice();
-            
+
             if (promotableOrderItem.isOnSale()) {
                 if (saleAdjustmentPrice.lessThanOrEqual(retailAdjustmentPrice)) {
                     this.useSaleAdjustments = Boolean.TRUE;
@@ -189,7 +185,6 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         }
 
         adjustedTotal = adjustedTotal.multiply(quantity);
-
     }
 
     public void removeAllAdjustments() {
@@ -207,7 +202,8 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
      * Removes retail only adjustments.
      */
     protected void removeRetailOnlyAdjustments() {
-        Iterator<PromotableOrderItemPriceDetailAdjustment> adjustments = promotableOrderItemPriceDetailAdjustments.iterator();
+        Iterator<PromotableOrderItemPriceDetailAdjustment> adjustments = promotableOrderItemPriceDetailAdjustments
+                .iterator();
         while (adjustments.hasNext()) {
             PromotableOrderItemPriceDetailAdjustment adjustment = adjustments.next();
             if (adjustment.getOffer().getApplyDiscountToSalePrice() == false) {
@@ -217,11 +213,13 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     }
 
     /**
-     * If removeUnusedAdjustments is s 
-     * @param useSaleAdjustments
+     * If removeUnusedAdjustments is s
+     *
+     * @param useSalePrice
      */
     protected void removeZeroDollarAdjustments(boolean useSalePrice) {
-        Iterator<PromotableOrderItemPriceDetailAdjustment> adjustments = promotableOrderItemPriceDetailAdjustments.iterator();
+        Iterator<PromotableOrderItemPriceDetailAdjustment> adjustments = promotableOrderItemPriceDetailAdjustments
+                .iterator();
         while (adjustments.hasNext()) {
             PromotableOrderItemPriceDetailAdjustment adjustment = adjustments.next();
             if (useSalePrice) {
@@ -232,10 +230,10 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
                 if (adjustment.getRetailAdjustmentValue().isZero()) {
                     adjustments.remove();
                 }
-            }            
+            }
         }
     }
-    
+
     public PromotableOrderItem getPromotableOrderItem() {
         return promotableOrderItem;
     }
@@ -260,7 +258,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         this.quantity = quantity;
     }
 
-    private boolean restrictTarget(Offer offer, boolean targetType) {
+    protected boolean restrictTarget(Offer offer, boolean targetType) {
         OfferItemRestrictionRuleType qualifierType;
         if (targetType) {
             qualifierType = offer.getOfferItemTargetRuleType();
@@ -271,7 +269,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
                 OfferItemRestrictionRuleType.QUALIFIER.equals(qualifierType);
     }
 
-    private boolean restrictQualifier(Offer offer, boolean targetType) {
+    protected boolean restrictQualifier(Offer offer, boolean targetType) {
         OfferItemRestrictionRuleType qualifierType;
         if (targetType) {
             qualifierType = offer.getOfferItemTargetRuleType();
@@ -337,11 +335,12 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
         }
 
         PromotionQualifier pq = new PromotionQualifier();
-        
+
         Money pqPriceBeforeAdjustment = new Money(0);
         for (Map.Entry<OfferItemCriteria, List<PromotableOrderItem>> qualifierMapEntry : candidatePromotion.getCandidateQualifiersMap().entrySet()) {
             for (PromotableOrderItem promotableOrderItem : qualifierMapEntry.getValue()) {
-                Money priceBeforeAdjustments = promotableOrderItem.getOrderItem().getPriceBeforeAdjustments(candidatePromotion.getOffer().getApplyDiscountToSalePrice());
+                Money priceBeforeAdjustments = promotableOrderItem.getOrderItem()
+                        .getPriceBeforeAdjustments(candidatePromotion.getOffer().getApplyDiscountToSalePrice());
                 pqPriceBeforeAdjustment = pqPriceBeforeAdjustment.add(priceBeforeAdjustments);
             }
         }
@@ -367,7 +366,11 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     }
 
     @Override
-    public PromotionQualifier addPromotionQualifier(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsQualifier) {
+    public PromotionQualifier addPromotionQualifier(
+            PromotableCandidateItemOffer itemOffer,
+            OfferItemCriteria itemCriteria,
+            int qtyToMarkAsQualifier
+    ) {
         PromotionQualifier pq = lookupOrCreatePromotionQualifier(itemOffer);
         pq.incrementQuantity(qtyToMarkAsQualifier);
         pq.setItemCriteria(itemCriteria);
@@ -375,7 +378,11 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     }
 
     @Override
-    public void addPromotionDiscount(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria, int qtyToMarkAsTarget) {
+    public void addPromotionDiscount(
+            PromotableCandidateItemOffer itemOffer,
+            OfferItemCriteria itemCriteria,
+            int qtyToMarkAsTarget
+    ) {
         PromotionDiscount pd = lookupOrCreatePromotionDiscount(itemOffer);
         if (pd == null) {
             return;
@@ -420,7 +427,6 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
                 promotionDiscount.setQuantity(promotionDiscount.getFinalizedQuantity());
             }
         }
-
     }
 
     @Override
@@ -489,11 +495,12 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
 
     /**
      * Creates a key that represents a unique priceDetail
+     *
      * @return
      */
     @Override
     public String buildDetailKey() {
-        List<Long> offerIds = new ArrayList<Long>();
+        List<Long> offerIds = new ArrayList<>();
         for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableOrderItemPriceDetailAdjustments) {
             Long offerId = adjustment.getOffer().getId();
             offerIds.add(offerId);
@@ -512,7 +519,7 @@ public class PromotableOrderItemPriceDetailImpl implements PromotableOrderItemPr
     public Money calculateTotalAdjustmentValue() {
         return calculateAdjustmentsUnitValue().multiply(quantity);
     }
-    
+
     @Override
     public PromotableOrderItemPriceDetail shallowCopy() {
         PromotableOrderItemPriceDetail copyDetail = promotableOrderItem.createNewDetail(quantity);

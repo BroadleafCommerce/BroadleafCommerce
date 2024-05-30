@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.presentation.client;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -30,14 +31,14 @@ import java.util.Map.Entry;
  * This extensible enumeration controls the field types that are available for users to choose from when creating
  * FieldDefinitions in the admin tool. This list should be a strict subset of {@link SupportedFieldType} and will
  * throw an exception if a non-matching type is added.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class DynamicSupportedFieldType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, DynamicSupportedFieldType> TYPES = new LinkedHashMap<String, DynamicSupportedFieldType>();
+    private static final Map<String, DynamicSupportedFieldType> TYPES = new LinkedHashMap<>();
 
     public static final DynamicSupportedFieldType STRING = new DynamicSupportedFieldType("STRING", "String");
     public static final DynamicSupportedFieldType HTML = new DynamicSupportedFieldType("HTML", "Rich Text");
@@ -47,10 +48,6 @@ public class DynamicSupportedFieldType implements Serializable, BroadleafEnumera
     public static final DynamicSupportedFieldType PRODUCT_LOOKUP = new DynamicSupportedFieldType("ADDITIONAL_FOREIGN_KEY|org.broadleafcommerce.core.catalog.domain.Product", "Product Lookup");
     public static final DynamicSupportedFieldType CATEGORY_LOOKUP = new DynamicSupportedFieldType("ADDITIONAL_FOREIGN_KEY|org.broadleafcommerce.core.catalog.domain.Category", "Category Lookup");
     public static final DynamicSupportedFieldType DATE = new DynamicSupportedFieldType("DATE", "Date");
-
-    public static DynamicSupportedFieldType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -64,7 +61,11 @@ public class DynamicSupportedFieldType implements Serializable, BroadleafEnumera
         this.friendlyType = friendlyType;
         setType(type);
     }
-    
+
+    public static DynamicSupportedFieldType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     /**
      * @param type
      * @throws IllegalArgumentException when the given type does not exist in {@link SupportedFieldType}
@@ -75,7 +76,7 @@ public class DynamicSupportedFieldType implements Serializable, BroadleafEnumera
         }
         SupportedFieldType.valueOf(type);
     }
-    
+
     /**
      * @return a cloned list of the currently known {@link DynamicSupportedFieldType}s.
      */
@@ -86,22 +87,23 @@ public class DynamicSupportedFieldType implements Serializable, BroadleafEnumera
         }
         return list;
     }
-    
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via "
+                    + getInstance(type).getClass().getName());
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

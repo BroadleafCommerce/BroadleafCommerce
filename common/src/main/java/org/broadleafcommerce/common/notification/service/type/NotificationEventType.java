@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.notification.service.type;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.springframework.stereotype.Component;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,9 +30,10 @@ import java.util.Map;
  */
 @Component
 public class NotificationEventType implements Serializable, BroadleafEnumerationType {
-    private static final long serialVersionUID = 1L;
 
-    private static final Map<String, NotificationEventType> TYPES = new LinkedHashMap<String, NotificationEventType>();
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static final Map<String, NotificationEventType> TYPES = new LinkedHashMap<>();
 
     public static final NotificationEventType ADMIN_FORGOT_PASSWORD = new NotificationEventType("ADMIN_FORGOT_PASSWORD", "Admin Forgot Password");
     public static final NotificationEventType ADMIN_FORGOT_USERNAME = new NotificationEventType("ADMIN_FORGOT_USERNAME", "Admin Forgot Username");
@@ -41,10 +43,6 @@ public class NotificationEventType implements Serializable, BroadleafEnumeration
     public static final NotificationEventType REGISTER_CUSTOMER = new NotificationEventType("REGISTER_CUSTOMER", "Register Customer");
     public static final NotificationEventType CONTACT_US = new NotificationEventType("CONTACT_US", "Contact Us");
     public static final NotificationEventType NOTIFY_ABANDONED_CART = new NotificationEventType("NOTIFY_ABANDONED_CART", "Notify Abandoned Cart");
-
-    public static NotificationEventType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -58,21 +56,25 @@ public class NotificationEventType implements Serializable, BroadleafEnumeration
         setType(type);
     }
 
+    public static NotificationEventType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     @Override
     public String getType() {
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -99,4 +101,5 @@ public class NotificationEventType implements Serializable, BroadleafEnumeration
             return false;
         return true;
     }
+
 }

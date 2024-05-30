@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.controller;
 
 import org.apache.commons.lang3.StringUtils;
@@ -94,16 +93,22 @@ public class AdminTranslationController extends AdminAbstractController {
      * @throws Exception
      */
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public String viewTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute(value = "form") TranslationForm form, BindingResult result) throws Exception {
+    public String viewTranslation(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @ModelAttribute(value = "form") TranslationForm form,
+            BindingResult result
+    ) throws Exception {
         if (extensionManager != null) {
             extensionManager.getProxy().applyTransformation(form);
         }
 
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
 
-        List<Translation> translations =
-                translationService.getTranslations(form.getCeilingEntity(), form.getEntityId(), form.getPropertyName());
+        List<Translation> translations = translationService.getTranslations(
+                form.getCeilingEntity(), form.getEntityId(), form.getPropertyName()
+        );
         ListGrid lg = formService.buildListGrid(translations, form.getIsRte());
 
         model.addAttribute("currentUrl", request.getRequestURL().toString());
@@ -126,9 +131,14 @@ public class AdminTranslationController extends AdminAbstractController {
      * @throws Exception
      */
     @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public String showAddTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars, @ModelAttribute(value = "form") TranslationForm form,
-            BindingResult result) throws Exception {
+    public String showAddTranslation(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @ModelAttribute(value = "form") TranslationForm form,
+            BindingResult result
+    ) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = new ArrayList<>();
@@ -147,7 +157,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
     /**
      * Saves a new translation to the database.
-     *
+     * <p>
      * Note that if the ceiling entity, entity id, property name, and locale code match a previously existing translation,
      * this method will update that translation.
      *
@@ -160,8 +170,13 @@ public class AdminTranslationController extends AdminAbstractController {
      * @throws Exception
      */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String addTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+    public String addTranslation(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @ModelAttribute(value = "entityForm") EntityForm entityForm,
+            BindingResult result
+    ) throws Exception {
 
         final TranslationForm form = getTranslationForm(entityForm);
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
@@ -173,7 +188,9 @@ public class AdminTranslationController extends AdminAbstractController {
 
         populateTranslationFields(entityForm, form);
 
-        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(form.getCeilingEntity(), getSectionCustomCriteria());
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(
+                form.getCeilingEntity(), getSectionCustomCriteria()
+        );
         Entity entity = service.addEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
 
         entityFormValidator.validate(entityForm, entity, result);
@@ -194,6 +211,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
     /**
      * analyzes the error information, and converts it into a Javascript object  string, which can be passed to to the HTML form through the entityForm
+     *
      * @param result
      * @return
      */
@@ -219,9 +237,14 @@ public class AdminTranslationController extends AdminAbstractController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.GET)
-    public String showUpdateTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars, @ModelAttribute(value = "form") TranslationForm form,
-            BindingResult result) throws Exception {
+    public String showUpdateTranslation(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @ModelAttribute(value = "form") TranslationForm form,
+            BindingResult result
+    ) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> sectionCrumbs = new ArrayList<>();
@@ -230,7 +253,9 @@ public class AdminTranslationController extends AdminAbstractController {
 
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.FETCH);
 
-        Entity entity = service.getRecord(ppr, form.getTranslationId().toString(), cmd, false).getDynamicResultSet().getRecords()[0];
+        Entity entity = service.getRecord(ppr, form.getTranslationId().toString(), cmd, false)
+                .getDynamicResultSet()
+                .getRecords()[0];
 
         form.setTranslatedValue(entity.findProperty("translatedValue").getValue());
 
@@ -261,8 +286,13 @@ public class AdminTranslationController extends AdminAbstractController {
      * @throws Exception
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String updateTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+    public String updateTranslation(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @ModelAttribute(value = "entityForm") EntityForm entityForm,
+            BindingResult result
+    ) throws Exception {
         final TranslationForm form = getTranslationForm(entityForm);
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
         SectionCrumb sectionCrumb = new SectionCrumb();
@@ -280,7 +310,9 @@ public class AdminTranslationController extends AdminAbstractController {
 
         populateTranslationFields(entityForm, form);
 
-        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(form.getCeilingEntity(), getSectionCustomCriteria());
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(
+                form.getCeilingEntity(), getSectionCustomCriteria()
+        );
         service.updateEntity(entityForm, sectionCriteria, sectionCrumbs).getEntity();
         return viewTranslation(request, response, model, form, result);
     }
@@ -291,16 +323,21 @@ public class AdminTranslationController extends AdminAbstractController {
      * @param request
      * @param response
      * @param model
-     * @param id
+     * @param pathVars
      * @param form
      * @param result
      * @return the result of a call to {@link #viewTranslation}, which renders the list grid
      * @throws Exception
      */
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public String deleteTranslation(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable Map<String, String> pathVars, @ModelAttribute(value = "form") final TranslationForm form,
-            BindingResult result) throws Exception {
+    public String deleteTranslation(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @ModelAttribute(value = "form") final TranslationForm form,
+            BindingResult result
+    ) throws Exception {
         adminRemoteSecurityService.securityCheck(form.getCeilingEntity(), EntityOperationType.UPDATE);
         SectionCrumb sectionCrumb = new SectionCrumb();
         sectionCrumb.setSectionIdentifier(TranslationImpl.class.getName());
@@ -321,7 +358,9 @@ public class AdminTranslationController extends AdminAbstractController {
         entityForm.getFields().put("id", id);
         entityForm.setId(String.valueOf(form.getTranslationId()));
 
-        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(Translation.class.getName(), getSectionCustomCriteria());
+        String[] sectionCriteria = customCriteriaService.mergeSectionCustomCriteria(
+                Translation.class.getName(), getSectionCustomCriteria()
+        );
         service.removeEntity(entityForm, sectionCriteria, sectionCrumbs);
         return viewTranslation(request, response, model, form, result);
     }
@@ -354,6 +393,7 @@ public class AdminTranslationController extends AdminAbstractController {
 
     /**
      * Changing the default button class to "translation-revert-button" so that the JQuery action will be correct
+     *
      * @param entityForm - EntityForm where revert action will be modified
      */
     protected void modifyRevertButton(EntityForm entityForm) {

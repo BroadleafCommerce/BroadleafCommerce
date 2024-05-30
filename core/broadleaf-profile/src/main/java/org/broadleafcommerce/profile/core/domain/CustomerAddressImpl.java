@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,6 +35,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
+
+import java.io.Serial;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -72,6 +74,7 @@ import jakarta.persistence.Table;
 @SQLDelete(sql = "UPDATE BLC_CUSTOMER_ADDRESS SET ARCHIVED = 'Y' WHERE CUSTOMER_ADDRESS_ID = ?")
 public class CustomerAddressImpl implements CustomerAddress {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -90,8 +93,7 @@ public class CustomerAddressImpl implements CustomerAddress {
 
     @Column(name = "ADDRESS_NAME")
     @AdminPresentation(friendlyName = "CustomerAddressImpl_Address_Name", order = 1,
-            group = "CustomerAddressImpl_Identification", groupOrder = 1, prominent = true,
-            gridOrder = 1)
+            group = "CustomerAddressImpl_Identification", groupOrder = 1, prominent = true, gridOrder = 1)
     protected String addressName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
@@ -232,10 +234,10 @@ public class CustomerAddressImpl implements CustomerAddress {
         return true;
     }
 
-
     @Override
     public <G extends CustomerAddress> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -248,4 +250,5 @@ public class CustomerAddressImpl implements CustomerAddress {
         cloned.setAddress(address.createOrRetrieveCopyInstance(context).getClone());
         return createResponse;
     }
+
 }

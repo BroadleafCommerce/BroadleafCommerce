@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.processor;
 
 import org.apache.commons.collections4.ListUtils;
@@ -58,15 +57,13 @@ import jakarta.annotation.Resource;
  * -the complete set of product options and values for a given product
  *
  * @author jfridye
- *
  */
 @Component("blProductOptionsProcessor")
 @ConditionalOnTemplating
 public class ProductOptionsProcessor implements ProductOptionsExpression {
 
+    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<>(500));
     private static final Log LOG = LogFactory.getLog(ProductOptionsProcessor.class);
-    protected static final Map<Object, String> JSON_CACHE = Collections.synchronizedMap(new LRUMap<Object, String>(500));
-
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -109,9 +106,9 @@ public class ProductOptionsProcessor implements ProductOptionsExpression {
         List<Sku> skus = product.getSkus();
         List<ProductOptionPricingDTO> skuPricing = new ArrayList<>();
         for (Sku sku : skus) {
-            
-            List<Long> productOptionValueIds = new ArrayList<Long>();
-            
+
+            List<Long> productOptionValueIds = new ArrayList<>();
+
             Set<SkuProductOptionValueXref> productOptionValueXrefs = SetUtils.emptyIfNull(sku.getProductOptionValueXrefs());
             for (SkuProductOptionValueXref skuProductOptionValueXref : productOptionValueXrefs) {
                 ProductOptionValue productOptionValue = skuProductOptionValueXref.getProductOptionValue();
@@ -148,7 +145,7 @@ public class ProductOptionsProcessor implements ProductOptionsExpression {
         dto.setSelectedOptions(values);
         return dto;
     }
-    
+
     protected void addAllProductOptionsToModel(Map<String, Object> newModelVars, Product product) {
         List<ProductOptionXref> productOptionXrefs = ListUtils.emptyIfNull(product.getProductOptionXrefs());
         List<ProductOptionDTO> dtos = new ArrayList<>();
@@ -342,12 +339,12 @@ public class ProductOptionsProcessor implements ProductOptionsExpression {
                 ProductOptionPricingDTO that = (ProductOptionPricingDTO) o;
 
                 return new EqualsBuilder()
-                    .append(this.price, that.price)
-                    .append(this.skuOptions, that.skuOptions)
-                    .append(this.retailPrice, that.retailPrice)
-                    .append(this.salePrice, that.salePrice)
-                    .append(this.onSale, that.onSale)
-                    .build();
+                        .append(this.price, that.price)
+                        .append(this.skuOptions, that.skuOptions)
+                        .append(this.retailPrice, that.retailPrice)
+                        .append(this.salePrice, that.salePrice)
+                        .append(this.onSale, that.onSale)
+                        .build();
             }
 
             return false;
@@ -356,12 +353,13 @@ public class ProductOptionsProcessor implements ProductOptionsExpression {
         @Override
         public int hashCode() {
             return new HashCodeBuilder()
-                .append(skuOptions)
-                .append(price)
-                .append(retailPrice)
-                .append(salePrice)
-                .append(onSale)
-                .build();
+                    .append(skuOptions)
+                    .append(price)
+                    .append(retailPrice)
+                    .append(salePrice)
+                    .append(onSale)
+                    .build();
         }
     }
+
 }

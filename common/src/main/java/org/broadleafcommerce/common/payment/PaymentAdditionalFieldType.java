@@ -10,32 +10,31 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, PaymentAdditionalFieldType> TYPES = new LinkedHashMap<String, PaymentAdditionalFieldType>();
+    private static final Map<String, PaymentAdditionalFieldType> TYPES = new LinkedHashMap<>();
 
     public static final PaymentAdditionalFieldType NAME_ON_CARD = new PaymentAdditionalFieldType("NAME_ON_CARD", "Cardholders Name");
     public static final PaymentAdditionalFieldType CARD_TYPE = new PaymentAdditionalFieldType("CARD_TYPE", "Card Type");
     public static final PaymentAdditionalFieldType EXP_DATE = new PaymentAdditionalFieldType("EXP_DATE", "Expiration Date");
     public static final PaymentAdditionalFieldType EXP_MONTH = new PaymentAdditionalFieldType("EXP_MONTH", "Expiration Month");
     public static final PaymentAdditionalFieldType EXP_YEAR = new PaymentAdditionalFieldType("EXP_YEAR", "Expiration Year");
-
     // Generic Fields that can be used for multiple payment types
     public static final PaymentAdditionalFieldType PAYMENT_TYPE = new PaymentAdditionalFieldType("PAYMENT_TYPE", "Type of OrderPayment");
     public static final PaymentAdditionalFieldType GATEWAY_TYPE = new PaymentAdditionalFieldType("GATEWAY_TYPE", "Gateway Type");
@@ -53,10 +52,6 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
     public static final PaymentAdditionalFieldType DECLINE_TYPE = new PaymentAdditionalFieldType("DECLINE_TYPE", "Decline Type");
     public static final PaymentAdditionalFieldType PAYMENT_NAME = new PaymentAdditionalFieldType("PAYMENT_NAME", "Payment Name");
 
-    public static PaymentAdditionalFieldType getInstance(final String type) {
-        return TYPES.get(type);
-    }
-
     private String type;
     private String friendlyType;
 
@@ -69,21 +64,25 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
         setType(type);
     }
 
+    public static PaymentAdditionalFieldType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     @Override
     public String getType() {
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -115,4 +114,5 @@ public class PaymentAdditionalFieldType implements Serializable, BroadleafEnumer
         }
         return true;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,6 +21,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,31 +30,25 @@ import java.util.Map;
  * @author Nathan Moore (nathanmoore).
  */
 public class WebRequestDeviceType implements BroadleafEnumerationType, Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
-    
     private static final Map<String, WebRequestDeviceType> TYPES = new LinkedHashMap<>();
-    
+
     public static final WebRequestDeviceType UNKNOWN = new WebRequestDeviceType("UNKNOWN", "Unknown");
-    public static final WebRequestDeviceType NORMAL =  new WebRequestDeviceType("NORMAL", "Normal");
-    public static final WebRequestDeviceType MOBILE =  new WebRequestDeviceType("MOBILE", "Mobile");
-    public static final WebRequestDeviceType TABLET =  new WebRequestDeviceType("TABLET", "Tablet");
-    
+    public static final WebRequestDeviceType NORMAL = new WebRequestDeviceType("NORMAL", "Normal");
+    public static final WebRequestDeviceType MOBILE = new WebRequestDeviceType("MOBILE", "Mobile");
+    public static final WebRequestDeviceType TABLET = new WebRequestDeviceType("TABLET", "Tablet");
+
     private String type;
     private String friendlyType;
-    
-    WebRequestDeviceType(){}
-    
+
+    WebRequestDeviceType() {
+    }
+
     WebRequestDeviceType(final String type, final String friendlyType) {
         this.friendlyType = friendlyType;
         setType(type);
-    }
-    
-    private void setType(final String type) {
-        this.type = type;
-        
-        if (!TYPES.containsKey(type)) {
-            TYPES.put(type, this);
-        }
     }
 
     public static WebRequestDeviceType getInstance(final String type) {
@@ -63,6 +58,14 @@ public class WebRequestDeviceType implements BroadleafEnumerationType, Serializa
     @Override
     public String getType() {
         return type;
+    }
+
+    protected void setType(final String type) {
+        this.type = type;
+
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
+        }
     }
 
     @Override
@@ -79,13 +82,13 @@ public class WebRequestDeviceType implements BroadleafEnumerationType, Serializa
     public boolean equals(Object o) {
         if (o != null && getClass().isAssignableFrom(o.getClass())) {
             final WebRequestDeviceType other = (WebRequestDeviceType) o;
-            
+
             return new EqualsBuilder()
                     .append(getType(), other.getType())
                     .append(getFriendlyType(), other.getFriendlyType())
                     .build();
         }
-        
+
         return false;
     }
 
@@ -96,4 +99,5 @@ public class WebRequestDeviceType implements BroadleafEnumerationType, Serializa
                 .append(getType())
                 .build();
     }
+
 }

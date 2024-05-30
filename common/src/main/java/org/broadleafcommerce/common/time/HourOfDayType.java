@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,49 +19,46 @@ package org.broadleafcommerce.common.time;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of container shape types.
- * 
+ *
  * @author jfischer
  */
 public class HourOfDayType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, HourOfDayType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, HourOfDayType> TYPES = new LinkedHashMap<String, HourOfDayType>();
-
-    public static final HourOfDayType ZERO  = new HourOfDayType("0", "00");
-    public static final HourOfDayType ONE  = new HourOfDayType("1", "01");
-    public static final HourOfDayType TWO  = new HourOfDayType("2", "02");
-    public static final HourOfDayType THREE  = new HourOfDayType("3", "03");
-    public static final HourOfDayType FOUR  = new HourOfDayType("4", "04");
-    public static final HourOfDayType FIVE  = new HourOfDayType("5", "05");
-    public static final HourOfDayType SIX  = new HourOfDayType("6", "06");
-    public static final HourOfDayType SEVEN  = new HourOfDayType("7", "07");
-    public static final HourOfDayType EIGHT  = new HourOfDayType("8", "08");
-    public static final HourOfDayType NINE  = new HourOfDayType("9", "09");
-    public static final HourOfDayType TEN  = new HourOfDayType("10", "10");
-    public static final HourOfDayType ELEVEN  = new HourOfDayType("11", "11");
-    public static final HourOfDayType TWELVE  = new HourOfDayType("12", "12");
-    public static final HourOfDayType THIRTEEN  = new HourOfDayType("13", "13");
-    public static final HourOfDayType FOURTEEN  = new HourOfDayType("14", "14");
-    public static final HourOfDayType FIFTEEN  = new HourOfDayType("15", "15");
-    public static final HourOfDayType SIXTEEN  = new HourOfDayType("16", "16");
-    public static final HourOfDayType SEVENTEEN  = new HourOfDayType("17", "17");
-    public static final HourOfDayType EIGHTEEN  = new HourOfDayType("18", "18");
-    public static final HourOfDayType NINETEEN  = new HourOfDayType("19", "19");
-    public static final HourOfDayType TWENTY  = new HourOfDayType("20", "20");
-    public static final HourOfDayType TWENTYONE  = new HourOfDayType("21", "21");
-    public static final HourOfDayType TWNETYTWO  = new HourOfDayType("22", "22");
-    public static final HourOfDayType TWENTYTHREE  = new HourOfDayType("23", "23");
-    
-    public static HourOfDayType getInstance(final String type) {
-        return TYPES.get(type);
-    }
+    public static final HourOfDayType ZERO = new HourOfDayType("0", "00");
+    public static final HourOfDayType ONE = new HourOfDayType("1", "01");
+    public static final HourOfDayType TWO = new HourOfDayType("2", "02");
+    public static final HourOfDayType THREE = new HourOfDayType("3", "03");
+    public static final HourOfDayType FOUR = new HourOfDayType("4", "04");
+    public static final HourOfDayType FIVE = new HourOfDayType("5", "05");
+    public static final HourOfDayType SIX = new HourOfDayType("6", "06");
+    public static final HourOfDayType SEVEN = new HourOfDayType("7", "07");
+    public static final HourOfDayType EIGHT = new HourOfDayType("8", "08");
+    public static final HourOfDayType NINE = new HourOfDayType("9", "09");
+    public static final HourOfDayType TEN = new HourOfDayType("10", "10");
+    public static final HourOfDayType ELEVEN = new HourOfDayType("11", "11");
+    public static final HourOfDayType TWELVE = new HourOfDayType("12", "12");
+    public static final HourOfDayType THIRTEEN = new HourOfDayType("13", "13");
+    public static final HourOfDayType FOURTEEN = new HourOfDayType("14", "14");
+    public static final HourOfDayType FIFTEEN = new HourOfDayType("15", "15");
+    public static final HourOfDayType SIXTEEN = new HourOfDayType("16", "16");
+    public static final HourOfDayType SEVENTEEN = new HourOfDayType("17", "17");
+    public static final HourOfDayType EIGHTEEN = new HourOfDayType("18", "18");
+    public static final HourOfDayType NINETEEN = new HourOfDayType("19", "19");
+    public static final HourOfDayType TWENTY = new HourOfDayType("20", "20");
+    public static final HourOfDayType TWENTYONE = new HourOfDayType("21", "21");
+    public static final HourOfDayType TWNETYTWO = new HourOfDayType("22", "22");
+    public static final HourOfDayType TWENTYTHREE = new HourOfDayType("23", "23");
 
     private String type;
     private String friendlyType;
@@ -75,21 +72,26 @@ public class HourOfDayType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static HourOfDayType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via "
+                    + getInstance(type).getClass().getName());
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -116,4 +118,5 @@ public class HourOfDayType implements Serializable, BroadleafEnumerationType {
             return false;
         return true;
     }
+
 }

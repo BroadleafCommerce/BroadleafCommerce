@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.security.util;
-
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -27,7 +26,7 @@ public class PasswordUtils {
 
     private static final Random RANDOM = new SecureRandom();
     private static final String CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
-    
+
     public static String generateSecurePassword(int requiredLength) {
 
         int start = 0;
@@ -35,8 +34,11 @@ public class PasswordUtils {
         boolean letters = true;
         boolean numbers = true;
 
-        String password = RandomStringUtils.random(requiredLength, start, end, letters, numbers, CHARS.toCharArray(), RANDOM);
+        String password = RandomStringUtils.random(
+                requiredLength, start, end, letters, numbers, CHARS.toCharArray(), RANDOM
+        );
 
         return password;
     }
+
 }

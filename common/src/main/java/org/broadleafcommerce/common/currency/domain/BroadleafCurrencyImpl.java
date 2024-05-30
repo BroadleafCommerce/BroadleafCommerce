@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,6 +26,8 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -37,7 +39,6 @@ import jakarta.persistence.Transient;
 /**
  * Author: jerryocanas Date: 9/6/12
  */
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CURRENCY")
@@ -49,6 +50,7 @@ import jakarta.persistence.Transient;
 })
 public class BroadleafCurrencyImpl implements BroadleafCurrency, AdminMainEntity {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -65,7 +67,7 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency, AdminMainEntity
     @Column(name = "DEFAULT_FLAG")
     @AdminPresentation(friendlyName = "BroadleafCurrencyImpl_Is_Default", group = "BroadleafCurrencyImpl_Details", excluded = true)
     protected Boolean defaultFlag = false;
-    
+
     @Transient
     protected java.util.Currency javaCurrency;
 
@@ -73,17 +75,17 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency, AdminMainEntity
     public String getCurrencyCode() {
         return currencyCode;
     }
-    
+
+    @Override
+    public void setCurrencyCode(String code) {
+        this.currencyCode = code;
+    }
+
     public java.util.Currency getJavaCurrency() {
         if (javaCurrency == null && getCurrencyCode() != null) {
             javaCurrency = java.util.Currency.getInstance(getCurrencyCode());
         }
         return javaCurrency;
-    }
-
-    @Override
-    public void setCurrencyCode(String code) {
-        this.currencyCode = code;
     }
 
     @Override
@@ -142,4 +144,5 @@ public class BroadleafCurrencyImpl implements BroadleafCurrency, AdminMainEntity
             return getCurrencyCode();
         }
     }
+
 }

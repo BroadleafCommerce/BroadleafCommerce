@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,49 +29,58 @@ public interface AdvancedOfferPromotionMessageXref extends Serializable, MultiTe
 
     /**
      * Id of this AdvancedOfferPromotionMessageXref
+     *
      * @return
      */
     Long getId();
 
     /**
      * Sets the id of this AdvancedOfferPromotionMessageXref
+     *
      * @param id
      */
     void setId(Long id);
 
     /**
      * Gets the Offer
+     *
      * @return
      */
     Offer getOffer();
 
     /**
      * Sets the Offer
+     *
      * @param offer
      */
     void setOffer(Offer offer);
 
     /**
      * Gets the PromotionMessage
+     *
      * @return
      */
     PromotionMessage getPromotionMessage();
 
     /**
      * Sets the PromotionMessage
+     *
      * @param promotionMessage
      */
     void setPromotionMessage(PromotionMessage promotionMessage);
 
     /**
      * Gets the PromotionMessage type
+     *
      * @return
      */
-    public String getMessageType();
+    String getMessageType();
 
     /**
      * Sets the PromotionMessage type
+     *
      * @param messageType
      */
-    public void setMessageType(String messageType);
+    void setMessageType(String messageType);
+
 }

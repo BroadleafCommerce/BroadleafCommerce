@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,16 +21,15 @@ import javax.cache.configuration.Configuration;
 
 /**
  * DTO object to represent the configuration of a cache region
- * 
+ * <p>
  * If {@link #configuration} is set then it will be used to create the region otherwise the other properties will be used.
  * If this class is subclassed then {@link JCacheConfigurationBuilder} will likely also need to be overridden in order to utilize any new properties.
- * 
+ * <p>
  * By default instances of this class are defined in Broadleaf to set the default configuration for known cache regions. If you would like to override
  * cache regions using this DTO when targeting ehcache then set the property jcache.create.cache.forceJavaConfig to true. When targeting any other jcache
  * implementation simply create an instance of this DTO for each new region or region override as a bean.
- * 
- * @author Jay Aisenbrey (cja769)
  *
+ * @author Jay Aisenbrey (cja769)
  */
 public class JCacheRegionConfiguration {
 
@@ -43,7 +42,15 @@ public class JCacheRegionConfiguration {
     protected Boolean enableStatistics;
     protected Configuration<?, ?> configuration;
 
-    public JCacheRegionConfiguration(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<?> key, Class<?> value, Boolean enableManagement, Boolean enableStatistics) {
+    public JCacheRegionConfiguration(
+            String cacheName,
+            int ttlSeconds,
+            int maxElementsInMemory,
+            Class<?> key,
+            Class<?> value,
+            Boolean enableManagement,
+            Boolean enableStatistics
+    ) {
         this.cacheName = cacheName;
         this.ttlSeconds = ttlSeconds;
         this.maxElementsInMemory = maxElementsInMemory;
@@ -53,7 +60,12 @@ public class JCacheRegionConfiguration {
         this.enableStatistics = enableStatistics;
     }
 
-    public JCacheRegionConfiguration(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<?> key, Class<?> value) {
+    public JCacheRegionConfiguration(
+            String cacheName,
+            int ttlSeconds,
+            int maxElementsInMemory,
+            Class<?> key, Class<?> value
+    ) {
         this(cacheName, ttlSeconds, maxElementsInMemory, key, value, true, true);
     }
 

@@ -10,13 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.search.dao;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -36,12 +37,13 @@ import java.util.Set;
  */
 public class CatalogStructure implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    protected Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<Long, Set<Long>>();
-    protected Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<Long, Set<Long>>();
-    protected Map<Long, List<Long>> productsByCategory = new HashMap<Long, List<Long>>();
-    protected Map<String, BigDecimal> displayOrdersByCategoryProduct = new HashMap<String, BigDecimal>();
+    protected Map<Long, Set<Long>> parentCategoriesByProduct = new HashMap<>();
+    protected Map<Long, Set<Long>> parentCategoriesByCategory = new HashMap<>();
+    protected Map<Long, List<Long>> productsByCategory = new HashMap<>();
+    protected Map<String, BigDecimal> displayOrdersByCategoryProduct = new HashMap<>();
 
     public Map<Long, Set<Long>> getParentCategoriesByProduct() {
         return parentCategoriesByProduct;

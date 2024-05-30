@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -67,7 +67,11 @@ public class QueryConfigurationClassTransformer implements BroadleafClassTransfo
     protected List<NamedNativeQuery> nativeQueries;
     protected List<String> managedClassNames;
 
-    public QueryConfigurationClassTransformer(List<NamedQuery> namedQueries, List<NamedNativeQuery> nativeQueries, List<String> managedClassNames) {
+    public QueryConfigurationClassTransformer(
+            List<NamedQuery> namedQueries,
+            List<NamedNativeQuery> nativeQueries,
+            List<String> managedClassNames
+    ) {
         this.namedQueries = namedQueries;
         this.nativeQueries = nativeQueries;
         this.managedClassNames = managedClassNames;
@@ -79,8 +83,13 @@ public class QueryConfigurationClassTransformer implements BroadleafClassTransfo
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain
-            protectionDomain, byte[] classfileBuffer) throws TransformerException {
+    public byte[] transform(
+            ClassLoader loader,
+            String className,
+            Class<?> classBeingRedefined,
+            ProtectionDomain protectionDomain,
+            byte[] classfileBuffer
+    ) throws TransformerException {
         if (className == null || isExecuted) {
             return null;
         }
@@ -112,7 +121,8 @@ public class QueryConfigurationClassTransformer implements BroadleafClassTransfo
                 return bos.toByteArray();
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new TransformerException("Unable to convert " + convertedClassName + " to a SingleTable inheritance strategy: " + e.getMessage());
+                throw new TransformerException("Unable to convert " + convertedClassName
+                        + " to a SingleTable inheritance strategy: " + e.getMessage());
             }
         } else {
             return null;
@@ -281,8 +291,8 @@ public class QueryConfigurationClassTransformer implements BroadleafClassTransfo
         hintValue.setValue(hint.value());
         queryHint.addMemberValue("value", hintValue);
 
-        AnnotationMemberValue hintAnnotation = new AnnotationMemberValue(queryHint,
-                constantPool);
+        AnnotationMemberValue hintAnnotation = new AnnotationMemberValue(queryHint, constantPool);
         queryHints.add(hintAnnotation);
     }
+
 }

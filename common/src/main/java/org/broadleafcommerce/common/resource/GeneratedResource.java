@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,36 +26,36 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  * An in memory generated resource. This class also overrides some parent Spring AbstractResource methods to ensure
  * compatibility with the {@link ResourceHttpRequestHandler}.
- * 
+ * <p>
  * Note that this class <i>intentionally</i> does not subclass Spring's {@link InMemoryResource} and instead has copied
  * the fields here because {@link InMemoryResource} does not provide a default constructor. This causes issues when
  * deserializing an instance from disk (such as in a caching scenario that overflows from memory to disk).
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class GeneratedResource extends AbstractResource implements Serializable {
-    
-    private static final long serialVersionUID = 7044543270746433688L;
 
-    protected long timeGenerated;
-    protected String hashRepresentation;
-    
+    @Serial
+    private static final long serialVersionUID = 7044543270746433688L;
     protected final byte[] source;
     protected final String description;
+    protected long timeGenerated;
+    protected String hashRepresentation;
 
     /**
-     * <b>Note: This constructor should not be explicitly used</b> 
-     * 
-     * To properly allow for serialization, we must provide this no-arg constructor that will 
+     * <b>Note: This constructor should not be explicitly used</b>
+     * <p>
+     * To properly allow for serialization, we must provide this no-arg constructor that will
      * create a "dummy" GeneratedResource. The appropriate fields will be set during deserialization.
      */
-    public GeneratedResource()  {
+    public GeneratedResource() {
         this(new byte[]{}, null);
     }
 
@@ -65,17 +65,17 @@ public class GeneratedResource extends AbstractResource implements Serializable 
         this.description = description;
         timeGenerated = System.currentTimeMillis();
     }
-    
+
     @Override
     public String getFilename() {
         return getDescription();
     }
-    
+
     @Override
-	public long lastModified() throws IOException {
+    public long lastModified() throws IOException {
         return timeGenerated;
     }
-    
+
     public String getHashRepresentation() {
         return StringUtils.isBlank(hashRepresentation) ? String.valueOf(timeGenerated) : hashRepresentation;
     }
@@ -83,7 +83,7 @@ public class GeneratedResource extends AbstractResource implements Serializable 
     public void setHashRepresentation(String hashRepresentation) {
         this.hashRepresentation = hashRepresentation;
     }
-    
+
     @Override
     public String getDescription() {
         return description;
@@ -110,7 +110,7 @@ public class GeneratedResource extends AbstractResource implements Serializable 
             return false;
         }
 
-        return Arrays.equals(source, ((GeneratedResource)res).source);
+        return Arrays.equals(source, ((GeneratedResource) res).source);
     }
 
 }

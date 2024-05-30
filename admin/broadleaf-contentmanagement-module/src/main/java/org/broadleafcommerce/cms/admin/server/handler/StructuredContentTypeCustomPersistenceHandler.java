@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,8 +20,6 @@ package org.broadleafcommerce.cms.admin.server.handler;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
@@ -69,15 +67,13 @@ import jakarta.persistence.PersistenceContext;
 @Component("blStructuredContentTypeCustomPersistenceHandler")
 public class StructuredContentTypeCustomPersistenceHandler extends CustomPersistenceHandlerAdapter implements DynamicEntityRetriever {
 
-    private final Log LOG = LogFactory.getLog(StructuredContentTypeCustomPersistenceHandler.class);
-
-    @Resource(name="blStructuredContentService")
+    @Resource(name = "blStructuredContentService")
     protected StructuredContentService structuredContentService;
 
     @Resource(name = "blDynamicFieldPersistenceHandlerHelper")
     protected DynamicFieldPersistenceHandlerHelper dynamicFieldUtil;
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     @Resource(name = "blAdminEntityService")
@@ -87,10 +83,10 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         return
-            StructuredContentType.class.getName().equals(ceilingEntityFullyQualifiedClassname) &&
-            persistencePackage.getCustomCriteria() != null &&
-            persistencePackage.getCustomCriteria().length > 0 &&
-            persistencePackage.getCustomCriteria()[0].equals("constructForm");
+                StructuredContentType.class.getName().equals(ceilingEntityFullyQualifiedClassname)
+                        && persistencePackage.getCustomCriteria() != null
+                        && persistencePackage.getCustomCriteria().length > 0
+                        && persistencePackage.getCustomCriteria()[0].equals("constructForm");
     }
 
     @Override
@@ -114,28 +110,41 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
     }
 
     @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+    public DynamicResultSet inspect(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            InspectHelper helper
+    ) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String structuredContentTypeId = persistencePackage.getCustomCriteria()[3];
-            StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeById(Long.valueOf(structuredContentTypeId));
+            StructuredContentType structuredContentType = structuredContentService.findStructuredContentTypeById(
+                    Long.valueOf(structuredContentTypeId)
+            );
             ClassMetadata metadata = new ClassMetadata();
             metadata.setCeilingType(StructuredContentType.class.getName());
             ClassTree entities = new ClassTree(StructuredContentTypeImpl.class.getName());
             metadata.setPolymorphicEntities(entities);
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContentType.getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentTypeImpl.class);
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(
+                    structuredContentType.getStructuredContentFieldTemplate().getFieldGroups(),
+                    StructuredContentTypeImpl.class
+            );
             metadata.setProperties(properties);
             DynamicResultSet results = new DynamicResultSet(metadata);
 
             return results;
         } catch (Exception e) {
-            throw new ServiceException("Unable to perform inspect for entity: "+ceilingEntityFullyQualifiedClassname, e);
+            throw new ServiceException("Unable to perform inspect for entity: " + ceilingEntityFullyQualifiedClassname, e);
         }
     }
 
-
     @Override
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    public DynamicResultSet fetch(
+            PersistencePackage persistencePackage,
+            CriteriaTransferObject cto,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String structuredContentId = persistencePackage.getCustomCriteria()[1];
@@ -144,13 +153,15 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
 
             return results;
         } catch (Exception e) {
-            throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
+            throw new ServiceException("Unable to perform fetch for entity: " + ceilingEntityFullyQualifiedClassname, e);
         }
     }
 
     @Override
     public Entity fetchEntityBasedOnId(String structuredContentId, List<String> dirtyFields) throws Exception {
-        StructuredContent structuredContent = structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
+        StructuredContent structuredContent = structuredContentService.findStructuredContentById(
+                Long.valueOf(structuredContentId)
+        );
         //Make sure the fieldmap is refreshed from the database based on any changes introduced in addOrUpdate()
         em.refresh(structuredContent);
         return fetchDynamicEntity(structuredContent, dirtyFields, true);
@@ -167,7 +178,7 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         Map<String, StructuredContentFieldXref> structuredContentFieldMap = structuredContent.getStructuredContentFieldXrefs();
         Entity entity = new Entity();
         entity.setType(new String[]{StructuredContentType.class.getName()});
-        List<Property> propertiesList = new ArrayList<Property>();
+        List<Property> propertiesList = new ArrayList<>();
         for (FieldGroup fieldGroup : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
             for (FieldDefinition def : fieldGroup.getFieldDefinitions()) {
                 Property property = new Property();
@@ -223,14 +234,21 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         return addOrUpdate(persistencePackage, dynamicEntityDao, helper);
     }
 
-    protected Entity addOrUpdate(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    protected Entity addOrUpdate(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         try {
             String structuredContentId = persistencePackage.getCustomCriteria()[1];
             StructuredContent structuredContent = structuredContentService.findStructuredContentById(Long.valueOf(structuredContentId));
 
-            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups(), StructuredContentType.class);
-            Map<String, FieldMetadata> md = new HashMap<String, FieldMetadata>();
+            Property[] properties = dynamicFieldUtil.buildDynamicPropertyList(
+                    structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups(),
+                    StructuredContentType.class
+            );
+            Map<String, FieldMetadata> md = new HashMap<>();
             for (Property property : properties) {
                 md.put(property.getName(), property.getMetadata());
             }
@@ -240,14 +258,14 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                 throw new ValidationException(persistencePackage.getEntity(), "Structured Content dynamic fields failed validation");
             }
 
-            List<String> templateFieldNames = new ArrayList<String>(20);
+            List<String> templateFieldNames = new ArrayList<>(20);
             for (FieldGroup group : structuredContent.getStructuredContentType().getStructuredContentFieldTemplate().getFieldGroups()) {
                 for (FieldDefinition def : group.getFieldDefinitions()) {
                     templateFieldNames.add(def.getName());
                 }
             }
-            Map<String, String> dirtyFieldsOrigVals = new HashMap<String, String>();
-            List<String> dirtyFields = new ArrayList<String>();
+            Map<String, String> dirtyFieldsOrigVals = new HashMap<>();
+            List<String> dirtyFields = new ArrayList<>();
             Map<String, StructuredContentFieldXref> structuredContentFieldMap =
                     structuredContent.getStructuredContentFieldXrefs();
             for (Property property : persistencePackage.getEntity().getProperties()) {
@@ -255,10 +273,10 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     StructuredContentFieldXref scXref = structuredContentFieldMap.get(property.getName());
                     if (scXref != null && scXref.getStructuredContentField() != null) {
                         StructuredContentField structuredContentField = scXref.getStructuredContentField();
-                        boolean isDirty = (structuredContentField.getValue() == null && property.getValue() != null) ||
-                                (structuredContentField.getValue() != null && property.getValue() == null);
-                        if (isDirty || (structuredContentField.getValue() != null && property.getValue() != null &&
-                                !structuredContentField.getValue().trim().equals(property.getValue().trim()))) {
+                        boolean isDirty = (structuredContentField.getValue() == null && property.getValue() != null)
+                                || (structuredContentField.getValue() != null && property.getValue() == null);
+                        if (isDirty || (structuredContentField.getValue() != null && property.getValue() != null
+                                && !structuredContentField.getValue().trim().equals(property.getValue().trim()))) {
                             dirtyFields.add(property.getName());
                             dirtyFieldsOrigVals.put(property.getName(), structuredContentField.getValue());
                             structuredContentField.setValue(property.getValue());
@@ -279,9 +297,9 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
                     }
                 }
             }
-            List<String> removeItems = new ArrayList<String>();
+            List<String> removeItems = new ArrayList<>();
             for (String key : structuredContentFieldMap.keySet()) {
-                if (persistencePackage.getEntity().findProperty(key)==null) {
+                if (persistencePackage.getEntity().findProperty(key) == null) {
                     removeItems.add(key);
                 }
             }
@@ -303,7 +321,8 @@ public class StructuredContentTypeCustomPersistenceHandler extends CustomPersist
         } catch (ValidationException e) {
             throw e;
         } catch (Exception e) {
-            throw new ServiceException("Unable to perform fetch for entity: "+ceilingEntityFullyQualifiedClassname, e);
+            throw new ServiceException("Unable to perform fetch for entity: " + ceilingEntityFullyQualifiedClassname, e);
         }
     }
+
 }

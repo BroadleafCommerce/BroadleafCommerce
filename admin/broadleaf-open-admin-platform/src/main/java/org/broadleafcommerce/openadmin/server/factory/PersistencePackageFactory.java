@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.factory;
 
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
@@ -23,7 +22,7 @@ import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 
 /**
  * Responsible for creating different persistence packages for different operations
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public interface PersistencePackageFactory {
@@ -31,13 +30,12 @@ public interface PersistencePackageFactory {
     /**
      * Creates a persistence package for the given request. Different request types require different combinations
      * of attributes, which are generally self explanatory.
-     * 
+     *
      * @param request
      * @return the persistence package
-     * 
      * @see PersistencePackageRequest
      * @see PersistencePackageRequest.Type
      */
-    public PersistencePackage create(PersistencePackageRequest request);
+    PersistencePackage create(PersistencePackageRequest request);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,7 +28,7 @@ import java.util.Map;
 
 /**
  * Rule Builder enum options provider for {@link HourOfDayType}
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blInventoryTypeOptionsExtensionListener")
@@ -36,11 +36,10 @@ public class InventoryTypeEnumOptionsExtensionListener extends AbstractRuleBuild
 
     @Override
     protected Map<String, Class<? extends BroadleafEnumerationType>> getValuesToGenerate() {
-        Map<String, Class<? extends BroadleafEnumerationType>> map = 
-                new HashMap<String, Class<? extends BroadleafEnumerationType>>();
-        
+        Map<String, Class<? extends BroadleafEnumerationType>> map = new HashMap<>();
+
         map.put("blcOptions_InventoryType", InventoryType.class);
-        
+
         return map;
     }
 

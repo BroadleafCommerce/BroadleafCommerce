@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,18 +20,17 @@ package org.broadleafcommerce.openadmin.dto;
 import org.broadleafcommerce.common.presentation.client.ForeignKeyRestrictionType;
 import org.broadleafcommerce.openadmin.dto.visitor.PersistencePerspectiveItemVisitor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
-
 /**
- * 
  * @author jfischer
- *
  */
 public class ForeignKey implements Serializable, PersistencePerspectiveItem {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     private String manyToField;
     private String originatingField;
     private String foreignKeyClass;
@@ -42,24 +41,35 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
     private Boolean mutable = true;
     private String sortField;
     private Boolean sortAscending;
-    
+
     public ForeignKey() {
         //do nothing
     }
-    
+
     public ForeignKey(String manyToField, String foreignKeyClass) {
         this(manyToField, foreignKeyClass, null);
     }
-    
+
     public ForeignKey(String manyToField, String foreignKeyClass, String dataSourceName) {
         this(manyToField, foreignKeyClass, dataSourceName, ForeignKeyRestrictionType.ID_EQ);
     }
 
-    public ForeignKey(String manyToField, String foreignKeyClass, String dataSourceName, ForeignKeyRestrictionType restrictionType) {
+    public ForeignKey(
+            String manyToField,
+            String foreignKeyClass,
+            String dataSourceName,
+            ForeignKeyRestrictionType restrictionType
+    ) {
         this(manyToField, foreignKeyClass, dataSourceName, restrictionType, "name");
     }
 
-    public ForeignKey(String manyToField, String foreignKeyClass, String dataSourceName, ForeignKeyRestrictionType restrictionType, String displayValueProperty) {
+    public ForeignKey(
+            String manyToField,
+            String foreignKeyClass,
+            String dataSourceName,
+            ForeignKeyRestrictionType restrictionType,
+            String displayValueProperty
+    ) {
         this.manyToField = manyToField;
         this.foreignKeyClass = foreignKeyClass;
         this.dataSourceName = dataSourceName;
@@ -86,19 +96,19 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         this.setSortField(sortField);
         return this;
     }
-    
+
     public String getManyToField() {
         return manyToField;
     }
-    
+
     public void setManyToField(String manyToField) {
         this.manyToField = manyToField;
     }
-    
+
     public String getForeignKeyClass() {
         return foreignKeyClass;
     }
-    
+
     public void setForeignKeyClass(String foreignKeyClass) {
         this.foreignKeyClass = foreignKeyClass;
     }
@@ -251,4 +261,5 @@ public class ForeignKey implements Serializable, PersistencePerspectiveItem {
         result = 31 * result + (mutable != null ? mutable.hashCode() : 0);
         return result;
     }
+
 }

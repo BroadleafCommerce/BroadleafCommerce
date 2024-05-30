@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 /**
  * Convenience base class which all handler implementations extend. This class
  * provides the common properties required by all MergeHandler implemenations.
+ *
  * @author jfischer
  */
 public abstract class BaseHandler implements MergeHandler, Comparable<Object> {
@@ -33,12 +34,12 @@ public abstract class BaseHandler implements MergeHandler, Comparable<Object> {
         return priority;
     }
 
-    public String getXPath() {
-        return xpath;
-    }
-
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    public String getXPath() {
+        return xpath;
     }
 
     public void setXPath(String xpath) {

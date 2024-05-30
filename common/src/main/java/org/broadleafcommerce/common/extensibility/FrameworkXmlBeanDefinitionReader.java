@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.extensibility;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -34,11 +33,11 @@ import java.util.Objects;
  * Ensures that any beans registered using this reader have a lower precedence than any beans defined in {@literal @}Configuration
  * classes, which otherwise have a lesser /priority than XML resources. This should be used anywhere that Broadleaf framework beans
  * are registered via XML to allow bean overriding in userland {@literal @}Configuration classes.
- * 
+ *
  * <p>
  * Note: this is a stop-gap measure as a pre-cursor to removing any relience on bean id overriding, which is officially an unsupported
  * feature in Spring.
- * 
+ *
  * @author Jeff Fischer
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -60,7 +59,7 @@ public class FrameworkXmlBeanDefinitionReader extends MergeXmlBeanDefinitionRead
                 implementationBeanDefinitions.put(name, definition);
             }
         }
-        
+
         // Now register the bean definitions in this XML file, which overrides any bean definitions defined previously
         int processedCount = super.registerBeanDefinitions(doc, resource);
 
@@ -71,7 +70,7 @@ public class FrameworkXmlBeanDefinitionReader extends MergeXmlBeanDefinitionRead
                 ((GenericBeanDefinition) beanDefinition).setRole(BeanDefinition.ROLE_SUPPORT);
             }
         }
-        
+
         // Now that all beans in this XML file (and any <import>s from this XML file) have been registered, go ahead and re-apply
         // the ones that were defined _prior_ to importing this XML file, which actualy registers the same beans a 3rd time.
         // But, since we are registering these beans at the Framework level, anything defined previously should take precedence

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,11 +26,17 @@ import java.lang.reflect.Field;
  *
  * @author Chris Kittrell
  */
-public class AddFieldMetadataRequest extends AddMetadataRequest{
+public class AddFieldMetadataRequest extends AddMetadataRequest {
 
     private final Field requestedField;
 
-    public AddFieldMetadataRequest(Field requestedField, Class<?> parentClass, Class<?> targetClass, DynamicEntityDao dynamicEntityDao, String prefix) {
+    public AddFieldMetadataRequest(
+            Field requestedField,
+            Class<?> parentClass,
+            Class<?> targetClass,
+            DynamicEntityDao dynamicEntityDao,
+            String prefix
+    ) {
         super(parentClass, targetClass, dynamicEntityDao, prefix);
         this.requestedField = requestedField;
     }
@@ -38,4 +44,5 @@ public class AddFieldMetadataRequest extends AddMetadataRequest{
     public Field getRequestedField() {
         return requestedField;
     }
+
 }

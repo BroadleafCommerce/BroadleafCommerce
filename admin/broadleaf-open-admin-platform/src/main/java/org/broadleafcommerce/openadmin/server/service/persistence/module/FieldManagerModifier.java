@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,8 +27,8 @@ import jakarta.persistence.EntityManager;
  * This interface is responsible for modifying the behavior of {@link FieldManager#setFieldValue(Object, String, Object)}
  * and {@link FieldManager#getFieldValue(Object, String)}.
  *
- * @see FieldManager
  * @author Nick Crum ncrum
+ * @see FieldManager
  */
 public interface FieldManagerModifier extends Ordered {
 
@@ -37,33 +37,34 @@ public interface FieldManagerModifier extends Ordered {
      *
      * @param field the Field that is being handled
      * @param value the value that is being set or read
-     * @param em the EntityManager
+     * @param em    the EntityManager
      * @return whether this field can be handled
      */
-    public boolean canHandle(Field field, Object value, EntityManager em);
+    boolean canHandle(Field field, Object value, EntityManager em);
 
     /**
      * Returns a modified write value for the field.
      *
-     * @see FieldManager#setFieldValue(Object, String, Object)
-     * @param field the field being modified
-     * @param value the bean or object with the field
+     * @param field    the field being modified
+     * @param value    the bean or object with the field
      * @param newValue the new value for the field
-     * @param em the {@code EntityManager}
+     * @param em       the {@code EntityManager}
      * @return the modified write value
      * @throws IllegalAccessException
+     * @see FieldManager#setFieldValue(Object, String, Object)
      */
-    public Object getModifiedWriteValue(Field field, Object value, Object newValue, EntityManager em) throws IllegalAccessException;
+    Object getModifiedWriteValue(Field field, Object value, Object newValue, EntityManager em) throws IllegalAccessException;
 
     /**
      * Returns a modified read value for the field.
      *
-     * @see FieldManager#getFieldValue(Object, String)
      * @param field the field being modified
      * @param value the value of the field
-     * @param em the {@code EntityManager}
+     * @param em    the {@code EntityManager}
      * @return
      * @throws IllegalAccessException
+     * @see FieldManager#getFieldValue(Object, String)
      */
-    public Object getModifiedReadValue(Field field, Object value, EntityManager em) throws IllegalAccessException;
+    Object getModifiedReadValue(Field field, Object value, EntityManager em) throws IllegalAccessException;
+
 }

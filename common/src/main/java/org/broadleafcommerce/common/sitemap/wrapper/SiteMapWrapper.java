@@ -10,14 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.wrapper;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.xml.bind.annotation.XmlElement;
@@ -27,19 +27,19 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Representation the sitemap element defined in the schema definition at
  * http://www.sitemaps.org/schemas/sitemap/0.9.
- * 
+ *
  * @author bpolster
  */
 @XmlRootElement(name = "sitemap")
-@XmlType(propOrder = { "loc", "lastmod" })
+@XmlType(propOrder = {"loc", "lastmod"})
 public class SiteMapWrapper implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected String loc;
 
     protected String lastmod;
-
 
     public String getLoc() {
         return loc;
@@ -50,7 +50,6 @@ public class SiteMapWrapper implements Serializable {
         this.loc = loc;
     }
 
-
     public String getLastmod() {
         return lastmod;
     }
@@ -59,4 +58,5 @@ public class SiteMapWrapper implements Serializable {
     public void setLastmod(String lastmod) {
         this.lastmod = lastmod;
     }
+
 }

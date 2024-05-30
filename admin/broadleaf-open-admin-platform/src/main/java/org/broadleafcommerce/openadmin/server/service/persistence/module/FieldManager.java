@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,19 +47,15 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.metamodel.EntityType;
 
 /**
- *
  * @author jfischer
- *
  */
 public class FieldManager {
 
-    private static final Log LOG = LogFactory.getLog(FieldManager.class);
-
     public static final String MAPFIELDSEPARATOR = "---";
-
+    private static final Log LOG = LogFactory.getLog(FieldManager.class);
     protected EntityConfiguration entityConfiguration;
     protected EntityManager entityManager;
-    protected List<SortableValue> middleFields = new ArrayList<SortableValue>(5);
+    protected List<SortableValue> middleFields = new ArrayList<>(5);
 
     protected Set<Class> persistentClasses = new HashSet<>();
 
@@ -89,7 +85,10 @@ public class FieldManager {
             String fieldNamePart = tokens.nextToken();
             String mapKey = null;
             if (fieldNamePart.contains(FieldManager.MAPFIELDSEPARATOR)) {
-                mapKey = fieldNamePart.substring(fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), fieldNamePart.length());
+                mapKey = fieldNamePart.substring(
+                        fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
+                        fieldNamePart.length()
+                );
                 fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR));
             }
             field = getSingleField(componentClass, fieldNamePart);
@@ -109,7 +108,8 @@ public class FieldManager {
                     break;
                 }
             } else {
-                throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
+                throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class ("
+                        + componentClass + ")");
             }
         }
 
@@ -129,14 +129,17 @@ public class FieldManager {
         Object value = bean;
 
         int count = tokens.countTokens();
-        int j=0;
+        int j = 0;
         StringBuilder sb = new StringBuilder();
         while (tokens.hasMoreTokens()) {
             String fieldNamePart = tokens.nextToken();
             sb.append(fieldNamePart);
             String mapKey = null;
             if (fieldNamePart.contains(FieldManager.MAPFIELDSEPARATOR)) {
-                mapKey = fieldNamePart.substring(fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(), fieldNamePart.length());
+                mapKey = fieldNamePart.substring(
+                        fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
+                        fieldNamePart.length()
+                );
                 fieldNamePart = fieldNamePart.substring(0, fieldNamePart.indexOf(FieldManager.MAPFIELDSEPARATOR));
             }
 
@@ -144,7 +147,9 @@ public class FieldManager {
             field.setAccessible(true);
             if (j == count - 1) {
                 if (mapKey != null) {
-                    handleMapFieldPopulation(bean, fieldName, newValue, componentClass, field, value, fieldNamePart, mapKey);
+                    handleMapFieldPopulation(
+                            bean, fieldName, newValue, componentClass, field, value, fieldNamePart, mapKey
+                    );
                 } else {
                     FieldModifierManager modifierManager = FieldModifierManager.getFieldModifierManager();
                     if (modifierManager != null) {
@@ -172,21 +177,21 @@ public class FieldManager {
                         PersistenceManager persistenceManager = getPersistenceManager(field.getType());
                         Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
                         if (!ArrayUtils.isEmpty(entities)) {
-                            Object newEntity = entities[entities.length-1].newInstance();
+                            Object newEntity = entities[entities.length - 1].newInstance();
                             SortableValue val = new SortableValue(bean, (Serializable) newEntity, j, sb.toString());
                             middleFields.add(val);
                             field.set(value, newEntity);
                             componentClass = newEntity.getClass();
                             value = newEntity;
-                            LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
-                                    "Using the most extended form of this class identified as ("+entities[0].getName()+")");
+                            LOG.info("Unable to find a reference to (" + field.getType().getName() + ") in the EntityConfigurationManager. " +
+                                    "Using the most extended form of this class identified as (" + entities[0].getName() + ")");
                         } else {
                             //Just use the field type
                             Object newEntity = field.getType().newInstance();
                             field.set(value, newEntity);
                             componentClass = newEntity.getClass();
                             value = newEntity;
-                            LOG.debug("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                            LOG.debug("Unable to find a reference to (" + field.getType().getName() + ") in the EntityConfigurationManager. " +
                                     "Using the type of this class.");
                         }
                     }
@@ -197,7 +202,6 @@ public class FieldManager {
         }
 
         return value;
-
     }
 
     public Class<?> getFieldType(Field field) {
@@ -211,13 +215,13 @@ public class FieldManager {
             PersistenceManager persistenceManager = getPersistenceManager(field.getType());
             Class<?>[] entities = persistenceManager.getUpDownInheritance(field.getType());
             if (!ArrayUtils.isEmpty(entities)) {
-                response = entities[entities.length-1];
-                LOG.info("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
-                        "Using the most extended form of this class identified as ("+entities[0].getName()+")");
+                response = entities[entities.length - 1];
+                LOG.info("Unable to find a reference to (" + field.getType().getName() + ") in the EntityConfigurationManager. " +
+                        "Using the most extended form of this class identified as (" + entities[0].getName() + ")");
             } else {
                 //Just use the field type
                 response = field.getType();
-                LOG.debug("Unable to find a reference to ("+field.getType().getName()+") in the EntityConfigurationManager. " +
+                LOG.debug("Unable to find a reference to (" + field.getType().getName() + ") in the EntityConfigurationManager. " +
                         "Using the type of this class.");
             }
         }
@@ -269,13 +273,21 @@ public class FieldManager {
         return !persistentClasses.isEmpty() && persistentClasses.contains(entityClass);
     }
 
-    protected Object handleMapFieldExtraction(Object bean, String fieldName, Class<?> componentClass, Object value,
-                                              String fieldNamePart, String mapKey) throws IllegalAccessException, FieldNotAvailableException {
+    protected Object handleMapFieldExtraction(
+            Object bean,
+            String fieldName,
+            Class<?> componentClass,
+            Object value,
+            String fieldNamePart,
+            String mapKey
+    ) throws IllegalAccessException, FieldNotAvailableException {
         String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
-        String multiValueMapFullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+        String multiValueMapFullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase()
+                + fieldNamePart.substring(1);
         String standardMapFullFieldName = null;
         if (!StringUtils.isEmpty(fieldNamePrefix)) {
-            standardMapFullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+            standardMapFullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase()
+                    + fieldNamePart.substring(1);
         }
 
         if (value instanceof List) {
@@ -286,8 +298,8 @@ public class FieldManager {
                     try {
                         value = PropertyUtils.getProperty(bean, standardMapFullFieldName);
                     } catch (InvocationTargetException | NoSuchMethodException n) {
-                        throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart + ") on the class (" + componentClass + ")");
-
+                        throw new FieldNotAvailableException("Unable to find field (" + fieldNamePart
+                                + ") on the class (" + componentClass + ")");
                     }
                 }
             }
@@ -300,7 +312,7 @@ public class FieldManager {
             }
             String combined = StringUtils.join(names, ",");
             throw new IllegalArgumentException(String.format("A field containing a map field separator was requested " +
-                    "(%s), but no Map type field or method returning a Map was found using the following tests (%s)",
+                            "(%s), but no Map type field or method returning a Map was found using the following tests (%s)",
                     fieldName, combined));
         }
 
@@ -315,13 +327,23 @@ public class FieldManager {
         return value;
     }
 
-    protected void handleMapFieldPopulation(Object bean, String fieldName, Object newValue, Class<?> componentClass,
-                                            Field field, Object value, String fieldNamePart, String mapKey) throws IllegalAccessException {
+    protected void handleMapFieldPopulation(
+            Object bean,
+            String fieldName,
+            Object newValue,
+            Class<?> componentClass,
+            Field field,
+            Object value,
+            String fieldNamePart,
+            String mapKey
+    ) throws IllegalAccessException {
         String fieldNamePrefix = fieldName.substring(0, fieldName.indexOf(fieldNamePart));
-        String multiValueMapFullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+        String multiValueMapFullFieldName = fieldNamePrefix + "multiValue" + fieldNamePart.substring(0, 1).toUpperCase()
+                + fieldNamePart.substring(1);
         String standardMapFullFieldName = null;
         if (!StringUtils.isEmpty(fieldNamePrefix)) {
-            standardMapFullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase() + fieldNamePart.substring(1);
+            standardMapFullFieldName = fieldNamePrefix + fieldNamePart.substring(0, 1).toUpperCase()
+                    + fieldNamePart.substring(1);
         }
 
         Map<String, Object> map = null;
@@ -329,7 +351,7 @@ public class FieldManager {
         if (fieldValue instanceof List) {
             try {
                 map = (Map<String, Object>) PropertyUtils.getProperty(bean, multiValueMapFullFieldName);
-            } catch (InvocationTargetException |NoSuchMethodException e) {
+            } catch (InvocationTargetException | NoSuchMethodException e) {
                 if (!StringUtils.isEmpty(standardMapFullFieldName)) {
                     try {
                         map = (Map<String, Object>) PropertyUtils.getProperty(bean, standardMapFullFieldName);
@@ -351,7 +373,7 @@ public class FieldManager {
             }
             String combined = StringUtils.join(names, ",");
             throw new IllegalArgumentException(String.format("A field containing a map field separator was requested " +
-                    "(%s), but no Map type field or method returning a Map was found using the following tests (%s)",
+                            "(%s), but no Map type field or method returning a Map was found using the following tests (%s)",
                     fieldName, combined));
         }
         if (newValue == null) {
@@ -370,7 +392,7 @@ public class FieldManager {
         middleFields.clear();
     }
 
-    private class SortableValue implements Comparable<SortableValue> {
+    protected class SortableValue implements Comparable<SortableValue> {
 
         private Integer pos;
         private Serializable entity;
@@ -395,7 +417,7 @@ public class FieldManager {
             return containingPropertyName;
         }
 
-        private Object getBean() {
+        protected Object getBean() {
             return bean;
         }
 
@@ -433,7 +455,7 @@ public class FieldManager {
             return true;
         }
 
-        private FieldManager getOuterType() {
+        protected FieldManager getOuterType() {
             return FieldManager.this;
         }
 

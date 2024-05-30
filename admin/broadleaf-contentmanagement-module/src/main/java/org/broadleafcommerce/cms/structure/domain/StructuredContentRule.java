@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,13 +31,12 @@ import jakarta.annotation.Nullable;
  * is able to process rules based on the current customer, product,
  * {@link org.broadleafcommerce.common.TimeDTO time}, or {@link org.broadleafcommerce.common.RequestDTO request}
  *
- * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
- * @see org.broadleafcommerce.cms.structure.service.StructuredContentServiceImpl#evaluateAndPriortizeContent(java.util.List, int, java.util.Map)
  * @author jfischer
  * @author bpolster
- *
+ * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
+ * @see org.broadleafcommerce.cms.structure.service.StructuredContentServiceImpl#evaluateAndPriortizeContent(java.util.List, int, java.util.Map)
  */
-public interface StructuredContentRule extends SimpleRule,MultiTenantCloneable<StructuredContentRule> {
+public interface StructuredContentRule extends SimpleRule, MultiTenantCloneable<StructuredContentRule> {
 
     /**
      * Gets the primary key.
@@ -45,14 +44,14 @@ public interface StructuredContentRule extends SimpleRule,MultiTenantCloneable<S
      * @return the primary key
      */
     @Nullable
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the primary key.
      *
      * @param id the new primary key
      */
-    public void setId(@Nullable Long id);
+    void setId(@Nullable Long id);
 
     /**
      * Builds a copy of this content rule.   Used by the content management system when an
@@ -61,6 +60,6 @@ public interface StructuredContentRule extends SimpleRule,MultiTenantCloneable<S
      * @return a copy of this rule
      */
     @Nonnull
-    public StructuredContentRule cloneEntity();
+    StructuredContentRule cloneEntity();
 
 }

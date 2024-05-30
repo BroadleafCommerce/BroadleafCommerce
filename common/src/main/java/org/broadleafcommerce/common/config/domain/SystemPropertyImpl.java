@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,6 +36,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -60,9 +62,9 @@ import jakarta.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX)
 })
-public class SystemPropertyImpl
-        implements SystemProperty, AdminMainEntity, SystemPropertyAdminPresentation {
+public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, SystemPropertyAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -216,8 +218,7 @@ public class SystemPropertyImpl
     }
 
     @Override
-    public <G extends SystemProperty> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends SystemProperty> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -268,4 +269,5 @@ public class SystemPropertyImpl
                 .append(friendlyTab)
                 .toHashCode();
     }
+
 }

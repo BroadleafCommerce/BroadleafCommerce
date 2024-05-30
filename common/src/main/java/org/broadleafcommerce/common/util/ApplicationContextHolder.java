@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,9 +30,9 @@ import org.springframework.stereotype.Component;
  */
 @Component("blApplicationContextHolder")
 public class ApplicationContextHolder implements ApplicationContextAware {
-    
+
     protected static ApplicationContext context;
-    
+
     public static ApplicationContext getApplicationContext() {
         return context;
     }
@@ -44,9 +44,10 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 
     /**
      * see org.broadleafcommerce.test.TestNGSiteIntegrationSetup#reSetApplicationContext()
+     *
      * @param applicationContext
      */
-    public static void resetApplicationContext(ApplicationContext applicationContext){
+    public static void resetApplicationContext(ApplicationContext applicationContext) {
         context = applicationContext;
     }
 

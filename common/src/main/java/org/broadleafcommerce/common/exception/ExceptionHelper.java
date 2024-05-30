@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,7 +31,12 @@ public class ExceptionHelper {
 
     private static final Log LOG = LogFactory.getLog(ExceptionHelper.class);
 
-    public static <G extends Throwable, J extends RuntimeException> RuntimeException refineException(Class<G> refineType, Class<J> wrapType, String message, Throwable e) {
+    public static <G extends Throwable, J extends RuntimeException> RuntimeException refineException(
+            Class<G> refineType,
+            Class<J> wrapType,
+            String message,
+            Throwable e
+    ) {
         if (refineType.isAssignableFrom(e.getClass())) {
             return wrapException(e, wrapType, message);
         }
@@ -39,7 +44,9 @@ public class ExceptionHelper {
             return refineException(refineType, wrapType, message, e.getCause());
         }
         if (e instanceof UndeclaredThrowableException) {
-            return refineException(refineType, wrapType, message, ((UndeclaredThrowableException) e).getUndeclaredThrowable());
+            return refineException(
+                    refineType, wrapType, message, ((UndeclaredThrowableException) e).getUndeclaredThrowable()
+            );
         }
         if (e instanceof InvocationTargetException) {
             return refineException(refineType, wrapType, message, ((InvocationTargetException) e).getTargetException());
@@ -47,11 +54,18 @@ public class ExceptionHelper {
         return wrapException(e, wrapType, message);
     }
 
-    public static <G extends Throwable, J extends RuntimeException> RuntimeException refineException(Class<G> refineType, Class<J> wrapType, Throwable e) {
+    public static <G extends Throwable, J extends RuntimeException> RuntimeException refineException(
+            Class<G> refineType,
+            Class<J> wrapType,
+            Throwable e
+    ) {
         return refineException(refineType, wrapType, null, e);
     }
 
-    public static <G extends Throwable, J extends RuntimeException> RuntimeException refineException(Class<J> wrapType, Throwable e) {
+    public static <G extends Throwable, J extends RuntimeException> RuntimeException refineException(
+            Class<J> wrapType,
+            Throwable e
+    ) {
         return refineException(RuntimeException.class, wrapType, null, e);
     }
 
@@ -59,7 +73,12 @@ public class ExceptionHelper {
         return refineException(RuntimeException.class, RuntimeException.class, null, e);
     }
 
-    public static <G extends Throwable, J extends RuntimeException> void processException(Class<G> refineType, Class<J> wrapType, String message, Throwable e) throws G {
+    public static <G extends Throwable, J extends RuntimeException> void processException(
+            Class<G> refineType,
+            Class<J> wrapType,
+            String message,
+            Throwable e
+    ) throws G {
         if (refineType.isAssignableFrom(e.getClass())) {
             throw (G) e;
         }
@@ -75,11 +94,18 @@ public class ExceptionHelper {
         throw wrapException(e, wrapType, message);
     }
 
-    public static <G extends Throwable, J extends RuntimeException> void processException(Class<G> refineType, Class<J> wrapType, Throwable e) throws G {
+    public static <G extends Throwable, J extends RuntimeException> void processException(
+            Class<G> refineType,
+            Class<J> wrapType,
+            Throwable e
+    ) throws G {
         processException(refineType, wrapType, null, e);
     }
 
-    public static <G extends Throwable, J extends RuntimeException> void processException(Class<J> wrapType, Throwable e) throws G {
+    public static <G extends Throwable, J extends RuntimeException> void processException(
+            Class<J> wrapType,
+            Throwable e
+    ) throws G {
         processException(RuntimeException.class, wrapType, null, e);
     }
 
@@ -87,7 +113,11 @@ public class ExceptionHelper {
         processException(RuntimeException.class, RuntimeException.class, null, e);
     }
 
-    private static <J extends RuntimeException> RuntimeException wrapException(Throwable e, Class<J> wrapType, String message) {
+    private static <J extends RuntimeException> RuntimeException wrapException(
+            Throwable e,
+            Class<J> wrapType,
+            String message
+    ) {
         if (e instanceof RuntimeException) {
             return (RuntimeException) e;
         }

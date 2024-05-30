@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.apache.commons.logging.Log;
@@ -29,22 +28,23 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 
 /**
- * @see SearchFieldResolver
  * @author Andre Azzolini (apazzolini)
+ * @see SearchFieldResolver
  */
 @Service("blSearchFieldResolver")
 public class SearchFieldResolverImpl implements SearchFieldResolver {
+
     protected static final Log LOG = LogFactory.getLog(SearchFieldResolverImpl.class);
 
     @Resource(name = "blAdminEntityService")
     protected AdminEntityService service;
-    
+
     @Override
     public String resolveField(String className) throws ServiceException {
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
                 .withCeilingEntityClassname(className);
         ClassMetadata md = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
-        
+
         if (md.getPMap().containsKey("name")) {
             return "name";
         }
@@ -56,9 +56,8 @@ public class SearchFieldResolverImpl implements SearchFieldResolver {
         if (md.getPMap().containsKey("templateName")) {
             return "templateName";
         }
-        
+
         return "id";
     }
-
 
 }

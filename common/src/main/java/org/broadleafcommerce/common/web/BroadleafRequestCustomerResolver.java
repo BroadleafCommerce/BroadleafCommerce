@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,22 +23,21 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This resolver is responsible for returning the Customer object that is currently present on the request.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public interface BroadleafRequestCustomerResolver {
 
-    public Object getCustomer(HttpServletRequest request);
+    Object getCustomer(HttpServletRequest request);
 
-    public Object getCustomer();
+    Object getCustomer();
 
-    public Object getCustomer(WebRequest request);
+    void setCustomer(Object customer);
 
-    public void setCustomer(Object customer);
+    Object getCustomer(WebRequest request);
 
-    public String getCustomerRequestAttributeName();
+    String getCustomerRequestAttributeName();
 
-    public void setCustomerRequestAttributeName(String customerRequestAttributeName);
-
+    void setCustomerRequestAttributeName(String customerRequestAttributeName);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,8 +42,8 @@ import java.util.Map;
  * default, this listener will handle the event synchronously unless the {@link BroadleafApplicationEventMulticaster} is
  * injected and configured correctly to handle asynchronous events.
  *
- * @see org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity for where the event is typically published
  * @author Nick Crum ncrum
+ * @see org.broadleafcommerce.core.checkout.service.workflow.CompleteOrderActivity for where the event is typically published
  */
 @Component("blNotificationOrderSubmittedEventListener")
 public class NotificationOrderSubmittedEventListener extends AbstractBroadleafApplicationEventListener<OrderSubmittedEvent> {
@@ -67,7 +67,9 @@ public class NotificationOrderSubmittedEventListener extends AbstractBroadleafAp
             Map<String, Object> context = createContext(order);
 
             try {
-                notificationDispatcher.dispatchNotification(new EmailNotification(order.getEmailAddress(), NotificationEventType.ORDER_CONFIRMATION, context));
+                notificationDispatcher.dispatchNotification(new EmailNotification(
+                        order.getEmailAddress(), NotificationEventType.ORDER_CONFIRMATION, context
+                ));
             } catch (ServiceException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Failure to dispatch order confirmation email notification", e);
@@ -75,7 +77,9 @@ public class NotificationOrderSubmittedEventListener extends AbstractBroadleafAp
             }
 
             try {
-                notificationDispatcher.dispatchNotification(new SMSNotification(NotificationEventType.ORDER_CONFIRMATION, context));
+                notificationDispatcher.dispatchNotification(new SMSNotification(
+                        NotificationEventType.ORDER_CONFIRMATION, context
+                ));
             } catch (ServiceException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Failure to dispatch order confirmation sms notification", e);
@@ -97,4 +101,5 @@ public class NotificationOrderSubmittedEventListener extends AbstractBroadleafAp
     public boolean isAsynchronous() {
         return true;
     }
+
 }

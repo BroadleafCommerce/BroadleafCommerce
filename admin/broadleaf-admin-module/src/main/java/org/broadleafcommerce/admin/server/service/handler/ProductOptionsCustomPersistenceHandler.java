@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,22 +42,20 @@ import java.util.Map;
 import jakarta.annotation.Resource;
 
 /**
- * 
- *  This class is used to prevent updates to Product Options if "Use in Sku generation" is true but no "Allowed Values" 
- *  have been set.
- * 
- *  @author Nathan Moore (nathanmoore)
- *  
+ * This class is used to prevent updates to Product Options if "Use in Sku generation" is true but no "Allowed Values"
+ * have been set.
+ *
+ * @author Nathan Moore (nathanmoore)
  */
 @Component("blProductOptionsCustomPersistenceHandler")
 public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     private static final int MAX_BOOLEAN_VALUES = 2;
 
-    @Resource(name="blProductOptionDao")
+    @Resource(name = "blProductOptionDao")
     protected ProductOptionDao productOptionDao;
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
     @Override
@@ -73,8 +71,8 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-        return canHandleUpdate(persistencePackage) &&
-                !persistencePackage.getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
+        return canHandleUpdate(persistencePackage)
+                && !persistencePackage.getPersistencePerspectiveItems().containsKey(PersistencePerspectiveItemType.ADORNEDTARGETLIST);
     }
 
     @Override
@@ -96,17 +94,21 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
 
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(ProductOption.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    ProductOption.class.getName(), persistencePerspective
+            );
 
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            ProductOption adminInstance = (ProductOption) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
+            ProductOption adminInstance = (ProductOption) dynamicEntityDao.retrieve(
+                    Class.forName(entity.getType()[0]), primaryKey
+            );
 
             adminInstance = (ProductOption) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             // validate Product Option
             if (validateProductOption(adminInstance, entity)) {
                 return entity;
             }
-            
+
             adminInstance = (ProductOption) dynamicEntityDao.merge(adminInstance);
             return helper.getRecord(adminProperties, adminInstance, null, null);
 
@@ -116,10 +118,10 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
     }
 
     /**
-     * This function checks if a Product Option's "Use in sku generation" field is set to true 
-     * without any allowed values set. This is what we are trying to prevent from happening. 
+     * This function checks if a Product Option's "Use in sku generation" field is set to true
+     * without any allowed values set. This is what we are trying to prevent from happening.
      * If "Use in sku generation" is true and there are no Allowed Values, the functions returns true.
-     * 
+     *
      * @param adminInstance: The Product Option being validated
      * @return boolean: Default is false. Returns whether the Product Option needs any Allowed Values .
      */
@@ -129,7 +131,7 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
         // and that there are allowed values set
         if (adminInstance.getUseInSkuGeneration() && !sandBoxHelper.isReplayOperation()) {
             Long count = productOptionDao.countAllowedValuesForProductOptionById(adminInstance.getId());
-            if(count.equals(0L)){
+            if (count.equals(0L)) {
                 String errorMessage = "Must add at least 1 Allowed Value when Product Option is used in Sku generation";
                 entity.addValidationError("useInSkuGeneration", errorMessage);
                 return true;
@@ -139,7 +141,7 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
 
         // Validate values and type
         if (adminInstance.getType() != null && adminInstance.getType().getType().equals(ProductOptionType.BOOLEAN.getType())
-            && adminInstance.getAllowedValues().size() > MAX_BOOLEAN_VALUES) {
+                && adminInstance.getAllowedValues().size() > MAX_BOOLEAN_VALUES) {
             String errorMessage = "The Product Option with the 'Boolean' type can't have more than " + MAX_BOOLEAN_VALUES + " values";
             entity.addValidationError("type", errorMessage);
             return true;
@@ -147,4 +149,5 @@ public class ProductOptionsCustomPersistenceHandler extends CustomPersistenceHan
 
         return false;
     }
+
 }

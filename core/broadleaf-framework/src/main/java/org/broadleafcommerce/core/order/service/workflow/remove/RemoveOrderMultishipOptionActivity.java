@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,9 +30,9 @@ import jakarta.annotation.Resource;
 
 @Component("blRemoveOrderMultishipOptionActivity")
 public class RemoveOrderMultishipOptionActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
-    
+
     public static final int ORDER = 2000;
-    
+
     @Resource(name = "blOrderMultishipOptionService")
     protected OrderMultishipOptionService orderMultishipOptionService;
 
@@ -42,7 +42,7 @@ public class RemoveOrderMultishipOptionActivity extends BaseActivity<ProcessCont
     public RemoveOrderMultishipOptionActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
@@ -51,12 +51,12 @@ public class RemoveOrderMultishipOptionActivity extends BaseActivity<ProcessCont
         OrderItem orderItem = request.getOrderItem();
         if (orderItem instanceof BundleOrderItem) {
             for (OrderItem discrete : ((BundleOrderItem) orderItem).getDiscreteOrderItems()) {
-                request.getMultishipOptionsToDelete().add(new Long[] { discrete.getId(), null });
+                request.getMultishipOptionsToDelete().add(new Long[]{discrete.getId(), null});
             }
         } else {
-            request.getMultishipOptionsToDelete().add(new Long[] { orderItemId, null });
+            request.getMultishipOptionsToDelete().add(new Long[]{orderItemId, null});
         }
-        
+
         return context;
     }
 

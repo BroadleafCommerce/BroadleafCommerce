@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,42 +28,42 @@ import java.util.Date;
 /**
  * @author Chris Kittrell (ckittrell)
  */
-public interface PromotionMessage extends Status, Serializable,MultiTenantCloneable<PromotionMessage> {
+public interface PromotionMessage extends Status, Serializable, MultiTenantCloneable<PromotionMessage> {
 
-    public void setId(Long id);
+    Long getId();
 
-    public Long getId();
+    void setId(Long id);
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public String getMessage();
+    String getMessage();
 
-    public void setMessage(String message);
+    void setMessage(String message);
 
-    public Media getMedia();
+    Media getMedia();
 
-    public void setMedia(Media media);
+    void setMedia(Media media);
 
-    public int getPriority();
+    int getPriority();
 
-    public void setPriority(Integer priority);
+    void setPriority(Integer priority);
 
-    public Date getStartDate();
+    Date getStartDate();
 
-    public void setStartDate(Date startDate);
+    void setStartDate(Date startDate);
 
-    public Date getEndDate();
+    Date getEndDate();
 
-    public void setEndDate(Date endDate);
+    void setEndDate(Date endDate);
 
-    public String getMessagePlacement();
+    String getMessagePlacement();
 
-    public void setMessagePlacement(String messagePlacement);
+    void setMessagePlacement(String messagePlacement);
 
-    public Locale getLocale();
+    Locale getLocale();
 
-    public void setLocale(Locale locale);
+    void setLocale(Locale locale);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -69,9 +69,15 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
     protected CountrySubdivisionService countrySubdivisionService;
 
     @Override
-    public void populateBillingInfo(PaymentResponseDTO responseDTO, OrderPayment payment, Address tempBillingAddress, boolean isUseBillingAddressFromGateway) {
+    public void populateBillingInfo(
+            PaymentResponseDTO responseDTO,
+            OrderPayment payment,
+            Address tempBillingAddress,
+            boolean isUseBillingAddressFromGateway
+    ) {
         Address billingAddress = tempBillingAddress;
-        if (responseDTO.getBillTo() != null && responseDTO.getBillTo().addressPopulated() && isUseBillingAddressFromGateway) {
+        if (responseDTO.getBillTo() != null && responseDTO.getBillTo().addressPopulated()
+                && isUseBillingAddressFromGateway) {
             billingAddress = addressService.create();
             AddressDTO<PaymentResponseDTO> billToDTO = responseDTO.getBillTo();
             populateAddressInfo(billToDTO, billingAddress);
@@ -83,12 +89,15 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
     @Override
     public void populateShippingInfo(PaymentResponseDTO responseDTO, Order order) {
         FulfillmentGroup shippableFulfillmentGroup = fulfillmentGroupService.getFirstShippableFulfillmentGroup(order);
-        if (responseDTO.getShipTo() != null && responseDTO.getShipTo().addressPopulated() && shippableFulfillmentGroup != null) {
+        if (responseDTO.getShipTo() != null && responseDTO.getShipTo().addressPopulated()
+                && shippableFulfillmentGroup != null) {
             Address shippingAddress = addressService.create();
             AddressDTO<PaymentResponseDTO> shipToDTO = responseDTO.getShipTo();
             populateAddressInfo(shipToDTO, shippingAddress);
 
-            shippableFulfillmentGroup = fulfillmentGroupService.findFulfillmentGroupById(shippableFulfillmentGroup.getId());
+            shippableFulfillmentGroup = fulfillmentGroupService.findFulfillmentGroupById(
+                    shippableFulfillmentGroup.getId()
+            );
             if (shippableFulfillmentGroup != null) {
                 shippableFulfillmentGroup.setAddress(shippingAddress);
                 fulfillmentGroupService.save(shippableFulfillmentGroup);
@@ -106,8 +115,10 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
         address.setCity(dto.getAddressCityLocality());
         address.setCounty(dto.getCounty());
 
-        CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByAbbreviation(dto.getAddressStateRegion());
-        if ( isoCountrySub != null) {
+        CountrySubdivision isoCountrySub = countrySubdivisionService.findSubdivisionByAbbreviation(
+                dto.getAddressStateRegion()
+        );
+        if (isoCountrySub != null) {
             address.setIsoCountrySubdivision(isoCountrySub.getAbbreviation());
             address.setStateProvinceRegion(isoCountrySub.getName());
         } else {
@@ -124,11 +135,11 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
             isoCountry = isoService.findISOCountryByAlpha2Code(dto.getAddressCountryCode());
         }
         if (country == null) {
-            LOG.warn("The given country from the response: " + StringUtil.sanitize(dto.getAddressCountryCode()) + " could not be found"
-                    + " as a country abbreviation in BLC_COUNTRY");
+            LOG.warn("The given country from the response: " + StringUtil.sanitize(dto.getAddressCountryCode())
+                    + " could not be found as a country abbreviation in BLC_COUNTRY");
         } else if (isoCountry == null) {
-            LOG.error("The given country from the response: " + StringUtil.sanitize(dto.getAddressCountryCode()) + " could not be found"
-                    + " as a country alpha-2 code in BLC_ISO_COUNTRY");
+            LOG.error("The given country from the response: " + StringUtil.sanitize(dto.getAddressCountryCode())
+                    + " could not be found as a country alpha-2 code in BLC_ISO_COUNTRY");
         }
 
         address.setIsoCountryAlpha2(isoCountry);
@@ -154,7 +165,9 @@ public class PaymentResponseDTOToEntityServiceImpl implements PaymentResponseDTO
             customerPayment.setPaymentToken(responseDTO.getPaymentToken());
         } else if (responseDTO.getResponseMap().containsKey(PaymentAdditionalFieldType.TOKEN.getType())) {
             //handle legacy additional fields map
-            customerPayment.setPaymentToken(responseDTO.getResponseMap().get(PaymentAdditionalFieldType.TOKEN.getType()));
+            customerPayment.setPaymentToken(responseDTO.getResponseMap().get(
+                    PaymentAdditionalFieldType.TOKEN.getType())
+            );
         } else if (responseDTO.getCreditCard() != null) {
             //handle higher PCI level compliance scenarios
             customerPayment.setPaymentToken(responseDTO.getCreditCard().getCreditCardNum());

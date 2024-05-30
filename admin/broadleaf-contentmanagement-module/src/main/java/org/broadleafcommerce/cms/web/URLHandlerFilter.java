@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,23 +56,43 @@ import jakarta.servlet.http.HttpServletResponse;
 public class URLHandlerFilter extends AbstractIgnorableOncePerRequestFilter {
 
     private static final Log LOG = LogFactory.getLog(URLHandlerFilter.class);
-
+    @Value("${request.uri.encoding}")
+    public String charEncoding;
     @Autowired
     @Qualifier("blURLHandlerService")
     private URLHandlerService urlHandlerService;
-
     @Autowired
     @Qualifier("blURLHandlerFilterExtensionManager")
     private URLHandlerFilterExtensionManager extensionManager;
 
-    @Value("${request.uri.encoding}")
-    public String charEncoding;
+    public static Set<String> getExistingQueryParams(String url) throws UnsupportedEncodingException {
+        Set<String> query_params = new HashSet<>();
+        int pos = url.indexOf("?");
+        if (pos > 0) {
+            String query = url.substring(pos);
+            String[] pairs = query.split("&");
+            for (String pair : pairs) {
+                int idx = pair.indexOf("=");
+                String param = "";
+                String value = null;
+                if (idx > 0) {
+                    param = pair.substring(0, idx);
+                } else {
+                    param = pair;
+                }
+                query_params.add(param);
+            }
+        }
+        return query_params;
+    }
 
     @Override
-    protected void doFilterInternalUnlessIgnored(HttpServletRequest request,
-            HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        
+    protected void doFilterInternalUnlessIgnored(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+
         String contextPath = request.getContextPath();
         String requestURIWithoutContext;
         if (request.getContextPath() != null) {
@@ -83,29 +103,29 @@ public class URLHandlerFilter extends AbstractIgnorableOncePerRequestFilter {
 
         requestURIWithoutContext = URLDecoder.decode(requestURIWithoutContext, charEncoding);
         URLHandler handler = urlHandlerService.findURLHandlerByURI(requestURIWithoutContext);
-        
+
         if (handler != null) {
             String url = UrlUtil.fixRedirectUrl(contextPath, handler.getNewURL());
             url = fixQueryString(request, url);
             extensionManager.getProxy().processPreRedirect(request, response, url);
             if (URLRedirectType.FORWARD == handler.getUrlRedirectType()) {
-                request.getRequestDispatcher(handler.getNewURL()).forward(request, response);               
+                request.getRequestDispatcher(handler.getNewURL()).forward(request, response);
             } else if (URLRedirectType.REDIRECT_PERM == handler.getUrlRedirectType()) {
                 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-                response.setHeader( "Location", url);
-                response.setHeader( "Connection", "close" );
+                response.setHeader("Location", url);
+                response.setHeader("Connection", "close");
             } else if (URLRedirectType.REDIRECT_TEMP == handler.getUrlRedirectType()) {
-                response.sendRedirect(url);             
+                response.sendRedirect(url);
             }
         } else {
             filterChain.doFilter(request, response);
         }
     }
-    
+
     /**
      * If the url does not include "//" then the system will ensure that the application context
      * is added to the start of the URL.
-     * 
+     *
      * @param url
      * @return
      * @throws Exception
@@ -142,27 +162,6 @@ public class URLHandlerFilter extends AbstractIgnorableOncePerRequestFilter {
         return url;
     }
 
-    public static Set<String> getExistingQueryParams(String url) throws UnsupportedEncodingException {
-        Set<String> query_params = new HashSet<String>();
-        int pos = url.indexOf("?");
-        if (pos > 0) {
-            String query = url.substring(pos);
-            String[] pairs = query.split("&");
-            for (String pair : pairs) {
-                int idx = pair.indexOf("=");
-                String param="";
-                String value = null;
-                if (idx > 0) {
-                    param = pair.substring(0, idx);
-                } else {
-                    param=pair;
-                }
-                query_params.add(param);
-            }
-        }
-        return query_params;
-    }
-
     protected boolean getPreserveQueryStringOnRedirect() {
         return BLCSystemProperty.resolveBooleanSystemProperty("preserveQueryStringOnRedirect");
     }
@@ -171,4 +170,5 @@ public class URLHandlerFilter extends AbstractIgnorableOncePerRequestFilter {
     public int getOrder() {
         return FilterOrdered.POST_SECURITY_LOW;
     }
+
 }

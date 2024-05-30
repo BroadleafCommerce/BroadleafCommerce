@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,13 +51,14 @@ import jakarta.annotation.Resource;
  */
 @Service("blUpdateCartService")
 public class UpdateCartServiceImpl implements UpdateCartService {
+
     protected static final Log LOG = LogFactory.getLog(UpdateCartServiceImpl.class);
 
     protected static BroadleafCurrency savedCurrency;
 
-    @Resource(name="blOrderService")
+    @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
+
     @Resource(name = "blUpdateCartServiceExtensionManager")
     protected UpdateCartServiceExtensionManager extensionManager;
 
@@ -65,13 +66,12 @@ public class UpdateCartServiceImpl implements UpdateCartService {
     @Qualifier("blOrderLockManager")
     protected OrderLockManager orderLockManager;
 
-
     @Override
     public boolean currencyHasChanged() {
         BroadleafCurrency currency = findActiveCurrency();
         if (getSavedCurrency() == null) {
             setSavedCurrency(currency);
-        } else if (getSavedCurrency() != currency){
+        } else if (getSavedCurrency() != currency) {
             return true;
         }
         return false;
@@ -79,11 +79,11 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
     @Override
     public UpdateCartResponse copyCartToCurrentContext(Order currentCart) {
-        if(currentCart.getOrderItems() == null){
+        if (currentCart.getOrderItems() == null) {
             return null;
         }
         BroadleafCurrency currency = findActiveCurrency();
-        if(currency == null){
+        if (currency == null) {
             return null;
         }
 
@@ -93,11 +93,11 @@ public class UpdateCartServiceImpl implements UpdateCartService {
         List<OrderItem> itemsToReset = new ArrayList<>();
         boolean repriceOrder = true;
 
-        for(OrderItem orderItem: currentCart.getOrderItems()){
+        for (OrderItem orderItem : currentCart.getOrderItems()) {
             //Lookup price in price list, if null, then add to itemsToRemove
-            if (orderItem instanceof DiscreteOrderItem){
+            if (orderItem instanceof DiscreteOrderItem) {
                 DiscreteOrderItem doi = (DiscreteOrderItem) orderItem;
-                if(checkAvailabilityInLocale(doi, currency)){
+                if (checkAvailabilityInLocale(doi, currency)) {
                     OrderItemRequestDTO itemRequest = new OrderItemRequestDTO();
                     itemRequest.setProductId(doi.getProduct().getId());
                     itemRequest.setQuantity(doi.getQuantity());
@@ -109,7 +109,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             } else if (orderItem instanceof BundleOrderItem) {
                 BundleOrderItem boi = (BundleOrderItem) orderItem;
                 for (DiscreteOrderItem doi : boi.getDiscreteOrderItems()) {
-                    if(checkAvailabilityInLocale(doi, currency)){
+                    if (checkAvailabilityInLocale(doi, currency)) {
                         OrderItemRequestDTO itemRequest = new OrderItemRequestDTO();
                         itemRequest.setProductId(doi.getProduct().getId());
                         itemRequest.setQuantity(doi.getQuantity());
@@ -122,7 +122,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             }
         }
 
-        for(OrderItem orderItem: itemsToReset){
+        for (OrderItem orderItem : itemsToReset) {
             try {
                 currentCart = orderService.removeItem(currentCart.getId(), orderItem.getId(), false);
             } catch (RemoveFromCartException e) {
@@ -130,7 +130,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             }
         }
 
-        for(OrderItemRequestDTO itemRequest: itemsToReprice){
+        for (OrderItemRequestDTO itemRequest : itemsToReprice) {
             try {
                 currentCart = orderService.addItem(currentCart.getId(), itemRequest, false);
             } catch (AddToCartException e) {
@@ -140,7 +140,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
         // Reprice and save the cart
         try {
-         currentCart = orderService.save(currentCart, repriceOrder);
+            currentCart = orderService.save(currentCart, repriceOrder);
         } catch (PricingException e) {
             LOG.error("Could not save cart.", e);
         }
@@ -175,13 +175,13 @@ public class UpdateCartServiceImpl implements UpdateCartService {
 
                     orderService.cancelOrder(cart);
                     cart = orderService.createNewCartForCustomer(cart.getCustomer());
-                }finally {
+                } finally {
                     if (lockObject != null) {
                         orderLockManager.releaseLock(lockObject);
                     }
 
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + cart.getId() +"]");
+                        LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + cart.getId() + "]");
                     }
                 }
             } else {
@@ -192,13 +192,13 @@ public class UpdateCartServiceImpl implements UpdateCartService {
                             lockObject = lockOrder(cart, lockObject);
 
                             orderService.save(cart, true, true);
-                        }finally {
+                        } finally {
                             if (lockObject != null) {
                                 orderLockManager.releaseLock(lockObject);
                             }
 
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + cart.getId() +"]");
+                                LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + cart.getId() + "]");
                             }
                         }
                     } else if (saveCart != null && saveCart.booleanValue()) {
@@ -207,13 +207,13 @@ public class UpdateCartServiceImpl implements UpdateCartService {
                             lockObject = lockOrder(cart, lockObject);
 
                             orderService.save(cart, false);
-                        }finally {
+                        } finally {
                             if (lockObject != null) {
                                 orderLockManager.releaseLock(lockObject);
                             }
 
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + cart.getId() +"]");
+                                LOG.trace("Thread[" + Thread.currentThread().getId() + "] released lock for order[" + cart.getId() + "]");
                             }
                         }
                     }
@@ -226,8 +226,7 @@ public class UpdateCartServiceImpl implements UpdateCartService {
         }
     }
 
-
-    protected Object lockOrder(Order order, Object lockObject){
+    protected Object lockOrder(Order order, Object lockObject) {
         if (lockObject == null) {
             if (getErrorInsteadOfQueue()) {
                 lockObject = orderLockManager.acquireLockIfAvailable(order);
@@ -248,8 +247,8 @@ public class UpdateCartServiceImpl implements UpdateCartService {
         return BLCSystemProperty.resolveBooleanSystemProperty("order.lock.errorInsteadOfQueue");
     }
 
-    protected BroadleafCurrency findActiveCurrency(){
-        if(BroadleafRequestContext.hasLocale()){
+    protected BroadleafCurrency findActiveCurrency() {
+        if (BroadleafRequestContext.hasLocale()) {
             return BroadleafRequestContext.getBroadleafRequestContext().getBroadleafCurrency();
         }
         return null;
@@ -260,13 +259,8 @@ public class UpdateCartServiceImpl implements UpdateCartService {
             Sku sku = doi.getSku();
             return sku.isAvailable();
         }
-        
-        return false;
-    }
 
-    @Override
-    public void setSavedCurrency(BroadleafCurrency savedCurrency) {
-        this.savedCurrency = savedCurrency;
+        return false;
     }
 
     @Override
@@ -274,5 +268,9 @@ public class UpdateCartServiceImpl implements UpdateCartService {
         return savedCurrency;
     }
 
+    @Override
+    public void setSavedCurrency(BroadleafCurrency savedCurrency) {
+        this.savedCurrency = savedCurrency;
+    }
 
 }

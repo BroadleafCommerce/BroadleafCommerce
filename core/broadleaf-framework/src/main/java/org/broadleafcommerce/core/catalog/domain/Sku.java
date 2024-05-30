@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -48,93 +48,100 @@ import java.util.Set;
  * You should implement this class if you want to make significant changes to how the
  * class is persisted.  If you just want to add additional fields then you should extend {@link SkuImpl}.
  *
- * @see {@link SkuImpl}, {@link Money}
  * @author btaylor
- *
+ * @see {@link SkuImpl}, {@link Money}
  */
 public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable {
 
     /**
      * Returns the id of this sku
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the id of this sku
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Returns the sku specific portion of a full url used for a sku info page.
-     */ 
-    public String getUrlKey();
+     */
+    String getUrlKey();
 
     /**
-     * Sets the sku specific portion of a full url used for a sku info page.  
-     * 
+     * Sets the sku specific portion of a full url used for a sku info page.
+     *
      * @param url
      */
-    public void setUrlKey(String url);
+    void setUrlKey(String url);
 
     /**
      * Returns the name of a display template that is used to render this sku.  Most implementations have a default
      * template for all skus.  This allows for the user to define a specific template to be used by this sku.
-     * 
+     *
      * @return
      */
-    public String getDisplayTemplate();
+    String getDisplayTemplate();
 
     /**
      * Sets the name of a display template that is used to render this sku.  Most implementations have a default
      * template for all skus.  This allows for the user to define a specific template to be used by this sku.
-     * 
+     *
      * @param displayTemplate
      */
-    public void setDisplayTemplate(String displayTemplate);
+    void setDisplayTemplate(String displayTemplate);
+
     /**
      * This is the sum total of the priceAdjustments from the associated ProductOptionValues
-     * 
+     *
      * @return <b>null</b> if there are no ProductOptionValues associated with this Sku or
      * all of their priceAdjustments are null. Otherwise this will be the sum total of those price
      * adjustments
-     * 
      * @see {@link ProductOptionValue}
      */
-    public Money getProductOptionValueAdjustments();
-    
+    Money getProductOptionValueAdjustments();
+
     /**
      * Returns the Sale Price of the Sku.  The Sale Price is the standard price the vendor sells
      * this item for.  If {@link SkuPricingConsiderationContext} is set, this uses the DynamicSkuPricingService
      * to calculate what this should actually be rather than use the property itself
-     * 
+     *
      * @see SkuPricingConsiderationContext, DynamicSkuPricingService
      */
-    public Money getSalePrice();
+    Money getSalePrice();
 
     /**
      * Sets the the Sale Price of the Sku.  The Sale Price is the standard price the vendor sells
      * this item for. This price will automatically be overridden if your system is utilizing
      * the DynamicSkuPricingService.
      */
-    public void setSalePrice(Money salePrice);
+    void setSalePrice(Money salePrice);
 
     /**
-     * Determines if there is a sale price.  In other words, determines whether salePrice is null. Returns true if 
+     * Determines if there is a sale price.  In other words, determines whether salePrice is null. Returns true if
      * salePrice is not null.  Returns false otherwise.
+     *
      * @return
      */
-    public boolean hasSalePrice();
+    boolean hasSalePrice();
 
     /**
      * Returns the Retail Price of the Sku.  The Retail Price is the MSRP of the sku. If {@link SkuPricingConsiderationContext}
      * is set, this uses the DynamicSkuPricingService to calculate what this should actually be rather than use the property
      * itself.
-     * 
-     * @throws IllegalStateException if retail price is null. 
-     * 
+     *
+     * @throws IllegalStateException if retail price is null.
      * @see SkuPricingConsiderationContext, DynamicSkuPricingService, Sku.hasRetailPrice()
      */
-    public Money getRetailPrice();
+    Money getRetailPrice();
+
+    /**
+     * Sets the retail price for the Sku. This price will automatically be overridden if your system is utilizing
+     * the DynamicSkuPricingService.
+     *
+     * @param retailPrice price for the Sku
+     */
+    void setRetailPrice(Money retailPrice);
 
     /**
      * Returns the basic retail price of the Sku. This price does not include any dynamic pricing, including PriceList
@@ -153,233 +160,238 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     Money getBaseSalePrice();
 
     /**
-     * Sets the retail price for the Sku. This price will automatically be overridden if your system is utilizing
-     * the DynamicSkuPricingService.
-     * 
-     * @param retailPrice price for the Sku
-     */
-    public void setRetailPrice(Money retailPrice);
-
-    /**
-     * Provides a way of determining if a Sku has a retail price without getting an IllegalStateException. Returns true if 
+     * Provides a way of determining if a Sku has a retail price without getting an IllegalStateException. Returns true if
      * retailPrice is not null.  Returns false otherwise.
-     * @see #getRetailPrice()
+     *
      * @return
+     * @see #getRetailPrice()
      */
-    public boolean hasRetailPrice();
+    boolean hasRetailPrice();
 
     /**
      * Resolves the price of the Sku. If the Sku is on sale (that is, isOnSale() returns true), the
      * return value will be the result of getSalePrice(). Otherwise, the return value will be the result of
      * getRetailPrice().
+     *
      * @return the price of the Sku
      */
-    public Money getPrice();
+    Money getPrice();
 
     /**
      * Returns the List Price of the Sku.  The List Price is the MSRP of the sku.
+     *
      * @deprecated
      */
     @Deprecated
-    public Money getListPrice();
+    Money getListPrice();
 
     /**
      * Sets the the List Price of the Sku.  The List Price is the MSRP of the sku.
+     *
      * @deprecated
      */
     @Deprecated
-    public void setListPrice(Money listPrice);
+    void setListPrice(Money listPrice);
 
     /**
      * Returns the purchase cost of this Sku.
      *
      * @return the purchase cost of this Sku
      */
-    public Money getCost();
+    Money getCost();
 
     /**
      * Sets the purchase cost for this Sku.
      *
      * @param cost
      */
-    public void setCost(Money cost);
+    void setCost(Money cost);
 
     /**
      * Returns the margin of the Sku. This is the value of getPrice() - getCost()
      *
      * @return the margin of this Sku
      */
-    public Money getMargin();
+    Money getMargin();
 
     /**
      * Returns the name of the Sku.  The name is a label used to show when displaying the sku.
      */
-    public String getName();
+    String getName();
 
     /**
      * Sets the the name of the Sku.  The name is a label used to show when displaying the sku.
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Returns the brief description of the Sku.
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Sets the brief description of the Sku.
      */
-    public void setDescription(String description);
+    void setDescription(String description);
 
     /**
      * Returns the long description of the sku.
      */
-    public String getLongDescription();
+    String getLongDescription();
 
     /**
      * Sets the long description of the sku.
      */
-    public void setLongDescription(String longDescription);
+    void setLongDescription(String longDescription);
 
     /**
      * Returns whether the Sku qualifies for taxes or not.  This field is used by the pricing engine
      * to calculate taxes.
      */
-    public Boolean isTaxable();
+    Boolean isTaxable();
 
     /**
      * Convenience that passes through to isTaxable
      */
-    public Boolean getTaxable();
+    Boolean getTaxable();
 
     /**
      * Sets the whether the Sku qualifies for taxes or not.  This field is used by the pricing engine
      * to calculate taxes.
      */
-    public void setTaxable(Boolean taxable);
+    void setTaxable(Boolean taxable);
 
     /**
      * Returns whether the Sku qualifies for discounts or not.  This field is used by the pricing engine
      * to apply offers.
      */
-    public Boolean isDiscountable();
+    Boolean isDiscountable();
 
     /**
      * Sets the whether the Sku qualifies for discounts or not.  This field is used by the pricing engine
      * to apply offers.
      */
-    public void setDiscountable(Boolean discountable);
+    void setDiscountable(Boolean discountable);
 
     /**
      * <p>Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
      * unavailable but still be considered 'active' where you still want to show the Sku on the site but not actually sell
      * it. This defaults to true</p>
-     * 
+     *
      * <p>This method only checks that this Sku is not marked as {@link InventoryType#UNAVAILABLE}. If {@link #getInventoryType()}
      * is set to {@link InventoryType#CHECK_QUANTITY} then this will return true.</p>
-     * 
+     *
      * @deprecated use {@link #getInventoryType()} or {@link InventoryService#isAvailable(Sku, int)} instead.
      */
     @Deprecated
-    public Boolean isAvailable();
+    Boolean isAvailable();
 
     /**
      * Convenience that passes through to isAvailable
+     *
      * @see {@link #isAvailable()}
      * @deprecated use {@link #getInventoryType()} instead
      */
     @Deprecated
-    public Boolean getAvailable();
-    
+    Boolean getAvailable();
+
     /**
      * Availability is really a concern of inventory vs a concern of the Sku being active or not. A Sku could be marked as
      * unavailable but still be considered 'active' where you still want to show the Sku on the site but not actually sell
      * it. This defaults to true
-     * 
+     *
      * @deprecated use {@link #setInventoryType(InventoryType)} instead
      */
     @Deprecated
-    public void setAvailable(Boolean available);
+    void setAvailable(Boolean available);
 
     /**
      * Returns the first date that the Sku should be available for sale.  This field is used to determine
      * whether a user can add the sku to their cart.
      */
-    public Date getActiveStartDate();
+    Date getActiveStartDate();
 
     /**
      * Sets the the first date that the Sku should be available for sale.  This field is used to determine
      * whether a user can add the sku to their cart.
      */
-    public void setActiveStartDate(Date activeStartDate);
+    void setActiveStartDate(Date activeStartDate);
 
     /**
      * Returns the the last date that the Sku should be available for sale.  This field is used to determine
      * whether a user can add the sku to their cart.
      */
-    public Date getActiveEndDate();
+    Date getActiveEndDate();
 
     /**
      * Sets the the last date that the Sku should be available for sale.  This field is used to determine
      * whether a user can add the sku to their cart.
      */
-    public void setActiveEndDate(Date activeEndDate);
+    void setActiveEndDate(Date activeEndDate);
 
     /**
      * Get the dimensions for this Sku
-     * 
+     *
      * @return this Sku's embedded Weight
      */
-    public Dimension getDimension();
+    Dimension getDimension();
 
     /**
      * Sets the embedded Dimension for this Sku
-     * 
+     *
      * @param dimension
      */
-    public void setDimension(Dimension dimension);
+    void setDimension(Dimension dimension);
 
     /**
      * Gets the embedded Weight for this Sku
-     * 
+     *
      * @return this Sku's embedded Weight
      */
-    public Weight getWeight();
+    Weight getWeight();
 
     /**
      * Sets the embedded Weight for this Sku
-     * 
+     *
      * @param weight
      */
-    public void setWeight(Weight weight);
-    
+    void setWeight(Weight weight);
+
     /**
      * Returns a boolean indicating whether this sku is active.  This is used to determine whether a user
      * the sku can add the sku to their cart.
      */
-    public boolean isActive();
+    boolean isActive();
 
     /**
      * Returns a map of key/value pairs where the key is a string for the name of a media object and the value
      * is a media object.
+     *
      * @deprecated use {@link #getSkuMediaXref()} instead
      */
     @Deprecated
-    public Map<String, Media> getSkuMedia();
+    Map<String, Media> getSkuMedia();
 
     /**
      * Sets a map of key/value pairs where the key is a string for the name of a media object and the value
      * is an object of type Media.
+     *
      * @deprecated use {@link #setSkuMediaXref(java.util.Map)} instead
      */
     @Deprecated
-    public void setSkuMedia(Map<String, Media> skuMedia);
+    void setSkuMedia(Map<String, Media> skuMedia);
 
     /**
      * Returns a map of key/value pairs where the key is a string for the name of a media object and the value
      * is a cross-reference to a media object.
      */
     Map<String, SkuMediaXref> getSkuMediaXref();
+
+    /**
+     * Sets a map of key/value pairs where the key is a string for the name of a media object and the value
+     * is a cross-reference object to type Media.
+     */
+    void setSkuMediaXref(Map<String, SkuMediaXref> skuMediaXref);
 
     /**
      * Returns a map of key/value pairs where the key is a string for the name of a media object and the value
@@ -394,20 +406,14 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     Media getPrimarySkuMedia();
 
     /**
-     * Sets a map of key/value pairs where the key is a string for the name of a media object and the value
-     * is a cross-reference object to type Media.
-     */
-    void setSkuMediaXref(Map<String, SkuMediaXref> skuMediaXref);
-
-    /**
      * Returns whether or not this Sku, the given Product and the given Category are all active
-     * 
-     * @param product - Product that should be active
+     *
+     * @param product  - Product that should be active
      * @param category - Category that should be active
      * @return <b>true</b> if this Sku, <code>product</code> and <code>category</code> are all active
      * <b>false</b> otherwise
      */
-    public boolean isActive(Product product, Category category);
+    boolean isActive(Product product, Category category);
 
     /**
      * Denormalized set of key-value pairs to attach to a Sku. If you are looking for setting up
@@ -418,7 +424,14 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      * @deprecated use {@link #getMultiValueSkuAttributes()} instead.
      */
     @Deprecated
-    public Map<String, SkuAttribute> getSkuAttributes();
+    Map<String, SkuAttribute> getSkuAttributes();
+
+    /**
+     * Sets the denormalized set of key-value pairs on a Sku
+     *
+     * @param skuAttributes
+     */
+    void setSkuAttributes(Map<String, SkuAttribute> skuAttributes);
 
     /**
      * Returns multivalued SkuAttributes associated with this sku using {@link org.apache.commons.collections.map.MultiValueMap}.
@@ -426,35 +439,28 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      *
      * @return the multivalued attributes for this Sku
      */
-    public Map<String, Collection<SkuAttribute>> getMultiValueSkuAttributes();
-
-    /**
-     * Sets the denormalized set of key-value pairs on a Sku
-     *
-     * @param skuAttributes
-     */
-    public void setSkuAttributes(Map<String, SkuAttribute> skuAttributes);
+    Map<String, Collection<SkuAttribute>> getMultiValueSkuAttributes();
 
     /**
      * Gets the ProductOptionValues used to map to this Sku. For instance, this Sku could hold specific
      * inventory, price and image information for a "Blue" "Extra-Large" shirt
-     * 
+     *
      * @return the ProductOptionValues for this Sku
      * @see {@link ProductOptionValue}, {@link ProductOption}
      * @deprecated use {@link #getProductOptionValuesCollection()} instead
      */
     @Deprecated
-    public List<ProductOptionValue> getProductOptionValues();
+    List<ProductOptionValue> getProductOptionValues();
 
     /**
      * Sets the ProductOptionValues that should be mapped to this Sku
-     * 
+     *
      * @param productOptionValues
      * @see {@link ProductOptionValue}, {@link ProductOption}
      * @deprecated use {@link #setProductOptionValuesCollection(java.util.Set)} instead
      */
     @Deprecated
-    public void setProductOptionValues(List<ProductOptionValue> productOptionValues);
+    void setProductOptionValues(List<ProductOptionValue> productOptionValues);
 
     /**
      * Gets the ProductOptionValues used to map to this Sku. For instance, this Sku could hold specific
@@ -478,28 +484,27 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     void setProductOptionValuesCollection(Set<ProductOptionValue> productOptionValues);
 
     /**
-     * Returns the ProductOptionValues that should be mapped to this Sku using the middle 
+     * Returns the ProductOptionValues that should be mapped to this Sku using the middle
      * XREF entity, {@link SkuProductOptionValueXref}
-     * 
+     *
      * @return the Set of {@link SkuProductOptionValueXref}s
      */
-    public Set<SkuProductOptionValueXref> getProductOptionValueXrefs();
+    Set<SkuProductOptionValueXref> getProductOptionValueXrefs();
 
     /**
-     * Sets the ProductOptionValues that should be mapped to this Sku using the middle 
+     * Sets the ProductOptionValues that should be mapped to this Sku using the middle
      * XREF entity, {@link SkuProductOptionValueXref}
      */
-    public void setProductOptionValueXrefs(Set<SkuProductOptionValueXref> productOptionValueXrefs);
-
+    void setProductOptionValueXrefs(Set<SkuProductOptionValueXref> productOptionValueXrefs);
 
     /**
      * This will be a value if and only if this Sku is the defaultSku of a Product (and thus has a @OneToOne relationship with a Product).
      * The mapping for this is actually done at the Product level with a foreign key to Sku; this exists for convenience to get the reverse relationship
-     * 
+     *
      * @return The associated Product if this Sku is a defaultSku, <b>null</b> otherwise
      * @see #getProduct()
      */
-    public Product getDefaultProduct();
+    Product getDefaultProduct();
 
     /**
      * The relationship for a Product's default Sku (and thus a Sku's default Product) is actually maintained
@@ -510,10 +515,10 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      * If you are looking for a way to simply associate a Sku to a Product, the correct way would be to call
      * {@link #setProduct(Product)} or {@link Product#setAdditionalSkus(List)} which would then cause this Sku to show up in the list of Skus for
      * the given Product
-     * 
+     *
      * @param product
      */
-    public void setDefaultProduct(Product product);
+    void setDefaultProduct(Product product);
 
     /**
      * This will return the correct Product association that is being used on the Sku. If this Sku is a default Sku
@@ -528,202 +533,208 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      * refer to different Products, and would represent an error state. If you require this, consider subclassing and using
      * your own @ManyToMany relationship between Product and Sku. If you are trying to model bundles, consider using a {@link ProductBundle}
      * and subsequent {@link SkuBundleItem}s.
-     * 
+     *
      * @return {@link #getDefaultProduct()} if {@link #getDefaultProduct()} is non-null, the @ManyToOne Product association otherwise. If no
      * relationship is set, returns null
      */
-    public Product getProduct();
+    Product getProduct();
 
     /**
      * Associates a Sku to a given Product. This will then show up in the list returned by {@link Product#getSkus()}
-     * 
+     *
      * @param product - Product to associate this Sku to
      * @see Product#getSkus()
      */
-    public void setProduct(Product product);
+    void setProduct(Product product);
 
     /**
      * A product is on sale provided the sale price is not null, non-zero, and less than the retail price.
-     * 
-     * Note that this flag should always be checked before showing or using a sale price as it is possible 
+     * <p>
+     * Note that this flag should always be checked before showing or using a sale price as it is possible
      * for a sale price to be greater than the retail price from a purely data perspective.
-     * 
+     *
      * @return whether or not the product is on sale
      */
-    public boolean isOnSale();
+    boolean isOnSale();
 
     /**
      * Whether this Sku can be sorted by a machine
-     * 
+     *
      * @return <b>true</b> if this Sku can be sorted by a machine
      * @deprecated use {@link #getIsMachineSortable()} instead since that is the correct bean notation
      */
     @Deprecated
-    public Boolean isMachineSortable();
+    Boolean isMachineSortable();
 
     /**
      * Whether this Sku can be sorted by a machine
-     * 
      */
-    public Boolean getIsMachineSortable();
+    Boolean getIsMachineSortable();
 
     /**
      * Sets whether or not this Sku can be sorted by a machine
-     * 
+     *
+     * @param isMachineSortable
+     */
+    void setIsMachineSortable(Boolean isMachineSortable);
+
+    /**
+     * Sets whether or not this Sku can be sorted by a machine
+     *
      * @param isMachineSortable
      * @deprecated use {@link #setIsMachineSortable(Boolean)} instead since that is the correct bean notation
      */
     @Deprecated
-    public void setMachineSortable(Boolean isMachineSortable);
-    
-    /**
-     * Sets whether or not this Sku can be sorted by a machine
-     * @param isMachineSortable
-     */
-    public void setIsMachineSortable(Boolean isMachineSortable);
+    void setMachineSortable(Boolean isMachineSortable);
 
     /**
      * Gets all the extra fees for this particular Sku. If the fee type is FULFILLMENT, these are stored
      * on {@link FulfillmentGroup#getFulfillmentGroupFees()} for an Order
-     * 
+     *
      * @return the {@link SkuFee}s for this Sku
      */
-    public List<SkuFee> getFees();
+    List<SkuFee> getFees();
 
     /**
      * Sets the extra fees for this particular Sku
-     * 
+     *
      * @param fees
      */
-    public void setFees(List<SkuFee> fees);
+    void setFees(List<SkuFee> fees);
 
     /**
      * Gets the flat rate for fulfilling this {@link Sku} for a particular {@link FulfillmentOption}. Depending
      * on the result of {@link FulfillmentOption#getUseFlatRates()}, this flat rate will be used in calculating
      * the cost of fulfilling this {@link Sku}.
-     * 
+     *
      * @return the flat rates for this {@link Sku}
      */
-    public Map<FulfillmentOption, BigDecimal> getFulfillmentFlatRates();
+    Map<FulfillmentOption, BigDecimal> getFulfillmentFlatRates();
 
     /**
      * Sets the flat rates for fulfilling this {@link Sku} for a particular {@link FulfillmentOption}. Depending
      * on the result of {@link FulfillmentOption#getUseFlatRates()}, this flat rate will be used in calculating
      * the cost of fulfilling this {@link Sku}.
-     * 
+     *
      * @param fulfillmentFlatRates
      */
-    public void setFulfillmentFlatRates(Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates);
+    void setFulfillmentFlatRates(Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates);
 
     /**
      * Gets the {@link FulfillmentOption}s that this {@link Sku} should be excluded from. For instance,
      * some {@link Sku}s might not be available to be fulfilled next-day
-     * 
+     *
      * @return
      */
-    public List<FulfillmentOption> getExcludedFulfillmentOptions();
+    List<FulfillmentOption> getExcludedFulfillmentOptions();
 
     /**
      * Sets the {@link FulfillmentOption}s that this Sku should be excluded from being apart of
-     * 
+     *
      * @param excludedFulfillmentOptions
      */
-    public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
+    void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions);
 
     /**
      * Returns the type of inventory for this sku
+     *
      * @return the {@link org.broadleafcommerce.core.inventory.service.type.InventoryType} for this sku
      */
-    public InventoryType getInventoryType();
+    InventoryType getInventoryType();
 
     /**
      * Sets the type of inventory for this sku
+     *
      * @param inventoryType the {@link InventoryType} for this sku
      */
-    public void setInventoryType(InventoryType inventoryType);
-    
+    void setInventoryType(InventoryType inventoryType);
+
     /**
      * <p>Used in conjuction with {@link InventoryType#CHECK_QUANTITY} within the blAddItemWorkflow and blUpdateItemWorkflow.
      * This field is checked within the {@link CheckAddAvailabilityActivity} to determine if inventory is actually available
      * for this Sku.
      */
-    public Integer getQuantityAvailable();
-    
+    Integer getQuantityAvailable();
+
     /**
      * <p>Used in conjunction with {@link InventoryType#CHECK_QUANTITY} from {@link #getInventoryType()}. This sets how much
      * inventory is available for this Sku.</p>
-     * 
-     * 
-     * @param quantityAvailable the quantity available for this sku 
+     *
+     * @param quantityAvailable the quantity available for this sku
      */
-    public void setQuantityAvailable(Integer quantityAvailable);
-    
+    void setQuantityAvailable(Integer quantityAvailable);
+
     /**
      * Returns the fulfillment type for this sku. May be null.
+     *
      * @return
      */
-    public FulfillmentType getFulfillmentType();
-    
+    FulfillmentType getFulfillmentType();
+
     /**
      * Sets the fulfillment type for this sku. May return null.
+     *
      * @param fulfillmentType
      */
-    public void setFulfillmentType(FulfillmentType fulfillmentType);
+    void setFulfillmentType(FulfillmentType fulfillmentType);
 
     /**
      * Clears any currently stored dynamic pricing
      */
-    public void clearDynamicPrices();
+    void clearDynamicPrices();
+
+    /**
+     * <b>Note: When using dynamic pricing, this method is unreliable and should not be called outside of the
+     * Broadleaf admin</b>  Instead, you should rely on the {@link BroadleafRequestContext#getBroadleafCurrency()}
+     * instead of storing at the SKU level.
+     * <p>
+     * As such, for supported, enterprise installations, this method should always return null.
+     * <p>
+     * This method was not deprecated as it may have some use in non-standard Broadleaf installations but
+     * using its use is not suggested for most implementations.
+     *
+     * @return the currency for this sku
+     */
+    BroadleafCurrency getCurrency();
 
     /**
      * Sets the currency for this Sku
-     * 
+     * <p>
      * Note: Currency is ignored when using dynamic pricing
-     * 
+     *
      * @param currency
      */
-    public void setCurrency(BroadleafCurrency currency);
-
-    /**
-     * <b>Note: When using dynamic pricing, this method is unreliable and should not be called outside of the 
-     * Broadleaf admin</b>  Instead, you should rely on the {@link BroadleafRequestContext#getBroadleafCurrency()} 
-     * instead of storing at the SKU level.
-     * 
-     * As such, for supported, enterprise installations, this method should always return null.
-     * 
-     * This method was not deprecated as it may have some use in non-standard Broadleaf installations but
-     * using its use is not suggested for most implementations. 
-     * 
-     * @return the currency for this sku
-     */
-    public BroadleafCurrency getCurrency();
+    void setCurrency(BroadleafCurrency currency);
 
     /**
      * Returns the Tax Code for this particular Entity.
-     * 
-     *  If the current Tax Code on the Sku is null, the Product tax code will be returned.
+     * <p>
+     * If the current Tax Code on the Sku is null, the Product tax code will be returned.
+     *
      * @return taxCode
      */
-    public String getTaxCode();
+    String getTaxCode();
 
     /**
      * Sets the tax code for this SKU
-     * 
+     *
      * @param taxCode
      */
-    public void setTaxCode(String taxCode);
+    void setTaxCode(String taxCode);
 
     /**
      * Gets the Universal Product Code (UPC)
+     *
      * @return
      */
-    public String getUpc();
+    String getUpc();
 
     /**
      * Sets the Universal Product Code (UPC)
+     *
      * @param upc
      */
-    public void setUpc(String upc);
+    void setUpc(String upc);
 
     /**
      * Intended to hold any unique identifier not tied to the Broadleaf Database Sequence Identifier.
@@ -732,21 +743,22 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
      *
      * @return external ID
      */
-    public String getExternalId();
+    String getExternalId();
 
     /**
      * Sets a unique external ID
+     *
      * @param externalId
      */
-    public void setExternalId(String externalId);
+    void setExternalId(String externalId);
 
     /**
      * If a DynamicPricingService is being used, this method will return the dynamic Sku prices.
      * Otherwise, it will return an instance of DynamicSkuPrices with the retail and sale price
      * from the underlying record.
-     * 
+     *
      * @return
      */
-    public DynamicSkuPrices getPriceData();
+    DynamicSkuPrices getPriceData();
 
 }

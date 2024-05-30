@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.dto;
 
 import java.util.HashMap;
@@ -23,12 +22,12 @@ import java.util.Map;
 
 /**
  * @author Elbert Bautista (elbertbautista)
- *
+ * <p>
  * Many Hosted solutions, (e.g. PayPal Express/Sagepay Form) allow you to pass in the contents of your
  * cart to be displayed on their hosted pages.
- *
+ * <p>
  * The following DTO represent the usual parameters that you may wish to pass:
- *
+ * <p>
  * name: a Name for this Line Item
  * description: a Description for this Line Item
  * category: a Category for this Line Item (PayPal Express uses this to differentiate between Digital vs Physical)
@@ -37,7 +36,6 @@ import java.util.Map;
  * tax: the tax applied to this unit item
  * itemTotal: the cost of the unit item with tax
  * total: the total cost of this line item (Quanity x Cost Including Tax)
- *
  */
 public class LineItemDTO {
 
@@ -55,14 +53,14 @@ public class LineItemDTO {
     protected String itemTotal;
     protected String total;
 
-    public PaymentRequestDTO done(){
-        parent.lineItems.add(this);
-        return parent;
+    public LineItemDTO(PaymentRequestDTO parent) {
+        this.additionalFields = new HashMap<>();
+        this.parent = parent;
     }
 
-    public LineItemDTO(PaymentRequestDTO parent) {
-        this.additionalFields = new HashMap<String, Object>();
-        this.parent = parent;
+    public PaymentRequestDTO done() {
+        parent.lineItems.add(this);
+        return parent;
     }
 
     public LineItemDTO additionalField(String key, Object value) {
@@ -163,4 +161,5 @@ public class LineItemDTO {
     public String getTotal() {
         return total;
     }
+
 }

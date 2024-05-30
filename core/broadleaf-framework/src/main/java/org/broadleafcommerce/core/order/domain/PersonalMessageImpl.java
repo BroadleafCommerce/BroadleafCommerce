@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,6 +24,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
+
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
@@ -33,41 +34,45 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PERSONAL_MESSAGE")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 public class PersonalMessageImpl implements PersonalMessage {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "PersonalMessageId")
     @GenericGenerator(
-        name="PersonalMessageId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="PersonalMessageImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.PersonalMessageImpl")
-        }
+            name = "PersonalMessageId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "PersonalMessageImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.PersonalMessageImpl")
+            }
     )
     @Column(name = "PERSONAL_MESSAGE_ID")
     protected Long id;
 
     @Column(name = "MESSAGE_TO")
-    @AdminPresentation(friendlyName = "PersonalMessageImpl_Message_To", order=1, group = "PersonalMessageImpl_Personal_Message")
+    @AdminPresentation(friendlyName = "PersonalMessageImpl_Message_To", order = 1, group = "PersonalMessageImpl_Personal_Message")
     protected String messageTo;
 
     @Column(name = "MESSAGE_FROM")
-    @AdminPresentation(friendlyName = "PersonalMessageImpl_Message_From", order=2, group = "PersonalMessageImpl_Personal_Message")
+    @AdminPresentation(friendlyName = "PersonalMessageImpl_Message_From", order = 2, group = "PersonalMessageImpl_Personal_Message")
     protected String messageFrom;
 
     @Column(name = "MESSAGE")
-    @AdminPresentation(friendlyName = "PersonalMessageImpl_Message", order=3, group = "PersonalMessageImpl_Personal_Message")
+    @AdminPresentation(friendlyName = "PersonalMessageImpl_Message", order = 3, group = "PersonalMessageImpl_Personal_Message")
     protected String message;
 
     @Column(name = "OCCASION")
-    @AdminPresentation(friendlyName = "PersonalMessageImpl_Occasion", order=4, group = "PersonalMessageImpl_Personal_Message")
+    @AdminPresentation(friendlyName = "PersonalMessageImpl_Occasion", order = 4, group = "PersonalMessageImpl_Personal_Message")
     protected String occasion;
 
     @Override
@@ -119,9 +124,11 @@ public class PersonalMessageImpl implements PersonalMessage {
     public void setOccasion(String occasion) {
         this.occasion = occasion;
     }
-    
+
     @Override
-    public CreateResponse<PersonalMessage> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public CreateResponse<PersonalMessage> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<PersonalMessage> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -131,7 +138,7 @@ public class PersonalMessageImpl implements PersonalMessage {
         cloned.setMessageFrom(messageFrom);
         cloned.setMessageTo(messageTo);
         cloned.setOccasion(occasion);
-        return  createResponse;
+        return createResponse;
     }
 
     @Override
@@ -173,4 +180,5 @@ public class PersonalMessageImpl implements PersonalMessage {
         } else
             return messageTo.equals(other.messageTo);
     }
+
 }

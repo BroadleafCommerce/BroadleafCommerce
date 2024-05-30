@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,37 +30,42 @@ public interface CurrentCustomerPaymentRequestService {
      * Returns a {@link PaymentRequestDTO} based on all the information from the current customer in the system, like one
      * on threadlocal
      */
-    public PaymentRequestDTO getPaymentRequestFromCurrentCustomer();
+    PaymentRequestDTO getPaymentRequestFromCurrentCustomer();
 
     /**
      * adds a concept of an "customer attribute" to the current customer in the system
+     *
      * @param customerAttributeKey
      * @param customerAttributeValue
      * @throws PaymentException
      */
-    public void addCustomerAttributeToCurrentCustomer(String customerAttributeKey, String customerAttributeValue) throws PaymentException;
+    void addCustomerAttributeToCurrentCustomer(String customerAttributeKey, String customerAttributeValue) throws PaymentException;
 
     /**
      * adds a concept of a "customer attribute" to a customer in the system based on ID.
+     *
      * @param customerId
      * @param customerAttributeKey
      * @param customerAttributeValue
      * @throws PaymentException
      */
-    public void addCustomerAttributeToCustomer(Long customerId, String customerAttributeKey, String customerAttributeValue) throws PaymentException;
+    void addCustomerAttributeToCustomer(Long customerId, String customerAttributeKey, String customerAttributeValue) throws PaymentException;
 
     /**
      * retrieve a "customer attribute" value on the current customer in the system
+     *
      * @param customerAttributeKey
      * @return
      */
-    public String retrieveCustomerAttributeFromCurrentCustomer(String customerAttributeKey);
+    String retrieveCustomerAttributeFromCurrentCustomer(String customerAttributeKey);
 
     /**
      * retrieve a "customer attribute" value based on the customer id in the system
+     *
      * @param customerId
      * @param customerAttributeKey
      * @return
      */
-    public String retrieveCustomerAttributeFromCustomer(Long customerId, String customerAttributeKey);
+    String retrieveCustomerAttributeFromCustomer(Long customerId, String customerAttributeKey);
+
 }

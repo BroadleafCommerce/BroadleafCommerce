@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,7 +23,7 @@ import org.springframework.core.Ordered;
 import java.util.Map;
 
 public abstract class BaseActivity<T extends ProcessContext<?>> implements Activity<T> {
-    
+
     protected ErrorHandler errorHandler;
     protected String beanName;
 
@@ -32,20 +32,15 @@ public abstract class BaseActivity<T extends ProcessContext<?>> implements Activ
     protected Map<String, Object> stateConfiguration;
     protected boolean automaticallyRegisterRollbackHandler = false;
     protected int order = Ordered.LOWEST_PRECEDENCE;
-    
+
     @Override
     public boolean shouldExecute(T context) {
         return true;
     }
-    
+
     @Override
     public ErrorHandler getErrorHandler() {
         return errorHandler;
-    }
-
-    @Override
-    public void setBeanName(final String beanName) {
-        this.beanName = beanName;
     }
 
     @Override
@@ -56,6 +51,11 @@ public abstract class BaseActivity<T extends ProcessContext<?>> implements Activ
     @Override
     public String getBeanName() {
         return beanName;
+    }
+
+    @Override
+    public void setBeanName(final String beanName) {
+        this.beanName = beanName;
     }
 
     @Override
@@ -97,7 +97,7 @@ public abstract class BaseActivity<T extends ProcessContext<?>> implements Activ
     public void setAutomaticallyRegisterRollbackHandler(boolean automaticallyRegisterRollbackHandler) {
         this.automaticallyRegisterRollbackHandler = automaticallyRegisterRollbackHandler;
     }
-    
+
     @Override
     public int getOrder() {
         return order;

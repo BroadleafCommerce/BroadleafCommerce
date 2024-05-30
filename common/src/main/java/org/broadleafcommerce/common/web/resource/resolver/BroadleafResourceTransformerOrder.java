@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,15 +24,15 @@ import jakarta.annotation.PostConstruct;
 
 /**
  * Constants representing out of box Broadleaf Resource Transformer ordering.
- * 
- * Used by {@link BroadleafResourceHttpRequestHandler} which sorts resolvers that 
+ * <p>
+ * Used by {@link BroadleafResourceHttpRequestHandler} which sorts resolvers that
  * implement {@link Ordered} in its {@link PostConstruct} method.
- * 
- * @author bpolster
  *
+ * @author bpolster
  */
 public class BroadleafResourceTransformerOrder {
 
     public static int BLC_CACHE_RESOURCE_TRANSFORMER = 1000;
     public static int BLC_MINIFY_RESOURCE_TRANSFORMER = 10000;
+
 }

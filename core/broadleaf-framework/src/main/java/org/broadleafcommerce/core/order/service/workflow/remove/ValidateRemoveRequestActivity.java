@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,12 +30,12 @@ import jakarta.annotation.Resource;
 
 @Component("blValidateRemoveRequestActivity")
 public class ValidateRemoveRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
-    
+
     public static final int ORDER = 1000;
-    
+
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-    
+
     public ValidateRemoveRequestActivity() {
         setOrder(ORDER);
     }
@@ -54,7 +54,7 @@ public class ValidateRemoveRequestActivity extends BaseActivity<ProcessContext<C
         if (request.getOrder() == null) {
             throw new IllegalArgumentException("Order is required when updating item quantities");
         }
-        
+
         // Throw an exception if the user is trying to remove an order item that is part of a bundle
         OrderItem orderItem = null;
         for (OrderItem oi : request.getOrder().getOrderItems()) {
@@ -62,11 +62,11 @@ public class ValidateRemoveRequestActivity extends BaseActivity<ProcessContext<C
                 orderItem = oi;
             }
         }
-        
+
         if (orderItem == null) {
             throw new IllegalArgumentException("Could not find order item to remove");
         }
-        
+
         if (orderItem != null && orderItem instanceof DiscreteOrderItem) {
             DiscreteOrderItem doi = (DiscreteOrderItem) orderItem;
             if (doi.getBundleOrderItem() != null) {
@@ -74,8 +74,8 @@ public class ValidateRemoveRequestActivity extends BaseActivity<ProcessContext<C
             }
         }
         request.setOrderItem(orderItem);
-        
+
         return context;
     }
-    
+
 }

@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.service;
 
 import org.apache.commons.logging.Log;
@@ -43,8 +42,8 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 
 /**
- * Handles creating the various sitemap files. 
- * 
+ * Handles creating the various sitemap files.
+ *
  * @author bpolster
  */
 public class SiteMapBuilder {
@@ -54,11 +53,16 @@ public class SiteMapBuilder {
 
     protected SiteMapConfiguration siteMapConfig;
     protected SiteMapURLSetWrapper currentURLSetWrapper;
-    protected List<String> indexedFileNames = new ArrayList<String>();
+    protected List<String> indexedFileNames = new ArrayList<>();
     protected String baseUrl;
     protected boolean gzipSiteMapFiles = true;
 
-    public SiteMapBuilder(SiteMapConfiguration siteMapConfig, FileWorkArea fileWorkArea, String baseUrl, boolean gzipSiteMapFiles) {
+    public SiteMapBuilder(
+            SiteMapConfiguration siteMapConfig,
+            FileWorkArea fileWorkArea,
+            String baseUrl,
+            boolean gzipSiteMapFiles
+    ) {
         this.fileWorkArea = fileWorkArea;
         this.siteMapConfig = siteMapConfig;
         this.currentURLSetWrapper = new SiteMapURLSetWrapper();
@@ -68,7 +72,6 @@ public class SiteMapBuilder {
 
     /**
      * Returns the SiteMapURLSetWrapper that a Generator should use to add its next URL element.
-     * 
      */
     public void addUrl(SiteMapURLWrapper urlWrapper) {
         if (currentURLSetWrapper.getSiteMapUrlWrappers().size() >= siteMapConfig.getMaximumUrlEntriesPerFile()) {
@@ -79,9 +82,9 @@ public class SiteMapBuilder {
     }
 
     /**
-     * Method takes in a valid JAXB object (e.g. has a RootElement) and persists it to 
-     * the temporary directory associated with this builder. 
-     * 
+     * Method takes in a valid JAXB object (e.g. has a RootElement) and persists it to
+     * the temporary directory associated with this builder.
+     *
      * @param fileName
      */
     protected void persistXMLDocument(String fileName, Object xmlObject) {
@@ -114,8 +117,8 @@ public class SiteMapBuilder {
     }
 
     /**
-     * Save the passed in URL set to a new indexed file. 
-     * 
+     * Save the passed in URL set to a new indexed file.
+     *
      * @return
      */
     protected void persistIndexedURLSetWrapper(SiteMapURLSetWrapper urlSetWrapper) {
@@ -125,8 +128,8 @@ public class SiteMapBuilder {
     }
 
     /**
-     * Save the passed in URL set to a non-indexed file. 
-     * 
+     * Save the passed in URL set to a non-indexed file.
+     *
      * @return
      */
     protected void persistNonIndexedSiteMap() {
@@ -135,13 +138,13 @@ public class SiteMapBuilder {
     }
 
     /**
-     * Save the site map index file. 
-     * 
+     * Save the site map index file.
+     *
      * @return
      */
     protected void persistIndexedSiteMap() {
         String now = FormatUtil.formatDateUsingW3C(new Date());
-        
+
         // Save the leftover URL set
         persistIndexedURLSetWrapper(currentURLSetWrapper);
 
@@ -155,7 +158,7 @@ public class SiteMapBuilder {
             } else {
                 fileLoc = BroadleafFileUtils.appendUnixPaths(baseUrl, fileName);
             }
-            siteMapWrapper.setLoc(fileLoc)   ;         
+            siteMapWrapper.setLoc(fileLoc);
             siteMapWrapper.setLastmod(now);
             siteMapIndexWrapper.getSiteMapWrappers().add(siteMapWrapper);
         }
@@ -164,14 +167,13 @@ public class SiteMapBuilder {
             LOG.trace("Persisting sitemap.xml file for indexed site map ");
         }
         indexedFileNames.add(siteMapConfig.getIndexedSiteMapFileName());
-        persistXMLDocument(siteMapConfig.getIndexedSiteMapFileName(),
-                siteMapIndexWrapper);
+        persistXMLDocument(siteMapConfig.getIndexedSiteMapFileName(), siteMapIndexWrapper);
     }
 
     /**
      * Create the name of the indexed files.
      * For example, sitemap1.xml, sitemap2.xml, etc.
-     * 
+     *
      * @return
      */
     protected String createNextIndexedFileName() {

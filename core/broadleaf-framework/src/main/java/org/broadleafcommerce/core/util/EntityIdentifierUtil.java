@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,17 +25,17 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
 /**
- * Utility class that will search for the entity identifier property and/or property value 
- * @author dcolgrove
+ * Utility class that will search for the entity identifier property and/or property value
  *
+ * @author dcolgrove
  */
 public class EntityIdentifierUtil {
+
     protected static final Log LOG = LogFactory.getLog(EntityIdentifierUtil.class);
 
-    
     /**
      * Determine the field name with the @id annotation (jakarta.persistence.Id)
-     * 
+     *
      * @param entity Object reference of the entity/bean where the property is to be searched
      * @return String representing the field name or null if the entity does not have an @Id annotation
      */
@@ -45,7 +45,7 @@ public class EntityIdentifierUtil {
 
     /**
      * Determine the field name with the @id annotation (jakarta.persistence.Id)
-     * 
+     *
      * @param clazz Class reference of the entity/bean where the property is to be searched
      * @return String representing the field name or null if the entity does not have an @Id annotation
      */
@@ -57,10 +57,9 @@ public class EntityIdentifierUtil {
         return null;
     }
 
-   
     /**
      * Given the entity, finds the identifier property and returns the associated value
-     * 
+     *
      * @param entity Object reference of the entity/bean where the property is to be searched
      * @return a Serializable instance of the value
      */
@@ -74,8 +73,8 @@ public class EntityIdentifierUtil {
 
     /**
      * Given the entity and specific field name, returns the value of that field.
-     * 
-     * @param entity Object reference of the entity/bean where the property is to be searched
+     *
+     * @param entity              Object reference of the entity/bean where the property is to be searched
      * @param primaryKeyFieldName the name of the field where the value will be taken
      * @return a Serializable instance of the value
      */
@@ -85,7 +84,7 @@ public class EntityIdentifierUtil {
             try {
                 field.setAccessible(true);
                 Object fieldValue = field.get(entity);
-                if (fieldValue != null ) {
+                if (fieldValue != null) {
                     return (Serializable) fieldValue;
                 }
             } catch (Exception e) {
@@ -98,16 +97,16 @@ public class EntityIdentifierUtil {
     /**
      * Determine the Reflection Field with the @id annotation (jakarta.persistence.Id)
      * This assumes the @Id annotation will be on the property
-     * 
+     *
      * @param clazz Object reference of the entity/bean where the property is to be searched
      * @return String representing the field name or null if the entity does not have an @Id annotation
      */
     protected Field findIdentifierField(Class<?> clazz) {
         Field fields[] = clazz.getDeclaredFields();
-        for( Field field : fields ) {
+        for (Field field : fields) {
             Annotation annotations[] = field.getDeclaredAnnotations();
-            for( Annotation annotation : annotations ) {
-                if( annotation instanceof jakarta.persistence.Id )
+            for (Annotation annotation : annotations) {
+                if (annotation instanceof jakarta.persistence.Id)
                     return field;
             }
         }
@@ -117,4 +116,5 @@ public class EntityIdentifierUtil {
         }
         return null; //no field found 
     }
+
 }

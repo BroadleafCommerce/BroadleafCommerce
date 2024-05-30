@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,7 +41,6 @@ import javax.cache.CacheManager;
 
 import jakarta.annotation.Resource;
 
-
 /**
  * Created by bpolster.
  */
@@ -52,18 +51,18 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     //This is just a placeholder object to allow us to cache a URI that does not have a URL handler.
     protected static final NullURLHandler NULL_URL_HANDLER = new NullURLHandler();
     private static final Log LOG = LogFactory.getLog(URLHandlerServiceImpl.class);
-    protected Cache<String,URLHandler> urlHandlerCache;
+    protected Cache<String, URLHandler> urlHandlerCache;
 
     @Resource(name = "blURLHandlerDao")
     protected URLHandlerDao urlHandlerDao;
 
     @Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
-    
+
     @Resource(name = "blCacheManager")
     protected CacheManager cacheManager;
 
-    protected Map<String, Pattern> urlPatternMap = new EfficientLRUMap<String, Pattern>(2000);
+    protected Map<String, Pattern> urlPatternMap = new EfficientLRUMap<>(2000);
 
     /**
      * Checks the passed in URL to determine if there is a matching URLHandler.
@@ -197,8 +196,8 @@ public class URLHandlerServiceImpl implements URLHandlerService {
     }
 
     /*
-     * Some clients may wish, for example, to convert the URI into all lower case, or to manipulate it in some way.  This 
-     * is just a convenience method to allow the manipulation of the URI coming in that we are trying to 
+     * Some clients may wish, for example, to convert the URI into all lower case, or to manipulate it in some way.  This
+     * is just a convenience method to allow the manipulation of the URI coming in that we are trying to
      * find a match for.
      */
     protected String manipulateUri(String uri) {
@@ -210,7 +209,7 @@ public class URLHandlerServiceImpl implements URLHandlerService {
         return getUrlHandlerCache().get(key);
     }
 
-    protected Cache<String,URLHandler> getUrlHandlerCache() {
+    protected Cache<String, URLHandler> getUrlHandlerCache() {
         if (urlHandlerCache == null) {
             urlHandlerCache = cacheManager.getCache("cmsUrlHandlerCache");
         }
@@ -245,4 +244,5 @@ public class URLHandlerServiceImpl implements URLHandlerService {
 
         return incomingUrl;
     }
+
 }

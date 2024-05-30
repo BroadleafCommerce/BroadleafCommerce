@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,24 +29,27 @@ public interface BroadleafCurrencyDao {
 
     /**
      * Returns the default Broadleaf currency
+     *
      * @return The default currency
      */
-    public BroadleafCurrency findDefaultBroadleafCurrency();
+    BroadleafCurrency findDefaultBroadleafCurrency();
 
     /**
      * Returns a Broadleaf currency found by a code
+     *
      * @return The currency
      */
-    public BroadleafCurrency findCurrencyByCode(String currencyCode);
+    BroadleafCurrency findCurrencyByCode(String currencyCode);
 
     /**
      * Returns a list of all the Broadleaf Currencies
+     *
      * @return List of currencies
      */
-    public List<BroadleafCurrency> getAllCurrencies();
+    List<BroadleafCurrency> getAllCurrencies();
 
-    public BroadleafCurrency save(BroadleafCurrency currency);
-    
-    public BroadleafCurrency create();    
+    BroadleafCurrency save(BroadleafCurrency currency);
+
+    BroadleafCurrency create();
 
 }

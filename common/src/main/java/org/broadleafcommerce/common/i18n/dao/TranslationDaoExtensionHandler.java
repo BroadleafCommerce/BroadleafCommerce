@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,23 +23,21 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
 import jakarta.persistence.EntityManager;
 
-
 /**
  * @author Andre Azzolini (apazzolini)
  */
 public interface TranslationDaoExtensionHandler extends ExtensionHandler {
-    
+
     /**
      * If there is a different id that should be used for a translation lookup instead of the given entityId,
      * the handler should place the result in the {@link ExtensionResultHolder} argument.
-     * 
+     *
      * @param erh
      * @param em
      * @param clazz
      * @param entityId
      * @return the status of the call to the given extension handler
      */
-    public ExtensionResultStatusType overrideRequestedId(ExtensionResultHolder erh, EntityManager em, 
-            Class<?> clazz, Long entityId);
+    ExtensionResultStatusType overrideRequestedId(ExtensionResultHolder erh, EntityManager em, Class<?> clazz, Long entityId);
 
 }

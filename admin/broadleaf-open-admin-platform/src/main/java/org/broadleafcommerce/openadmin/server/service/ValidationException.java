@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,36 +21,38 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 
+import java.io.Serial;
 
 /**
  * Thrown when an entity fails validation when attempting to populate an actual Hibernate entity based on its DTO
  * representation
  *
- * @see {@link RecordHelper#createPopulatedInstance(java.io.Serializable, Entity, java.util.Map, Boolean)}
  * @author Phillip Verheyden (phillipuniverse)
+ * @see {@link RecordHelper#createPopulatedInstance(java.io.Serializable, Entity, java.util.Map, Boolean)}
  */
 public class ValidationException extends ServiceException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     protected Entity entity;
 
     public ValidationException(Entity entity) {
         super();
         setEntity(entity);
     }
-    
+
     public ValidationException(Entity entity, String message) {
         super(message);
         setEntity(entity);
     }
-    
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-    
+
     public Entity getEntity() {
         return entity;
     }
-    
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
 }

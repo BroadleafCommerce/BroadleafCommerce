@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,11 +35,21 @@ public class DefaultJCacheConfigurationBuilder implements JCacheConfigurationBui
 
     @Override
     public Configuration buildConfiguration(JCacheRegionConfiguration regionInformation) {
-        return buildConfiguration(regionInformation.getTtlSeconds(), regionInformation.getMaxElementsInMemory(), regionInformation.getKey(), regionInformation.getValue());
+        return buildConfiguration(
+                regionInformation.getTtlSeconds(),
+                regionInformation.getMaxElementsInMemory(),
+                regionInformation.getKey(),
+                regionInformation.getValue()
+        );
     }
 
     @Override
-    public <K, V> Configuration<K, V> buildConfiguration(int ttlSeconds, int maxElementsInMemory, Class<K> keyClass, Class<V> valueClass) {
+    public <K, V> Configuration<K, V> buildConfiguration(
+            int ttlSeconds,
+            int maxElementsInMemory,
+            Class<K> keyClass,
+            Class<V> valueClass
+    ) {
         final Factory<ExpiryPolicy> expiryPolicy;
         if (ttlSeconds < 0) {
             //Eternal

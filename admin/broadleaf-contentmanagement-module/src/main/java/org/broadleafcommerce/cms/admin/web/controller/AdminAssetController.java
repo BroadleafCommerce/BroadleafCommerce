@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -48,20 +48,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Handles admin operations for the {@link Asset} entity. This is mostly to support displaying image assets inline 
+ * Handles admin operations for the {@link Asset} entity. This is mostly to support displaying image assets inline
  * in listgrids.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Controller("blAdminAssetController")
 @RequestMapping("/" + AdminAssetController.SECTION_KEY)
 public class AdminAssetController extends AdminBasicEntityController {
-    
+
     public static final String SECTION_KEY = "assets";
-    
+
     @Resource(name = "blAssetFormBuilderService")
     protected AssetFormBuilderService formService;
-    
+
     @Resource(name = "blStaticAssetService")
     protected StaticAssetService staticAssetService;
 
@@ -70,7 +70,7 @@ public class AdminAssetController extends AdminBasicEntityController {
 
     @Resource(name = "blStaticAssetMultiTenantExtensionManager")
     protected StaticAssetMultiTenantExtensionManager staticAssetExtensionManager;
-    
+
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
         //allow external links to work for ToOne items
@@ -79,15 +79,15 @@ public class AdminAssetController extends AdminBasicEntityController {
         }
         return SECTION_KEY;
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String viewEntityList(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
+                                 @PathVariable Map<String, String> pathVars,
+                                 @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         String returnPath = super.viewEntityList(request, response, model, pathVars, requestParams);
-        
+
         // Remove the default add button and replace it with an upload asset button
         List<EntityFormAction> mainActions = (List<EntityFormAction>) model.asMap().get("mainActions");
         Iterator<EntityFormAction> actions = mainActions.iterator();
@@ -105,7 +105,7 @@ public class AdminAssetController extends AdminBasicEntityController {
 
         // Change the listGrid view to one that has a hidden form for uploading the image.
         model.addAttribute("viewType", "entityListWithUploadForm");
-        
+
         ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
         formService.addImageThumbnailField(listGrid, "fullUrl");
 
@@ -115,8 +115,8 @@ public class AdminAssetController extends AdminBasicEntityController {
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @PathVariable(value="id") String id) throws Exception {
+                                 @PathVariable Map<String, String> pathVars,
+                                 @PathVariable(value = "id") String id) throws Exception {
         Site currentSite = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
 
         model.addAttribute("cmsUrlPrefix", staticAssetService.getStaticAssetUrlPrefix());
@@ -126,20 +126,20 @@ public class AdminAssetController extends AdminBasicEntityController {
 
         return returnPath;
     }
-    
+
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
     public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @PathVariable(value="id") String id,
-            @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result,
-            RedirectAttributes ra) throws Exception {
+                             @PathVariable Map<String, String> pathVars,
+                             @PathVariable(value = "id") String id,
+                             @ModelAttribute(value = "entityForm") EntityForm entityForm, BindingResult result,
+                             RedirectAttributes ra) throws Exception {
         String templatePath = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
 
         if (result.hasErrors()) {
             model.addAttribute("cmsUrlPrefix", staticAssetService.getStaticAssetUrlPrefix());
         }
-        
+
         return templatePath;
     }
 

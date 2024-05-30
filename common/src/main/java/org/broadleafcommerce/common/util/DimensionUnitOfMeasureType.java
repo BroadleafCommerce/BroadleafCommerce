@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,30 +19,26 @@ package org.broadleafcommerce.common.util;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of units of measure types.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class DimensionUnitOfMeasureType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, DimensionUnitOfMeasureType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, DimensionUnitOfMeasureType> TYPES = new LinkedHashMap<String, DimensionUnitOfMeasureType>();
-
-    public static final DimensionUnitOfMeasureType CENTIMETERS  = new DimensionUnitOfMeasureType("CENTIMETERS", "Centimeters");
-    public static final DimensionUnitOfMeasureType METERS  = new DimensionUnitOfMeasureType("METERS", "Meters");
-    public static final DimensionUnitOfMeasureType INCHES  = new DimensionUnitOfMeasureType("INCHES", "Inches");
-    public static final DimensionUnitOfMeasureType FEET  = new DimensionUnitOfMeasureType("FEET", "Feet");
-
-    public static DimensionUnitOfMeasureType getInstance(final String type) {
-        return TYPES.get(type);
-    }
+    public static final DimensionUnitOfMeasureType CENTIMETERS = new DimensionUnitOfMeasureType("CENTIMETERS", "Centimeters");
+    public static final DimensionUnitOfMeasureType METERS = new DimensionUnitOfMeasureType("METERS", "Meters");
+    public static final DimensionUnitOfMeasureType INCHES = new DimensionUnitOfMeasureType("INCHES", "Inches");
+    public static final DimensionUnitOfMeasureType FEET = new DimensionUnitOfMeasureType("FEET", "Feet");
 
     private String type;
     private String friendlyType;
@@ -56,19 +52,23 @@ public class DimensionUnitOfMeasureType implements Serializable, BroadleafEnumer
         setType(type);
     }
 
+    public static DimensionUnitOfMeasureType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
-        if (!TYPES.containsKey(type)){
+        if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -95,4 +95,5 @@ public class DimensionUnitOfMeasureType implements Serializable, BroadleafEnumer
             return false;
         return true;
     }
+
 }

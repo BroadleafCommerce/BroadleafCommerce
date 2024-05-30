@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,8 @@ import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,16 +36,42 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 /**
- * 
  * @author jfischer
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CREDIT_CARD_PAYMENT", indexes = {@Index(name = "CREDITCARD_INDEX", columnList = "REFERENCE_NUMBER")})
 public class CreditCardPaymentInfoImpl implements CreditCardPayment {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    @Transient
+    protected EncryptionModule encryptionModule;
+    @Id
+    @GeneratedValue(generator = "CreditCardPaymentId")
+    @GenericGenerator(
+            name = "CreditCardPaymentId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CreditCardPaymentInfoImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl")
+            }
+    )
+    @Column(name = "PAYMENT_ID")
+    protected Long id;
+    @Column(name = "REFERENCE_NUMBER", nullable = false)
+    protected String referenceNumber;
+    @Column(name = "PAN", nullable = false)
+    protected String pan;
+    @Column(name = "EXPIRATION_MONTH", nullable = false)
+    protected Integer expirationMonth;
+    @Column(name = "EXPIRATION_YEAR", nullable = false)
+    protected Integer expirationYear;
+    @Column(name = "NAME_ON_CARD", nullable = false)
+    protected String nameOnCard;
+    @Transient
+    protected String cvvCode;
 
     /**
      * Rather than constructing directly, use {@link SecureOrderPaymentService#create(org.broadleafcommerce.core.payment.service.type.PaymentType)}
@@ -53,40 +81,6 @@ public class CreditCardPaymentInfoImpl implements CreditCardPayment {
         //do not allow direct instantiation -- must at least be package private for bytecode instrumentation
         //this complies with JPA specification requirements for entity construction
     }
-
-    @Transient
-    protected EncryptionModule encryptionModule;
-
-    @Id
-    @GeneratedValue(generator = "CreditCardPaymentId")
-    @GenericGenerator(
-            name="CreditCardPaymentId",
-            type= IdOverrideTableGenerator.class,
-            parameters = {
-                @Parameter(name="segment_value", value="CreditCardPaymentInfoImpl"),
-                @Parameter(name="entity_name", value="org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfoImpl")
-            }
-        )
-    @Column(name = "PAYMENT_ID")
-    protected Long id;
-
-    @Column(name = "REFERENCE_NUMBER", nullable=false)
-    protected String referenceNumber;
-
-    @Column(name = "PAN", nullable=false)
-    protected String pan;
-
-    @Column(name = "EXPIRATION_MONTH", nullable=false)
-    protected Integer expirationMonth;
-
-    @Column(name = "EXPIRATION_YEAR", nullable=false)
-    protected Integer expirationYear;
-
-    @Column(name = "NAME_ON_CARD", nullable=false)
-    protected String nameOnCard;
-
-    @Transient
-    protected String cvvCode;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#getId()
@@ -169,16 +163,16 @@ public class CreditCardPaymentInfoImpl implements CreditCardPayment {
     }
 
     /* (non-Javadoc)
-    * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#getNameOnCard()
-    */
+     * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#getNameOnCard()
+     */
     @Override
     public String getNameOnCard() {
         return nameOnCard;
     }
 
     /* (non-Javadoc)
-    * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#setNameOnCard(java.lang.String)
-    */
+     * @see org.broadleafcommerce.profile.payment.secure.domain.CreditCardPaymentInfo#setNameOnCard(java.lang.String)
+     */
     @Override
     public void setNameOnCard(String nameOnCard) {
         this.nameOnCard = nameOnCard;

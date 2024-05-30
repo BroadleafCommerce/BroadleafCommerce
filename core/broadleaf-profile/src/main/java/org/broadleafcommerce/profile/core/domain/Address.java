@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,177 +24,182 @@ import java.io.Serializable;
 
 public interface Address extends Serializable, MultiTenantCloneable<Address> {
 
-    public void setId(Long id);
+    Long getId();
 
-    public Long getId();
+    void setId(Long id);
 
-    public void setAddressLine1(String addressLine1);
+    String getAddressLine1();
 
-    public String getAddressLine1();
+    void setAddressLine1(String addressLine1);
 
-    public void setAddressLine2(String addressLine2);
+    String getAddressLine2();
 
-    public String getAddressLine2();
+    void setAddressLine2(String addressLine2);
 
-    public void setAddressLine3(String addressLine3);
+    String getAddressLine3();
 
-    public String getAddressLine3();
+    void setAddressLine3(String addressLine3);
 
-    public void setCity(String city);
+    String getCity();
 
-    public String getCity();
-
+    void setCity(String city);
 
     /**
      * gets the ISO 3166-2 code for the country subdivision (state/region/province) where this address resides
+     *
      * @return - the code
      */
-    public String getIsoCountrySubdivision();
+    String getIsoCountrySubdivision();
 
     /**
      * sets the ISO 3166-2 code for the country subdivision (state/region/province) where this address resides
+     *
      * @param isoCountrySubdivision - ISO 3166-2 country subdivision code
      */
-    public void setIsoCountrySubdivision(String isoCountrySubdivision);
+    void setIsoCountrySubdivision(String isoCountrySubdivision);
 
     /**
      * @return - a friendly name indicating a countries subdivision, i.e. State, Province, Region etc...
      */
-    public String getStateProvinceRegion();
+    String getStateProvinceRegion();
 
     /**
      * sets the friendly name indicating a countries subdivision, i.e. State, Province, Region etc...
+     *
      * @param stateProvinceRegion - friendly name
      */
-    public void setStateProvinceRegion(String stateProvinceRegion);
+    void setStateProvinceRegion(String stateProvinceRegion);
 
-    public void setPostalCode(String postalCode);
+    String getPostalCode();
 
-    public String getPostalCode();
+    void setPostalCode(String postalCode);
 
-    public String getCounty();
+    String getCounty();
 
-    public void setCounty(String county);
+    void setCounty(String county);
 
-    public String getZipFour();
+    String getZipFour();
 
-    public void setZipFour(String zipFour);
+    void setZipFour(String zipFour);
 
     /**
      * gets the ISO 3166-1 alpha-2 code for the country where this address resides
+     *
      * @return - the ISOCountry representation of the code
      */
-    public ISOCountry getIsoCountryAlpha2();
+    ISOCountry getIsoCountryAlpha2();
 
     /**
      * sets the ISO 3166-1 alpha-2 code for the country where this address resides
+     *
      * @param isoCountryAlpha2 - ISO 3166-1 alpha-2 code
      */
-    public void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2);
+    void setIsoCountryAlpha2(ISOCountry isoCountryAlpha2);
 
-    public String getTokenizedAddress();
+    String getTokenizedAddress();
 
-    public void setTokenizedAddress(String tAddress);
+    void setTokenizedAddress(String tAddress);
 
-    public Boolean getStandardized();
+    Boolean getStandardized();
 
-    public void setStandardized(Boolean standardized);
+    void setStandardized(Boolean standardized);
 
-    public String getCompanyName();
+    String getCompanyName();
 
-    public void setCompanyName(String companyName);
+    void setCompanyName(String companyName);
 
-    public boolean isDefault();
+    boolean isDefault();
 
-    public void setDefault(boolean isDefault);
+    void setDefault(boolean isDefault);
 
-    public String getFirstName();
+    String getFirstName();
 
-    public void setFirstName(String firstName);
+    void setFirstName(String firstName);
 
-    public String getLastName();
+    String getLastName();
 
-    public void setLastName(String lastName);
+    void setLastName(String lastName);
 
-    public String getFullName();
+    String getFullName();
 
-    public void setFullName(String fullName);
+    void setFullName(String fullName);
 
     /**
+     * @see {@link Phone}
      * @deprecated Should use {@link #getPhonePrimary()} instead
-     * @see {@link Phone}
      */
     @Deprecated
-    public String getPrimaryPhone();
+    String getPrimaryPhone();
 
     /**
+     * @see {@link Phone}
      * @deprecated Should use {@link #setPhonePrimary(Phone)} instead
-     * @see {@link Phone}
      */
     @Deprecated
-    public void setPrimaryPhone(String primaryPhone);
+    void setPrimaryPhone(String primaryPhone);
 
     /**
+     * @see {@link Phone}
      * @deprecated Should use {@link #getPhoneSecondary()} instead
-     * @see {@link Phone}
      */
     @Deprecated
-    public String getSecondaryPhone();
+    String getSecondaryPhone();
 
     /**
+     * @see {@link Phone}
      * @deprecated Should use {@link #setPhoneSecondary(Phone)} instead
-     * @see {@link Phone}
      */
     @Deprecated
-    public void setSecondaryPhone(String secondaryPhone);
+    void setSecondaryPhone(String secondaryPhone);
 
     /**
+     * @see {@link Phone}
      * @deprecated Should use {@link #getPhoneFax()} instead
-     * @see {@link Phone}
      */
     @Deprecated
-    public String getFax();
+    String getFax();
 
     /**
-     * @deprecated Should use {@link #setPhoneFax(Phone)} instead
      * @see {@link Phone}
+     * @deprecated Should use {@link #setPhoneFax(Phone)} instead
      */
     @Deprecated
-    public void setFax(String fax);
+    void setFax(String fax);
 
-    public Phone getPhonePrimary();
+    Phone getPhonePrimary();
 
-    public void setPhonePrimary(Phone phonePrimary);
+    void setPhonePrimary(Phone phonePrimary);
 
-    public Phone getPhoneSecondary();
+    Phone getPhoneSecondary();
 
-    public void setPhoneSecondary(Phone phoneSecondary);
-    
-    public Phone getPhoneFax();
+    void setPhoneSecondary(Phone phoneSecondary);
 
-    public void setPhoneFax(Phone phone);
+    Phone getPhoneFax();
 
-    public String getEmailAddress();
+    void setPhoneFax(Phone phone);
 
-    public void setEmailAddress(String emailAddress);
+    String getEmailAddress();
 
-    public boolean isBusiness();
+    void setEmailAddress(String emailAddress);
 
-    public void setBusiness(boolean isBusiness);
+    boolean isBusiness();
 
-    public boolean isStreet();
+    void setBusiness(boolean isBusiness);
 
-    public void setStreet(boolean isStreet);
+    boolean isStreet();
 
-    public boolean isMailing();
+    void setStreet(boolean isStreet);
 
-    public void setMailing(boolean isMailing);
+    boolean isMailing();
 
-    public String getVerificationLevel();
+    void setMailing(boolean isMailing);
 
-    public void setVerificationLevel(String verificationLevel);
+    String getVerificationLevel();
 
-    public boolean isActive();
+    void setVerificationLevel(String verificationLevel);
 
-    public void setActive(boolean isActive);
+    boolean isActive();
+
+    void setActive(boolean isActive);
+
 }

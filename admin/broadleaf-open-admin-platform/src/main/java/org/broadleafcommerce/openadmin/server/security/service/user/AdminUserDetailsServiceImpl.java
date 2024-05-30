@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,14 +41,12 @@ import jakarta.annotation.Resource;
 @Component("blAdminUserDetailsService")
 public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
-    @Resource(name="blAdminUserDao")
-    protected AdminUserDao adminUserDao;
-
-    @Resource(name="blAdminSecurityHelper")
-    protected AdminSecurityHelper adminSecurityHelper;
-
     public static final String LEGACY_ROLE_PREFIX = "PERMISSION_";
     public static final String DEFAULT_SPRING_SECURITY_ROLE_PREFIX = "ROLE_";
+    @Resource(name = "blAdminUserDao")
+    protected AdminUserDao adminUserDao;
+    @Resource(name = "blAdminSecurityHelper")
+    protected AdminSecurityHelper adminSecurityHelper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
@@ -59,7 +57,7 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
 
         return buildDetails(username, adminUser);
     }
-    
+
     protected UserDetails buildDetails(final String username, final AdminUser adminUser) {
         final List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
@@ -70,19 +68,15 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
         return createDetails(username, adminUser, authorities);
     }
 
-    protected void addRoles(final AdminUser adminUser,
-            final List<SimpleGrantedAuthority> authorities) {
+    protected void addRoles(final AdminUser adminUser, final List<SimpleGrantedAuthority> authorities) {
         for (final AdminRole role : adminUser.getAllRoles()) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
-            adminSecurityHelper
-                    .addAllPermissionsToAuthorities(authorities, role.getAllPermissions());
+            adminSecurityHelper.addAllPermissionsToAuthorities(authorities, role.getAllPermissions());
         }
     }
 
-    protected void addPermissions(final AdminUser adminUser,
-            final List<SimpleGrantedAuthority> authorities) {
-        adminSecurityHelper
-                .addAllPermissionsToAuthorities(authorities, adminUser.getAllPermissions());
+    protected void addPermissions(final AdminUser adminUser, final List<SimpleGrantedAuthority> authorities) {
+        adminSecurityHelper.addAllPermissionsToAuthorities(authorities, adminUser.getAllPermissions());
 
         for (final String perm : AdminSecurityService.DEFAULT_PERMISSIONS) {
             authorities.add(new SimpleGrantedAuthority(perm));
@@ -102,17 +96,30 @@ public class AdminUserDetailsServiceImpl implements UserDetailsService {
             final SimpleGrantedAuthority auth = it.next();
 
             if (auth.getAuthority().startsWith(LEGACY_ROLE_PREFIX)) {
-                it.add(new SimpleGrantedAuthority(DEFAULT_SPRING_SECURITY_ROLE_PREFIX
-                        + auth.getAuthority()));
-                it.add(new SimpleGrantedAuthority(auth.getAuthority()
-                        .replaceAll(LEGACY_ROLE_PREFIX, DEFAULT_SPRING_SECURITY_ROLE_PREFIX)));
+                it.add(new SimpleGrantedAuthority(DEFAULT_SPRING_SECURITY_ROLE_PREFIX + auth.getAuthority()));
+                it.add(new SimpleGrantedAuthority(
+                        auth.getAuthority()
+                                .replaceAll(LEGACY_ROLE_PREFIX, DEFAULT_SPRING_SECURITY_ROLE_PREFIX)
+                ));
             }
         }
     }
-    
-    protected UserDetails createDetails(final String username, final AdminUser adminUser, 
-            final List<SimpleGrantedAuthority> authorities) {
-        return new AdminUserDetails(adminUser.getId(), username, 
-                adminUser.getPassword(), true, true, true, true, authorities);
+
+    protected UserDetails createDetails(
+            final String username,
+            final AdminUser adminUser,
+            final List<SimpleGrantedAuthority> authorities
+    ) {
+        return new AdminUserDetails(
+                adminUser.getId(),
+                username,
+                adminUser.getPassword(),
+                true,
+                true,
+                true,
+                true,
+                authorities
+        );
     }
+
 }

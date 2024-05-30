@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,6 +34,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 
-
 /**
  * @deprecated instead, use the ProductType Module's Product Add-Ons to build and configure bundles
  */
@@ -55,10 +55,10 @@ import jakarta.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_BUNDLE")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
-        friendlyName = "ProductImpl_bundleProduct")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "ProductImpl_bundleProduct")
 public class ProductBundleImpl extends ProductImpl implements ProductBundle {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Column(name = "PRICING_MODEL")
@@ -84,19 +84,17 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
     protected Boolean bundlePromotable = false;
 
     @Column(name = "BUNDLE_PRIORITY")
-    @AdminPresentation(excluded = true, friendlyName = "productBundlePriority",
-            group = "productBundleGroup")
+    @AdminPresentation(excluded = true, friendlyName = "productBundlePriority", group = "productBundleGroup")
     protected Integer priority = 99;
 
-    @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class,
-            cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "bundle", targetEntity = SkuBundleItemImpl.class, cascade = {CascadeType.ALL})
     @OrderBy(value = "sequence")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "skuBundleItemsTitle",
             sortProperty = "sequence",
             tab = TabName.General)
-    protected List<SkuBundleItem> skuBundleItems = new ArrayList<SkuBundleItem>();
+    protected List<SkuBundleItem> skuBundleItems = new ArrayList<>();
 
     @Override
     public boolean isOnSale() {
@@ -241,7 +239,6 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
                                 .multiply(skuBundleItem.getQuantity()));
                     }
                 }
-
             }
 
             if (ProductBundlePricingModelType.BUNDLE.equals(getPricingModel())) {
@@ -253,17 +250,13 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
             }
 
             return totalNormalPrice.subtract(totalBundlePrice).getAmount();
-
         }
 
         return BigDecimal.ZERO;
-
     }
 
     @Override
-    public CreateResponse<ProductBundle> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
-            throws
-            CloneNotSupportedException {
+    public CreateResponse<ProductBundle> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<ProductBundle> createResponse = super.createOrRetrieveCopyInstance(context);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -312,4 +305,5 @@ public class ProductBundleImpl extends ProductImpl implements ProductBundle {
                 .append(skuBundleItems)
                 .toHashCode();
     }
+
 }

@@ -10,12 +10,38 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.site.domain;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
+import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
+import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
+import org.broadleafcommerce.common.locale.domain.Locale;
+import org.broadleafcommerce.common.locale.domain.LocaleImpl;
+import org.broadleafcommerce.common.persistence.ArchiveStatus;
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.presentation.AdminPresentation;
+import org.broadleafcommerce.common.presentation.RequiredOverride;
+import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,31 +57,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
-import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.locale.domain.Locale;
-import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.RequiredOverride;
-import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by bpolster.
@@ -71,37 +72,38 @@ import java.util.List;
 })
 public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(SiteImpl.class);
 
     @Id
     @GeneratedValue(generator = "SiteId")
     @GenericGenerator(
-        name="SiteId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="SiteImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.common.site.domain.SiteImpl")
-        }
+            name = "SiteId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "SiteImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.site.domain.SiteImpl")
+            }
     )
     @Column(name = "SITE_ID")
     protected Long id;
 
-    @Column (name = "NAME")
+    @Column(name = "NAME")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Name", order = 1000,
             gridOrder = 1, prominent = true, requiredOverride = RequiredOverride.REQUIRED, translatable = true, group = GroupName.General)
     protected String name;
 
-    @Column (name = "SITE_IDENTIFIER_TYPE")
+    @Column(name = "SITE_IDENTIFIER_TYPE")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Type", order = 2000,
             gridOrder = 2, prominent = true,
-            broadleafEnumeration = "org.broadleafcommerce.common.site.service.type.SiteResolutionType", requiredOverride=RequiredOverride.REQUIRED,
+            broadleafEnumeration = "org.broadleafcommerce.common.site.service.type.SiteResolutionType", requiredOverride = RequiredOverride.REQUIRED,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION, group = GroupName.General)
     protected String siteIdentifierType;
 
-    @Column (name = "SITE_IDENTIFIER_VALUE")
+    @Column(name = "SITE_IDENTIFIER_VALUE")
     @AdminPresentation(friendlyName = "SiteImpl_Site_Identifier_Value", order = 3000,
-            gridOrder = 3, prominent = true, requiredOverride=RequiredOverride.REQUIRED, group = GroupName.General)
+            gridOrder = 3, prominent = true, requiredOverride = RequiredOverride.REQUIRED, group = GroupName.General)
     protected String siteIdentifierValue;
 
     @Column(name = "DEACTIVATED")
@@ -109,18 +111,18 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
             gridOrder = 4, excluded = false,
             defaultValue = "false", group = GroupName.General)
     protected Boolean deactivated = false;
-    
+
     @ManyToMany(targetEntity = CatalogImpl.class, cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(name = "BLC_SITE_CATALOG", joinColumns = @JoinColumn(name = "SITE_ID"), inverseJoinColumns = @JoinColumn(name = "CATALOG_ID"))
     @BatchSize(size = 50)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blSiteElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSiteElements")
     @AdminPresentation(excluded = true)
-    protected List<Catalog> catalogs = new ArrayList<Catalog>();
+    protected List<Catalog> catalogs = new ArrayList<>();
 
     @ManyToOne(targetEntity = LocaleImpl.class)
     @JoinColumn(name = "DEFAULT_LOCALE")
     @AdminPresentation(friendlyName = "SiteImpl_Default_Locale", order = 3500, gridOrder = 5,
-        prominent = true, fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY)
+            prominent = true, fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY)
     protected Locale defaultLocale;
 
     /**************************************************/
@@ -132,7 +134,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
 
     @Embedded
     protected ArchiveStatus archiveStatus = new ArchiveStatus();
-    
+
     @Override
     public Long getId() {
         return id;
@@ -205,23 +207,23 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
 
     @Override
     public Character getArchived() {
-       ArchiveStatus temp;
-       if (archiveStatus == null) {
-           temp = new ArchiveStatus();
-       } else {
-           temp = archiveStatus;
-       }
-       return temp.getArchived();
+        ArchiveStatus temp;
+        if (archiveStatus == null) {
+            temp = new ArchiveStatus();
+        } else {
+            temp = archiveStatus;
+        }
+        return temp.getArchived();
     }
 
     @Override
     public void setArchived(Character archived) {
-       if (archiveStatus == null) {
-           archiveStatus = new ArchiveStatus();
-       }
-       archiveStatus.setArchived(archived);
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
     }
-    
+
     @Override
     public ArchiveStatus getArchiveStatus() {
         return archiveStatus;
@@ -233,11 +235,11 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
             if (isDeactivated()) {
                 LOG.debug("site, " + id + ", inactive due to deactivated property");
             }
-            if ('Y'==getArchived()) {
+            if ('Y' == getArchived()) {
                 LOG.debug("site, " + id + ", inactive due to archived status");
             }
         }
-        return !isDeactivated() && 'Y'!=getArchived();
+        return !isDeactivated() && 'Y' != getArchived();
     }
 
     @Override
@@ -253,7 +255,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     public void setDeactivated(boolean deactivated) {
         this.deactivated = deactivated;
     }
-    
+
     @Override
     public boolean isTemplateSite() {
         return false;
@@ -261,7 +263,8 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
 
     public void checkCloneable(Site site) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = site.getClass().getMethod("clone");
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !site.getClass().getName().startsWith("org.broadleafcommerce")) {
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
+                && !site.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone.");
         }
@@ -275,7 +278,8 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
             try {
                 checkCloneable(clone);
             } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: "
+                        + clone.getClass().getName(), e);
             }
             clone.setId(id);
             clone.setName(name);
@@ -310,5 +314,6 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
 }
 

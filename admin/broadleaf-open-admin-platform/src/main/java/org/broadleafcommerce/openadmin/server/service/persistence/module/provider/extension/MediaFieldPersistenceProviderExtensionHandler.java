@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,16 +31,18 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
  */
 public interface MediaFieldPersistenceProviderExtensionHandler extends ExtensionHandler {
 
+    int DEFAULT_PRIORITY = Integer.MAX_VALUE;
+
     ExtensionResultStatusType transformId(Media media, ExtensionResultHolder<Long> resultHolder);
 
     ExtensionResultStatusType postAdd(Media media);
 
     ExtensionResultStatusType postUpdate(Media media);
 
-    ExtensionResultStatusType retrieveMedia(Object instance, PopulateValueRequest request, ExtensionResultHolder<Tuple<Media, Boolean>> resultHolder);
+    ExtensionResultStatusType retrieveMedia(
+            Object instance, PopulateValueRequest request, ExtensionResultHolder<Tuple<Media, Boolean>> resultHolder
+    );
 
     ExtensionResultStatusType checkDirtyState(Media oldMedia, Media newMedia, ExtensionResultHolder<Boolean> resultHolder);
-
-    public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 
 }

@@ -10,15 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.sandbox.service;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.sandbox.dao.SandBoxDao;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
@@ -36,34 +34,31 @@ import jakarta.annotation.Resource;
 
 @Service(value = "blSandBoxService")
 public class SandBoxServiceImpl implements SandBoxService {
-    
-    private static final Log LOG = LogFactory.getLog(SandBoxServiceImpl.class);
-
-    private Map<String, Long> approvalToUserSandboxes = new ConcurrentHashMap<>();
 
     @Resource(name = "blSandBoxDao")
     protected SandBoxDao sandBoxDao;
+    private Map<String, Long> approvalToUserSandboxes = new ConcurrentHashMap<>();
 
     @Override
     public SandBox retrieveSandBoxById(Long sandboxId) {
         return sandBoxDao.retrieve(sandboxId);
     }
-    
+
     @Override
     public List<SandBox> retrieveAllSandBoxes() {
         return sandBoxDao.retrieveAllSandBoxes();
     }
-    
+
     @Override
     public List<SandBox> retrieveSandBoxesByType(SandBoxType type) {
         return sandBoxDao.retrieveSandBoxesByType(type);
     }
-    
+
     @Override
     public SandBox retrieveUserSandBoxForParent(Long authorId, Long parentSandBoxId) {
         return sandBoxDao.retrieveUserSandBoxForParent(authorId, parentSandBoxId);
     }
-    
+
     @Override
     public SandBox retrieveSandBoxManagementById(Long sandBoxId) {
         return sandBoxDao.retrieveSandBoxManagementById(sandBoxId);
@@ -71,7 +66,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
     @Override
     public List<SandBox> retrievePreviewSandBoxes(Long authorId) {
-        List<SandBox> returnList = new ArrayList<SandBox>();
+        List<SandBox> returnList = new ArrayList<>();
         List<SandBox> authorBoxes = sandBoxDao.retrieveSandBoxesForAuthor(authorId, SandBoxType.USER);
         List<SandBox> approvalBoxes = sandBoxDao.retrieveSandBoxesByType(SandBoxType.APPROVAL);
         List<SandBox> defaultBoxes = sandBoxDao.retrieveSandBoxesByType(SandBoxType.DEFAULT);
@@ -79,14 +74,14 @@ public class SandBoxServiceImpl implements SandBoxService {
         List<SandBox> candidateBoxes = new ArrayList<SandBox>();
         candidateBoxes.addAll(approvalBoxes);
         candidateBoxes.addAll(defaultBoxes);
-        
+
         returnList.addAll(authorBoxes);
 
         for (SandBox cb : candidateBoxes) {
             boolean match = false;
             for (SandBox authorBox : authorBoxes) {
-                if (authorBox.getId().equals(cb.getId()) || 
-                        (authorBox.getParentSandBox() != null && authorBox.getParentSandBox().getId().equals(cb.getId()))) {
+                if (authorBox.getId().equals(cb.getId()) || (authorBox.getParentSandBox() != null
+                        && authorBox.getParentSandBox().getId().equals(cb.getId()))) {
                     match = true;
                 }
             }
@@ -94,7 +89,7 @@ public class SandBoxServiceImpl implements SandBoxService {
                 returnList.add(cb);
             }
         }
-        
+
         return returnList;
     }
 
@@ -112,7 +107,7 @@ public class SandBoxServiceImpl implements SandBoxService {
 
         return userSandbox;
     }
-    
+
     @Override
     public Map<Long, String> retrieveAuthorNamesForSandBoxes(Set<Long> sandBoxIds) {
         return sandBoxDao.retrieveAuthorNamesForSandBoxes(sandBoxIds);
@@ -127,7 +122,7 @@ public class SandBoxServiceImpl implements SandBoxService {
     public synchronized SandBox createSandBox(String sandBoxName, SandBoxType sandBoxType) {
         return sandBoxDao.createSandBox(sandBoxName, sandBoxType);
     }
-    
+
     @Override
     public synchronized SandBox createUserSandBox(Long authorId, SandBox approvalSandBox) {
         if (checkForExistingSandbox(SandBoxType.USER, approvalSandBox.getName(), authorId)) {

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,11 +40,16 @@ public class SearchFilterUtil {
      * For sliderRange items, the property on the product must be of type {@link Money}. The product will be filtered
      * out if it's property is greater than the Money value parsed out of max-(property name) or smaller than the Money
      * value parsed from min-(property name)
-     * @param products the list of products to filter
-     * @param parameters the parameters passed to the controller. Generally request.getParameterMap()
+     *
+     * @param products          the list of products to filter
+     * @param parameters        the parameters passed to the controller. Generally request.getParameterMap()
      * @param allowedParameters an array of the allowed parameters to filter on
      */
-    public static void filterProducts(List<Product> products,  Map<String, String[]>parameters, String[] allowedParameters) {
+    public static void filterProducts(
+            List<Product> products,
+            Map<String, String[]> parameters,
+            String[] allowedParameters
+    ) {
         for (String parameter : allowedParameters) {
             BeanToPropertyValueTransformer reader = new BeanToPropertyValueTransformer(parameter, true);
             if (parameters.containsKey(parameter)) { // we're doing a multi-select
@@ -54,12 +59,12 @@ public class SearchFilterUtil {
                         itr.remove();
                     }
                 }
-            } else if (parameters.containsKey("min-"+parameter)) {
+            } else if (parameters.containsKey("min-" + parameter)) {
                 String minMoney = parameters.get("min-" + parameter)[0];
                 String maxMoney = parameters.get("max-" + parameter)[0];
                 Money minimumMoney = new Money(minMoney.replaceAll("[^0-9.]", ""));
                 Money maximumMoney = new Money(maxMoney.replaceAll("[^0-9.]", ""));
-                for (Iterator<Product> itr = products.iterator(); itr.hasNext();) {
+                for (Iterator<Product> itr = products.iterator(); itr.hasNext(); ) {
                     Product product = itr.next();
                     Money objectValue = (Money) reader.transform(product);
                     if (objectValue.lessThan(minimumMoney) || objectValue.greaterThan(maximumMoney)) {
@@ -69,4 +74,5 @@ public class SearchFilterUtil {
             }
         }
     }
+
 }

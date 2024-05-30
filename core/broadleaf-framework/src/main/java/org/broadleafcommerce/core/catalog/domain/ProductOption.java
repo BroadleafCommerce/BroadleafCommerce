@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,33 +47,37 @@ import java.util.List;
  * <p>26 would indicate that there are 25 SKUs that are used to track inventory and potentially
  * override pricing.    The extra "1" sku is used to hold the default pricing.</p>
  *
- *  @author bpolster
+ * @author bpolster
  */
 public interface ProductOption extends Serializable, MultiTenantCloneable<ProductOption> {
-    
+
     /**
      * Returns unique identifier of the product option.
+     *
      * @return
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the unique identifier of the product option.
+     *
      * @param id
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Returns name of the product option.
+     *
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * Sets the name of the product option.
+     *
      * @param name
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Returns the option type.   For example, "color", "size", etc.
@@ -82,7 +86,7 @@ public interface ProductOption extends Serializable, MultiTenantCloneable<Produc
      *
      * @return
      */
-    public ProductOptionType getType();
+    ProductOptionType getType();
 
     /**
      * Sets the option type.   This is primarily used for
@@ -90,122 +94,119 @@ public interface ProductOption extends Serializable, MultiTenantCloneable<Produc
      *
      * @param type
      */
-    public void setType(ProductOptionType type);
+    void setType(ProductOptionType type);
 
     /**
      * Gets the attribute name for where the ProductOptionValue selected for
-     * this ProductOption is stored in the OrderItemAttributes for the 
+     * this ProductOption is stored in the OrderItemAttributes for the
      * OrderItem
-     * 
+     *
      * @return the name of the OrderItemAttribute to store the selected
      * ProductOptionValue in the Order domain
      * @see {@link OrderItemAttribute}, {@link OrderItem}
      */
-    public String getAttributeName();
+    String getAttributeName();
 
     /**
      * Sets the attribute name that will be used in storing the selected
      * ProductOptionValue for this ProductOption
-     * 
+     *
      * @param name - the name of the OrderItemAttribute to store the selected
-     * ProductOptionValue in the Order domain
+     *             ProductOptionValue in the Order domain
      */
-    public void setAttributeName(String name);
+    void setAttributeName(String name);
 
     /**
      * The label to show to the user when selecting from the available
      * {@link ProductOptionValue}s. This might be "Color" or "Size"
-     * 
+     *
      * @return
      */
-    public String getLabel();
+    String getLabel();
 
     /**
      * Sets the label to show the user when selecting from the available
      * {@link ProductOptionValue}s
-     * 
+     *
      * @param label
      */
-    public void setLabel(String label);
+    void setLabel(String label);
 
     /**
-     * 
      * @return whether or not this ProductOption is required
      */
-    public Boolean getRequired();
+    Boolean getRequired();
 
     /**
-     * Sets whether or not 
+     * Sets whether or not
+     *
      * @param required
      */
-    public void setRequired(Boolean required);
-    
+    void setRequired(Boolean required);
+
     /**
      * Gets the display order of this option in relation to the other {@link ProductOption}s
-     * 
+     *
      * @return
      */
-    public Integer getDisplayOrder();
+    Integer getDisplayOrder();
 
     /**
      * Gets the display order of this option in relation to the other {@link ProductOption}s
-     * 
+     *
      * @param displayOrder
      */
-    public void setDisplayOrder(Integer displayOrder);
-
+    void setDisplayOrder(Integer displayOrder);
 
     /**
      * Gets all the Products associated with this ProductOption
      *
-     * @deprecated use getProductXrefs instead
      * @return the Products associated with this ProductOption
+     * @deprecated use getProductXrefs instead
      */
     @Deprecated(forRemoval = true)
-    public List<Product> getProducts();
+    List<Product> getProducts();
 
     /**
      * Set the Products to associate with this ProductOption
      *
-     * @deprecated use setProductXrefs instead
      * @param products
+     * @deprecated use setProductXrefs instead
      */
     @Deprecated(forRemoval = true)
-    public void setProducts(List<Product> products);
+    void setProducts(List<Product> products);
 
-    public List<ProductOptionXref> getProductXrefs();
+    List<ProductOptionXref> getProductXrefs();
 
-    public void setProductXrefs(List<ProductOptionXref> xrefs);
+    void setProductXrefs(List<ProductOptionXref> xrefs);
 
     /**
      * Gets the available values that a user can select for this ProductOption.
      * This value will be stored in OrderItemAttributes at the OrderItem level. The
      * OrderItemAttribute name will be whatever was returned from {@link #getAttributeName()}
-     * 
+     *
      * @return the allowed values for this ProductOption
      */
-    public List<ProductOptionValue> getAllowedValues();
+    List<ProductOptionValue> getAllowedValues();
 
     /**
      * Set the allowed values for this ProductOption
-     * 
+     *
      * @param allowedValues
      */
-    public void setAllowedValues(List<ProductOptionValue> allowedValues);
+    void setAllowedValues(List<ProductOptionValue> allowedValues);
 
-    public Boolean getUseInSkuGeneration();
+    Boolean getUseInSkuGeneration();
 
-    public ProductOptionValidationType getProductOptionValidationType();
+    void setUseInSkuGeneration(Boolean useInSkuGeneration);
 
-    public void setProductOptionValidationType(ProductOptionValidationType productOptionValidationType);
+    ProductOptionValidationType getProductOptionValidationType();
 
-    public void setUseInSkuGeneration(Boolean useInSkuGeneration);
-
-    void setErrorMessage(String errorMessage);
-
-    void setErrorCode(String errorCode);
+    void setProductOptionValidationType(ProductOptionValidationType productOptionValidationType);
 
     String getErrorMessage();
+
+    void setErrorMessage(String errorMessage);
 
     String getValidationString();
 
@@ -213,13 +214,14 @@ public interface ProductOption extends Serializable, MultiTenantCloneable<Produc
 
     String getErrorCode();
 
-    void setProductOptionValidationStrategyType(ProductOptionValidationStrategyType productOptionValidationType);
+    void setErrorCode(String errorCode);
 
     ProductOptionValidationStrategyType getProductOptionValidationStrategyType();
 
-    void setLongDescription(String longDescription);
+    void setProductOptionValidationStrategyType(ProductOptionValidationStrategyType productOptionValidationType);
 
     String getLongDescription();
 
+    void setLongDescription(String longDescription);
 
 }

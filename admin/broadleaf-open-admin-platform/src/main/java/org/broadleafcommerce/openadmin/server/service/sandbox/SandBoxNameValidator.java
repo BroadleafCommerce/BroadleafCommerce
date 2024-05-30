@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,7 +33,7 @@ import jakarta.annotation.Resource;
 
 /**
  * Ensures that the SandBox name is unique within a given site.
- * 
+ *
  * @author bpolster
  */
 @Component("blSandBoxNameValidator")
@@ -51,14 +51,15 @@ public class SandBoxNameValidator extends ValidationConfigurationBasedPropertyVa
     protected String ERROR_DUPLICATE_SANDBOX_NAME = "errorDuplicateSandBoxName";
 
     @Override
-    public PropertyValidationResult validate(Entity entity,
+    public PropertyValidationResult validate(
+            Entity entity,
             Serializable instance,
             Map<String, FieldMetadata> entityFieldMetadata,
             Map<String, String> validationConfiguration,
             BasicFieldMetadata propertyMetadata,
             String propertyName,
-            String value) {
-
+            String value
+    ) {
         if (value == null) {
             return new PropertyValidationResult(succeedForNullValues);
         }

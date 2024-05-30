@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,15 +20,15 @@ package org.broadleafcommerce.common.persistence;
 /**
  * Interface that denotes whether or not an entity is archived. Usually, entities that implement this interface also only
  * undergo soft-deletes.
- * 
+ *
  * @author Jeff Fischer
  */
 public interface Status {
 
-    public void setArchived(Character archived);
+    Character getArchived();
 
-    public Character getArchived();
+    void setArchived(Character archived);
 
-    public boolean isActive();
+    boolean isActive();
 
 }

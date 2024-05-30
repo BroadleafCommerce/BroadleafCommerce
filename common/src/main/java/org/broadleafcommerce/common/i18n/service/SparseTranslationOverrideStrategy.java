@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -80,8 +80,8 @@ import jakarta.persistence.criteria.Root;
  * This strategy is disabled by default. Please see the javadoc for com.broadleafcommerce.tenant.service.cache.SparseOverridePreCacheServiceImpl (MultiTenant only)
  * for more information on how to enable this strategy via configuration of that service.
  *
- * @see ThresholdCacheTranslationOverrideStrategy
  * @author Jeff Fischer
+ * @see ThresholdCacheTranslationOverrideStrategy
  */
 @Component("blSparseTranslationOverrideStrategy")
 public class SparseTranslationOverrideStrategy implements TranslationOverrideStrategy, OverridePreCacheInitializer {
@@ -91,7 +91,7 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
     @Resource(name = "blOverridePreCacheService")
     protected OverridePreCacheService preCachedSparseOverrideService;
 
-    @Resource(name="blTemplateOnlyQueryExtensionManager")
+    @Resource(name = "blTemplateOnlyQueryExtensionManager")
     protected TemplateOnlyQueryExtensionManager extensionManager;
 
     @PersistenceContext(unitName = "blPU")
@@ -99,9 +99,6 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
 
     @Resource(name = "blTranslationDao")
     protected TranslationDao dao;
-
-    DynamicDaoHelper helper = new DynamicDaoHelperImpl();
-
     /**
      * Whether or not {@link #getLocaleBasedTemplateValue(String, String, TranslatedEntity, String, String, String, String, String)}
      * will be utilized from this strategy. If false, the fallback
@@ -120,7 +117,6 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
      */
     @Value("${precached.sparse.override.translation.template.enabled:true}")
     protected boolean templateEnabled = true;
-
     /**
      * Whether or not to restrict the template search to the catalog/site of an associated item. For example, restrict
      * the translation of name for a Sku to the catalog of the Sku. Or, restrict
@@ -131,10 +127,17 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
      */
     @Value("${precached.sparse.override.translation.template.search.restrict.association:false}")
     protected boolean restrictAssociation = false;
+    DynamicDaoHelper helper = new DynamicDaoHelperImpl();
 
     @Override
-    public LocalePair getLocaleBasedOverride(String property, TranslatedEntity entityType, String entityId,
-                                             String localeCode, String localeCountryCode, String basicCacheKey) {
+    public LocalePair getLocaleBasedOverride(
+            String property,
+            TranslatedEntity entityType,
+            String entityId,
+            String localeCode,
+            String localeCountryCode,
+            String basicCacheKey
+    ) {
         LocalePair override = null;
         if (preCachedSparseOverrideService.isActiveForType(Translation.class.getName())) {
             boolean isSpecificOnly = localeCode.equals(localeCountryCode) && localeCode.contains("_");
@@ -174,15 +177,24 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
     }
 
     @Override
-    public LocalePair getLocaleBasedTemplateValue(String templateCacheKey, String property, TranslatedEntity entityType,
-                                                  String entityId, String localeCode, String localeCountryCode,
-                                                  String specificPropertyKey, String generalPropertyKey) {
+    public LocalePair getLocaleBasedTemplateValue(
+            String templateCacheKey,
+            String property,
+            TranslatedEntity entityType,
+            String entityId,
+            String localeCode,
+            String localeCountryCode,
+            String specificPropertyKey,
+            String generalPropertyKey
+    ) {
         LocalePair override = null;
         if (preCachedSparseOverrideService.isActiveForType(Translation.class.getName())) {
             Site currentSite = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
             boolean isIsolatedActive = false;
             if (currentSite != null) {
-                isIsolatedActive = preCachedSparseOverrideService.isActiveIsolatedSiteForType(currentSite.getId(), TranslationImpl.class.getName());
+                isIsolatedActive = preCachedSparseOverrideService.isActiveIsolatedSiteForType(
+                        currentSite.getId(), TranslationImpl.class.getName()
+                );
             }
             if (isIsolatedActive || templateEnabled) {
                 override = new LocalePair();
@@ -191,13 +203,15 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
                     templateVals = getTemplateTranslations(entityType, entityId, property, localeCode);
                 } else {
                     //We need to include the standard site catalog in the query, so don't try to use an optimized template query
-                    templateVals = new ArrayList<Translation>();
-                    Translation translation = dao.readTranslation(entityType, entityId, property, localeCode, localeCountryCode, ResultType.CATALOG_ONLY);
+                    templateVals = new ArrayList<>();
+                    Translation translation = dao.readTranslation(
+                            entityType, entityId, property, localeCode, localeCountryCode, ResultType.CATALOG_ONLY
+                    );
                     if (translation != null) {
                         templateVals.add(translation);
                     }
                 }
-                List<String> codesToMatch = new ArrayList<String>();
+                List<String> codesToMatch = new ArrayList<>();
                 if (specificPropertyKey.endsWith(localeCountryCode) && generalPropertyKey.endsWith(localeCountryCode)) {
                     codesToMatch.add(localeCountryCode);
                 } else if (specificPropertyKey.endsWith(localeCode) && generalPropertyKey.endsWith(localeCode)) {
@@ -237,7 +251,7 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
         StandardCacheItem cacheItem = new StandardCacheItem();
         ItemStatus status = ItemStatus.NORMAL;
         if (extensionManager != null) {
-            ExtensionResultHolder<ItemStatus> response = new ExtensionResultHolder<ItemStatus>();
+            ExtensionResultHolder<ItemStatus> response = new ExtensionResultHolder<>();
             ExtensionResultStatusType result = extensionManager.buildStatus(entity, response);
             if (ExtensionResultStatusType.NOT_HANDLED != result && response.getResult() != null) {
                 status = response.getResult();
@@ -280,17 +294,19 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
         criteria.select(root);
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.equal(root.get("entityType"), entityType.getFriendlyType()));
         restrictions.add(builder.equal(root.get("entityId"), entityId));
         restrictions.add(builder.equal(root.get("fieldName"), property));
-        restrictions.add(builder.like(root.get("localeCode").as(String.class),localeCode + "%"));
+        restrictions.add(builder.like(root.get("localeCode").as(String.class), localeCode + "%"));
         try {
             Object testObject = null;
             if (restrictAssociation) {
                 try {
                     Class<?> type = Class.forName(entityType.getType());
-                    Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(type, true, true);
+                    Class<?>[] entities = helper.getAllPolymorphicEntitiesFromCeiling(
+                            type, true, true
+                    );
                     //This should already be in level 1 cache and this should not cause a hit to the database.
                     Map<String, Object> idMetadata = helper.getIdMetadata(entities[entities.length - 1], em);
                     Type idType = (Type) idMetadata.get("type");
@@ -306,7 +322,9 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
             }
             if (extensionManager != null) {
                 extensionManager.setup(TranslationImpl.class);
-                extensionManager.refineParameterRetrieve(TranslationImpl.class, testObject, builder, criteria, root, restrictions);
+                extensionManager.refineParameterRetrieve(
+                        TranslationImpl.class, testObject, builder, criteria, root, restrictions
+                );
             }
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
@@ -326,10 +344,16 @@ public class SparseTranslationOverrideStrategy implements TranslationOverrideStr
     }
 
     protected String getCacheKey(Translation translation) {
-        return getCacheKey(translation.getEntityType(), translation.getEntityId(), translation.getFieldName(), translation.getLocaleCode());
+        return getCacheKey(
+                translation.getEntityType(),
+                translation.getEntityId(),
+                translation.getFieldName(),
+                translation.getLocaleCode()
+        );
     }
 
     protected String getCacheKey(TranslatedEntity type, String entityId, String fieldName, String localeCode) {
-        return StringUtils.join(new String[]{"translation", type.getType(), entityId, fieldName, localeCode},"-");
+        return StringUtils.join(new String[]{"translation", type.getType(), entityId, fieldName, localeCode}, "-");
     }
+
 }

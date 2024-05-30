@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,6 +34,7 @@ public interface LinkedDataGenerator {
 
     /**
      * Determines whether or not this LinkedDataGenerator can handle the incoming request.
+     *
      * @param request
      * @return whether to handle the destination type
      */
@@ -41,12 +42,13 @@ public interface LinkedDataGenerator {
 
     /**
      * Gets the linked data for default pages
+     *
      * @param url
      * @param request
      * @return JSON representation of linked data
      */
     void getLinkedDataJSON(final String url, final HttpServletRequest request, final JSONArray schemaObjects) throws JSONException;
 
-    
     String getStructuredDataContext();
+
 }

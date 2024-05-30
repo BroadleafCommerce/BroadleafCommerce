@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,13 +22,12 @@ import java.util.Map;
 
 /**
  * If a service extension using the {@link ExtensionManager} pattern expects a result from the extension, it should
- * pass in an instance of this class into the method call.   
- * 
+ * pass in an instance of this class into the method call.
+ * <p>
  * The extension points can examine or update this class with response information and set a single return value with
  * {@link #setResult(Object)} or add values via the contextMap provided with {@link #getContextMap()}
- * 
- * @author bpolster
  *
+ * @author bpolster
  */
 public class ExtensionResultHolder<T> {
 
@@ -55,4 +54,5 @@ public class ExtensionResultHolder<T> {
     public Map<String, Object> getContextMap() {
         return contextMap;
     }
+
 }

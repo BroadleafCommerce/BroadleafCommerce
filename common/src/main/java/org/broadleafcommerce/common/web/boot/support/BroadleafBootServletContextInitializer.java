@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,8 +28,9 @@ import jakarta.servlet.ServletException;
  * Used in conjunction with {@link SpringBootBootstrappingServletContextListener}. Since that class
  * establishes its own delegate {@link ContextLoaderListener} that closes the Spring ApplicationContext we want
  * to disable the fact that Spring Boot tries to add a {@link ContextLoaderListener}.
- * 
+ * <p>
  * SPRING-UPGRADE-CHECK
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 public abstract class BroadleafBootServletContextInitializer extends SpringBootServletInitializer {
@@ -39,4 +40,5 @@ public abstract class BroadleafBootServletContextInitializer extends SpringBootS
         this.logger = LogFactory.getLog(getClass());
         createRootApplicationContext(servletContext);
     }
+
 }

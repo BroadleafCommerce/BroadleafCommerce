@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
@@ -38,12 +37,11 @@ import jakarta.servlet.http.HttpServletRequest;
  *
  * <p>This is usually invoked by a gateway endpoint controller that extends PaymentGatewayAbstractController</p>
  *
- * @see {@link org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController}
- *
  * @author Elbert Bautista (elbertbautista)
+ * @see {@link org.broadleafcommerce.common.web.payment.controller.PaymentGatewayAbstractController}
  */
 public interface PaymentGatewayWebResponseService {
 
-    public PaymentResponseDTO translateWebResponse(HttpServletRequest request) throws PaymentException;
+    PaymentResponseDTO translateWebResponse(HttpServletRequest request) throws PaymentException;
 
 }

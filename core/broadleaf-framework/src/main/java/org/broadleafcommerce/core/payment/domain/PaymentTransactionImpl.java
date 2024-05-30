@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,6 +41,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -69,15 +70,14 @@ import jakarta.persistence.Table;
 @Table(name = "BLC_ORDER_PAYMENT_TRANSACTION")
 @SQLDelete(
         sql = "UPDATE BLC_ORDER_PAYMENT_TRANSACTION SET ARCHIVED = 'Y' WHERE PAYMENT_TRANSACTION_ID = ?")
-@AdminPresentationMergeOverrides(
-        {
-                @AdminPresentationMergeOverride(name = "", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                        booleanOverrideValue = true))
-        }
-)
+@AdminPresentationMergeOverrides({
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
 public class PaymentTransactionImpl implements PaymentTransaction {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -108,8 +108,7 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     protected BigDecimal amount;
 
     @Column(name = "DATE_RECORDED")
-    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Date", prominent = true,
-            gridOrder = 3000)
+    @AdminPresentation(friendlyName = "PaymentTransactionImpl_Date", prominent = true, gridOrder = 3000)
     protected Date date;
 
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
@@ -157,7 +156,6 @@ public class PaymentTransactionImpl implements PaymentTransaction {
             keyPropertyFriendlyName = "PaymentTransactionImpl_Additional_Fields_Name"
     )
     protected Map<String, String> additionalFields = new HashMap<String, String>();
-
 
     @Column(name = "SAVE_TOKEN")
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Save_Token")
@@ -304,10 +302,10 @@ public class PaymentTransactionImpl implements PaymentTransaction {
         return 'Y' != getArchived();
     }
 
-
     @Override
     public <G extends PaymentTransaction> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -328,4 +326,5 @@ public class PaymentTransactionImpl implements PaymentTransaction {
         }
         return createResponse;
     }
+
 }

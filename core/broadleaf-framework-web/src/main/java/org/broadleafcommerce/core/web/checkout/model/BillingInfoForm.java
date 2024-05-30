@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,7 @@ import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.CustomerPayment;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -32,6 +33,7 @@ import java.io.Serializable;
  */
 public class BillingInfoForm implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Address address = new AddressImpl();
@@ -81,7 +83,7 @@ public class BillingInfoForm implements Serializable {
     }
 
     public Boolean getUseCustomerPayment() {
-        return useCustomerPayment == null? false : useCustomerPayment;
+        return useCustomerPayment == null ? false : useCustomerPayment;
     }
 
     public void setUseCustomerPayment(Boolean useCustomerPayment) {
@@ -89,7 +91,7 @@ public class BillingInfoForm implements Serializable {
     }
 
     public Boolean getSaveNewPayment() {
-        return saveNewPayment == null? false : saveNewPayment;
+        return saveNewPayment == null ? false : saveNewPayment;
     }
 
     public void setSaveNewPayment(Boolean saveNewPayment) {
@@ -103,4 +105,5 @@ public class BillingInfoForm implements Serializable {
     public void setPaymentName(String paymentName) {
         this.paymentName = paymentName;
     }
+
 }

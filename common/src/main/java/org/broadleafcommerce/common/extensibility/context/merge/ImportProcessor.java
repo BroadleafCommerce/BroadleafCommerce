@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -67,8 +67,8 @@ public class ImportProcessor {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             builder = dbf.newDocumentBuilder();
-            XPathFactory factory=XPathFactory.newInstance();
-            xPath=factory.newXPath();
+            XPathFactory factory = XPathFactory.newInstance();
+            xPath = factory.newXPath();
         } catch (ParserConfigurationException e) {
             LOG.error("Unable to create document builder", e);
             throw new RuntimeException(e);
@@ -82,15 +82,17 @@ public class ImportProcessor {
         try {
             DynamicResourceIterator resourceList = new DynamicResourceIterator();
             resourceList.addAll(Arrays.asList(sources));
-            while(resourceList.hasNext()) {
+            while (resourceList.hasNext()) {
                 ResourceInputStream myStream = resourceList.nextResource();
                 Document doc = builder.parse(myStream);
                 NodeList nodeList = (NodeList) xPath.evaluate(IMPORT_PATH, doc, XPathConstants.NODESET);
                 int length = nodeList.getLength();
-                for (int j=0;j<length;j++) {
+                for (int j = 0; j < length; j++) {
                     Element element = (Element) nodeList.item(j);
                     Resource resource = loader.getResource(element.getAttribute("resource"));
-                    ResourceInputStream ris = new ResourceInputStream(resource.getInputStream(), resource.getURL().toString());
+                    ResourceInputStream ris = new ResourceInputStream(
+                            resource.getInputStream(), resource.getURL().toString()
+                    );
                     resourceList.addEmbeddedResource(ris);
                     element.getParentNode().removeChild(element);
                 }
@@ -110,7 +112,10 @@ public class ImportProcessor {
 
                     byte[] itemArray = baos.toByteArray();
 
-                    resourceList.set(resourceList.getPosition() - 1, new ResourceInputStream(new ByteArrayInputStream(itemArray), null, myStream.getNames()));
+                    resourceList.set(
+                            resourceList.getPosition() - 1,
+                            new ResourceInputStream(new ByteArrayInputStream(itemArray), null, myStream.getNames())
+                    );
                 } else {
                     myStream.reset();
                 }
@@ -121,4 +126,5 @@ public class ImportProcessor {
             throw new MergeException(e);
         }
     }
+
 }

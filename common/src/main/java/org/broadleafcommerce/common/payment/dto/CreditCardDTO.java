@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.dto;
 
 import java.util.HashMap;
@@ -39,11 +38,11 @@ public class CreditCardDTO<T> {
     protected String creditCardCvv;
 
     public CreditCardDTO() {
-        this.additionalFields = new HashMap<String, Object>();
+        this.additionalFields = new HashMap<>();
     }
 
     public CreditCardDTO(T parent) {
-        this.additionalFields = new HashMap<String, Object>();
+        this.additionalFields = new HashMap<>();
         this.parent = parent;
     }
 
@@ -96,7 +95,6 @@ public class CreditCardDTO<T> {
         return this;
     }
 
-
     public Map<String, Object> getAdditionalFields() {
         return additionalFields;
     }
@@ -134,14 +132,10 @@ public class CreditCardDTO<T> {
     }
 
     public boolean creditCardPopulated() {
-        return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) ||
-                getCreditCardHolderName() != null ||
-                getCreditCardType() != null ||
-                getCreditCardNum() != null ||
-                getCreditCardLastFour() != null ||
-                getCreditCardExpDate() != null ||
-                getCreditCardExpMonth() != null ||
-                getCreditCardExpYear() != null ||
-                getCreditCardCvv() != null);
+        return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) || getCreditCardHolderName() != null
+                || getCreditCardType() != null || getCreditCardNum() != null || getCreditCardLastFour() != null
+                || getCreditCardExpDate() != null || getCreditCardExpMonth() != null || getCreditCardExpYear() != null
+                || getCreditCardCvv() != null);
     }
+
 }

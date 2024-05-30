@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,18 +25,18 @@ import org.springframework.stereotype.Component;
 
 /**
  * A {@link BroadleafVariableExpression} that assists with operations for Thymeleaf-layer operations on entity forms.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blEntityFormVariableExpression")
 @ConditionalOnTemplating
 public class EntityFormVariableExpression implements BroadleafVariableExpression {
-    
+
     @Override
     public String getName() {
         return "ef";
     }
-    
+
     public boolean isTabActive(EntityForm ef, Tab tab) {
         boolean foundVisibleTab = false;
 

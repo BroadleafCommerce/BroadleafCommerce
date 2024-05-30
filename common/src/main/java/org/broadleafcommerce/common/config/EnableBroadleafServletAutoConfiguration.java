@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,6 +33,7 @@ import java.lang.annotation.Target;
  * <b>STOP. This is probably not the annotation you want currently.</b>
  * <p>
  * The same rules apply here as with {@link EnableBroadleafAutoConfiguration} but this is for only the servlet-level Broadleaf beans
+ *
  * @author Philip Baggett (pbaggett)
  * @author Brandon Hines (bhines)
  * @author Nick Crum (ncrum)
@@ -46,8 +47,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({
-    BroadleafServletAutoConfiguration.class,
-    BroadleafServletAutoConfigurationOverrides.class
+        BroadleafServletAutoConfiguration.class,
+        BroadleafServletAutoConfigurationOverrides.class
 })
 public @interface EnableBroadleafServletAutoConfiguration {
 
@@ -62,8 +63,11 @@ public @interface EnableBroadleafServletAutoConfiguration {
             "classpath*:/blc-config/bl-*-applicationContext-servlet.xml",
             "classpath*:/blc-config/late/bl-*-applicationContext-servlet.xml"
     }, reader = FrameworkXmlBeanDefinitionReader.class)
-    class BroadleafServletAutoConfiguration {}
-    
+    class BroadleafServletAutoConfiguration {
+    }
+
     @ImportResource("classpath:/override-contexts/autoconfiguration-servlet-overrides.xml")
-    class BroadleafServletAutoConfigurationOverrides { }
+    class BroadleafServletAutoConfigurationOverrides {
+    }
+
 }

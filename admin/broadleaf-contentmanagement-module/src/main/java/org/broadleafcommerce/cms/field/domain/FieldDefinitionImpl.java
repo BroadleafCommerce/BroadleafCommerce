@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -178,6 +178,16 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     }
 
     @Override
+    public void setFieldType(SupportedFieldType fieldType) {
+        this.fieldType = fieldType != null ? fieldType.toString() : null;
+    }
+
+    @Override
+    public void setFieldType(String fieldType) {
+        this.fieldType = fieldType;
+    }
+
+    @Override
     public String getFieldTypeVal() {
         return fieldType;
     }
@@ -201,16 +211,6 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
         }
 
         this.fieldType = SupportedFieldType.ADDITIONAL_FOREIGN_KEY.toString() + '|' + className;
-    }
-
-    @Override
-    public void setFieldType(SupportedFieldType fieldType) {
-        this.fieldType = fieldType != null ? fieldType.toString() : null;
-    }
-
-    @Override
-    public void setFieldType(String fieldType) {
-        this.fieldType = fieldType;
     }
 
     @Override

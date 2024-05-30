@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,18 +28,21 @@ public interface PromotableFulfillmentGroup extends Serializable {
 
     /**
      * Adds a fulfillmentGroupAdjustment
+     *
      * @return
      */
     void addCandidateFulfillmentGroupAdjustment(PromotableFulfillmentGroupAdjustment adjustment);
 
     /**
      * Adds a fulfillmentGroupAdjustment
+     *
      * @return
      */
     List<PromotableFulfillmentGroupAdjustment> getCandidateFulfillmentGroupAdjustments();
 
     /**
      * Removes all candidate adjustments
+     *
      * @return
      */
     void removeAllCandidateAdjustments();
@@ -53,7 +56,7 @@ public interface PromotableFulfillmentGroup extends Serializable {
     /**
      * Returns the decorated FulfillmentGroup
      */
-    public FulfillmentGroup getFulfillmentGroup();
+    FulfillmentGroup getFulfillmentGroup();
 
     /**
      * Adds the underlying fulfillmentGroup to the rule variable map.
@@ -62,27 +65,29 @@ public interface PromotableFulfillmentGroup extends Serializable {
 
     /**
      * Calculates the price with adjustments.   Uses the sale or retail adjustments
-     * based on the passed in parameter.     
+     * based on the passed in parameter.
+     *
      * @param useSalePrice
      */
-    public Money calculatePriceWithAdjustments(boolean useSalePrice);
+    Money calculatePriceWithAdjustments(boolean useSalePrice);
 
     /**
      * Calculates the price with all adjustments.   May error in the case where adjustments have
      * not been finalized with a call to chooseSaleOrRetailAdjustments.
-     * @param useSalePrice
      */
-    public Money getFinalizedPriceWithAdjustments();
+    Money getFinalizedPriceWithAdjustments();
 
     /**
      * Return list of discountable discrete order items contained in this fulfillmentGroup.
+     *
      * @return
      */
     List<PromotableOrderItem> getDiscountableOrderItems();
 
     /**
-     * Checks to see if the offer can be added to this fulfillmentGroup based on whether or not 
+     * Checks to see if the offer can be added to this fulfillmentGroup based on whether or not
      * it is combinable or if this fulfillmentGroup already has a non-combinable offer applied.
+     *
      * @param fulfillmentGroupOffer
      * @return
      */
@@ -90,12 +95,14 @@ public interface PromotableFulfillmentGroup extends Serializable {
 
     /**
      * Returns the price of this fulfillment group if no adjustments were applied.
+     *
      * @return
      */
     Money calculatePriceWithoutAdjustments();
-    
+
     /**
      * Returns true if totalitarian offer was applied to this promotable fulfillment group.
+     *
      * @return
      */
     boolean isTotalitarianOfferApplied();

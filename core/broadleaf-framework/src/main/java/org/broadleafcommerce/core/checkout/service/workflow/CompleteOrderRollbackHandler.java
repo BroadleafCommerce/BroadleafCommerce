@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,13 +26,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-
 /**
  * Rollback handler to execute after an order has been marked as 'completed' and there is an exception.
- * 
- *  1. Change the status back to IN_PROCESS
- *  2. Change the order number back to null
- *  3. Change the submit date back to null
+ * <p>
+ * 1. Change the status back to IN_PROCESS
+ * 2. Change the order number back to null
+ * 3. Change the submit date back to null
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
@@ -40,7 +39,11 @@ import java.util.Map;
 public class CompleteOrderRollbackHandler implements RollbackHandler<ProcessContext<CheckoutSeed>> {
 
     @Override
-    public void rollbackState(Activity<ProcessContext<CheckoutSeed>> activity, ProcessContext<CheckoutSeed> processContext, Map<String, Object> stateConfiguration) throws RollbackFailureException {
+    public void rollbackState(
+            Activity<ProcessContext<CheckoutSeed>> activity,
+            ProcessContext<CheckoutSeed> processContext,
+            Map<String, Object> stateConfiguration
+    ) throws RollbackFailureException {
         CheckoutSeed seed = processContext.getSeedData();
         seed.getOrder().setStatus(OrderStatus.IN_PROCESS);
         seed.getOrder().setOrderNumber(null);

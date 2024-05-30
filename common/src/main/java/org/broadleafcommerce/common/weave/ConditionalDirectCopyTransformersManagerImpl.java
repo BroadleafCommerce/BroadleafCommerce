@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,16 +31,15 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 
 /**
- * @see org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformersManager
- *
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformersManager
  */
 @Service("blConditionalDirectCopyTransformersManager")
 public class ConditionalDirectCopyTransformersManagerImpl implements BeanFactoryAware, ConditionalDirectCopyTransformersManager {
 
-    @Resource(name="blConditionalDirectCopyTransformers")
+    @Resource(name = "blConditionalDirectCopyTransformers")
     protected Map<String, ConditionalDirectCopyTransformMemberDto> entityToPropertyMap;
-    protected Map<String, ConditionalDirectCopyTransformMemberDto> enabledEntities = new HashMap<String, ConditionalDirectCopyTransformMemberDto>();
+    protected Map<String, ConditionalDirectCopyTransformMemberDto> enabledEntities = new HashMap<>();
     protected ConfigurableBeanFactory beanFactory;
 
     @PostConstruct
@@ -81,4 +80,5 @@ public class ConditionalDirectCopyTransformersManagerImpl implements BeanFactory
         }
         return shouldProceed;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,15 +23,17 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 /**
  * Extension handler for {@link org.broadleafcommerce.openadmin.web.form.component.ListGrid}.
- *
+ * <p>
  * Created by Reginald Cole
  */
 public interface AdminAbstractListGridExtensionHandler extends ExtensionHandler {
 
     /**
      * This can be used to add {@link org.broadleafcommerce.openadmin.web.form.component.ListGridAction}s to the {@link ListGrid}
+     *
      * @param listGrid
      * @return
      */
-    public ExtensionResultStatusType addAdditionalRowAction(ListGrid listGrid);
+    ExtensionResultStatusType addAdditionalRowAction(ListGrid listGrid);
+
 }

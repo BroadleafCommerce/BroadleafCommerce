@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,26 +24,26 @@ import org.broadleafcommerce.openadmin.web.form.component.ListGridRecord;
 
 /**
  * An extension handler to allow a custom error key or error message to be added to the ListGridRecord.
- * @author kellytisdell
  *
+ * @author kellytisdell
  */
 public interface ListGridErrorMessageExtensionHandler extends ExtensionHandler {
 
     /**
-     * Allows the extension handler to determine a custom error message or error message key for the entity. 
-     * Implementors should determine if they can handle the entity in question. If not, they should return 
+     * Allows the extension handler to determine a custom error message or error message key for the entity.
+     * Implementors should determine if they can handle the entity in question. If not, they should return
      * ExtensionResultStatusType.NOT_HANDLED.
-     * 
-     * Otherwise, they should either set the error message or the error key on the ListGrid on the entity. If both 
+     * <p>
+     * Otherwise, they should either set the error message or the error key on the ListGrid on the entity. If both
      * are set the error message will win.
-     * 
+     * <p>
      * Implementors can use the BroadleafRequestContext to try to determine Locale, or get a MessageSource, etc.
-     * 
+     *
      * @param entity
      * @param lgr
      * @return
      */
-    public ExtensionResultStatusType determineErrorMessageForEntity(Entity entity, ListGridRecord lgr);
+    ExtensionResultStatusType determineErrorMessageForEntity(Entity entity, ListGridRecord lgr);
 
     /**
      * Allows the extension handler to determine a custom status message for the entity.
@@ -52,6 +52,6 @@ public interface ListGridErrorMessageExtensionHandler extends ExtensionHandler {
      * @param lgr
      * @return
      */
-    public ExtensionResultStatusType determineStatusMessageForEntity(Entity entity, ListGridRecord lgr);
+    ExtensionResultStatusType determineStatusMessageForEntity(Entity entity, ListGridRecord lgr);
 
 }

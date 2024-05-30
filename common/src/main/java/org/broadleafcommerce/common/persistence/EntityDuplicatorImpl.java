@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,8 +43,8 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
 import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.PROPAGATION;
 
 /**
- * @see EntityDuplicator
  * @author Jeff Fischer
+ * @see EntityDuplicator
  */
 @Service("blEntityDuplicator")
 public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDuplicator {
@@ -57,7 +57,7 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
 
     @Resource(name = "blMultiTenantCopierExtensionManager")
     protected MultiTenantCopierExtensionManager mtCopierExtensionManager;
-    
+
     @Resource(name = "blEntityDuplicationHelpers")
     protected Collection<EntityDuplicationHelper> entityDuplicationHelpers;
 
@@ -71,9 +71,9 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
         if (!isActive) {
             return false;
         }
-        
+
         final Object entity = genericEntityService.readGenericEntity(entityClass, id);
-        
+
         return validate(entity);
     }
 
@@ -82,28 +82,27 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
         if (!isActive) {
             return false;
         }
-        
+
         if (!(entity instanceof MultiTenantCloneable)) {
             return false;
         }
 
-        final Set<EntityDuplicationHelper> helpers = 
-                filterDuplicationHelpers((MultiTenantCloneable<?>) entity);
-        
+        final Set<EntityDuplicationHelper> helpers = filterDuplicationHelpers((MultiTenantCloneable<?>) entity);
+
         if (helpers.isEmpty()) {
             return false;
         }
-        
+
         ExtensionResultHolder<Boolean> response = new ExtensionResultHolder<>();
         response.setResult(true);
-        
+
         if (extensionManager != null) {
             extensionManager.validateDuplicate(entity, response);
         }
-        
+
         return response.getResult();
     }
-    
+
     /**
      * Instead of passing in {@link EntityDuplicateModifier}s, add the beans to
      * {@code EntityDuplicationHelpers}. Additionally, add copy hints to the helpers.
@@ -111,14 +110,16 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
      * {@link EntityDuplicateModifier} is deprecated.
      */
     @Deprecated
-    @Override 
-    public <T> T copy(final Class<T> entityClass,
+    @Override
+    public <T> T copy(
+            final Class<T> entityClass,
             final Long id,
             final Map<String, String> copyHints,
-            final EntityDuplicateModifier... modifiers) {
+            final EntityDuplicateModifier... modifiers
+    ) {
         return copy(entityClass, id, copyHints);
     }
-     
+
     /**
      * Instead of passing in {@link EntityDuplicateModifier}s, add the beans to
      * {@code EntityDuplicationHelpers}. Additionally, add copy hints to the helpers.
@@ -126,11 +127,13 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
      * {@link EntityDuplicateModifier} is deprecated.
      */
     @Deprecated
-    @Override 
-    public <T> T copy(final MultiTenantCopyContext context,
+    @Override
+    public <T> T copy(
+            final MultiTenantCopyContext context,
             final MultiTenantCloneable<T> entity,
             final Map<String, String> copyHints,
-            final EntityDuplicateModifier... modifiers) {
+            final EntityDuplicateModifier... modifiers
+    ) {
         return copy(context, entity, copyHints);
     }
 
@@ -139,28 +142,33 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
     public <T> T copy(final Class<T> entityClass, final Long id) {
         genericEntityService.flush();
         genericEntityService.clear();
-        
+
         final Object entity = genericEntityService.readGenericEntity(entityClass, id);
-        
+
         if (!validate(entity)) {
             throw new IllegalArgumentException(
-                    String.format("Entity not valid for duplication - %s:%s", 
+                    String.format("Entity not valid for duplication - %s:%s",
                             entityClass.getName(), id));
         }
-        
+
         final T dup;
-        
+
         try {
-            final Site currentSite = 
-                    BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
-            MultiTenantCopyContext context = new MultiTenantCopyContext(null, null, 
-                    currentSite, currentSite, genericEntityService, mtCopierExtensionManager);
-            
+            final Site currentSite = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
+            MultiTenantCopyContext context = new MultiTenantCopyContext(
+                    null,
+                    null,
+                    currentSite,
+                    currentSite,
+                    genericEntityService,
+                    mtCopierExtensionManager
+            );
+
             if (extensionManager != null) {
-                final ExtensionResultHolder<MultiTenantCopyContext> contextResponse = 
+                final ExtensionResultHolder<MultiTenantCopyContext> contextResponse =
                         new ExtensionResultHolder<>();
                 extensionManager.setupDuplicate(entity, contextResponse);
-                
+
                 if (contextResponse.getResult() != null) {
                     context = contextResponse.getResult();
                 }
@@ -174,20 +182,21 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
             List<MultiTenantCopyContext> contexts = resultHolder.getResult();
             for (MultiTenantCopyContext multiTenantCopyContext : contexts) {
                 multiTenantCopyContext.getCopyHints().put(MANUAL_DUPLICATION, Boolean.TRUE.toString());
-                BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put("MANUAL_DUPLICATION_PROPAGATION","TRUE");
+                BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties()
+                        .put("MANUAL_DUPLICATION_PROPAGATION", "TRUE");
                 multiTenantCopyContext.getCopyHints().put(PROPAGATION, Boolean.TRUE.toString());
                 performCopy(multiTenantCopyContext, (MultiTenantCloneable<T>) dup);
             }
         } catch (Exception e) {
             throw ExceptionHelper.refineException(RuntimeException.class, RuntimeException.class,
-                    String.format("Unable to duplicate entity %s:%s", entityClass.getName(), id), 
+                    String.format("Unable to duplicate entity %s:%s", entityClass.getName(), id),
                     e);
         } finally {
             if (extensionManager != null) {
                 extensionManager.tearDownDuplicate();
             }
         }
-        
+
         return dup;
     }
 
@@ -200,16 +209,15 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
                             entity.getClass().getName(),
                             genericEntityService.getIdentifier(entity)));
         }
-        
+
         final T dup;
-        
+
         try {
             if (extensionManager != null) {
-                ExtensionResultHolder<MultiTenantCopyContext> contextResponse = 
-                        new ExtensionResultHolder<>();
+                ExtensionResultHolder<MultiTenantCopyContext> contextResponse = new ExtensionResultHolder<>();
                 extensionManager.setupDuplicate(entity, contextResponse);
             }
-            
+
             dup = performCopy(context, entity);
         } catch (Exception e) {
             throw ExceptionHelper.refineException(RuntimeException.class, RuntimeException.class,
@@ -220,30 +228,34 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
                 extensionManager.tearDownDuplicate();
             }
         }
-        
+
         return dup;
     }
 
     /**
-     * Instead of passing in {@link EntityDuplicateModifier}s, add the beans to 
+     * Instead of passing in {@link EntityDuplicateModifier}s, add the beans to
      * {@code EntityDuplicationHelpers}. Additionally, add copy hints to the helpers.
-     * Also, note that you should implement {@link AbstractEntityDuplicationHelper} now instead as 
+     * Also, note that you should implement {@link AbstractEntityDuplicationHelper} now instead as
      * {@link EntityDuplicateModifier} is deprecated.
      */
     @Deprecated
-    protected <T> T performCopy(final MultiTenantCopyContext context,
+    protected <T> T performCopy(
+            final MultiTenantCopyContext context,
             final MultiTenantCloneable<T> entity,
             Map<String, String> copyHints,
-            final EntityDuplicateModifier... modifiers) throws Exception {
+            final EntityDuplicateModifier... modifiers
+    ) throws Exception {
         return performCopy(context, entity, copyHints);
     }
-    
-    protected <T> T performCopy(final MultiTenantCopyContext context, 
-            final MultiTenantCloneable<T> entity) throws Exception {
+
+    protected <T> T performCopy(
+            final MultiTenantCopyContext context,
+            final MultiTenantCloneable<T> entity
+    ) throws Exception {
         final Set<EntityDuplicationHelper> helpers = filterDuplicationHelpers(entity);
         putAllCopyHints(context, helpers);
         context.setForDuplicate(true);
-        
+
         persistCopyObjectTree(new CopyOperation<T, CloneNotSupportedException>() {
             @Override
             public T execute(T original) throws CloneNotSupportedException {
@@ -254,29 +266,27 @@ public class EntityDuplicatorImpl extends MultiTenantCopier implements EntityDup
                 return response;
             }
         }, (Class<T>) entity.getClass(), (T) entity, context);
-        
-        return context.getClonedVersion((Class<T>) entity.getClass(),
-                genericEntityService.getIdentifier(entity));
+
+        return context.getClonedVersion((Class<T>) entity.getClass(), genericEntityService.getIdentifier(entity));
     }
-    
-    protected Set<EntityDuplicationHelper> filterDuplicationHelpers(
-            final MultiTenantCloneable entity) {
+
+    protected Set<EntityDuplicationHelper> filterDuplicationHelpers(final MultiTenantCloneable entity) {
         final Set<EntityDuplicationHelper> filteredHelpers = new HashSet<>();
-        
+
         for (final EntityDuplicationHelper helper : entityDuplicationHelpers) {
             if (helper.canHandle(entity)) {
                 filteredHelpers.add(helper);
             }
         }
-        
+
         return filteredHelpers;
     }
-    
-    protected void putAllCopyHints(final MultiTenantCopyContext context, 
-            final Set<EntityDuplicationHelper> helpers) {
+
+    protected void putAllCopyHints(final MultiTenantCopyContext context, final Set<EntityDuplicationHelper> helpers) {
         final Map<String, String> hints = context.getCopyHints();
         for (final EntityDuplicationHelper helper : helpers) {
             hints.putAll(helper.getCopyHints());
         }
     }
+
 }

@@ -10,12 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.id.domain;
+
+import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,10 +32,11 @@ import jakarta.persistence.Version;
 @Table(name = "BLC_ID_GENERATION")
 public class IdGenerationImpl implements IdGeneration {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "ID_TYPE", nullable=false)
+    @Column(name = "ID_TYPE", nullable = false)
     protected String type;
 
     @Column(name = "ID_MIN", nullable = true)
@@ -45,7 +48,7 @@ public class IdGenerationImpl implements IdGeneration {
     @Column(name = "BATCH_START", nullable = false)
     protected Long batchStart;
 
-    @Column(name = "BATCH_SIZE", nullable=false)
+    @Column(name = "BATCH_SIZE", nullable = false)
     protected Long batchSize;
 
     @Version

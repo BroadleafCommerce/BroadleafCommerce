@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -34,7 +33,7 @@ public class FilterMapping {
     public static final String RANGE_SPECIFIER_REGEX = "->";
 
     protected String fullPropertyName;
-    protected List<String> filterValues = new ArrayList<String>();
+    protected List<String> filterValues = new ArrayList<>();
     protected List directFilterValues = new ArrayList();
     protected SortDirection sortDirection;
     protected Restriction restriction;
@@ -105,7 +104,7 @@ public class FilterMapping {
             throw new IllegalArgumentException("Cannot set both filter values and direct filter values");
         }
 
-        List<String> parsedValues = new ArrayList<String>();
+        List<String> parsedValues = new ArrayList<>();
         for (String unfiltered : filterValues) {
             parsedValues.addAll(Arrays.asList(parseFilterValue(unfiltered)));
         }
@@ -163,11 +162,11 @@ public class FilterMapping {
         if (filterValue == null) {
             vals = new String[0];
         } else if (filterValue.contains(RANGE_SPECIFIER_REGEX)) {
-            vals = new String[] { filterValue.substring(0, filterValue.indexOf(RANGE_SPECIFIER_REGEX)),
+            vals = new String[]{filterValue.substring(0, filterValue.indexOf(RANGE_SPECIFIER_REGEX)),
                     filterValue.substring(filterValue.indexOf(RANGE_SPECIFIER_REGEX) + RANGE_SPECIFIER_REGEX.length(),
-                            filterValue.length()) };
+                            filterValue.length())};
         } else {
-            vals = new String[] { filterValue };
+            vals = new String[]{filterValue};
         }
         for (int j = 0; j < vals.length; j++) {
             vals[j] = vals[j].trim();
@@ -208,6 +207,6 @@ public class FilterMapping {
                 return firstValue.compareTo(secondValue);
             }
         }
-
     }
+
 }

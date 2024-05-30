@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,13 +32,11 @@ import java.util.Map;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 
-
 /**
  * Contributes a breadcrumb (typically the first breadcrumb).    Simply the word home
  * as defined by the property "breadcrumb.homepageText" and the url "/".
- *  
- * @author bpolster
  *
+ * @author bpolster
  */
 @Service("blHomePageBreadcrumbServiceExtensionHandler")
 public class HomePageBreadcrumbServiceExtensionHandler extends AbstractBreadcrumbServiceExtensionHandler {
@@ -57,8 +55,11 @@ public class HomePageBreadcrumbServiceExtensionHandler extends AbstractBreadcrum
     }
 
     @Override
-    public ExtensionResultStatusType modifyBreadcrumbList(String url, Map<String, String[]> params,
-            ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
+    public ExtensionResultStatusType modifyBreadcrumbList(
+            String url,
+            Map<String, String[]> params,
+            ExtensionResultHolder<List<BreadcrumbDTO>> holder
+    ) {
         BreadcrumbDTO homePageDto = new BreadcrumbDTO();
         homePageDto.setText(homePageText);
         homePageDto.setLink("/");

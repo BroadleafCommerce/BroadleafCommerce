@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,24 +31,26 @@ public interface SkuMetadataCacheService {
      * past the metadata TTL, the cache is cleared out from this method
      */
     boolean useCache();
-    
+
     /**
      * Not generally used but could be useful in some scenarios if you need to invalidate the entire cache
+     *
      * @return the cache, keyed by {@link #buildCacheKey(String)}
      */
     Map<String, Map<String, FieldMetadata>> getEntireCache();
 
     /**
      * Builds out the cache key to use for the other methods
+     *
      * @param productId optional productId, can be null
      * @return
      */
     String buildCacheKey(String productId);
-    
+
     Map<String, FieldMetadata> getFromCache(String cacheKey);
 
     boolean addToCache(String cacheKey, Map<String, FieldMetadata> metadata);
-    
+
     /**
      * Allows for outside sources to invalidate entries from the Sku Metadata cache that
      * is being used during sku inspects.
@@ -56,4 +58,5 @@ public interface SkuMetadataCacheService {
      * @param cacheKey from {@link #buildCacheKey(String)}
      */
     void invalidateFromCache(String cacheKey);
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,9 +29,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 
 /**
- * 
  * @author jfischer
- *
  */
 @Repository("blAdminRoleDao")
 public class AdminRoleDaoImpl implements AdminRoleDao {
@@ -39,7 +37,7 @@ public class AdminRoleDaoImpl implements AdminRoleDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public void deleteAdminRole(AdminRole role) {
@@ -50,7 +48,12 @@ public class AdminRoleDaoImpl implements AdminRoleDao {
     }
 
     public AdminRole readAdminRoleById(Long id) {
-        return (AdminRole) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminRole"), id);
+        return (AdminRole) em.find(
+                entityConfiguration.lookupEntityClass(
+                        "org.broadleafcommerce.openadmin.server.security.domain.AdminRole"
+                ),
+                id
+        );
     }
 
     public AdminRole saveAdminRole(AdminRole role) {

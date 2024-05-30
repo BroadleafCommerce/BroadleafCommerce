@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,15 +33,15 @@ import org.springframework.core.Ordered;
  * <p/>
  * {@code
  * <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
- *      <property name="collectionRef" value="blSandBoxPersistenceManagerEventHandlers"/>
- *      <property name="targetRef" value="blPersistenceManagerEventHandlers"/>
+ * <property name="collectionRef" value="blSandBoxPersistenceManagerEventHandlers"/>
+ * <property name="targetRef" value="blPersistenceManagerEventHandlers"/>
  * </bean>
  * <bean id="blSandBoxPersistenceManagerEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">
- *      <property name="sourceList">
- *          <list>
- *              <ref bean="blSandBoxPersistenceManagerEventHandler"/>
- *          </list>
-*       </property>
+ * <property name="sourceList">
+ * <list>
+ * <ref bean="blSandBoxPersistenceManagerEventHandler"/>
+ * </list>
+ * </property>
  * </bean>
  * }
  *
@@ -63,7 +63,7 @@ public interface PersistenceManagerEventHandler extends Ordered {
      * Called after the inspection for the entity described by persistencePackage
      *
      * @param persistenceManager the PersistenceManager instance making the call
-     * @param resultSet the inspection result data
+     * @param resultSet          the inspection result data
      * @param persistencePackage the descriptive information for the call
      * @return the response containing any changes, status or additional data
      * @throws ServiceException
@@ -75,7 +75,7 @@ public interface PersistenceManagerEventHandler extends Ordered {
      *
      * @param persistenceManager the PersistenceManager instance making the call
      * @param persistencePackage the descriptive information for the call
-     * @param cto the criteria describing the parameters of the fetch - converted into the where clause for the select query
+     * @param cto                the criteria describing the parameters of the fetch - converted into the where clause for the select query
      * @return the response containing any changes, status or additional data
      * @throws ServiceException
      */
@@ -85,9 +85,9 @@ public interface PersistenceManagerEventHandler extends Ordered {
      * Called after the fetch, which is a request for one or more persisted entities
      *
      * @param persistenceManager the PersistenceManager instance making the call
-     * @param resultSet the fetch result data
+     * @param resultSet          the fetch result data
      * @param persistencePackage the descriptive information for the call
-     * @param cto the criteria describing the parameters of the fetch - converted into the where clause for the select query
+     * @param cto                the criteria describing the parameters of the fetch - converted into the where clause for the select query
      * @return the response containing any changes, status or additional data
      * @throws ServiceException
      */
@@ -107,7 +107,7 @@ public interface PersistenceManagerEventHandler extends Ordered {
      * Called after an add
      *
      * @param persistenceManager the PersistenceManager instance making the call
-     * @param entity the result of the add
+     * @param entity             the result of the add
      * @param persistencePackage the descriptive information for the call
      * @return the response containing any changes, status or additional data
      * @throws ServiceException
@@ -128,7 +128,7 @@ public interface PersistenceManagerEventHandler extends Ordered {
      * Called after an update
      *
      * @param persistenceManager the PersistenceManager instance making the call
-     * @param entity the result of the update
+     * @param entity             the result of the update
      * @param persistencePackage the descriptive information for the call
      * @return the response containing any changes, status or additional data
      * @throws ServiceException
@@ -162,10 +162,11 @@ public interface PersistenceManagerEventHandler extends Ordered {
      * {@link org.broadleafcommerce.openadmin.dto.Entity#getPropertyValidationErrors()}
      *
      * @param persistenceManager the PersistenceManager instance making the call
-     * @param entity the results of the persistence request
+     * @param entity             the results of the persistence request
      * @param persistencePackage the descriptive information for the call
      * @return the response containing any changes, status or additional data
      * @throws ServiceException
      */
     PersistenceManagerEventHandlerResponse processValidationError(PersistenceManager persistenceManager, Entity entity, PersistencePackage persistencePackage) throws ServiceException;
+
 }

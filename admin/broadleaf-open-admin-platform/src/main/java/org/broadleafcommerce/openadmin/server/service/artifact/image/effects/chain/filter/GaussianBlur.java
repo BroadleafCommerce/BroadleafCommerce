@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,7 +35,17 @@ public class GaussianBlur extends BaseFilter {
 
     public static final int NUM_KERNELS = 16;
     public static final float[][] GAUSSIAN_BLUR_KERNELS = generateGaussianBlurKernels(NUM_KERNELS);
-    
+    private int kernelSize;
+    private int numOfPasses;
+
+    public GaussianBlur() {
+        //do nothing
+    }
+    public GaussianBlur(int kernelSize, int numOfPasses, RenderingHints hints) {
+        this.kernelSize = kernelSize;
+        this.numOfPasses = numOfPasses;
+    }
+
     public static float[][] generateGaussianBlurKernels(int level) {
         float[][] pascalsTriangle = generatePascalsTriangle(level);
         float[][] gaussianTriangle = new float[pascalsTriangle.length][];
@@ -90,18 +100,6 @@ public class GaussianBlur extends BaseFilter {
 
         return triangle;
     }
-    
-    private int kernelSize;
-    private int numOfPasses;
-
-    public GaussianBlur() {
-        //do nothing
-    }
-
-    public GaussianBlur(int kernelSize, int numOfPasses, RenderingHints hints) {
-        this.kernelSize = kernelSize;
-        this.numOfPasses = numOfPasses;
-    }
 
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
@@ -114,7 +112,7 @@ public class GaussianBlur extends BaseFilter {
         Operation operation = new Operation();
         operation.setName(key);
         String factor = parameterMap.get(key + "-factor");
-        operation.setFactor(factor==null?null:Double.valueOf(factor));
+        operation.setFactor(factor == null ? null : Double.valueOf(factor));
 
         UnmarshalledParameter kernelSize = new UnmarshalledParameter();
         String kernelSizeApplyFactor = parameterMap.get(key + "-kernel-size-apply-factor");
@@ -142,25 +140,25 @@ public class GaussianBlur extends BaseFilter {
         if (numOfPasses < 1) {
             return src;
         }
-        
+
         if (src == null) {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
             throw new IllegalArgumentException("src image cannot be the same as the dst image");
         }
-        
+
         boolean needToConvert = false;
         ColorModel srcCM = src.getColorModel();
         ColorModel dstCM;
         BufferedImage origDst = dst;
-        
+
         if (srcCM instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel) srcCM;
             src = icm.convertToIntDiscrete(src.getRaster(), false);
             srcCM = src.getColorModel();
         }
-        
+
         if (dst == null) {
             dst = createCompatibleDestImage(src, null);
             dstCM = srcCM;
@@ -168,18 +166,16 @@ public class GaussianBlur extends BaseFilter {
         } else {
             dstCM = dst.getColorModel();
             if (srcCM.getColorSpace().getType() !=
-                dstCM.getColorSpace().getType())
-            {
+                    dstCM.getColorSpace().getType()) {
                 needToConvert = true;
                 dst = createCompatibleDestImage(src, null);
                 dstCM = dst.getColorModel();
-            }
-            else if (dstCM instanceof IndexColorModel) {
+            } else if (dstCM instanceof IndexColorModel) {
                 dst = createCompatibleDestImage(src, null);
                 dstCM = dst.getColorModel();
             }
         }
-        
+
         float[] matrix = GAUSSIAN_BLUR_KERNELS[kernelSize - 1];
 
         Kernel gaussianBlur1 = new Kernel(matrix.length, 1, matrix);
@@ -204,16 +200,16 @@ public class GaussianBlur extends BaseFilter {
         if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
-        }
-        else if (origDst != dst) {
+        } else if (origDst != dst) {
             java.awt.Graphics2D g = origDst.createGraphics();
-        try {
-            g.drawImage(dst, 0, 0, null);
-        } finally {
-            g.dispose();
-        }
+            try {
+                g.drawImage(dst, 0, 0, null);
+            } finally {
+                g.dispose();
+            }
         }
 
         return origDst;
     }
+
 }

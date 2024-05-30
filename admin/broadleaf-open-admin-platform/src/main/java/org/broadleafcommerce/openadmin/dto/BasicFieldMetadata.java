@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -70,7 +70,6 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected SupportedFieldType fieldComponentRenderer;
     protected String fieldComponentRendererTemplate;
     protected SupportedFieldType gridFieldComponentRenderer;
-    private String gridFieldComponentRendererTemplate;
     protected Boolean readOnly;
     protected Map<String, List<Map<String, String>>> validationConfigurations = new HashMap<>(5);
     protected Boolean requiredOverride;
@@ -96,7 +95,6 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected Boolean isFilter;
     protected Boolean canLinkToExternalEntity;
     protected String associatedFieldName;
-
     //for MapFields
     protected String mapFieldValueClass;
     protected Boolean searchable;
@@ -104,8 +102,8 @@ public class BasicFieldMetadata extends FieldMetadata {
     protected String toOneTargetProperty;
     protected String toOneParentProperty;
     protected String mapKeyValueProperty;
-
     protected Boolean allowNoValueEnumOption;
+    private String gridFieldComponentRendererTemplate;
 
     public SupportedFieldType getFieldType() {
         return fieldType;
@@ -229,7 +227,7 @@ public class BasicFieldMetadata extends FieldMetadata {
     public void setEnumerationClass(String enumerationClass) {
         this.enumerationClass = enumerationClass;
     }
-    
+
     public Boolean getIsDerived() {
         return isDerived;
     }
@@ -419,18 +417,19 @@ public class BasicFieldMetadata extends FieldMetadata {
     public void setLookupDisplayProperty(String lookupDisplayProperty) {
         this.lookupDisplayProperty = lookupDisplayProperty;
     }
-    
+
     public Boolean getForcePopulateChildProperties() {
         return forcePopulateChildProperties;
     }
-    
+
     public void setForcePopulateChildProperties(Boolean forcePopulateChildProperties) {
         this.forcePopulateChildProperties = forcePopulateChildProperties;
     }
+
     public Boolean getEnableTypeaheadLookup() {
         return enableTypeaheadLookup;
     }
-    
+
     public void setEnableTypeaheadLookup(Boolean enableTypeaheadLookup) {
         this.enableTypeaheadLookup = enableTypeaheadLookup;
     }
@@ -522,9 +521,13 @@ public class BasicFieldMetadata extends FieldMetadata {
     public void setMapFieldValueClass(String mapFieldValueClass) {
         this.mapFieldValueClass = mapFieldValueClass;
     }
-    
+
     public LookupType getLookupType() {
         return lookupType;
+    }
+
+    public void setLookupType(LookupType lookupType) {
+        this.lookupType = lookupType;
     }
 
     public Boolean getSearchable() {
@@ -567,14 +570,10 @@ public class BasicFieldMetadata extends FieldMetadata {
         this.mapKeyValueProperty = mapKeyValueProperty;
     }
 
-    public void setLookupType(LookupType lookupType) {
-        this.lookupType = lookupType;
-    }
-    
     public Boolean getTranslatable() {
         return translatable;
     }
-    
+
     public void setTranslatable(Boolean translatable) {
         this.translatable = translatable;
     }
@@ -604,24 +603,24 @@ public class BasicFieldMetadata extends FieldMetadata {
     }
 
     public Boolean getAllowNoValueEnumOption() {
-        if (allowNoValueEnumOption==null || !allowNoValueEnumOption) {
+        if (allowNoValueEnumOption == null || !allowNoValueEnumOption) {
             return StringUtils.isEmpty(getDefaultValue())
                     && (!getRequired() && !(getRequiredOverride() != null && getRequiredOverride()));
-        }else{
+        } else {
             return allowNoValueEnumOption;
         }
     }
 
-    public void setCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {
-        this.canLinkToExternalEntity = canLinkToExternalEntity;
+    public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
+        this.allowNoValueEnumOption = allowNoValueEnumOption;
     }
 
     public Boolean getCanLinkToExternalEntity() {
         return canLinkToExternalEntity;
     }
 
-    public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
-        this.allowNoValueEnumOption = allowNoValueEnumOption;
+    public void setCanLinkToExternalEntity(Boolean canLinkToExternalEntity) {
+        this.canLinkToExternalEntity = canLinkToExternalEntity;
     }
 
     @Override
@@ -643,7 +642,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.enumerationClass = enumerationClass;
         if (enumerationValues != null) {
             metadata.enumerationValues = new String[enumerationValues.length][];
-            for (int j=0;j<enumerationValues.length;j++) {
+            for (int j = 0; j < enumerationValues.length; j++) {
                 metadata.enumerationValues[j] = new String[enumerationValues[j].length];
                 System.arraycopy(enumerationValues[j], 0, metadata.enumerationValues[j], 0, enumerationValues[j].length);
             }
@@ -656,7 +655,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.displayType = displayType;
         metadata.largeEntry = largeEntry;
         metadata.prominent = prominent;
-        metadata.gridOrder = gridOrder;        
+        metadata.gridOrder = gridOrder;
         metadata.columnWidth = columnWidth;
         metadata.broadleafEnumeration = broadleafEnumeration;
         metadata.hideEnumerationIfEmpty = hideEnumerationIfEmpty;
@@ -671,7 +670,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.hint = hint;
         for (Map.Entry<String, List<Map<String, String>>> entry : validationConfigurations.entrySet()) {
             List<Map<String, String>> clonedConfigItems = new ArrayList<>(entry.getValue().size());
-            
+
             for (Map<String, String> configEntries : entry.getValue()) {
                 Map<String, String> clone = new HashMap<>(configEntries.keySet().size());
                 for (Map.Entry<String, String> entry2 : configEntries.entrySet()) {
@@ -691,7 +690,7 @@ public class BasicFieldMetadata extends FieldMetadata {
         metadata.optionValueFieldName = optionValueFieldName;
         if (optionFilterParams != null) {
             metadata.optionFilterParams = new String[optionFilterParams.length][];
-            for (int j=0;j<optionFilterParams.length;j++) {
+            for (int j = 0; j < optionFilterParams.length; j++) {
                 metadata.optionFilterParams[j] = new String[optionFilterParams[j].length];
                 System.arraycopy(optionFilterParams[j], 0, metadata.optionFilterParams[j], 0, optionFilterParams[j].length);
             }
@@ -962,6 +961,5 @@ public class BasicFieldMetadata extends FieldMetadata {
         result = 31 * result + (canLinkToExternalEntity != null ? canLinkToExternalEntity.hashCode() : 0);
         return result;
     }
-
 
 }

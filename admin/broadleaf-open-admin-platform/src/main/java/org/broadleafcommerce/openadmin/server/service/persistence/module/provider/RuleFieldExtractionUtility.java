@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
 import org.broadleafcommerce.openadmin.dto.Entity;
@@ -58,6 +57,7 @@ public class RuleFieldExtractionUtility {
     /**
      * Takes a JSON string that came from the frontend form submission and deserializes it into its {@link DataWrapper} dto
      * representation so that it can be converted to an MVEL expression
+     *
      * @param json
      * @return
      */
@@ -81,15 +81,20 @@ public class RuleFieldExtractionUtility {
 
     /**
      * Converts the given {@link DataWrapper} into an MVEL expression
-     * @param translator 
+     *
+     * @param translator
      * @param entityKey
      * @param fieldService
      * @param dw
      * @return
      * @throws MVELTranslationException
      */
-    public String convertSimpleMatchRuleJsonToMvel(DataDTOToMVELTranslator translator, String entityKey,
-            String fieldService, DataWrapper dw) throws MVELTranslationException {
+    public String convertSimpleMatchRuleJsonToMvel(
+            DataDTOToMVELTranslator translator,
+            String entityKey,
+            String fieldService,
+            DataWrapper dw
+    ) throws MVELTranslationException {
         String mvel = null;
         // there can only be one DataDTO for an appliesTo* rule
         if (dw != null && dw.getData().size() == 1) {
@@ -100,13 +105,19 @@ public class RuleFieldExtractionUtility {
         return mvel;
     }
 
-    public String convertDTOToMvelString(DataDTOToMVELTranslator translator, String entityKey, DataDTO dto, String fieldService) throws MVELTranslationException {
+    public String convertDTOToMvelString(
+            DataDTOToMVELTranslator translator,
+            String entityKey,
+            DataDTO dto,
+            String fieldService
+    ) throws MVELTranslationException {
         return translator.createMVEL(entityKey, dto, ruleBuilderFieldServiceFactory.createInstance(fieldService));
     }
 
     /**
      * Converts a simple MVEL rule into its JSON representation suitable for adding to an {@link Entity} to pass to the
      * frontend.
+     *
      * @param translator
      * @param mapper
      * @param matchRule
@@ -114,8 +125,13 @@ public class RuleFieldExtractionUtility {
      * @param fieldService
      * @return
      */
-    public Property convertSimpleRuleToJson(MVELToDataWrapperTranslator translator, ObjectMapper mapper,
-            String matchRule, String jsonProp, String fieldService) {
+    public Property convertSimpleRuleToJson(
+            MVELToDataWrapperTranslator translator,
+            ObjectMapper mapper,
+            String matchRule,
+            String jsonProp,
+            String fieldService
+    ) {
         Entity[] matchCriteria = new Entity[1];
         Property[] properties = new Property[1];
         Property mvelProperty = new Property();
@@ -128,8 +144,13 @@ public class RuleFieldExtractionUtility {
 
         String json;
         try {
-            DataWrapper orderWrapper = translator.createRuleData(matchCriteria, "matchRule", null, null,
-                    ruleBuilderFieldServiceFactory.createInstance(fieldService));
+            DataWrapper orderWrapper = translator.createRuleData(
+                    matchCriteria,
+                    "matchRule",
+                    null,
+                    null,
+                    ruleBuilderFieldServiceFactory.createInstance(fieldService)
+            );
             json = mapper.writeValueAsString(orderWrapper);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -161,7 +182,7 @@ public class RuleFieldExtractionUtility {
         return s;
     }
 
-    private Map<String, String> populateSpecialCharactersMap() {
+    protected Map<String, String> populateSpecialCharactersMap() {
         Map<String, String> stringMapping = new HashMap<>();
         stringMapping.put("&", "&amp;");
         return stringMapping;

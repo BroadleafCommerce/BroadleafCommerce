@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,12 +34,13 @@ public class ProductBundleOrderItemRequest {
     protected Order order;
     protected int quantity;
     protected ProductBundle productBundle;
-    private Map<String,String> itemAttributes = new HashMap<String,String>();
     protected Money salePriceOverride;
     protected Money retailPriceOverride;
+    private Map<String, String> itemAttributes = new HashMap<>();
 
-    public ProductBundleOrderItemRequest() {}
-    
+    public ProductBundleOrderItemRequest() {
+    }
+
     public String getName() {
         return name;
     }
@@ -57,7 +58,7 @@ public class ProductBundleOrderItemRequest {
         this.category = category;
         return this;
     }
-    
+
     public Sku getSku() {
         return sku;
     }
@@ -66,14 +67,14 @@ public class ProductBundleOrderItemRequest {
         this.sku = sku;
         return this;
     }
-    
+
+    public Order getOrder() {
+        return order;
+    }
+
     public ProductBundleOrderItemRequest setOrder(Order order) {
         this.order = order;
         return this;
-    }
-    
-    public Order getOrder() {
-        return order;
     }
 
     public int getQuantity() {

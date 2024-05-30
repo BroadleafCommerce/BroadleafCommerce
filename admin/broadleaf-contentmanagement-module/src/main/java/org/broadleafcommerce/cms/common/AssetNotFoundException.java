@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,13 +19,16 @@ package org.broadleafcommerce.cms.common;
 
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
 
+import java.io.Serial;
 
 /**
  * Exception thrown by the {@link StaticAssetService} indicating that the asset requested does not exist.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class AssetNotFoundException extends RuntimeException {
+
+    @Serial
     private static final long serialVersionUID = -6349160176427682630L;
 
     public AssetNotFoundException() {

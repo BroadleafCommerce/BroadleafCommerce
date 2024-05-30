@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,22 +23,24 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import java.io.Serializable;
 
 /**
- * This class holds adjustment records during the discount calculation 
- * processing.  This and other disposable objects avoid churn on the database while the 
+ * This class holds adjustment records during the discount calculation
+ * processing.  This and other disposable objects avoid churn on the database while the
  * offer engine determines the best offer(s) for the order being priced.
- * 
+ *
  * @author bpolster
  */
 public interface PromotableOrderItemPriceDetailAdjustment extends Serializable {
 
     /**
      * Returns the associated promotableOrderItemPriceDetail
+     *
      * @return
      */
     PromotableOrderItemPriceDetail getPromotableOrderItemPriceDetail();
 
     /**
      * Returns the associated promotableCandidateItemOffer
+     *
      * @return
      */
     Offer getOffer();
@@ -46,6 +48,7 @@ public interface PromotableOrderItemPriceDetailAdjustment extends Serializable {
     /**
      * Returns the value of this adjustment if only retail prices
      * can be used.
+     *
      * @return
      */
     Money getRetailAdjustmentValue();
@@ -53,6 +56,7 @@ public interface PromotableOrderItemPriceDetailAdjustment extends Serializable {
     /**
      * Returns the value of this adjustment if sale prices
      * can be used.
+     *
      * @return
      */
     Money getSaleAdjustmentValue();
@@ -60,12 +64,14 @@ public interface PromotableOrderItemPriceDetailAdjustment extends Serializable {
     /**
      * Returns the value of this adjustment.
      * can be used.
+     *
      * @return
      */
     Money getAdjustmentValue();
 
     /**
      * Returns true if the value was applied to the sale price.
+     *
      * @return
      */
     boolean isAppliedToSalePrice();
@@ -76,12 +82,13 @@ public interface PromotableOrderItemPriceDetailAdjustment extends Serializable {
     boolean isCombinable();
 
     /**
-     * Returns true if this adjustment represents a totalitarian offer.   
+     * Returns true if this adjustment represents a totalitarian offer.
      */
     boolean isTotalitarian();
 
     /**
      * Returns the id of the contained offer.
+     *
      * @return
      */
     Long getOfferId();
@@ -93,10 +100,9 @@ public interface PromotableOrderItemPriceDetailAdjustment extends Serializable {
 
     /**
      * Copy this adjustment.   Used when a detail that contains this adjustment needs to be split.
-     * @param discountQty
-     * @param copy
+     *
      * @return
      */
-    public PromotableOrderItemPriceDetailAdjustment copy();
+    PromotableOrderItemPriceDetailAdjustment copy();
 
 }

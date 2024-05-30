@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,33 +24,33 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * This class creates the following BLC domain object for the Spring Social User Connection.
  * The following is the SQL that is needed for Spring Social to achieve JDBC-based persistence.
  * http://static.springsource.org/spring-social/docs/1.0.x/reference/html/serviceprovider.html#service-providers-persisting-connections
- *
+ * <p>
  * It is expected that the following table be created:
  * -----------------------------------------------------
  * create table UserConnection (userId varchar(255) not null,
- *  providerId varchar(255) not null,
- *  providerUserId varchar(255),
- *  rank int not null,
- *  displayName varchar(255),
- *  profileUrl varchar(512),
- *  imageUrl varchar(512),
- *  accessToken varchar(255) not null,
- *  secret varchar(255),
- *  refreshToken varchar(255),
- *  expireTime bigint,
- *  primary key (userId, providerId, providerUserId));
- *
+ * providerId varchar(255) not null,
+ * providerUserId varchar(255),
+ * rank int not null,
+ * displayName varchar(255),
+ * profileUrl varchar(512),
+ * imageUrl varchar(512),
+ * accessToken varchar(255) not null,
+ * secret varchar(255),
+ * refreshToken varchar(255),
+ * expireTime bigint,
+ * primary key (userId, providerId, providerUserId));
+ * <p>
  * create unique index UserConnectionRank on UserConnection(userId, providerId, rank);
  * ------------------------------------------------------
  *
  * @author elbertbautista
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -175,7 +175,11 @@ public class UserConnectionImpl implements UserConnection {
     }
 
     public static class UserConnectionPK implements Serializable {
-        /** The Constant serialVersionUID. */
+
+        /**
+         * The Constant serialVersionUID.
+         */
+        @Serial
         private static final long serialVersionUID = 1L;
 
         @Column(name = "userId", nullable = false)
@@ -216,9 +220,9 @@ public class UserConnectionImpl implements UserConnection {
             if (obj == null) return false;
             else if (!getClass().isAssignableFrom(obj.getClass())) return false;
 
-            return userId.equals(((UserConnectionPK) obj).getUserId()) &&
-                    providerId.equals(((UserConnectionPK) obj).getProviderId()) &&
-                    providerUserId.equals(((UserConnectionPK) obj).getProviderUserId());
+            return userId.equals(((UserConnectionPK) obj).getUserId())
+                    && providerId.equals(((UserConnectionPK) obj).getProviderId())
+                    && providerUserId.equals(((UserConnectionPK) obj).getProviderUserId());
         }
 
         @Override

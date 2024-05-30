@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,13 +23,12 @@ import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * <p>
- * This is by default added into {@code META-INF/spring.factories} with the {@link org.springframework.boot.env.EnvironmentPostProcessor} key. 
+ * This is by default added into {@code META-INF/spring.factories} with the {@link org.springframework.boot.env.EnvironmentPostProcessor} key.
  * In non-boot applications refer to {@link org.broadleafcommerce.common.config.BroadleafEnvironmentConfiguringApplicationListener}
- * 
- * @author Jay Aisenbrey (cja769)
- * @since 6.1
- * @see BroadleafEnvironmentConfigurer
  *
+ * @author Jay Aisenbrey (cja769)
+ * @see BroadleafEnvironmentConfigurer
+ * @since 6.1
  */
 public class BroadleafEnvironmentConfiguringPostProcessor extends BroadleafEnvironmentConfigurer implements EnvironmentPostProcessor {
 

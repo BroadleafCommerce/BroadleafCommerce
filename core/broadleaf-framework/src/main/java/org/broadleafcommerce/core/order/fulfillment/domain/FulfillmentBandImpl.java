@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,26 +21,28 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 
 /**
- * 
  * @author Phillip Verheyden
  * @see {@link FulfillmentPriceBandImpl}, {@link FulfillmentWeightBandImpl}
  */
 @MappedSuperclass
 public abstract class FulfillmentBandImpl implements FulfillmentBand {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    @Column(name="RESULT_AMOUNT", precision=19, scale=5, nullable = false)
+    @Column(name = "RESULT_AMOUNT", precision = 19, scale = 5, nullable = false)
     protected BigDecimal resultAmount;
-    
-    @Column(name="RESULT_AMOUNT_TYPE", nullable = false)
-    @AdminPresentation(friendlyName="Result Type", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType")
+
+    @Column(name = "RESULT_AMOUNT_TYPE", nullable = false)
+    @AdminPresentation(friendlyName = "Result Type", fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentBandResultAmountType")
     protected String resultAmountType = FulfillmentBandResultAmountType.RATE.getType();
 
     @Override

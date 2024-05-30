@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,13 +40,15 @@ import java.util.Map;
 public class MaxGreaterThanMinValidator extends ValidationConfigurationBasedPropertyValidator {
 
     @Override
-    public PropertyValidationResult validate(Entity entity,
-                                             Serializable instance,
-                                             Map<String, FieldMetadata> entityFieldMetadata,
-                                             Map<String, String> validationConfiguration,
-                                             BasicFieldMetadata propertyMetadata,
-                                             String propertyName,
-                                             String value) {
+    public PropertyValidationResult validate(
+            Entity entity,
+            Serializable instance,
+            Map<String, FieldMetadata> entityFieldMetadata,
+            Map<String, String> validationConfiguration,
+            BasicFieldMetadata propertyMetadata,
+            String propertyName,
+            String value
+    ) {
         String otherField = validationConfiguration.get("otherField");
         FieldManager fm = getFieldManager(propertyMetadata);
         boolean valid = true;
@@ -69,7 +71,7 @@ public class MaxGreaterThanMinValidator extends ValidationConfigurationBasedProp
             message = e.getMessage();
         }
 
-        if (valid && max != null && min != null && max.compareTo(min) < 0 ) {
+        if (valid && max != null && min != null && max.compareTo(min) < 0) {
             valid = false;
             message = "minGreaterThanMax";
         }
@@ -78,7 +80,9 @@ public class MaxGreaterThanMinValidator extends ValidationConfigurationBasedProp
     }
 
     protected FieldManager getFieldManager(BasicFieldMetadata propertyMetadata) {
-        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(propertyMetadata.getTargetClass());
+        PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(
+                propertyMetadata.getTargetClass()
+        );
         return persistenceManager.getDynamicEntityDao().getFieldManager();
     }
 

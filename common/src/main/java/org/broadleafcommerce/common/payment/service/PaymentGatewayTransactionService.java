@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
@@ -43,22 +42,21 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
  * The PaymentGatewayWebResponseService will handle translation of the final transaction response from the gateway.
  * There is no need to re-call this service if the gateway doesn't support confirming the transaction.</p>
  *
- * @see {@link PaymentGatewayWebResponseService}
- *
  * @author Elbert Bautista (elbertbautista)
+ * @see {@link PaymentGatewayWebResponseService}
  */
 public interface PaymentGatewayTransactionService {
 
-    public PaymentResponseDTO authorize(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
+    PaymentResponseDTO authorize(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
 
-    public PaymentResponseDTO capture(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
+    PaymentResponseDTO capture(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
 
-    public PaymentResponseDTO authorizeAndCapture(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
+    PaymentResponseDTO authorizeAndCapture(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
 
-    public PaymentResponseDTO reverseAuthorize(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
+    PaymentResponseDTO reverseAuthorize(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
 
-    public PaymentResponseDTO refund(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
+    PaymentResponseDTO refund(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
 
-    public PaymentResponseDTO voidPayment(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
+    PaymentResponseDTO voidPayment(PaymentRequestDTO paymentRequestDTO) throws PaymentException;
 
 }

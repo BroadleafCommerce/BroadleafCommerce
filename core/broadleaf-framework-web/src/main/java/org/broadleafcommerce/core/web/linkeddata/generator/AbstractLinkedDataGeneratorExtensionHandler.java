@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,107 +29,92 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * @author Nathan Moore (nathanmoore).
  */
-public abstract class AbstractLinkedDataGeneratorExtensionHandler extends AbstractExtensionHandler implements LinkedDataGeneratorExtensionHandler {
+public abstract class AbstractLinkedDataGeneratorExtensionHandler extends AbstractExtensionHandler
+        implements LinkedDataGeneratorExtensionHandler {
 
     @Override
-    public ExtensionResultStatusType addDefaultData(final HttpServletRequest request, final JSONArray defaultData)
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addBreadcrumbData(final HttpServletRequest request, final JSONObject breadcrumbData)
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addBreadcrumbListItemData(final HttpServletRequest request, final JSONObject breadcrumbData)
-            throws JSONException {
+    public ExtensionResultStatusType addDefaultData(final HttpServletRequest request, final JSONArray defaultData) throws JSONException {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType addBreadcrumbItemData(final HttpServletRequest request, final JSONObject breadcrumbData)
-            throws JSONException {
+    public ExtensionResultStatusType addBreadcrumbData(final HttpServletRequest request, final JSONObject breadcrumbData) throws JSONException {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType addHomepageData(final HttpServletRequest request, final JSONArray homepageData)
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addWebSiteData(final HttpServletRequest request, final JSONObject homepageData)
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addOrganizationData(final HttpServletRequest request, final JSONObject homepageData) 
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addContactData(final HttpServletRequest request, final JSONObject homepageData)
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addSocialMediaData(final HttpServletRequest request, final JSONArray homepageData)
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addPotentialActionsData(final HttpServletRequest request, final JSONObject homepageData) 
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addCategoryData(final HttpServletRequest request, final JSONObject categoryData)
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addCategoryProductData(final HttpServletRequest request, final JSONObject categoryData) 
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addReviewData(final HttpServletRequest request, final Product product, final JSONObject reviewData) 
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addAggregateReviewData(final HttpServletRequest request, final Product product, final JSONObject reviewData)
-            throws JSONException {
+    public ExtensionResultStatusType addBreadcrumbListItemData(final HttpServletRequest request, final JSONObject breadcrumbData) throws JSONException {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType addProductData(final HttpServletRequest request, final Product product, final JSONObject productData) 
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addSkuData(final HttpServletRequest request, final Product product, final JSONObject skuData) 
-            throws JSONException {
-        return ExtensionResultStatusType.NOT_HANDLED; 
-    }
-
-    @Override
-    public ExtensionResultStatusType addAggregateSkuData(final HttpServletRequest request, final Product product, final JSONObject skuData)
-            throws JSONException {
+    public ExtensionResultStatusType addBreadcrumbItemData(final HttpServletRequest request, final JSONObject breadcrumbData) throws JSONException {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
+    @Override
+    public ExtensionResultStatusType addHomepageData(final HttpServletRequest request, final JSONArray homepageData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addWebSiteData(final HttpServletRequest request, final JSONObject homepageData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addOrganizationData(final HttpServletRequest request, final JSONObject homepageData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addContactData(final HttpServletRequest request, final JSONObject homepageData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addSocialMediaData(final HttpServletRequest request, final JSONArray homepageData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addPotentialActionsData(final HttpServletRequest request, final JSONObject homepageData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addCategoryData(final HttpServletRequest request, final JSONObject categoryData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addCategoryProductData(final HttpServletRequest request, final JSONObject categoryData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addReviewData(final HttpServletRequest request, final Product product, final JSONObject reviewData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addAggregateReviewData(final HttpServletRequest request, final Product product, final JSONObject reviewData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addProductData(final HttpServletRequest request, final Product product, final JSONObject productData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addSkuData(final HttpServletRequest request, final Product product, final JSONObject skuData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    @Override
+    public ExtensionResultStatusType addAggregateSkuData(final HttpServletRequest request, final Product product, final JSONObject skuData) throws JSONException {
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
 }

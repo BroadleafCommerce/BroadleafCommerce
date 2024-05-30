@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -71,13 +71,13 @@ import jakarta.annotation.Resource;
 @Service("blOrderItemService")
 public class OrderItemServiceImpl implements OrderItemService {
 
-    @Resource(name="blOrderItemDao")
+    @Resource(name = "blOrderItemDao")
     protected OrderItemDao orderItemDao;
 
-    @Resource(name="blDynamicSkuPricingService" )
+    @Resource(name = "blDynamicSkuPricingService")
     protected DynamicSkuPricingService dynamicSkuPricingService;
 
-    @Resource(name="blOrderItemServiceExtensionManager")
+    @Resource(name = "blOrderItemServiceExtensionManager")
     protected OrderItemServiceExtensionManager extensionManager;
 
     @Resource(name = "blCatalogService")
@@ -118,17 +118,17 @@ public class OrderItemServiceImpl implements OrderItemService {
         if (attributes != null && attributes.size() > 0) {
             Map<String, OrderItemAttribute> orderItemAttributes = item.getOrderItemAttributes();
             if (item.getOrderItemAttributes() == null) {
-                orderItemAttributes = new HashMap<String, OrderItemAttribute>();
+                orderItemAttributes = new HashMap<>();
                 item.setOrderItemAttributes(orderItemAttributes);
             }
             for (String key : attributes.keySet()) {
                 String value = attributes.get(key);
-                if(value == null){
+                if (value == null) {
                     continue;
                 }
                 OrderItemAttribute attribute = orderItemAttributes.get(key);
 
-                if(attribute == null) {
+                if (attribute == null) {
                     attribute = new OrderItemAttributeImpl();
                 }
 
@@ -161,7 +161,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         if (MapUtils.isNotEmpty(itemRequest.getItemAttributes())) {
             Map<String, OrderItemAttribute> attributeMap = item.getOrderItemAttributes();
             if (attributeMap == null) {
-                attributeMap = new HashMap<String, OrderItemAttribute>();
+                attributeMap = new HashMap<>();
                 item.setOrderItemAttributes(attributeMap);
             }
 
@@ -189,7 +189,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         } else if (item instanceof BundleOrderItem) {
             productOptions = ((BundleOrderItem) item).getProduct().getProductOptions();
         }
-        List<String> removeKeys = new ArrayList<String>();
+        List<String> removeKeys = new ArrayList<>();
         if (productOptions != null && itemRequest.getItemAttributes() != null) {
             for (String name : itemRequest.getItemAttributes().keySet()) {
                 //we do not let them update all product options.
@@ -267,7 +267,10 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) {
+    public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(
+            final DiscreteOrderItemRequest itemRequest,
+            @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations
+    ) {
         final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.EXTERNALLY_PRICED);
         populateDiscreteOrderItem(item, itemRequest);
 
@@ -597,7 +600,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     protected Set<Product> findAllChildProductsInRequest(List<OrderItemRequestDTO> childItems) {
-        Set<Product> allProductsSet = new HashSet<Product>();
+        Set<Product> allProductsSet = new HashSet<>();
         for (OrderItemRequestDTO child : childItems) {
             ConfigurableOrderItemRequest configChild = (ConfigurableOrderItemRequest) child;
             Product childProduct = configChild.getProduct();
@@ -651,4 +654,5 @@ public class OrderItemServiceImpl implements OrderItemService {
     public Long readNumberOfOrderItems() {
         return orderItemDao.readNumberOfOrderItems();
     }
+
 }

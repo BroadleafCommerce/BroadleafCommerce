@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -100,25 +100,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerRequestFilter {
 
     private static final Log LOG = LogFactory.getLog(CachingCompressedResponseFilter.class);
-
-    @Configuration
-    static class BroadleafSpringResourceConfig {
-
-        @Bean
-        public CacheAwareResponseHandler blCacheAwareReponseHandler(@Value("${staticResourceBrowserCacheSeconds}") int cacheSeconds) {
-            CacheAwareResponseHandler handler = new CacheAwareResponseHandler();
-            handler.setCacheSeconds(cacheSeconds);
-            return handler;
-        }
-    }
-
     /**
      * Whether or not compression is enabled in the default Spring environment. Used to turn off during development. True
      * by default (compression enabled).
      */
     @Value("${filter.compression.use.default.environment:true}")
     protected Boolean useWhileInDefaultEnvironment = true;
-
     /**
      * It is likely resource versioning will be disabled in the default, development environment. This setting will tell
      * the system to not cache static resources in the local filesystem in the default environment to avoid static
@@ -126,68 +113,58 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
      */
     @Value("${filter.compression.cache.default.environment:false}")
     protected Boolean cacheWhileInDefaultEnvironment = false;
-
     /**
      * Specify a filesystem directory in which to store compressed static files. 'none' by default, which means use
      * the java temp directory.
      */
     @Value("${filter.compression.file.temp.directory:none}")
     protected String compressedFileTempDirectory;
-
     /**
      * The minimum size of a cached,compressed file (in bytes) for which to use the OS sendfile feature. 49152 bytes
      * by default.
      */
     @Value("${filter.compression.sendfile.size:49152}")
     protected long sendFileSize;
-
     /**
      * Whether or not to ever use the OS sendfile feature. True by default (use the feature).
      */
     @Value("${filter.compression.use.sendfile:true}")
     protected Boolean useSendFile;
-
     /**
      * Comma delimited URI matching regular expression to mime type mapping. The default value is
      * {@code .*\\.svg:image/svg+xml,.*\\.png:image/png,.*\\.xml:text/xml,.*\\.css:text/css,.*\\.js:application/javascript,.*\\.otf:application/x-font-opentype,.*\\.json:application/json,.*\\.css\.map:application/json,.*\\.js\.map:application/json}
      */
     @Value("${filter.compression.extension.mime.mappings:.*\\.svg:image/svg+xml,.*\\.png:image/png,.*\\.xml:text/xml,.*\\.css:text/css,.*\\.js:application/javascript,.*\\.otf:application/x-font-opentype,.*\\.json:application/json,.*\\.css\\.map:application/json,.*\\.js\\.map:application/json}")
     protected String compressionExtensionToMimeMappings;
-
     /**
      * Whether or not to cache static file compression results. The default value is false (don't use the cache).
      */
     @Value("${filter.compression.allow.static.file.cache:false}")
     protected Boolean allowStaticFileCache;
-
     /**
      * A comma delimited list of URI matching regular expressions for requests that should be ignored for any compression.
      * The default value is '.*\\.jpg,.*\\.jpeg,.*\\.gif,.*\\.png'.
      */
     @Value("${filter.compression.blacklist.uri.regex:.*\\.jpg,.*\\.jpeg,.*\\.gif,.*\\.png}")
     protected String blackListURIs;
-
     @Value("${resource.versioning.enabled:true}")
     protected Boolean resourceVersioningEnabled;
-
     protected Boolean isDefaultEnvironment = false;
-
     protected Boolean initialized = false;
-
     @Autowired
     protected Environment environment;
-
     @Autowired
     protected CacheAwareResponseHandler cacheAwareResponseHandler;
-
     protected AtomicMove atomicMove = new AtomicMoveImpl();
-
     protected Map<Pattern, String> extensionToMime = new HashMap<>();
-
     protected List<Pattern> blackListPatterns = new ArrayList<>();
 
     @Override
-    protected void doFilterInternalUnlessIgnored(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void doFilterInternalUnlessIgnored(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain
+    ) throws IOException, ServletException {
         if (!isDefaultEnvironment || useWhileInDefaultEnvironment) {
             if (useGzipCompression(request, response)) {
                 String mimeType = getMimeType(request);
@@ -209,8 +186,8 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
 
     @Override
     public int getOrder() {
-            return FilterOrdered.PRE_SECURITY_HIGH - 1200;
-        }
+        return FilterOrdered.PRE_SECURITY_HIGH - 1200;
+    }
 
     @Override
     protected void initFilterBean() throws ServletException {
@@ -226,7 +203,8 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
                     blackListPatterns.add(Pattern.compile(rawPattern));
                 }
             }
-            isDefaultEnvironment = !(ArrayUtils.isNotEmpty(environment.getActiveProfiles()) && Arrays.binarySearch(environment.getActiveProfiles(), "default") < 0);
+            isDefaultEnvironment = !(ArrayUtils.isNotEmpty(environment.getActiveProfiles())
+                    && Arrays.binarySearch(environment.getActiveProfiles(), "default") < 0);
 
             if (!resourceVersioningEnabled && shouldUseStaticCache()) {
                 LOG.warn("Static file compression cache is enabled, but resource versioning is not enabled. This can lead " +
@@ -255,7 +233,11 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
         return response;
     }
 
-    protected void processDynamic(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+    protected void processDynamic(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain
+    ) throws IOException, ServletException {
         ContentCachingResponseWrapper wrapper = new ContentCachingResponseWrapper(response);
         chain.doFilter(request, wrapper);
         FastByteArrayOutputStream baos = new FastByteArrayOutputStream(1024);
@@ -267,7 +249,12 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
         StreamUtils.copy(new ByteArrayInputStream(baos.toByteArray()), response.getOutputStream());
     }
 
-    protected boolean processStatic(HttpServletRequest request, HttpServletResponse response, FilterChain chain, String mimeType) throws IOException, ServletException {
+    protected boolean processStatic(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain,
+            String mimeType
+    ) throws IOException, ServletException {
         boolean success = true;
         try {
             File targetFile = prepareTargetFile(request);
@@ -320,7 +307,12 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
         return new File(targetDir, uriHash + ".gz");
     }
 
-    protected void cacheStaticCompressedFileInFileSystem(HttpServletRequest request, HttpServletResponse response, FilterChain chain, File targetFile) throws IOException, ServletException {
+    protected void cacheStaticCompressedFileInFileSystem(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain,
+            File targetFile
+    ) throws IOException, ServletException {
         String tempRoot = UUID.randomUUID().toString();
         File tempFile = File.createTempFile(tempRoot, ".tmp");
         FileSystemResponseWrapper wrapper = new FileSystemResponseWrapper(response, tempFile);
@@ -363,6 +355,19 @@ public class CachingCompressedResponseFilter extends AbstractIgnorableOncePerReq
         }
 
         return false;
+    }
+
+    @Configuration
+    static class BroadleafSpringResourceConfig {
+
+        @Bean
+        public CacheAwareResponseHandler blCacheAwareReponseHandler(
+                @Value("${staticResourceBrowserCacheSeconds}") int cacheSeconds
+        ) {
+            CacheAwareResponseHandler handler = new CacheAwareResponseHandler();
+            handler.setCacheSeconds(cacheSeconds);
+            return handler;
+        }
     }
 
 }

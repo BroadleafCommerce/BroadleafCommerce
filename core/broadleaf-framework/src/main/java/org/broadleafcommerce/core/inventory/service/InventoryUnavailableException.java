@@ -10,17 +10,18 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.inventory.service;
 
+import java.io.Serial;
 
 public class InventoryUnavailableException extends Exception {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Long skuId;
@@ -32,7 +33,7 @@ public class InventoryUnavailableException extends Exception {
     public InventoryUnavailableException(String msg) {
         super(msg);
     }
-    
+
     public InventoryUnavailableException(Long skuId, Integer quantityRequested, Integer quantityAvailable) {
         super();
         this.skuId = skuId;
@@ -46,7 +47,7 @@ public class InventoryUnavailableException extends Exception {
         this.quantityAvailable = quantityAvailable;
         this.quantityRequested = quantityRequested;
     }
-    
+
     public InventoryUnavailableException(String msg, Throwable cause) {
         super(msg, cause);
     }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,18 +36,18 @@ import java.util.Map;
 
 public class PromotableOrderImpl implements PromotableOrder {
 
-
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     protected PromotableItemFactory itemFactory;
     protected Order order;
     protected List<PromotableOrderItem> allOrderItems;
     protected List<PromotableOrderItem> discountableOrderItems;
     protected boolean currentSortParam = false;
     protected List<PromotableFulfillmentGroup> fulfillmentGroups;
-    protected List<PromotableOrderAdjustment> candidateOrderOfferAdjustments = new ArrayList<PromotableOrderAdjustment>();
+    protected List<PromotableOrderAdjustment> candidateOrderOfferAdjustments = new ArrayList<>();
     protected boolean includeOrderAndItemAdjustments = false;
-    protected Map<String, Object> extraDataMap = new HashMap<String, Object>();
+    protected Map<String, Object> extraDataMap = new HashMap<>();
 
     public PromotableOrderImpl(Order order, PromotableItemFactory itemFactory, boolean includeOrderAndItemAdjustments) {
         this.order = order;
@@ -66,8 +67,12 @@ public class PromotableOrderImpl implements PromotableOrder {
         if (order.getOrderAdjustments() != null) {
             for (OrderAdjustment adjustment : order.getOrderAdjustments()) {
                 if (adjustment.getOffer() != null) {
-                    PromotableCandidateOrderOffer pcoo = itemFactory.createPromotableCandidateOrderOffer(this, adjustment.getOffer(), adjustment.getValue());
-                    PromotableOrderAdjustment adj = itemFactory.createPromotableOrderAdjustment(pcoo, this, adjustment.getValue());
+                    PromotableCandidateOrderOffer pcoo = itemFactory.createPromotableCandidateOrderOffer(
+                            this, adjustment.getOffer(), adjustment.getValue()
+                    );
+                    PromotableOrderAdjustment adj = itemFactory.createPromotableOrderAdjustment(
+                            pcoo, this, adjustment.getValue()
+                    );
                     candidateOrderOfferAdjustments.add(adj);
                 }
             }
@@ -79,7 +84,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         Money calculatedSubTotal = calculateSubtotalWithoutAdjustments();
         order.setSubTotal(calculatedSubTotal);
     }
-    
+
     @Override
     public void setOrderSubTotalToPriceWithAdjustments() {
         Money calculatedSubTotal = calculateSubtotalWithAdjustments();
@@ -89,7 +94,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     @Override
     public List<PromotableOrderItem> getAllOrderItems() {
         if (allOrderItems == null) {
-            allOrderItems = new ArrayList<PromotableOrderItem>();
+            allOrderItems = new ArrayList<>();
 
             for (OrderItem orderItem : order.getOrderItems()) {
                 addPromotableOrderItem(orderItem, allOrderItems);
@@ -103,7 +108,6 @@ public class PromotableOrderImpl implements PromotableOrder {
     public List<PromotableOrderItem> getDiscountableOrderItems() {
         return getDiscountableOrderItems(currentSortParam);
     }
-
 
     @Override
     public List<PromotableOrderItem> getDiscountableOrderItems(boolean applyDiscountToSalePrice) {
@@ -128,7 +132,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
 
     protected List<PromotableOrderItem> buildPromotableOrderItemsList() {
-        List<PromotableOrderItem> discountableOrderItems = new ArrayList<PromotableOrderItem>();
+        List<PromotableOrderItem> discountableOrderItems = new ArrayList<>();
 
         for (PromotableOrderItem promotableOrderItem : getAllOrderItems()) {
             if (promotableOrderItem.isDiscountingAllowed()) {
@@ -151,14 +155,16 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
 
     protected void addPromotableOrderItem(OrderItem orderItem, List<PromotableOrderItem> discountableOrderItems) {
-        PromotableOrderItem item = itemFactory.createPromotableOrderItem(orderItem, PromotableOrderImpl.this, includeOrderAndItemAdjustments);
+        PromotableOrderItem item = itemFactory.createPromotableOrderItem(
+                orderItem, PromotableOrderImpl.this, includeOrderAndItemAdjustments
+        );
         discountableOrderItems.add(item);
     }
 
     @Override
     public List<PromotableFulfillmentGroup> getFulfillmentGroups() {
         if (fulfillmentGroups == null) {
-            fulfillmentGroups = new ArrayList<PromotableFulfillmentGroup>();
+            fulfillmentGroups = new ArrayList<>();
             for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
                 fulfillmentGroups.add(itemFactory.createPromotableFulfillmentGroup(fulfillmentGroup, this));
             }
@@ -170,7 +176,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     public boolean isHasOrderAdjustments() {
         return candidateOrderOfferAdjustments.size() > 0;
     }
-    
+
     @Override
     public List<PromotableOrderAdjustment> getCandidateOrderAdjustments() {
         return candidateOrderOfferAdjustments;
@@ -215,13 +221,12 @@ public class PromotableOrderImpl implements PromotableOrder {
     public Order getOrder() {
         return order;
     }
-    
 
     @Override
     public boolean isTotalitarianOfferApplied() {
         return isTotalitarianFgOfferApplied() || isTotalitarianItemOfferApplied() || isTotalitarianOrderOfferApplied();
     }
-    
+
     @Override
     public boolean isTotalitarianOrderOfferApplied() {
         for (PromotableOrderAdjustment adjustment : candidateOrderOfferAdjustments) {
@@ -231,7 +236,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         }
         return false;
     }
-    
+
     @Override
     public boolean isTotalitarianItemOfferApplied() {
         for (PromotableOrderItemPriceDetail itemPriceDetail : getAllPromotableOrderItemPriceDetails()) {
@@ -241,7 +246,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         }
         return false;
     }
-    
+
     @Override
     public boolean isTotalitarianFgOfferApplied() {
         for (PromotableFulfillmentGroup fg : getFulfillmentGroups()) {
@@ -272,7 +277,7 @@ public class PromotableOrderImpl implements PromotableOrder {
     }
 
     public List<PromotableOrderItemPriceDetail> getAllPromotableOrderItemPriceDetails() {
-        List<PromotableOrderItemPriceDetail> allPriceDetails = new ArrayList<PromotableOrderItemPriceDetail>();
+        List<PromotableOrderItemPriceDetail> allPriceDetails = new ArrayList<>();
         for (PromotableOrderItem item : getDiscountableOrderItems()) {
             allPriceDetails.addAll(item.getPromotableOrderItemPriceDetails());
         }
@@ -301,7 +306,7 @@ public class PromotableOrderImpl implements PromotableOrder {
         if (isNotCombinableOrderOfferApplied()) {
             return false;
         }
-        
+
         if (!offer.isCombinable() || offer.isTotalitarian()) {
             // Only allow a combinable or totalitarian offer if this is the first adjustment.
             return candidateOrderOfferAdjustments.size() == 0;
@@ -309,7 +314,7 @@ public class PromotableOrderImpl implements PromotableOrder {
 
         return true;
     }
-    
+
     @Override
     public Money calculateSubtotalWithoutAdjustments() {
         Money calculatedSubTotal = BroadleafCurrencyUtils.getMoney(order.getCurrency());
@@ -337,4 +342,5 @@ public class PromotableOrderImpl implements PromotableOrder {
     public Map<String, Object> getExtraDataMap() {
         return extraDataMap;
     }
+
 }

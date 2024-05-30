@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,6 +38,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -58,16 +59,13 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_SANDBOX",
-        indexes = {@Index(name = "SANDBOX_NAME_INDEX", columnList = "SANDBOX_NAME")})
+@Table(name = "BLC_SANDBOX", indexes = {@Index(name = "SANDBOX_NAME_INDEX", columnList = "SANDBOX_NAME")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSandBoxElements")
 @SQLDelete(sql = "UPDATE BLC_SANDBOX SET ARCHIVED = 'Y' WHERE SANDBOX_ID = ?")
-@DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)
-})
+@DirectCopyTransform({@DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.AUDITABLE_ONLY)})
 public class SandBoxImpl implements SandBox, AdminMainEntity {
 
-    private static final Log LOG = LogFactory.getLog(SandBoxImpl.class);
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -89,8 +87,7 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     @AdminPresentation(friendlyName = "SandBoxImpl_Name",
             group = SandboxAdminPresentation.GroupName.Description, prominent = true,
             gridOrder = 2000, order = 1000,
-            validationConfigurations = {
-                    @ValidationConfiguration(validationImplementation = "blSandBoxNameValidator")})
+            validationConfigurations = {@ValidationConfiguration(validationImplementation = "blSandBoxNameValidator")})
     protected String name;
 
     @Column(name = "AUTHOR")
@@ -235,9 +232,8 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     }
 
     @Override
-    public List<Long> getSandBoxIdsForUpwardHierarchy(boolean includeInherited,
-            boolean includeCurrent) {
-        List<Long> ids = new ArrayList<Long>();
+    public List<Long> getSandBoxIdsForUpwardHierarchy(boolean includeInherited, boolean includeCurrent) {
+        List<Long> ids = new ArrayList<>();
         if (includeCurrent) {
             ids.add(this.getId());
         }
@@ -297,14 +293,6 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     }
 
     @Override
-    public void setArchived(Character archived) {
-        if (archiveStatus == null) {
-            archiveStatus = new ArchiveStatus();
-        }
-        archiveStatus.setArchived(archived);
-    }
-
-    @Override
     public Character getArchived() {
         ArchiveStatus temp;
         if (archiveStatus == null) {
@@ -316,7 +304,16 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     }
 
     @Override
+    public void setArchived(Character archived) {
+        if (archiveStatus == null) {
+            archiveStatus = new ArchiveStatus();
+        }
+        archiveStatus.setArchived(archived);
+    }
+
+    @Override
     public boolean isActive() {
         return 'Y' != getArchived();
     }
+
 }

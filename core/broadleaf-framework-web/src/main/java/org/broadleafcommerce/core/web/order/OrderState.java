@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,13 +31,12 @@ import jakarta.annotation.Resource;
  * flow of a single request may retrieve the order from this object. OrderState
  * utilizes the DAO to retrieve the full order from its dehydrated state in the
  * Hibernate cache.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class OrderState {
 
-    private final HashMap<Long, Long> orders = new HashMap<Long, Long>();
+    private final HashMap<Long, Long> orders = new HashMap<>();
 
     @Resource(name = "blOrderDao")
     protected OrderDao orderDao;

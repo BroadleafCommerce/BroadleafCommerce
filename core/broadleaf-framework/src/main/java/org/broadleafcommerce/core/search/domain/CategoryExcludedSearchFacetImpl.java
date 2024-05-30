@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,6 +27,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
@@ -43,6 +44,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -56,20 +58,19 @@ import java.math.BigDecimal;
 })
 public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFacet, Serializable {
 
-    /**
-     * 
-     */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "CategoryExcludedSearchFacetId")
     @GenericGenerator(
-        name="CategoryExcludedSearchFacetId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="CategoryExcludedSearchFacetImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl")
-        }
+            name = "CategoryExcludedSearchFacetId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "CategoryExcludedSearchFacetImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacetImpl")
+            }
     )
     @Column(name = "CAT_EXCL_SEARCH_FACET_ID")
     protected Long id;
@@ -81,7 +82,7 @@ public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFa
     @ManyToOne(targetEntity = SearchFacetImpl.class)
     @JoinColumn(name = "SEARCH_FACET_ID")
     protected SearchFacet searchFacet;
-    
+
     @Column(name = "SEQUENCE")
     @AdminPresentation(friendlyName = "CategorySearchFacetImpl_sequence")
     protected BigDecimal sequence;
@@ -150,7 +151,9 @@ public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFa
     }
 
     @Override
-    public <G extends CategoryExcludedSearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends CategoryExcludedSearchFacet> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -165,4 +168,5 @@ public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFa
         }
         return createResponse;
     }
+
 }

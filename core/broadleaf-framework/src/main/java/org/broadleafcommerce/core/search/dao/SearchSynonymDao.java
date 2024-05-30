@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,8 +22,13 @@ import org.broadleafcommerce.core.search.domain.SearchSynonym;
 import java.util.List;
 
 public interface SearchSynonymDao {
-    public List<SearchSynonym> getAllSynonyms();
-    public void createSynonym(SearchSynonym synonym);
-    public void updateSynonym(SearchSynonym synonym);
-    public void deleteSynonym(SearchSynonym synonym);
+
+    List<SearchSynonym> getAllSynonyms();
+
+    void createSynonym(SearchSynonym synonym);
+
+    void updateSynonym(SearchSynonym synonym);
+
+    void deleteSynonym(SearchSynonym synonym);
+
 }

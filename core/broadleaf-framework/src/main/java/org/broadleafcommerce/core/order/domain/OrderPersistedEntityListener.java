@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,13 +26,11 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostUpdate;
 
-
 /**
  * The main function of this entity listener is to publish a Spring event that the customer has been persisted. This is
  * necessary in order to update the current order in the application
  *
  * @author Phillip Verheyden (phillipuniverse)
- *
  * @see {@link ApplicationEventPublisher#publishEvent(org.springframework.context.ApplicationEvent)}
  * @see {@link OrderPersistedEvent}
  * @see {@link org.broadleafcommerce.core.web.order.CartStateRefresher}
@@ -56,7 +54,9 @@ public class OrderPersistedEntityListener {
                 @Override
                 public void afterCompletion(int status) {
                     if (status == TransactionSynchronization.STATUS_COMMITTED) {
-                        ApplicationContextHolder.getApplicationContext().publishEvent(new OrderPersistedEvent((Order) entity));
+                        ApplicationContextHolder.getApplicationContext().publishEvent(
+                                new OrderPersistedEvent((Order) entity)
+                        );
                     }
                 }
             });

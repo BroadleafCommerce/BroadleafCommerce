@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,14 +38,14 @@ import java.util.regex.Pattern;
  */
 public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlScriptExtractor {
 
-    private static final SupportLogger LOGGER = SupportLogManager.getLogger("UserOverride", DemoOracleSingleLineSqlCommandExtractor.class);
-
+    public static final String TRUE = "1";
+    public static final String FALSE = "0";
+    private static final SupportLogger LOGGER = SupportLogManager.getLogger(
+            "UserOverride", DemoOracleSingleLineSqlCommandExtractor.class
+    );
     private static final String BOOLEANTRUEMATCH = "(?i)(true)";
     private static final String BOOLEANFALSEMATCH = "(?i)(false)";
     private static final String TIMESTAMPMATCH = "(?<!\\{ts\\s)('\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}')";
-    public static final String TRUE = "1";
-    public static final String FALSE = "0";
-
     protected boolean alreadyRun = false;
 
     @Override
@@ -88,7 +88,7 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlScript
 
         //Address raw string dates, if any, for Oracle
         Pattern pattern = Pattern.compile(TIMESTAMPMATCH);
-        List<String> result = new ArrayList<String>(stringList.size());
+        List<String> result = new ArrayList<>(stringList.size());
         for (String statement : stringList) {
             Matcher matcher = pattern.matcher(statement);
             while (matcher.find()) {
@@ -98,7 +98,10 @@ public class DemoOracleSingleLineSqlCommandExtractor extends SingleLineSqlScript
             }
 
             // Any MySQL-specific newlines replace with newline character concatenation
-            statement = statement.replaceAll(DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX, "' || CHR(13) || CHR(10) || '");
+            statement = statement.replaceAll(
+                    DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX,
+                    "' || CHR(13) || CHR(10) || '"
+            );
             // Any MySQL CHAR functions with CHR
             Pattern charPattern = Pattern.compile("CHAR\\((\\d+)\\)");
             Matcher charMatcher = charPattern.matcher(statement);

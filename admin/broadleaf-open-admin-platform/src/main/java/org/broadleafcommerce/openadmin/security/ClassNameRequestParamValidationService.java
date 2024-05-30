@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,7 +35,7 @@ public interface ClassNameRequestParamValidationService {
      * Compare a map of request params to fully qualified classname values against the whitelist.
      *
      * @param requestParamToClassName a map of request params and associated fully qualified classnames to confirm against the whitelist
-     * @param persistenceUnitName the persistence unit the white list is generated from
+     * @param persistenceUnitName     the persistence unit the white list is generated from
      * @return whether or not the map of values is valid
      */
     boolean validateClassNameParams(Map<String, String> requestParamToClassName, String persistenceUnitName);
@@ -65,4 +65,5 @@ public interface ClassNameRequestParamValidationService {
      * @return the list of section crumbs representing the currently active admin sections for a given request
      */
     List<SectionCrumb> getSectionCrumbs(String crumbList);
+
 }

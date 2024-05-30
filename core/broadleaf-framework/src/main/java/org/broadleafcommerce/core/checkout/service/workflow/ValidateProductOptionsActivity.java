@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,25 +43,24 @@ import jakarta.annotation.Resource;
 
 /**
  * This is an required activity to valiate if required product options are in the order.
- * 
+ * <p>
  * If sku browsing is enabled, product option data will not be available.
  * In this case, the following validation is skipped.
- * 
- * @author Priyesh Patel
  *
+ * @author Priyesh Patel
  */
 @Component("blValidateProductOptionsActivity")
 public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<CheckoutSeed>> {
 
     public static final int ORDER = 2000;
-    
+
     @Resource(name = "blProductOptionValidationService")
     protected ProductOptionValidationService productOptionValidationService;
 
     public ValidateProductOptionsActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<CheckoutSeed> execute(ProcessContext<CheckoutSeed> context) throws Exception {
         Order order = context.getSeedData().getOrder();
@@ -83,7 +82,8 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
                     boolean isSubmitType = productOptionValidationService.isSubmitType(productOption);
 
                     if (isMissingRequiredAttribute(isRequired, hasStrategy, isAddOrNoneType, isSubmitType, attributeValue)) {
-                        String message = "Unable to validate cart, product  (" + product.getId() + ") required" + " attribute was not provided: " + attributeName;
+                        String message = "Unable to validate cart, product  (" + product.getId() + ") required"
+                                + " attribute was not provided: " + attributeName;
                         throw new RequiredAttributeNotProvidedException(message, attributeName, String.valueOf(product.getId()));
                     }
 
@@ -119,12 +119,23 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
         return orderItems;
     }
 
-    protected boolean shouldValidateWithException(boolean hasValidationType, boolean hasStrategy, boolean isAddOrNoneType, boolean isSubmitType) {
+    protected boolean shouldValidateWithException(
+            boolean hasValidationType,
+            boolean hasStrategy,
+            boolean isAddOrNoneType,
+            boolean isSubmitType
+    ) {
         boolean passesStrategyValidation = !hasStrategy || (isAddOrNoneType || isSubmitType);
         return hasValidationType && (passesStrategyValidation);
     }
 
-    protected boolean isMissingRequiredAttribute(boolean isRequired, boolean hasStrategy, boolean isAddOrNoneType, boolean isSubmitType, String attributeValue) {
+    protected boolean isMissingRequiredAttribute(
+            boolean isRequired,
+            boolean hasStrategy,
+            boolean isAddOrNoneType,
+            boolean isSubmitType,
+            String attributeValue
+    ) {
         boolean passesStrategyValidation = !hasStrategy || (hasStrategy && (isAddOrNoneType || isSubmitType));
         return isRequired && passesStrategyValidation && StringUtils.isEmpty(attributeValue);
     }
@@ -132,4 +143,5 @@ public class ValidateProductOptionsActivity extends BaseActivity<ProcessContext<
     public ProductOptionValidationStrategyType getProductOptionValidationStrategyType() {
         return ProductOptionValidationStrategyType.SUBMIT_ORDER;
     }
+
 }

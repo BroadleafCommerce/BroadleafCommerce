@@ -10,17 +10,15 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 
 /**
- *
  * @author Joshua Skorton (jskorton)
  */
-
 @XmlSchema(
         namespace = "http://www.sitemaps.org/schemas/sitemap/0.9",
         elementFormDefault = XmlNsForm.QUALIFIED,
@@ -33,4 +31,3 @@ package org.broadleafcommerce.common.sitemap.wrapper;
 import jakarta.xml.bind.annotation.XmlNs;
 import jakarta.xml.bind.annotation.XmlNsForm;
 import jakarta.xml.bind.annotation.XmlSchema;
-

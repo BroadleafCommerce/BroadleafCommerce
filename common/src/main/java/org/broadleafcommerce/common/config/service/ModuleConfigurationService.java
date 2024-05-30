@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,16 +24,16 @@ import java.util.List;
 
 public interface ModuleConfigurationService {
 
-    public ModuleConfiguration findById(Long id);
+    ModuleConfiguration findById(Long id);
 
-    public ModuleConfiguration save(ModuleConfiguration config);
+    ModuleConfiguration save(ModuleConfiguration config);
 
-    public void delete(ModuleConfiguration config);
+    void delete(ModuleConfiguration config);
 
-    public List<ModuleConfiguration> findActiveConfigurationsByType(ModuleConfigurationType type);
+    List<ModuleConfiguration> findActiveConfigurationsByType(ModuleConfigurationType type);
 
-    public List<ModuleConfiguration> findAllConfigurationByType(ModuleConfigurationType type);
+    List<ModuleConfiguration> findAllConfigurationByType(ModuleConfigurationType type);
 
-    public List<ModuleConfiguration> findByType(Class<? extends ModuleConfiguration> type);
+    List<ModuleConfiguration> findByType(Class<? extends ModuleConfiguration> type);
 
 }

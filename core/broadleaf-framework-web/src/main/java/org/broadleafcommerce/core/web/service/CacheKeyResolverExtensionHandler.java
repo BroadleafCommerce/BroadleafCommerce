@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.web.service;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 
-
 /**
  * @author bpolster
  */
@@ -29,13 +28,14 @@ public interface CacheKeyResolverExtensionHandler extends ExtensionHandler {
     /**
      * The passed in StringBuilder represents the current state of the cache key prior
      * to running any extension handlers.
-     * 
+     * <p>
      * Any implementations of this processor can read modify the passed in stringBuilder as
-     * needed.    
-     * 
+     * needed.
+     *
      * @param stringBuilder
      * @param hasProducts
      * @return
      */
-    public ExtensionResultStatusType updateCacheKey(StringBuilder stringBuilder, boolean hasProducts);
+    ExtensionResultStatusType updateCacheKey(StringBuilder stringBuilder, boolean hasProducts);
+
 }

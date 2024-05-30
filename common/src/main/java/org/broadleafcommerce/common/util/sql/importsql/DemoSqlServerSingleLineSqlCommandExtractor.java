@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,7 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.tool.schema.internal.script.SingleLineSqlScriptExtractor;
 
 import java.io.Reader;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,18 +36,18 @@ import java.util.List;
  */
 public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlScriptExtractor {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final SupportLogger LOGGER = SupportLogManager.getLogger("UserOverride", DemoSqlServerSingleLineSqlCommandExtractor.class);
-
-    private static final String BOOLEANTRUEMATCH = "(?i)(true)(?=(?:[^']|'[^']*')*$)";
-    private static final String BOOLEANFALSEMATCH = "(?i)(false)(?=(?:[^']|'[^']*')*$)";
-    private static final String TIMESTAMPMATCH = "(?i)(current_date)";
     public static final String DOUBLEBACKSLASHMATCH = "(\\\\\\\\)";
     public static final String TRUE = "'TRUE'";
     public static final String FALSE = "'FALSE'";
     public static final String CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP";
-
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static final SupportLogger LOGGER = SupportLogManager.getLogger(
+            "UserOverride", DemoSqlServerSingleLineSqlCommandExtractor.class
+    );
+    private static final String BOOLEANTRUEMATCH = "(?i)(true)(?=(?:[^']|'[^']*')*$)";
+    private static final String BOOLEANFALSEMATCH = "(?i)(false)(?=(?:[^']|'[^']*')*$)";
+    private static final String TIMESTAMPMATCH = "(?i)(current_date)";
     protected boolean alreadyRun = false;
 
     @Override
@@ -65,7 +66,10 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlScr
         for (String statement : statements) {
             String fixed = replaceBoolean(statement);
             // Replace newline characters
-            result.add(fixed.replaceAll(DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX, "' + CHAR(13) + CHAR(10) + '"));
+            result.add(fixed.replaceAll(
+                    DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX,
+                    "' + CHAR(13) + CHAR(10) + '"
+            ));
         }
         return result;
     }
@@ -95,4 +99,5 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlScr
 
         return statement;
     }
+
 }

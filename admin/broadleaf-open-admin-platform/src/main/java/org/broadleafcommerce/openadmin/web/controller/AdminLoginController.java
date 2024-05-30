@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -53,180 +53,24 @@ import jakarta.servlet.http.HttpServletResponse;
  *     <li>Forgot Username</li>
  *     <li>Reset Password</li>
  * </ul>
- *
  */
 @Controller("blAdminLoginController")
 public class AdminLoginController extends BroadleafAbstractController {
 
     private static final String ANONYMOUS_USER_NAME = "anonymousUser";
-
-    @Resource(name="blAdminSecurityService")
-    protected AdminSecurityService adminSecurityService;
-
-    @Resource(name="blAdminNavigationService")
-    protected AdminNavigationService adminNavigationService;
-
     // Entry URLs
     protected static String loginView = "login/login";
     protected static String forgotPasswordView = "login/forgotPassword";
     protected static String forgotUsernameView = "login/forgotUsername";
-    protected static String resetPasswordView  = "login/resetPassword";
-    protected static String changePasswordView  = "login/changePasswordPopup";
+    protected static String resetPasswordView = "login/resetPassword";
+    protected static String changePasswordView = "login/changePasswordPopup";
     protected static String loginRedirect = "login";
     protected static String resetPasswordRedirect = "resetPassword";
     protected static String noAccessView = "noAccess";
-
-    @RequestMapping(value="/login", method=RequestMethod.GET)
-    public String baseLogin(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return getLoginView();
-    }
-
-    @RequestMapping(value = {"/", "/loginSuccess"}, method = RequestMethod.GET)
-    public String loginSuccess(HttpServletRequest request, HttpServletResponse response, Model model) {
-        AdminMenu adminMenu = adminNavigationService.buildMenu(getPersistentAdminUser());
-        if (!adminMenu.getAdminModules().isEmpty()) {
-            AdminModule first = adminMenu.getAdminModules().get(0);
-            List<AdminSection> sections = first.getSections();
-            if (!sections.isEmpty()) {
-                AdminSection adminSection = sections.get(0);
-                return "redirect:" + adminSection.getUrl();
-            }
-        }
-        return "noAccess";
-    }
-   
-    @RequestMapping(value="/forgotPassword", method=RequestMethod.GET)
-    public String forgotPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return getForgotPasswordView();
-    }
-    
-    @RequestMapping(value="/forgotUsername", method=RequestMethod.GET)
-    public String forgotUsername(HttpServletRequest request, HttpServletResponse response,Model model) {
-        return getForgotUsernameView();
-    }
-    
-    @RequestMapping(value = "/sendResetPassword", method = RequestMethod.POST)
-    public String processSendResetPasswordEmail(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam("username") String username) {
-
-        GenericResponse errorResponse = adminSecurityService.sendResetPasswordNotification(username);
-        if (errorResponse.getHasErrors()) {
-            setErrors(errorResponse, request);
-            return getForgotPasswordView();
-        } else {
-            request.getSession(true).setAttribute("forgot_password_username", username);
-            return redirectToResetPasswordWithMessage("passwordTokenSent");
-        }
-    }
-
-    @RequestMapping(value="/resetPassword", method=RequestMethod.POST)
-    public String processResetPassword(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
-        GenericResponse errorResponse = adminSecurityService.resetPasswordUsingToken(
-                resetPasswordForm.getUsername(),
-                resetPasswordForm.getToken(),
-                resetPasswordForm.getPassword(),
-                resetPasswordForm.getConfirmPassword());
-        if (errorResponse.getHasErrors()) {
-            setErrors(errorResponse, request);
-            return getResetPasswordView();
-        } else {
-            return redirectToLoginWithMessage("passwordReset");
-        }
-    }
-   
-    @RequestMapping(value="/forgotUsername", method=RequestMethod.POST)
-    public String processForgotUserName(HttpServletRequest request,
-            @RequestParam("emailAddress") String email) {
-        GenericResponse errorResponse = adminSecurityService.sendForgotUsernameNotification(email);
-        if (errorResponse.getHasErrors()) {
-            setErrors(errorResponse, request);
-            return getForgotUsernameView();
-        } else {
-            return redirectToLoginWithMessage("usernameSent");
-        }
-    }
-
-    @RequestMapping(value="/resetPassword", method=RequestMethod.GET)
-    public String resetPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
-        return getResetPasswordView();
-    }
-
-    @ModelAttribute("resetPasswordForm")
-    public ResetPasswordForm initResetPasswordForm(HttpServletRequest request) {
-        ResetPasswordForm resetPasswordForm = new ResetPasswordForm();
-        String username = (String) request.getSession(true).getAttribute("forgot_password_username");
-        String token = request.getParameter("token");
-        resetPasswordForm.setToken(token);
-        resetPasswordForm.setUsername(username);
-        return resetPasswordForm;
-    }
-
-    @RequestMapping(value="/changePassword", method=RequestMethod.GET)
-    public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
-        SecurityContext c = SecurityContextHolder.getContext();
-        model.addAttribute("username", ((AdminUserDetails) c.getAuthentication().getPrincipal()).getUsername());
-        return "login/changePasswordPopup";
-    }
-
-    @RequestMapping(value="/changePassword", method=RequestMethod.POST)
-    public String processchangePassword(HttpServletRequest request, HttpServletResponse response, Model model,
-            @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm) {
-        SecurityContext c = SecurityContextHolder.getContext();
-        String username = ((AdminUserDetails) c.getAuthentication().getPrincipal()).getUsername();
-        GenericResponse errorResponse;
-        if(resetPasswordForm.getUsername()!=null && resetPasswordForm.getUsername().equals(username)) {
-            errorResponse = adminSecurityService.changePassword(resetPasswordForm.getUsername(),
-                    resetPasswordForm.getOldPassword(),
-                    resetPasswordForm.getPassword(),
-                    resetPasswordForm.getConfirmPassword());
-        }else{
-            errorResponse = new GenericResponse();
-            errorResponse.getErrorCodesList().add("invalidUser");
-        }
-        
-        if (errorResponse.getHasErrors()) {
-            String errorCode = errorResponse.getErrorCodesList().get(0);
-            return new JsonResponse(response)
-                .with("status", "error")
-                .with("errorText", BLCMessageUtils.getMessage("password." + errorCode))
-                .done();
-        } else {
-            return new JsonResponse(response)
-                .with("data.status", "ok")
-                .with("successMessage", BLCMessageUtils.getMessage("PasswordChange_success"))
-                .done();
-        }
-    }
-
-    protected String redirectToLoginWithMessage(String message) {
-        StringBuffer url = new StringBuffer("redirect:").append(loginRedirect).append("?messageCode=").append(message);
-        return url.toString();
-    }
-
-    protected String redirectToResetPasswordWithMessage(String message) {
-        StringBuffer url = new StringBuffer("redirect:").append(resetPasswordRedirect).append("?messageCode=").append(message);
-        return url.toString();
-    }
-
-    protected void setErrors(GenericResponse response, HttpServletRequest request) {
-        String errorCode = response.getErrorCodesList().get(0);
-        request.setAttribute("errorCode", errorCode);
-    }
-    
-    protected AdminUser getPersistentAdminUser() {
-        SecurityContext ctx = SecurityContextHolder.getContext();
-        if (ctx != null) {
-            Authentication auth = ctx.getAuthentication();
-            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
-                UserDetails temp = (UserDetails) auth.getPrincipal();
-
-                return adminSecurityService.readAdminUserByUserName(temp.getUsername());
-            }
-        }
-
-        return null;
-    }
+    @Resource(name = "blAdminSecurityService")
+    protected AdminSecurityService adminSecurityService;
+    @Resource(name = "blAdminNavigationService")
+    protected AdminNavigationService adminNavigationService;
 
     public static String getLoginView() {
         return loginView;
@@ -267,14 +111,6 @@ public class AdminLoginController extends BroadleafAbstractController {
     public static void setChangePasswordView(String changePasswordView) {
         AdminLoginController.changePasswordView = changePasswordView;
     }
-    
-    public AdminSecurityService getAdminSecurityService() {
-        return adminSecurityService;
-    }
-
-    public void setAdminSecurityService(AdminSecurityService adminSecurityService) {
-        this.adminSecurityService = adminSecurityService;
-    }
 
     public static String getLoginRedirect() {
         return loginRedirect;
@@ -290,6 +126,185 @@ public class AdminLoginController extends BroadleafAbstractController {
 
     public static void setResetPasswordRedirect(String resetPasswordRedirect) {
         AdminLoginController.resetPasswordRedirect = resetPasswordRedirect;
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    public String baseLogin(HttpServletRequest request, HttpServletResponse response, Model model) {
+        return getLoginView();
+    }
+
+    @RequestMapping(value = {"/", "/loginSuccess"}, method = RequestMethod.GET)
+    public String loginSuccess(HttpServletRequest request, HttpServletResponse response, Model model) {
+        AdminMenu adminMenu = adminNavigationService.buildMenu(getPersistentAdminUser());
+        if (!adminMenu.getAdminModules().isEmpty()) {
+            AdminModule first = adminMenu.getAdminModules().get(0);
+            List<AdminSection> sections = first.getSections();
+            if (!sections.isEmpty()) {
+                AdminSection adminSection = sections.get(0);
+                return "redirect:" + adminSection.getUrl();
+            }
+        }
+        return "noAccess";
+    }
+
+    @RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
+    public String forgotPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
+        return getForgotPasswordView();
+    }
+
+    @RequestMapping(value = "/forgotUsername", method = RequestMethod.GET)
+    public String forgotUsername(HttpServletRequest request, HttpServletResponse response, Model model) {
+        return getForgotUsernameView();
+    }
+
+    @RequestMapping(value = "/sendResetPassword", method = RequestMethod.POST)
+    public String processSendResetPasswordEmail(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam("username") String username
+    ) {
+        GenericResponse errorResponse = adminSecurityService.sendResetPasswordNotification(username);
+        if (errorResponse.getHasErrors()) {
+            setErrors(errorResponse, request);
+            return getForgotPasswordView();
+        } else {
+            request.getSession(true).setAttribute("forgot_password_username", username);
+            return redirectToResetPasswordWithMessage("passwordTokenSent");
+        }
+    }
+
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+    public String processResetPassword(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm
+    ) {
+        GenericResponse errorResponse = adminSecurityService.resetPasswordUsingToken(
+                resetPasswordForm.getUsername(),
+                resetPasswordForm.getToken(),
+                resetPasswordForm.getPassword(),
+                resetPasswordForm.getConfirmPassword()
+        );
+        if (errorResponse.getHasErrors()) {
+            setErrors(errorResponse, request);
+            return getResetPasswordView();
+        } else {
+            return redirectToLoginWithMessage("passwordReset");
+        }
+    }
+
+    @RequestMapping(value = "/forgotUsername", method = RequestMethod.POST)
+    public String processForgotUserName(
+            HttpServletRequest request,
+            @RequestParam("emailAddress") String email
+    ) {
+        GenericResponse errorResponse = adminSecurityService.sendForgotUsernameNotification(email);
+        if (errorResponse.getHasErrors()) {
+            setErrors(errorResponse, request);
+            return getForgotUsernameView();
+        } else {
+            return redirectToLoginWithMessage("usernameSent");
+        }
+    }
+
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.GET)
+    public String resetPassword(HttpServletRequest request, HttpServletResponse response, Model model) {
+        return getResetPasswordView();
+    }
+
+    @ModelAttribute("resetPasswordForm")
+    public ResetPasswordForm initResetPasswordForm(HttpServletRequest request) {
+        ResetPasswordForm resetPasswordForm = new ResetPasswordForm();
+        String username = (String) request.getSession(true).getAttribute("forgot_password_username");
+        String token = request.getParameter("token");
+        resetPasswordForm.setToken(token);
+        resetPasswordForm.setUsername(username);
+        return resetPasswordForm;
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
+    public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
+        SecurityContext c = SecurityContextHolder.getContext();
+        model.addAttribute(
+                "username",
+                ((AdminUserDetails) c.getAuthentication().getPrincipal()).getUsername()
+        );
+        return "login/changePasswordPopup";
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    public String processchangePassword(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @ModelAttribute("resetPasswordForm") ResetPasswordForm resetPasswordForm
+    ) {
+        SecurityContext c = SecurityContextHolder.getContext();
+        String username = ((AdminUserDetails) c.getAuthentication().getPrincipal()).getUsername();
+        GenericResponse errorResponse;
+        if (resetPasswordForm.getUsername() != null && resetPasswordForm.getUsername().equals(username)) {
+            errorResponse = adminSecurityService.changePassword(resetPasswordForm.getUsername(),
+                    resetPasswordForm.getOldPassword(),
+                    resetPasswordForm.getPassword(),
+                    resetPasswordForm.getConfirmPassword());
+        } else {
+            errorResponse = new GenericResponse();
+            errorResponse.getErrorCodesList().add("invalidUser");
+        }
+
+        if (errorResponse.getHasErrors()) {
+            String errorCode = errorResponse.getErrorCodesList().get(0);
+            return new JsonResponse(response)
+                    .with("status", "error")
+                    .with("errorText", BLCMessageUtils.getMessage("password." + errorCode))
+                    .done();
+        } else {
+            return new JsonResponse(response)
+                    .with("data.status", "ok")
+                    .with("successMessage", BLCMessageUtils.getMessage("PasswordChange_success"))
+                    .done();
+        }
+    }
+
+    protected String redirectToLoginWithMessage(String message) {
+        StringBuffer url = new StringBuffer("redirect:").append(loginRedirect).append("?messageCode=").append(message);
+        return url.toString();
+    }
+
+    protected String redirectToResetPasswordWithMessage(String message) {
+        StringBuffer url = new StringBuffer("redirect:")
+                .append(resetPasswordRedirect)
+                .append("?messageCode=")
+                .append(message);
+        return url.toString();
+    }
+
+    protected void setErrors(GenericResponse response, HttpServletRequest request) {
+        String errorCode = response.getErrorCodesList().get(0);
+        request.setAttribute("errorCode", errorCode);
+    }
+
+    protected AdminUser getPersistentAdminUser() {
+        SecurityContext ctx = SecurityContextHolder.getContext();
+        if (ctx != null) {
+            Authentication auth = ctx.getAuthentication();
+            if (auth != null && !auth.getName().equals(ANONYMOUS_USER_NAME)) {
+                UserDetails temp = (UserDetails) auth.getPrincipal();
+
+                return adminSecurityService.readAdminUserByUserName(temp.getUsername());
+            }
+        }
+
+        return null;
+    }
+
+    public AdminSecurityService getAdminSecurityService() {
+        return adminSecurityService;
+    }
+
+    public void setAdminSecurityService(AdminSecurityService adminSecurityService) {
+        this.adminSecurityService = adminSecurityService;
     }
 
 }

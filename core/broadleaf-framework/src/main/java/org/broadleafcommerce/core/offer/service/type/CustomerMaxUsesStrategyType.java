@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,26 +19,22 @@ package org.broadleafcommerce.core.offer.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Determines how the Offer.getMaxUsesPerCustomer() will be applied.
- *
  */
 public class CustomerMaxUsesStrategyType implements Serializable, BroadleafEnumerationType {
-    
-    private static final long serialVersionUID = 1L;
 
-    private static final Map<String, CustomerMaxUsesStrategyType> TYPES = new LinkedHashMap<String, CustomerMaxUsesStrategyType>();
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static final Map<String, CustomerMaxUsesStrategyType> TYPES = new LinkedHashMap<>();
 
     public static final CustomerMaxUsesStrategyType CUSTOMER = new CustomerMaxUsesStrategyType("CUSTOMER", "Customer");
     public static final CustomerMaxUsesStrategyType ACCOUNT = new CustomerMaxUsesStrategyType("ACCOUNT", "Account");
-
-    public static CustomerMaxUsesStrategyType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -52,15 +48,19 @@ public class CustomerMaxUsesStrategyType implements Serializable, BroadleafEnume
         setType(type);
     }
 
+    public static CustomerMaxUsesStrategyType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getFriendlyType() {

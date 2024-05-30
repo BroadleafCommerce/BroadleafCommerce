@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,11 +27,10 @@ import java.lang.annotation.Target;
 
 /**
  * Used to indicate that a class should be instantiated as a bean if ehcache is missing fromm the classpath
- * 
- * @author Jay Aisenbrey (cja769)
  *
+ * @author Jay Aisenbrey (cja769)
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Conditional(OnEhCacheMissingCondition.class)

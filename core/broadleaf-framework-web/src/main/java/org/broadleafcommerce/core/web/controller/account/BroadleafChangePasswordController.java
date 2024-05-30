@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,21 +35,25 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class BroadleafChangePasswordController extends BroadleafAbstractController {
 
+    protected static String changePasswordView = "account/changePassword";
+    protected static String changePasswordRedirect = "redirect:/account/password";
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
     @Resource(name = "blChangePasswordValidator")
     protected ChangePasswordValidator changePasswordValidator;
-
     protected String passwordChangedMessage = "Password successfully changed";
-    
-    protected static String changePasswordView = "account/changePassword";
-    protected static String changePasswordRedirect = "redirect:/account/password";
 
     public String viewChangePassword(HttpServletRequest request, Model model) {
         return getChangePasswordView();
     }
 
-    public String processChangePassword(HttpServletRequest request, Model model, ChangePasswordForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
+    public String processChangePassword(
+            HttpServletRequest request,
+            Model model,
+            ChangePasswordForm form,
+            BindingResult result,
+            RedirectAttributes redirectAttributes
+    ) throws ServiceException {
         PasswordChange passwordChange = new PasswordChange(CustomerState.getCustomer().getUsername());
         passwordChange.setCurrentPassword(form.getCurrentPassword());
         passwordChange.setNewPassword(form.getNewPassword());
@@ -66,13 +70,13 @@ public class BroadleafChangePasswordController extends BroadleafAbstractControll
     public String getChangePasswordView() {
         return changePasswordView;
     }
-    
+
     public String getChangePasswordRedirect() {
         return changePasswordRedirect;
     }
-    
+
     public String getPasswordChangedMessage() {
         return passwordChangedMessage;
     }
-    
+
 }

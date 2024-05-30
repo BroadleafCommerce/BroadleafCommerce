@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,10 +34,10 @@ public class IdGenerationServiceImpl implements IdGenerationService {
 
     private static final Log LOG = LogFactory.getLog(IdGenerationServiceImpl.class);
 
-    @Resource(name="blIdGenerationDao")
+    @Resource(name = "blIdGenerationDao")
     protected IdGenerationDao idGenerationDao;
 
-    protected Map<String, Id> idTypeIdMap = new HashMap<String, Id>();
+    protected Map<String, Id> idTypeIdMap = new HashMap<>();
 
     @Override
     public Long findNextId(String idType) {
@@ -63,7 +63,7 @@ public class IdGenerationServiceImpl implements IdGenerationService {
             }
         }
 
-        synchronized(id) {
+        synchronized (id) {
             if (id.batchSize == 0L) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Updating batch size for idType " + idType);
@@ -78,8 +78,8 @@ public class IdGenerationServiceImpl implements IdGenerationService {
             return retId;
         }
     }
-    
-    private IdGeneration getCurrentIdRange(String idType, Long batchSize) {
+
+    protected IdGeneration getCurrentIdRange(String idType, Long batchSize) {
         IdGeneration idGeneration = null;
         int retryCount = 0;
         boolean stale = true;
@@ -96,14 +96,15 @@ public class IdGenerationServiceImpl implements IdGenerationService {
                 throw new RuntimeException("Unable to retrieve id range for " + idType, e);
             }
             if (retryCount >= 10) {
-                throw new RuntimeException("Unable to retrieve id range for " + idType + ". Tried " + retryCount + " times, but the version for this entity continues to be concurrently modified.");
+                throw new RuntimeException("Unable to retrieve id range for " + idType + ". Tried " + retryCount
+                        + " times, but the version for this entity continues to be concurrently modified.");
             }
             retryCount++;
         }
         return idGeneration;
     }
 
-    private class Id {
+    protected class Id {
         public Long nextId;
         public Long batchSize;
 
@@ -112,4 +113,5 @@ public class IdGenerationServiceImpl implements IdGenerationService {
             this.batchSize = batchSize;
         }
     }
+
 }

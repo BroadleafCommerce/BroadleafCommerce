@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,7 +39,7 @@ public class ItemOfferWeightedPercentComparator implements Comparator<Promotable
         Integer priority2 = p2.getPriority();
 
         int result = priority1.compareTo(priority2);
-        
+
         if (result != 0) {
             return result;
         }
@@ -55,7 +55,7 @@ public class ItemOfferWeightedPercentComparator implements Comparator<Promotable
         return weightedPercentSaved2.compareTo(weightedPercentSaved1);
     }
 
-    private Boolean nullDetected(Object p1, Object p2) {
+    protected Boolean nullDetected(Object p1, Object p2) {
         return p1 == null || p2 == null;
     }
 

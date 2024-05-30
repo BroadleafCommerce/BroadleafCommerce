@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,17 +25,18 @@ import java.io.Serializable;
  */
 public interface BroadleafCurrency extends Serializable {
 
-    public String getCurrencyCode();
-    
-    public java.util.Currency getJavaCurrency();
+    String getCurrencyCode();
 
-    public void setCurrencyCode(String code);
+    void setCurrencyCode(String code);
 
-    public String getFriendlyName();
+    java.util.Currency getJavaCurrency();
 
-    public void setFriendlyName(String friendlyName);
+    String getFriendlyName();
 
-    public boolean getDefaultFlag();
+    void setFriendlyName(String friendlyName);
 
-    public void setDefaultFlag(boolean defaultFlag);
+    boolean getDefaultFlag();
+
+    void setDefaultFlag(boolean defaultFlag);
+
 }

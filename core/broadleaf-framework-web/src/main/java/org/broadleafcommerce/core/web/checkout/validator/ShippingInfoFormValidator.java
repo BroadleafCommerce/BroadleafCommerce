@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,6 +36,9 @@ public class ShippingInfoFormValidator extends BroadleafCommonAddressValidator i
     public void validate(Object obj, Errors errors) {
         ShippingInfoForm shippingInfoForm = (ShippingInfoForm) obj;
         super.validate(BroadleafFormType.SHIPPING_FORM, shippingInfoForm.getAddress(), errors);
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "fulfillmentOptionId", "fulfillmentOptionId.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(
+                errors, "fulfillmentOptionId", "fulfillmentOptionId.required"
+        );
     }
+
 }

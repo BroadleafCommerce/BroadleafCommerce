@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,7 +40,7 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
     public static final String GEOLOCATON_ATTRIBUTE_NAME = "_blGeolocationAttribute";
     protected static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
-    @Resource(name="blGeolocationService")
+    @Resource(name = "blGeolocationService")
     protected GeolocationService geolocationService;
 
     @Resource
@@ -51,13 +51,17 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
         if (isGeolocationEnabled()) {
             if (request instanceof ServletWebRequest) {
                 ServletWebRequest servletWebRequest = (ServletWebRequest) request;
-                GeolocationDTO location = (GeolocationDTO) BLCRequestUtils.getSessionAttributeIfOk(request, GEOLOCATON_ATTRIBUTE_NAME);
+                GeolocationDTO location = (GeolocationDTO) BLCRequestUtils.getSessionAttributeIfOk(
+                        request, GEOLOCATON_ATTRIBUTE_NAME
+                );
                 if (location == null) {
                     String ipAddress = getIPAddress(servletWebRequest);
                     location = geolocationService.getLocationData(ipAddress);
                     BLCRequestUtils.setSessionAttributeIfOk(request, GEOLOCATON_ATTRIBUTE_NAME, location);
                 }
-                BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(GEOLOCATON_ATTRIBUTE_NAME, location);
+                BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(
+                        GEOLOCATON_ATTRIBUTE_NAME, location
+                );
 
                 Map<String, Object> ruleMap = getRuleMapFromRequest(request);
                 ruleMap.put(GEOLOCATON_ATTRIBUTE_NAME, location);
@@ -78,11 +82,14 @@ public class GeolocationRequestProcessor extends AbstractBroadleafWebRequestProc
         return ipAddress;
     }
 
-    protected Map<String,Object> getRuleMapFromRequest(WebRequest request) {
-        Map<String,Object> ruleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM, WebRequest.SCOPE_REQUEST);
+    protected Map<String, Object> getRuleMapFromRequest(WebRequest request) {
+        Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute(
+                BLC_RULE_MAP_PARAM, WebRequest.SCOPE_REQUEST
+        );
         if (ruleMap == null) {
             ruleMap = new HashMap<>();
         }
         return ruleMap;
     }
+
 }

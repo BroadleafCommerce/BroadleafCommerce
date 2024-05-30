@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,30 +24,30 @@ import java.io.Serializable;
 
 public interface BundleOrderItemFeePrice extends Serializable, MultiTenantCloneable<BundleOrderItemFeePrice> {
 
-    public abstract Long getId();
+    Long getId();
 
-    public abstract void setId(Long id);
+    void setId(Long id);
 
-    public abstract BundleOrderItem getBundleOrderItem();
+    BundleOrderItem getBundleOrderItem();
 
-    public abstract void setBundleOrderItem(BundleOrderItem bundleOrderItem);
+    void setBundleOrderItem(BundleOrderItem bundleOrderItem);
 
-    public abstract Money getAmount();
+    Money getAmount();
 
-    public abstract void setAmount(Money amount);
+    void setAmount(Money amount);
 
-    public abstract String getName();
+    String getName();
 
-    public abstract void setName(String name);
+    void setName(String name);
 
-    public abstract Boolean isTaxable();
+    Boolean isTaxable();
 
-    public abstract void setTaxable(Boolean isTaxable);
+    void setTaxable(Boolean isTaxable);
 
-    public abstract String getReportingCode();
+    String getReportingCode();
 
-    public abstract void setReportingCode(String reportingCode);
+    void setReportingCode(String reportingCode);
 
-    public BundleOrderItemFeePrice clone();
+    BundleOrderItemFeePrice clone();
 
 }

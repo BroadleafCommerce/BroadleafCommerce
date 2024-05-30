@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,21 +26,26 @@ import jakarta.persistence.spi.TransformerException;
 
 /**
  * This class transformer will do nothing. The main use case for this transformer is when you would prefer to not
- * have a module's template classes copied over, and would rather do it yourself. 
- * 
+ * have a module's template classes copied over, and would rather do it yourself.
+ * <p>
  * This transformer should not typically be used.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class NullClassTransformer implements BroadleafClassTransformer {
-    
+
     @Override
     public void compileJPAProperties(Properties props, Object key) throws Exception {
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, 
-            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
+    public byte[] transform(
+            ClassLoader loader,
+            String className,
+            Class<?> classBeingRedefined,
+            ProtectionDomain protectionDomain,
+            byte[] classfileBuffer
+    ) throws TransformerException {
         return null;
     }
 

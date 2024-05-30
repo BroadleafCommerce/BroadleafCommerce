@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,30 +19,27 @@ package org.broadleafcommerce.common.template;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of template types
- * 
+ *
  * @author bpolster
  */
 public class TemplateType implements Serializable, BroadleafEnumerationType, Comparable<TemplateType> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, TemplateType> TYPES = new LinkedHashMap<String, TemplateType>();
+    private static final Map<String, TemplateType> TYPES = new LinkedHashMap<>();
 
     public static final TemplateType PRODUCT = new TemplateType("PRODUCT", "Product", 1000);
     public static final TemplateType CATEGORY = new TemplateType("CATEGORY", "Category", 2000);
     public static final TemplateType PAGE = new TemplateType("PAGE", "Page", 3000);
     public static final TemplateType SKU = new TemplateType("SKU", "Sku", 4000);
     public static final TemplateType OTHER = new TemplateType("OTHER", "Other", Integer.MAX_VALUE);
-
-    public static TemplateType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -58,21 +55,26 @@ public class TemplateType implements Serializable, BroadleafEnumerationType, Com
         setOrder(order);
     }
 
+    public static TemplateType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via "
+                    + getInstance(type).getClass().getName());
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     public int getOrder() {
@@ -112,4 +114,5 @@ public class TemplateType implements Serializable, BroadleafEnumerationType, Com
     public int compareTo(TemplateType arg0) {
         return this.order - arg0.order;
     }
+
 }

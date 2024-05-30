@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,12 +33,18 @@ import jakarta.servlet.http.HttpServletResponse;
 public class AdminBundleProductController extends AdminProductController {
 
     public static final String SECTION_KEY = "bundle";
+
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-                                 @PathVariable Map<String, String> pathVars,
-                                 @PathVariable(value = "id") String id) throws Exception {
+    public String viewEntityForm(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id
+    ) throws Exception {
         String view = super.viewEntityForm(request, response, model, pathVars, id);
         return view;
     }
+
 }

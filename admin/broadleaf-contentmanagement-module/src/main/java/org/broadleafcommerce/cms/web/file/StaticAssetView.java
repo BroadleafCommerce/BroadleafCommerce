@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,12 +56,12 @@ public class StaticAssetView implements View {
             String mimeType = (String) model.get("mimeType");
             response.setContentType(mimeType);
             if (!browserAssetCachingEnabled) {
-                response.setHeader("Cache-Control","no-cache");
-                response.setHeader("Pragma","no-cache");
-                response.setDateHeader ("Expires", 0);
+                response.setHeader("Cache-Control", "no-cache");
+                response.setHeader("Pragma", "no-cache");
+                response.setDateHeader("Expires", 0);
             } else {
-                response.setHeader("Cache-Control","public");
-                response.setHeader("Pragma","cache");
+                response.setHeader("Cache-Control", "public");
+                response.setHeader("Pragma", "cache");
                 if (!StringUtils.isEmpty(request.getHeader("If-Modified-Since"))) {
                     long lastModified = request.getDateHeader("If-Modified-Since");
                     Calendar last = Calendar.getInstance();
@@ -75,12 +75,12 @@ public class StaticAssetView implements View {
                 } else {
                     Calendar check = Calendar.getInstance();
                     check.add(Calendar.SECOND, -1 * Long.valueOf(cacheSeconds).intValue());
-                    response.setDateHeader ("Last-Modified", check.getTimeInMillis());
+                    response.setDateHeader("Last-Modified", check.getTimeInMillis());
                 }
                 Calendar cal = Calendar.getInstance();
                 long year = cacheSeconds * 365;
                 cal.add(Calendar.SECOND, Long.valueOf(year).intValue());
-                response.setDateHeader ("Expires", cal.getTimeInMillis());
+                response.setDateHeader("Expires", cal.getTimeInMillis());
             }
             OutputStream os = response.getOutputStream();
             boolean eof = false;
@@ -126,4 +126,5 @@ public class StaticAssetView implements View {
     public void setCacheSeconds(long cacheSeconds) {
         this.cacheSeconds = cacheSeconds;
     }
+
 }

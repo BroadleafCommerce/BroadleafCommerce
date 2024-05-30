@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,17 +40,22 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
 
     private static final Log LOG = LogFactory.getLog(PromotableOrderItem.class);
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     protected PromotableOrder promotableOrder;
     protected OrderItem orderItem;
     protected PromotableItemFactory itemFactory;
-    protected List<PromotableOrderItemPriceDetail> itemPriceDetails = new ArrayList<PromotableOrderItemPriceDetail>();
+    protected List<PromotableOrderItemPriceDetail> itemPriceDetails = new ArrayList<>();
     protected boolean includeAdjustments;
-    protected Map<String, Object> extraDataMap = new HashMap<String, Object>();
+    protected Map<String, Object> extraDataMap = new HashMap<>();
 
-    public PromotableOrderItemImpl(OrderItem orderItem, PromotableOrder promotableOrder, PromotableItemFactory itemFactory,
-            boolean includeAdjustments) {
+    public PromotableOrderItemImpl(
+            OrderItem orderItem,
+            PromotableOrder promotableOrder,
+            PromotableItemFactory itemFactory,
+            boolean includeAdjustments
+    ) {
         this.orderItem = orderItem;
         this.promotableOrder = promotableOrder;
         this.itemFactory = itemFactory;
@@ -66,8 +72,9 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     protected void initializePriceDetails() {
         if (includeAdjustments) {
             for (OrderItemPriceDetail detail : orderItem.getOrderItemPriceDetails()) {
-                PromotableOrderItemPriceDetail poid =
-                        itemFactory.createPromotableOrderItemPriceDetail(this, detail.getQuantity());
+                PromotableOrderItemPriceDetail poid = itemFactory.createPromotableOrderItemPriceDetail(
+                        this, detail.getQuantity()
+                );
                 itemPriceDetails.add(poid);
                 for (OrderItemPriceDetailAdjustment adjustment : detail.getOrderItemPriceDetailAdjustments()) {
                     PromotableOrderItemPriceDetailAdjustment poidAdj =
@@ -83,20 +90,24 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
                         pq.setPromotion(oiq.getOffer());
                         pq.setQuantity(oiq.getQuantity().intValue());
                         pq.setFinalizedQuantity(oiq.getQuantity().intValue());
-                        pq.setPrice(oiq.getOrderItem().getPriceBeforeAdjustments(oiq.getOffer().getApplyDiscountToSalePrice()));
+                        pq.setPrice(oiq.getOrderItem().getPriceBeforeAdjustments(
+                                oiq.getOffer().getApplyDiscountToSalePrice()
+                        ));
                         poid.getPromotionQualifiers().add(pq);
                     }
                 }
             }
         } else {
-            PromotableOrderItemPriceDetail poid =
-                    itemFactory.createPromotableOrderItemPriceDetail(this, orderItem.getQuantity());
+            PromotableOrderItemPriceDetail poid = itemFactory.createPromotableOrderItemPriceDetail(
+                    this, orderItem.getQuantity()
+            );
             itemPriceDetails.add(poid);
         }
     }
-    
+
     /**
      * Adds the item to the rule variables map.
+     *
      * @param ruleVars
      */
     public void updateRuleVariables(Map<String, Object> ruleVars) {
@@ -109,7 +120,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     public boolean isDiscountingAllowed() {
         return orderItem.isDiscountingAllowed();
     }
-    
+
     @Override
     public boolean isOrderItemContainer() {
         return orderItem instanceof OrderItemContainer;
@@ -187,7 +198,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     protected void mergeDetails(PromotableOrderItemPriceDetail firstDetail, PromotableOrderItemPriceDetail secondDetail) {
         int firstQty = firstDetail.getQuantity();
         int secondQty = secondDetail.getQuantity();
-        
+
         if (LOG.isDebugEnabled()) {
             LOG.trace("Merging priceDetails with quantities " + firstQty + " and " + secondQty);
         }
@@ -199,7 +210,7 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     public void mergeLikeDetails() {
         if (itemPriceDetails.size() > 1) {
             Iterator<PromotableOrderItemPriceDetail> detailIterator = itemPriceDetails.iterator();
-            Map<String, PromotableOrderItemPriceDetail> detailMap = new HashMap<String, PromotableOrderItemPriceDetail>();
+            Map<String, PromotableOrderItemPriceDetail> detailMap = new HashMap<>();
 
             while (detailIterator.hasNext()) {
                 PromotableOrderItemPriceDetail currentDetail = detailIterator.next();
@@ -258,4 +269,5 @@ public class PromotableOrderItemImpl implements PromotableOrderItem {
     public Map<String, Object> getExtraDataMap() {
         return extraDataMap;
     }
+
 }

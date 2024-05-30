@@ -50,6 +50,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,60 +85,59 @@ import jakarta.persistence.Table;
         @Index(name = "FG_MESSAGE_INDEX", columnList = "PERSONAL_MESSAGE_ID")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-        {
-                @AdminPresentationMergeOverride(name = "", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                        booleanOverrideValue = true)),
-                @AdminPresentationMergeOverride(name = "currency", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT,
-                        booleanOverrideValue = false)),
-                @AdminPresentationMergeOverride(name = "personalMessage", mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
-                                overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Advanced),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
-                                intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Advanced)
-                }),
-                @AdminPresentationMergeOverride(name = "address", mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
-                                overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
-                                intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Address)
-                }),
-                @AdminPresentationMergeOverride(name = "address.isDefault", mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                booleanOverrideValue = true)
-                }),
-                @AdminPresentationMergeOverride(name = "address.isActive", mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                booleanOverrideValue = true)
-                }),
-                @AdminPresentationMergeOverride(name = "address.isBusiness", mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                booleanOverrideValue = true)
-                }),
-                @AdminPresentationMergeOverride(name = "phone", mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                booleanOverrideValue = true)
-                }),
-                @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
-                                booleanOverrideValue = false),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
-                                intOverrideValue = FulfillmentGroupImpl.Presentation.FieldOrder.PHONE),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
-                                overrideValue = "General"),
-                        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
-                                overrideValue = "NOT_REQUIRED")
-                })
-        }
-)
+@AdminPresentationMergeOverrides({
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true)),
+        @AdminPresentationMergeOverride(name = "currency", mergeEntries =
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.PROMINENT,
+                booleanOverrideValue = false)),
+        @AdminPresentationMergeOverride(name = "personalMessage", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
+                        overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Advanced),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
+                        intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Advanced)
+        }),
+        @AdminPresentationMergeOverride(name = "address", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TAB,
+                        overrideValue = FulfillmentGroupImpl.Presentation.Tab.Name.Address),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.TABORDER,
+                        intOverrideValue = FulfillmentGroupImpl.Presentation.Tab.Order.Address)
+        }),
+        @AdminPresentationMergeOverride(name = "address.isDefault", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "address.isActive", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "address.isBusiness", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "phone", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = true)
+        }),
+        @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.EXCLUDED,
+                        booleanOverrideValue = false),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.ORDER,
+                        intOverrideValue = FulfillmentGroupImpl.Presentation.FieldOrder.PHONE),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
+                        overrideValue = "General"),
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.REQUIREDOVERRIDE,
+                        overrideValue = "NOT_REQUIRED")
+        })
+})
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "FulfillmentGroupImpl_baseFulfillmentGroup")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdentifiable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -147,7 +147,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "FulfillmentGroupImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl")
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl")
             }
     )
     @Column(name = "FULFILLMENT_GROUP_ID")
@@ -368,6 +369,11 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     }
 
     @Override
+    public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems) {
+        this.fulfillmentGroupItems = fulfillmentGroupItems;
+    }
+
+    @Override
     public List<DiscreteOrderItem> getDiscreteOrderItems() {
         List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (FulfillmentGroupItem fgItem : fulfillmentGroupItems) {
@@ -383,11 +389,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
             }
         }
         return discreteOrderItems;
-    }
-
-    @Override
-    public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems) {
-        this.fulfillmentGroupItems = fulfillmentGroupItems;
     }
 
     @Override
@@ -441,8 +442,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
 
     @Override
     public Money getRetailFulfillmentPrice() {
-        return retailFulfillmentPrice == null ? null :
-                BroadleafCurrencyUtils.getMoney(retailFulfillmentPrice, getOrder().getCurrency());
+        return retailFulfillmentPrice == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(retailFulfillmentPrice, getOrder().getCurrency());
     }
 
     @Override
@@ -502,6 +504,11 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     }
 
     @Override
+    public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments) {
+        this.fulfillmentGroupAdjustments = fulfillmentGroupAdjustments;
+    }
+
+    @Override
     public List<FulfillmentGroupAdjustment> getFutureCreditFulfillmentGroupAdjustments() {
         List<FulfillmentGroupAdjustment> futureCreditAdjustments = new ArrayList<>();
         for (FulfillmentGroupAdjustment adjustment : fulfillmentGroupAdjustments) {
@@ -541,11 +548,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
             }
             fulfillmentGroupAdjustments.clear();
         }
-    }
-
-    @Override
-    public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments) {
-        this.fulfillmentGroupAdjustments = fulfillmentGroupAdjustments;
     }
 
     @Override
@@ -632,8 +634,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
 
     @Override
     public Money getTotalFulfillmentGroupTax() {
-        return totalFulfillmentGroupTax == null ? null : BroadleafCurrencyUtils.getMoney(totalFulfillmentGroupTax,
-                getOrder().getCurrency());
+        return totalFulfillmentGroupTax == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(totalFulfillmentGroupTax, getOrder().getCurrency());
     }
 
     @Override
@@ -673,8 +676,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
 
     @Override
     public Money getMerchandiseTotal() {
-        return merchandiseTotal == null ? null : BroadleafCurrencyUtils.getMoney(merchandiseTotal,
-                getOrder().getCurrency());
+        return merchandiseTotal == null
+                ? null
+                : BroadleafCurrencyUtils.getMoney(merchandiseTotal, getOrder().getCurrency());
     }
 
     @Override
@@ -738,13 +742,13 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     }
 
     @Override
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
+    public Integer getSequence() {
+        return this.sequence;
     }
 
     @Override
-    public Integer getSequence() {
-        return this.sequence;
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 
     @Override
@@ -787,7 +791,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     }
 
     @Override
-    public <G extends FulfillmentGroup> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends FulfillmentGroup> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -904,4 +910,5 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
             public static final int TAXABLE = 10000;
         }
     }
+
 }

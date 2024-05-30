@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,23 +23,22 @@ import java.util.List;
 
 public interface StoreDao {
 
-    public Store readStoreById(Long id);
+    Store readStoreById(Long id);
 
-    public Store readStoreByStoreName(final String storeName);
+    Store readStoreByStoreName(final String storeName);
 
     /**
-     * @deprecated use {@link #readStoreByStoreName(String)} instead
-     *
      * @param storeCode
      * @return
+     * @deprecated use {@link #readStoreByStoreName(String)} instead
      */
     @Deprecated
-    public Store readStoreByStoreCode(final String storeCode);
+    Store readStoreByStoreCode(final String storeCode);
 
-    public List<Store> readAllStores();
+    List<Store> readAllStores();
 
-    public List<Store> readAllStoresByState(final String state);
+    List<Store> readAllStoresByState(final String state);
 
-    public Store save(Store store);
+    Store save(Store store);
 
 }

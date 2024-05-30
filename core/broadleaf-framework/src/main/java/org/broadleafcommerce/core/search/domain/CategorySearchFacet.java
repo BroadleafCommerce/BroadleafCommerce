@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,59 +30,59 @@ public interface CategorySearchFacet extends Serializable, MultiTenantCloneable<
 
     /**
      * Gets the internal id
-     * 
+     *
      * @return the internal id
      */
-    public Long getId();
+    Long getId();
 
-    /** 
+    /**
      * Sets the internal id
-     * 
+     *
      * @param id
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Gets the associated category
-     * 
+     *
      * @return the associated category
      */
-    public Category getCategory();
+    Category getCategory();
 
     /**
      * Sets the associated category
-     * 
+     *
      * @param category
      */
-    public void setCategory(Category category);
+    void setCategory(Category category);
 
     /**
      * Gets the associated search facet
-     * 
+     *
      * @return the associated search facet
      */
-    public SearchFacet getSearchFacet();
+    SearchFacet getSearchFacet();
 
     /**
      * Sets the associated search facet
-     * 
+     *
      * @param searchFacet
      */
-    public void setSearchFacet(SearchFacet searchFacet);
+    void setSearchFacet(SearchFacet searchFacet);
 
     /**
      * Gets the priority of this search facet in relationship to other search facets in this category
-     * 
+     *
      * @return the sequence of this search facet
      */
-    public BigDecimal getSequence();
+    BigDecimal getSequence();
 
     /**
      * Sets the sequence of this search facet
-     * 
+     *
+     * @param sequence
      * @see #getPosition()
-     * @param position
      */
-    public void setSequence(BigDecimal sequence);
+    void setSequence(BigDecimal sequence);
 
 }

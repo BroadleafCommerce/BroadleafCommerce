@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,8 +19,6 @@ package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -55,14 +53,12 @@ import jakarta.annotation.Resource;
 @Component("blSkuLookupByProductCustomPersistenceHandler")
 public class SkuLookupByProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(SkuLookupByProductCustomPersistenceHandler.class);
-
     protected static final String TO_ONE_LOOKUP_CRITERIA = "toOneLookup";
 
     // ability to return skus lookup by product
     protected static final String FILTER_SKUS_BY_PRODUCT = "productFilterForSkus";
 
-    @Resource(name="blCatalogService")
+    @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
     @Resource(name = "blSkuCustomPersistenceHandler")
@@ -75,17 +71,21 @@ public class SkuLookupByProductCustomPersistenceHandler extends CustomPersistenc
         try {
             Class<?> testClass = Class.forName(ceilingEntityFullyQualifiedClassname);
             return !ArrayUtils.isEmpty(customCriteria)
-                   && TO_ONE_LOOKUP_CRITERIA.equals(customCriteria[0])
-                   && isRequestForSkusFilteredByProduct(persistencePackage)
-                   && Sku.class.isAssignableFrom(testClass);
+                    && TO_ONE_LOOKUP_CRITERIA.equals(customCriteria[0])
+                    && isRequestForSkusFilteredByProduct(persistencePackage)
+                    && Sku.class.isAssignableFrom(testClass);
         } catch (ClassNotFoundException e) {
             return false;
         }
     }
 
     @Override
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao
-            dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    public DynamicResultSet fetch(
+            PersistencePackage persistencePackage,
+            CriteriaTransferObject cto,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
 
         // find criteria for productId
         FilterAndSortCriteria productIdCriteria = cto.getCriteriaMap().get("productId");
@@ -100,7 +100,9 @@ public class SkuLookupByProductCustomPersistenceHandler extends CustomPersistenc
         }
 
         PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-        Map<String, FieldMetadata> SkuMetadata = helper.getSimpleMergedProperties(Sku.class.getName(), persistencePerspective);
+        Map<String, FieldMetadata> SkuMetadata = helper.getSimpleMergedProperties(
+                Sku.class.getName(), persistencePerspective
+        );
         Entity[] entities = helper.getRecords(SkuMetadata, skusFromProducts);
 
         skuPersistenceHandler.updateProductOptionFieldsForFetch(skusFromProducts, entities);
@@ -115,4 +117,5 @@ public class SkuLookupByProductCustomPersistenceHandler extends CustomPersistenc
     public int getOrder() {
         return CustomPersistenceHandler.DEFAULT_ORDER - 2;
     }
+
 }

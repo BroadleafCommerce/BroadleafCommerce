@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,8 +25,6 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.Resource;
 
 /**
- * 
- * 
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blUpdateWorkflowVerifyFulfillmentGroupItemsActivity")
@@ -40,14 +38,15 @@ public class UpdateWorkflowVerifyFulfillmentGroupItemsActivity extends BaseActiv
     public UpdateWorkflowVerifyFulfillmentGroupItemsActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
-        
+
         request = fgItemStrategy.verify(request);
-        
+
         context.setSeedData(request);
         return context;
     }
+
 }

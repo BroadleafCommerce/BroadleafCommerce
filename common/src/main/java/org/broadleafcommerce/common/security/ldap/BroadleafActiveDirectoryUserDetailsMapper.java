@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,10 +35,8 @@ import java.util.Map;
  * user.  It also allows us to override the role names (GrantedAuthorities) that come from LDAP with
  * names that may be more suitable for Broadleaf.
  *
- * @deprecated NO LONGER REQUIRED AND SHOULD NOT BE USED. SEE BroadleafAdminLdapUserDetailsMapper.
- *
  * @author Kelly Tisdell
- *
+ * @deprecated NO LONGER REQUIRED AND SHOULD NOT BE USED. SEE BroadleafAdminLdapUserDetailsMapper.
  */
 @Deprecated
 public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMapper {
@@ -51,9 +49,9 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
-        Collection<GrantedAuthority> newAuthorities = new HashSet<GrantedAuthority>();
+        Collection<GrantedAuthority> newAuthorities = new HashSet<>();
 
-        if (roleNameSubstitutions != null && ! roleNameSubstitutions.isEmpty()) {
+        if (roleNameSubstitutions != null && !roleNameSubstitutions.isEmpty()) {
             for (GrantedAuthority authority : authorities) {
                 if (roleNameSubstitutions.containsKey(authority.getAuthority())) {
                     String[] roles = roleNameSubstitutions.get(authority.getAuthority());
@@ -71,7 +69,7 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
             newAuthorities.addAll(authorities);
         }
 
-        String email = (String)ctx.getObjectAttribute("mail");
+        String email = (String) ctx.getObjectAttribute("mail");
         UserDetails userDetails = null;
         if (useEmailAddressAsUsername) {
             if (email != null) {
@@ -82,15 +80,17 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
         if (userDetails == null) {
             userDetails = super.mapUserFromContext(ctx, username, newAuthorities);
         }
-        
+
         String password = userDetails.getPassword();
         if (password == null) {
             password = userDetails.getUsername();
         }
 
-        BroadleafExternalAuthenticationUserDetails broadleafUser = new BroadleafExternalAuthenticationUserDetails(userDetails.getUsername(), password, userDetails.getAuthorities());
-        broadleafUser.setFirstName((String)ctx.getObjectAttribute("givenName"));
-        broadleafUser.setLastName((String)ctx.getObjectAttribute("sn"));
+        BroadleafExternalAuthenticationUserDetails broadleafUser = new BroadleafExternalAuthenticationUserDetails(
+                userDetails.getUsername(), password, userDetails.getAuthorities()
+        );
+        broadleafUser.setFirstName((String) ctx.getObjectAttribute("givenName"));
+        broadleafUser.setLastName((String) ctx.getObjectAttribute("sn"));
         broadleafUser.setEmail(email);
 
         return broadleafUser;
@@ -99,6 +99,7 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
     /**
      * The LDAP server may contain a user name other than an email address.  If the email address should be used to map to a Broadleaf user, then
      * set this to true.  The principal will be set to the user's email address returned from the LDAP server.
+     *
      * @param value
      */
     public void setUseEmailAddressAsUsername(boolean value) {
@@ -111,14 +112,15 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
      * map that to the role "ADMIN".  By default the prefix "ROLE_" will be pre-pended to this name. So to configure this, you would specify:
      *
      * <bean class="org.broadleaf.loadtest.web.security.ActiveDirectoryUserDetailsContextMapper">
-     *     <property name="roleMappings">
-     *         <map>
-     *             <entry key="Marketing_Administrator" value="CATALOG_ADMIN"/>
-     *         </map>
-     *     </property>
+     * <property name="roleMappings">
+     * <map>
+     * <entry key="Marketing_Administrator" value="CATALOG_ADMIN"/>
+     * </map>
+     * </property>
      * </bean>
-     *
+     * <p>
      * With this configuration, all roles returned by LDAP that have a DN of "Marketing Administrator" will be converted to "ADMIN"
+     *
      * @param roleNameSubstitutions
      */
     public void setRoleNameSubstitutions(Map<String, String[]> roleNameSubstitutions) {
@@ -135,4 +137,5 @@ public class BroadleafActiveDirectoryUserDetailsMapper extends LdapUserDetailsMa
     public void setAdditiveRoleNameSubstitutions(boolean additiveRoleNameSubstitutions) {
         this.additiveRoleNameSubstitutions = additiveRoleNameSubstitutions;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,38 +23,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class SecurityConfig {
 
     private String ceilingEntityFullyQualifiedName;
     private List<EntityOperationType> requiredTypes;
-    private List<String> permissions = new ArrayList<String>();
-    private List<String> roles = new ArrayList<String>();
-    
+    private List<String> permissions = new ArrayList<>();
+    private List<String> roles = new ArrayList<>();
+
     public String getCeilingEntityFullyQualifiedName() {
         return ceilingEntityFullyQualifiedName;
     }
-    
-    public void setCeilingEntityFullyQualifiedName(
-            String ceilingEntityFullyQualifiedName) {
+
+    public void setCeilingEntityFullyQualifiedName(String ceilingEntityFullyQualifiedName) {
         this.ceilingEntityFullyQualifiedName = ceilingEntityFullyQualifiedName;
     }
-    
+
     public List<EntityOperationType> getRequiredTypes() {
         return requiredTypes;
     }
-    
+
     public void setRequiredTypes(List<EntityOperationType> requiredTypes) {
         this.requiredTypes = requiredTypes;
     }
-    
+
     public List<String> getPermissions() {
         return permissions;
     }
-    
+
     public void setPermissions(List<String> permissions) {
         this.permissions = permissions;
     }

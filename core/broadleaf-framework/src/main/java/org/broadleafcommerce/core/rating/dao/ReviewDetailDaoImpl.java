@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,7 +36,7 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public ReviewDetail readReviewDetailById(Long reviewId) {
@@ -46,7 +46,7 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
     public ReviewDetail saveReviewDetail(ReviewDetail reviewDetail) {
         return em.merge(reviewDetail);
     }
-    
+
     @Override
     public ReviewDetail readReviewByCustomerAndItem(Customer customer, String itemId) {
         final Query query = em.createNamedQuery("BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_ITEM_ID");
@@ -68,4 +68,5 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
     public ReviewFeedback createFeedback() {
         return (ReviewFeedback) entityConfiguration.createEntityInstance(ReviewFeedback.class.getName());
     }
+
 }

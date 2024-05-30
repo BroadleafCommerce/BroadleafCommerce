@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,12 +56,12 @@ public class CustomerPaymentDaoImpl implements CustomerPaymentDao {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_PAYMENT_BY_TOKEN");
         query.setParameter("token", token);
         CustomerPayment payment = null;
-        try{
+        try {
             payment = (CustomerPayment) query.getSingleResult();
         } catch (NoResultException e) {
-           //do nothing
+            //do nothing
         }
-        return  payment;
+        return payment;
     }
 
     @Override

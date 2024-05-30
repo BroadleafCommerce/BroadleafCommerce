@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,12 +23,13 @@ import java.util.List;
 import java.util.Map;
 
 public class GenericResponse {
-    
-    private List<String> errorCodes = new ArrayList<String>();
-    private Map<String, List<String>> errorCodeMap = new HashMap<String, List<String>>();
+
+    private List<String> errorCodes = new ArrayList<>();
+    private Map<String, List<String>> errorCodeMap = new HashMap<>();
 
     /**
      * Returns true if
+     *
      * @return
      */
     public boolean getHasErrors() {
@@ -41,7 +42,7 @@ public class GenericResponse {
 
     public void addErrorCode(String errorCode) {
         errorCodes.add(errorCode);
-        errorCodeMap.put(errorCode, new ArrayList<String>());
+        errorCodeMap.put(errorCode, new ArrayList<>());
     }
 
     public void addErrorCode(String errorCode, List<String> arguments) {
@@ -57,4 +58,5 @@ public class GenericResponse {
             return errorCodes.toArray(new String[0]);
         }
     }
+
 }

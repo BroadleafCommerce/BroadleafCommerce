@@ -10,24 +10,22 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.util;
 
-
 /**
  * A class that provides for a typed closure that will return a the specified type value from the specified type
- * 
- * @author Andre Azzolini (apazzolini)
  *
  * @param <K> the type of the key to be returned
  * @param <V> the type of the value to generate a key for
+ * @author Andre Azzolini (apazzolini)
  */
 public interface TypedClosure<K, V> {
-    
-    public K getKey(V value);
+
+    K getKey(V value);
 
 }

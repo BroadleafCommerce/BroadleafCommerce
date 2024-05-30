@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -52,7 +52,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Responsible for setting the necessary attributes on the BroadleafRequestContext
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blAdminRequestFilter")
@@ -77,7 +77,11 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
     protected StaleStateProtectionService staleStateProtectionService;
 
     @Override
-    public void doFilterInternalUnlessIgnored(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterInternalUnlessIgnored(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final FilterChain filterChain
+    ) throws IOException, ServletException {
 
         if (!validateClassNameParams(request)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -93,7 +97,7 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
         }
 
         try {
-            persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable <Void, RuntimeException>() {
+            persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<Void, RuntimeException>() {
                 @Override
                 public Void execute() {
                     try {
@@ -118,7 +122,7 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
         } catch (StaleStateServiceException e) {
             //catch state change attempts from a stale page
             forwardToConflictDestination(request, response);
-        } catch (SecurityException e){
+        } catch (SecurityException e) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         } finally {
             requestProcessor.postProcess(new ServletWebRequest(request, response));
@@ -135,7 +139,7 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
         params.put("ceilingEntityClassname", ceilingEntityClassname);
         //hardcode :(, the issue is that if you have translations admin section, and want to filter on entityType
         //field, you will not be able to do that, so if this is translations and param is entityType, skip this
-        if(!"/translations".equals(request.getServletPath())) {
+        if (!"/translations".equals(request.getServletPath())) {
             params.put("entityType", entityType);
         }
         params.put("ceilingEntity", ceilingEntity);
@@ -152,7 +156,10 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
      * @throws ServletException
      * @throws IOException
      */
-    public void forwardToConflictDestination(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    public void forwardToConflictDestination(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws ServletException, IOException {
         response.setStatus(HttpServletResponse.SC_CONFLICT);
         final Map reducedMap = new LinkedHashMap(request.getParameterMap());
         reducedMap.remove(BroadleafAdminRequestProcessor.CATALOG_REQ_PARAM);
@@ -199,4 +206,5 @@ public class BroadleafAdminRequestFilter extends AbstractBroadleafAdminRequestFi
     public int getOrder() {
         return FilterOrdered.POST_SECURITY_HIGH;
     }
+
 }

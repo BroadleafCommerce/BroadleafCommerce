@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,22 +27,22 @@ import jakarta.annotation.Resource;
 
 @Component("blRemoveFulfillmentGroupItemActivity")
 public class RemoveFulfillmentGroupItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
-    
+
     public static final int ORDER = 3000;
-    
+
     @Resource(name = "blFulfillmentGroupItemStrategy")
     protected FulfillmentGroupItemStrategy fgItemStrategy;
 
     public RemoveFulfillmentGroupItemActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
-        
+
         request = fgItemStrategy.onItemRemoved(request);
-        
+
         context.setSeedData(request);
         return context;
     }

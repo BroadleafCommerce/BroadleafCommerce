@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -70,7 +70,7 @@ public class TaxServiceImpl implements TaxService {
                 }
             }
         }
-        
+
         // haven't returned anything, nothing must have run
         if (!mustCalculate) {
             return order;
@@ -151,7 +151,7 @@ public class TaxServiceImpl implements TaxService {
 
     /**
      * Sets a list of <code>TaxProvider</code> implementations.
-     * 
+     *
      * @param providers
      */
     public void setTaxProviders(List<TaxProvider> providers) {
@@ -159,12 +159,14 @@ public class TaxServiceImpl implements TaxService {
     }
 
     /**
-     * Sets whether or not this service is required to delegate to a tax provider. 
-     * Setting this value to true will cause an exception if no tax providers are configured, 
-     * or if none are eligible. 
+     * Sets whether or not this service is required to delegate to a tax provider.
+     * Setting this value to true will cause an exception if no tax providers are configured,
+     * or if none are eligible.
+     *
      * @param mustCalculate
      */
     public void setMustCalculate(boolean mustCalculate) {
         this.mustCalculate = mustCalculate;
     }
+
 }

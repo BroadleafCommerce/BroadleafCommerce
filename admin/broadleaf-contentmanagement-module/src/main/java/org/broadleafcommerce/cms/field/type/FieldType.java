@@ -10,29 +10,28 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.field.type;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * Supported field types within the Broadleaf CMS admin.
  *
  * @author bpolster
- *
  */
 public class FieldType implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, FieldType> TYPES = new HashMap<String, FieldType>();
+    private static final Map<String, FieldType> TYPES = new HashMap<>();
 
     public static final FieldType BOOLEAN = new FieldType("BOOLEAN", "Boolean");
     public static final FieldType DATE = new FieldType("DATE", "Date");
@@ -43,11 +42,6 @@ public class FieldType implements Serializable {
     public static final FieldType RICH_TEXT = new FieldType("RICH_TEXT", "Rich Text");
     public static final FieldType HTML = new FieldType("HTML", "HTML");
     public static final FieldType ENUMERATION = new FieldType("ENUMERATION", "Enumeration");
-
-
-    public static FieldType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -61,19 +55,23 @@ public class FieldType implements Serializable {
         setType(type);
     }
 
+    public static FieldType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -98,4 +96,5 @@ public class FieldType implements Serializable {
         } else
             return type.equals(other.type);
     }
+
 }

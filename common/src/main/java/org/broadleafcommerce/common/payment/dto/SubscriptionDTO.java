@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,17 +22,16 @@ import java.util.Map;
 
 /**
  * @author Chad Harchar (charchar)
- *
+ * <p>
  * Many payment solutions allow you to set up subscriptions (recurring payments)
  * with payment transactions.
- *
+ * <p>
  * The following DTO represent the usual parameters that you may wish to pass:
- *
+ * <p>
  * recurringAmount: the amount that you charge for every recurring payment
  * frequency: the frequency of the recurring payment
  * numberOfInstallments: the number of payments for this subscription
  * startDate: the start date for this subscription
- *
  */
 public class SubscriptionDTO<T> {
 
@@ -45,11 +44,11 @@ public class SubscriptionDTO<T> {
     protected String startDate;
 
     public SubscriptionDTO() {
-        this.additionalFields = new HashMap<String, Object>();
+        this.additionalFields = new HashMap<>();
     }
 
     public SubscriptionDTO(T parent) {
-        this.additionalFields = new HashMap<String, Object>();
+        this.additionalFields = new HashMap<>();
         this.parent = parent;
     }
 
@@ -103,10 +102,8 @@ public class SubscriptionDTO<T> {
     }
 
     public boolean subscriptionPopulated() {
-        return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) ||
-                getRecurringAmount() != null ||
-                getFrequency() != null ||
-                getNumberOfInstallments() != null ||
-                getStartDate() != null);
+        return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) || getRecurringAmount() != null
+                || getFrequency() != null || getNumberOfInstallments() != null || getStartDate() != null);
     }
+
 }

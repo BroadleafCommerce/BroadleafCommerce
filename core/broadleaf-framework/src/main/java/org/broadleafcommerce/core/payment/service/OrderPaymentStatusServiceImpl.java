@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,7 +35,7 @@ public class OrderPaymentStatusServiceImpl implements OrderPaymentStatusService 
 
         if (determineComplete(orderPayment)) {
             return OrderPaymentStatus.COMPLETE;
-        }else if (determineFullyCaptured(orderPayment)) {
+        } else if (determineFullyCaptured(orderPayment)) {
             return OrderPaymentStatus.FULLY_CAPTURED;
         } else if (determinePartiallyComplete(orderPayment)) {
             return OrderPaymentStatus.PARTIALLY_COMPLETE;
@@ -76,8 +76,8 @@ public class OrderPaymentStatusServiceImpl implements OrderPaymentStatusService 
         Money totalVoidAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.VOID);
         Money totalRefundAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.REFUND);
 
-        return fullAuthAmount.greaterThan(Money.ZERO) &&
-                (fullAuthAmount.equals(totalRefundAmount) || fullAuthAmount.equals(totalVoidAmount));
+        return fullAuthAmount.greaterThan(Money.ZERO)
+                && (fullAuthAmount.equals(totalRefundAmount) || fullAuthAmount.equals(totalVoidAmount));
     }
 
     protected boolean determinePartiallyComplete(OrderPayment payment) {
@@ -86,20 +86,19 @@ public class OrderPaymentStatusServiceImpl implements OrderPaymentStatusService 
         Money totalVoidAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.VOID);
         Money totalRefundAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.REFUND);
 
-        return !determineComplete(payment) &&
-                ((totalRefundAmount.greaterThan(Money.ZERO) && fullAuthAmount.greaterThan(totalRefundAmount)) ||
-                 (totalVoidAmount.greaterThan(Money.ZERO) && fullAuthAmount.greaterThan(totalVoidAmount)) ||
-                        (containsSuccessfulType(payment, PaymentTransactionType.CAPTURE) &&
-                         fullAuthAmount.greaterThan(Money.ZERO) &&
-                         fullAuthAmount.greaterThan(fullCaptureAmount)));
+        return !determineComplete(payment)
+                && ((totalRefundAmount.greaterThan(Money.ZERO) && fullAuthAmount.greaterThan(totalRefundAmount))
+                || (totalVoidAmount.greaterThan(Money.ZERO) && fullAuthAmount.greaterThan(totalVoidAmount))
+                || (containsSuccessfulType(payment, PaymentTransactionType.CAPTURE)
+                && fullAuthAmount.greaterThan(Money.ZERO) && fullAuthAmount.greaterThan(fullCaptureAmount)));
     }
 
     protected boolean determineFullyCaptured(OrderPayment payment) {
         Money fullAuthAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.AUTHORIZE);
         Money fullCaptureAmount = payment.getSuccessfulTransactionAmountForType(PaymentTransactionType.CAPTURE);
 
-        return containsSuccessfulType(payment, PaymentTransactionType.AUTHORIZE_AND_CAPTURE) ||
-                (fullAuthAmount.greaterThan(Money.ZERO) && fullAuthAmount.equals(fullCaptureAmount));
+        return containsSuccessfulType(payment, PaymentTransactionType.AUTHORIZE_AND_CAPTURE)
+                || (fullAuthAmount.greaterThan(Money.ZERO) && fullAuthAmount.equals(fullCaptureAmount));
     }
 
     protected boolean determineAuthorized(OrderPayment payment) {
@@ -107,15 +106,15 @@ public class OrderPaymentStatusServiceImpl implements OrderPaymentStatusService 
     }
 
     protected boolean determinePending(OrderPayment payment) {
-        return !determineAuthorized(payment) &&
-                !containsSuccessfulType(payment, PaymentTransactionType.AUTHORIZE_AND_CAPTURE) &&
-                containsSuccessfulType(payment, PaymentTransactionType.PENDING);
+        return !determineAuthorized(payment)
+                && !containsSuccessfulType(payment, PaymentTransactionType.AUTHORIZE_AND_CAPTURE)
+                && containsSuccessfulType(payment, PaymentTransactionType.PENDING);
     }
 
     protected boolean determineUnconfirmed(OrderPayment payment) {
-        return payment.getTransactions().size() == 1 &&
-                payment.getTransactions().get(0).getSuccess() &&
-                payment.getTransactions().get(0).getType().equals(PaymentTransactionType.UNCONFIRMED);
+        return payment.getTransactions().size() == 1
+                && payment.getTransactions().get(0).getSuccess()
+                && payment.getTransactions().get(0).getType().equals(PaymentTransactionType.UNCONFIRMED);
     }
 
 }

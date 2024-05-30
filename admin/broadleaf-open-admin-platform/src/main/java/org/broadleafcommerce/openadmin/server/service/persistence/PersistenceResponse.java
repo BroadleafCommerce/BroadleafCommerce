@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,7 +30,7 @@ public class PersistenceResponse {
 
     protected DynamicResultSet dynamicResultSet;
     protected Entity entity;
-    protected Map<String, Object> additionalData = new HashMap<String, Object>();
+    protected Map<String, Object> additionalData = new HashMap<>();
 
     public PersistenceResponse withDynamicResultSet(DynamicResultSet dynamicResultSet) {
         setDynamicResultSet(dynamicResultSet);
@@ -74,4 +74,5 @@ public class PersistenceResponse {
     public static class AdditionalData {
         public static final String CLONEID = "cloneId";
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,7 +28,7 @@ public class CartState {
 
     /**
      * Gets the current cart based on the current request
-     * 
+     *
      * @return the current customer's cart
      */
     public static Order getCart() {
@@ -38,12 +38,15 @@ public class CartState {
         }
 
         WebRequest request = BroadleafRequestContext.getBroadleafRequestContext().getWebRequest();
-        return (Order) request.getAttribute(CartStateRequestProcessor.getCartRequestAttributeName(), WebRequest.SCOPE_REQUEST);
+        return (Order) request.getAttribute(
+                CartStateRequestProcessor.getCartRequestAttributeName(),
+                WebRequest.SCOPE_REQUEST
+        );
     }
-    
+
     /**
      * Sets the current cart on the current request
-     * 
+     *
      * @param cart the new cart to set
      */
     public static void setCart(Order cart) {

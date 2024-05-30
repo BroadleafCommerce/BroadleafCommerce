@@ -10,39 +10,45 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.util.queue;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * Interface that defines a distributed {@link BlockingQueue}, which means that this queue can be created, distributed, and operated on by multiple 
- * @author Kelly Tisdell
+ * Interface that defines a distributed {@link BlockingQueue}, which means that this queue can be created, distributed, and operated on by multiple
  *
  * @param <E>
+ * @author Kelly Tisdell
  */
 public interface DistributedBlockingQueue<E extends Serializable> extends BlockingQueue<E> {
 
     /**
      * {@link RuntimeException} indicating that there was an error operating on the queue, or changing queue state.
-     * 
-     * @author Kelly Tisdell
      *
+     * @author Kelly Tisdell
      */
-    public class DistributedQueueException extends RuntimeException {
+    class DistributedQueueException extends RuntimeException {
 
+        @Serial
         private static final long serialVersionUID = 1L;
 
         public DistributedQueueException() {
             super();
         }
 
-        public DistributedQueueException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        public DistributedQueueException(
+                String message,
+                Throwable cause,
+                boolean enableSuppression,
+                boolean writableStackTrace
+        ) {
             super(message, cause, enableSuppression, writableStackTrace);
         }
 
@@ -57,7 +63,7 @@ public interface DistributedBlockingQueue<E extends Serializable> extends Blocki
         public DistributedQueueException(Throwable cause) {
             super(cause);
         }
-        
-        
+
     }
+
 }

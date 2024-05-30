@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,23 +36,24 @@ import java.util.Map;
 
 /**
  * Checks to make sure that the end date being updated is after the start date
- * 
+ *
  * @author Jay Aisenbrey
  */
 @Component("blAfterStartDateValidator")
 public class AfterStartDateValidator extends ValidationConfigurationBasedPropertyValidator {
-    
-    private static final String END_DATE_BEFORE_START = "End date cannot be before the start date";   
-    
+
+    private static final String END_DATE_BEFORE_START = "End date cannot be before the start date";
+
     @Override
-    public PropertyValidationResult validate(Entity entity,
+    public PropertyValidationResult validate(
+            Entity entity,
             Serializable instance,
             Map<String, FieldMetadata> entityFieldMetadata,
             Map<String, String> validationConfiguration,
             BasicFieldMetadata propertyMetadata,
             String propertyName,
-            String value) {
-        
+            String value
+    ) {
 
         String otherField = validationConfiguration.get("otherField");
         FieldManager fm = getFieldManager(propertyMetadata);
@@ -60,7 +61,7 @@ public class AfterStartDateValidator extends ValidationConfigurationBasedPropert
         String message = "";
         Date startDate = null;
         Date endDate = null;
-        
+
         if (StringUtils.isBlank(value) || StringUtils.isBlank(otherField)) {
             return new PropertyValidationResult(true);
         }
@@ -72,7 +73,7 @@ public class AfterStartDateValidator extends ValidationConfigurationBasedPropert
             valid = false;
             message = e.getMessage();
         }
-        
+
         // Validate against the entity only if the instance doesn't have that field
         if (!valid && entity.getPMap().get(otherField) != null && entity.getPMap().get(propertyName) != null) {
             try {

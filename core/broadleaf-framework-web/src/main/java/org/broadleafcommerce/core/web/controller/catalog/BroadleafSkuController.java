@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,11 +43,10 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Joshua Skorton (jskorton)
  */
 public class BroadleafSkuController extends BroadleafAbstractController implements Controller, TemplateTypeAware {
-    
-    protected String defaultSkuView = "catalog/sku";
+
     protected static String MODEL_ATTRIBUTE_NAME = "sku";
     protected static String ALL_SKUS_ATTRIBUTE_NAME = "blcAllDisplayedSkus";
-    
+    protected String defaultSkuView = "catalog/sku";
     @Autowired(required = false)
     @Qualifier("blSkuDeepLinkService")
     protected DeepLinkService<Sku> deepLinkService;
@@ -56,17 +55,17 @@ public class BroadleafSkuController extends BroadleafAbstractController implemen
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ModelAndView model = new ModelAndView();
         Sku sku = (Sku) request.getAttribute(SkuHandlerMapping.CURRENT_SKU_ATTRIBUTE_NAME);
-        assert(sku != null);
-        
+        assert (sku != null);
+
         model.addObject(MODEL_ATTRIBUTE_NAME, sku);
-        Set<Sku> allSkusSet = new HashSet<Sku>();
+        Set<Sku> allSkusSet = new HashSet<>();
         allSkusSet.add(sku);
-        model.addObject(ALL_SKUS_ATTRIBUTE_NAME, new HashSet<Sku>(allSkusSet));
+        model.addObject(ALL_SKUS_ATTRIBUTE_NAME, new HashSet<>(allSkusSet));
 
         addDeepLink(model, deepLinkService, sku);
 
         if (StringUtils.isNotEmpty(sku.getDisplayTemplate())) {
-            model.setViewName(sku.getDisplayTemplate());    
+            model.setViewName(sku.getDisplayTemplate());
         } else {
             model.setViewName(getDefaultSkuView());
         }
@@ -80,7 +79,7 @@ public class BroadleafSkuController extends BroadleafAbstractController implemen
     public void setDefaultSkuView(String defaultSkuView) {
         this.defaultSkuView = defaultSkuView;
     }
-    
+
     @Override
     public String getExpectedTemplateName(HttpServletRequest request) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();

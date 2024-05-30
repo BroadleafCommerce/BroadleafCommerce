@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,28 +47,25 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
         }
 )
 public interface StaticAssetAdminPresentation {
-    public static class TabName {
-
+    class TabName {
         public static final String General = "StaticAssetImpl_FileDetails_Tab";
         public static final String Advanced = "StaticAssetImpl_Advanced_Tab";
     }
 
-    public static class TabOrder {
-
+    class TabOrder {
         public static final int General = 100;
         public static final int Advanced = 2000;
     }
 
-    public static class GroupName {
+    class GroupName {
         public static final String General = "StaticAssetImpl_Asset_Description";
         public static final String Options = "StaticAssetImpl_Asset_Options";
         public static final String Image = "StaticAssetImpl_Asset_Image";
         public static final String Dates = "StaticAssetImpl_Asset_Dates";
         public static final String File_Details = "StaticAssetImpl_Asset_File_Details";
-
     }
 
-    public static class GroupOrder {
+    class GroupOrder {
         public static final int General = 2000;
         public static final int Options = 6000;
         public static final int Image = 1000;
@@ -76,8 +73,7 @@ public interface StaticAssetAdminPresentation {
         public static final int File_Details = 5000;
     }
 
-    public static class FieldOrder {
-
+    class FieldOrder {
         // General Fields
         public static final int NAME = 3000;
         public static final int URL = 6000;
@@ -90,6 +86,6 @@ public interface StaticAssetAdminPresentation {
 
         // Used by subclasses to know where the last field is.
         public static final int LAST = 7000;
-
     }
+
 }

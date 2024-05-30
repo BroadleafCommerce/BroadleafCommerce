@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.domain;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +27,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +39,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
- * 
  * @author Joshua Skorton (jskorton)
  */
 @Entity
@@ -48,6 +47,7 @@ import jakarta.persistence.Table;
 //@AdminPresentationClass(friendlyName = "SiteMapConfigurationImpl")
 public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implements SiteMapConfiguration, AbstractModuleConfigurationAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static Integer DEFAULT_MAX_URL_ENTRIES = 50000;
 
@@ -58,7 +58,7 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
     protected Integer maximumURLEntriesPerFile;
 
     @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class,
-            cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
+            cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.EAGER)
     @AdminPresentationCollection(friendlyName = "SiteMapConfigurationImpl_Generator_Configurations", tab = TabName.General)
     @SiteDiscriminatable(type = SiteDiscriminatableType.SITE)
     protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<SiteMapGeneratorConfiguration>();
@@ -162,4 +162,5 @@ public class SiteMapConfigurationImpl extends AbstractModuleConfiguration implem
     public void setIndexedSiteMapFilePattern(String indexedSiteMapFilePattern) {
         this.indexedSiteMapFilePattern = indexedSiteMapFilePattern;
     }
+
 }

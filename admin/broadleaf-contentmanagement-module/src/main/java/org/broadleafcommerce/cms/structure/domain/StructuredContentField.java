@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,12 +31,11 @@ import jakarta.annotation.Nullable;
  * determined by the {@link org.broadleafcommerce.cms.field.domain.FieldDefinition}s  associated
  * with the {@link StructuredContentType}.
  *
+ * @author bpolster
  * @see StructuredContentType
  * @see org.broadleafcommerce.cms.field.domain.FieldDefinition
- * @author bpolster
- *
  */
-public interface StructuredContentField extends Serializable, Cloneable,MultiTenantCloneable<StructuredContentField> {
+public interface StructuredContentField extends Serializable, Cloneable, MultiTenantCloneable<StructuredContentField> {
 
     /**
      * Gets the primary key.
@@ -44,22 +43,21 @@ public interface StructuredContentField extends Serializable, Cloneable,MultiTen
      * @return the primary key
      */
     @Nullable
-    public Long getId();
-
+    Long getId();
 
     /**
      * Sets the primary key.
      *
      * @param id the new primary key
      */
-    public void setId(@Nullable Long id);
+    void setId(@Nullable Long id);
 
     /**
      * Returns the fieldKey associated with this field.   The key used for a
      * <code>StructuredContentField</code> is determined by the associated
      * {@link org.broadleafcommerce.cms.field.domain.FieldDefinition} that was used by the
      * Content Management System to create this instance.
-     *
+     * <p>
      * As an example, a <code>StructuredContentType</code> might be configured to contain a
      * field definition with a key of "targetUrl".
      *
@@ -67,33 +65,35 @@ public interface StructuredContentField extends Serializable, Cloneable,MultiTen
      * @see org.broadleafcommerce.cms.field.domain.FieldDefinition
      */
     @Nonnull
-    public String getFieldKey();
+    String getFieldKey();
 
     /**
      * Sets the fieldKey.
+     *
      * @param fieldKey
      * @see org.broadleafcommerce.cms.field.domain.FieldDefinition
      */
-    public void setFieldKey(@Nonnull String fieldKey);
+    void setFieldKey(@Nonnull String fieldKey);
+
+    /**
+     * Sets the value of this custom field.
+     *
+     * @return
+     */
+    @Nonnull
+    String getValue();
 
     /**
      * Returns the value for this custom field.
      *
      * @param value
      */
-    public void setValue(@Nonnull String value);
-
-    /**
-     * Sets the value of this custom field.
-     * @return
-     */
-    @Nonnull
-    public String getValue();
+    void setValue(@Nonnull String value);
 
     /**
      * @return a deep copy of this object. By default, clones the fieldKey and value fields and ignores the auditable
      * and id fields.
      */
-    public StructuredContentField clone();
+    StructuredContentField clone();
 
 }

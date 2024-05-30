@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
@@ -32,6 +33,7 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public class ArchiveStatus implements Serializable, SandBoxNonProductionSkip {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Column(name = "ARCHIVED")
@@ -63,4 +65,5 @@ public class ArchiveStatus implements Serializable, SandBoxNonProductionSkip {
     public int hashCode() {
         return archived != null ? archived.hashCode() : 0;
     }
+
 }

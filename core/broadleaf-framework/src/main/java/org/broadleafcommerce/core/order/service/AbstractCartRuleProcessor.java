@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 public abstract class AbstractCartRuleProcessor<T> extends AbstractRuleProcessor<T> {
 
     protected OrderDao orderDao;
@@ -44,7 +43,7 @@ public abstract class AbstractCartRuleProcessor<T> extends AbstractRuleProcessor
     }
 
     protected boolean checkItemCriteria(ItemCriteriaDTO itemCriteria, List<OrderItem> orderItems) {
-        Map<String,Object> vars = new HashMap<String, Object>();
+        Map<String, Object> vars = new HashMap<>();
         int foundCount = 0;
         Iterator<OrderItem> items = orderItems.iterator();
         while (foundCount < itemCriteria.getQty() && items.hasNext()) {
@@ -60,12 +59,12 @@ public abstract class AbstractCartRuleProcessor<T> extends AbstractRuleProcessor
         return (foundCount >= itemCriteria.getQty().intValue());
     }
 
-    public void setOrderDao(OrderDao orderDao) {
-        this.orderDao = orderDao;
-    }
-
     public OrderDao getOrderDao() {
         return orderDao;
+    }
+
+    public void setOrderDao(OrderDao orderDao) {
+        this.orderDao = orderDao;
     }
 
 }

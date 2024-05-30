@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.form.component;
 
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +34,8 @@ public class ListGridRecord {
     protected String id;
     protected String displayOrder;
     protected String altId;
-    protected List<Field> fields = new ArrayList<Field>();
-    protected List<Field> hiddenFields = new ArrayList<Field>();
+    protected List<Field> fields = new ArrayList<>();
+    protected List<Field> hiddenFields = new ArrayList<>();
     protected Boolean isDirty;
     protected Boolean isError;
     protected String status;
@@ -52,7 +51,7 @@ public class ListGridRecord {
      * Convenience map keyed by the field name. Used to guarantee field ordering with header fields within a ListGrid
      */
     protected Map<String, Field> fieldMap;
-    
+
     public String getPath() {
         String path = listGrid.getPath() + "/" + id;
         if (!StringUtils.isEmpty(altId)) {
@@ -60,11 +59,11 @@ public class ListGridRecord {
         }
         return path;
     }
-    
+
     public boolean getCanLinkToExternalEntity() {
         return StringUtils.isNotBlank(listGrid.getExternalEntitySectionKey());
     }
-    
+
     public String getExternalEntityPath() {
         return listGrid.getExternalEntitySectionKey() + "/" + id;
     }
@@ -72,7 +71,7 @@ public class ListGridRecord {
     public ListGrid getListGrid() {
         return listGrid;
     }
-    
+
     public void setListGrid(ListGrid listGrid) {
         this.listGrid = listGrid;
     }
@@ -101,7 +100,7 @@ public class ListGridRecord {
      * Normally you should not be looping through these fields. In order to preserve proper field ordering, instead you
      * should loop through {@link ListGrid#getHeaderFields()} and then invoke the {@link #getField(String)} method
      * with that header field name.
-     * 
+     *
      * @return
      */
     public List<Field> getFields() {
@@ -123,7 +122,7 @@ public class ListGridRecord {
     /**
      * Returns a {@link Field} in this record for a particular field name. Used when displaying a {@link ListGrid} in order
      * to guarantee proper field ordering
-     * 
+     *
      * @param fieldName
      * @return
      */
@@ -132,13 +131,13 @@ public class ListGridRecord {
             populateFieldMap();
         }
         Field field = fieldMap.get(fieldName);
-        
+
         // We'll return a null field is this particular record doesn't have this polymorphic property.
         // This prevents NPEs in list grids
         if (field == null) {
             field = new Field();
         }
-        
+
         return field;
     }
 
@@ -150,7 +149,7 @@ public class ListGridRecord {
     }
 
     protected void populateFieldMap() {
-        fieldMap = new LinkedHashMap<String, Field>();
+        fieldMap = new LinkedHashMap<>();
         for (Field field : fields) {
             fieldMap.put(field.getName(), field);
         }
@@ -167,13 +166,13 @@ public class ListGridRecord {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         sb.append("\"hiddenFields\":[");
-        for (int j=0;j<hiddenFields.size();j++) {
+        for (int j = 0; j < hiddenFields.size(); j++) {
             sb.append("{\"name\":\"");
             sb.append(hiddenFields.get(j).getName());
             sb.append("\",\"val\":");
             sb.append(JSONObject.quote(hiddenFields.get(j).getValue()));
             sb.append("}");
-            if (j < hiddenFields.size()-1) {
+            if (j < hiddenFields.size() - 1) {
                 sb.append(",");
             }
         }
@@ -215,8 +214,8 @@ public class ListGridRecord {
     }
 
     public String getStatus() {
-            return status;
-        }
+        return status;
+    }
 
     public void setStatus(String status) {
         this.status = status;
@@ -237,9 +236,10 @@ public class ListGridRecord {
     public void setErrorKey(String errorKey) {
         this.errorKey = errorKey;
     }
-    
+
     /**
      * Actual, localized error message.  If set, this will override the error key.
+     *
      * @return
      */
     public String getErrorMessage() {
@@ -248,7 +248,7 @@ public class ListGridRecord {
 
     /**
      * If set, this will override the errorKey.
-     * 
+     *
      * @param errorMessage
      */
     public void setErrorMessage(String errorMessage) {
@@ -259,7 +259,7 @@ public class ListGridRecord {
         if (icon != null) {
             return icon;
         }
-        
+
         if (getIsError()) {
             String msgToUser = getErrorMessage();
             if (msgToUser == null) {
@@ -267,9 +267,9 @@ public class ListGridRecord {
             }
 
             return new ListGridRecordIcon()
-                .withCssClass("fa fa-exclamation-triangle")
-                .withMessage(msgToUser)
-                .withHasDetails(true);
+                    .withCssClass("fa fa-exclamation-triangle")
+                    .withMessage(msgToUser)
+                    .withHasDetails(true);
         } else if (getStatus() != null) {
             return new ListGridRecordIcon()
                     .withCssClass(getStatusCssClass())
@@ -279,22 +279,22 @@ public class ListGridRecord {
 
         if (getIsDirty()) {
             return new ListGridRecordIcon()
-                .withCssClass("blc-icon-site-updates")
-                .withMessage(BLCMessageUtils.getMessage("listgrid.record.edited"))
-                .withHasDetails(false);
+                    .withCssClass("blc-icon-site-updates")
+                    .withMessage(BLCMessageUtils.getMessage("listgrid.record.edited"))
+                    .withHasDetails(false);
         }
-        
+
         return null;
     }
-    
+
     public void setIcon(ListGridRecordIcon icon) {
         this.icon = icon;
     }
-    
+
     public Boolean getHasIcon() {
         return icon != null || getIsError() || getIsDirty() || getStatus() != null;
     }
-    
+
     public String getAltId() {
         return altId;
     }
@@ -310,4 +310,5 @@ public class ListGridRecord {
     public void setLocked(Boolean locked) {
         isLocked = locked;
     }
+
 }

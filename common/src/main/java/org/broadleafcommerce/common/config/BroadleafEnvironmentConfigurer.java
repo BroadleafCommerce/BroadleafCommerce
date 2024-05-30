@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,24 +41,24 @@ import java.util.List;
 
 /**
  * <p>
- * Created as a common class for adding property sources to the Spring {@link Environment}. 
- * 
+ * Created as a common class for adding property sources to the Spring {@link Environment}.
+ *
  * <p>
  * Adds {@code META-INF/spring.factories} entries of type {@link FrameworkCommonClasspathPropertySource} and {@link BroadleafSharedOverrideProfileAwarePropertySource}
  * to the current {@link Environment}. All property sources that this initializer adds are added as composite sources to the {@link Environment} with
  * different priorities, and are added relative to each other via the {@link AnnotationAwareOrderComparator}. The {@link PropertySource}s are in the {@link Environment}
  * in the following order, all as {@link CompositePropertySource}s:
- * 
+ *
  * <ol>
  *  <li>{@link #OVERRIDE_SOURCES_NAME} - An external property file given with {@code -Dproperty-override}</li>
  *  <li>{@link #PROFILE_AWARE_SOURCES_NAME} - All {@link BroadleafSharedOverrideProfileAwarePropertySource} entries from {@code META-INF/spring.factories}</li>
  *  <li>{@link #FRAMEWORK_SOURCES_NAME} - All {@link FrameworkCommonClasspathPropertySource} entries from {@code META-IF/spring.factories}</li>
  * </ol>
- * 
+ *
  * <p>
  * If no Spring profile is active, this will default to {@code "development"} and add that profile to {@link ConfigurableEnvironment#getActiveProfiles()} in order
  * to maintain backwards compatibility with Broadleaf versions prior to 5.2.
- * 
+ *
  * @see BroadleafSharedOverrideProfileAwarePropertySource
  * @see FrameworkCommonClasspathPropertySource
  */
@@ -98,7 +98,9 @@ public class BroadleafEnvironmentConfigurer {
     }
 
     protected List<BroadleafSharedOverrideProfileAwarePropertySource> getProfileAwareSources() {
-        return SpringFactoriesLoader.loadFactories(BroadleafSharedOverrideProfileAwarePropertySource.class, null);
+        return SpringFactoriesLoader.loadFactories(
+                BroadleafSharedOverrideProfileAwarePropertySource.class, null
+        );
     }
 
     public void configure(ConfigurableEnvironment environment) {
@@ -147,7 +149,9 @@ public class BroadleafEnvironmentConfigurer {
                 String[] defaultProfiles = environment.getDefaultProfiles();
 
                 for (String defaultProfile : defaultProfiles) {
-                    Resource profileSpecificSharedProps = createClasspathResource(configLocation, defaultProfile, "shared");
+                    Resource profileSpecificSharedProps = createClasspathResource(
+                            configLocation, defaultProfile, "shared"
+                    );
                     profileSpecificSharedResources.add(profileSpecificSharedProps);
 
                     Resource profileSpecificProps = createClasspathResource(configLocation, defaultProfile, null);
@@ -157,7 +161,9 @@ public class BroadleafEnvironmentConfigurer {
 
                 String deprecatedDefaultProfile = getDeprecatedDefaultProfileKey();
                 if (!ArrayUtils.contains(defaultProfiles, deprecatedDefaultProfile)) {
-                    Resource developmentSharedProps = createClasspathResource(configLocation, deprecatedDefaultProfile, "shared");
+                    Resource developmentSharedProps = createClasspathResource(
+                            configLocation, deprecatedDefaultProfile, "shared"
+                    );
                     profileSpecificSharedResources.add(developmentSharedProps);
 
                     Resource developmentProps = createClasspathResource(configLocation, deprecatedDefaultProfile, null);
@@ -195,7 +201,12 @@ public class BroadleafEnvironmentConfigurer {
         if (StringUtils.isNotBlank(overrideFileLocation)) {
             Resource overrideFileResource = new FileSystemResource(overrideFileLocation);
             if (overrideFileResource.exists()) {
-                addToEnvironment(environment, Arrays.asList(overrideFileResource), OVERRIDE_SOURCES_NAME, currentHighestPrecedenceProperties);
+                addToEnvironment(
+                        environment,
+                        Arrays.asList(overrideFileResource),
+                        OVERRIDE_SOURCES_NAME,
+                        currentHighestPrecedenceProperties
+                );
             } else {
                 LOG.warn(String.format("An environment property of %s was specified but the file path %s does not exist, not overriding properties", PROPERTY_OVERRIDES_PROPERTY, overrideFileLocation));
             }
@@ -212,11 +223,16 @@ public class BroadleafEnvironmentConfigurer {
      * <p>
      * Adds the specified <b>resource</b> as a {@link PropertySource} to the given <b>environment</b> at the order from <b>addBeforeResourceName</b>. If the
      * <b>resource</b> does not exist (meaning {@code resource.exists() == false}) then this immediately returns <b>addBeforeResourceName</b>
-     * 
+     *
      * <p>
      * If <b>addBeforeResourceName</b> is null, the given <b>resource</b> will be added last via {@link MutablePropertySources#addLast(PropertySource)}.
      */
-    protected void addToEnvironment(ConfigurableEnvironment environment, List<Resource> resources, String compositeSourceName, String addBeforeSourceName) {
+    protected void addToEnvironment(
+            ConfigurableEnvironment environment,
+            List<Resource> resources,
+            String compositeSourceName,
+            String addBeforeSourceName
+    ) {
         try {
             for (Resource resource : resources) {
                 if (!resource.exists()) {
@@ -225,7 +241,8 @@ public class BroadleafEnvironmentConfigurer {
                 }
                 PropertySource<?> props = new ResourcePropertySource(resource);
 
-                CompositePropertySource compositeSource = (CompositePropertySource) environment.getPropertySources().get(compositeSourceName);
+                CompositePropertySource compositeSource = (CompositePropertySource) environment.getPropertySources()
+                        .get(compositeSourceName);
                 if (compositeSource == null) {
                     compositeSource = new CompositePropertySource(compositeSourceName);
                     if (addBeforeSourceName == null) {
@@ -237,7 +254,8 @@ public class BroadleafEnvironmentConfigurer {
                 }
 
                 compositeSource.addFirstPropertySource(props);
-                LOG.debug(String.format("Added property source %s at the beginning of the composite source ", props.getName(), compositeSource.getName()));
+                LOG.debug(String.format("Added property source %s at the beginning of the composite source ",
+                        props.getName(), compositeSource.getName()));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.audit;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -30,6 +31,7 @@ import jakarta.persistence.TemporalType;
 @Embeddable
 public class Auditable implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Column(name = "DATE_CREATED", updatable = false)
@@ -66,28 +68,28 @@ public class Auditable implements Serializable {
         return dateCreated;
     }
 
-    public Long getCreatedBy() {
-        return createdBy;
-    }
-
-    public Date getDateUpdated() {
-        return dateUpdated;
-    }
-
-    public Long getUpdatedBy() {
-        return updatedBy;
-    }
-
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
     }
 
     public void setCreatedBy(Long createdBy) {
         this.createdBy = createdBy;
     }
 
+    public Date getDateUpdated() {
+        return dateUpdated;
+    }
+
     public void setDateUpdated(Date dateUpdated) {
         this.dateUpdated = dateUpdated;
+    }
+
+    public Long getUpdatedBy() {
+        return updatedBy;
     }
 
     public void setUpdatedBy(Long updatedBy) {
@@ -127,6 +129,7 @@ public class Auditable implements Serializable {
             public static class Name {
                 public static final String Audit = "Auditable_Tab";
             }
+
             public static class Order {
                 public static final int Audit = 99000;
             }
@@ -137,6 +140,7 @@ public class Auditable implements Serializable {
 
                 public static final String Audit = "Auditable_Audit";
             }
+
             public static class Order {
 
                 public static final int Audit = 1000;

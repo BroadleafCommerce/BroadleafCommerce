@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,13 +28,13 @@ import java.util.Map;
  * <p>
  * Interface to be used for workflows in Broadleaf. Usually implementations will subclass {@link BaseActivity}.
  * </p>
- * 
+ * <p>
  * Important note: if you are writing a 3rd-party integration module or adding a module outside of the Broadleaf core, your
  * activity should implement the {@link ModuleActivity} interface as well. This ensures that there is proper logging
  * for users that are using your module so that they know exactly what their final workflow configuration looks like.
  *
- * @author Phillip Verheyden (phillipuniverse)
  * @param <T>
+ * @author Phillip Verheyden (phillipuniverse)
  * @see {@link BaseActivity}
  * @see {@link ModuleActivity}
  * @see {@link BaseProcessor}
@@ -45,33 +45,34 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
     /**
      * Called by the encompassing processor to activate
      * the execution of the Activity
-     * 
+     *
      * @param context - process context for this workflow
      * @return resulting process context
      * @throws Exception
      */
-    public T execute(T context) throws Exception;
+    T execute(T context) throws Exception;
 
     /**
      * Determines if an activity should execute based on the current values in the {@link ProcessContext}. For example, a
      * context might have both an {@link Order} as well as a String 'status' of what the order should be changed to. It is
      * possible that an activity in a workflow could only deal with a particular status change, and thus could return false
      * from this method.
-     * 
+     *
      * @param context
      * @return
      */
-    public boolean shouldExecute(T context);
+    boolean shouldExecute(T context);
 
     /**
      * Get the fine-grained error handler wired up for this Activity
+     *
      * @return
      */
-    public ErrorHandler getErrorHandler();
+    ErrorHandler getErrorHandler();
 
-    public void setErrorHandler(final ErrorHandler errorHandler);
-    
-    public String getBeanName();
+    void setErrorHandler(final ErrorHandler errorHandler);
+
+    String getBeanName();
 
     /**
      * Retrieve the RollbackHandler instance that should be called by the ActivityStateManager in the
@@ -80,7 +81,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
      *
      * @return the handler responsible for reverting state for the activity
      */
-    public RollbackHandler<T> getRollbackHandler();
+    RollbackHandler<T> getRollbackHandler();
 
     /**
      * Set the RollbackHandler instance that should be called by the ActivityStateManager in the
@@ -89,7 +90,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
      *
      * @param rollbackHandler the handler responsible for reverting state for the activity
      */
-    public void setRollbackHandler(RollbackHandler<T> rollbackHandler);
+    void setRollbackHandler(RollbackHandler<T> rollbackHandler);
 
     /**
      * Retrieve the optional region label for the RollbackHandler. Setting a region allows
@@ -101,7 +102,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
      *
      * @return the rollback region label for the RollbackHandler instance
      */
-    public String getRollbackRegion();
+    String getRollbackRegion();
 
     /**
      * Set the optional region label for the RollbackHandler. Setting a region allows
@@ -113,7 +114,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
      *
      * @param rollbackRegion the rollback region label for the RollbackHandler instance
      */
-    public void setRollbackRegion(String rollbackRegion);
+    void setRollbackRegion(String rollbackRegion);
 
     /**
      * Retrieve any user-defined state that should accompany the RollbackHandler. This configuration will be passed to
@@ -121,7 +122,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
      *
      * @return any user-defined state configuratio necessary for the execution of the RollbackHandler
      */
-    public Map<String, Object> getStateConfiguration();
+    Map<String, Object> getStateConfiguration();
 
     /**
      * Set any user-defined state that should accompany the RollbackHandler. This configuration will be passed to
@@ -129,7 +130,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
      *
      * @param stateConfiguration any user-defined state configuration necessary for the execution of the RollbackHandler
      */
-    public void setStateConfiguration(Map<String, Object> stateConfiguration);
+    void setStateConfiguration(Map<String, Object> stateConfiguration);
 
     /**
      * Whether or not this activity should automatically register a configured RollbackHandler with the ActivityStateManager.
@@ -138,7 +139,7 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
      *
      * @return Whether or not to automatically register a RollbackHandler with the ActivityStateManager
      */
-    public boolean getAutomaticallyRegisterRollbackHandler();
+    boolean getAutomaticallyRegisterRollbackHandler();
 
     /**
      * Whether or not this activity should automatically register a configured RollbackHandler with the ActivityStateManager.
@@ -147,5 +148,6 @@ public interface Activity<T extends ProcessContext<?>> extends BeanNameAware, Or
      *
      * @param automaticallyRegisterRollbackHandler Whether or not to automatically register a RollbackHandler with the ActivityStateManager
      */
-    public void setAutomaticallyRegisterRollbackHandler(boolean automaticallyRegisterRollbackHandler);
+    void setAutomaticallyRegisterRollbackHandler(boolean automaticallyRegisterRollbackHandler);
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,45 +38,44 @@ import javax.cache.CacheManager;
 /**
  * An abstract GeneratedResourceHandler that is capable of responding to a single specified filename and generate
  * contents for that filename. This abstract parent will handle caching of the generated resource.
- * 
- * @author Andre Azzolini (apazzolini)
  *
+ * @author Andre Azzolini (apazzolini)
  */
 public abstract class AbstractGeneratedResourceHandler implements Ordered {
-    
+
     public static final int DEFAULT_ORDER = 10000;
 
     protected static final Log LOG = LogFactory.getLog(AbstractGeneratedResourceHandler.class);
 
     private static final String GENERATED_RESOURCE_CACHE_NAME = "generatedResourceCache";
 
-    @jakarta.annotation.Resource(name="blStatisticsService")
+    @jakarta.annotation.Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
 
-    @jakarta.annotation.Resource(name="blStreamingTransactionCapableUtil")
+    @jakarta.annotation.Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
     @jakarta.annotation.Resource(name = "blResourceRequestExtensionManager")
     protected ResourceRequestExtensionManager extensionManager;
-    
+
     @jakarta.annotation.Resource(name = "blCacheManager")
     protected CacheManager cacheManager;
 
     protected Cache<String, Resource> generatedResourceCache;
-    
+
     /**
      * @param path
      * @return booelean determining whether or not this handler is able to handle the given request
      */
     public abstract boolean canHandle(String path);
-    
+
     /**
      * @param path
-     * @param locations 
+     * @param locations
      * @return the Resource representing this file
      */
     public abstract Resource getFileContents(String path, List<Resource> locations);
-    
+
     /**
      * @param cachedResource
      * @param path
@@ -88,9 +87,9 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
     /**
      * Attempts to retrive the requested resource from cache. If not cached, generates the resource, caches it,
      * and then returns it
-     * 
-     * @param request
-     * @param location
+     *
+     * @param path
+     * @param locations
      * @return the generated resource
      */
     public Resource getResource(final String path, final List<Resource> locations) {
@@ -113,10 +112,10 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
         }
         return r;
     }
-    
+
     /**
      * This method can be used to read in a resource given a path and at least one resource location
-     * 
+     *
      * @param path
      * @param locations
      * @return the resource from the file system, classpath, etc, if it exists
@@ -128,38 +127,37 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
             return (Resource) erh.getContextMap().get(ResourceRequestExtensionHandler.RESOURCE_ATTR);
         }
 
-		for (Resource location : locations) {
-			try {
-				Resource resource = location.createRelative(path);
-				if (resource.exists() && resource.isReadable()) {
-				    return resource;
-				}
-			}
-			catch (IOException ex) {
-				LOG.debug("Failed to create relative resource - trying next resource location", ex);
-			}
-		}
-		return null;
+        for (Resource location : locations) {
+            try {
+                Resource resource = location.createRelative(path);
+                if (resource.exists() && resource.isReadable()) {
+                    return resource;
+                }
+            } catch (IOException ex) {
+                LOG.debug("Failed to create relative resource - trying next resource location", ex);
+            }
+        }
+        return null;
     }
-    
-	/**
-	 * @param resource
-	 * @return the UTF-8 String represetation of the contents of the resource
-	 */
-	protected String getResourceContents(Resource resource) throws IOException {
-    	StringWriter writer = null;
-	    try {
-	        writer = new StringWriter();
-    	    IOUtils.copy(resource.getInputStream(), writer, "UTF-8");
-    	    return writer.toString();
-	    } finally {
-	        if (writer != null) {
-    	        writer.flush();
-    	        writer.close();
-	        }
-	    }
-	}
-    
+
+    /**
+     * @param resource
+     * @return the UTF-8 String represetation of the contents of the resource
+     */
+    protected String getResourceContents(Resource resource) throws IOException {
+        StringWriter writer = null;
+        try {
+            writer = new StringWriter();
+            IOUtils.copy(resource.getInputStream(), writer, "UTF-8");
+            return writer.toString();
+        } finally {
+            if (writer != null) {
+                writer.flush();
+                writer.close();
+            }
+        }
+    }
+
     protected Cache<String, Resource> getGeneratedResourceCache() {
         if (generatedResourceCache == null) {
             synchronized (this) {
@@ -179,5 +177,5 @@ public abstract class AbstractGeneratedResourceHandler implements Ordered {
     public int getOrder() {
         return DEFAULT_ORDER;
     }
-    
+
 }

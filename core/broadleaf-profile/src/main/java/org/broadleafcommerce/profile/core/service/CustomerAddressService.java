@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,19 +23,19 @@ import java.util.List;
 
 public interface CustomerAddressService {
 
-    public CustomerAddress saveCustomerAddress(CustomerAddress customerAddress);
+    CustomerAddress saveCustomerAddress(CustomerAddress customerAddress);
 
-    public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId);
+    List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId);
 
-    public CustomerAddress readCustomerAddressById(Long customerAddressId);
+    CustomerAddress readCustomerAddressById(Long customerAddressId);
 
-    public void makeCustomerAddressDefault(Long customerAddressId, Long customerId);
+    void makeCustomerAddressDefault(Long customerAddressId, Long customerId);
 
-    public void deleteCustomerAddressById(Long customerAddressId);
+    void deleteCustomerAddressById(Long customerAddressId);
 
-    public CustomerAddress findDefaultCustomerAddress(Long customerId);
+    CustomerAddress findDefaultCustomerAddress(Long customerId);
 
-    public CustomerAddress create();
+    CustomerAddress create();
 
     List<CustomerAddress> readBatchAddresses(int start, int pageSize);
 

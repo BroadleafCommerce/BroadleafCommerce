@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,39 +22,41 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 
 public interface OrderItemAdjustment extends Adjustment {
 
-    public OrderItem getOrderItem();
+    OrderItem getOrderItem();
 
-    public void init(OrderItem orderItem, Offer offer, String reason);
+    void setOrderItem(OrderItem orderItem);
 
-    public void setOrderItem(OrderItem orderItem);
+    void init(OrderItem orderItem, Offer offer, String reason);
 
     /**
      * Even for items that are on sale, it is possible that an adjustment was made
      * to the retail price that gave the customer a better offer.
-     *
+     * <p>
      * Since some offers can be applied to the sale price and some only to the
      * retail price, this setting provides the required value.
      *
      * @return true if this adjustment was applied to the sale price
      */
-    public boolean isAppliedToSalePrice();
+    boolean isAppliedToSalePrice();
 
-    public void setAppliedToSalePrice(boolean appliedToSalePrice);
+    void setAppliedToSalePrice(boolean appliedToSalePrice);
 
     /**
      * Value of this adjustment relative to the retail price.
+     *
      * @return
      */
-    public Money getRetailPriceValue();
+    Money getRetailPriceValue();
 
-    public void setRetailPriceValue(Money retailPriceValue);
+    void setRetailPriceValue(Money retailPriceValue);
 
     /**
      * Value of this adjustment relative to the sale price.
      *
      * @return
      */
-    public Money getSalesPriceValue();
+    Money getSalesPriceValue();
 
-    public void setSalesPriceValue(Money salesPriceValue);
+    void setSalesPriceValue(Money salesPriceValue);
+
 }

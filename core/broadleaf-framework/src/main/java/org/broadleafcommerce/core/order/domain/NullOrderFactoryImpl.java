@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,12 +20,12 @@ package org.broadleafcommerce.core.order.domain;
 import org.springframework.stereotype.Service;
 
 /**
- * @see org.broadleafcommerce.core.order.domain.NullOrderFactory
  * @author apazzolini
+ * @see org.broadleafcommerce.core.order.domain.NullOrderFactory
  */
 @Service("blNullOrderFactory")
 public class NullOrderFactoryImpl implements NullOrderFactory {
-    
+
     protected static final Order NULL_ORDER = new NullOrderImpl();
 
     @Override

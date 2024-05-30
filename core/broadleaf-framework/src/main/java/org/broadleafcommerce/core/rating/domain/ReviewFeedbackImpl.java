@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,6 +25,7 @@ import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
@@ -46,6 +47,7 @@ import jakarta.persistence.Table;
 })
 public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -84,13 +86,28 @@ public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
     }
 
     @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Override
     public Customer getCustomer() {
         return customer;
     }
 
     @Override
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    @Override
     public ReviewDetail getReviewDetail() {
         return reviewDetail;
+    }
+
+    @Override
+    public void setReviewDetail(ReviewDetail reviewDetail) {
+        this.reviewDetail = reviewDetail;
     }
 
     @Override
@@ -101,21 +118,6 @@ public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
     @Override
     public void setIsHelpful(Boolean isHelpful) {
         this.isHelpful = isHelpful;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    @Override
-    public void setReviewDetail(ReviewDetail reviewDetail) {
-        this.reviewDetail = reviewDetail;
     }
 
 }

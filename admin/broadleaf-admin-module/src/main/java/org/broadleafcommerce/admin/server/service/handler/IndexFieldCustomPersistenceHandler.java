@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,8 +18,6 @@
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.Status;
@@ -61,8 +59,6 @@ import jakarta.persistence.criteria.Predicate;
 @Component("blIndexFieldCustomPersistenceHandler")
 public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(IndexFieldCustomPersistenceHandler.class);
-
     @Resource(name = "blIndexFieldCustomPersistenceHandlerExtensionManager")
     protected IndexFieldCustomPersistenceHandlerExtensionManager extensionManager;
 
@@ -100,9 +96,9 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(IndexField.class.getName(), persistencePerspective);
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            Serializable instance = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]),primaryKey);
+            Serializable instance = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             if (instance instanceof Status) {
-                ((Status)instance).setArchived('Y');
+                ((Status) instance).setArchived('Y');
                 dynamicEntityDao.merge(instance);
                 return;
             }
@@ -135,7 +131,7 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
 
         ExtensionResultStatusType result = ExtensionResultStatusType.NOT_HANDLED;
         if (extensionManager != null) {
-             result = extensionManager.getProxy().addtoSearchableFields(persistencePackage, adminInstance);
+            result = extensionManager.getProxy().addtoSearchableFields(persistencePackage, adminInstance);
         }
 
         if (result.equals(ExtensionResultStatusType.NOT_HANDLED)) {
@@ -176,18 +172,18 @@ public class IndexFieldCustomPersistenceHandler extends CustomPersistenceHandler
             List<String> filterValues = fieldFsc.getFilterValues();
             cto.getCriteriaMap().remove("field");
             cto.getAdditionalFilterMappings().add(new FilterMapping()
-                .withFieldPath(new FieldPath().withTargetProperty("field.friendlyName"))
-                .withFilterValues(filterValues)
-                .withSortDirection(fieldFsc.getSortDirection())
-                .withRestriction(new Restriction()
-                    .withPredicateProvider(new PredicateProvider() {
-                        @Override
-                        public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
-                                                        String ceilingEntity, String fullPropertyName, Path explicitPath, List directValues) {
-                            return builder.like(explicitPath.as(String.class), "%" + directValues.get(0) + "%");
-                        }
-                    })
-                ));
+                    .withFieldPath(new FieldPath().withTargetProperty("field.friendlyName"))
+                    .withFilterValues(filterValues)
+                    .withSortDirection(fieldFsc.getSortDirection())
+                    .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider() {
+                                @Override
+                                public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
+                                                                String ceilingEntity, String fullPropertyName, Path explicitPath, List directValues) {
+                                    return builder.like(explicitPath.as(String.class), "%" + directValues.get(0) + "%");
+                                }
+                            })
+                    ));
         }
 
         DynamicResultSet resultSet = helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);

@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -50,6 +49,7 @@ import jakarta.annotation.Resource;
 
 @Service("blTranslationFormBuilderService")
 public class TranslationFormBuilderServiceImpl implements TranslationFormBuilderService {
+
     protected static final Log LOG = LogFactory.getLog(TranslationFormBuilderServiceImpl.class);
 
     @Resource(name = "blFormBuilderService")
@@ -61,7 +61,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
     @Override
     public ListGrid buildListGrid(List<Translation> translations, boolean isRte) {
         // Set up the two header fields we're interested in for the translations list grid
-        List<Field> headerFields = new ArrayList<Field>();
+        List<Field> headerFields = new ArrayList<>();
         headerFields.add(new Field()
                 .withName("localeCode")
                 .withFriendlyName("Translation_localeCode")
@@ -127,9 +127,11 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
     }
 
     @Override
-    public EntityForm buildTranslationForm(ClassMetadata cmd,
+    public EntityForm buildTranslationForm(
+            ClassMetadata cmd,
             TranslationForm formProperties,
-            TranslationFormAction action) {
+            TranslationFormAction action
+    ) {
         EntityForm ef = new EntityForm();
 
         EntityFormAction saveAction = DefaultEntityFormActions.SAVE.clone();
@@ -183,8 +185,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
      * name of an HTML template.
      *
      * @param formProperties The {@link TranslationForm} submitted containing the properties
-     *        necessary for translating a single entity property
-     *
+     *                       necessary for translating a single entity property
      * @return The value to use for the {@link Field#getFieldType()}.
      */
     protected String getFormFieldType(TranslationForm formProperties) {
@@ -226,7 +227,7 @@ public class TranslationFormBuilderServiceImpl implements TranslationFormBuilder
 
         List<Locale> locales = localeService.findAllLocales();
 
-        Map<String, String> localeMap = new HashMap<String, String>();
+        Map<String, String> localeMap = new HashMap<>();
         for (Locale l : locales) {
             localeMap.put(l.getLocaleCode(), l.getFriendlyName());
         }

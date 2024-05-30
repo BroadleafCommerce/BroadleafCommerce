@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,37 +26,34 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
  * @author Jon Fleschler (jfleschler)
  */
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderImpl_baseOrder",
-    tabs = {
-        @AdminTabPresentation(name = OrderAdminPresentation.TabName.General,
-            order = OrderAdminPresentation.TabOrder.General,
-            groups = {
-                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.General,
-                    order = OrderAdminPresentation.GroupOrder.General,
-                    untitled = true),
-                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.Customer,
-                    order = OrderAdminPresentation.GroupOrder.Customer,
-                    column = 1),
-                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.OrderTotals,
-                    order = OrderAdminPresentation.GroupOrder.OrderTotals,
-                    untitled = true, column = 1)
-            }
-        ),
-        @AdminTabPresentation(name = OrderAdminPresentation.TabName.FulfillmentGroups,
-            order = OrderAdminPresentation.TabOrder.FulfillmentGroups),
-        @AdminTabPresentation(name = OrderAdminPresentation.TabName.Payment,
-            order = OrderAdminPresentation.TabOrder.Payment),
-        @AdminTabPresentation(name = OrderAdminPresentation.TabName.Advanced,
-            order = OrderAdminPresentation.TabOrder.Advanced,
-            groups = {
-                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.Advanced,
-                    order = OrderAdminPresentation.GroupOrder.Advanced,
-                    untitled = true)
-            }
-        )
-    }
+        tabs = {
+                @AdminTabPresentation(name = OrderAdminPresentation.TabName.General,
+                        order = OrderAdminPresentation.TabOrder.General,
+                        groups = {
+                                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.General,
+                                        order = OrderAdminPresentation.GroupOrder.General, untitled = true),
+                                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.Customer,
+                                        order = OrderAdminPresentation.GroupOrder.Customer, column = 1),
+                                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.OrderTotals,
+                                        order = OrderAdminPresentation.GroupOrder.OrderTotals,
+                                        untitled = true, column = 1)
+                        }
+                ),
+                @AdminTabPresentation(name = OrderAdminPresentation.TabName.FulfillmentGroups,
+                        order = OrderAdminPresentation.TabOrder.FulfillmentGroups),
+                @AdminTabPresentation(name = OrderAdminPresentation.TabName.Payment,
+                        order = OrderAdminPresentation.TabOrder.Payment),
+                @AdminTabPresentation(name = OrderAdminPresentation.TabName.Advanced,
+                        order = OrderAdminPresentation.TabOrder.Advanced,
+                        groups = {
+                                @AdminGroupPresentation(name = OrderAdminPresentation.GroupName.Advanced,
+                                        order = OrderAdminPresentation.GroupOrder.Advanced, untitled = true)
+                        }
+                )
+        }
 )
-
 public interface OrderAdminPresentation {
+
     class TabName {
         public static final String General = "General";
         public static final String FulfillmentGroups = "OrderImpl_Fulfillment_Groups_Tab";
@@ -70,7 +67,7 @@ public interface OrderAdminPresentation {
         public static final int Payment = 3000;
         public static final int Advanced = 4000;
     }
-    
+
     class GroupName {
         public static final String General = "General";
         public static final String Customer = "OrderImpl_Customer_Details_Group";
@@ -104,4 +101,5 @@ public interface OrderAdminPresentation {
         public static final int OFFERCODES = 2000;
         public static final int ATTRIBUTES = 3000;
     }
+
 }

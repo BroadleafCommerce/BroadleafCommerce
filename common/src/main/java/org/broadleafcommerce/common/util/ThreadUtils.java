@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,16 +21,21 @@ import java.util.Calendar;
 
 /**
  * This utility class provides methods that simplify thread operations.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class ThreadUtils {
-    
+
     /**
      * Sleeps the current thread until the specified future date. If the date is before the current time,
      * the thread will resume operation immediately.
-     * 
-     * @param date
+     *
+     * @param year
+     * @param month
+     * @param day
+     * @param hour
+     * @param min
+     * @param sec
      */
     public static void sleepUntil(int year, int month, int day, int hour, int min, int sec) {
         Calendar cal = Calendar.getInstance();

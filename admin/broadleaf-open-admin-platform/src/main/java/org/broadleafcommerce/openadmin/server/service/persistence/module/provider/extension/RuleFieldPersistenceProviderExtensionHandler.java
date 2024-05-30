@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
  */
 public interface RuleFieldPersistenceProviderExtensionHandler extends ExtensionHandler {
 
+    int DEFAULT_PRIORITY = Integer.MAX_VALUE;
+
     ExtensionResultStatusType transformId(Object rule, ExtensionResultHolder<Long> resultHolder);
 
     ExtensionResultStatusType postAdd(Object rule, ExtensionResultHolder resultHolder);
@@ -35,7 +37,5 @@ public interface RuleFieldPersistenceProviderExtensionHandler extends ExtensionH
     ExtensionResultStatusType postUpdate(Object rule);
 
     ExtensionResultStatusType establishDirtyState(Object rule, ExtensionResultHolder<Boolean> resultHolder);
-
-    public static final int DEFAULT_PRIORITY = Integer.MAX_VALUE;
 
 }

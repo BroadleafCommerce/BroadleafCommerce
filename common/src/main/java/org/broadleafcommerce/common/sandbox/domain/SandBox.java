@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -71,13 +71,13 @@ public interface SandBox extends Serializable, Status {
     /**
      * @return whether or not this sandbox, or any of its parent sandboxes, has type DEFAULT.
      */
-    public boolean getIsInDefaultHierarchy();
+    boolean getIsInDefaultHierarchy();
 
-    public void setArchived(Character archived);
+    Character getArchived();
 
-    public Character getArchived();
+    void setArchived(Character archived);
 
-    public boolean isActive();
+    boolean isActive();
 
 }
 

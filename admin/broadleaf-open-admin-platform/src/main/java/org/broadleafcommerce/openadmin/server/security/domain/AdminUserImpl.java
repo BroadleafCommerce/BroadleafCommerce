@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -87,38 +87,19 @@ import jakarta.persistence.Transient;
 })
 public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdminPresentation {
 
+    protected static final String LAST_USED_SANDBOX = "LAST_USED_SANDBOX";
     private static final Log LOG = LogFactory.getLog(AdminUserImpl.class);
     private static final long serialVersionUID = 1L;
-    protected static final String LAST_USED_SANDBOX = "LAST_USED_SANDBOX";
-
-    @Id
-    @GeneratedValue(generator = "AdminUserId")
-    @GenericGenerator(
-            name = "AdminUserId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "AdminUserImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl")
-            }
-    )
-    @Column(name = "ADMIN_USER_ID")
-    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_User_ID",
-            group = "AdminUserImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
-    private Long id;
-
     @Column(name = "NAME", nullable = false)
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Name",
             group = GroupName.User, order = FieldOrder.NAME,
             prominent = true, gridOrder = 1000)
     protected String name;
-
     @Column(name = "LOGIN", nullable = false)
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Login",
             group = GroupName.User, order = FieldOrder.LOGIN,
             prominent = true, gridOrder = 2000)
     protected String login;
-
     @Column(name = "PASSWORD")
     @AdminPresentation(
             friendlyName = "AdminUserImpl_Admin_Password",
@@ -138,25 +119,21 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
                     })
             })
     protected String password;
-
     @Column(name = "EMAIL", nullable = false)
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_Email_Address",
             group = GroupName.User, order = FieldOrder.EMAIL,
             requiredOverride = RequiredOverride.REQUIRED,
             fieldType = SupportedFieldType.STRING)
     protected String email;
-
     @Column(name = "PHONE_NUMBER")
     @AdminPresentation(friendlyName = "AdminUserImpl_Phone_Number",
             group = GroupName.User, order = FieldOrder.PHONE_NUMBER)
     protected String phoneNumber;
-
     @Column(name = "ACTIVE_STATUS_FLAG")
     @AdminPresentation(friendlyName = "AdminUserImpl_Active_Status",
             group = GroupName.Miscellaneous, order = FieldOrder.ACTIVE_STATUS_FLAG,
             defaultValue = "true")
     protected Boolean activeStatusFlag;
-
     /**
      * All roles that this user has
      */
@@ -173,8 +150,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
             manyToField = "allUsers",
             operationTypes = @AdminPresentationOperationTypes(
                     removeType = OperationType.NONDESTRUCTIVEREMOVE))
-    protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
-
+    protected Set<AdminRole> allRoles = new HashSet<>();
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF",
             joinColumns = @JoinColumn(name = "ADMIN_USER_ID",
@@ -191,15 +167,8 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
             operationTypes = @AdminPresentationOperationTypes(
                     removeType = OperationType.NONDESTRUCTIVEREMOVE))
     protected Set<AdminPermission> allPermissions = new HashSet<>();
-
     @Transient
     protected String unencodedPassword;
-
-    @Override
-    public String getUnencodedPassword() {
-        return unencodedPassword;
-    }
-
     @ManyToOne(targetEntity = SandBoxImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID",
             referencedColumnName = "ADMIN_USER_ID"),
@@ -207,7 +176,6 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
                     referencedColumnName = "SANDBOX_ID"))
     @AdminPresentation(excluded = true)
     protected SandBox overrideSandBox;
-
     @OneToMany(mappedBy = "adminUser", targetEntity = AdminUserAttributeImpl.class,
             cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
@@ -218,6 +186,26 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
             deleteEntityUponRemove = true, forceFreeFormKeys = true,
             keyPropertyFriendlyName = "AdminUserAttributeImpl_Key")
     protected Map<String, AdminUserAttribute> additionalFields = new HashMap<>();
+    @Id
+    @GeneratedValue(generator = "AdminUserId")
+    @GenericGenerator(
+            name = "AdminUserId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "AdminUserImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl")
+            }
+    )
+    @Column(name = "ADMIN_USER_ID")
+    @AdminPresentation(friendlyName = "AdminUserImpl_Admin_User_ID",
+            group = "AdminUserImpl_Primary_Key", visibility = VisibilityEnum.HIDDEN_ALL)
+    private Long id;
+
+    @Override
+    public String getUnencodedPassword() {
+        return unencodedPassword;
+    }
 
     @Override
     public void setUnencodedPassword(String unencodedPassword) {

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,16 +19,16 @@ package org.broadleafcommerce.common.config.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
 public class ModuleConfigurationType implements BroadleafEnumerationType, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, ModuleConfigurationType> TYPES = new LinkedHashMap<String, ModuleConfigurationType>();
+    private static final Map<String, ModuleConfigurationType> TYPES = new LinkedHashMap<>();
 
     public static final ModuleConfigurationType FULFILLMENT_PRICING = new ModuleConfigurationType("FULFILLMENT_PRICING", "Fulfillment Pricing Module");
     public static final ModuleConfigurationType TAX_CALCULATION = new ModuleConfigurationType("TAX_CALCULATION", "Tax Calculation Module");
@@ -36,10 +36,6 @@ public class ModuleConfigurationType implements BroadleafEnumerationType, Serial
     public static final ModuleConfigurationType PAYMENT_PROCESSOR = new ModuleConfigurationType("PAYMENT_PROCESSOR", "Payment Processor Module");
     public static final ModuleConfigurationType CDN_PROVIDER = new ModuleConfigurationType("CDN_PROVIDER", "Content Delivery Network Module");
     public static final ModuleConfigurationType SITE_MAP = new ModuleConfigurationType("SITE_MAP", "Site Map Generator");
-
-    public static ModuleConfigurationType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -53,21 +49,25 @@ public class ModuleConfigurationType implements BroadleafEnumerationType, Serial
         setType(type);
     }
 
+    public static ModuleConfigurationType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     @Override
     public String getType() {
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

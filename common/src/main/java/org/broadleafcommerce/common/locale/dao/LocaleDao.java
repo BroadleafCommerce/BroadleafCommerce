@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,21 +29,22 @@ public interface LocaleDao {
     /**
      * @return The locale for the passed in code
      */
-    public Locale findLocaleByCode(String localeCode);
+    Locale findLocaleByCode(String localeCode);
 
     /**
      * Returns the page template with the passed in id.
      *
      * @return The default locale
      */
-    public Locale findDefaultLocale();
+    Locale findDefaultLocale();
 
     /**
      * Returns all supported BLC locales.
+     *
      * @return
      */
-    public List<Locale> findAllLocales();
-    
-    public Locale save(Locale locale);
+    List<Locale> findAllLocales();
+
+    Locale save(Locale locale);
 
 }

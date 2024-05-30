@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,12 +23,13 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexCachedOperation;
 
 public interface CatalogSolrIndexUpdateService extends SolrIndexUpdateService {
-    
-    public void rebuildIndex(Catalog catalog) throws ServiceException;
-    
-    public void rebuildIndex(Site site) throws ServiceException;
 
-    public void rebuildIndex() throws ServiceException;
-    
-    public void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
+    void rebuildIndex(Catalog catalog) throws ServiceException;
+
+    void rebuildIndex(Site site) throws ServiceException;
+
+    void rebuildIndex() throws ServiceException;
+
+    void performCachedOperation(SolrIndexCachedOperation.CacheOperation cacheOperation) throws ServiceException;
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,13 +25,15 @@ import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OfferPriceData;
 import org.broadleafcommerce.core.offer.domain.OfferTargetCriteriaXref;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding implements PromotableCandidateItemOffer, OfferHolder {
-    
+
+    @Serial
     private static final long serialVersionUID = 1L;
     protected Offer offer;
     protected PromotableOrder promotableOrder;
@@ -42,15 +44,13 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     protected int uses = 0;
     protected boolean useQtyOnlyTierCalculation = false;
 
-    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap =
-            new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<>();
 
-    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateTargetsMap =
-            new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateTargetsMap = new HashMap<>();
 
     protected HashMap<OfferPriceData, List<PromotableOrderItem>> candidateFixedTargetsMap = new HashMap<>();
-    
-    protected List<PromotableOrderItem> legacyCandidateTargets = new ArrayList<PromotableOrderItem>();
+
+    protected List<PromotableOrderItem> legacyCandidateTargets = new ArrayList<>();
 
     protected int minimumTargetsRequired = 1;
 
@@ -107,7 +107,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
                 if (itemCriteria.getQuantity() <= 0) {
                     tmpReturnQty = 0;
                 } else {
-                    tmpReturnQty = (int)Math.floor(iterationQty / itemCriteria.getQuantity());
+                    tmpReturnQty = (int) Math.floor(iterationQty / itemCriteria.getQuantity());
                 }
 
                 if (returnQty == null) {
@@ -161,7 +161,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
      * ItemCriteria and promotion's maxQty setting.
      */
     @Override
-    public int calculateMaximumNumberOfUses() {     
+    public int calculateMaximumNumberOfUses() {
         int maxMatchesFound = 9999; // set arbitrarily high / algorithm will adjust down
 
         //iterate through the target criteria and find the least amount of max uses. This will be the overall
@@ -177,23 +177,23 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
 
         return Math.min(maxMatchesFound, offerMaxUses);
     }
-    
+
     @Override
     public int calculateMaxUsesForItemCriteria(OfferItemCriteria itemCriteria, Offer promotion) {
         int numberOfTargets = 0;
         int numberOfUsesForThisItemCriteria = 9999;
-        
+
         if (itemCriteria != null) {
             List<PromotableOrderItem> candidateTargets = getCandidateTargetsMap().get(itemCriteria);
-            for(PromotableOrderItem potentialTarget : candidateTargets) {
+            for (PromotableOrderItem potentialTarget : candidateTargets) {
                 numberOfTargets += potentialTarget.getQuantity();
             }
             numberOfUsesForThisItemCriteria = numberOfTargets / itemCriteria.getQuantity();
         }
-        
+
         return numberOfUsesForThisItemCriteria;
     }
-    
+
     @Override
     public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
         return candidateQualifiersMap;
@@ -228,7 +228,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     public int getPriority() {
         return offer.getPriority();
     }
-    
+
     @Override
     public Offer getOffer() {
         return offer;
@@ -243,7 +243,7 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     public void addUse() {
         uses++;
     }
-    
+
     @Override
     public void resetUses() {
         uses = 0;
@@ -296,9 +296,9 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     /**
      * If the offer has a minimum required number of targets, then the first time this
      * offer is processed, return that number.   On subsequent runs, return 1.
-     * 
-     * @see MinimumTargetsRequired
+     *
      * @return
+     * @see MinimumTargetsRequired
      */
     public int getMinimumRequiredTargetQuantity() {
         if (uses > 0) {
@@ -317,4 +317,5 @@ public class PromotableCandidateItemOfferImpl extends AbstractPromotionRounding 
     public void setUseQtyOnlyTierCalculation(boolean useQtyOnlyTierCalculation) {
         this.useQtyOnlyTierCalculation = useQtyOnlyTierCalculation;
     }
+
 }

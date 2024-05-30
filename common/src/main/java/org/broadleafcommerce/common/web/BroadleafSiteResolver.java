@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,30 +29,30 @@ import jakarta.servlet.http.HttpServletRequest;
  *
  * @author bpolster
  */
-public interface BroadleafSiteResolver  {
+public interface BroadleafSiteResolver {
 
-    public static final String SELECTED_SITE_URL_PARAM = "selectedSite";
+    String SELECTED_SITE_URL_PARAM = "selectedSite";
 
     /**
-     * 
      * @deprecated Use {@link #resolveSite(WebRequest)} instead
      */
     @Deprecated
-    public Site resolveSite(HttpServletRequest request) throws SiteNotFoundException;
+    Site resolveSite(HttpServletRequest request) throws SiteNotFoundException;
 
     /**
      * @see #resolveSite(WebRequest, boolean)
      */
-    public Site resolveSite(WebRequest request) throws SiteNotFoundException;
+    Site resolveSite(WebRequest request) throws SiteNotFoundException;
 
     /**
      * Resolves a site for the given WebRequest. Implementations should throw a {@link SiteNotFoundException}
      * when a site could not be resolved unless the allowNullSite parameter is set to true.
-     * 
+     *
      * @param request
      * @param allowNullSite
      * @return the resolved {@link Site}
      * @throws SiteNotFoundException
      */
-    public Site resolveSite(final WebRequest request, final boolean allowNullSite) throws SiteNotFoundException;
+    Site resolveSite(final WebRequest request, final boolean allowNullSite) throws SiteNotFoundException;
+
 }

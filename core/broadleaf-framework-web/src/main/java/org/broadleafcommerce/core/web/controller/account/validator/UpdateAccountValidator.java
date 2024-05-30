@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,11 +29,10 @@ import org.springframework.validation.Validator;
 
 import jakarta.annotation.Resource;
 
-
 @Component("blUpdateAccountValidator")
 public class UpdateAccountValidator implements Validator {
 
-    @Resource(name="blCustomerService")
+    @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
     public void validate(UpdateAccountForm form, Errors errors) {
@@ -52,7 +51,8 @@ public class UpdateAccountValidator implements Validator {
             //check email address to see if it is already in use by another customer
             Customer customerMatchingNewEmail = customerService.readCustomerByEmail(form.getEmailAddress());
 
-            if (customerMatchingNewEmail != null && !CustomerState.getCustomer().getId().equals(customerMatchingNewEmail.getId())) {
+            if (customerMatchingNewEmail != null
+                    && !CustomerState.getCustomer().getId().equals(customerMatchingNewEmail.getId())) {
                 //customer found with new email entered, and it is not the current customer
                 errors.rejectValue("emailAddress", "emailAddress.used");
             }

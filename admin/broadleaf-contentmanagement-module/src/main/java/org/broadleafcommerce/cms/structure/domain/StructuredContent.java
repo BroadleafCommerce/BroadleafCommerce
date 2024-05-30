@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,18 +42,17 @@ import jakarta.annotation.Nullable;
  * "target-url".    This "ad" might show on a websites home page.  By adding
  * <code>StructuredContentMatchRules</code> and setting the <code>priority</code>,
  * different ads could be shown to different users.
- *
+ * <p>
  * It would not be typical in a Broadleaf implementation to extend this interface
  * or to use any implementation other than {@link StructuredContentImpl}.
  *
+ * @author Brian Polster
+ * @author Jeff Fischer
  * @see {@link StructuredContentType}
  * @see {@link StructuredContentImpl}
  * @see {@link org.broadleafcommerce.cms.web.structure.DisplayContentTag}
- * @author Brian Polster
- * @author Jeff Fischer
- *
  */
-public interface StructuredContent extends Serializable,MultiTenantCloneable<StructuredContent> {
+public interface StructuredContent extends Serializable, MultiTenantCloneable<StructuredContent> {
 
     /**
      * Gets the primary key.
@@ -61,16 +60,14 @@ public interface StructuredContent extends Serializable,MultiTenantCloneable<Str
      * @return the primary key
      */
     @Nullable
-    public Long getId();
-
+    Long getId();
 
     /**
      * Sets the primary key.
      *
      * @param id the new primary key
      */
-    public void setId(@Nullable Long id);
-
+    void setId(@Nullable Long id);
 
     /**
      * Gets the name.
@@ -78,13 +75,14 @@ public interface StructuredContent extends Serializable,MultiTenantCloneable<Str
      * @return the name
      */
     @Nonnull
-    public String getContentName();
+    String getContentName();
 
     /**
      * Sets the name.
+     *
      * @param contentName
      */
-    public void setContentName(@Nonnull String contentName);
+    void setContentName(@Nonnull String contentName);
 
     /**
      * Gets the {@link Locale} associated with this content item.
@@ -92,14 +90,14 @@ public interface StructuredContent extends Serializable,MultiTenantCloneable<Str
      * @return
      */
     @Nonnull
-    public Locale getLocale();
-
+    Locale getLocale();
 
     /**
      * Sets the locale associated with this content item.
+     *
      * @param locale
      */
-    public void setLocale(@Nonnull Locale locale);
+    void setLocale(@Nonnull Locale locale);
 
     /**
      * Gets the {@link StructuredContentType} associated with this content item.
@@ -107,27 +105,27 @@ public interface StructuredContent extends Serializable,MultiTenantCloneable<Str
      * @return
      */
     @Nonnull
-    public StructuredContentType getStructuredContentType();
+    StructuredContentType getStructuredContentType();
 
     /**
      * Sets the {@link StructuredContentType} associated with this content item.
-     *
      */
-    public void setStructuredContentType(@Nonnull StructuredContentType structuredContentType);
+    void setStructuredContentType(@Nonnull StructuredContentType structuredContentType);
 
     /**
      * <b>NOTE: This method is typically only used when wanting to persist new {@link StructuredContentField}s.
      * Users trying to get a field to render should typically invoke {@link #getFieldValues()}.</b>
-     * 
+     * <p>
      * Gets a map with the custom fields associated with this content item.<br>
      * The map keys are based on the field types.   For example, consider a content
      * item with a <code>StructuredContentType</code> of ad which defined a field
      * named targetUrl.    The field could be accessed with
      * <code>structuredContentItem.getStructuredContentFields().get("targetUrl")</code>
+     *
      * @return
      */
     @Nullable
-    public Map<String, StructuredContentFieldXref> getStructuredContentFieldXrefs();
+    Map<String, StructuredContentFieldXref> getStructuredContentFieldXrefs();
 
     /**
      * Sets the structured content fields for this item.   Would not typically be called
@@ -135,7 +133,7 @@ public interface StructuredContent extends Serializable,MultiTenantCloneable<Str
      *
      * @param structuredContentFields
      */
-    public void setStructuredContentFieldXrefs(@Nullable Map<String, StructuredContentFieldXref> structuredContentFields);
+    void setStructuredContentFieldXrefs(@Nullable Map<String, StructuredContentFieldXref> structuredContentFields);
 
     /**
      * Returns the offlineFlag.   Indicates that the item should no longer appear on the site.
@@ -145,14 +143,14 @@ public interface StructuredContent extends Serializable,MultiTenantCloneable<Str
      * @return true if this item is offline
      */
     @Nullable
-    public Boolean getOfflineFlag();
+    Boolean getOfflineFlag();
 
     /**
      * Sets the offline flag.
      *
      * @param offlineFlag
      */
-    public void setOfflineFlag(@Nullable Boolean offlineFlag);
+    void setOfflineFlag(@Nullable Boolean offlineFlag);
 
     /**
      * Gets the integer priority of this content item.   Items with a lower priority should
@@ -161,76 +159,72 @@ public interface StructuredContent extends Serializable,MultiTenantCloneable<Str
      * @return the priority as a numeric value
      */
     @Nullable
-    public Integer getPriority();
+    Integer getPriority();
 
     /**
      * Sets the display priority of this item.   Lower priorities should be displayed first.
      *
      * @param priority
      */
-    public void setPriority(@Nullable Integer priority);
+    void setPriority(@Nullable Integer priority);
 
     /**
-     * @deprecated - Not supported - simplifying interface
-     * 
-     * Functionality removed as of BLC 3.2
-     * 
      * @return
+     * @deprecated - Not supported - simplifying interface
+     * <p>
+     * Functionality removed as of BLC 3.2
      */
     @Nullable
     @Deprecated
-    public Map<String, StructuredContentRule> getStructuredContentMatchRules();
+    Map<String, StructuredContentRule> getStructuredContentMatchRules();
 
     /**
-     * @deprecated - Not supported - simplifying interface
-     * 
-     * Functionality removed as of BLC 3.2
-     *
      * @param structuredContentMatchRules
+     * @deprecated - Not supported - simplifying interface
+     * <p>
+     * Functionality removed as of BLC 3.2
      */
     @Deprecated
-    public void setStructuredContentMatchRules(@Nullable Map<String, StructuredContentRule> structuredContentMatchRules);
+    void setStructuredContentMatchRules(@Nullable Map<String, StructuredContentRule> structuredContentMatchRules);
 
     /**
-     * @deprecated - no longer supported - simplifying interface
-     * 
-     * Functionality removed as of BLC 3.2
-     *
      * @return
+     * @deprecated - no longer supported - simplifying interface
+     * <p>
+     * Functionality removed as of BLC 3.2
      */
     @Nullable
     @Deprecated
-    public Set<StructuredContentItemCriteria> getQualifyingItemCriteria();
+    Set<StructuredContentItemCriteria> getQualifyingItemCriteria();
 
     /**
-     * @deprecated - no longer supported - simplifying interface
-     * 
-     * Functionality removed as of BLC 3.2
-     *
      * @param qualifyingItemCriteria
+     * @deprecated - no longer supported - simplifying interface
+     * <p>
+     * Functionality removed as of BLC 3.2
      */
     @Deprecated
-    public void setQualifyingItemCriteria(@Nullable Set<StructuredContentItemCriteria> qualifyingItemCriteria);
-    
+    void setQualifyingItemCriteria(@Nullable Set<StructuredContentItemCriteria> qualifyingItemCriteria);
+
     /**
      * Returns the value of the associated {@link StructuredContentField} if the given fieldName
      * exists in the map returned by {@link #getStructuredContentFieldXrefs()}, and null otherwise.
-     * 
+     *
      * @param fieldName
      * @return the value of the given field
      */
-    public String getFieldValue(String fieldName);
+    String getFieldValue(String fieldName);
 
-    /**
-     * Sets the transient fieldValues map on this StructuredContent.
-     * 
-     * @param fieldValuesMap
-     */
-    public void setFieldValues(Map<String, String> fieldValuesMap);
-    
     /**
      * @return a map of {@link StructuredContentField} field key names to their associated values
      */
-    public Map<String, String> getFieldValues();
+    Map<String, String> getFieldValues();
+
+    /**
+     * Sets the transient fieldValues map on this StructuredContent.
+     *
+     * @param fieldValuesMap
+     */
+    void setFieldValues(Map<String, String> fieldValuesMap);
 
 }

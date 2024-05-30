@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,23 +31,23 @@ import java.util.Locale;
 
 /**
  * Persistence provider capable of extracting friendly display values for Money fields
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Scope("prototype")
 @Component("blMoneyFieldPersistenceProvider")
 public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistenceProvider {
-    
+
     @Override
     public int getOrder() {
         return FieldPersistenceProvider.MONEY;
     }
-    
+
     @Override
     protected boolean canHandleExtraction(ExtractValueRequest extractValueRequest, Property property) {
         return extractValueRequest.getMetadata().getFieldType() == SupportedFieldType.MONEY;
     }
-    
+
     @Override
     protected Locale getLocale(ExtractValueRequest extractValueRequest, Property property) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
@@ -59,14 +59,19 @@ public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistence
         String currencyCodeField = extractValueRequest.getMetadata().getCurrencyCodeField();
         if (!StringUtils.isEmpty(currencyCodeField)) {
             try {
-                return Currency.getInstance((String) extractValueRequest.getFieldManager().getFieldValue(extractValueRequest.getEntity(), currencyCodeField));
+                return Currency.getInstance((String) extractValueRequest.getFieldManager().getFieldValue(
+                        extractValueRequest.getEntity(),
+                        currencyCodeField
+                ));
             } catch (Exception e) {
                 //do nothing
             }
         }
         if (extractValueRequest.getEntity() instanceof CurrencyCodeIdentifiable) {
             try {
-                return Currency.getInstance(((CurrencyCodeIdentifiable) extractValueRequest.getEntity()).getCurrencyCode());
+                return Currency.getInstance(
+                        ((CurrencyCodeIdentifiable) extractValueRequest.getEntity()).getCurrencyCode()
+                );
             } catch (Exception e) {
                 //do nothing
             }
@@ -74,5 +79,5 @@ public class MoneyFieldPersistenceProvider extends AbstractMoneyFieldPersistence
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         return brc.getJavaCurrency();
     }
-    
+
 }

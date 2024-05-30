@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,7 +30,7 @@ import jakarta.annotation.Resource;
  * Example of trying to  resolve images in longDescription:
  *
  * <div id="description" th:with="input=*{longDescription}">
- *     <span th:utext="${#cms.fixUrl(input)}"></span>
+ * <span th:utext="${#cms.fixUrl(input)}"></span>
  * </div>
  *
  * @author by reginaldccole
@@ -39,29 +39,28 @@ import jakarta.annotation.Resource;
 @ConditionalOnTemplating
 public class AssetURLVariableExpression implements BroadleafVariableExpression {
 
-    @Resource(name="blStaticAssetPathService")
+    @Resource(name = "blStaticAssetPathService")
     protected StaticAssetPathService staticAssetPathService;
-
 
     @Override
     public String getName() {
         return "cms";
     }
 
-
     /**
      * This method will resolve image urls located in HTML.
-     * @see StaticAssetPathService#convertAllAssetPathsInContent(String, boolean)
+     *
      * @param content
      * @return
+     * @see StaticAssetPathService#convertAllAssetPathsInContent(String, boolean)
      */
-    public String fixUrl(String content){
+    public String fixUrl(String content) {
         boolean isSecure = false;
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {
-             isSecure  = brc.getRequest().isSecure();
+            isSecure = brc.getRequest().isSecure();
         }
-        return staticAssetPathService.convertAllAssetPathsInContent(content,isSecure);
+        return staticAssetPathService.convertAllAssetPathsInContent(content, isSecure);
     }
 
 }

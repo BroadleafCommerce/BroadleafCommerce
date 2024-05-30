@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -49,43 +49,45 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
      * @param returnContainer
      * @return the extension result status type
      */
-    public ExtensionResultStatusType getCategoryId(Long category, Long[] returnContainer);
+    ExtensionResultStatusType getCategoryId(Long category, Long[] returnContainer);
 
     /**
      * In certain scenarios, the requested product id might not be the one that should be used in Solr.
      * If this method returns {@link ExtensionResultStatusType#HANDLED}, the value placed in the 0th element
      * in the returnContainer should be used.
-     * 
-     * @param product
+     *
+     * @param indexable
      * @param returnContainer
      * @return the extension result status type
      */
-    public ExtensionResultStatusType getIndexableId(Indexable indexable, Long[] returnContainer);
-    
-    public ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<? extends Indexable> items, List<IndexField> fields, List<Locale> locales);
+    ExtensionResultStatusType getIndexableId(Indexable indexable, Long[] returnContainer);
+
+    ExtensionResultStatusType modifyBuiltDocuments(Collection<SolrInputDocument> documents, List<? extends Indexable> items,
+                                                   List<IndexField> fields, List<Locale> locales);
 
     /**
-     * Perform actions at the start of a batch to improve performance of Solr search for the list of batch products.  
+     * Perform actions at the start of a batch to improve performance of Solr search for the list of batch products.
      * For example we want to get, in bulk, the SkuPriceData for each product and save these in memory by default.
-     * 
-     * @param products
+     *
+     * @param indexables
      * @return
      */
-    public ExtensionResultStatusType startBatchEvent(List<? extends Indexable> indexables);
+    ExtensionResultStatusType startBatchEvent(List<? extends Indexable> indexables);
 
     /**
      * Perform actions to end a batch event, such as closing any Contexts that have been previously created.
-     * 
+     *
      * @return
      */
-    public ExtensionResultStatusType endBatchEvent(List<? extends Indexable> indexables);
+    ExtensionResultStatusType endBatchEvent(List<? extends Indexable> indexables);
 
     /**
-     * Given the input field, populates the values array with the fields needed for the 
-     * passed in field.   
-     * 
+     * Given the input field, populates the values array with the fields needed for the
+     * passed in field.
+     * <p>
      * For example, a handler might create multiple fields for the given passed in field.
-     * @param product
+     *
+     * @param indexable
      * @param field
      * @param values
      * @param propertyName
@@ -95,28 +97,29 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    public ExtensionResultStatusType addPropertyValues(Indexable indexable, Field field, FieldType fieldType,
-            Map<String, Object> values, String propertyName, List<Locale> locales)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
+    ExtensionResultStatusType addPropertyValues(
+            Indexable indexable, Field field, FieldType fieldType,
+            Map<String, Object> values, String propertyName, List<Locale> locales
+    ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException;
 
     /**
      * Allows the extension additional fields to the document that are not configured via the DB.
      */
-    public ExtensionResultStatusType attachAdditionalBasicFields(Indexable indexable, SolrInputDocument document, SolrHelperService shs);
+    ExtensionResultStatusType attachAdditionalBasicFields(Indexable indexable, SolrInputDocument document, SolrHelperService shs);
 
     /**
      * This is used to populate any fields for the given parameters as well as adding any property names to the added properties list.
      *
-     * @param document the document we are populating
-     * @param field the field we are populating the document with
-     * @param fieldType the field type of the field
+     * @param document       the document we are populating
+     * @param field          the field we are populating the document with
+     * @param fieldType      the field type of the field
      * @param propertyValues the property values for the given Field
-     * @param addedProperties the properties that have been added to this document so far
      * @return the result of this handler, if NOT_HANDLED, no fields were populated
      */
-    public ExtensionResultStatusType populateDocumentForIndexField(SolrInputDocument document, IndexField field, FieldType fieldType, Map<String, Object> propertyValues);
+    ExtensionResultStatusType populateDocumentForIndexField(SolrInputDocument document, IndexField field,
+                                                            FieldType fieldType, Map<String, Object> propertyValues);
 
-    public ExtensionResultStatusType attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document);
+    ExtensionResultStatusType attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document);
 
     /**
      * This extension point allows other modules to contribute child documents to this document.
@@ -127,5 +130,7 @@ public interface SolrIndexServiceExtensionHandler extends ExtensionHandler {
      * @param locales
      * @return either {@link ExtensionResultStatusType#NOT_HANDLED} or {@link ExtensionResultStatusType#HANDLED_CONTINUE}.
      */
-    public ExtensionResultStatusType attachChildDocuments(Indexable indexable, SolrInputDocument document, List<IndexField> fields, List<Locale> locales);
+    ExtensionResultStatusType attachChildDocuments(Indexable indexable, SolrInputDocument document,
+                                                   List<IndexField> fields, List<Locale> locales);
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,6 +38,8 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
+import java.io.Serial;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -58,21 +60,23 @@ import jakarta.persistence.Table;
 })
 public class FulfillmentOptionImpl implements FulfillmentOption {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "FulfillmentOptionId")
+    @GeneratedValue(generator = "FulfillmentOptionId")
     @GenericGenerator(
-        name="FulfillmentOptionId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="FulfillmentOptionImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl")
-        }
+            name = "FulfillmentOptionId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "FulfillmentOptionImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl")
+            }
     )
     @Column(name = "FULFILLMENT_OPTION_ID")
     protected Long id;
-    
+
     @Column(name = "NAME")
     @AdminPresentation(friendlyName = "FulfillmentOptionImpl_name",
             order = Presentation.FieldOrder.NAME, prominent = true, gridOrder = 1000, translatable = true)
@@ -87,24 +91,22 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
 
     @Column(name = "USE_FLAT_RATES")
     @AdminPresentation(friendlyName = "FulfillmentOptionImpl_useFlatRates",
-        order = Presentation.FieldOrder.FLATRATES)
+            order = Presentation.FieldOrder.FLATRATES)
     protected Boolean useFlatRates = true;
 
     @Column(name = "FULFILLMENT_TYPE", nullable = false)
     @AdminPresentation(friendlyName = "FulfillmentOptionImpl_fulfillmentType",
-                       order = Presentation.FieldOrder.FULFILLMENT_TYPE,
-                       fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
-                       broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
+            order = Presentation.FieldOrder.FULFILLMENT_TYPE,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.core.order.service.type.FulfillmentType")
     protected String fulfillmentType;
 
     @Column(name = "TAX_CODE")
-    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_taxCode",
-                       order = Presentation.FieldOrder.TAX_CODE)
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_taxCode", order = Presentation.FieldOrder.TAX_CODE)
     protected String taxCode;
 
     @Column(name = "TAXABLE")
-    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_taxable",
-                       order = Presentation.FieldOrder.TAXABLE)
+    @AdminPresentation(friendlyName = "FulfillmentOptionImpl_taxable", order = Presentation.FieldOrder.TAXABLE)
     protected Boolean taxable = false;
 
     @Override
@@ -178,17 +180,19 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     }
 
     @Override
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
-    }
-
-    @Override
     public String getTaxCode() {
         return this.taxCode;
     }
 
     @Override
-    public <G extends FulfillmentOption> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    @Override
+    public <G extends FulfillmentOption> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -221,4 +225,5 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
             public static final int TAXABLE = 12000;
         }
     }
+
 }

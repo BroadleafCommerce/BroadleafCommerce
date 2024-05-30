@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,9 +32,14 @@ import javax.cache.configuration.Configuration;
 public class DefaultEhCacheConfigurationBuilder extends DefaultJCacheConfigurationBuilder {
 
     @Override
-    public <K, V> Configuration<K, V> buildConfiguration(int ttlSeconds, int maxElementsInMemory, Class<K> keyClass, Class<V> valueClass) {
+    public <K, V> Configuration<K, V> buildConfiguration(
+            int ttlSeconds,
+            int maxElementsInMemory,
+            Class<K> keyClass,
+            Class<V> valueClass
+    ) {
         ExpiryPolicy<Object, Object> expiryPolicy = new DefaultExpiryPolicy(ttlSeconds);
-        
+
         CacheConfiguration<K, V> config = CacheConfigurationBuilder.
                 newCacheConfigurationBuilder(keyClass, valueClass, ResourcePoolsBuilder.heap(maxElementsInMemory))
                 .withExpiry(expiryPolicy)

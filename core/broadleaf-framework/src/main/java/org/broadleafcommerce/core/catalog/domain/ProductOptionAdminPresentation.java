@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,48 +25,47 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 /**
  * @author Jon Fleschler (jfleschler)
  */
-@AdminPresentationClass(friendlyName = "ProductOptionImpl_baseProductOption", populateToOneFields=PopulateToOneFieldsEnum.TRUE,
-    tabs = {
-        @AdminTabPresentation(name = ProductOptionAdminPresentation.TabName.General,
-            order = ProductOptionAdminPresentation.TabOrder.General,
-            groups = {
-                @AdminGroupPresentation(name = ProductOptionAdminPresentation.GroupName.General,
-                    order = ProductOptionAdminPresentation.GroupOrder.General,
-                    untitled = true),
-                @AdminGroupPresentation(name = ProductOptionAdminPresentation.GroupName.Details,
-                    order = ProductOptionAdminPresentation.GroupOrder.Details,
-                    column = 1),
-                @AdminGroupPresentation(name = ProductOptionAdminPresentation.GroupName.Validation,
-                    order = ProductOptionAdminPresentation.GroupOrder.Validation,
-                    column = 1)
-            }
-        )
-    }
+@AdminPresentationClass(friendlyName = "ProductOptionImpl_baseProductOption", populateToOneFields = PopulateToOneFieldsEnum.TRUE,
+        tabs = {
+                @AdminTabPresentation(name = ProductOptionAdminPresentation.TabName.General,
+                        order = ProductOptionAdminPresentation.TabOrder.General,
+                        groups = {
+                                @AdminGroupPresentation(name = ProductOptionAdminPresentation.GroupName.General,
+                                        order = ProductOptionAdminPresentation.GroupOrder.General,
+                                        untitled = true),
+                                @AdminGroupPresentation(name = ProductOptionAdminPresentation.GroupName.Details,
+                                        order = ProductOptionAdminPresentation.GroupOrder.Details,
+                                        column = 1),
+                                @AdminGroupPresentation(name = ProductOptionAdminPresentation.GroupName.Validation,
+                                        order = ProductOptionAdminPresentation.GroupOrder.Validation,
+                                        column = 1)
+                        }
+                )
+        }
 )
-
 public interface ProductOptionAdminPresentation {
 
-    public static class TabName {
+    class TabName {
         public static final String General = "General";
     }
 
-    public static class TabOrder {
+    class TabOrder {
         public static final int General = 1000;
     }
 
-    public static class GroupName {
+    class GroupName {
         public static final String General = "General";
         public static final String Details = "productOption_details";
         public static final String Validation = "productOption_validation";
     }
 
-    public static class GroupOrder {
+    class GroupOrder {
         public static final int General = 1000;
         public static final int Details = 1000;
         public static final int Validation = 2000;
     }
 
-    public static class FieldOrder {
+    class FieldOrder {
         public static final int name = 1000;
         public static final int label = 2000;
         public static final int type = 3000;
@@ -82,4 +81,5 @@ public interface ProductOptionAdminPresentation {
         public static final int errorCode = 5000;
         public static final int errorMessage = 6000;
     }
+
 }

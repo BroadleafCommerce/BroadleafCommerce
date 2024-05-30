@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,23 +33,22 @@ import java.util.Properties;
 import jakarta.persistence.Id;
 
 /**
- *
  * @author Jeff Fischer
  */
 public class IdOverrideTableGenerator extends TableGenerator {
 
     public static final String ENTITY_NAME_PARAM = "entity_name";
-    
+
     public static final String DEFAULT_TABLE_NAME = "SEQUENCE_GENERATOR";
     public static final String DEFAULT_SEGMENT_COLUMN_NAME = "ID_NAME";
     public static final String DEFAULT_VALUE_COLUMN_NAME = "ID_VAL";
     public static final int DEFAULT_INCREMENT_SIZE = 50;
 
     private static final Map<String, Field> FIELD_CACHE = Collections.synchronizedMap(new HashMap<>());
-    
+
     private String entityName;
 
-    private Field getIdField(Class<?> clazz) {
+    protected Field getIdField(Class<?> clazz) {
         Field response = null;
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
@@ -77,7 +76,8 @@ public class IdOverrideTableGenerator extends TableGenerator {
         if (!FIELD_CACHE.containsKey(objName)) {
             Field field = getIdField(obj.getClass());
             if (field == null) {
-                throw new IllegalArgumentException("Cannot specify IdOverrideTableGenerator for an entity (" + objName + ") that does not have an Id field declared using the @Id annotation.");
+                throw new IllegalArgumentException("Cannot specify IdOverrideTableGenerator for an entity (" + objName
+                        + ") that does not have an Id field declared using the @Id annotation.");
             }
             field.setAccessible(true);
             FIELD_CACHE.put(objName, field);
@@ -89,7 +89,7 @@ public class IdOverrideTableGenerator extends TableGenerator {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-        if ( id != null ) {
+        if (id != null) {
             return id;
         }
         return (Serializable) super.generate(session, obj);
@@ -112,4 +112,5 @@ public class IdOverrideTableGenerator extends TableGenerator {
     public void setEntityName(String entityName) {
         this.entityName = entityName;
     }
+
 }

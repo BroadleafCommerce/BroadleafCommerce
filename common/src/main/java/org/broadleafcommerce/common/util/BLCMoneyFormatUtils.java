@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,14 +23,14 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 /**
  * Convenience class to format prices for front-end display.
- * 
+ *
  * @author Chris Kittrell (ckittrell)
  */
 public class BLCMoneyFormatUtils {
-    
+
     /**
      * Reformats the given price field for front-end display.
-     * 
+     *
      * @param price
      * @return the formatted price
      */
@@ -41,10 +41,12 @@ public class BLCMoneyFormatUtils {
 
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getJavaLocale() != null) {
-            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency()).format(price.getAmount());
+            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency())
+                    .format(price.getAmount());
         } else {
             // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
             return "$ " + price.getAmount().toString();
         }
     }
+
 }

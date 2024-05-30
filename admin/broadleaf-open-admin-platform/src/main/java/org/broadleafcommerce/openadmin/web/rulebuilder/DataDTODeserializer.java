@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,7 +22,6 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,16 +44,16 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
     }
 
     @Override
-    public DataDTO deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public DataDTO deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         ObjectMapper mapper = (ObjectMapper) jp.getCodec();
-        ObjectNode root = (ObjectNode) mapper.readTree(jp);
+        ObjectNode root = mapper.readTree(jp);
         Iterator<Map.Entry<String, JsonNode>> elementsIterator =
                 root.fields();
         DataDTO dataDTO = new DataDTO();
         ExpressionDTO expressionDTO = new ExpressionDTO();
         boolean isExpression = false;
         while (elementsIterator.hasNext()) {
-            Map.Entry<String, JsonNode> element=elementsIterator.next();
+            Map.Entry<String, JsonNode> element = elementsIterator.next();
             String name = element.getKey();
             if ("id".equals(name)) {
                 expressionDTO.setId(getNullAwareText(element.getValue()));
@@ -115,9 +114,11 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
                 dataDTO.setCondition(getNullAwareText(element.getValue()));
             }
 
-            if ("rules".equals(name)){
-                CollectionType dtoCollectionType = mapper.getTypeFactory().constructCollectionType(ArrayList.class, DataDTO.class);
-                dataDTO.setRules((ArrayList<DataDTO>) mapper.readValue(element.getValue().traverse(jp.getCodec()), dtoCollectionType));
+            if ("rules".equals(name)) {
+                CollectionType dtoCollectionType = mapper.getTypeFactory().constructCollectionType(
+                        ArrayList.class, DataDTO.class
+                );
+                dataDTO.setRules(mapper.readValue(element.getValue().traverse(jp.getCodec()), dtoCollectionType));
             }
         }
 
@@ -127,7 +128,7 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
             return dataDTO;
         }
     }
-    
+
     /**
      * Handles the string "null" when using asText() in a JsonNode and returns the literal null instead
      */

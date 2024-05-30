@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,10 +34,10 @@ public interface ReconstituteForAddHandler {
      * have an incorrect reference to the product state before the replay unless
      * you update the cross sale to the new product value.
      *
-     * @param library holds any previous adds
+     * @param library       holds any previous adds
      * @param replayPackage the change request
      */
-    void reconstitutePreviousAddForReplay(Map<Class<?>, Map<String,String>> library, PersistencePackage replayPackage);
+    void reconstitutePreviousAddForReplay(Map<Class<?>, Map<String, String>> library, PersistencePackage replayPackage);
 
     /**
      * Must rematch up any items that are dependent on a previous add. For example,
@@ -45,7 +45,7 @@ public interface ReconstituteForAddHandler {
      * add, the edit will have an incorrect reference to the offer state before the
      * replay unless you update the edit to the new offer value.
      *
-     * @param library holds any previous adds
+     * @param library       holds any previous adds
      * @param replayPackage the change request
      */
     void reconstitutePreviousAddForUpdateReplay(Map<Class<?>, Map<String, String>> library, PersistencePackage replayPackage);

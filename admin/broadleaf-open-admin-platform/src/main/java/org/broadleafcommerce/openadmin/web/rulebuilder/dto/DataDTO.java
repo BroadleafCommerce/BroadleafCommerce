@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -28,6 +29,7 @@ import java.util.ArrayList;
  */
 public class DataDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Long pk;
@@ -36,8 +38,8 @@ public class DataDTO implements Serializable {
     protected Long previousContainedPk;
     protected Integer quantity;
     protected String condition;
-    protected boolean createdFromSubGroup=false;
-    protected ArrayList<DataDTO> rules = new ArrayList<DataDTO>();
+    protected boolean createdFromSubGroup = false;
+    protected ArrayList<DataDTO> rules = new ArrayList<>();
 
     public Long getPk() {
         return pk;
@@ -108,16 +110,14 @@ public class DataDTO implements Serializable {
         if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
             DataDTO that = (DataDTO) obj;
             return new EqualsBuilder()
-                .append(pk, that.pk)
-                .append(quantity, that.quantity)
-                .append(condition, that.condition)
-                .append(rules.toArray(), that.rules.toArray())
-                .build();
+                    .append(pk, that.pk)
+                    .append(quantity, that.quantity)
+                    .append(condition, that.condition)
+                    .append(rules.toArray(), that.rules.toArray())
+                    .build();
         }
         return false;
     }
-
-
 
     @Override
     public int hashCode() {
@@ -131,4 +131,5 @@ public class DataDTO implements Serializable {
                 .append(rules)
                 .toHashCode();
     }
+
 }

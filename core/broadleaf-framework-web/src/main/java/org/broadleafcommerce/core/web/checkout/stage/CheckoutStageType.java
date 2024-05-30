@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.core.web.checkout.stage;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,16 +29,13 @@ import java.util.Map;
  */
 public class CheckoutStageType implements Serializable, BroadleafEnumerationType, Comparable<CheckoutStageType> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
     private static final Map<String, CheckoutStageType> TYPES = new LinkedHashMap<>();
+
     public static final CheckoutStageType SHIPPING_INFO = new CheckoutStageType("SHIPPING_INFO", "Shipping Info", 1000);
     public static final CheckoutStageType PAYMENT_INFO = new CheckoutStageType("PAYMENT_INFO", "Payment Info", 2000);
     public static final CheckoutStageType REVIEW = new CheckoutStageType("REVIEW", "Review", 3000);
-
-    public static CheckoutStageType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -53,6 +51,14 @@ public class CheckoutStageType implements Serializable, BroadleafEnumerationType
         setOrder(order);
     }
 
+    public static CheckoutStageType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
@@ -60,14 +66,10 @@ public class CheckoutStageType implements Serializable, BroadleafEnumerationType
         }
     }
 
-    public String getType() {
-        return type;
-    }
-
     public String getFriendlyType() {
         return friendlyType;
     }
-    
+
     public int getOrder() {
         return order;
     }
@@ -100,7 +102,7 @@ public class CheckoutStageType implements Serializable, BroadleafEnumerationType
             return false;
         return true;
     }
-    
+
     @Override
     public int compareTo(CheckoutStageType arg0) {
         return this.order - arg0.order;

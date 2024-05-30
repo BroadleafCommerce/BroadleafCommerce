@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,28 +19,24 @@ package org.broadleafcommerce.core.offer.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of offer types.
- *
  */
 public class OfferPriceDataIdentifierType implements Serializable, BroadleafEnumerationType, Comparable<OfferPriceDataIdentifierType> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, OfferPriceDataIdentifierType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, OfferPriceDataIdentifierType> TYPES = new LinkedHashMap<String, OfferPriceDataIdentifierType>();
     public static final OfferPriceDataIdentifierType SKU_ID = new OfferPriceDataIdentifierType("SKU_ID", "Sku ID", 1000);
     public static final OfferPriceDataIdentifierType PRODUCT_ID = new OfferPriceDataIdentifierType("PRODUCT_ID", "Product ID", 2000);
     public static final OfferPriceDataIdentifierType SKU_EXTERNAL_ID = new OfferPriceDataIdentifierType("SKU_EXTERNAL_ID", "Sku External ID", 3000);
     public static final OfferPriceDataIdentifierType PRODUCT_EXTERNAL_ID = new OfferPriceDataIdentifierType("PRODUCT_EXTERNAL_ID", "Product External ID", 4000);
-
-
-    public static OfferPriceDataIdentifierType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -56,6 +52,14 @@ public class OfferPriceDataIdentifierType implements Serializable, BroadleafEnum
         setOrder(order);
     }
 
+    public static OfferPriceDataIdentifierType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
@@ -63,14 +67,10 @@ public class OfferPriceDataIdentifierType implements Serializable, BroadleafEnum
         }
     }
 
-    public String getType() {
-        return type;
-    }
-
     public String getFriendlyType() {
         return friendlyType;
     }
-    
+
     public int getOrder() {
         return order;
     }
@@ -103,7 +103,7 @@ public class OfferPriceDataIdentifierType implements Serializable, BroadleafEnum
             return false;
         return true;
     }
-    
+
     @Override
     public int compareTo(OfferPriceDataIdentifierType arg0) {
         return this.order - arg0.order;

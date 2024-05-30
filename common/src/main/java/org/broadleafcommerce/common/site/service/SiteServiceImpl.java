@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,7 +38,7 @@ import jakarta.annotation.Resource;
 @Service("blSiteService")
 public class SiteServiceImpl implements SiteService {
 
-    @Resource(name="blStreamingTransactionCapableUtil")
+    @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
     @Resource(name = "blSiteDao")
@@ -46,7 +46,7 @@ public class SiteServiceImpl implements SiteService {
 
     @Resource(name = "blSiteServiceExtensionManager")
     protected SiteServiceExtensionManager extensionManager;
-    
+
     @Override
     public Site createSite() {
         return siteDao.create();
@@ -57,7 +57,7 @@ public class SiteServiceImpl implements SiteService {
     public Site retrieveSiteById(final Long id) {
         return retrieveNonPersistentSiteById(id);
     }
-    
+
     @Override
     public Site retrieveNonPersistentSiteById(final Long id) {
         return retrieveSiteById(id, false);
@@ -67,12 +67,14 @@ public class SiteServiceImpl implements SiteService {
     public Site retrievePersistentSiteById(final Long id) {
         return retrieveSiteById(id, true);
     }
-    
+
     protected Site retrieveSiteById(final Long id, final boolean persistentResult) {
         //Provide an entity manager in view, if we don't already have one, to facilitate a larger scope
         //for the session and avoid lazy init problems. This should only cause a connection borrow from the
         //connection pool if L2 cache is not effective.
-        if (id == null) { return null; }
+        if (id == null) {
+            return null;
+        }
         final Site[] response = new Site[1];
         transUtil.runOptionalEntityManagerInViewOperation(new Runnable() {
             @Override
@@ -88,43 +90,47 @@ public class SiteServiceImpl implements SiteService {
 
         return response[0];
     }
-    
+
     @Override
     public Site retrieveNonPersistentSiteByIdentifer(String identifier) {
         return retrieveSiteByIdentifier(identifier, false);
     }
-    
+
     @Override
     public Site retrievePersistentSiteByIdentifier(String identifier) {
         return retrieveSiteByIdentifier(identifier, true);
     }
-    
-    protected Site retrieveSiteByIdentifier(final String identifier, final boolean persistentResult) {
-          //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
-          //only run the operation under a transaction if there is not already an entity manager in the view
-          if (identifier == null) { return null; }
-          final Site[] response = new Site[1];
-          transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
-              @Override
-              public void execute() throws Throwable {
-                  Site site = siteDao.retrieveSiteByIdentifier(identifier);
-                  if (persistentResult) {
-                      response[0] = site;
-                  } else {
-                      response[0] = getNonPersistentSite(site);
-                  }
-              }
-          }, RuntimeException.class, !TransactionSynchronizationManager.hasResource(((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory()));
 
-          return response[0];
-      }
-    
+    protected Site retrieveSiteByIdentifier(final String identifier, final boolean persistentResult) {
+        //Since the methods on this class are frequently called during regular page requests and transactions are expensive,
+        //only run the operation under a transaction if there is not already an entity manager in the view
+        if (identifier == null) {
+            return null;
+        }
+        final Site[] response = new Site[1];
+        transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+            @Override
+            public void execute() throws Throwable {
+                Site site = siteDao.retrieveSiteByIdentifier(identifier);
+                if (persistentResult) {
+                    response[0] = site;
+                } else {
+                    response[0] = getNonPersistentSite(site);
+                }
+            }
+        }, RuntimeException.class, !TransactionSynchronizationManager.hasResource(
+                ((JpaTransactionManager) transUtil.getTransactionManager()).getEntityManagerFactory()
+        ));
+
+        return response[0];
+    }
+
     @Override
     @Deprecated
     public Site retrieveSiteByDomainName(final String domainName) {
         return retrieveNonPersistentSiteByDomainName(domainName);
     }
-    
+
     @Override
     public Site retrieveNonPersistentSiteByDomainName(final String domainName) {
         return retrieveSiteByDomainName(domainName, false);
@@ -134,7 +140,7 @@ public class SiteServiceImpl implements SiteService {
     public Site retrievePersistentSiteByDomainName(final String domainName) {
         return retrieveSiteByDomainName(domainName, true);
     }
-    
+
     public Site retrieveSiteByDomainName(final String domainName, final boolean persistentResult) {
         //Provide an entity manager in view, if we don't already have one, to facilitate a larger scope
         //for the session and avoid lazy init problems. This should only cause a connection borrow from the
@@ -180,7 +186,7 @@ public class SiteServiceImpl implements SiteService {
             String propStripPrefixes = BLCSystemProperty.resolveSystemProperty("site.domain.resolver.strip.subdomains");
             if (propStripPrefixes != null) {
                 String[] prefixes = propStripPrefixes.split(",");
-                for(String prefix : prefixes) {
+                for (String prefix : prefixes) {
                     if (subDomain.equals(prefix)) {
                         return true;
                     }
@@ -196,7 +202,7 @@ public class SiteServiceImpl implements SiteService {
     public Site save(Site site) {
         return saveAndReturnNonPersisted(site);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public Site saveAndReturnNonPersisted(Site site) {
@@ -213,7 +219,7 @@ public class SiteServiceImpl implements SiteService {
     public Catalog findCatalogById(Long id) {
         return siteDao.retrieveCatalog(id);
     }
-    
+
     @Override
     public Catalog findCatalogByName(String name) {
         return siteDao.retrieveCatalogByName(name);
@@ -224,7 +230,7 @@ public class SiteServiceImpl implements SiteService {
     public Site retrieveDefaultSite() {
         return retrieveNonPersistentDefaultSite();
     }
-    
+
     @Override
     public Site retrieveNonPersistentDefaultSite() {
         return getNonPersistentSite(retrievePersistentDefaultSite());
@@ -234,7 +240,7 @@ public class SiteServiceImpl implements SiteService {
     public Site retrievePersistentDefaultSite() {
         return retrieveDefaultSite(true);
     }
-    
+
     protected Site retrieveDefaultSite(final boolean persistentResult) {
         //Provide an entity manager in view, if we don't already have one, to facilitate a larger scope
         //for the session and avoid lazy init problems. This should only cause a connection borrow from the
@@ -254,13 +260,13 @@ public class SiteServiceImpl implements SiteService {
 
         return response[0];
     }
-    
+
     @Override
     @Deprecated
     public List<Site> findAllActiveSites() {
         return findAllNonPersistentActiveSites();
     }
-    
+
     @Override
     public List<Site> findAllNonPersistentActiveSites() {
         return findAllSites(false);
@@ -270,28 +276,28 @@ public class SiteServiceImpl implements SiteService {
     public List<Site> findAllPersistentActiveSites() {
         return findAllSites(true);
     }
-    
+
     protected List<Site> findAllSites(final boolean persistentResult) {
         //Provide an entity manager in view, if we don't already have one, to facilitate a larger scope
         //for the session and avoid lazy init problems. This should only cause a connection borrow from the
         //connection pool if L2 cache is not effective.
-        final List<Site> response = new ArrayList<Site>();
+        final List<Site> response = new ArrayList<>();
         transUtil.runOptionalEntityManagerInViewOperation(new Runnable() {
             @Override
             public void run() {
-              List<Site> sites = siteDao.readAllActiveSites();
-              for (Site site : sites) {
-                  if (persistentResult) {
-                      response.add(site);
-                  } else {
-                      response.add(getNonPersistentSite(site));
-                  }
-              }
-          }
+                List<Site> sites = siteDao.readAllActiveSites();
+                for (Site site : sites) {
+                    if (persistentResult) {
+                        response.add(site);
+                    } else {
+                        response.add(getNonPersistentSite(site));
+                    }
+                }
+            }
         });
         return response;
-      }
-    
+    }
+
     protected Site getNonPersistentSite(Site persistentSite) {
         if (persistentSite == null) {
             return null;
@@ -321,7 +327,7 @@ public class SiteServiceImpl implements SiteService {
     public Catalog save(Catalog catalog) {
         return siteDao.save(catalog);
     }
-    
+
     @Override
     public List<Catalog> findAllCatalogs() {
         return siteDao.retrieveAllCatalogs();

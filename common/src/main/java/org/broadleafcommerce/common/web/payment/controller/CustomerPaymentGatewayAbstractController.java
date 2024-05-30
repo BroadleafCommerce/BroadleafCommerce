@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -55,7 +55,7 @@ public abstract class CustomerPaymentGatewayAbstractController extends Broadleaf
     @Resource(name = "blPaymentGatewayWebResponsePrintService")
     protected PaymentGatewayWebResponsePrintService webResponsePrintService;
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("blCustomerPaymentGatewayService")
     protected CustomerPaymentGatewayService customerPaymentGatewayService;
 
@@ -76,6 +76,7 @@ public abstract class CustomerPaymentGatewayAbstractController extends Broadleaf
     // ***********************************************
     // Customer Payment Result Processing
     // ***********************************************
+
     /**
      * <p>This method is intended to initiate the creation of a saved payment token.</p>
      *
@@ -84,19 +85,22 @@ public abstract class CustomerPaymentGatewayAbstractController extends Broadleaf
      * {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO} which will then be used by the
      * customer profile engine to save a token to the user's account (e.g. wallet).</p>
      *
-     * @param model - Spring MVC model
-     * @param request - the HTTPServletRequest (originating either from a Payment Gateway or from the implementing checkout engine)
+     * @param model              - Spring MVC model
+     * @param request            - the HTTPServletRequest (originating either from a Payment Gateway or from the implementing checkout engine)
      * @param redirectAttributes - Spring MVC redirect attributes
      * @return the resulting view
      * @throws org.broadleafcommerce.common.vendor.service.exception.PaymentException
      */
-    public String createCustomerPayment(Model model, HttpServletRequest request,
-                                        final RedirectAttributes redirectAttributes) throws PaymentException {
+    public String createCustomerPayment(
+            Model model,
+            HttpServletRequest request,
+            final RedirectAttributes redirectAttributes
+    ) throws PaymentException {
 
         try {
             PaymentResponseDTO responseDTO = getWebResponseService().translateWebResponse(request);
             if (LOG.isTraceEnabled()) {
-                LOG.trace("HTTPRequest translated to Raw Response: " +  responseDTO.getRawResponse());
+                LOG.trace("HTTPRequest translated to Raw Response: " + responseDTO.getRawResponse());
             }
 
             Long customerPaymentId = applyCustomerTokenToProfile(responseDTO);
@@ -127,7 +131,6 @@ public abstract class CustomerPaymentGatewayAbstractController extends Broadleaf
 
     public abstract String getCustomerPaymentErrorRedirect();
 
-    public abstract void handleProcessingException(Exception e, final RedirectAttributes redirectAttributes)
-            throws PaymentException;
+    public abstract void handleProcessingException(Exception e, final RedirectAttributes redirectAttributes) throws PaymentException;
 
 }

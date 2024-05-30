@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,12 +37,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Controller that responds to custom catalog actions. These would normally be hooked up in customized controllers like 
+ * Controller that responds to custom catalog actions. These would normally be hooked up in customized controllers like
  * {@link AdminProductController}
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link AdminProductController}
- * 
  */
 @Controller("blAdminCatalogActionsController")
 public class AdminCatalogActionsController extends AdminAbstractController {
@@ -59,9 +58,13 @@ public class AdminCatalogActionsController extends AdminAbstractController {
     @RequestMapping(value = "product/{productId}/{skusFieldName}/generate-skus",
             method = RequestMethod.GET,
             produces = "application/json")
-    public @ResponseBody Map<String, Object> generateSkus(HttpServletRequest request, HttpServletResponse response, Model model,
-                                                          @PathVariable(value = "productId") Long productId,
-                                                          @PathVariable(value = "skusFieldName") String skusFieldName) {
+    public @ResponseBody Map<String, Object> generateSkus(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable(value = "productId") Long productId,
+            @PathVariable(value = "skusFieldName") String skusFieldName
+    ) {
         Map<String, Object> responseBody = adminCatalogService.generateSkus(productId);
 
         String url = request.getRequestURL().toString();

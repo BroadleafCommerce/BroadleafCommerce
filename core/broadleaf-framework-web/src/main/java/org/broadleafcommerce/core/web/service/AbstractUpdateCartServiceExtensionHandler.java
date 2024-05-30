@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,7 +23,6 @@ import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO;
 
-
 /**
  * @author Andre Azzolini (apazzolini), bpolster
  */
@@ -32,7 +31,7 @@ public abstract class AbstractUpdateCartServiceExtensionHandler extends Abstract
 
     /**
      * Throws an exception if cart is invalid.
-     * 
+     *
      * @param cart
      * @param resultHolder
      * @return
@@ -41,7 +40,7 @@ public abstract class AbstractUpdateCartServiceExtensionHandler extends Abstract
     public ExtensionResultStatusType updateAndValidateCart(Order cart, ExtensionResultHolder resultHolder) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
-    
+
     @Override
     public ExtensionResultStatusType validateAddToCartItem(OrderItemRequestDTO itemRequest, Order cart) throws IllegalArgumentException {
         return ExtensionResultStatusType.NOT_HANDLED;

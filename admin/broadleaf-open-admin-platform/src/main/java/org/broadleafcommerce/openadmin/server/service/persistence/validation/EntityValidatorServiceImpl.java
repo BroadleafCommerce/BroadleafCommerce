@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -57,6 +57,7 @@ import jakarta.annotation.Resource;
  */
 @Service("blEntityValidatorService")
 public class EntityValidatorServiceImpl implements EntityValidatorService {
+
     protected static final Log LOG = LogFactory.getLog(EntityValidatorServiceImpl.class);
 
     @Resource(name = "blGlobalEntityPropertyValidators")
@@ -76,17 +77,18 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
         broadleafValidatorMap = new HashMap<>(beanNames.length);
 
         for (String beanName : beanNames) {
-            BroadleafEntityValidator<?> broadleafValidator = applicationContext.getBean(beanName,
-                                                                                        BroadleafEntityValidator.class);
-            Class<?> entityType = GenericTypeResolver.resolveTypeArgument(broadleafValidator.getClass(),
-                                                                          BroadleafEntityValidator.class);
+            BroadleafEntityValidator<?> broadleafValidator = applicationContext.getBean(
+                    beanName, BroadleafEntityValidator.class
+            );
+            Class<?> entityType = GenericTypeResolver.resolveTypeArgument(
+                    broadleafValidator.getClass(), BroadleafEntityValidator.class
+            );
             if (entityType != null) {
                 String entityClassName = entityType.getName();
                 LOG.info(String.format("Registering validator %s for entity type %s",
-                                       broadleafValidator.getClass().getName(), entityClassName));
+                        broadleafValidator.getClass().getName(), entityClassName));
 
-                List<BroadleafEntityValidator<?>> registeredValidatorsForType = broadleafValidatorMap
-                        .get(entityClassName);
+                List<BroadleafEntityValidator<?>> registeredValidatorsForType = broadleafValidatorMap.get(entityClassName);
                 if (registeredValidatorsForType == null) {
                     registeredValidatorsForType = new ArrayList<>();
                     broadleafValidatorMap.put(entityClassName, registeredValidatorsForType);
@@ -99,9 +101,13 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
     }
 
     @Override
-    public void validate(Entity submittedEntity, @Nullable Serializable instance,
-                         Map<String, FieldMetadata> propertiesMetadata, RecordHelper recordHelper,
-                         boolean validateUnsubmittedProperties) {
+    public void validate(
+            Entity submittedEntity,
+            @Nullable Serializable instance,
+            Map<String, FieldMetadata> propertiesMetadata,
+            RecordHelper recordHelper,
+            boolean validateUnsubmittedProperties
+    ) {
         Object idValue = null;
         if (instance != null) {
             String idField = (String) ((BasicPersistenceModule) recordHelper.getCompatibleModule(OperationType.BASIC))
@@ -149,7 +155,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
 
             // Don't test this field if it was not inherited from our polymorphic type (or supertype)
             if (instance != null && (types.contains(metadata.getInheritedFromType())
-                                     || instance.getClass().getName().equals(metadata.getInheritedFromType()))) {
+                    || instance.getClass().getName().equals(metadata.getInheritedFromType()))) {
 
                 Property property = entity.getPMap().get(metadataEntry.getKey());
 
@@ -169,8 +175,14 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
                     // First execute the global field validators
                     if (CollectionUtils.isNotEmpty(globalEntityValidators)) {
                         for (GlobalPropertyValidator validator : globalEntityValidators) {
-                            PropertyValidationResult result = validator.validate(entity, instance, propertiesMetadata,
-                                                                                 (BasicFieldMetadata) metadata, propertyName, propertyValue);
+                            PropertyValidationResult result = validator.validate(
+                                    entity,
+                                    instance,
+                                    propertiesMetadata,
+                                    (BasicFieldMetadata) metadata,
+                                    propertyName,
+                                    propertyValue
+                            );
                             if (!result.isValid()) {
                                 submittedEntity.addValidationError(propertyName, result.getErrorMessage());
                             }
@@ -189,8 +201,9 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
 
                             // attempt bean resolution to find the validator
                             if (applicationContext.containsBean(validationImplementation)) {
-                                validator = applicationContext.getBean(validationImplementation,
-                                                                       PropertyValidator.class);
+                                validator = applicationContext.getBean(
+                                        validationImplementation, PropertyValidator.class
+                                );
                             }
 
                             // not a bean, attempt to instantiate the class
@@ -205,11 +218,18 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
 
                             if (validator == null) {
                                 throw new PersistenceException("Could not find validator: " + validationImplementation
-                                                               + " for property: " + propertyName);
+                                        + " for property: " + propertyName);
                             }
 
-                            PropertyValidationResult result = validator.validate(entity, instance, propertiesMetadata,
-                                                                                 configuration, (BasicFieldMetadata) metadata, propertyName, propertyValue);
+                            PropertyValidationResult result = validator.validate(
+                                    entity,
+                                    instance,
+                                    propertiesMetadata,
+                                    configuration,
+                                    (BasicFieldMetadata) metadata,
+                                    propertyName,
+                                    propertyValue
+                            );
                             if (!result.isValid()) {
                                 for (String message : result.getErrorMessages()) {
                                     submittedEntity.addValidationError(propertyName, message);
@@ -221,13 +241,19 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
             }
         }
         if (instance != null) {
-            List<BroadleafEntityValidator<?>> broadleafValidators = broadleafValidatorMap
-                    .get(instance.getClass().getName());
+            List<BroadleafEntityValidator<?>> broadleafValidators = broadleafValidatorMap.get(
+                    instance.getClass().getName()
+            );
             if (broadleafValidators != null) {
                 for (BroadleafEntityValidator<?> broadleafValidator : broadleafValidators) {
                     LOG.debug("Calling validator " + broadleafValidator.getClass().getName());
-                    broadleafValidator.validate(submittedEntity, instance, propertiesMetadata, recordHelper,
-                                                validateUnsubmittedProperties);
+                    broadleafValidator.validate(
+                            submittedEntity,
+                            instance,
+                            propertiesMetadata,
+                            recordHelper,
+                            validateUnsubmittedProperties
+                    );
                 }
             }
         }
@@ -239,7 +265,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
      *
      * <p>
      * For instance, if this entity's {@link Entity#getType()} is {@link ProductBundleImpl}, then the result will be:
-     *
+     * <p>
      * [org.broadleafcommerce.core.catalog.domain.ProductBundleImpl,
      * org.broadleafcommerce.core.catalog.domain.ProductImpl]
      *
@@ -247,7 +273,7 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
      * @return
      */
     protected List<String> getTypeHierarchy(Entity entity) {
-        List<String> types = new ArrayList<String>();
+        List<String> types = new ArrayList<>();
         Class<?> myType;
         try {
             myType = Class.forName(entity.getType()[0]);
@@ -276,4 +302,5 @@ public class EntityValidatorServiceImpl implements EntityValidatorService {
     public void setGlobalEntityValidators(List<GlobalPropertyValidator> globalEntityValidators) {
         this.globalEntityValidators = globalEntityValidators;
     }
+
 }

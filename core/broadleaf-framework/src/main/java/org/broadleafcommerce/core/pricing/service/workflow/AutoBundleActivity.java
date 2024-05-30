@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,25 +47,25 @@ import jakarta.annotation.Resource;
 
 /**
  * This pricing workflow step will automatically bundle items in the cart.
- *
+ * <p>
  * For example, if a ProductBundle exists of two items and the user has
  * one of the items in their cart.   If they then add the second item,
  * this activity will replace the two items with the ProductBundle.
- *
+ * <p>
  * This only occurs if the ProductBundle is set to "automatically" bundle.
- *
  */
 public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
-    @Resource(name="blCatalogService")
+
+    @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
-    @Resource(name="blOrderService")
+    @Resource(name = "blOrderService")
     protected OrderService orderService;
 
-    @Resource(name="blOrderItemDao")
+    @Resource(name = "blOrderItemDao")
     protected OrderItemDao orderItemDao;
 
-    @Resource(name="blFulfillmentGroupItemDao")
+    @Resource(name = "blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
@@ -80,7 +80,7 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
         List<DiscreteOrderItem> unbundledItems = null;
 
         List<ProductBundle> productBundles = catalogService.findAutomaticProductBundles();
-        Set<Long> processedBundleIds = new HashSet<Long>();
+        Set<Long> processedBundleIds = new HashSet<>();
         for (ProductBundle productBundle : productBundles) {
             int existingUses = countExistingUsesOfBundle(order, productBundle);
             Integer maxApplications = null;
@@ -93,7 +93,7 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
             processedBundleIds.add(productBundle.getId());
 
             if (maxApplications != existingUses) {
-                if (! itemsHaveBeenUnbundled) {
+                if (!itemsHaveBeenUnbundled) {
                     // Store the discrete items that were part of automatic bundles
                     unbundledItems = unBundleItems(order);
                     order = removeAutomaticBundles(order);
@@ -111,7 +111,7 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
      * Removes all automatic bundles from the order and replaces with DiscreteOrderItems.
      *
      * @param order
-     * @throws PricingException 
+     * @throws PricingException
      */
     private Order removeAutomaticBundles(Order order) throws PricingException {
         List<BundleOrderItem> bundlesToRemove = new ArrayList<BundleOrderItem>();
@@ -141,7 +141,7 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
      *
      * @param order
      */
-    private List<DiscreteOrderItem> unBundleItems(Order order) throws PricingException{
+    private List<DiscreteOrderItem> unBundleItems(Order order) throws PricingException {
         List<DiscreteOrderItem> unbundledItems = null;
 
         for (OrderItem orderItem : order.getOrderItems()) {
@@ -152,11 +152,11 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
                         unbundledItems = new ArrayList<DiscreteOrderItem>();
                     }
 
-                    for(DiscreteOrderItem item : bundleOrderItem.getDiscreteOrderItems()) {
+                    for (DiscreteOrderItem item : bundleOrderItem.getDiscreteOrderItems()) {
                         DiscreteOrderItem newOrderItem = (DiscreteOrderItem) item.clone();
                         newOrderItem.setQuantity(item.getQuantity() * bundleOrderItem.getQuantity());
                         newOrderItem.setSkuBundleItem(null);
-                        newOrderItem.setBundleOrderItem(null);   
+                        newOrderItem.setBundleOrderItem(null);
                         newOrderItem.updateSaleAndRetailPrices();
                         newOrderItem.setOrder(order);
                         unbundledItems.add(newOrderItem);
@@ -174,10 +174,15 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
      * @param order
      * @param productBundle
      * @param numApplications
-     * @throws PricingException 
-     * @throws ItemNotFoundException 
+     * @throws PricingException
+     * @throws ItemNotFoundException
      */
-    private Order bundleItems(Order order, ProductBundle productBundle, Integer numApplications, List<DiscreteOrderItem> unbundledItems) throws PricingException, RemoveFromCartException {
+    private Order bundleItems(
+            Order order,
+            ProductBundle productBundle,
+            Integer numApplications,
+            List<DiscreteOrderItem> unbundledItems
+    ) throws PricingException, RemoveFromCartException {
 
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
         bundleOrderItem.setQuantity(numApplications);
@@ -201,7 +206,7 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
         for (SkuBundleItem skuBundleItem : productBundle.getSkuBundleItems()) {
             List<DiscreteOrderItem> itemMatches = new ArrayList<DiscreteOrderItem>();
             int skuMatches = populateItemMatchesForSku(itemMatches, order, unbundledItems, skuBundleItem.getSku().getId());
-            int skusRequired = skuBundleItem.getQuantity()* numApplications;
+            int skusRequired = skuBundleItem.getQuantity() * numApplications;
 
             if (skuMatches < skusRequired) {
                 throw new IllegalArgumentException("Something went wrong creating automatic bundles.  Not enough skus to fulfill bundle requirements for sku id: " + skuBundleItem.getSku().getId());
@@ -217,11 +222,11 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
             if (itemMatches.size() > 0) {
                 baseItem = itemMatches.get(0);
             } else {
-                 for (DiscreteOrderItem discreteOrderItem : unbundledItems) {
-                     if (discreteOrderItem.getSku().getId().equals(skuBundleItem.getSku().getId())) {
-                         baseItem = discreteOrderItem;
-                     }
-                 }
+                for (DiscreteOrderItem discreteOrderItem : unbundledItems) {
+                    if (discreteOrderItem.getSku().getId().equals(skuBundleItem.getSku().getId())) {
+                        baseItem = discreteOrderItem;
+                    }
+                }
             }
 
             // Add item to the skuBundle
@@ -244,7 +249,9 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
                 newOrderItem.updateSaleAndRetailPrices();
 
                 // Re-associate fulfillment group item to newOrderItem
-                FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(newSkuBundleItem.getSku().getId());
+                FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(
+                        newSkuBundleItem.getSku().getId()
+                );
                 if (fulfillmentGroupItem != null) {
                     FulfillmentGroupItem newFulfillmentGroupItem = fulfillmentGroupItem.clone();
                     newFulfillmentGroupItem.setOrderItem(newOrderItem);
@@ -254,7 +261,8 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
                     //In case this activity is run inside a transaction, we need to set the relationships on the order directly
                     //these associations may have not been committed yet. This order is used in other activities and will not be reloaded if in a transaction.
                     for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                        if (newFulfillmentGroupItem.getFulfillmentGroup() != null && fg.getId().equals(newFulfillmentGroupItem.getFulfillmentGroup().getId())) {
+                        if (newFulfillmentGroupItem.getFulfillmentGroup() != null
+                                && fg.getId().equals(newFulfillmentGroupItem.getFulfillmentGroup().getId())) {
                             fg.addFulfillmentGroupItem(newFulfillmentGroupItem);
                         }
                     }
@@ -267,14 +275,16 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
         bundleOrderItem.updateSaleAndRetailPrices();
 
         order.getOrderItems().add(bundleOrderItem);
-        order =  orderService.save(order, false);
+        order = orderService.save(order, false);
 
         for (OrderItem orderItem : order.getOrderItems()) {
             if (orderItem instanceof BundleOrderItem) {
                 BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
                 for (DiscreteOrderItem discreteOrderItem : bundleItem.getDiscreteOrderItems()) {
                     // Re-associate fulfillment group item to newly created skuBundles
-                    FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(discreteOrderItem.getSku().getId());
+                    FulfillmentGroupItem fulfillmentGroupItem = skuIdFulfillmentGroupMap.get(
+                            discreteOrderItem.getSku().getId()
+                    );
                     if (fulfillmentGroupItem != null) {
                         FulfillmentGroupItem newFulfillmentGroupItem = fulfillmentGroupItem.clone();
                         newFulfillmentGroupItem.setOrderItem(discreteOrderItem);
@@ -283,7 +293,8 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
                         //In case this activity is run inside a transaction, we need to set the relationships on the order directly
                         //these associations may have not been committed yet. This order is used in other activities and will not be reloaded if in a transaction.
                         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                            if (newFulfillmentGroupItem.getFulfillmentGroup() != null && fg.getId().equals(newFulfillmentGroupItem.getFulfillmentGroup().getId())) {
+                            if (newFulfillmentGroupItem.getFulfillmentGroup() != null
+                                    && fg.getId().equals(newFulfillmentGroupItem.getFulfillmentGroup().getId())) {
                                 fg.addFulfillmentGroupItem(newFulfillmentGroupItem);
                             }
                         }
@@ -297,15 +308,14 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
         return order;
     }
 
-
     protected int countExistingUsesOfBundle(Order order, ProductBundle bundle) {
-        int existingUses=0;
+        int existingUses = 0;
         for (OrderItem orderItem : order.getOrderItems()) {
             if (orderItem instanceof BundleOrderItem) {
                 BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
                 if (bundleOrderItem.getProductBundle() != null) {
                     if (bundleOrderItem.getProductBundle().getId().equals(bundle.getId())) {
-                        existingUses = existingUses+1;
+                        existingUses = existingUses + 1;
                     }
                 }
             }
@@ -313,7 +323,12 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
         return existingUses;
     }
 
-    protected int populateItemMatchesForSku(List<DiscreteOrderItem> matchingItems, Order order, List<DiscreteOrderItem> unbundledItems, Long skuId) {
+    protected int populateItemMatchesForSku(
+            List<DiscreteOrderItem> matchingItems,
+            Order order,
+            List<DiscreteOrderItem> unbundledItems,
+            Long skuId
+    ) {
         int skuMatches = 0;
         for (OrderItem orderItem : order.getOrderItems()) {
             if (orderItem instanceof DiscreteOrderItem) {
@@ -348,8 +363,8 @@ public class AutoBundleActivity extends BaseActivity<ProcessContext<Order>> {
 
                 BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
                 if (bundleItem.getProductBundle() != null && bundleItem.getProductBundle().getAutoBundle()) {
-                    if (! processedBundles.contains(bundleItem.getId())) {
-                        for(DiscreteOrderItem discreteItem : bundleItem.getDiscreteOrderItems()) {
+                    if (!processedBundles.contains(bundleItem.getId())) {
+                        for (DiscreteOrderItem discreteItem : bundleItem.getDiscreteOrderItems()) {
                             if (skuId.equals(discreteItem.getSku().getId())) {
                                 skuMatches = skuMatches + (discreteItem.getQuantity() * bundleItem.getQuantity());
                             }

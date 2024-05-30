@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,6 +36,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -111,10 +113,10 @@ import jakarta.persistence.Table;
                 booleanOverrideValue = true))
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE,
-        friendlyName = "AddressImpl_baseAddress")
+@AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "AddressImpl_baseAddress")
 public class AddressImpl implements Address {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -132,43 +134,35 @@ public class AddressImpl implements Address {
     protected Long id;
 
     @Column(name = "FULL_NAME")
-    @AdminPresentation(friendlyName = "AddressImpl_Full_Name", order = 10,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Full_Name", order = 10, group = "AddressImpl_Address")
     protected String fullName;
 
     @Column(name = "FIRST_NAME")
-    @AdminPresentation(friendlyName = "AddressImpl_First_Name", order = 10,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_First_Name", order = 10, group = "AddressImpl_Address")
     protected String firstName;
 
     @Column(name = "LAST_NAME")
-    @AdminPresentation(friendlyName = "AddressImpl_Last_Name", order = 20,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Last_Name", order = 20, group = "AddressImpl_Address")
     protected String lastName;
 
     @Column(name = "EMAIL_ADDRESS")
-    @AdminPresentation(friendlyName = "AddressImpl_Email_Address", order = 30,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Email_Address", order = 30, group = "AddressImpl_Address")
     protected String emailAddress;
 
     @Column(name = "COMPANY_NAME")
-    @AdminPresentation(friendlyName = "AddressImpl_Company_Name", order = 40,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Company_Name", order = 40, group = "AddressImpl_Address")
     protected String companyName;
 
     @Column(name = "ADDRESS_LINE1", nullable = false)
-    @AdminPresentation(friendlyName = "AddressImpl_Address_1", order = 50,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Address_1", order = 50, group = "AddressImpl_Address")
     protected String addressLine1;
 
     @Column(name = "ADDRESS_LINE2")
-    @AdminPresentation(friendlyName = "AddressImpl_Address_2", order = 60,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Address_2", order = 60, group = "AddressImpl_Address")
     protected String addressLine2;
 
     @Column(name = "ADDRESS_LINE3")
-    @AdminPresentation(friendlyName = "AddressImpl_Address_3", order = 60,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Address_3", order = 60, group = "AddressImpl_Address")
     protected String addressLine3;
 
     @Column(name = "CITY", nullable = false)
@@ -176,67 +170,54 @@ public class AddressImpl implements Address {
     protected String city;
 
     @Column(name = "ISO_COUNTRY_SUB")
-    @AdminPresentation(friendlyName = "AddressImpl_Country_Subdivision", order = 110,
-            group = "AddressImpl_Address",
+    @AdminPresentation(friendlyName = "AddressImpl_Country_Subdivision", order = 110, group = "AddressImpl_Address",
             tooltip = "AddressImpl_Country_Subdivision_ToolTip")
     protected String isoCountrySubdivision;
 
     @Column(name = "SUB_STATE_PROV_REG")
-    @AdminPresentation(friendlyName = "AddressImpl_State_Province_Region", order = 80,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_State_Province_Region", order = 80, group = "AddressImpl_Address")
     protected String stateProvinceRegion;
 
     @Column(name = "COUNTY")
-    @AdminPresentation(friendlyName = "AddressImpl_County", order = 90,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_County", order = 90, group = "AddressImpl_Address")
     protected String county;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            targetEntity = ISOCountryImpl.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = ISOCountryImpl.class)
     @JoinColumn(name = "ISO_COUNTRY_ALPHA2")
-    @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order = 100,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Country_Alpha2", order = 100, group = "AddressImpl_Address")
     @AdminPresentationToOneLookup
     protected ISOCountry isoCountryAlpha2;
 
     @Column(name = "POSTAL_CODE")
-    @AdminPresentation(friendlyName = "AddressImpl_Postal_Code", order = 120,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Postal_Code", order = 120, group = "AddressImpl_Address")
     protected String postalCode;
 
     @Column(name = "ZIP_FOUR")
-    @AdminPresentation(friendlyName = "AddressImpl_Four_Digit_Zip", order = 130,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Four_Digit_Zip", order = 130, group = "AddressImpl_Address")
     protected String zipFour;
 
-    @ManyToOne(targetEntity = PhoneImpl.class,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_PRIMARY_ID")
     protected Phone phonePrimary;
 
-    @ManyToOne(targetEntity = PhoneImpl.class,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_SECONDARY_ID")
     protected Phone phoneSecondary;
 
-    @ManyToOne(targetEntity = PhoneImpl.class,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "PHONE_FAX_ID")
     protected Phone phoneFax;
 
     @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName = "AddressImpl_Default_Address", order = 160,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Default_Address", order = 160, group = "AddressImpl_Address")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName = "AddressImpl_Active_Address", order = 170,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Active_Address", order = 170, group = "AddressImpl_Address")
     protected boolean isActive = true;
 
     @Column(name = "IS_BUSINESS")
-    @AdminPresentation(friendlyName = "AddressImpl_Business_Address", order = 180,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Business_Address", order = 180, group = "AddressImpl_Address")
     protected boolean isBusiness = false;
 
     /**
@@ -244,8 +225,7 @@ public class AddressImpl implements Address {
      * street/house) or a mailing address (e.g. P.O. Box etc..)
      */
     @Column(name = "IS_STREET")
-    @AdminPresentation(friendlyName = "AddressImpl_Street_Address", order = 220,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Street_Address", order = 220, group = "AddressImpl_Address")
     protected boolean isStreet = false;
 
     /**
@@ -253,8 +233,7 @@ public class AddressImpl implements Address {
      * street/house) or a mailing address (e.g. P.O. Box etc..)
      */
     @Column(name = "IS_MAILING")
-    @AdminPresentation(friendlyName = "AddressImpl_Mailing_Address", order = 230,
-            group = "AddressImpl_Address")
+    @AdminPresentation(friendlyName = "AddressImpl_Mailing_Address", order = 230, group = "AddressImpl_Address")
     protected boolean isMailing = false;
 
     /**
@@ -748,4 +727,5 @@ public class AddressImpl implements Address {
         cloned.setPhoneSecondary(phoneSecondary);
         return createResponse;
     }
+
 }

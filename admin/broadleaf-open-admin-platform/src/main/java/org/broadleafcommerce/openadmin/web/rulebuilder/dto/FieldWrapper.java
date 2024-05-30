@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,43 +22,44 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * @author Elbert Bautista (elbertbautista)
- *
+ * <p>
  * An example of the Serialized JSON:
- *
+ * <p>
  * {'fields': [
- *      {'label':'Order Item - name',
- *      'id':'name',
- *      'operators':blcOperators_Text,
- *      'values':[]},
- *      {'label':'Order Item - Retail Price',
- *      'id':'retailPrice',
- *      'operators':blcOperators_Numeric,
- *      'values':[]},
- *      {'label':'Product - is Featured Product',
- *      'id':'sku.product.isFeaturedProduct',
- *      'operators':blcOperators_Boolean,
- *      'values':[]},
- *      {'label':'Sku - Active End Date',
- *      'id':'sku.activeEndDate',
- *      'operators':blcOperators_Date,
- *      'values':[]},
- *      {'label':'Category - Fulfillment Type',
- *      'id':'category.fulfillmentType',
- *      'operators':blcOperators_Enumeration,
- *      'values':blcOptions_FulfillmentType}
+ * {'label':'Order Item - name',
+ * 'id':'name',
+ * 'operators':blcOperators_Text,
+ * 'values':[]},
+ * {'label':'Order Item - Retail Price',
+ * 'id':'retailPrice',
+ * 'operators':blcOperators_Numeric,
+ * 'values':[]},
+ * {'label':'Product - is Featured Product',
+ * 'id':'sku.product.isFeaturedProduct',
+ * 'operators':blcOperators_Boolean,
+ * 'values':[]},
+ * {'label':'Sku - Active End Date',
+ * 'id':'sku.activeEndDate',
+ * 'operators':blcOperators_Date,
+ * 'values':[]},
+ * {'label':'Category - Fulfillment Type',
+ * 'id':'category.fulfillmentType',
+ * 'operators':blcOperators_Enumeration,
+ * 'values':blcOptions_FulfillmentType}
  * ]}
- *
  */
 public class FieldWrapper implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    protected ArrayList<FieldDTO> fields = new ArrayList<FieldDTO>();
+    protected ArrayList<FieldDTO> fields = new ArrayList<>();
 
     public ArrayList<FieldDTO> getFields() {
         return fields;
@@ -67,8 +68,9 @@ public class FieldWrapper implements Serializable {
     public void setFields(ArrayList<FieldDTO> fields) {
         this.fields = fields;
     }
-    
+
     public String serialize() throws JsonGenerationException, JsonMappingException, IOException {
         return new ObjectMapper().writeValueAsString(this);
     }
+
 }

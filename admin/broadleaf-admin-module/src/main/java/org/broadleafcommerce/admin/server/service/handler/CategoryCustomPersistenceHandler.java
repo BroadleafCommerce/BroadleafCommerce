@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -64,11 +64,10 @@ import jakarta.annotation.Resource;
 @Component("blCategoryCustomPersistenceHandler")
 public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(CategoryCustomPersistenceHandler.class);
     protected static final String DEFAULT_PARENT_CATEGORY = "defaultParentCategory";
     protected static final String ID_PROPERTY = "id";
     protected static final String CATEGORY_SEPARATOR = " -> ";
-
+    private static final Log LOG = LogFactory.getLog(CategoryCustomPersistenceHandler.class);
     @Value("${allow.category.delete.with.children:false}")
     protected boolean allowCategoryDeleteWithChildren;
 
@@ -85,7 +84,8 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     public Boolean canHandleAdd(PersistencePackage persistencePackage) {
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
         String[] customCriteria = persistencePackage.getCustomCriteria();
-        return !ArrayUtils.isEmpty(customCriteria) && "categoryDirectEdit".equals(customCriteria[0]) && Category.class.getName().equals(ceilingEntityFullyQualifiedClassname);
+        return !ArrayUtils.isEmpty(customCriteria) && "categoryDirectEdit".equals(customCriteria[0])
+                && Category.class.getName().equals(ceilingEntityFullyQualifiedClassname);
     }
 
     @Override
@@ -105,7 +105,11 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
     }
 
     @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException {
+    public DynamicResultSet inspect(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            InspectHelper helper
+    ) throws ServiceException {
         Map<String, FieldMetadata> md = getMetadata(persistencePackage, helper);
 
         if (!isDefaultCategoryLegacyMode()) {
@@ -125,7 +129,9 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Category adminInstance = (Category) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    Category.class.getName(), persistencePerspective
+            );
             adminInstance = (Category) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
             adminInstance = dynamicEntityDao.merge(adminInstance);
             boolean handled = false;
@@ -151,7 +157,9 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         this.validateCategory(entity);
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Category.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    Category.class.getName(), persistencePerspective
+            );
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
             Category adminInstance = (Category) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
             CategoryXref oldDefault = this.getCurrentDefaultXref(adminInstance);
@@ -183,7 +191,10 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
             OperationType removeType = persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType();
             helper.getCompatibleModule(removeType).remove(persistencePackage);
         } else {
-            throw new ValidationException(persistencePackage.getEntity(), "Unable to delete category - found that this category is primary category for some product(s)");
+            throw new ValidationException(
+                    persistencePackage.getEntity(),
+                    "Unable to delete category - found that this category is primary category for some product(s)"
+            );
         }
     }
 
@@ -222,8 +233,12 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         }
     }
 
-    protected void validateCategories(final Entity entity, final Category category, final Long id,
-                                      final StringBuilder categoryLinks) throws ValidationException {
+    protected void validateCategories(
+            final Entity entity,
+            final Category category,
+            final Long id,
+            final StringBuilder categoryLinks
+    ) throws ValidationException {
         if (category != null) {
             Category parentCategory = category.getParentCategory();
             if (parentCategory != null) {
@@ -247,11 +262,14 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         productLinks.append(CATEGORY_SEPARATOR);
     }
 
-    private void checkIfHasSubCategories(PersistencePackage persistencePackage, String id) throws ValidationException {
+    protected void checkIfHasSubCategories(PersistencePackage persistencePackage, String id) throws ValidationException {
         if (!allowCategoryDeleteWithChildren) {
             final List<Category> subCategories = categoryDao.readAllSubCategories(Long.valueOf(id));
             if (!subCategories.isEmpty()) {
-                throw new ValidationException(persistencePackage.getEntity(), "Unable to delete category - found that this category is parent category for some other category(s)");
+                throw new ValidationException(
+                        persistencePackage.getEntity(),
+                        "Unable to delete category - found that this category is parent category for some other category(s)"
+                );
             }
         }
     }
@@ -279,7 +297,8 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
 
     protected void removeOldDefault(Category adminInstance, CategoryXref oldDefault, Entity entity) {
         if (!isDefaultCategoryLegacyMode()) {
-            if (entity.findProperty(DEFAULT_PARENT_CATEGORY) != null && StringUtils.isEmpty(entity.findProperty(DEFAULT_PARENT_CATEGORY).getValue())) {
+            if (entity.findProperty(DEFAULT_PARENT_CATEGORY) != null
+                    && StringUtils.isEmpty(entity.findProperty(DEFAULT_PARENT_CATEGORY).getValue())) {
                 adminInstance.setParentCategory(null);
             }
             CategoryXref newDefault = this.getCurrentDefaultXref(adminInstance);
@@ -313,4 +332,5 @@ public class CategoryCustomPersistenceHandler extends CustomPersistenceHandlerAd
         }
         return currentDefault;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,12 +22,14 @@ import org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecu
 import java.util.List;
 
 /**
- * 
  * @author bpolster
- *
  */
 public interface ForgotPasswordSecurityTokenDao {
-    public ForgotPasswordSecurityToken readToken(String token);
-    public List<ForgotPasswordSecurityToken> readUnusedTokensByAdminUserId(Long adminId);
-    public ForgotPasswordSecurityToken saveToken(ForgotPasswordSecurityToken token);
+
+    ForgotPasswordSecurityToken readToken(String token);
+
+    List<ForgotPasswordSecurityToken> readUnusedTokensByAdminUserId(Long adminId);
+
+    ForgotPasswordSecurityToken saveToken(ForgotPasswordSecurityToken token);
+
 }

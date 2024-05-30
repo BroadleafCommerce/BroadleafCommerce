@@ -10,15 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.web.controller.checkout;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.i18n.service.ISOService;
 import org.broadleafcommerce.common.payment.service.PaymentGatewayCheckoutService;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
@@ -62,8 +60,6 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public abstract class AbstractCheckoutController extends BroadleafAbstractController {
 
-    private static final Log LOG = LogFactory.getLog(AbstractCheckoutController.class);
-
     protected static String ACTIVE_STAGE = "activeStage";
 
     protected static String cartPageRedirect = "redirect:/cart";
@@ -73,7 +69,7 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
     protected static String baseConfirmationView = "ajaxredirect:/confirmation";
 
     /* Optional Service */
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("blPaymentGatewayCheckoutService")
     protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
 
@@ -95,7 +91,7 @@ public abstract class AbstractCheckoutController extends BroadleafAbstractContro
 
     @Resource(name = "blCheckoutService")
     protected CheckoutService checkoutService;
-    
+
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 

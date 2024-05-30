@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,45 +26,45 @@ import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
  * @author Chris Kittrell (ckittrell)
  */
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.FALSE,
-    tabs = {
-        @AdminTabPresentation(name = SkuBundleItemAdminPresentation.TabName.General,
-            order = SkuBundleItemAdminPresentation.TabOrder.General,
-            groups = {
-                @AdminGroupPresentation(name = SkuBundleItemAdminPresentation.GroupName.General,
-                    order = SkuBundleItemAdminPresentation.GroupOrder.General,
-                    untitled = true)
-            }
-        )
-    }
+        tabs = {
+                @AdminTabPresentation(name = SkuBundleItemAdminPresentation.TabName.General,
+                        order = SkuBundleItemAdminPresentation.TabOrder.General,
+                        groups = {
+                                @AdminGroupPresentation(name = SkuBundleItemAdminPresentation.GroupName.General,
+                                        order = SkuBundleItemAdminPresentation.GroupOrder.General,
+                                        untitled = true)
+                        }
+                )
+        }
 )
-
 public interface SkuBundleItemAdminPresentation {
 
-    public static class TabName {
+    class TabName {
 
         public static final String General = "General";
 
     }
 
-    public static class TabOrder {
+    class TabOrder {
 
         public static final int General = 1000;
     }
 
-    public static class GroupName {
+    class GroupName {
 
         public static final String General = "General";
     }
 
-    public static class GroupOrder {
+    class GroupOrder {
 
         public static final int General = 1000;
     }
 
-    public static class FieldOrder {
+    class FieldOrder {
 
         public static final int SKU = 1000;
         public static final int QUANTITY = 2000;
         public static final int ITEM_SALE_PRICE = 3000;
     }
+
 }

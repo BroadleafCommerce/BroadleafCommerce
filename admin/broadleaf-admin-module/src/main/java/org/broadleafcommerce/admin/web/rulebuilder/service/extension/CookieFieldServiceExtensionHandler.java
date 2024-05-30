@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,15 +38,14 @@ import jakarta.annotation.PostConstruct;
  * </p>
  * Add a cookie configuration to your Spring xml or Java configuration. Sample below demonstrated Java-based config:
  * {@code
- *    @Merge("blCookieRuleConfigs")
- *    public RuleDTOConfig myCookieRuleDTOConfig() {
- *        RuleDTOConfig config = new RuleDTOConfig("myFieldName", "myLabel");
- *        config.setAlternateName("cookieName");
- *        return config;
- *    }
- * }
  *
  * @author Jeff Fischer
+ * @Merge("blCookieRuleConfigs") public RuleDTOConfig myCookieRuleDTOConfig() {
+ * RuleDTOConfig config = new RuleDTOConfig("myFieldName", "myLabel");
+ * config.setAlternateName("cookieName");
+ * return config;
+ * }
+ * }
  */
 public class CookieFieldServiceExtensionHandler extends AbstractRuleBuilderFieldServiceExtensionHandler {
 
@@ -55,7 +54,10 @@ public class CookieFieldServiceExtensionHandler extends AbstractRuleBuilderField
     protected RuleBuilderFieldServiceExtensionManager extensionManager;
     protected List<RuleDTOConfig> fieldConfigs;
 
-    public CookieFieldServiceExtensionHandler(RuleBuilderFieldServiceExtensionManager extensionManager, List<RuleDTOConfig> fieldConfigs) {
+    public CookieFieldServiceExtensionHandler(
+            RuleBuilderFieldServiceExtensionManager extensionManager,
+            List<RuleDTOConfig> fieldConfigs
+    ) {
         this.extensionManager = extensionManager;
         this.fieldConfigs = fieldConfigs;
     }
@@ -72,14 +74,14 @@ public class CookieFieldServiceExtensionHandler extends AbstractRuleBuilderField
         if (RuleIdentifier.REQUEST.equals(ruleFieldName)) {
             for (RuleDTOConfig fieldConfig : fieldConfigs) {
                 fields.add(new FieldData.Builder()
-                    .label(fieldConfig.getLabel())
-                    .name(fieldConfig.getFieldName())
-                    .operators(fieldConfig.getOperators())
-                    .options(fieldConfig.getOptions())
-                    .type(fieldConfig.getType())
-                    .skipValidation(true)
-                    .overrideEntityKey(COOKIE_ATTRIBUTE_NAME)
-                    .build());
+                        .label(fieldConfig.getLabel())
+                        .name(fieldConfig.getFieldName())
+                        .operators(fieldConfig.getOperators())
+                        .options(fieldConfig.getOptions())
+                        .type(fieldConfig.getType())
+                        .skipValidation(true)
+                        .overrideEntityKey(COOKIE_ATTRIBUTE_NAME)
+                        .build());
             }
             return ExtensionResultStatusType.HANDLED_CONTINUE;
         }

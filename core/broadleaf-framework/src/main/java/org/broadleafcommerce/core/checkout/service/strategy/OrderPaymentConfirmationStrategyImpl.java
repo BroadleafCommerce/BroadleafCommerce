@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -55,16 +55,16 @@ import jakarta.annotation.Resource;
 
 /**
  * Strategy to handle confirming "UNCONFIRMED" transactions on an Order Payment during the checkout workflow.
- *
+ * <p>
  * The default implementation is to (based on the passed in payment type):
- *  - If PaymentType == CREDIT_CARD -> AUTHORIZE or AUTHORIZE_AND_CAPTURE based on configuration of the gateway
- *  - Otherwise -> call the configured gateways {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService}
- *
+ * - If PaymentType == CREDIT_CARD -> AUTHORIZE or AUTHORIZE_AND_CAPTURE based on configuration of the gateway
+ * - Otherwise -> call the configured gateways {@link org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService}
+ * <p>
  * However, if PENDING payments are enabled, then this logic will be by-passed and a new transaction
  * will be created as the payment is marked to be charged offline or asynchronously.
  *
- * @see {@link org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity}
  * @author Elbert Bautista (elbertbautista)
+ * @see {@link org.broadleafcommerce.core.checkout.service.workflow.ValidateAndConfirmPaymentActivity}
  */
 @Service("blOrderPaymentConfirmationStrategy")
 public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirmationStrategy {
@@ -94,7 +94,11 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         return confirmTransactionInternal(tx, context, false);
     }
 
-    protected PaymentResponseDTO confirmTransactionInternal(PaymentTransaction tx, ProcessContext<CheckoutSeed> context, boolean isCheckout) throws PaymentException, WorkflowException, CheckoutException {
+    protected PaymentResponseDTO confirmTransactionInternal(
+            PaymentTransaction tx,
+            ProcessContext<CheckoutSeed> context,
+            boolean isCheckout
+    ) throws PaymentException, WorkflowException, CheckoutException {
         // Cannot confirm anything here if there is no provider
         if (paymentConfigurationServiceProvider == null) {
             String msg = "There are unconfirmed payment transactions on this payment but no payment gateway" +
@@ -104,7 +108,9 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         }
 
         OrderPayment payment = tx.getOrderPayment();
-        PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(tx.getOrderPayment().getGatewayType());
+        PaymentGatewayConfigurationService cfg = paymentConfigurationServiceProvider.getGatewayConfigurationService(
+                tx.getOrderPayment().getGatewayType()
+        );
         PaymentResponseDTO responseDTO = null;
 
         // Auto-calculate totals and line items to send to the gateway when in a "Checkout Payment flow"
@@ -151,6 +157,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
     /**
      * determine whether or not this order contains multiple final payments.
      * (e.g. paying with multiple credit cards)
+     *
      * @param order
      * @return
      */
@@ -168,6 +175,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
      * determine whether or not this transaction is a detached credit request.
      * By default, will look at the additional fields map to determine intent
      * (as the actual type of the transaction is UNCONFIRMED).
+     *
      * @param transaction
      * @return
      */
@@ -175,8 +183,11 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         return transaction.getAdditionalFields().containsKey(PaymentGatewayRequestType.DETACHED_CREDIT_REFUND.getType());
     }
 
-    protected PaymentResponseDTO constructPendingTransaction(PaymentType paymentType, PaymentGatewayType gatewayType,
-                                                             PaymentRequestDTO confirmationRequest) {
+    protected PaymentResponseDTO constructPendingTransaction(
+            PaymentType paymentType,
+            PaymentGatewayType gatewayType,
+            PaymentRequestDTO confirmationRequest
+    ) {
         PaymentResponseDTO responseDTO = new PaymentResponseDTO(paymentType, gatewayType);
         responseDTO.amount(new Money(confirmationRequest.getTransactionTotal()))
                 .rawResponse(this.getClass().getName() + ": converting UNCONFIRMED transaction into a PENDING payment")
@@ -193,14 +204,19 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
     protected void populateCreditCardOnRequest(PaymentRequestDTO requestDTO, OrderPayment payment) throws WorkflowException {
         if (payment.getReferenceNumber() != null) {
             //maybe instead of PaymentType.CREDIT_CARD use payment.getType()?
-            CreditCardPayment creditCardPayment = (CreditCardPayment) secureOrderPaymentService.findSecurePaymentInfo(payment.getReferenceNumber(), PaymentType.CREDIT_CARD);
+            CreditCardPayment creditCardPayment = (CreditCardPayment) secureOrderPaymentService.findSecurePaymentInfo(
+                    payment.getReferenceNumber(), PaymentType.CREDIT_CARD
+            );
             if (creditCardPayment != null) {
                 requestDTO.creditCard()
                         .creditCardHolderName(creditCardPayment.getNameOnCard())
                         .creditCardNum(creditCardPayment.getPan())
                         .creditCardExpDate(
-                                constructExpirationDate(creditCardPayment.getExpirationMonth(),
-                                        creditCardPayment.getExpirationYear()))
+                                constructExpirationDate(
+                                        creditCardPayment.getExpirationMonth(),
+                                        creditCardPayment.getExpirationYear()
+                                )
+                        )
                         .creditCardExpMonth(creditCardPayment.getExpirationMonth() + "")
                         .creditCardExpYear(creditCardPayment.getExpirationYear() + "")
                         .done();
@@ -212,18 +228,16 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         if (payment != null && payment.getBillingAddress() != null) {
             orderToPaymentRequestService.populateBillTo(payment.getOrder(), requestDTO);
         }
-
     }
 
     protected void populateCustomerOnRequest(PaymentRequestDTO requestDTO, OrderPayment payment) {
         if (payment != null && payment.getOrder() != null && payment.getOrder().getCustomer() != null) {
             orderToPaymentRequestService.populateCustomerInfo(payment.getOrder(), requestDTO);
         }
-
     }
 
     protected void populateShippingAddressOnRequest(PaymentRequestDTO requestDTO, OrderPayment payment) {
-        if(payment != null && payment.getOrder() != null) {
+        if (payment != null && payment.getOrder() != null) {
             orderToPaymentRequestService.populateShipTo(payment.getOrder(), requestDTO);
         }
     }
@@ -232,6 +246,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
      * Default expiration date construction.
      * Some Payment Gateways may require a different format. Override if necessary or set the property
      * "gateway.config.global.expDateFormat" with a format string to provide the correct format for the configured gateway.
+     *
      * @param expMonth
      * @param expYear
      * @return
@@ -247,7 +262,7 @@ public class OrderPaymentConfirmationStrategyImpl implements OrderPaymentConfirm
         return sdf.format(expiryDate);
     }
 
-    protected String getGatewayExpirationDateFormat(){
+    protected String getGatewayExpirationDateFormat() {
         String format = systemPropertiesService.resolveSystemProperty("gateway.config.global.expDateFormat");
         if (StringUtils.isBlank(format)) {
             if (LOG.isWarnEnabled()) {

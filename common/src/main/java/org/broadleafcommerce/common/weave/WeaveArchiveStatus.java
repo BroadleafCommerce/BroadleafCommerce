@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,12 +30,6 @@ public final class WeaveArchiveStatus implements Status {
     @Embedded
     protected ArchiveStatus archiveStatus;
 
-
-    @Override
-    public void setArchived(Character archived) {
-            getEmbeddableArchiveStatus(true).setArchived(archived);
-    }
-
     private ArchiveStatus getEmbeddableArchiveStatus(boolean assign) {
         ArchiveStatus temp = archiveStatus;
         if (temp == null) {
@@ -53,7 +47,13 @@ public final class WeaveArchiveStatus implements Status {
     }
 
     @Override
-    public boolean isActive() {
-         return 'Y'!=getArchived();
+    public void setArchived(Character archived) {
+        getEmbeddableArchiveStatus(true).setArchived(archived);
     }
+
+    @Override
+    public boolean isActive() {
+        return 'Y' != getArchived();
+    }
+
 }

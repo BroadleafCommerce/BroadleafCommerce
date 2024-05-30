@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,8 +30,8 @@ import jakarta.annotation.Nonnull;
 /**
  * {@code ProductDao} provides persistence access to {@code Product} instances
  *
- * @see Product
  * @author Jeff Fischer
+ * @see Product
  */
 public interface ProductDao {
 
@@ -43,12 +43,12 @@ public interface ProductDao {
      */
     @Nonnull
     Product readProductById(@Nonnull Long productId);
-    
+
     Product readProductByExternalId(String externalId);
-    
+
     /**
      * Retrieves a list of Product instances by their primary keys
-     * 
+     *
      * @param productIds the list of primary keys for products
      * @return the list of products specified by the primary keys
      */
@@ -76,25 +76,26 @@ public interface ProductDao {
     /**
      * Find a subset of {@code Product} instances whose name starts with
      * or is equal to the passed in search parameter.  Res
+     *
      * @param searchName
-     * @param limit the maximum number of results
-     * @param offset the starting point in the record set
+     * @param limit      the maximum number of results
+     * @param offset     the starting point in the record set
      * @return the list of product instances that fit the search criteria
      */
     @Nonnull
     List<Product> readProductsByName(@Nonnull String searchName, @Nonnull int limit, @Nonnull int offset);
 
-    /** 
+    /**
      * Find all products whose in the passed in category.
-     * 
-     * @param categoryId the primary key of the category to whom the resulting product list should be related 
+     *
+     * @param categoryId the primary key of the category to whom the resulting product list should be related
      * @return the list of products qualified for the category and date
      */
     List<Product> readActiveProductsByCategory(@Nonnull Long categoryId);
 
     /**
      * Read a page of products for a category.
-     * 
+     *
      * @param categoryId
      * @param limit
      * @param offset
@@ -103,9 +104,9 @@ public interface ProductDao {
     List<Product> readActiveProductsByCategory(@Nonnull Long categoryId, @Nonnull int limit, @Nonnull int offset);
 
     /**
-     * Find all active products that are related to the given category, match the given search criteria, and 
+     * Find all active products that are related to the given category, match the given search criteria, and
      * are not marked as archived.
-     * 
+     *
      * @param categoryId
      * @param searchCriteria
      * @return the matching products
@@ -114,10 +115,10 @@ public interface ProductDao {
     List<Product> readFilteredActiveProductsByCategory(Long categoryId, SearchCriteria searchCriteria);
 
     /**
-     * Find all products whose start and end dates are before and after the passed in 
+     * Find all products whose start and end dates are before and after the passed in
      * date, who match the search string, match the given search criteria, and are not
      * marked as archived.
-     * 
+     *
      * @param query
      * @param searchCriteria
      * @return the matching products
@@ -126,31 +127,29 @@ public interface ProductDao {
     List<Product> readFilteredActiveProductsByQuery(String query, SearchCriteria searchCriteria);
 
     /**
-     * @deprecated Use {@link #readFilteredActiveProductsByCategory(Long, SearchCriteria)}
-     * 
-     * Find all products whose start and end dates are before and after the passed in
-     * date, who are related to the given category, match the given search criteria, and 
-     * are not marked as archived.
-     * 
      * @param categoryId
      * @param currentDate
      * @param searchCriteria
      * @return the matching products
+     * @deprecated Use {@link #readFilteredActiveProductsByCategory(Long, SearchCriteria)}
+     * <p>
+     * Find all products whose start and end dates are before and after the passed in
+     * date, who are related to the given category, match the given search criteria, and
+     * are not marked as archived.
      */
     @Deprecated(forRemoval = true)
     @Nonnull
     List<Product> readFilteredActiveProductsByCategory(Long categoryId, Date currentDate, SearchCriteria searchCriteria);
 
     /**
-     * @deprecated Use {@link #readFilteredActiveProductsByQuery(String, SearchCriteria)}
-     * Find all products whose start and end dates are before and after the passed in 
-     * date, who match the search string, match the given search criteria, and are not
-     * marked as archived.
-     * 
      * @param query
      * @param currentDate
      * @param searchCriteria
      * @return the matching products
+     * @deprecated Use {@link #readFilteredActiveProductsByQuery(String, SearchCriteria)}
+     * Find all products whose start and end dates are before and after the passed in
+     * date, who match the search string, match the given search criteria, and are not
+     * marked as archived.
      */
     @Deprecated(forRemoval = true)
     @Nonnull
@@ -176,8 +175,8 @@ public interface ProductDao {
      * Find all products related to the passed in category
      *
      * @param categoryId the primary key of the category to whom the resulting product list should be related
-     * @param limit the maximum number of results to return
-     * @param offset the starting point in the record set
+     * @param limit      the maximum number of results to return
+     * @param offset     the starting point in the record set
      * @return the list of products qualified for the category
      */
     @Nonnull
@@ -196,15 +195,17 @@ public interface ProductDao {
      * to determine which polymorphic version of {@code Product} to instantiate. To make Broadleaf instantiate your
      * extension of {@code Product} by default, include an entity configuration bean in your application context xml similar to:
      * <p>
+     * </pre>
      * {@code
-     *     <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
-     *          <property name="entityContexts">
-     *              <list>
-     *                  <value>classpath:myCompany-applicationContext-entity.xml</value>
-     *              </list>
-     *          </property>
-     *      </bean>
+     * <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
+     * <property name="entityContexts">
+     * <list>
+     * <value>classpath:myCompany-applicationContext-entity.xml</value>
+     * </list>
+     * </property>
+     * </bean>
      * }
+     * </pre>
      * </p>
      * Declare the same key for your desired entity in your entity xml that is used in the Broadleaf entity xml, but change the value to the fully
      * qualified classname of your entity extension.
@@ -223,26 +224,23 @@ public interface ProductDao {
 
     /**
      * Look up a product that matches the given URI
-     * 
+     *
      * @param key - the relative URL to look up the Product by
      * @return List of products that match the passed in URI.
-     * 
      */
     List<Product> findProductByURI(String key);
 
     /**
-     * 
-     * Reads all products from the database that are currently active. 
-     * 
+     * Reads all products from the database that are currently active.
+     *
      * @return a list of all active products
      */
     List<Product> readAllActiveProducts();
 
     /**
-     * @deprecated use {@link #readAllActiveProducts()}
-     * 
      * @param currentDate
      * @return a list of all active products
+     * @deprecated use {@link #readAllActiveProducts()}
      */
     @Deprecated(forRemoval = true)
     List<Product> readAllActiveProducts(@Nonnull Date currentDate);
@@ -250,13 +248,13 @@ public interface ProductDao {
     /**
      * Reads all products from the database that are currently active. This method differs from
      * {@link #readAllActiveProducts()} in that this one will utilize database paging.
-     * 
+     * <p>
      * It will fetch results in pages. For example, if page = 3 and pageSize = 25, this method would
      * return rows 75-99 from the database.
-     *
+     * <p>
      * When possible, it is suggested to use {@link #readAllActiveProducts(Integer, Long)} instead for performance.
      *
-     * @param page - the number of the page to get (0 indexed)
+     * @param page     - the number of the page to get (0 indexed)
      * @param pageSize - the number of results per page
      * @return a list of active products for the given page
      */
@@ -270,34 +268,32 @@ public interface ProductDao {
      * of the table and trim the offset.
      *
      * @param pageSize the number of results per page
-     * @param lastId the last id from the previous page - can be null if this is the first page request
+     * @param lastId   the last id from the previous page - can be null if this is the first page request
      * @return a list of active products for the given page
      */
     List<Product> readAllActiveProducts(Integer pageSize, Long lastId);
 
     /**
-     * @deprecated Use {@link #readAllActiveProducts(int, int)}
-     * 
-     * @param page - the number of the page to get (0 indexed)
-     * @param pageSize - the number of results per page
+     * @param page        - the number of the page to get (0 indexed)
+     * @param pageSize    - the number of results per page
      * @param currentDate
      * @return a list of active products for the given page
+     * @deprecated Use {@link #readAllActiveProducts(int, int)}
      */
     @Deprecated
     List<Product> readAllActiveProducts(int page, int pageSize, Date currentDate);
 
     /**
      * Returns the number of products that are currently active.
-     * 
+     *
      * @return the number of currently active products
      */
     Long readCountAllActiveProducts();
 
     /**
-     * @deprecated {@link #readCountAllActiveProducts()}
-     * 
      * @param currentDate
      * @return the number of currently active products
+     * @deprecated {@link #readCountAllActiveProducts()}
      */
     @Deprecated
     Long readCountAllActiveProducts(Date currentDate);
@@ -319,11 +315,11 @@ public interface ProductDao {
      * @param currentDateResolution the milliseconds to cache the current date/time
      */
     void setCurrentDateResolution(Long currentDateResolution);
-    
+
     /**
-     * Reads a paginated list of active product IDs, in ascending order, starting immediately after the lastId.  
+     * Reads a paginated list of active product IDs, in ascending order, starting immediately after the lastId.
      * If the lastId is null, then this returns the first page.
-     * 
+     *
      * @param lastId
      * @param pageSize
      * @return
@@ -331,4 +327,5 @@ public interface ProductDao {
     List<Long> readAllActiveProductIds(Long lastId, int pageSize);
 
     List<Product> readAllActiveProductsForSiteMap(int page, int pageSize);
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,32 +19,29 @@ package org.broadleafcommerce.common.time;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of container shape types.
- * 
+ *
  * @author jfischer
  */
 public class DayOfWeekType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, DayOfWeekType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, DayOfWeekType> TYPES = new LinkedHashMap<String, DayOfWeekType>();
-
-    public static final DayOfWeekType SUNDAY  = new DayOfWeekType("1", "Sunday");
-    public static final DayOfWeekType MONDAY  = new DayOfWeekType("2", "Monday");
-    public static final DayOfWeekType TUESDAY  = new DayOfWeekType("3", "Tuesday");
-    public static final DayOfWeekType WEDNESDAY  = new DayOfWeekType("4", "Wednesday");
-    public static final DayOfWeekType THURSDAY  = new DayOfWeekType("5", "Thursday");
-    public static final DayOfWeekType FRIDAY  = new DayOfWeekType("6", "Friday");
-    public static final DayOfWeekType SATURDAY  = new DayOfWeekType("7", "Saturday");
-
-    public static DayOfWeekType getInstance(final String type) {
-        return TYPES.get(type);
-    }
+    public static final DayOfWeekType SUNDAY = new DayOfWeekType("1", "Sunday");
+    public static final DayOfWeekType MONDAY = new DayOfWeekType("2", "Monday");
+    public static final DayOfWeekType TUESDAY = new DayOfWeekType("3", "Tuesday");
+    public static final DayOfWeekType WEDNESDAY = new DayOfWeekType("4", "Wednesday");
+    public static final DayOfWeekType THURSDAY = new DayOfWeekType("5", "Thursday");
+    public static final DayOfWeekType FRIDAY = new DayOfWeekType("6", "Friday");
+    public static final DayOfWeekType SATURDAY = new DayOfWeekType("7", "Saturday");
 
     private String type;
     private String friendlyType;
@@ -58,21 +55,26 @@ public class DayOfWeekType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static DayOfWeekType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via "
+                    + getInstance(type).getClass().getName());
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -99,4 +101,5 @@ public class DayOfWeekType implements Serializable, BroadleafEnumerationType {
             return false;
         return true;
     }
+
 }

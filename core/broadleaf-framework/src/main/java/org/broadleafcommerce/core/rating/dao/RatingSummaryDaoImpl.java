@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,14 +43,14 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override
     public RatingSummary createSummary() {
         return entityConfiguration.createEntityInstance(RatingSummary.class.getName(), RatingSummary.class);
     }
-    
+
     @Override
     public RatingSummary createSummary(String itemId, RatingType type) {
         RatingSummary summary = createSummary();
@@ -58,12 +58,12 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
         summary.setRatingType(type);
         return summary;
     }
-    
+
     @Override
     public RatingDetail createDetail() {
         return entityConfiguration.createEntityInstance(RatingDetail.class.getName(), RatingDetail.class);
     }
-    
+
     @Override
     public RatingDetail createDetail(RatingSummary ratingSummary, Double rating, Date submittedDate, Customer customer) {
         RatingDetail detail = createDetail();
@@ -73,7 +73,7 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
         detail.setCustomer(customer);
         return detail;
     }
-    
+
     @Override
     public void deleteRatingSummary(final RatingSummary summary) {
         RatingSummary lSummary = summary;

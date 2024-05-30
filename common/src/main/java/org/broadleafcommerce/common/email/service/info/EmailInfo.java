@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.common.email.service.info;
 
 import org.broadleafcommerce.common.email.service.message.Attachment;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,10 +28,10 @@ import java.util.Map;
 
 /**
  * @author jfischer
- *
  */
 public class EmailInfo implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String emailType;
@@ -39,7 +40,7 @@ public class EmailInfo implements Serializable {
     private String fromAddress;
     private String messageBody;
     private String encoding = "UTF8";
-    private List<Attachment> attachments = new ArrayList<Attachment>();
+    private List<Attachment> attachments = new ArrayList<>();
     private Map<String, String> headers = new HashMap<>();
 
     private String sendEmailReliableAsync;
@@ -180,4 +181,5 @@ public class EmailInfo implements Serializable {
 
         return info;
     }
+
 }

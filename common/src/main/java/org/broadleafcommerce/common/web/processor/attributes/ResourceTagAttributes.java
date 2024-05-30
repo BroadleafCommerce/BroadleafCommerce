@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,11 +21,12 @@ package org.broadleafcommerce.common.web.processor.attributes;
  * Builder class that holds attributes relevant to resources, namely those that go on &lt;blc:bundle&gt; and
  * &lt;blc:bundlepreload&gt; tags.
  *
+ * @author Jacob Mitash
  * @see org.broadleafcommerce.common.web.processor.ResourcePreloadProcessor
  * @see org.broadleafcommerce.common.web.processor.ResourceBundleProcessor
- * @author Jacob Mitash
  */
 public class ResourceTagAttributes {
+
     private String src;
     private String name;
     private String mappingPrefix;
@@ -45,6 +46,7 @@ public class ResourceTagAttributes {
 
     /**
      * Copy constructor for a {@link ResourceTagAttributes}.
+     *
      * @param toCopy the attributes to copy from
      */
     public ResourceTagAttributes(final ResourceTagAttributes toCopy) {
@@ -95,7 +97,6 @@ public class ResourceTagAttributes {
         return this;
     }
 
-
     public boolean defer() {
         return defer;
     }
@@ -140,4 +141,5 @@ public class ResourceTagAttributes {
         this.bundleCompletedEvent = bundleCompletedEvent;
         return this;
     }
+
 }

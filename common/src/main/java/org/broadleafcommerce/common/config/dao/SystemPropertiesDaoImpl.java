@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -89,8 +89,8 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware<SystemProper
         CriteriaQuery<SystemProperty> criteria = builder.createQuery(SystemProperty.class);
         Root<SystemPropertyImpl> handler = criteria.from(SystemPropertyImpl.class);
         criteria.select(handler);
-        List<Predicate> restrictions = new ArrayList<Predicate>();
-        List<Order> sorts = new ArrayList<Order>();
+        List<Predicate> restrictions = new ArrayList<>();
+        List<Order> sorts = new ArrayList<>();
         try {
             if (queryExtensionManager != null) {
                 queryExtensionManager.getProxy().setup(SystemPropertyImpl.class, null);
@@ -100,7 +100,7 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware<SystemProper
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
             return em.createQuery(criteria).setHint(QueryHints.HINT_CACHEABLE, Boolean.TRUE).getResultList();
         } catch (NoResultException e) {
-            LOG.error("An error has occurred ",e);
+            LOG.error("An error has occurred ", e);
             return new ArrayList<SystemProperty>();
         } finally {
             if (queryExtensionManager != null) {
@@ -119,7 +119,7 @@ public class SystemPropertiesDaoImpl extends AbstractCacheMissAware<SystemProper
                 Root<SystemPropertyImpl> handler = criteria.from(SystemPropertyImpl.class);
                 criteria.select(handler);
 
-                List<Predicate> restrictions = new ArrayList<Predicate>();
+                List<Predicate> restrictions = new ArrayList<>();
                 restrictions.add(builder.equal(handler.get("name"), name));
 
                 try {

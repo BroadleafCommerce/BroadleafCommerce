@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,26 +24,26 @@ import java.io.Serializable;
 
 public interface DiscreteOrderItemFeePrice extends Serializable, MultiTenantCloneable<DiscreteOrderItemFeePrice> {
 
-    public abstract Long getId();
+    Long getId();
 
-    public abstract void setId(Long id);
+    void setId(Long id);
 
-    public DiscreteOrderItem getDiscreteOrderItem();
+    DiscreteOrderItem getDiscreteOrderItem();
 
-    public void setDiscreteOrderItem(DiscreteOrderItem discreteOrderItem);
+    void setDiscreteOrderItem(DiscreteOrderItem discreteOrderItem);
 
-    public abstract Money getAmount();
+    Money getAmount();
 
-    public abstract void setAmount(Money amount);
+    void setAmount(Money amount);
 
-    public abstract String getName();
+    String getName();
 
-    public abstract void setName(String name);
+    void setName(String name);
 
-    public abstract String getReportingCode();
+    String getReportingCode();
 
-    public abstract void setReportingCode(String reportingCode);
+    void setReportingCode(String reportingCode);
 
-    public DiscreteOrderItemFeePrice clone();
+    DiscreteOrderItemFeePrice clone();
 
 }

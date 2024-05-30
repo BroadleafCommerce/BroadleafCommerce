@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,6 +21,7 @@ package org.broadleafcommerce.common.cache;
  * @author Jeff Fischer
  */
 public enum CacheStatType {
+
     PAGE_CACHE_HIT_RATE,
     STRUCTURED_CONTENT_CACHE_HIT_RATE,
     URL_HANDLER_CACHE_HIT_RATE,
@@ -30,4 +31,5 @@ public enum CacheStatType {
     TRANSLATION_CACHE_HIT_RATE,
     RESOURCE_BUNDLING_CACHE_HIT_RATE,
     GENERATED_RESOURCE_CACHE_HIT_RATE
+
 }

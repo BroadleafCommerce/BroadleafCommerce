@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,31 +28,30 @@ import javax.cache.CacheManager;
 import javax.cache.configuration.Configuration;
 
 /**
- * Allows an encapsulated way to create caches programmatically from an EhCache {@link CacheManager}.  
+ * Allows an encapsulated way to create caches programmatically from an EhCache {@link CacheManager}.
  * The standard APIs do not provide enough control, so we encapsulate those details here.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 @Component("blJCacheUtil")
 @ConditionalOnEhCache
 public class DefaultEhCacheUtil extends DefaultJCacheUtil {
-    
+
     public DefaultEhCacheUtil(String uri) {
         super(uri);
     }
-    
+
     @Autowired
     public DefaultEhCacheUtil(CacheManager cacheManager) {
         super(cacheManager);
     }
-    
+
     public DefaultEhCacheUtil(URI uri) {
         super(uri);
     }
 
     @Override
-    public <K,V> Cache<K,V> getCache(String cacheName) {
+    public <K, V> Cache<K, V> getCache(String cacheName) {
         return this.getCacheManager().getCache(cacheName);
     }
 
@@ -62,12 +61,18 @@ public class DefaultEhCacheUtil extends DefaultJCacheUtil {
     }
 
     @Override
-    public synchronized <K, V> Cache<K, V> createCache(String cacheName, int ttlSeconds, int maxElementsInMemory, Class<K> key, Class<V> value) {
+    public synchronized <K, V> Cache<K, V> createCache(
+            String cacheName,
+            int ttlSeconds,
+            int maxElementsInMemory,
+            Class<K> key,
+            Class<V> value
+    ) {
         Configuration<K, V> configuration = builder.buildConfiguration(ttlSeconds, maxElementsInMemory, key, value);
         Cache<K, V> cache = getCacheManager().createCache(cacheName, configuration);
         enableManagement(cache);
         enableStatistics(cache);
         return cache;
     }
-    
+
 }

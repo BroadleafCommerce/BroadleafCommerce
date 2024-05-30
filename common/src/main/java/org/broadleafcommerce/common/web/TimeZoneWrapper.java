@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,9 +26,33 @@ public class TimeZoneWrapper extends TimeZone {
 
     private final TimeZone timeZone;
 
-    public TimeZoneWrapper(TimeZone timeZone){
+    public TimeZoneWrapper(TimeZone timeZone) {
 
         this.timeZone = timeZone;
+    }
+
+    public static TimeZone getTimeZone(String ID) {
+        return TimeZone.getTimeZone(ID);
+    }
+
+    public static TimeZone getTimeZone(ZoneId zoneId) {
+        return TimeZone.getTimeZone(zoneId);
+    }
+
+    public static String[] getAvailableIDs(int rawOffset) {
+        return TimeZone.getAvailableIDs(rawOffset);
+    }
+
+    public static String[] getAvailableIDs() {
+        return TimeZone.getAvailableIDs();
+    }
+
+    public static TimeZone getDefault() {
+        return TimeZone.getDefault();
+    }
+
+    public static void setDefault(TimeZone zone) {
+        TimeZone.setDefault(zone);
     }
 
     @Override
@@ -42,13 +66,13 @@ public class TimeZoneWrapper extends TimeZone {
     }
 
     @Override
-    public void setRawOffset(int offsetMillis) {
-        timeZone.setRawOffset(offsetMillis);
+    public int getRawOffset() {
+        return timeZone.getRawOffset();
     }
 
     @Override
-    public int getRawOffset() {
-        return timeZone.getRawOffset();
+    public void setRawOffset(int offsetMillis) {
+        timeZone.setRawOffset(offsetMillis);
     }
 
     @Override
@@ -86,33 +110,9 @@ public class TimeZoneWrapper extends TimeZone {
         return timeZone.inDaylightTime(date);
     }
 
-    public static TimeZone getTimeZone(String ID) {
-        return TimeZone.getTimeZone(ID);
-    }
-
-    public static TimeZone getTimeZone(ZoneId zoneId) {
-        return TimeZone.getTimeZone(zoneId);
-    }
-
     @Override
     public ZoneId toZoneId() {
         return timeZone.toZoneId();
-    }
-
-    public static String[] getAvailableIDs(int rawOffset) {
-        return TimeZone.getAvailableIDs(rawOffset);
-    }
-
-    public static String[] getAvailableIDs() {
-        return TimeZone.getAvailableIDs();
-    }
-
-    public static TimeZone getDefault() {
-        return TimeZone.getDefault();
-    }
-
-    public static void setDefault(TimeZone zone) {
-        TimeZone.setDefault(zone);
     }
 
     @Override
@@ -129,4 +129,5 @@ public class TimeZoneWrapper extends TimeZone {
     public String toString() {
         return timeZone.toString();
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -72,13 +72,14 @@ import jakarta.annotation.Resource;
 
 /**
  * An implementation of SearchService that uses Solr.
- * 
+ * <p>
  * Note that prior to 2.2.0, this class used to contain all of the logic for interaction with Solr. Since 2.2.0, this class
  * has been refactored and parts of it have been split into the other classes you can find in this package.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class SolrSearchServiceImpl implements SearchService, DisposableBean {
+
     private static final Log LOG = LogFactory.getLog(SolrSearchServiceImpl.class);
 
     @Qualifier("blCatalogSolrConfiguration")
@@ -148,7 +149,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     @Override
     @Deprecated
-    public SearchResult findSearchResultsByCategoryAndQuery(Category category, String query, SearchCriteria searchCriteria) throws ServiceException {
+    public SearchResult findSearchResultsByCategoryAndQuery(
+            Category category,
+            String query,
+            SearchCriteria searchCriteria
+    ) throws ServiceException {
         searchCriteria.setCategory(category);
         searchCriteria.setQuery(query);
         return findSearchResults(searchCriteria);
@@ -170,17 +175,23 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @deprecated in favor of the other findSearchResults() method
      */
     @Deprecated(forRemoval = true)
-    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
-            SearchCriteria searchCriteria, String defaultSort) throws ServiceException {
+    protected SearchResult findSearchResults(
+            String qualifiedSolrQuery,
+            List<SearchFacetDTO> facets,
+            SearchCriteria searchCriteria,
+            String defaultSort
+    ) throws ServiceException {
         return findSearchResults(
                 searchCriteria.getQuery(),
                 facets,
                 searchCriteria,
                 defaultSort,
-                searchCriteria.getFilterQueries() == null ? null : searchCriteria.getFilterQueries().toArray(new String[searchCriteria.getFilterQueries().size()])
+                searchCriteria.getFilterQueries() == null
+                        ? null
+                        : searchCriteria.getFilterQueries().toArray(new String[searchCriteria.getFilterQueries().size()])
         );
     }
-    
+
     /**
      * Given a qualified solr query string (such as "category:2002"), actually performs a solr search. It will
      * take into considering the search criteria to build out facets / pagination / sorting.
@@ -190,15 +201,20 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @return the ProductSearchResult of the search
      * @throws ServiceException
      */
-    protected SearchResult findSearchResults(String qualifiedSolrQuery, List<SearchFacetDTO> facets,
-                                             SearchCriteria searchCriteria, String defaultSort, String... filterQueries) throws ServiceException {
+    protected SearchResult findSearchResults(
+            String qualifiedSolrQuery,
+            List<SearchFacetDTO> facets,
+            SearchCriteria searchCriteria,
+            String defaultSort,
+            String... filterQueries
+    ) throws ServiceException {
         Map<String, SearchFacetDTO> namedFacetMap = getNamedFacetMap(facets, searchCriteria);
 
         // Left here for backwards compatibility for this method signature
         if (searchCriteria.getQuery() == null && qualifiedSolrQuery != null) {
             searchCriteria.setQuery(qualifiedSolrQuery);
         }
-        
+
         // Build the basic query
         // Solr queries with a 'start' parameter cannot be a negative number
         int start = (searchCriteria.getPage() <= 0) ? 0 : (searchCriteria.getPage() - 1);
@@ -225,13 +241,14 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         // Attach additional restrictions
         attachActiveFacetFilters(solrQuery, namedFacetMap, searchCriteria);
         attachFacets(solrQuery, namedFacetMap, searchCriteria);
-        
+
         modifySolrQuery(solrQuery, searchCriteria.getQuery(), facets, searchCriteria, defaultSort);
 
         // If there is a sort, remove all boosting that has been applied before we apply the sort clause.
         // We do this in order to support cases where we use boosting for enforcing a sort, specifically when sorting
         // on child documents.
-        if ((StringUtils.isNotBlank(defaultSort) || StringUtils.isNotBlank(searchCriteria.getSortQuery())) && !boostSearchResultsCategory) {
+        if ((StringUtils.isNotBlank(defaultSort) || StringUtils.isNotBlank(searchCriteria.getSortQuery()))
+                && !boostSearchResultsCategory) {
             solrQuery.remove("bq");
             solrQuery.remove("bf");
             solrQuery.remove("boost");
@@ -254,7 +271,11 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
         List<SolrDocument> responseDocuments;
         int numResults = 0;
         try {
-            response = solrConfiguration.getServer().query(solrConfiguration.getQueryCollectionName(), solrQuery, getSolrQueryMethod());
+            response = solrConfiguration.getServer().query(
+                    solrConfiguration.getQueryCollectionName(),
+                    solrQuery,
+                    getSolrQueryMethod()
+            );
             responseDocuments = getResponseDocuments(response);
             numResults = (int) response.getResults().getNumFound();
 
@@ -295,8 +316,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
             Product product = iterator.next();
             Optional<CategoryProductXref> defaultParent;
             if (product.getAllParentCategoryXrefs().size() > 1) {
-                defaultParent = product.getAllParentCategoryXrefs()
-                        .stream().filter(t -> t.getDefaultReference() != null && t.getDefaultReference()).findFirst();
+                defaultParent = product.getAllParentCategoryXrefs().stream()
+                        .filter(t -> t.getDefaultReference() != null && t.getDefaultReference())
+                        .findFirst();
             } else {
                 defaultParent = Optional.of(product.getAllParentCategoryXrefs().get(0));
             }
@@ -312,7 +334,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                             .findFirst();
                     parentCategory = parentXref.map(CategoryXref::getCategory).orElse(null);
                 }
-            } else if(defaultParent.isPresent() && !defaultParent.get().getCategory().isActive()) {
+            } else if (defaultParent.isPresent() && !defaultParent.get().getCategory().isActive()) {
                 iterator.remove();
             }
         }
@@ -344,14 +366,16 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     }
 
     protected String getCategoryFilter(SearchCriteria searchCriteria) {
-        String categoryFilterIds = StringUtils.join(shs.getCategoryFilterIds(searchCriteria.getCategory(), searchCriteria), "\" \"");
-        
+        String categoryFilterIds = StringUtils.join(
+                shs.getCategoryFilterIds(searchCriteria.getCategory(), searchCriteria), "\" \""
+        );
+
         String categoryFilterField = shs.getCategoryFieldName();
         if (searchCriteria.getSearchExplicitCategory()) {
             categoryFilterField = shs.getExplicitCategoryFieldName();
         }
 
-        return categoryFilterField + ":(\"" + categoryFilterIds +  "\")";
+        return categoryFilterField + ":(\"" + categoryFilterIds + "\")";
     }
 
     public String getLocalePrefix() {
@@ -382,12 +406,18 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * This helper method gathers the query fields for the given field and stores them in the List parameter.
+     *
      * @param query
-     * @param queryFields the query fields for this query
+     * @param queryFields    the query fields for this query
      * @param indexField
      * @param searchCriteria
      */
-    protected void getQueryFields(SolrQuery query, final List<String> queryFields, IndexField indexField, SearchCriteria searchCriteria) {
+    protected void getQueryFields(
+            SolrQuery query,
+            final List<String> queryFields,
+            IndexField indexField,
+            SearchCriteria searchCriteria
+    ) {
 
         if (indexField != null && BooleanUtils.isTrue(indexField.getSearchable())) {
             List<IndexFieldType> fieldTypes = indexField.getFieldTypes();
@@ -400,7 +430,9 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
                 queryFieldResult.setResult(queryFields);
 
                 // here we try to get the query field's for this search field
-                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(query, searchCriteria, indexFieldType, queryFieldResult);
+                ExtensionResultStatusType result = extensionManager.getProxy().getQueryField(
+                        query, searchCriteria, indexFieldType, queryFieldResult
+                );
 
                 if (Objects.equals(ExtensionResultStatusType.NOT_HANDLED, result)) {
                     // if we didn't get any query fields we just add a default one
@@ -415,17 +447,23 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * Provides a hook point for implementations to modify all SolrQueries before they're executed.
      * Modules should leverage the extension manager method of the same name,
      * {@link SolrSearchServiceExtensionHandler#modifySolrQuery(SolrQuery, String, List, SearchCriteria, String)}
-     * 
+     *
      * @param query
      * @param qualifiedSolrQuery
      * @param facets
      * @param searchCriteria
      * @param defaultSort
      */
-    protected void modifySolrQuery(SolrQuery query, String qualifiedSolrQuery,
-            List<SearchFacetDTO> facets, SearchCriteria searchCriteria, String defaultSort) {
-
-        extensionManager.getProxy().modifySolrQuery(createSearchContextDTO(), query, qualifiedSolrQuery, facets, searchCriteria, defaultSort);
+    protected void modifySolrQuery(
+            SolrQuery query,
+            String qualifiedSolrQuery,
+            List<SearchFacetDTO> facets,
+            SearchCriteria searchCriteria,
+            String defaultSort
+    ) {
+        extensionManager.getProxy().modifySolrQuery(
+                createSearchContextDTO(), query, qualifiedSolrQuery, facets, searchCriteria, defaultSort
+        );
     }
 
     protected SearchContextDTO createSearchContextDTO() {
@@ -493,7 +531,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Sets up the sorting criteria. This will support sorting by multiple fields at a time
-     * 
+     *
      * @param query
      * @param searchCriteria
      */
@@ -504,19 +542,22 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Restricts the query by adding active facet filters.
-     * 
+     *
      * @param query
      * @param namedFacetMap
      * @param searchCriteria
      */
-    protected void attachActiveFacetFilters(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap,
-            SearchCriteria searchCriteria) {
+    protected void attachActiveFacetFilters(
+            SolrQuery query,
+            Map<String, SearchFacetDTO> namedFacetMap,
+            SearchCriteria searchCriteria
+    ) {
         shs.attachActiveFacetFilters(query, namedFacetMap, searchCriteria);
     }
-    
+
     /**
      * Scrubs a facet value string for all Solr special characters, automatically adding escape characters
-     * 
+     *
      * @param facetValue The raw facet value
      * @return The facet value with all special characters properly escaped, safe to be used in construction of a Solr query
      */
@@ -526,18 +567,23 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Notifies solr about which facets you want it to determine results and counts for
+     *
      * @param query
      * @param namedFacetMap
      * @param searchCriteria
      */
-    protected void attachFacets(SolrQuery query, Map<String, SearchFacetDTO> namedFacetMap, SearchCriteria searchCriteria) {
+    protected void attachFacets(
+            SolrQuery query,
+            Map<String, SearchFacetDTO> namedFacetMap,
+            SearchCriteria searchCriteria
+    ) {
         shs.attachFacets(query, namedFacetMap, searchCriteria);
     }
 
     /**
      * Builds out the DTOs for facet results from the search. This will then be used by the view layer to
      * display which values are available given the current constraints as well as the count of the values.
-     * 
+     *
      * @param namedFacetMap
      * @param response
      */
@@ -549,7 +595,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * Invoked to sort the facet results. This method will use the natural sorting of the value attribute of the
      * facet (or, if value is null, the minValue of the facet result). Override this method to customize facet
      * sorting for your given needs.
-     * 
+     *
      * @param namedFacetMap
      */
     protected void sortFacetResults(Map<String, SearchFacetDTO> namedFacetMap) {
@@ -559,7 +605,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     /**
      * Sets the total results, the current page, and the page size on the ProductSearchResult. Total results comes
      * from solr, while page and page size are duplicates of the searchCriteria conditions for ease of use.
-     * 
+     *
      * @param result
      * @param numResults
      * @param searchCriteria
@@ -574,7 +620,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * Given a list of product IDs from solr, this method will look up the IDs via the productDao and build out
      * actual Product instances. It will return a Products that is sorted by the order of the IDs in the passed
      * in list.
-     * 
+     *
      * @param responseDocuments
      * @return the actual Product instances as a result of the search
      */
@@ -604,7 +650,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Create the wrapper DTO around the SearchFacet
-     * 
+     *
      * @param searchFacets
      * @return the wrapper DTO
      */
@@ -614,10 +660,10 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Checks to see if the requiredFacets condition for a given facet is met.
-     * 
+     *
      * @param facet
      * @param params
-     * @return whether or not the facet parameter is available 
+     * @return whether or not the facet parameter is available
      */
     protected boolean facetIsAvailable(SearchFacet facet, Map<String, String[]> params) {
         return shs.isFacetAvailable(facet, params);
@@ -627,7 +673,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * Perform any necessary query sanitation here. For example, we disallow open and close parentheses, colons, and we also
      * ensure that quotes are actual quotes (") and not the URL encoding (&quot;) so that Solr is able to properly handle
      * the user's intent.
-     * 
+     *
      * @param query
      * @return the sanitized query
      */
@@ -645,7 +691,7 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
 
     /**
      * Returns a solr field tag. Given indexField = a, tag = tag, would produce the following String:
-     * {!tag=a}. if range is not null it will produce {!tag=a frange incl=false l=minVal u=maxVal} 
+     * {!tag=a}. if range is not null it will produce {!tag=a frange incl=false l=minVal u=maxVal}
      */
     protected String getSolrFieldTag(String tagField, String tag, SearchFacetRange range) {
         return shs.getSolrFieldTag(tagField, tag, range);
@@ -669,17 +715,19 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
      * @param searchCriteria
      * @return a map of fully qualified solr index field key to the searchFacetDTO object
      */
-    protected Map<String, SearchFacetDTO> getNamedFacetMap(List<SearchFacetDTO> facets,
-            final SearchCriteria searchCriteria) {
+    protected Map<String, SearchFacetDTO> getNamedFacetMap(
+            List<SearchFacetDTO> facets,
+            final SearchCriteria searchCriteria
+    ) {
         return shs.getNamedFacetMap(facets, searchCriteria);
     }
 
     /**
-     * Allows the user to choose the query method to use.  POST allows for longer, more complex queries with 
+     * Allows the user to choose the query method to use.  POST allows for longer, more complex queries with
      * a higher number of facets.
-     * 
+     * <p>
      * Default value is POST.  Implementors can change the value by setting the solr.search.method property
-     * 
+     *
      * @return
      */
     protected METHOD getSolrQueryMethod() {
@@ -695,4 +743,5 @@ public class SolrSearchServiceImpl implements SearchService, DisposableBean {
     public boolean isActive() {
         return solrConfiguration != null;
     }
+
 }

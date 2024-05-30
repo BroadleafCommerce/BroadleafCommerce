@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,10 +47,11 @@ public class XssFilter extends AbstractIgnorableOncePerRequestFilter {
     protected String[] whiteListParamNames;
 
     @Override
-    public void destroy() { }
+    public void destroy() {
+    }
 
     @PostConstruct
-    public void init(){
+    public void init() {
         String whiteList = environment.getProperty("blc.site.xssWrapper.whitelist.uri", "");
         String whiteListParams = environment.getProperty("blc.site.xssWrapper.whitelist.params", "");
         whiteListUris = whiteList.split(",");
@@ -58,7 +59,11 @@ public class XssFilter extends AbstractIgnorableOncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternalUnlessIgnored(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternalUnlessIgnored(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
+            FilterChain filterChain
+    ) throws IOException, ServletException {
 
         //we can use esapi SecurityWrapperRequest but then we need to tweak patterns for header, parameter names, also add a number of HttpUtilities.xxx params to esapi.properties
         //oob it is not allowing abc[xxx]. so using custom one for now.
@@ -76,7 +81,7 @@ public class XssFilter extends AbstractIgnorableOncePerRequestFilter {
 
     protected boolean isWhiteListUrl(String requestURI) {
         for (String uri : whiteListUris) {
-            if(uri.equals(requestURI)){
+            if (uri.equals(requestURI)) {
                 return false;
             }
         }
@@ -87,4 +92,5 @@ public class XssFilter extends AbstractIgnorableOncePerRequestFilter {
     public int getOrder() {
         return FilterOrdered.POST_SECURITY_HIGH;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -123,32 +123,39 @@ public class AdminProductController extends AdminBasicEntityController {
         }
     }
 
-
     @Override
     protected void modifyEntityForm(EntityForm entityForm, Map<String, String> pathVars) throws Exception {
         Field overrideGeneratedUrl = entityForm.findField("overrideGeneratedUrl");
         if (overrideGeneratedUrl != null) {
-           boolean overridenURL = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
-           if (!overridenURL) {
-               Field url = entityForm.findField("url");
-               url.setReadOnly(true);
-           }
+            boolean overridenURL = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
+            if (!overridenURL) {
+                Field url = entityForm.findField("url");
+                url.setReadOnly(true);
+            }
 
         }
     }
 
-
-    protected String showAddAdditionalSku(HttpServletRequest request, HttpServletResponse response, Model model,
-            String id, Map<String, String> pathVars) throws Exception {
+    protected String showAddAdditionalSku(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            String id,
+            Map<String, String> pathVars
+    ) throws Exception {
         String collectionField = "additionalSkus";
         String mainClassName = getClassNameForSection(SECTION_KEY);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, SECTION_KEY, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(
+                        getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)
+                )
+                .getDynamicResultSet()
+                .getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
-                .withCustomCriteria(new String[] { id });
+                .withCustomCriteria(new String[]{id});
         BasicCollectionMetadata fmd = (BasicCollectionMetadata) md;
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         // If the entity type isn't specified, we need to determine if there are various polymorphic types
@@ -157,13 +164,13 @@ public class AdminProductController extends AdminBasicEntityController {
         if (request.getParameter("entityType") != null) {
             entityType = request.getParameter("entityType");
         }
-        
+
         entityType = determineEntityType(entityType, cmd);
 
         if (StringUtils.isBlank(entityType)) {
             return getModalForBlankEntityType(request, model, SECTION_KEY, cmd);
         }
-        
+
         ppr = ppr.withCeilingEntityClassname(entityType);
 
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
@@ -175,7 +182,7 @@ public class AdminProductController extends AdminBasicEntityController {
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
         entityForm.removeAction(DefaultEntityFormActions.DUPLICATE);
 
-        if(StringUtils.isBlank(entityForm.getParentId())) {
+        if (StringUtils.isBlank(entityForm.getParentId())) {
             entityForm.setParentId(id);
         }
 
@@ -190,46 +197,66 @@ public class AdminProductController extends AdminBasicEntityController {
     }
 
     @Override
-    protected String buildAddCollectionItemModel(HttpServletRequest request, HttpServletResponse response,
+    protected String buildAddCollectionItemModel(
+            HttpServletRequest request,
+            HttpServletResponse response,
             Model model,
             String id,
             String collectionField,
             String sectionKey,
             Property collectionProperty,
-            FieldMetadata md, PersistencePackageRequest ppr, EntityForm entityForm, Entity entity) throws ServiceException {
+            FieldMetadata md,
+            PersistencePackageRequest ppr,
+            EntityForm entityForm,
+            Entity entity
+    ) throws ServiceException {
         if ("additionalSkus".equals(collectionField) && ppr.getCustomCriteria().length == 0) {
-            ppr.withCustomCriteria(new String[] { id });
+            ppr.withCustomCriteria(new String[]{id});
         }
-        return super.buildAddCollectionItemModel(request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, entityForm, entity);
+        return super.buildAddCollectionItemModel(
+                request, response, model, id, collectionField, sectionKey, collectionProperty, md, ppr, entityForm, entity
+        );
     }
 
-    protected String showUpdateAdditionalSku(HttpServletRequest request, Model model,
-                                             String id, String collectionItemId, Map<String, String> pathVars, EntityForm entityForm) throws Exception {
+    protected String showUpdateAdditionalSku(
+            HttpServletRequest request,
+            Model model,
+            String id,
+            String collectionItemId,
+            Map<String, String> pathVars,
+            EntityForm entityForm
+    ) throws Exception {
         String collectionField = "additionalSkus";
 
         // Find out metadata for the additionalSkus property
         String mainClassName = getClassNameForSection(SECTION_KEY);
         List<SectionCrumb> sectionCrumbs = getSectionCrumbs(request, SECTION_KEY, id);
-        ClassMetadata mainMetadata = service.getClassMetadata(getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)).getDynamicResultSet().getClassMetaData();
+        ClassMetadata mainMetadata = service.getClassMetadata(
+                        getSectionPersistencePackageRequest(mainClassName, sectionCrumbs, pathVars)
+                ).getDynamicResultSet()
+                .getClassMetaData();
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
         // Find the metadata and the entity for the selected sku
         PersistencePackageRequest ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs)
-                .withCustomCriteria(new String[] { id });
+                .withCustomCriteria(new String[]{id});
         ClassMetadata collectionMetadata = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         if (collectionMetadata.getCeilingType().equals(SkuImpl.class.getName())) {
             collectionMetadata.setCeilingType(Sku.class.getName());
         }
 
-        Entity entity = service.getRecord(ppr, collectionItemId, collectionMetadata, true).getDynamicResultSet().getRecords()[0];
+        Entity entity = service.getRecord(
+                        ppr, collectionItemId, collectionMetadata, true
+                ).getDynamicResultSet()
+                .getRecords()[0];
 
         String currentTabName = getCurrentTabName(pathVars, collectionMetadata);
-        Map<String, DynamicResultSet> subRecordsMap = service
-                .getRecordsForSelectedTab(collectionMetadata, entity, sectionCrumbs, currentTabName);
+        Map<String, DynamicResultSet> subRecordsMap = service.getRecordsForSelectedTab(
+                collectionMetadata, entity, sectionCrumbs, currentTabName
+        );
 
-        entityForm = reinitializeEntityForm(entityForm, collectionMetadata, entity, subRecordsMap, 
-                sectionCrumbs);
+        entityForm = reinitializeEntityForm(entityForm, collectionMetadata, entity, subRecordsMap, sectionCrumbs);
 
         entityForm.removeAction(DefaultEntityFormActions.DELETE);
         entityForm.removeAction(DefaultEntityFormActions.DUPLICATE);
@@ -253,10 +280,13 @@ public class AdminProductController extends AdminBasicEntityController {
     @Override
     @RequestMapping(value = "/selectize", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, Object> viewEntityListSelectize(HttpServletRequest request,
-                                                HttpServletResponse response, Model model,
-                                                @PathVariable Map<String, String> pathVars,
-                                                @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+    Map<String, Object> viewEntityListSelectize(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @RequestParam MultiValueMap<String, String> requestParams
+    ) throws Exception {
         String sectionKey = getSectionKey(pathVars);
         String sectionClassName = getClassNameForSection(sectionKey);
         List<SectionCrumb> crumbs = getSectionCrumbs(request, null, null);
@@ -266,7 +296,7 @@ public class AdminProductController extends AdminBasicEntityController {
                 .withCustomCriteria(getCustomCriteria(requestParams));
 
         FilterAndSortCriteria[] fascs = getCriteria(requestParams);
-        for(FilterAndSortCriteria fasc : fascs) {
+        for (FilterAndSortCriteria fasc : fascs) {
             if (SELECTIZE_NAME_PROPERTY.equals(fasc.getPropertyId())) {
                 fasc.setPropertyId(DEFAULT_SKU_NAME);
                 break;
@@ -276,7 +306,7 @@ public class AdminProductController extends AdminBasicEntityController {
         ppr.addCustomCriteria(buildSelectizeCustomCriteria());
 
         ClassMetadata cmd = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
-        DynamicResultSet drs =  service.getRecords(ppr).getDynamicResultSet();
+        DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
 
         return constructSelectizeOptionMap(drs, cmd);
     }
@@ -305,11 +335,15 @@ public class AdminProductController extends AdminBasicEntityController {
 
     @Override
     @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}", method = RequestMethod.GET)
-    public String showUpdateCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @PathVariable(value="id") String id,
-            @PathVariable(value="collectionField") String collectionField,
-            @PathVariable(value="collectionItemId") String collectionItemId) throws Exception {
+    public String showUpdateCollectionItem(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id,
+            @PathVariable(value = "collectionField") String collectionField,
+            @PathVariable(value = "collectionItemId") String collectionItemId
+    ) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
             return showUpdateAdditionalSku(request, model, id, collectionItemId, pathVars, null);
         }
@@ -317,14 +351,26 @@ public class AdminProductController extends AdminBasicEntityController {
     }
 
     @Override
-    protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
-                                              String id, String collectionField, String collectionItemId, String alternateId, String modalHeaderType, EntityForm entityForm, Entity entity) throws ServiceException {
+    protected String showViewUpdateCollection(
+            HttpServletRequest request,
+            Model model,
+            Map<String, String> pathVars,
+            String id,
+            String collectionField,
+            String collectionItemId,
+            String alternateId,
+            String modalHeaderType,
+            EntityForm entityForm,
+            Entity entity
+    ) throws ServiceException {
         try {
             if ("additionalSkus".equals(collectionField)) {
                 return showUpdateAdditionalSku(request, model, id, collectionItemId, pathVars, entityForm);
             } else {
-                return super.showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId, alternateId,
-                        modalHeaderType, entityForm, entity);
+                return super.showViewUpdateCollection(
+                        request, model, pathVars, id, collectionField, collectionItemId, alternateId,
+                        modalHeaderType, entityForm, entity
+                );
             }
         } catch (Exception e) {
             throw new ServiceException(e);
@@ -333,11 +379,15 @@ public class AdminProductController extends AdminBasicEntityController {
 
     @Override
     @RequestMapping(value = "/{id}/{collectionField}/add", method = RequestMethod.GET)
-    public String showAddCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable  Map<String, String> pathVars,
-            @PathVariable(value="id") String id,
-            @PathVariable(value="collectionField") String collectionField,
-            @RequestParam  MultiValueMap<String, String> requestParams) throws Exception {
+    public String showAddCollectionItem(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id,
+            @PathVariable(value = "collectionField") String collectionField,
+            @RequestParam MultiValueMap<String, String> requestParams
+    ) throws Exception {
         if ("additionalSkus".equals(collectionField)) {
             return showAddAdditionalSku(request, response, model, id, pathVars);
         }
@@ -346,9 +396,13 @@ public class AdminProductController extends AdminBasicEntityController {
 
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
+    public String viewEntityForm(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
             @PathVariable Map<String, String> pathVars,
-            @PathVariable(value = "id") String id) throws Exception {
+            @PathVariable(value = "id") String id
+    ) throws Exception {
         String view = super.viewEntityForm(request, response, model, pathVars, id);
 
         //Skus have a specific toolbar action to generate Skus based on permutations
@@ -385,7 +439,7 @@ public class AdminProductController extends AdminBasicEntityController {
     @Override
     protected void modifyCriteria(Map<String, FilterAndSortCriteria> fasMap) {
         super.modifyCriteria(fasMap);
-        if(BroadleafRequestContext.getBroadleafRequestContext().getRequest().getRequestURL().toString().contains("product:")) {
+        if (BroadleafRequestContext.getBroadleafRequestContext().getRequest().getRequestURL().toString().contains("product:")) {
             CriteriaTransferObject criteriaTransferObject = new CriteriaTransferObject();
             criteriaTransferObject.setCriteriaMap(fasMap);
             try {
@@ -397,31 +451,43 @@ public class AdminProductController extends AdminBasicEntityController {
     }
 
     @Override
-    public String addCollectionItem(HttpServletRequest request, HttpServletResponse response, Model model, @PathVariable Map<String, String> pathVars, @PathVariable("id") String id, @PathVariable("collectionField") String collectionField, @ModelAttribute("entityForm") EntityForm entityForm, BindingResult result) throws Exception {
+    public String addCollectionItem(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable("id") String id,
+            @PathVariable("collectionField") String collectionField,
+            @ModelAttribute("entityForm") EntityForm entityForm,
+            BindingResult result
+    ) throws Exception {
         if (PRODUCT_OPTIONS_COLLECTION_FIELD.equals(collectionField)) {
             boolean isAttributeNameExist = false;
             String addAttributeName = null;
             try {
                 final Field productOptionIdField = entityForm.getFields().get(PRODUCT_OPTION_ID_FIELD_KEY);
                 final Field productIdField = entityForm.getFields().get(PRODUCT_ID_FIELD_KEY);
-                final ProductOption addProductOption = catalogService.findProductOptionById(Long.parseLong(productOptionIdField.getValue()));
+                final ProductOption addProductOption = catalogService.findProductOptionById(
+                        Long.parseLong(productOptionIdField.getValue())
+                );
                 final Product product = catalogService.findProductById(Long.parseLong(productIdField.getValue()));
                 addAttributeName = addProductOption.getAttributeName();
                 isAttributeNameExist = product.getProductOptionXrefs().stream()
-                    .map(ProductOptionXref::getProductOption)
-                    .map(ProductOption::getAttributeName)
-                    .anyMatch(attributeName -> attributeName.equals(addProductOption.getAttributeName()));
+                        .map(ProductOptionXref::getProductOption)
+                        .map(ProductOption::getAttributeName)
+                        .anyMatch(attributeName -> attributeName.equals(addProductOption.getAttributeName()));
             } catch (Exception e) {
-                LOG.error("An error has occurred ",e);
+                LOG.error("An error has occurred ", e);
             }
             if (isAttributeNameExist) {
                 return new JsonResponse(response)
-                    .with("status", "error")
-                    .with("message", String.format("Product Option with attribute name: '%s' is already assigned", addAttributeName))
-                    .done();
+                        .with("status", "error")
+                        .with("message", String.format("Product Option with attribute name: '%s' is already assigned", addAttributeName))
+                        .done();
             }
         }
 
         return super.addCollectionItem(request, response, model, pathVars, id, collectionField, entityForm, result);
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,7 +39,7 @@ public abstract class AbstractBreadcrumbServiceExtensionHandler implements Exten
 
     @Override
     public ExtensionResultStatusType modifyBreadcrumbList(String url, Map<String, String[]> params,
-            ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
+                                                          ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
 
@@ -86,6 +86,7 @@ public abstract class AbstractBreadcrumbServiceExtensionHandler implements Exten
     /**
      * Implementations must provide a priority for this extension handler as the
      * order determines the breadcrumb order.
+     *
      * @return
      */
     public abstract int getDefaultPriority();

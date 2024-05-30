@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -38,15 +37,15 @@ public interface GenericEntityDao {
      * @param id
      * @return the entity
      */
-    public <T> T readGenericEntity(Class<T> clazz, Object id);
+    <T> T readGenericEntity(Class<T> clazz, Object id);
 
     /**
      * For a given className, finds the parent implementation class as defined in the {@link EntityConfiguration}
-     * 
+     *
      * @param className
      * @return the impl class object
      */
-    public Class<?> getImplClass(String className);
+    Class<?> getImplClass(String className);
 
     /**
      * Finds the ceiling implementation for the entity
@@ -58,11 +57,11 @@ public interface GenericEntityDao {
 
     /**
      * Saves a generic entity
-     * 
+     *
      * @param object
      * @return the persisted version of the entity
      */
-    public <T> T save(T object);
+    <T> T save(T object);
 
     /**
      * Persist the new entity
@@ -80,21 +79,21 @@ public interface GenericEntityDao {
 
     /**
      * Finds how many of the given entity class are persisted
-     * 
+     *
      * @param clazz
      * @return the count of the generic entity
      */
-    public <T> Long readCountGenericEntity(Class<T> clazz);
+    <T> Long readCountGenericEntity(Class<T> clazz);
 
     /**
      * Finds all generic entities for a given classname, with pagination options.
-     * 
+     *
      * @param clazz
      * @param limit
      * @param offset
      * @return the entities
      */
-    public <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset);
+    <T> List<T> readAllGenericEntity(Class<T> clazz, int limit, int offset);
 
     <T> List<T> readAllGenericEntity(Class<T> clazz);
 
@@ -132,6 +131,7 @@ public interface GenericEntityDao {
 
     /**
      * Whether or not this object is an {@link jakarta.persistence.Entity} and whether or not it already has an id assigned
+     *
      * @param object
      * @return
      */
@@ -143,4 +143,5 @@ public interface GenericEntityDao {
      * @return the {@link EntityManager}
      */
     EntityManager getEntityManager();
+
 }

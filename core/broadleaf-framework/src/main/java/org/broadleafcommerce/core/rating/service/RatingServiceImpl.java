@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,10 +43,10 @@ import jakarta.annotation.Resource;
 @Service("blRatingService")
 public class RatingServiceImpl implements RatingService {
 
-    @Resource(name="blRatingSummaryDao")
+    @Resource(name = "blRatingSummaryDao")
     protected RatingSummaryDao ratingSummaryDao;
 
-    @Resource(name="blReviewDetailDao")
+    @Resource(name = "blReviewDetailDao")
     protected ReviewDetailDao reviewDetailDao;
 
     @Override
@@ -68,7 +68,6 @@ public class RatingServiceImpl implements RatingService {
             reviewDetail.getReviewFeedback().add(reviewFeedback);
             reviewDetailDao.saveReviewDetail(reviewDetail);
         }
-
     }
 
     @Override
@@ -113,7 +112,7 @@ public class RatingServiceImpl implements RatingService {
     @SuppressWarnings("unchecked")
     public List<ReviewDetail> readReviews(String itemId, RatingType type, int start, int finish, RatingSortType sortBy) {
         RatingSummary summary = this.readRatingSummary(itemId, type);
-        if(summary != null) {
+        if (summary != null) {
             List<ReviewDetail> reviews = summary.getReviews();
             List<ReviewDetail> reviewsToReturn = new ArrayList<ReviewDetail>();
             int i = 0;
@@ -121,24 +120,24 @@ public class RatingServiceImpl implements RatingService {
                 if (i > finish) {
                     break;
                 }
-    
+
                 if (i >= start) {
                     reviewsToReturn.add(review);
                 }
-    
+
                 i++;
             }
-    
+
             String sortByBeanProperty = "reviewSubmittedDate";
             if (sortBy == RatingSortType.MOST_HELPFUL) {
                 sortByBeanProperty = "helpfulCount";
             }
-    
+
             Collections.sort(reviewsToReturn, new BeanComparator(sortByBeanProperty));
-    
+
             return reviewsToReturn;
         } else {
-            return new ArrayList<ReviewDetail>();
+            return new ArrayList<>();
         }
     }
 
@@ -158,30 +157,30 @@ public class RatingServiceImpl implements RatingService {
         }
 
         RatingDetail ratingDetail = ratingSummary.getId() == null ?
-            null : ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
+                null : ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
 
         if (ratingDetail == null) {
             ratingDetail = ratingSummaryDao.createDetail(ratingSummary, rating, SystemTime.asDate(), customer);
             ratingSummary.getRatings().add(ratingDetail);
         } else {
-            ratingDetail.setRating(rating);         
+            ratingDetail.setRating(rating);
         }
 
         ReviewDetail reviewDetail = ratingSummary.getId() == null ?
-            null : ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
+                null : ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
 
         if (reviewDetail == null) {
             reviewDetail = new ReviewDetailImpl(customer, SystemTime.asDate(), ratingDetail, reviewText, ratingSummary);
             ratingSummary.getReviews().add(reviewDetail);
         } else {
-            reviewDetail.setReviewText(reviewText);         
+            reviewDetail.setReviewText(reviewText);
         }
 
         // load reviews
         ratingSummary.getReviews().size();
         ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
-    
+
     @Override
     public ReviewDetail readReviewByCustomerAndItem(Customer customer, String itemId) {
         return reviewDetailDao.readReviewByCustomerAndItem(customer, itemId);

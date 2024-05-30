@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -91,7 +91,9 @@ public class SearchFacetDTOServiceImpl implements SearchFacetDTOService {
         }
 
         searchCriteria.setFilterCriteria(facets);
-        searchCriteria.setCategory((Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME));
+        searchCriteria.setCategory(
+                (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME)
+        );
 
         return searchCriteria;
     }

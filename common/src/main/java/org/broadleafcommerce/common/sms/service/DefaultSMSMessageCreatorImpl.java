@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,7 +35,9 @@ public class DefaultSMSMessageCreatorImpl implements SMSMessageCreator {
     @Override
     public void sendMessage(SMSMessage message, Map<String, Object> props) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Attempt to send SMS message to " + message.getTo() + " from " + message.getFrom() + " with message body:\n" + message.getBody());
+            LOG.debug("Attempt to send SMS message to " + message.getTo() + " from " + message.getFrom()
+                    + " with message body:\n" + message.getBody());
         }
     }
+
 }

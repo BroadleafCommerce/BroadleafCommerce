@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,32 +24,34 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
 public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrderOffer {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
-    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<>();
     protected Offer offer;
     protected PromotableOrder promotableOrder;
     protected Money potentialSavings;
-    
+
     public PromotableCandidateOrderOfferImpl(PromotableOrder promotableOrder, Offer offer) {
-        assert(offer != null);
-        assert(promotableOrder != null);
+        assert (offer != null);
+        assert (promotableOrder != null);
         this.promotableOrder = promotableOrder;
         this.offer = offer;
         calculatePotentialSavings();
     }
-    
+
     /**
-     * Instead of calculating the potential savings, you can specify an override of this value.   
+     * Instead of calculating the potential savings, you can specify an override of this value.
      * This is currently coded only to work if the promotableOrder's isIncludeOrderAndItemAdjustments flag
      * is true.
-     *  
+     *
      * @param promotableOrder
      * @param offer
      * @param potentialSavings
@@ -65,14 +67,16 @@ public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrd
     public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
         return candidateQualifiersMap;
     }
-    
+
     protected void calculatePotentialSavings() {
         Money amountBeforeAdjustments = promotableOrder.calculateSubtotalWithoutAdjustments();
         potentialSavings = BroadleafCurrencyUtils.getMoney(BigDecimal.ZERO, getCurrency());
         if (getOffer().getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
             potentialSavings = BroadleafCurrencyUtils.getMoney(getOffer().getValue(), getCurrency());
         } else if (getOffer().getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-            potentialSavings = amountBeforeAdjustments.subtract(BroadleafCurrencyUtils.getMoney(getOffer().getValue(), getCurrency()));
+            potentialSavings = amountBeforeAdjustments.subtract(
+                    BroadleafCurrencyUtils.getMoney(getOffer().getValue(), getCurrency())
+            );
         } else if (getOffer().getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
             potentialSavings = amountBeforeAdjustments.multiply(getOffer().getValue().divide(new BigDecimal("100")));
         }
@@ -81,17 +85,17 @@ public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrd
             potentialSavings = amountBeforeAdjustments;
         }
     }
-    
+
     @Override
     public Offer getOffer() {
         return this.offer;
     }
-    
+
     @Override
     public PromotableOrder getPromotableOrder() {
         return this.promotableOrder;
     }
-    
+
     public BroadleafCurrency getCurrency() {
         return promotableOrder.getOrderCurrency();
     }
@@ -117,4 +121,5 @@ public class PromotableCandidateOrderOfferImpl implements PromotableCandidateOrd
     public int getPriority() {
         return offer.getPriority();
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,7 +30,6 @@ import java.util.Map;
 
 import jakarta.annotation.Resource;
 
-
 /**
  * A basic entity persistence validation hook into validation provided by instances of
  * {@link org.broadleafcommerce.openadmin.server.service.persistence.extension.AdornedTargetAutoPopulateExtensionHandler}
@@ -44,17 +43,21 @@ public class AdornedTargetMaintainedFieldPropertyValidator implements GlobalProp
 
     @Resource(name = "blAdornedTargetAutoPopulateExtensionManager")
     protected AdornedTargetAutoPopulateExtensionManager adornedTargetAutoPopulateExtensionManager;
-    
+
     @Override
-    public PropertyValidationResult validate(Entity entity,
-                            Serializable instance,
-                            Map<String, FieldMetadata> entityFieldMetadata,
-                            BasicFieldMetadata propertyMetadata,
-                            String propertyName,
-                            String value) {
-        ExtensionResultHolder<Boolean> validationResult = new ExtensionResultHolder<Boolean>();
-        ExtensionResultStatusType status = adornedTargetAutoPopulateExtensionManager.getProxy().validateSubmittedAdornedTargetManagedFields(entity, instance,
-                entityFieldMetadata, propertyMetadata, propertyName, value, validationResult);
+    public PropertyValidationResult validate(
+            Entity entity,
+            Serializable instance,
+            Map<String, FieldMetadata> entityFieldMetadata,
+            BasicFieldMetadata propertyMetadata,
+            String propertyName,
+            String value
+    ) {
+        ExtensionResultHolder<Boolean> validationResult = new ExtensionResultHolder<>();
+        ExtensionResultStatusType status = adornedTargetAutoPopulateExtensionManager.getProxy()
+                .validateSubmittedAdornedTargetManagedFields(
+                        entity, instance, entityFieldMetadata, propertyMetadata, propertyName, value, validationResult
+                );
         Boolean valid = true;
         if (ExtensionResultStatusType.NOT_HANDLED != status && validationResult.getResult() != null) {
             valid = validationResult.getResult();

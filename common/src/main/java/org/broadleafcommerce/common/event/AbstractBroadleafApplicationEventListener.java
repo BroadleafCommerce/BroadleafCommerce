@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -60,7 +60,7 @@ public abstract class AbstractBroadleafApplicationEventListener<T extends Broadl
         Catalog catalog = getCatalog(event);
         Site profile = getProfile(event);
 
-        IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<Void,RuntimeException>() {
+        IdentityExecutionUtils.runOperationByIdentifier(new IdentityOperation<Void, RuntimeException>() {
             @Override
             public Void execute() throws RuntimeException {
                 BroadleafRequestContext ctx = BroadleafRequestContext.getBroadleafRequestContext();
@@ -123,4 +123,5 @@ public abstract class AbstractBroadleafApplicationEventListener<T extends Broadl
         }
         return null;
     }
+
 }

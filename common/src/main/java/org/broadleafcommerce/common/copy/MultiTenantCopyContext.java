@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,7 +43,7 @@ import jakarta.persistence.Embeddable;
 
 public class MultiTenantCopyContext {
 
-    public static final String[] BROADLEAF_PACKAGE_PREFIXES = {"org.broadleafcommerce","com.broadleafcommerce"};
+    public static final String[] BROADLEAF_PACKAGE_PREFIXES = {"org.broadleafcommerce", "com.broadleafcommerce"};
     public static final String MANUAL_DUPLICATION = "MANUAL_DUPLICATION";
     public static final String PROPAGATION = "PROPAGATION";
 
@@ -53,19 +53,25 @@ public class MultiTenantCopyContext {
     protected Site toSite;
     protected MultiTenantCopierExtensionManager extensionManager;
     protected BiMap<Integer, String> currentEquivalentMap = HashBiMap.create();
-    protected Map<Integer, Object> currentCloneMap = new HashMap<Integer, Object>();
+    protected Map<Integer, Object> currentCloneMap = new HashMap<>();
     protected Map<String, Map<Object, Object>> equivalentsMap;
     protected GenericEntityService genericEntityService;
-    protected List<DeferredOperation> deferredOperations = new ArrayList<DeferredOperation>();
+    protected List<DeferredOperation> deferredOperations = new ArrayList<>();
     /**
      * hints used to fine tune copying - generally support for hints is included in {@link MultiTenantCloneable#createOrRetrieveCopyInstance(org.broadleafcommerce.common.copy.MultiTenantCopyContext)} implementations.
      */
-    protected Map<String, String> copyHints = new HashMap<String, String>();
+    protected Map<String, String> copyHints = new HashMap<>();
     protected Boolean isForDuplicate = false;
 
-    public MultiTenantCopyContext(Catalog fromCatalog, Catalog toCatalog, Site fromSite, Site toSite,
-            GenericEntityService genericEntityService, MultiTenantCopierExtensionManager extensionManager) {
-        equivalentsMap = new HashMap<String, Map<Object, Object>>();
+    public MultiTenantCopyContext(
+            Catalog fromCatalog,
+            Catalog toCatalog,
+            Site fromSite,
+            Site toSite,
+            GenericEntityService genericEntityService,
+            MultiTenantCopierExtensionManager extensionManager
+    ) {
+        equivalentsMap = new HashMap<>();
         this.fromCatalog = fromCatalog;
         this.toCatalog = toCatalog;
         this.fromSite = fromSite;
@@ -90,7 +96,6 @@ public class MultiTenantCopyContext {
         }, getToSite(), getToSite(), getToCatalog());
     }
 
-
     public Object getEquivalentId(String className, Object fromId) {
         String ceilingImpl = genericEntityService.getCeilingImplClass(className).getName();
         Map<Object, Object> keys = equivalentsMap.get(ceilingImpl);
@@ -101,7 +106,7 @@ public class MultiTenantCopyContext {
         String ceilingImpl = genericEntityService.getCeilingImplClass(className).getName();
         Map<Object, Object> keys = equivalentsMap.get(ceilingImpl);
         if (keys == null) {
-            keys = new HashMap<Object, Object>();
+            keys = new HashMap<>();
             equivalentsMap.put(ceilingImpl, keys);
         }
 
@@ -187,7 +192,9 @@ public class MultiTenantCopyContext {
     public Object getPreviousClone(Class<?> instanceClass, Long originalId) {
         Object previousClone;
         if (currentEquivalentMap.inverse().containsKey(instanceClass.getName() + "_" + originalId)) {
-            previousClone = currentCloneMap.get(currentEquivalentMap.inverse().get(instanceClass.getName() + "_" + originalId));
+            previousClone = currentCloneMap.get(
+                    currentEquivalentMap.inverse().get(instanceClass.getName() + "_" + originalId)
+            );
         } else {
             previousClone = getClonedVersion(instanceClass, originalId);
         }
@@ -231,7 +238,7 @@ public class MultiTenantCopyContext {
 
     protected boolean checkCloneStatus(Object instance) {
         boolean shouldClone = true;
-        ExtensionResultHolder<Boolean> shouldCloneHolder = new ExtensionResultHolder<Boolean>();
+        ExtensionResultHolder<Boolean> shouldCloneHolder = new ExtensionResultHolder<>();
         if (extensionManager != null) {
             ExtensionResultStatusType status = extensionManager.getProxy().shouldClone(this, instance,
                     shouldCloneHolder);
@@ -277,7 +284,11 @@ public class MultiTenantCopyContext {
         return response;
     }
 
-    protected <G> CreateResponse<G> handleStandardEntity(Object instance, BroadleafRequestContext context, Class<?> instanceClass) throws CloneNotSupportedException {
+    protected <G> CreateResponse<G> handleStandardEntity(
+            Object instance,
+            BroadleafRequestContext context,
+            Class<?> instanceClass
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse;
         Long originalId = getIdentifier(instance);
         Object previousClone = getPreviousClone(instanceClass, originalId);
@@ -317,10 +328,14 @@ public class MultiTenantCopyContext {
         try {
             for (Field field : getAllFields(instanceClass)) {
                 field.setAccessible(true);
-                if (field.getType().getAnnotation(Embeddable.class) != null && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
+                if (field.getType().getAnnotation(Embeddable.class) != null
+                        && MultiTenantCloneable.class.isAssignableFrom(field.getType())) {
                     Object embeddable = field.get(instance);
                     if (embeddable != null) {
-                        field.set(response, ((MultiTenantCloneable) embeddable).createOrRetrieveCopyInstance(this).getClone());
+                        field.set(
+                                response,
+                                ((MultiTenantCloneable) embeddable).createOrRetrieveCopyInstance(this).getClone()
+                        );
                     }
                 }
             }
@@ -369,4 +384,5 @@ public class MultiTenantCopyContext {
                     "), and then finish populating this instance with your custom fields before passing back the finished object.");
         }
     }
+
 }

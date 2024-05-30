@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,8 +29,10 @@ public class DoubleParameterConverter implements ParameterConverter {
     public Parameter convert(String value, Double factor, boolean applyFactor) throws ConversionException {
         Parameter param = new Parameter();
         param.setParameterClass(double.class);
-        param.setParameterInstance(applyFactor&&factor!=null?Double.parseDouble(value)/factor:Double.parseDouble(value));
-        
+        param.setParameterInstance(applyFactor && factor != null
+                ? Double.parseDouble(value) / factor
+                : Double.parseDouble(value));
+
         return param;
     }
 

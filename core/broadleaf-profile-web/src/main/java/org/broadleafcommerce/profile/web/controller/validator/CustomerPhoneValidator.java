@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,10 +31,10 @@ import jakarta.annotation.Resource;
 @Component("blCustomerPhoneValidator")
 public class CustomerPhoneValidator implements Validator {
 
-    @Resource(name="blCustomerPhoneService")
+    @Resource(name = "blCustomerPhoneService")
     private final CustomerPhoneService customerPhoneService;
 
-    public CustomerPhoneValidator(){
+    public CustomerPhoneValidator() {
         this.customerPhoneService = null;
     }
 
@@ -49,7 +49,9 @@ public class CustomerPhoneValidator implements Validator {
 
         if (!errors.hasErrors()) {
             //check for duplicate phone number
-            List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(cPhone.getCustomer().getId());
+            List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(
+                    cPhone.getCustomer().getId()
+            );
 
             String phoneNum = cPhone.getPhone().getPhoneNumber();
             String phoneName = cPhone.getPhoneName();
@@ -62,43 +64,44 @@ public class CustomerPhoneValidator implements Validator {
 
             for (CustomerPhone existingPhone : phones) {
                 //validate that the phoneId passed for an editPhone scenario exists for this user
-                if(phoneId != null && !foundPhoneIdForUpdate){
-                    if(existingPhone.getPhone().getId().equals(phoneId)){
+                if (phoneId != null && !foundPhoneIdForUpdate) {
+                    if (existingPhone.getPhone().getId().equals(phoneId)) {
                         foundPhoneIdForUpdate = true;
                     }
                 }
 
                 //validate that the customerPhoneId passed for an editPhone scenario exists for this user
-                if(customerPhoneId != null && !foundCustomerPhoneIdForUpdate){
-                    if(existingPhone.getId().equals(customerPhoneId)){
+                if (customerPhoneId != null && !foundCustomerPhoneIdForUpdate) {
+                    if (existingPhone.getId().equals(customerPhoneId)) {
                         foundCustomerPhoneIdForUpdate = true;
                     }
                 }
 
-                if(existingPhone.getId().equals(cPhone.getId())){
+                if (existingPhone.getId().equals(cPhone.getId())) {
                     continue;
                 }
 
-                if(phoneNum.equals(existingPhone.getPhone().getPhoneNumber())){
+                if (phoneNum.equals(existingPhone.getPhone().getPhoneNumber())) {
                     errors.pushNestedPath("phone");
                     errors.rejectValue("phoneNumber", "phoneNumber.duplicate", null);
                     errors.popNestedPath();
                 }
 
-                if(phoneName.equalsIgnoreCase(existingPhone.getPhoneName())){
+                if (phoneName.equalsIgnoreCase(existingPhone.getPhoneName())) {
                     errors.rejectValue("phoneName", "phoneName.duplicate", null);
                 }
             }
 
-            if(phoneId != null && !foundPhoneIdForUpdate){
+            if (phoneId != null && !foundPhoneIdForUpdate) {
                 errors.pushNestedPath("phone");
                 errors.rejectValue("id", "phone.invalid_id", null);
                 errors.popNestedPath();
             }
 
-            if(customerPhoneId != null && !foundCustomerPhoneIdForUpdate){
+            if (customerPhoneId != null && !foundCustomerPhoneIdForUpdate) {
                 errors.rejectValue("id", "phone.invalid_id", null);
             }
         }
     }
+
 }

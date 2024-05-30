@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,15 +32,15 @@ import jakarta.annotation.Resource;
 
 /**
  * Handles admin operations for the {@link Category} entity.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Controller("blAdminCategoryController")
 @RequestMapping("/" + AdminCategoryController.SECTION_KEY)
 public class AdminCategoryController extends AdminBasicEntityController {
-    
+
     public static final String SECTION_KEY = "category";
-    
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -53,8 +53,6 @@ public class AdminCategoryController extends AdminBasicEntityController {
         return SECTION_KEY;
     }
 
-
-
     @Override
     protected void modifyAddEntityForm(EntityForm ef, Map<String, String> pathVars) {
         Field overrideGeneratedUrl = ef.findField("overrideGeneratedUrl");
@@ -62,8 +60,9 @@ public class AdminCategoryController extends AdminBasicEntityController {
         boolean overriddenUrl = Boolean.parseBoolean(overrideGeneratedUrl.getValue());
         Field fullUrl = ef.findField("url");
         fullUrl.withAttribute("overriddenUrl", overriddenUrl)
-            .withAttribute("sourceField", "name")
-            .withAttribute("toggleField", "overrideGeneratedUrl")
-            .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
+                .withAttribute("sourceField", "name")
+                .withAttribute("toggleField", "overrideGeneratedUrl")
+                .withFieldType(SupportedFieldType.GENERATED_URL.toString().toLowerCase());
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,8 +35,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 /**
- * @see ResourceMinificationService 
  * @author Andre Azzolini (apazzolini)
+ * @see ResourceMinificationService
  */
 @Service("blResourceMinificationService")
 public class ResourceMinificationServiceImpl implements ResourceMinificationService {
@@ -114,8 +114,8 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
         }
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(originalResource.getInputStream(), "utf-8"));
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(baos, "utf-8"));) {
+             ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(baos, "utf-8"));) {
 
             minify(in, out, filename, type);
             out.flush();
@@ -125,7 +125,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
             return originalResource;
         }
     }
-    
+
     // TODO Change method signature to throw a ResourceMinificationException in 5.4
     protected void minify(BufferedReader in, BufferedWriter out, String filename, String type) throws IOException {
         try {
@@ -145,6 +145,7 @@ public class ResourceMinificationServiceImpl implements ResourceMinificationServ
 
     /**
      * Return a SupportedFileType
+     *
      * @param originalResource
      * @param filename
      * @return

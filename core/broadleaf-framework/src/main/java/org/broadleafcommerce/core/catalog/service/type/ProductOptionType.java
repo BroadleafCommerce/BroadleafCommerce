@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,36 +19,33 @@ package org.broadleafcommerce.core.catalog.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of product option types.
- * 
+ *
  * @author jfischer
  */
 public class ProductOptionType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, ProductOptionType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, ProductOptionType> TYPES = new LinkedHashMap<String, ProductOptionType>();
-
-    public static final ProductOptionType COLOR  = new ProductOptionType("COLOR","Color");
-    public static final ProductOptionType SIZE  = new ProductOptionType("SIZE","Size");
-    public static final ProductOptionType DATE  = new ProductOptionType("DATE","Date");
-    public static final ProductOptionType TEXT  = new ProductOptionType("TEXT","Text");
+    public static final ProductOptionType COLOR = new ProductOptionType("COLOR", "Color");
+    public static final ProductOptionType SIZE = new ProductOptionType("SIZE", "Size");
+    public static final ProductOptionType DATE = new ProductOptionType("DATE", "Date");
+    public static final ProductOptionType TEXT = new ProductOptionType("TEXT", "Text");
     public static final ProductOptionType TEXTAREA = new ProductOptionType("TEXTAREA", "Textarea");
-    public static final ProductOptionType BOOLEAN  = new ProductOptionType("BOOLEAN","Boolean");
-    public static final ProductOptionType INTEGER  = new ProductOptionType("INTEGER","Integer");
-    public static final ProductOptionType INPUT  = new ProductOptionType("INPUT","Input");
-    public static final ProductOptionType PRODUCT  = new ProductOptionType("PRODUCT","Product");
+    public static final ProductOptionType BOOLEAN = new ProductOptionType("BOOLEAN", "Boolean");
+    public static final ProductOptionType INTEGER = new ProductOptionType("INTEGER", "Integer");
+    public static final ProductOptionType INPUT = new ProductOptionType("INPUT", "Input");
+    public static final ProductOptionType PRODUCT = new ProductOptionType("PRODUCT", "Product");
     public static final ProductOptionType SELECT = new ProductOptionType("SELECT", "Select");
-    public static final ProductOptionType CHECKBOX = new ProductOptionType("CHECKBOX","Checkbox");
-
-    public static ProductOptionType getInstance(final String type) {
-        return TYPES.get(type);
-    }
+    public static final ProductOptionType CHECKBOX = new ProductOptionType("CHECKBOX", "Checkbox");
 
     private String type;
     private String friendlyType;
@@ -62,19 +59,23 @@ public class ProductOptionType implements Serializable, BroadleafEnumerationType
         setType(type);
     }
 
+    public static ProductOptionType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -101,4 +102,5 @@ public class ProductOptionType implements Serializable, BroadleafEnumerationType
             return false;
         return true;
     }
+
 }

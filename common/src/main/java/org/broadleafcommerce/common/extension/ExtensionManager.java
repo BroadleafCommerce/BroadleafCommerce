@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,36 +30,37 @@ import java.util.List;
 
 /**
  * The ExtensionManager pattern is intended for out of box components to be extended by Broadleaf modules.
- * 
+ * <p>
  * Each component that needs an extension should define an interface which is a descendant of ExtensionHandler.
- * The concrete ExtensionManager class will utilize that interface as a parameter (e.g. T below).   
- * 
- * The default extension manager pattern loops through all handlers and examines their {@link ExtensionResultStatusType} 
+ * The concrete ExtensionManager class will utilize that interface as a parameter (e.g. T below).
+ * <p>
+ * The default extension manager pattern loops through all handlers and examines their {@link ExtensionResultStatusType}
  * to determine whether or not to continue with other handlers.
- * 
- * @author bpolster
  *
  * @param <T>
+ * @author bpolster
  */
 public abstract class ExtensionManager<T extends ExtensionHandler> implements InvocationHandler {
 
-    protected boolean handlersSorted = false;
     protected static String LOCK_OBJECT = new String("EM_LOCK");
-    
+    protected boolean handlersSorted = false;
     protected T extensionHandler;
     protected List<T> handlers = new ArrayList<T>();
 
     /**
      * Should take in a className that matches the ExtensionHandler interface being managed.
-     * @param className
+     *
+     * @param _clazz
      */
     @SuppressWarnings("unchecked")
     public ExtensionManager(Class<T> _clazz) {
-        extensionHandler = (T) Proxy.newProxyInstance(_clazz.getClassLoader(),
-                new Class[] { _clazz },
-                this);
+        extensionHandler = (T) Proxy.newProxyInstance(
+                _clazz.getClassLoader(),
+                new Class[]{_clazz},
+                this
+        );
     }
-    
+
     public T getProxy() {
         return extensionHandler;
     }
@@ -67,9 +68,9 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
     /**
      * If you are attempting to register a handler with this manager and are invoking this outside of an {@link ExtensionManager}
      * subclass, consider using {@link #registerHandler(ExtensionHandler)} instead.
-     * 
+     * <p>
      * While the sorting of the handlers prior to their return is thread safe, adding directly to this list is not.
-     * 
+     *
      * @return a list of handlers sorted by their priority
      * @see {@link #registerHandler(ExtensionHandler)}
      */
@@ -82,7 +83,11 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
         return handlers;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void setHandlers(List<T> handlers) {
+        this.handlers = handlers;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected void sortHandlers() {
         if (!handlersSorted) {
             Comparator fieldCompare = new BeanComparator("priority");
@@ -90,14 +95,14 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
             handlersSorted = true;
         }
     }
-    
+
     /**
      * Intended to be invoked from the extension handlers themselves. This will add the given handler to this manager's list of
      * handlers. This also checks to ensure that the handler has not been already registered with this {@link ExtensionManager}
      * by checking the class names of the already-added handlers.
-     * 
+     * <p>
      * This method is thread safe.
-     * 
+     *
      * @param handler the handler to register with this extension manager
      * @return true if the handler was successfully registered, false if this handler was already contained in the list of
      * handlers for this manager
@@ -114,40 +119,40 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
                 this.handlers.add(handler);
                 handlersSorted = false;
             }
-            
+
             return add;
         }
     }
 
-    public void setHandlers(List<T> handlers) {
-        this.handlers = handlers;
-    }
-    
     /**
      * Utility method that is useful for determining whether or not an ExtensionManager implementation
      * should continue after processing a ExtensionHandler call.
-     * 
+     * <p>
      * By default, returns true for CONTINUE
-     * 
+     *
      * @return
      */
-    public boolean shouldContinue(ExtensionResultStatusType result, ExtensionHandler handler,
-            Method method, Object[] args) {
+    public boolean shouldContinue(
+            ExtensionResultStatusType result,
+            ExtensionHandler handler,
+            Method method,
+            Object[] args
+    ) {
         if (result != null) {
             if (ExtensionResultStatusType.HANDLED_STOP.equals(result)) {
                 return false;
             }
-            
-            if (ExtensionResultStatusType.HANDLED.equals(result) && ! continueOnHandled()) {
+
+            if (ExtensionResultStatusType.HANDLED.equals(result) && !continueOnHandled()) {
                 return false;
             }
         }
         return true;
     }
-    
+
     /**
-     * Returns whether or not this extension manager continues on {@link ExtensionResultStatusType}.HANDLED.   
-     * 
+     * Returns whether or not this extension manager continues on {@link ExtensionResultStatusType}.HANDLED.
+     *
      * @return
      */
     public boolean continueOnHandled() {
@@ -155,9 +160,9 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
     }
 
     /**
-     * {@link ExtensionManager}s don't really need a priority but they pick up this property due to the 
-     * fact that we want them to implement the same interface <T> as the handlers they are managing.   
-     * 
+     * {@link ExtensionManager}s don't really need a priority but they pick up this property due to the
+     * fact that we want them to implement the same interface <T> as the handlers they are managing.
+     *
      * @return
      */
     public int getPriority() {
@@ -217,4 +222,5 @@ public abstract class ExtensionManager<T extends ExtensionHandler> implements In
             return ExtensionResultStatusType.HANDLED;
         }
     }
+
 }

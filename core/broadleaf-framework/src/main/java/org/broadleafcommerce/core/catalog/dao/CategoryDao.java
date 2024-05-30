@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.catalog.dao;
-
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
@@ -29,9 +28,9 @@ import jakarta.annotation.Nonnull;
 /**
  * {@code CategoryDao} provides persistence access to {@code Category} instances.
  *
+ * @author Jeff Fischer
  * @see Category
  * @see Product
- * @author Jeff Fischer
  */
 public interface CategoryDao {
 
@@ -42,7 +41,7 @@ public interface CategoryDao {
      * @return the {@code Category}  at the specified primary key
      */
     @Nonnull
-    public Category readCategoryById(@Nonnull Long categoryId);
+    Category readCategoryById(@Nonnull Long categoryId);
 
     /**
      * Retrieves a List of Category IDs
@@ -50,18 +49,19 @@ public interface CategoryDao {
      * @param categoryIds
      * @return
      */
-    public List<Category> readCategoriesByIds(List<Long> categoryIds);
+    List<Category> readCategoriesByIds(List<Long> categoryIds);
 
     /**
      * Retrieve a {@link Category} instance by the external id
+     *
      * @param externalId
      * @return
      */
-    public Category readCategoryByExternalId(@Nonnull String externalId);
+    Category readCategoryByExternalId(@Nonnull String externalId);
 
     /**
      * Retrieve a {@code Category} instance by its name.
-     *
+     * <p>
      * Broadleaf allows more than one category to have the same name. Calling
      * this method could produce an exception in such situations. Use
      * {@link #readCategoriesByName(String)} instead.
@@ -71,7 +71,7 @@ public interface CategoryDao {
      */
     @Nonnull
     @Deprecated(forRemoval = true)
-    public Category readCategoryByName(@Nonnull String categoryName);
+    Category readCategoryByName(@Nonnull String categoryName);
 
     /**
      * Retrieve a list of {@code Category} instances by name.
@@ -80,13 +80,13 @@ public interface CategoryDao {
      * @return the Category instances having the specified name
      */
     @Nonnull
-    public List<Category> readCategoriesByName(@Nonnull String categoryName);
+    List<Category> readCategoriesByName(@Nonnull String categoryName);
 
     @Nonnull
-    public List<Category> readCategoriesByName(@Nonnull String categoryName, int limit, int offset);
+    List<Category> readCategoriesByName(@Nonnull String categoryName, int limit, int offset);
 
     @Nonnull
-    public List<Category> readCategoriesByNames(List<String> names);
+    List<Category> readCategoriesByNames(List<String> names);
 
     /**
      * Persist a {@code Category} instance to the datastore
@@ -95,7 +95,7 @@ public interface CategoryDao {
      * @return the updated state of the passed in {@code Category} after being persisted
      */
     @Nonnull
-    public Category save(@Nonnull Category category);
+    Category save(@Nonnull Category category);
 
     /**
      * Retrieve all categories in the datastore
@@ -103,17 +103,17 @@ public interface CategoryDao {
      * @return a list of all the {@code Category} instances in the datastore
      */
     @Nonnull
-    public List<Category> readAllCategories();
+    List<Category> readAllCategories();
 
     /**
      * Retrieve a subset of all categories
      *
-     * @param limit the maximum number of results, defaults to 20
+     * @param limit  the maximum number of results, defaults to 20
      * @param offset the starting point in the record set, defaults to 0
      * @return
      */
     @Nonnull
-    public List<Category> readAllCategories(@Nonnull int limit, @Nonnull int offset);
+    List<Category> readAllCategories(@Nonnull int limit, @Nonnull int offset);
 
     Long readTotalCategoryCount();
 
@@ -123,10 +123,10 @@ public interface CategoryDao {
      * @return a list of all {@code Category} instances in the datastore, regardless of their category association
      */
     @Nonnull
-    public List<Product> readAllProducts();
+    List<Product> readAllProducts();
 
     @Nonnull
-    public List<Product> readAllProducts(@Nonnull int limit, @Nonnull int offset);
+    List<Product> readAllProducts(@Nonnull int limit, @Nonnull int offset);
 
     /**
      * Retrieve a list of all child categories of the passed in {@code Category} instance
@@ -135,7 +135,7 @@ public interface CategoryDao {
      * @return a list of all child categories
      */
     @Nonnull
-    public List<Category> readAllSubCategories(@Nonnull Category category);
+    List<Category> readAllSubCategories(@Nonnull Category category);
 
     /**
      * Retrieve a list of all child categories of the passed in {@code Category} instance
@@ -144,25 +144,25 @@ public interface CategoryDao {
      * @return a list of all child categories
      */
     @Nonnull
-    public List<Category> readAllSubCategories(@Nonnull Long id);
+    List<Category> readAllSubCategories(@Nonnull Long id);
 
     /**
      * Retrieve a list of all child categories of the passed in {@code Category} instance
      *
      * @param category the parent category
-     * @param limit the maximum number of results to return
-     * @param offset the starting point in the record set
+     * @param limit    the maximum number of results to return
+     * @param offset   the starting point in the record set
      * @return a list of all child categories
      */
     @Nonnull
-    public List<Category> readAllSubCategories(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
+    List<Category> readAllSubCategories(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
 
     /**
      * Removed the passed in {@code Category} instance from the datastore
      *
      * @param category the {@code Category} instance to remove
      */
-    public void delete(@Nonnull Category category);
+    void delete(@Nonnull Category category);
 
     /**
      * Create a new {@code Category} instance. The system will use the configuration in
@@ -170,6 +170,7 @@ public interface CategoryDao {
      * to determine which polymorphic version of {@code Category} to instantiate. To make Broadleaf instantiate your
      * extension of {@code Category} by default, include an entity configuration bean in your application context xml similar to:
      * <p>
+     * <pre>
      * {@code
      *     <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
      *          <property name="entityContexts">
@@ -179,6 +180,7 @@ public interface CategoryDao {
      *          </property>
      *      </bean>
      * }
+     * </pre>
      * </p>
      * Declare the same key for your desired entity in your entity xml that is used in the Broadleaf entity xml, but change the value to the fully
      * qualified classname of your entity extension.
@@ -186,7 +188,7 @@ public interface CategoryDao {
      * @return a {@code Category} instance based on the Broadleaf entity configuration.
      */
     @Nonnull
-    public Category create();
+    Category create();
 
     /**
      * Retrieve a list of all active child categories of the passed in {@code Category} instance.
@@ -198,7 +200,7 @@ public interface CategoryDao {
      * @return a list of all active child categories
      */
     @Nonnull
-    public List<Category> readActiveSubCategoriesByCategory(Category category);
+    List<Category> readActiveSubCategoriesByCategory(Category category);
 
     /**
      * Retrieve a list of all active child categories of the passed in {@code Category} instance.
@@ -207,14 +209,14 @@ public interface CategoryDao {
      * {@link #getCurrentDateResolution()}
      *
      * @param category the parent category
-     * @param limit the maximum number of results to return
-     * @param offset the starting point in the record set
+     * @param limit    the maximum number of results to return
+     * @param offset   the starting point in the record set
      * @return a list of all active child categories
      */
     @Nonnull
-    public List<Category> readActiveSubCategoriesByCategory(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
+    List<Category> readActiveSubCategoriesByCategory(@Nonnull Category category, @Nonnull int limit, @Nonnull int offset);
 
-    public Category findCategoryByURI(String uri);
+    Category findCategoryByURI(String uri);
 
     /**
      * Returns the number of milliseconds that the current date/time will be cached for queries before refreshing.
@@ -223,7 +225,7 @@ public interface CategoryDao {
      *
      * @return the milliseconds to cache the current date/time
      */
-    public Long getCurrentDateResolution();
+    Long getCurrentDateResolution();
 
     /**
      * Sets the number of milliseconds that the current date/time will be cached for queries before refreshing.
@@ -232,14 +234,16 @@ public interface CategoryDao {
      *
      * @param currentDateResolution the milliseconds to cache the current date/time
      */
-    public void setCurrentDateResolution(Long currentDateResolution);
+    void setCurrentDateResolution(Long currentDateResolution);
 
     Long readCountAllActiveProductsByCategory(Category category);
 
     /**
      * returns a list of CategoryProductXref where provided category is default reference(xref.defaultReference=true)
+     *
      * @param categoryId long, id of the category
      * @return returns a list of CategoryProductXref where provided category is default reference(xref.defaultReference=true)
      */
     List<CategoryProductXref> findXrefByCategoryWithDefaultReference(Long categoryId);
+
 }

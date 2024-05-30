@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,8 +22,11 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OrderItemPriceDetailAdjustment;
 
+import java.io.Serial;
+
 public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromotionRounding implements PromotableOrderItemPriceDetailAdjustment, OfferHolder {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected PromotableCandidateItemOffer promotableCandidateItemOffer;
@@ -34,10 +37,12 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
     protected boolean appliedToSalePrice;
     protected Offer offer;
 
-    public PromotableOrderItemPriceDetailAdjustmentImpl(PromotableCandidateItemOffer promotableCandidateItemOffer,
-                                                        PromotableOrderItemPriceDetail orderItemPriceDetail,
-                                                        Money retailAdjustmentValue,
-                                                        Money saleAdjustmentValue) {
+    public PromotableOrderItemPriceDetailAdjustmentImpl(
+            PromotableCandidateItemOffer promotableCandidateItemOffer,
+            PromotableOrderItemPriceDetail orderItemPriceDetail,
+            Money retailAdjustmentValue,
+            Money saleAdjustmentValue
+    ) {
         assert (promotableCandidateItemOffer != null);
         assert (orderItemPriceDetail != null);
         this.promotableCandidateItemOffer = promotableCandidateItemOffer;
@@ -47,8 +52,10 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
         this.saleAdjustmentValue = saleAdjustmentValue;
     }
 
-    public PromotableOrderItemPriceDetailAdjustmentImpl(OrderItemPriceDetailAdjustment itemAdjustment,
-            PromotableOrderItemPriceDetail orderItemPriceDetail) {
+    public PromotableOrderItemPriceDetailAdjustmentImpl(
+            OrderItemPriceDetailAdjustment itemAdjustment,
+            PromotableOrderItemPriceDetail orderItemPriceDetail
+    ) {
         assert (orderItemPriceDetail != null);
         adjustmentValue = itemAdjustment.getValue();
         if (itemAdjustment.isAppliedToSalePrice()) {
@@ -74,11 +81,11 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
     public Money getSaleAdjustmentValue() {
         return saleAdjustmentValue;
     }
-    
+
     @Override
     public BroadleafCurrency getCurrency() {
         return promotableOrderItemPriceDetail.getPromotableOrderItem().getCurrency();
-    }    
+    }
 
     @Override
     public PromotableOrderItemPriceDetail getPromotableOrderItemPriceDetail() {
@@ -130,11 +137,16 @@ public class PromotableOrderItemPriceDetailAdjustmentImpl extends AbstractPromot
     @Override
     public PromotableOrderItemPriceDetailAdjustment copy() {
         PromotableOrderItemPriceDetailAdjustmentImpl newAdjustment = new PromotableOrderItemPriceDetailAdjustmentImpl(
-                promotableCandidateItemOffer, promotableOrderItemPriceDetail, retailAdjustmentValue, saleAdjustmentValue);
+                promotableCandidateItemOffer,
+                promotableOrderItemPriceDetail,
+                retailAdjustmentValue,
+                saleAdjustmentValue
+        );
         newAdjustment.adjustmentValue = adjustmentValue;
         newAdjustment.saleAdjustmentValue = saleAdjustmentValue;
         newAdjustment.retailAdjustmentValue = retailAdjustmentValue;
         newAdjustment.appliedToSalePrice = appliedToSalePrice;
         return newAdjustment;
     }
+
 }

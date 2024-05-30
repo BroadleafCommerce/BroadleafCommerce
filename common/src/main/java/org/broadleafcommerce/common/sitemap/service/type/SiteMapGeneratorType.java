@@ -10,47 +10,43 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of site map generator types.
- * 
+ *
  * <ul>
  *  <li><b>CATEGORY</b> - Generator that understands how to generate category based sitemap entries.</li>
  *  <li><b>PRODUCT</b> - Generator that understands how to generate product based sitemap entries.</li>
  *  <li><b>PAGE</b> - Generator that understands how to generate page based sitemap entries.</li>
- *  <li><b>CUSTOM</b> - Generator that understands how to generate static based sitemap entries.</li>  
+ *  <li><b>CUSTOM</b> - Generator that understands how to generate static based sitemap entries.</li>
  * </ul>
- * 
+ *
  * @author bpolster
  */
 public class SiteMapGeneratorType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, SiteMapGeneratorType> TYPES = new LinkedHashMap<String, SiteMapGeneratorType>();
+    private static final Map<String, SiteMapGeneratorType> TYPES = new LinkedHashMap<>();
 
     public static final SiteMapGeneratorType CATEGORY = new SiteMapGeneratorType("CATEGORY", "Category");
     public static final SiteMapGeneratorType PRODUCT = new SiteMapGeneratorType("PRODUCT", "Product");
     public static final SiteMapGeneratorType SKU = new SiteMapGeneratorType("SKU", "Sku");
     public static final SiteMapGeneratorType PAGE = new SiteMapGeneratorType("PAGE", "Page");
     public static final SiteMapGeneratorType CUSTOM = new SiteMapGeneratorType("CUSTOM", "Custom");
-
-    public static SiteMapGeneratorType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -64,19 +60,23 @@ public class SiteMapGeneratorType implements Serializable, BroadleafEnumerationT
         setType(type);
     }
 
+    public static SiteMapGeneratorType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

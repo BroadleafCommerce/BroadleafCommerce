@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -54,17 +54,17 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     protected static final Log LOG = LogFactory.getLog(TranslationServiceImpl.class);
     private static final Translation DELETED_TRANSLATION = new TranslationImpl();
     private static final String TRANSLATION_CACHE_NAME = "blTranslationElements";
-    
+
     @Resource(name = "blTranslationDao")
     protected TranslationDao dao;
 
-    @Resource(name="blStatisticsService")
+    @Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
-    
-    @Resource(name="blTranslationServiceExtensionManager")
+
+    @Resource(name = "blTranslationServiceExtensionManager")
     protected TranslationServiceExtensionManager extensionManager;
 
     /**
@@ -85,33 +85,33 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     protected boolean returnBlankTranslationForNotDefaultLocale;
 
     @Resource(name = "blTranslationExceptionProperties")
-    protected List<String> translationExceptionProperties = new ArrayList<String>();
+    protected List<String> translationExceptionProperties = new ArrayList<>();
 
     @Resource(name = "blLocaleService")
     protected LocaleService localeService;
 
     @Resource
     protected List<TranslationOverrideStrategy> strategies;
-    
+
     @Resource(name = "blCacheManager")
     protected CacheManager cacheManager;
-    
+
     protected Cache<String, Object> cache;
-    
+
     @Override
     @Transactional("blTransactionManager")
     public Translation save(Translation translation) {
         return dao.save(translation);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
-    public Translation save(String entityType, String entityId, String fieldName, String localeCode, 
-            String translatedValue) {
+    public Translation save(String entityType, String entityId, String fieldName, String localeCode,
+                            String translatedValue) {
         TranslatedEntity te = getAssignableEntityType(entityType);
-        
+
         Translation translation = getTranslation(te, entityId, fieldName, localeCode);
-        
+
         if (translation == null) {
             translation = dao.create();
             translation.setEntityType(te);
@@ -119,7 +119,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
             translation.setFieldName(fieldName);
             translation.setLocaleCode(localeCode);
         }
-        
+
         translation.setTranslatedValue(translatedValue);
         return save(translation);
     }
@@ -128,35 +128,35 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     public Translation findTranslationById(Long id) {
         return dao.readTranslationById(id);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public Translation update(Long translationId, String localeCode, String translatedValue) {
         Translation t = dao.readTranslationById(translationId);
-        
+
         // Check to see if there is another translation that matches this updated one. We'll remove it if it exists
         Translation t2 = dao.readTranslation(t.getEntityType(), t.getEntityId(), t.getFieldName(), localeCode);
         if (t2 != null && t != t2) {
             dao.delete(t2);
         }
-        
+
         t.setLocaleCode(localeCode);
         t.setTranslatedValue(translatedValue);
         return save(t);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public void deleteTranslationById(Long translationId) {
         Translation t = dao.readTranslationById(translationId);
         dao.delete(t);
     }
-    
+
     @Override
     public Translation getTranslation(TranslatedEntity entity, String entityId, String fieldName, String localeCode) {
         return dao.readTranslation(entity, entityId, fieldName, localeCode);
     }
-    
+
     @Override
     public List<Translation> getTranslations(String ceilingEntityClassname, String entityId, String property) {
         TranslatedEntity entityType = getAssignableEntityType(ceilingEntityClassname);
@@ -193,7 +193,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
 
         TranslatedEntity entityType = getEntityType(entity);
         String entityId = dao.getEntityId(entityType, entity);
-        
+
         if (TranslationBatchReadCache.hasCache()) {
             Translation translation = TranslationBatchReadCache.getFromCache(entityType, entityId, property, localeCountryCode);
             if (translation != null) {
@@ -203,10 +203,10 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
                 return null;
             }
         }
-        
+
         boolean isValidForCache = false;
         if (extensionManager != null) {
-            ExtensionResultHolder<Boolean> response = new ExtensionResultHolder<Boolean>();
+            ExtensionResultHolder<Boolean> response = new ExtensionResultHolder<>();
             response.setResult(false);
             extensionManager.getProxy().isValidState(response);
             isValidForCache = response.getResult();
@@ -245,7 +245,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         org.broadleafcommerce.common.locale.domain.Locale locale = localeService.findLocaleByCode(localeCode);
 
         if (locale == null) {
-            LOG.warn("A locale could not be found for the provided localeCode: "+ localeCode);
+            LOG.warn("A locale could not be found for the provided localeCode: " + localeCode);
             return true;
         }
 
@@ -257,7 +257,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         if (BroadleafRequestContext.getBroadleafRequestContext().isProductionSandBox()) {
             ResultType resultType = ResultType.STANDARD;
             if (extensionManager != null) {
-                ExtensionResultHolder<ResultType> response = new ExtensionResultHolder<ResultType>();
+                ExtensionResultHolder<ResultType> response = new ExtensionResultHolder<>();
                 extensionManager.getProxy().getResultType(translation, response);
                 resultType = response.getResult();
                 if (ResultType.STANDARD == resultType) {
@@ -267,7 +267,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
                 } else {
                     List<String> cacheKeysList =
                             getCacheKeyListForTemplateSite(translation.getEntityType().getFriendlyType());
-                    for (String key: cacheKeysList) {
+                    for (String key : cacheKeysList) {
                         LOG.debug("Removing key [" + key + "] for TEMPLATE site");
                         getCache().remove(key);
                     }
@@ -276,8 +276,13 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         }
     }
 
-    protected String getOverrideTranslatedValue(String property, TranslatedEntity entityType,
-                                                String entityId, String localeCode, String localeCountryCode) {
+    protected String getOverrideTranslatedValue(
+            String property,
+            TranslatedEntity entityType,
+            String entityId,
+            String localeCode,
+            String localeCountryCode
+    ) {
         boolean specificTranslationDeleted = false;
         boolean generalTranslationDeleted = false;
         StandardCacheItem specificTranslation = null;
@@ -288,8 +293,10 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         String cacheKey = getCacheKey(ResultType.STANDARD, entityType);
         LocalePair override = null;
         for (TranslationOverrideStrategy strategy : strategies) {
-            override = strategy.getLocaleBasedOverride(property, entityType, entityId, localeCode, localeCountryCode, cacheKey);
-            if(override != null) {
+            override = strategy.getLocaleBasedOverride(
+                    property, entityType, entityId, localeCode, localeCountryCode, cacheKey
+            );
+            if (override != null) {
                 specificTranslation = override.getSpecificItem();
                 generalTranslation = override.getGeneralItem();
                 break;
@@ -346,7 +353,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         }
 
         String templateResponse = getTemplateTranslatedValue(cacheKey, property, entityType, entityId, localeCode,
-                    localeCountryCode, specificPropertyKey, generalPropertyKey);
+                localeCountryCode, specificPropertyKey, generalPropertyKey);
         if (templateResponse != null) {
             response = templateResponse;
         }
@@ -360,14 +367,31 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         return null;
     }
 
-    protected String getTemplateTranslatedValue(String standardCacheKey, String property, TranslatedEntity entityType,
-                        String entityId, String localeCode, String localeCountryCode, String specificPropertyKey, String generalPropertyKey) {
+    protected String getTemplateTranslatedValue(
+            String standardCacheKey,
+            String property,
+            TranslatedEntity entityType,
+            String entityId,
+            String localeCode,
+            String localeCountryCode,
+            String specificPropertyKey,
+            String generalPropertyKey
+    ) {
         String cacheKey = getCacheKey(ResultType.TEMPLATE, entityType);
         StandardCacheItem translation = null;
         LocalePair override = null;
         for (TranslationOverrideStrategy strategy : strategies) {
-            override = strategy.getLocaleBasedTemplateValue(cacheKey, property, entityType, entityId, localeCode, localeCountryCode, specificPropertyKey, generalPropertyKey);
-            if(override != null) {
+            override = strategy.getLocaleBasedTemplateValue(
+                    cacheKey,
+                    property,
+                    entityType,
+                    entityId,
+                    localeCode,
+                    localeCountryCode,
+                    specificPropertyKey,
+                    generalPropertyKey
+            );
+            if (override != null) {
                 translation = override.getSpecificItem();
                 if (!strategy.validateTemplateProcessing(standardCacheKey, cacheKey)) {
                     return null;
@@ -378,12 +402,17 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         if (override == null) {
             throw new IllegalStateException("Expected at least one TranslationOverrideStrategy to return a valid value");
         }
-        return translation==null?null:replaceEmptyWithNullResponse(((Translation) translation.getCacheItem()).getTranslatedValue());
+        return translation == null
+                ? null
+                : replaceEmptyWithNullResponse(((Translation) translation.getCacheItem()).getTranslatedValue());
     }
 
     @Override
-    public StandardCacheItem lookupTranslationFromMap(String key,
-            Map<String, Map<String, StandardCacheItem>> propertyTranslationMap, String entityId) {
+    public StandardCacheItem lookupTranslationFromMap(
+            String key,
+            Map<String, Map<String, StandardCacheItem>> propertyTranslationMap,
+            String entityId
+    ) {
 
         StandardCacheItem cacheItem = null;
         if (propertyTranslationMap.containsKey(key)) {
@@ -394,7 +423,12 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     }
 
     @Override
-    public Translation findBestTemplateTranslation(String specificPropertyKey, String generalPropertyKey, Map<String, Map<String, Translation>> propertyTranslationMap, String entityId) {
+    public Translation findBestTemplateTranslation(
+            String specificPropertyKey,
+            String generalPropertyKey,
+            Map<String, Map<String, Translation>> propertyTranslationMap,
+            String entityId
+    ) {
         Translation translation = null;
         if (propertyTranslationMap.containsKey(specificPropertyKey)) {
             Map<String, Translation> byEntity = propertyTranslationMap.get(specificPropertyKey);
@@ -406,7 +440,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         }
         return translation;
     }
-    
+
     protected TranslatedEntity getEntityType(Class<?> entityClass) {
         for (Entry<String, TranslatedEntity> entry : TranslatedEntity.getTypes().entrySet()) {
             try {
@@ -420,11 +454,11 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
         }
         throw new IllegalArgumentException(entityClass.getName() + " is not a known translatable class");
     }
-    
+
     protected TranslatedEntity getEntityType(Object entity) {
         return getEntityType(entity.getClass());
     }
-    
+
     @Override
     public TranslatedEntity getAssignableEntityType(String className) {
         try {
@@ -437,7 +471,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
 
     @Override
     public String getCacheKey(ResultType resultType, TranslatedEntity entityType) {
-        String cacheKey = StringUtils.join(new String[] { entityType.getFriendlyType()}, "|");
+        String cacheKey = StringUtils.join(new String[]{entityType.getFriendlyType()}, "|");
         if (extensionManager != null) {
             ExtensionResultHolder<String> result = new ExtensionResultHolder<String>();
             extensionManager.getProxy().getCacheKey(cacheKey, resultType, result);
@@ -451,9 +485,9 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     @Override
     public List<String> getCacheKeyListForTemplateSite(String propertyName) {
         List<String> cacheKeyList = new ArrayList<>();
-        String cacheKey = StringUtils.join(new String[] {propertyName}, "|");
+        String cacheKey = StringUtils.join(new String[]{propertyName}, "|");
         if (extensionManager != null) {
-            ExtensionResultHolder<List<String>> result = new ExtensionResultHolder<List<String>>();
+            ExtensionResultHolder<List<String>> result = new ExtensionResultHolder<>();
             extensionManager.getProxy().getCacheKeyListForTemplateSite(cacheKey, result);
             if (result.getResult() != null) {
                 cacheKeyList = result.getResult();
@@ -493,8 +527,12 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     }
 
     @Override
-    public String getDefaultTranslationValue(Object entity, String property, Locale locale,
-            String requestedDefaultValue) {
+    public String getDefaultTranslationValue(
+            Object entity,
+            String property,
+            Locale locale,
+            String requestedDefaultValue
+    ) {
 
         if (returnBlankTranslationForNotDefaultLocale
                 && !localeMatchesDefaultLocale(locale)
@@ -506,18 +544,22 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
     }
 
     @Override
-    public List<Translation> findAllTranslationEntries(TranslatedEntity translatedEntity, ResultType standard, List<String> entityIds) {
+    public List<Translation> findAllTranslationEntries(
+            TranslatedEntity translatedEntity,
+            ResultType standard,
+            List<String> entityIds
+    ) {
         return dao.readAllTranslationEntries(translatedEntity, standard, entityIds);
     }
 
     /**
      * Returns true if the passed in entity / property combination is in the defaultLocaleExceptionList
-     * 
+     * <p>
      * The default implementation checks the "translationExceptionProperties" list to see if the
      * property matches one of the regularExpressions in that list.
-     * 
-     * Implementors are expected to override this method for implementation specific needs. 
-     * 
+     * <p>
+     * Implementors are expected to override this method for implementation specific needs.
+     *
      * @param entity
      * @param property
      * @return
@@ -536,6 +578,7 @@ public class TranslationServiceImpl implements TranslationService, TranslationSu
 
     /**
      * Returns true if the passed in locale's language matches the Broadleaf default locale.
+     *
      * @param locale
      * @return
      */

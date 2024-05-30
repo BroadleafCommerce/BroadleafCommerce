@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,17 +31,15 @@ public class BundleOrderItemRequest {
     protected Category category;
     protected int quantity;
     protected Order order;
-    protected List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
-    protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
+    protected List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<>();
+    protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<>();
     protected Money salePriceOverride;
     protected Money retailPriceOverride;
 
-    
     public Order getOrder() {
         return order;
     }
 
-    
     public void setOrder(Order order) {
         this.order = order;
     }
@@ -142,4 +140,5 @@ public class BundleOrderItemRequest {
         result = prime * result + quantity;
         return result;
     }
+
 }

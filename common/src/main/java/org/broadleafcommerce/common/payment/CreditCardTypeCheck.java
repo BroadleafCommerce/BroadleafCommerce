@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,7 +31,8 @@ public class CreditCardTypeCheck {
         if (pan.matches("(34)?(37)?[0-9]{13}")) {
             return CreditCardType.AMEX;
         }
-        if (pan.matches("(300)?(301)?(302)?(303)?(304)?(305)?[0-9]{11}") || pan.matches("(36)?(38)?[0-9]{12}")) {
+        if (pan.matches("(300)?(301)?(302)?(303)?(304)?(305)?[0-9]{11}")
+                || pan.matches("(36)?(38)?[0-9]{12}")) {
             return CreditCardType.DINERSCLUB_CARTEBLANCHE;
         }
         if (pan.matches("6011[0-9]{12}")) {
@@ -44,7 +45,7 @@ public class CreditCardTypeCheck {
             return CreditCardType.JCB;
         }
 
-        ArrayList<UnmaskRange> ranges = new ArrayList<UnmaskRange>();
+        ArrayList<UnmaskRange> ranges = new ArrayList<>();
         ranges.add(new UnmaskRange(UnmaskRange.BEGINNINGTYPE, 4));
         AccountNumberMask mask = new AccountNumberMask(ranges, 'X');
         throw new RuntimeException("Unable to determine credit card type for pan :" + mask.mask(pan));

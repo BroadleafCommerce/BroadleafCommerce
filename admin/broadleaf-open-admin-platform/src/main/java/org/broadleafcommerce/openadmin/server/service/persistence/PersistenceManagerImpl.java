@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -92,25 +92,25 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     private static final Log LOG = LogFactory.getLog(PersistenceManagerImpl.class);
 
-    @Resource(name="blDynamicEntityDao")
+    @Resource(name = "blDynamicEntityDao")
     protected DynamicEntityDao dynamicEntityDao;
 
-    @Resource(name="blPersistenceService")
+    @Resource(name = "blPersistenceService")
     protected PersistenceService persistenceService;
 
-    @Resource(name="blCustomPersistenceHandlers")
+    @Resource(name = "blCustomPersistenceHandlers")
     protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<>();
 
-    @Resource(name="blCustomPersistenceHandlerFilters")
+    @Resource(name = "blCustomPersistenceHandlerFilters")
     protected List<CustomPersistenceHandlerFilter> customPersistenceHandlerFilters = new ArrayList<>();
 
-    @Resource(name="blAdminSecurityRemoteService")
+    @Resource(name = "blAdminSecurityRemoteService")
     protected SecurityVerifier adminRemoteSecurityService;
 
-    @Resource(name="blPersistenceModules")
+    @Resource(name = "blPersistenceModules")
     protected PersistenceModule[] modules;
 
-    @Resource(name="blPersistenceManagerEventHandlers")
+    @Resource(name = "blPersistenceManagerEventHandlers")
     protected List<PersistenceManagerEventHandler> persistenceManagerEventHandlers;
 
     @Resource(name = "blEntityParentIdServiceExtensionManager")
@@ -164,11 +164,17 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     @Override
-    public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective) {
+    public Map<String, FieldMetadata> getSimpleMergedProperties(
+            String entityName,
+            PersistencePerspective persistencePerspective
+    ) {
         return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective);
     }
 
-    public Property[] processMergedProperties(Class<?>[] entities, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) {
+    public Property[] processMergedProperties(
+            Class<?>[] entities,
+            Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties
+    ) {
         List<Property> propertiesList = new ArrayList<>();
         for (PersistenceModule module : modules) {
             module.extractProperties(entities, mergedProperties, propertiesList);
@@ -206,19 +212,23 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 String name2 = o2.getName() == null ? "zzzzz" : o2.getName();
 
                 return new CompareToBuilder()
-                    .append(tabOrder1, tabOrder2)
-                    .append(groupOrder1, groupOrder2)
-                    .append(fieldOrder1, fieldOrder2)
-                    .append(friendlyName1, friendlyName2)
-                    .append(name1, name2)
-                    .toComparison();
+                        .append(tabOrder1, tabOrder2)
+                        .append(groupOrder1, groupOrder2)
+                        .append(fieldOrder1, fieldOrder2)
+                        .append(friendlyName1, friendlyName2)
+                        .append(name1, name2)
+                        .toComparison();
             }
         });
         return properties;
     }
 
     @Override
-    public ClassMetadata buildClassMetadata(Class<?>[] entities, PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties) {
+    public ClassMetadata buildClassMetadata(
+            Class<?>[] entities,
+            PersistencePackage persistencePackage,
+            Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties
+    ) {
         ClassMetadata cmd = new ClassMetadata();
         cmd.setCeilingType(persistencePackage.getCeilingEntityFullyQualifiedClassname());
         cmd.setSecurityCeilingType(persistencePackage.getSecurityCeilingEntityFullyQualifiedClassname());
@@ -234,8 +244,10 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     @Override
     public PersistenceResponse inspect(PersistencePackage persistencePackage) throws ServiceException, ClassNotFoundException {
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
-            PersistenceManagerEventHandlerResponse response = handler.preInspect(this, persistencePackage);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            PersistenceManagerEventHandlerResponse response = handler.preInspect(
+                    this, persistencePackage
+            );
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 break;
             }
         }
@@ -246,8 +258,10 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.INSPECT);
                 }
                 DynamicResultSet results = handler.inspect(persistencePackage, dynamicEntityDao, this);
-                return executePostInspectHandlers(persistencePackage, new PersistenceResponse().withDynamicResultSet
-                        (results));
+                return executePostInspectHandlers(
+                        persistencePackage,
+                        new PersistenceResponse().withDynamicResultSet(results)
+                );
             }
         }
 
@@ -281,17 +295,21 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return response;
     }
 
-    protected PersistenceResponse executePostInspectHandlers(PersistencePackage persistencePackage,
-                                                             PersistenceResponse persistenceResponse) throws ServiceException {
+    protected PersistenceResponse executePostInspectHandlers(
+            PersistencePackage persistencePackage,
+            PersistenceResponse persistenceResponse
+    ) throws ServiceException {
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
-            PersistenceManagerEventHandlerResponse response = handler.postInspect(this, persistenceResponse.getDynamicResultSet(), persistencePackage);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            PersistenceManagerEventHandlerResponse response = handler.postInspect(
+                    this, persistenceResponse.getDynamicResultSet(), persistencePackage
+            );
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 persistenceResponse.setDynamicResultSet(response.getDynamicResultSet());
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
                 }
                 break;
-            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED==response.getStatus()) {
+            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED == response.getStatus()) {
                 persistenceResponse.setDynamicResultSet(response.getDynamicResultSet());
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
@@ -305,7 +323,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     public PersistenceResponse fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException {
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.preFetch(this, persistencePackage, cto);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 break;
             }
         }
@@ -315,19 +333,28 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 if (!handler.willHandleSecurity(persistencePackage)) {
                     adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.FETCH);
                 }
-                DynamicResultSet results = handler.fetch(persistencePackage, cto, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
-                return executePostFetchHandlers(persistencePackage, cto, new PersistenceResponse().withDynamicResultSet(results));
+                DynamicResultSet results = handler.fetch(
+                        persistencePackage,
+                        cto,
+                        dynamicEntityDao,
+                        (RecordHelper) getCompatibleModule(OperationType.BASIC)
+                );
+                return executePostFetchHandlers(
+                        persistencePackage, cto, new PersistenceResponse().withDynamicResultSet(results)
+                );
             }
         }
         adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.FETCH);
-        PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
+        PersistenceModule myModule = getCompatibleModule(
+                persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType()
+        );
 
         try {
             DynamicResultSet results = myModule.fetch(persistencePackage, cto);
             return executePostFetchHandlers(persistencePackage, cto, new PersistenceResponse().withDynamicResultSet(results));
         } catch (ServiceException e) {
             if (e.getCause() instanceof NoPossibleResultsException) {
-                DynamicResultSet drs = new DynamicResultSet(null, new Entity[] {}, 0);
+                DynamicResultSet drs = new DynamicResultSet(null, new Entity[]{}, 0);
                 return executePostFetchHandlers(persistencePackage, cto, new PersistenceResponse().withDynamicResultSet(drs));
             }
             throw e;
@@ -338,14 +365,16 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             cto, PersistenceResponse persistenceResponse) throws ServiceException {
         postFetchValidation(persistencePackage, persistenceResponse);
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
-            PersistenceManagerEventHandlerResponse response = handler.postFetch(this, persistenceResponse.getDynamicResultSet(), persistencePackage, cto);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            PersistenceManagerEventHandlerResponse response = handler.postFetch(
+                    this, persistenceResponse.getDynamicResultSet(), persistencePackage, cto
+            );
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 persistenceResponse.setDynamicResultSet(response.getDynamicResultSet());
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
                 }
                 break;
-            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED==response.getStatus()) {
+            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED == response.getStatus()) {
                 persistenceResponse.setDynamicResultSet(response.getDynamicResultSet());
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
@@ -353,7 +382,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         }
         //support legacy api
-        persistenceResponse.setDynamicResultSet(postFetch(persistenceResponse.getDynamicResultSet(), persistencePackage, cto));
+        persistenceResponse.setDynamicResultSet(postFetch(
+                persistenceResponse.getDynamicResultSet(), persistencePackage, cto
+        ));
         persistenceResponse.getDynamicResultSet().setStartIndex(cto.getFirstResult());
         persistenceResponse.getDynamicResultSet().setPageSize(cto.getMaxResults());
         Integer upperCount;
@@ -373,14 +404,16 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             }
         }
         if (cto.getFirstId() == null && cto.getLastId() == null) {
-            persistenceResponse.getDynamicResultSet().setTotalCountLessThanPageSize(persistenceResponse.getDynamicResultSet().getTotalRecords() < cto.getMaxResults());
+            persistenceResponse.getDynamicResultSet().setTotalCountLessThanPageSize(
+                    persistenceResponse.getDynamicResultSet().getTotalRecords() < cto.getMaxResults()
+            );
         }
         persistenceResponse.getDynamicResultSet().setUpperCount(upperCount);
         persistenceResponse.getDynamicResultSet().setLowerCount(lowerCount);
         Entity[] payload = persistenceResponse.getDynamicResultSet().getRecords();
         if (!ArrayUtils.isEmpty(payload)) {
             Entity first = payload[0];
-            Entity last = payload[payload.length-1];
+            Entity last = payload[payload.length - 1];
             String idProperty = getIdPropertyName(persistencePackage.getCeilingEntityFullyQualifiedClassname());
             if (!StringUtils.isEmpty(idProperty)) {
                 {
@@ -407,18 +440,21 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
         if (fetchDetection != null) {
             persistenceResponse.getDynamicResultSet().setFetchType(fetchDetection.getFetchType(persistencePackage, cto));
-            persistenceResponse.getDynamicResultSet().setPromptSearch(fetchDetection.shouldPromptForSearch(persistencePackage, cto));
+            persistenceResponse.getDynamicResultSet().setPromptSearch(
+                    fetchDetection.shouldPromptForSearch(persistencePackage, cto)
+            );
         }
 
         return persistenceResponse;
     }
 
     protected void postFetchValidation(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
-        final Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems = persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems();
+        final Map<PersistencePerspectiveItemType, PersistencePerspectiveItem> persistencePerspectiveItems =
+                persistencePackage.getPersistencePerspective().getPersistencePerspectiveItems();
         final SectionCrumb[] sectionCrumbs = persistencePackage.getSectionCrumbs();
         final DynamicResultSet dynamicResultSet = persistenceResponse.getDynamicResultSet();
         if (persistencePerspectiveItems == null || sectionCrumbs == null
-            || dynamicResultSet == null || dynamicResultSet.getRecords() == null ) return;
+                || dynamicResultSet == null || dynamicResultSet.getRecords() == null) return;
         for (PersistencePerspectiveItem persistencePerspectiveItem : persistencePerspectiveItems.values()) {
             for (Entity entity : dynamicResultSet.getRecords()) {
                 final Map<String, Property> propertyMap = entity.getPMap();
@@ -426,9 +462,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     final ForeignKey foreignKey = (ForeignKey) persistencePerspectiveItem;
                     final Property property = propertyMap.get(foreignKey.getManyToField());
                     final Optional<SectionCrumb> sectionCrumbOptional = Stream.of(sectionCrumbs)
-                        .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier() != null)
-                        .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier().equals(foreignKey.getManyToField()))
-                        .findFirst();
+                            .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier() != null)
+                            .filter(sectionCrumb -> sectionCrumb.getOriginalSectionIdentifier().equals(foreignKey.getManyToField()))
+                            .findFirst();
                     if (property != null && sectionCrumbOptional.isPresent()) {
                         boolean isValid = false;
                         if (property.getValue().equals(sectionCrumbOptional.get().getSectionId())) {
@@ -437,8 +473,10 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                             // It's possible that we are trying to validate against an inherited entity.  To be sure, let's get
                             //  the parentID and compare against that
                             if (extensionManager != null) {
-                                ExtensionResultHolder<String> extensionResultHolder = new ExtensionResultHolder<String>();
-                                ExtensionResultStatusType result = extensionManager.getProxy().findEntityParentId(property.getValue(), foreignKey.getForeignKeyClass(), extensionResultHolder);
+                                ExtensionResultHolder<String> extensionResultHolder = new ExtensionResultHolder<>();
+                                ExtensionResultStatusType result = extensionManager.getProxy().findEntityParentId(
+                                        property.getValue(), foreignKey.getForeignKeyClass(), extensionResultHolder
+                                );
                                 if (result.equals(ExtensionResultStatusType.HANDLED)) {
                                     String parentID = extensionResultHolder.getResult();
                                     if (parentID.equals(sectionCrumbOptional.get().getSectionId())) {
@@ -467,9 +505,11 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
      * @deprecated use the PersistenceManagerEventHandler api instead
      */
     @Deprecated
-    protected DynamicResultSet postFetch(DynamicResultSet resultSet, PersistencePackage persistencePackage,
-            CriteriaTransferObject cto)
-            throws ServiceException {
+    protected DynamicResultSet postFetch(
+            DynamicResultSet resultSet,
+            PersistencePackage persistencePackage,
+            CriteriaTransferObject cto
+    ) throws ServiceException {
         return resultSet;
     }
 
@@ -477,7 +517,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     public PersistenceResponse add(PersistencePackage persistencePackage) throws ServiceException {
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.preAdd(this, persistencePackage);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 break;
             }
         }
@@ -485,7 +525,8 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //execute the root PersistencePackage
         Entity response;
         try {
-            checkRoot: {
+            checkRoot:
+            {
                 //if there is a validation exception in the root check, let it bubble, as we need a valid, persisted
                 //entity to execute the subPackage code later
                 for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
@@ -493,15 +534,21 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                         if (!handler.willHandleSecurity(persistencePackage)) {
                             adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.ADD);
                         }
-                        response = handler.add(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                        response = handler.add(
+                                persistencePackage,
+                                dynamicEntityDao,
+                                (RecordHelper) getCompatibleModule(OperationType.BASIC)
+                        );
                         break checkRoot;
                     }
                 }
                 adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.ADD);
-                PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getAddType());
+                PersistenceModule myModule = getCompatibleModule(
+                        persistencePackage.getPersistencePerspective().getOperationTypes().getAddType()
+                );
                 response = myModule.add(persistencePackage);
             }
-        }  catch (ValidationException e) {
+        } catch (ValidationException e) {
             response = e.getEntity();
         } catch (ServiceException e) {
             if (e.getCause() instanceof ValidationException) {
@@ -524,21 +571,28 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             String idVal = response.findProperty(idProperty).getValue();
 
             Map<String, List<String>> subPackageValidationErrors = new HashMap<>();
-            for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
+            for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
                 Entity subResponse;
                 try {
                     subPackage.getValue().getCustomCriteria()[1] = idVal;
                     //Run through any subPackages -- add up any validation errors
-                    checkHandler: {
+                    checkHandler:
+                    {
                         for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
                             if (handler.canHandleAdd(subPackage.getValue())) {
-                                subResponse = handler.add(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                                subResponse = handler.add(
+                                        subPackage.getValue(),
+                                        dynamicEntityDao,
+                                        (RecordHelper) getCompatibleModule(OperationType.BASIC)
+                                );
                                 subPackage.getValue().setEntity(subResponse);
 
                                 break checkHandler;
                             }
                         }
-                        PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getAddType());
+                        PersistenceModule subModule = getCompatibleModule(
+                                subPackage.getValue().getPersistencePerspective().getOperationTypes().getAddType()
+                        );
                         subResponse = subModule.add(persistencePackage);
                         subPackage.getValue().setEntity(subResponse);
                     }
@@ -552,38 +606,49 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                     }
                 }
             }
-            
+
             //Build up validation errors in all of the subpackages, even those that might not have thrown ValidationExceptions
             for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
                 for (Map.Entry<String, List<String>> error : subPackage.getValue().getEntity().getPropertyValidationErrors().entrySet()) {
-                    subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
+                    subPackageValidationErrors.put(
+                            subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(),
+                            error.getValue()
+                    );
                 }
             }
-            
+
             response.getPropertyValidationErrors().putAll(subPackageValidationErrors);
         }
 
         if (response.isValidationFailure()) {
-            PersistenceResponse validationResponse = executeValidationProcessors(persistencePackage, new PersistenceResponse().withEntity(response));
+            PersistenceResponse validationResponse = executeValidationProcessors(
+                    persistencePackage, new PersistenceResponse().withEntity(response)
+            );
             Entity entity = validationResponse.getEntity();
-            String message = ValidationUtil.buildErrorMessage(entity.getPropertyValidationErrors(), entity.getGlobalValidationErrors());
+            String message = ValidationUtil.buildErrorMessage(
+                    entity.getPropertyValidationErrors(), entity.getGlobalValidationErrors()
+            );
             throw new ValidationException(entity, message);
         }
 
         return executePostAddHandlers(persistencePackage, new PersistenceResponse().withEntity(response));
     }
 
-    protected PersistenceResponse executeValidationProcessors(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+    protected PersistenceResponse executeValidationProcessors(
+            PersistencePackage persistencePackage,
+            PersistenceResponse persistenceResponse
+    ) throws ServiceException {
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
-            PersistenceManagerEventHandlerResponse response = handler.processValidationError(this,
-                    persistenceResponse.getEntity(), persistencePackage);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            PersistenceManagerEventHandlerResponse response = handler.processValidationError(
+                    this, persistenceResponse.getEntity(), persistencePackage
+            );
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 persistenceResponse.setEntity(response.getEntity());
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
                 }
                 break;
-            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED==response.getStatus()) {
+            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED == response.getStatus()) {
                 persistenceResponse.setEntity(response.getEntity());
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
@@ -594,18 +659,23 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         return persistenceResponse;
     }
 
-    protected PersistenceResponse executePostAddHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+    protected PersistenceResponse executePostAddHandlers(
+            PersistencePackage persistencePackage,
+            PersistenceResponse persistenceResponse
+    ) throws ServiceException {
         dynamicEntityDao.flush();
         setMainEntityName(persistencePackage, persistenceResponse.getEntity());
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
-            PersistenceManagerEventHandlerResponse response = handler.postAdd(this, persistenceResponse.getEntity(), persistencePackage);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            PersistenceManagerEventHandlerResponse response = handler.postAdd(
+                    this, persistenceResponse.getEntity(), persistencePackage
+            );
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 persistenceResponse.setEntity(response.getEntity());
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
                 }
                 break;
-            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED==response.getStatus()) {
+            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED == response.getStatus()) {
                 persistenceResponse.setEntity(response.getEntity());
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
@@ -676,7 +746,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     public PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException {
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.preUpdate(this, persistencePackage);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 break;
             }
         }
@@ -684,18 +754,25 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         //execute the root PersistencePackage
         Entity response;
         try {
-            checkRoot: {
+            checkRoot:
+            {
                 for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
                     if (handler.canHandleUpdate(persistencePackage)) {
                         if (!handler.willHandleSecurity(persistencePackage)) {
                             adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.UPDATE);
                         }
-                        response = handler.update(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                        response = handler.update(
+                                persistencePackage,
+                                dynamicEntityDao,
+                                (RecordHelper) getCompatibleModule(OperationType.BASIC)
+                        );
                         break checkRoot;
                     }
                 }
                 adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.UPDATE);
-                PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType());
+                PersistenceModule myModule = getCompatibleModule(
+                        persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType()
+                );
                 response = myModule.update(persistencePackage);
             }
         } catch (ValidationException e) {
@@ -711,18 +788,25 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         }
 
         Map<String, List<String>> subPackageValidationErrors = new HashMap<>();
-        for (Map.Entry<String,PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
+        for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
             try {
                 //Run through any subPackages -- add up any validation errors
-                checkHandler: {
+                checkHandler:
+                {
                     for (CustomPersistenceHandler handler : getCustomPersistenceHandlers()) {
                         if (handler.canHandleUpdate(subPackage.getValue())) {
-                            Entity subResponse = handler.update(subPackage.getValue(), dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                            Entity subResponse = handler.update(
+                                    subPackage.getValue(),
+                                    dynamicEntityDao,
+                                    (RecordHelper) getCompatibleModule(OperationType.BASIC)
+                            );
                             subPackage.getValue().setEntity(subResponse);
                             break checkHandler;
                         }
                     }
-                    PersistenceModule subModule = getCompatibleModule(subPackage.getValue().getPersistencePerspective().getOperationTypes().getUpdateType());
+                    PersistenceModule subModule = getCompatibleModule(
+                            subPackage.getValue().getPersistencePerspective().getOperationTypes().getUpdateType()
+                    );
                     Entity subResponse = subModule.update(persistencePackage);
                     subPackage.getValue().setEntity(subResponse);
                 }
@@ -736,20 +820,27 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 }
             }
         }
-        
+
         //Build up validation errors in all of the subpackages, even those that might not have thrown ValidationExceptions
         for (Map.Entry<String, PersistencePackage> subPackage : persistencePackage.getSubPackages().entrySet()) {
             for (Map.Entry<String, List<String>> error : subPackage.getValue().getEntity().getPropertyValidationErrors().entrySet()) {
-                subPackageValidationErrors.put(subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(), error.getValue());
+                subPackageValidationErrors.put(
+                        subPackage.getKey() + DynamicEntityFormInfo.FIELD_SEPARATOR + error.getKey(),
+                        error.getValue()
+                );
             }
         }
 
         response.getPropertyValidationErrors().putAll(subPackageValidationErrors);
 
         if (response.isValidationFailure()) {
-            PersistenceResponse validationResponse = executeValidationProcessors(persistencePackage, new PersistenceResponse().withEntity(response));
+            PersistenceResponse validationResponse = executeValidationProcessors(
+                    persistencePackage, new PersistenceResponse().withEntity(response)
+            );
             Entity entity = validationResponse.getEntity();
-            String message = ValidationUtil.buildErrorMessage(entity.getPropertyValidationErrors(), entity.getGlobalValidationErrors());
+            String message = ValidationUtil.buildErrorMessage(
+                    entity.getPropertyValidationErrors(), entity.getGlobalValidationErrors()
+            );
             throw new ValidationException(entity, message);
         }
 
@@ -760,18 +851,23 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         LOG.info("A validation error occurred: " + response.getPropertyValidationErrors());
     }
 
-    protected PersistenceResponse executePostUpdateHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+    protected PersistenceResponse executePostUpdateHandlers(
+            PersistencePackage persistencePackage,
+            PersistenceResponse persistenceResponse
+    ) throws ServiceException {
         dynamicEntityDao.flush();
         setMainEntityName(persistencePackage, persistenceResponse.getEntity());
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
-            PersistenceManagerEventHandlerResponse response = handler.postUpdate(this, persistenceResponse.getEntity(), persistencePackage);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            PersistenceManagerEventHandlerResponse response = handler.postUpdate(
+                    this, persistenceResponse.getEntity(), persistencePackage
+            );
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 persistenceResponse.setEntity(response.getEntity());
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
                 }
                 break;
-            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED==response.getStatus()) {
+            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED == response.getStatus()) {
                 persistenceResponse.setEntity(response.getEntity());
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
@@ -805,7 +901,7 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     public PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException {
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.preRemove(this, persistencePackage);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 break;
             }
         }
@@ -815,28 +911,37 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 if (!handler.willHandleSecurity(persistencePackage)) {
                     adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.REMOVE);
                 }
-                handler.remove(persistencePackage, dynamicEntityDao, (RecordHelper) getCompatibleModule(OperationType.BASIC));
+                handler.remove(
+                        persistencePackage,
+                        dynamicEntityDao,
+                        (RecordHelper) getCompatibleModule(OperationType.BASIC)
+                );
                 return executePostRemoveHandlers(persistencePackage, new PersistenceResponse());
             }
         }
         adminRemoteSecurityService.securityCheck(persistencePackage, EntityOperationType.REMOVE);
-        PersistenceModule myModule = getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType());
+        PersistenceModule myModule = getCompatibleModule(
+                persistencePackage.getPersistencePerspective().getOperationTypes().getRemoveType()
+        );
         myModule.remove(persistencePackage);
 
         return executePostRemoveHandlers(persistencePackage, new PersistenceResponse());
     }
 
-    protected PersistenceResponse executePostRemoveHandlers(PersistencePackage persistencePackage, PersistenceResponse persistenceResponse) throws ServiceException {
+    protected PersistenceResponse executePostRemoveHandlers(
+            PersistencePackage persistencePackage,
+            PersistenceResponse persistenceResponse
+    ) throws ServiceException {
         dynamicEntityDao.flush();
         setMainEntityName(persistencePackage, persistenceResponse.getEntity());
         for (PersistenceManagerEventHandler handler : persistenceManagerEventHandlers) {
             PersistenceManagerEventHandlerResponse response = handler.postRemove(this, persistencePackage);
-            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK==response.getStatus()) {
+            if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED_BREAK == response.getStatus()) {
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
                 }
                 break;
-            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED==response.getStatus()) {
+            } else if (PersistenceManagerEventHandlerResponse.PersistenceManagerEventHandlerResponseStatus.HANDLED == response.getStatus()) {
                 if (!MapUtils.isEmpty(response.getAdditionalData())) {
                     persistenceResponse.getAdditionalData().putAll(response.getAdditionalData());
                 }
@@ -923,7 +1028,12 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
         cloned.sort(Comparator.comparingInt(Ordered::getOrder));
         return cloned;
     }
-    
+
+    @Override
+    public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers) {
+        this.customPersistenceHandlers = customPersistenceHandlers;
+    }
+
     protected void setMainEntityName(PersistencePackage pp, Entity entity) {
         if (StringUtils.isBlank(pp.getRequestingEntityName()) && entity != null) {
             Property nameProp = entity.getPMap().get(AdminMainEntity.MAIN_ENTITY_NAME_PROPERTY);
@@ -931,11 +1041,6 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
                 pp.setRequestingEntityName(nameProp.getValue());
             }
         }
-    }
-
-    @Override
-    public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers) {
-        this.customPersistenceHandlers = customPersistenceHandlers;
     }
 
     public SecurityVerifier getAdminRemoteSecurityService() {
@@ -1007,4 +1112,5 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
             customPersistenceHandlers = sorted;
         }
     }
+
 }

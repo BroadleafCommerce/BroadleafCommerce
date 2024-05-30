@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,20 +25,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * Container that holds additional criteria to consider when performing searches for Products
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class SearchCriteria {
-    
+
     public static String PAGE_SIZE_STRING = "pageSize";
     public static String PAGE_NUMBER = "page";
     public static String SORT_STRING = "sort";
     public static String QUERY_STRING = "q";
     public static String REQUEST_HANDLER = "qt";
-    
+
     protected Integer page = 1;
     protected Integer pageSize;
     protected Integer startIndex;
@@ -46,6 +45,7 @@ public class SearchCriteria {
     protected String requestHandler;
     protected Map<String, String[]> filterCriteria = new HashMap<>();
     protected Collection<String> filterQueries = new ArrayList<>();
+
     /**
      * The category that the user searched on
      */
@@ -55,13 +55,13 @@ public class SearchCriteria {
      * The query that the user actually typed into the search box, fully sanitized
      */
     protected String query;
-    
+
     /**
      * Whether or not to do category filtering based on {@link SolrHelperService#getExplicitCategoryFieldName()} or
      * {@link SolrHelperService#getCategoryFieldName()}
      */
     protected boolean searchExplicitCategory = false;
-    
+
     public Integer getPage() {
         return page;
     }
@@ -89,7 +89,7 @@ public class SearchCriteria {
     public String getSortQuery() {
         return sortQuery;
     }
-    
+
     public void setSortQuery(String sortQuery) {
         this.sortQuery = sortQuery;
     }
@@ -142,7 +142,8 @@ public class SearchCriteria {
         this.filterQueries = filterQueries;
     }
 
-    public void addFilterQuery(String query){
+    public void addFilterQuery(String query) {
         filterQueries.add(query);
     }
+
 }

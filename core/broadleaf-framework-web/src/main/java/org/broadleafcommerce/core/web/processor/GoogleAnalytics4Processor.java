@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -70,7 +70,6 @@ import jakarta.annotation.Resource;
  * @param ordernumber the order number to look up for ecommerce tracking, such as on the confirmation page
  * @author Markiian Buryi (MarekB01)
  */
-
 @Component("blGoogleAnalytics4Processor")
 @ConditionalOnTemplating
 public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementProcessor {
@@ -81,7 +80,7 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
      * Global value, intentionally only retrieved as a file property NOT via the system properties service
      */
     @Value("${googleAnalytics4.masterWebPropertyId:null}")
-   protected String googleAnalytics4PropertyId;
+    protected String googleAnalytics4PropertyId;
 
     @Value("${googleAnalytics4.webPropertyId:null}")
     protected String googleAnalytics4WebPropertyId;
@@ -110,7 +109,11 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
     }
 
     @Override
-    public BroadleafTemplateModel getReplacementModel(String tagName, Map<String, String> tagAttributes, BroadleafTemplateContext context) {
+    public BroadleafTemplateModel getReplacementModel(
+            String tagName,
+            Map<String, String> tagAttributes,
+            BroadleafTemplateContext context
+    ) {
         StringBuilder sb = new StringBuilder();
         if (StringUtils.isNotEmpty(getTagIdForProperty())) {
             tagId = getTagIdForProperty();
@@ -119,7 +122,8 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
             googleAnalytics4WebPropertyId = getWebPropertyId();
         }
 
-        if (StringUtils.isNotEmpty(tagId) || StringUtils.isNotEmpty(googleAnalytics4PropertyId) || StringUtils.isNotEmpty(googleAnalytics4WebPropertyId)) {
+        if (StringUtils.isNotEmpty(tagId) || StringUtils.isNotEmpty(googleAnalytics4PropertyId)
+                || StringUtils.isNotEmpty(googleAnalytics4WebPropertyId)) {
             sb.append("window.dataLayer = window.dataLayer || [];");
             sb.append("function gtag(){dataLayer.push(arguments);}");
             sb.append("gtag('js', new Date());");
@@ -142,7 +146,6 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
                 sb.append("gtag('config', '" + tagId + "');");
             }
 
-
             String orderNumberExpression = tagAttributes.get("ordernumber");
             String orderNumber = null;
             if (orderNumberExpression != null) {
@@ -160,7 +163,9 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
             BroadleafTemplateModel model = context.createModel();
             Map<String, String> attrs = new HashMap<>();
             attrs.put("asynch", null);
-            String analyticsProperty = StringUtils.isNotEmpty(googleAnalytics4PropertyId) ? googleAnalytics4PropertyId : googleAnalytics4WebPropertyId;
+            String analyticsProperty = StringUtils.isNotEmpty(googleAnalytics4PropertyId)
+                    ? googleAnalytics4PropertyId
+                    : googleAnalytics4WebPropertyId;
             String idToUse = StringUtils.isNotEmpty(analyticsProperty) ? analyticsProperty : tagId;
             attrs.put("src", "https://www.googletagmanager.com/gtag/js?id=" + idToUse);
             BroadleafTemplateElement importScript = context.createStandaloneElement("script", attrs, true);
@@ -260,17 +265,20 @@ public class GoogleAnalytics4Processor extends AbstractBroadleafTagReplacementPr
         return BLCSystemProperty.resolveSystemProperty("googleAnalytics4.webPropertyId");
     }
 
-
     public String getAffiliation() {
         return BLCSystemProperty.resolveSystemProperty("googleAnalytics4.affiliation");
     }
 
     public boolean isIncludeLinkAttribution() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("googleAnalytics4.enableLinkAttribution", true);
+        return BLCSystemProperty.resolveBooleanSystemProperty(
+                "googleAnalytics4.enableLinkAttribution", true
+        );
     }
 
     public boolean isIncludeDisplayAdvertising() {
-        return BLCSystemProperty.resolveBooleanSystemProperty("googleAnalytics4.enableDisplayAdvertising", false);
+        return BLCSystemProperty.resolveBooleanSystemProperty(
+                "googleAnalytics4.enableDisplayAdvertising", false
+        );
     }
 
 }

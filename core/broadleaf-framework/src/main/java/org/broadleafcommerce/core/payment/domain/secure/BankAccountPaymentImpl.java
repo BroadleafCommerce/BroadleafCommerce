@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,6 +22,8 @@ import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,25 +41,14 @@ import jakarta.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BANK_ACCOUNT_PAYMENT",
-        indexes = {@Index(name = "BANKACCOUNT_INDEX", columnList = "REFERENCE_NUMBER")})
+        indexes = {@Index(name = "BANKACCOUNT_INDEX", columnList = "REFERENCE_NUMBER")}
+)
 public class BankAccountPaymentImpl implements BankAccountPayment {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    /**
-     * Rather than constructing directly, use
-     * {@link
-     * SecureOrderPaymentService#create(org.broadleafcommerce.core.payment.service.type.PaymentType)}
-     * so that the appropriate {@link EncryptionModule} can be hooked up to this entity
-     */
-    protected BankAccountPaymentImpl() {
-        //do not allow direct instantiation -- must at least be package private for bytecode instrumentation
-        //this complies with JPA specification requirements for entity construction
-    }
-
     @Transient
     protected EncryptionModule encryptionModule;
-
     @Id
     @GeneratedValue(generator = "BankPaymentId")
     @GenericGenerator(
@@ -71,15 +62,23 @@ public class BankAccountPaymentImpl implements BankAccountPayment {
     )
     @Column(name = "PAYMENT_ID")
     protected Long id;
-
     @Column(name = "REFERENCE_NUMBER", nullable = false)
     protected String referenceNumber;
-
     @Column(name = "ACCOUNT_NUMBER", nullable = false)
     protected String accountNumber;
-
     @Column(name = "ROUTING_NUMBER", nullable = false)
     protected String routingNumber;
+
+    /**
+     * Rather than constructing directly, use
+     * {@link
+     * SecureOrderPaymentService#create(org.broadleafcommerce.core.payment.service.type.PaymentType)}
+     * so that the appropriate {@link EncryptionModule} can be hooked up to this entity
+     */
+    protected BankAccountPaymentImpl() {
+        //do not allow direct instantiation -- must at least be package private for bytecode instrumentation
+        //this complies with JPA specification requirements for entity construction
+    }
 
     @Override
     public Long getId() {

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,25 +21,29 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment {
-    
+
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     protected PromotableCandidateOrderOffer promotableCandidateOrderOffer;
     protected PromotableOrder promotableOrder;
     protected Money adjustmentValue;
     protected Offer offer;
-    
+
     protected boolean roundOfferValues = true;
     protected int roundingScale = 2;
     protected RoundingMode roundingMode = RoundingMode.HALF_EVEN;
     protected boolean isFutureCredit = false;
 
-
-    public PromotableOrderAdjustmentImpl(PromotableCandidateOrderOffer promotableCandidateOrderOffer, PromotableOrder promotableOrder) {
+    public PromotableOrderAdjustmentImpl(
+            PromotableCandidateOrderOffer promotableCandidateOrderOffer,
+            PromotableOrder promotableOrder
+    ) {
         assert (promotableOrder != null);
         assert (promotableCandidateOrderOffer != null);
 
@@ -51,9 +55,12 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
         }
         computeAdjustmentValue();
     }
-    
-    public PromotableOrderAdjustmentImpl(PromotableCandidateOrderOffer promotableCandidateOrderOffer,
-            PromotableOrder promotableOrder, Money adjustmentValue) {
+
+    public PromotableOrderAdjustmentImpl(
+            PromotableCandidateOrderOffer promotableCandidateOrderOffer,
+            PromotableOrder promotableOrder,
+            Money adjustmentValue
+    ) {
         this(promotableCandidateOrderOffer, promotableOrder);
         if (promotableOrder.isIncludeOrderAndItemAdjustments()) {
             this.adjustmentValue = adjustmentValue;
@@ -64,33 +71,35 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
     public PromotableOrder getPromotableOrder() {
         return promotableOrder;
     }
-    
+
     @Override
     public Offer getOffer() {
         return offer;
     }
-    
+
     /*
      * Calculates the value of the adjustment by first getting the current value of the order and then
-     * calculating the value of this adjustment.   
-     * 
+     * calculating the value of this adjustment.
+     *
      * If this adjustment value is greater than the currentOrderValue (e.g. would make the order go negative
-     * then the adjustment value is set to the value of the order).  
+     * then the adjustment value is set to the value of the order).
      */
     protected void computeAdjustmentValue() {
         adjustmentValue = new Money(promotableOrder.getOrderCurrency());
         Money currentOrderValue = promotableOrder.calculateSubtotalWithAdjustments();
-        
+
         // We also need to consider order offers that have been applied when figuring out if the current value of this
         // adjustment will be more than the current subtotal of the order
         currentOrderValue = currentOrderValue.subtract(promotableOrder.calculateOrderAdjustmentTotal());
 
         // Note: FIXED_PRICE not calculated as this is not a valid option for offers.
         if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-            adjustmentValue = new Money(offer.getValue(), promotableOrder.getOrderCurrency());            
+            adjustmentValue = new Money(offer.getValue(), promotableOrder.getOrderCurrency());
         } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-            BigDecimal offerValue = currentOrderValue.getAmount().multiply(offer.getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN));
-            
+            BigDecimal offerValue = currentOrderValue.getAmount().multiply(
+                    offer.getValue().divide(new BigDecimal("100"), 5, RoundingMode.HALF_EVEN)
+            );
+
             if (isRoundOfferValues()) {
                 offerValue = offerValue.setScale(roundingScale, roundingMode);
             }
@@ -101,7 +110,7 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
             adjustmentValue = currentOrderValue;
         }
     }
-    
+
     @Override
     public Money getAdjustmentValue() {
         return adjustmentValue;
@@ -116,30 +125,28 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
         return roundOfferValues;
     }
 
-    /**
-     * @see #isRoundOfferValues()
-     * 
-     * @param roundingScale
-     */
-    public void setRoundingScale(int roundingScale) {
-        this.roundingScale = roundingScale;
-    }
-
     public int getRoundingScale() {
         return roundingScale;
     }
 
     /**
+     * @param roundingScale
      * @see #isRoundOfferValues()
-     * 
-     * @param roundingMode
      */
-    public void setRoundingMode(RoundingMode roundingMode) {
-        this.roundingMode = roundingMode;
+    public void setRoundingScale(int roundingScale) {
+        this.roundingScale = roundingScale;
     }
 
     public RoundingMode getRoundingMode() {
         return roundingMode;
+    }
+
+    /**
+     * @param roundingMode
+     * @see #isRoundOfferValues()
+     */
+    public void setRoundingMode(RoundingMode roundingMode) {
+        this.roundingMode = roundingMode;
     }
 
     @Override
@@ -163,4 +170,5 @@ public class PromotableOrderAdjustmentImpl implements PromotableOrderAdjustment 
     public void setFutureCredit(boolean futureCredit) {
         isFutureCredit = futureCredit;
     }
+
 }

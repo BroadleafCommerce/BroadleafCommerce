@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,33 +30,32 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
 
-
 @Service("blAssetFormBuilderService")
 public class AssetFormBuilderServiceImpl implements AssetFormBuilderService {
-    
+
     @Resource(name = "blFormBuilderService")
     protected FormBuilderService formBuilderService;
-    
+
     @Resource(name = "blStaticAssetService")
     protected StaticAssetService staticAssetService;
-    
+
     @Resource(name = "blStaticMapNamedOperationComponent")
     protected StaticMapNamedOperationComponent operationMap;
- 
+
     @Override
     public void addImageThumbnailField(ListGrid listGrid, String urlField) {
         listGrid.getHeaderFields().add(new Field()
-            .withName("thumbnail")
-            .withFriendlyName("Asset_thumbnail")
-            .withFieldType(SupportedFieldType.STRING.toString())
-            .withOrder(Integer.MIN_VALUE)
-            .withColumnWidth("50px")
-            .withFilterSortDisabled(true));
-        
+                .withName("thumbnail")
+                .withFriendlyName("Asset_thumbnail")
+                .withFieldType(SupportedFieldType.STRING.toString())
+                .withOrder(Integer.MIN_VALUE)
+                .withColumnWidth("50px")
+                .withFilterSortDisabled(true));
+
         for (ListGridRecord record : listGrid.getRecords()) {
             // Get the value of the URL
             String imageUrl = record.getField(urlField).getValue();
-            
+
             // Prepend the static asset url prefix if necessary
             String staticAssetUrlPrefix = staticAssetService.getStaticAssetUrlPrefix();
             if (staticAssetUrlPrefix != null && !staticAssetUrlPrefix.startsWith("/")) {
@@ -67,33 +66,34 @@ public class AssetFormBuilderServiceImpl implements AssetFormBuilderService {
             } else {
                 imageUrl = staticAssetUrlPrefix + imageUrl;
             }
-            
+
             MediaField mf = (MediaField) new MediaField()
-                .withName("thumbnail")
-                .withFriendlyName("Asset_thumbnail")
-                .withFieldType(SupportedFieldType.IMAGE.toString())
-                .withOrder(Integer.MIN_VALUE)
-                .withValue(imageUrl);
-            
+                    .withName("thumbnail")
+                    .withFriendlyName("Asset_thumbnail")
+                    .withFieldType(SupportedFieldType.IMAGE.toString())
+                    .withOrder(Integer.MIN_VALUE)
+                    .withValue(imageUrl);
+
             // Add a hidden field for the large thumbnail path
             record.getHiddenFields().add(new Field()
                     .withName("cmsUrlPrefix")
                     .withValue(staticAssetUrlPrefix));
-                
+
             record.getHiddenFields().add(new Field()
-                .withName("thumbnailKey")
-                .withValue("?smallAdminThumbnail"));
-            
+                    .withName("thumbnailKey")
+                    .withValue("?smallAdminThumbnail"));
+
             record.getHiddenFields().add(new Field()
-                .withName("servletContext")
-                .withValue(BroadleafRequestContext.getBroadleafRequestContext().getRequest().getContextPath()));
-            
+                    .withName("servletContext")
+                    .withValue(BroadleafRequestContext.getBroadleafRequestContext().getRequest().getContextPath()));
+
             // Set the height value on this field
             mf.setHeight(operationMap.getNamedOperations().get("smallAdminThumbnail").get("resize-height-amount"));
             record.getFields().add(mf);
-            
+
             // Since we've added a new field, we need to clear the cached map to ensure it will display
             record.clearFieldMap();
         }
     }
+
 }

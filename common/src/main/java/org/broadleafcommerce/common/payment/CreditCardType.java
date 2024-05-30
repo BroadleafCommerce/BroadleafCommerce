@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,33 +19,29 @@ package org.broadleafcommerce.common.payment;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of credit card types.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class CreditCardType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, CreditCardType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, CreditCardType> TYPES = new LinkedHashMap<String, CreditCardType>();
-
-    public static final CreditCardType MASTERCARD  = new CreditCardType("MASTERCARD", "Master Card");
-    public static final CreditCardType VISA  = new CreditCardType("VISA", "Visa");
-    public static final CreditCardType AMEX  = new CreditCardType("AMEX", "American Express");
-    public static final CreditCardType DINERSCLUB_CARTEBLANCHE  = new CreditCardType("DINERSCLUB_CARTEBLANCHE", "Diner's Club / Carte Blanche");
-    public static final CreditCardType DISCOVER  = new CreditCardType("DISCOVER", "Discover");
-    public static final CreditCardType ENROUTE  = new CreditCardType("ENROUTE", "En Route");
-    public static final CreditCardType JCB  = new CreditCardType("JCB", "JCB");
-
-    public static CreditCardType getInstance(final String type) {
-        return TYPES.get(type);
-    }
+    public static final CreditCardType MASTERCARD = new CreditCardType("MASTERCARD", "Master Card");
+    public static final CreditCardType VISA = new CreditCardType("VISA", "Visa");
+    public static final CreditCardType AMEX = new CreditCardType("AMEX", "American Express");
+    public static final CreditCardType DINERSCLUB_CARTEBLANCHE = new CreditCardType("DINERSCLUB_CARTEBLANCHE", "Diner's Club / Carte Blanche");
+    public static final CreditCardType DISCOVER = new CreditCardType("DISCOVER", "Discover");
+    public static final CreditCardType ENROUTE = new CreditCardType("ENROUTE", "En Route");
+    public static final CreditCardType JCB = new CreditCardType("JCB", "JCB");
 
     private String type;
     private String friendlyType;
@@ -59,19 +55,23 @@ public class CreditCardType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static CreditCardType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
-        if (!TYPES.containsKey(type)){
+        if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -98,4 +98,5 @@ public class CreditCardType implements Serializable, BroadleafEnumerationType {
             return false;
         return true;
     }
+
 }

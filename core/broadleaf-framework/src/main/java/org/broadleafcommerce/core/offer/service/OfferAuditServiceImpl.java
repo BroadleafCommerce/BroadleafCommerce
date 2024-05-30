@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,17 +28,15 @@ import java.util.List;
 
 import jakarta.annotation.Resource;
 
-
 /**
- *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Service("blOfferAuditService")
 public class OfferAuditServiceImpl implements OfferAuditService {
-    
+
     @Resource(name = "blOfferAuditDao")
     protected OfferAuditDao offerAuditDao;
-    
+
     @Override
     public OfferAudit readAuditById(Long offerAuditId) {
         return offerAuditDao.readAuditById(offerAuditId);
@@ -49,7 +47,7 @@ public class OfferAuditServiceImpl implements OfferAuditService {
     public OfferAudit save(OfferAudit offerAudit) {
         return offerAuditDao.save(offerAudit);
     }
-    
+
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void delete(OfferAudit offerAudit) {
@@ -86,7 +84,7 @@ public class OfferAuditServiceImpl implements OfferAuditService {
     public Long countOfferCodeUses(Order order, Long offerCodeId) {
         return offerAuditDao.countOfferCodeUses(order, offerCodeId);
     }
-    
+
     @Deprecated
     @Override
     public Long countOfferCodeUses(Long offerCodeId) {
@@ -97,6 +95,5 @@ public class OfferAuditServiceImpl implements OfferAuditService {
     public List<OfferAudit> readOfferAuditsByOrderId(Long orderId) {
         return offerAuditDao.readOfferAuditsByOrderId(orderId);
     }
-
 
 }

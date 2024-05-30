@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,31 +19,28 @@ package org.broadleafcommerce.openadmin.server.security.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of container permission types.
- * 
+ *
  * @author jfischer
  */
 public class PermissionType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, PermissionType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, PermissionType> TYPES = new LinkedHashMap<String, PermissionType>();
-
-    public static final PermissionType READ  = new PermissionType("READ", "Read");
-    public static final PermissionType CREATE  = new PermissionType("CREATE", "Create");
-    public static final PermissionType UPDATE  = new PermissionType("UPDATE", "Update");
-    public static final PermissionType DELETE  = new PermissionType("DELETE", "Delete");
-    public static final PermissionType ALL  = new PermissionType("ALL", "All");
-    public static final PermissionType OTHER  = new PermissionType("OTHER", "Other");
-
-    public static PermissionType getInstance(final String type) {
-        return TYPES.get(type);
-    }
+    public static final PermissionType READ = new PermissionType("READ", "Read");
+    public static final PermissionType CREATE = new PermissionType("CREATE", "Create");
+    public static final PermissionType UPDATE = new PermissionType("UPDATE", "Update");
+    public static final PermissionType DELETE = new PermissionType("DELETE", "Delete");
+    public static final PermissionType ALL = new PermissionType("ALL", "All");
+    public static final PermissionType OTHER = new PermissionType("OTHER", "Other");
 
     private String type;
     private String friendlyType;
@@ -57,21 +54,26 @@ public class PermissionType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static PermissionType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via "
+                    + getInstance(type).getClass().getName());
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -98,4 +100,5 @@ public class PermissionType implements Serializable, BroadleafEnumerationType {
             return false;
         return true;
     }
+
 }

@@ -73,6 +73,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -121,63 +122,34 @@ import jakarta.persistence.Transient;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategories")
 @SQLDelete(sql = "UPDATE BLC_CATEGORY SET ARCHIVED = 'Y' WHERE CATEGORY_ID = ?")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
-public class CategoryImpl
-        implements Category, Status, AdminMainEntity, Locatable, TemplatePathContainer,
+public class CategoryImpl implements Category, Status, AdminMainEntity, Locatable, TemplatePathContainer,
         CategoryAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
-
-    private static String buildLink(Category category, boolean ignoreTopLevel) {
-        Category myCategory = category;
-        List<Long> preventRecursionCategoryIds = new ArrayList<Long>();
-
-        StringBuilder linkBuffer = new StringBuilder(50);
-        while (myCategory != null && !preventRecursionCategoryIds.contains(myCategory.getId())) {
-            preventRecursionCategoryIds.add(myCategory.getId());
-            if (!ignoreTopLevel || myCategory.getParentCategory() != null) {
-                if (linkBuffer.length() == 0) {
-                    linkBuffer.append(myCategory.getUrlKey());
-                } else if (myCategory.getUrlKey() != null && !"/".equals(myCategory.getUrlKey())) {
-                    linkBuffer.insert(0, myCategory.getUrlKey() + '/');
+    protected static Comparator<CategorySearchFacet> facetPositionComparator =
+            new Comparator<CategorySearchFacet>() {
+                @Override
+                public int compare(CategorySearchFacet o1, CategorySearchFacet o2) {
+                    return o1.getSequence().compareTo(o2.getSequence());
                 }
+            };
+    protected static Comparator sequenceComparator = new Comparator() {
+
+        @Override
+        public int compare(Object o1, Object o2) {
+            try {
+                return ((Comparable) PropertyUtils.getProperty(o1, "sequence")).compareTo(PropertyUtils.getProperty(o2, "sequence"));
+            } catch (Exception e) {
+                LOG.warn("Trying to compare objects that do not have a sequence property, assuming they are the same order");
+                return 0;
             }
-            myCategory = myCategory.getParentCategory();
         }
-
-        return linkBuffer.toString();
-    }
-
-    private static void fillInURLMapForCategory(Map<String, List<Long>> categoryUrlMap,
-                                                Category category,
-                                                String startingPath,
-                                                List<Long> startingCategoryList) throws CacheFactoryException {
-        String urlKey = category.getUrlKey();
-        if (urlKey == null) {
-            throw new CacheFactoryException(
-                    "Cannot create childCategoryURLMap - the urlKey for a category("
-                            + category.getId() + ") was null");
-        }
-
-        String currentPath = "";
-        if (!"/".equals(category.getUrlKey())) {
-            currentPath = startingPath + "/" + category.getUrlKey();
-        }
-
-        List<Long> newCategoryList = new ArrayList<Long>(startingCategoryList);
-        newCategoryList.add(category.getId());
-
-        categoryUrlMap.put(currentPath, newCategoryList);
-        for (CategoryXref currentCategory : category.getChildCategoryXrefs()) {
-            fillInURLMapForCategory(categoryUrlMap, currentCategory.getSubCategory(), currentPath,
-                    newCategoryList);
-        }
-    }
-
+    };
     @Id
     @GeneratedValue(generator = "CategoryId")
     @GenericGenerator(
@@ -185,13 +157,11 @@ public class CategoryImpl
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "CategoryImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.catalog.domain.CategoryImpl")
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.CategoryImpl")
             }
     )
     @Column(name = "CATEGORY_ID")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_ID",
-            visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "CategoryImpl_Category_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;
 
     @Column(name = "NAME", nullable = false)
@@ -205,8 +175,7 @@ public class CategoryImpl
     @AdminPresentation(friendlyName = "CategoryImpl_Category_Url", order = 4000,
             group = GroupName.General,
             prominent = true, gridOrder = 2000,
-            validationConfigurations = {
-                    @ValidationConfiguration(validationImplementation = "blUriPropertyValidator")})
+            validationConfigurations = {@ValidationConfiguration(validationImplementation = "blUriPropertyValidator")})
     protected String url;
 
     @Column(name = "OVERRIDE_GENERATED_URL")
@@ -308,8 +277,7 @@ public class CategoryImpl
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
-    @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory", order = 3000,
-            group = GroupName.General)
+    @AdminPresentation(friendlyName = "CategoryImpl_defaultParentCategory", order = 3000, group = GroupName.General)
     @AdminPresentationToOneLookup()
     @Deprecated
     protected Category defaultParentCategory;
@@ -326,10 +294,9 @@ public class CategoryImpl
             sortProperty = "displayOrder",
             tab = TabName.Subcategories,
             gridVisibleFields = {"name"})
-    protected List<CategoryXref> allChildCategoryXrefs = new ArrayList<CategoryXref>(10);
+    protected List<CategoryXref> allChildCategoryXrefs = new ArrayList<>(10);
 
-    @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "subCategory",
-            orphanRemoval = true,
+    @OneToMany(targetEntity = CategoryXrefImpl.class, mappedBy = "subCategory", orphanRemoval = true,
             cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @OrderBy(value = "displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
@@ -341,10 +308,9 @@ public class CategoryImpl
             sortProperty = "displayOrder",
             tab = TabName.Subcategories,
             gridVisibleFields = {"name"})
-    protected List<CategoryXref> allParentCategoryXrefs = new ArrayList<CategoryXref>(10);
+    protected List<CategoryXref> allParentCategoryXrefs = new ArrayList<>(10);
 
-    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "category",
-            orphanRemoval = true,
+    @OneToMany(targetEntity = CategoryProductXrefImpl.class, mappedBy = "category", orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @OrderBy(value = "displayOrder")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryProduct")
@@ -356,7 +322,7 @@ public class CategoryImpl
             tab = TabName.Products,
             gridVisibleFields = {"defaultSku.name", "displayOrder"},
             maintainedAdornedTargetFields = {"displayOrder"})
-    protected List<CategoryProductXref> allProductXrefs = new ArrayList<CategoryProductXref>(10);
+    protected List<CategoryProductXref> allProductXrefs = new ArrayList<>(10);
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryMediaXrefImpl.class,
             cascade = {CascadeType.ALL}, orphanRemoval = true)
@@ -380,11 +346,10 @@ public class CategoryImpl
                     @AdminPresentationMapKey(keyName = "alt6", friendlyKeyName = "mediaAlternate6")
             }
     )
-    protected Map<String, CategoryMediaXref> categoryMedia =
-            new HashMap<String, CategoryMediaXref>();
+    protected Map<String, CategoryMediaXref> categoryMedia = new HashMap<>();
 
     @Transient
-    protected Map<String, Media> legacyCategoryMedia = new HashMap<String, Media>();
+    protected Map<String, Media> legacyCategoryMedia = new HashMap<>();
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class,
             cascade = {CascadeType.ALL}, orphanRemoval = true)
@@ -398,7 +363,7 @@ public class CategoryImpl
             sortProperty = "sequence",
             maintainedAdornedTargetFields = {"promotionMessage"},
             gridVisibleFields = {"defaultSku.name", "promotionMessage"})
-    protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>(10);
+    protected List<FeaturedProduct> featuredProducts = new ArrayList<>(10);
 
     @OneToMany(mappedBy = "category", targetEntity = CrossSaleProductImpl.class,
             cascade = {CascadeType.ALL}, orphanRemoval = true)
@@ -412,7 +377,7 @@ public class CategoryImpl
             sortProperty = "sequence",
             maintainedAdornedTargetFields = {"promotionMessage"},
             gridVisibleFields = {"defaultSku.name", "promotionMessage"})
-    protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
+    protected List<RelatedProduct> crossSaleProducts = new ArrayList<>();
 
     @OneToMany(mappedBy = "category", targetEntity = UpSaleProductImpl.class,
             cascade = {CascadeType.ALL}, orphanRemoval = true)
@@ -425,7 +390,7 @@ public class CategoryImpl
             sortProperty = "sequence",
             maintainedAdornedTargetFields = {"promotionMessage"},
             gridVisibleFields = {"defaultSku.name", "promotionMessage"})
-    protected List<RelatedProduct> upSaleProducts = new ArrayList<RelatedProduct>();
+    protected List<RelatedProduct> upSaleProducts = new ArrayList<>();
 
     @OneToMany(mappedBy = "category", targetEntity = CategorySearchFacetImpl.class,
             cascade = {CascadeType.ALL})
@@ -437,7 +402,7 @@ public class CategoryImpl
             sortProperty = "sequence",
             gridVisibleFields = {"name", "label", "fieldType.indexField.field.friendlyName"})
     @BatchSize(size = 50)
-    protected List<CategorySearchFacet> searchFacets = new ArrayList<CategorySearchFacet>();
+    protected List<CategorySearchFacet> searchFacets = new ArrayList<>();
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryExcludedSearchFacetImpl.class,
             cascade = {CascadeType.ALL})
@@ -449,8 +414,7 @@ public class CategoryImpl
             sortProperty = "sequence",
             gridVisibleFields = {"name", "label", "fieldType.indexField.field.friendlyName"})
     @BatchSize(size = 50)
-    protected List<CategoryExcludedSearchFacet> excludedSearchFacets =
-            new ArrayList<CategoryExcludedSearchFacet>(10);
+    protected List<CategoryExcludedSearchFacet> excludedSearchFacets = new ArrayList<>(10);
 
     @OneToMany(mappedBy = "category", targetEntity = CategoryAttributeImpl.class,
             cascade = {CascadeType.ALL}, orphanRemoval = true)
@@ -458,7 +422,7 @@ public class CategoryImpl
     @BatchSize(size = 50)
     @AdminPresentationCollection(friendlyName = "categoryAttributesTitle",
             tab = TabName.General, order = FieldOrder.CustomAttributes)
-    protected List<CategoryAttribute> categoryAttributes = new ArrayList<CategoryAttribute>();
+    protected List<CategoryAttribute> categoryAttributes = new ArrayList<>();
 
     @Column(name = "INVENTORY_TYPE")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_InventoryType", order = 2000,
@@ -488,13 +452,13 @@ public class CategoryImpl
     protected List<Long> childCategoryIds;
 
     @Transient
-    protected List<CategoryXref> childCategoryXrefs = new ArrayList<CategoryXref>(50);
+    protected List<CategoryXref> childCategoryXrefs = new ArrayList<>(50);
 
     @Transient
-    protected List<Category> legacyChildCategories = new ArrayList<Category>(50);
+    protected List<Category> legacyChildCategories = new ArrayList<>(50);
 
     @Transient
-    protected List<Category> allLegacyChildCategories = new ArrayList<Category>(50);
+    protected List<Category> allLegacyChildCategories = new ArrayList<>(50);
 
     @Transient
     protected List<FeaturedProduct> filteredFeaturedProducts = null;
@@ -504,6 +468,53 @@ public class CategoryImpl
 
     @Transient
     protected List<RelatedProduct> filteredUpSales = null;
+
+    private static String buildLink(Category category, boolean ignoreTopLevel) {
+        Category myCategory = category;
+        List<Long> preventRecursionCategoryIds = new ArrayList<>();
+
+        StringBuilder linkBuffer = new StringBuilder(50);
+        while (myCategory != null && !preventRecursionCategoryIds.contains(myCategory.getId())) {
+            preventRecursionCategoryIds.add(myCategory.getId());
+            if (!ignoreTopLevel || myCategory.getParentCategory() != null) {
+                if (linkBuffer.length() == 0) {
+                    linkBuffer.append(myCategory.getUrlKey());
+                } else if (myCategory.getUrlKey() != null && !"/".equals(myCategory.getUrlKey())) {
+                    linkBuffer.insert(0, myCategory.getUrlKey() + '/');
+                }
+            }
+            myCategory = myCategory.getParentCategory();
+        }
+
+        return linkBuffer.toString();
+    }
+
+    private static void fillInURLMapForCategory(
+            Map<String, List<Long>> categoryUrlMap,
+            Category category,
+            String startingPath,
+            List<Long> startingCategoryList
+    ) throws CacheFactoryException {
+        String urlKey = category.getUrlKey();
+        if (urlKey == null) {
+            throw new CacheFactoryException(
+                    "Cannot create childCategoryURLMap - the urlKey for a category(" + category.getId() + ") was null"
+            );
+        }
+
+        String currentPath = "";
+        if (!"/".equals(category.getUrlKey())) {
+            currentPath = startingPath + "/" + category.getUrlKey();
+        }
+
+        List<Long> newCategoryList = new ArrayList<>(startingCategoryList);
+        newCategoryList.add(category.getId());
+
+        categoryUrlMap.put(currentPath, newCategoryList);
+        for (CategoryXref currentCategory : category.getChildCategoryXrefs()) {
+            fillInURLMapForCategory(categoryUrlMap, currentCategory.getSubCategory(), currentPath, newCategoryList);
+        }
+    }
 
     @Override
     public Long getId() {
@@ -566,13 +577,13 @@ public class CategoryImpl
     }
 
     @Override
-    public String getGeneratedUrl() {
-        return buildLink(this, false);
+    public void setUrlKey(String urlKey) {
+        this.urlKey = urlKey;
     }
 
     @Override
-    public void setUrlKey(String urlKey) {
-        this.urlKey = urlKey;
+    public String getGeneratedUrl() {
+        return buildLink(this, false);
     }
 
     @Override
@@ -706,6 +717,27 @@ public class CategoryImpl
     }
 
     @Override
+    public void setParentCategory(Category category) {
+        List<CategoryXref> xrefs = getAllParentCategoryXrefs();
+        boolean found = false;
+        for (CategoryXref xref : xrefs) {
+            if (xref.getCategory().equals(category)) {
+                xref.setDefaultReference(true);
+                found = true;
+            } else if (xref.getDefaultReference() != null && xref.getDefaultReference()) {
+                xref.setDefaultReference(null);
+            }
+        }
+        if (!found && category != null) {
+            CategoryXref xref = new CategoryXrefImpl();
+            xref.setSubCategory(this);
+            xref.setCategory(category);
+            xref.setDefaultReference(true);
+            allParentCategoryXrefs.add(xref);
+        }
+    }
+
+    @Override
     public CategoryXref getParentCategoryXref() {
         CategoryXref response = null;
         List<CategoryXref> xrefs = getAllParentCategoryXrefs();
@@ -732,29 +764,16 @@ public class CategoryImpl
     }
 
     @Override
-    public void setParentCategory(Category category) {
-        List<CategoryXref> xrefs = getAllParentCategoryXrefs();
-        boolean found = false;
-        for (CategoryXref xref : xrefs) {
-            if (xref.getCategory().equals(category)) {
-                xref.setDefaultReference(true);
-                found = true;
-            } else if (xref.getDefaultReference() != null && xref.getDefaultReference()) {
-                xref.setDefaultReference(null);
-            }
-        }
-        if (!found && category != null) {
-            CategoryXref xref = new CategoryXrefImpl();
-            xref.setSubCategory(this);
-            xref.setCategory(category);
-            xref.setDefaultReference(true);
-            allParentCategoryXrefs.add(xref);
-        }
+    public List<CategoryXref> getAllChildCategoryXrefs() {
+        return allChildCategoryXrefs;
     }
 
     @Override
-    public List<CategoryXref> getAllChildCategoryXrefs() {
-        return allChildCategoryXrefs;
+    public void setAllChildCategoryXrefs(List<CategoryXref> childCategories) {
+        allChildCategoryXrefs.clear();
+        for (CategoryXref category : childCategories) {
+            allChildCategoryXrefs.add(category);
+        }
     }
 
     @Override
@@ -777,14 +796,6 @@ public class CategoryImpl
     }
 
     @Override
-    public void setAllChildCategoryXrefs(List<CategoryXref> childCategories) {
-        allChildCategoryXrefs.clear();
-        for (CategoryXref category : childCategories) {
-            allChildCategoryXrefs.add(category);
-        }
-    }
-
-    @Override
     @Deprecated
     public List<Category> getAllChildCategories() {
         if (allLegacyChildCategories.isEmpty()) {
@@ -796,14 +807,14 @@ public class CategoryImpl
     }
 
     @Override
-    public boolean hasAllChildCategories() {
-        return !allChildCategoryXrefs.isEmpty();
-    }
-
-    @Override
     @Deprecated
     public void setAllChildCategories(List<Category> childCategories) {
         throw new UnsupportedOperationException("Not Supported - Use setAllChildCategoryXrefs()");
+    }
+
+    @Override
+    public boolean hasAllChildCategories() {
+        return !allChildCategoryXrefs.isEmpty();
     }
 
     @Override
@@ -820,14 +831,14 @@ public class CategoryImpl
     }
 
     @Override
-    public boolean hasChildCategories() {
-        return !getChildCategoryXrefs().isEmpty();
-    }
-
-    @Override
     @Deprecated
     public void setChildCategories(List<Category> childCategories) {
         throw new UnsupportedOperationException("Not Supported - Use setChildCategoryXrefs()");
+    }
+
+    @Override
+    public boolean hasChildCategories() {
+        return !getChildCategoryXrefs().isEmpty();
     }
 
     @Override
@@ -844,7 +855,7 @@ public class CategoryImpl
     }
 
     public List<Long> createChildCategoryIds() {
-        childCategoryIds = new ArrayList<Long>();
+        childCategoryIds = new ArrayList<>();
         for (CategoryXref category : allChildCategoryXrefs) {
             if (category.getSubCategory().isActive()) {
                 childCategoryIds.add(category.getSubCategory().getId());
@@ -862,20 +873,20 @@ public class CategoryImpl
         return childCategoryURLMap;
     }
 
-    public Map<String, List<Long>> createChildCategoryURLMap() {
-        try {
-            Map<String, List<Long>> newMap = new HashMap<String, List<Long>>(50);
-            fillInURLMapForCategory(newMap, this, "", new ArrayList<Long>(10));
-            return newMap;
-        } catch (CacheFactoryException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
     @Deprecated
     public void setChildCategoryURLMap(Map<String, List<Long>> childCategoryURLMap) {
         this.childCategoryURLMap = childCategoryURLMap;
+    }
+
+    public Map<String, List<Long>> createChildCategoryURLMap() {
+        try {
+            Map<String, List<Long>> newMap = new HashMap<>(50);
+            fillInURLMapForCategory(newMap, this, "", new ArrayList<>(10));
+            return newMap;
+        } catch (CacheFactoryException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -892,12 +903,12 @@ public class CategoryImpl
 
         // If the currentPath is null, this is the first iteration.
         if (currentPath == null) {
-            currentPath = new ArrayList<Category>();
+            currentPath = new ArrayList<>();
             currentPath.add(0, this);
         }
 
         Boolean shouldAdd = true;
-        List<Category> myParentCategories = new ArrayList<Category>();
+        List<Category> myParentCategories = new ArrayList<>();
         if (getDefaultParentCategory() != null) {
             myParentCategories.add(getDefaultParentCategory());
             if (firstParent) {
@@ -928,7 +939,7 @@ public class CategoryImpl
     @Override
     public List<Category> buildDefaultParentCategoryPath(List<Category> currentPath) {
         if (currentPath == null) {
-            currentPath = new ArrayList<Category>();
+            currentPath = new ArrayList<>();
             currentPath.add(0, this);
         }
         if (getDefaultParentCategory() != null && !currentPath.contains(getDefaultParentCategory())) {
@@ -952,7 +963,7 @@ public class CategoryImpl
     @Override
     @Deprecated
     public List<Category> getAllParentCategories() {
-        List<Category> parents = new ArrayList<Category>(allParentCategoryXrefs.size());
+        List<Category> parents = new ArrayList<>(allParentCategoryXrefs.size());
         for (CategoryXref xref : allParentCategoryXrefs) {
             parents.add(xref.getCategory());
         }
@@ -1007,48 +1018,6 @@ public class CategoryImpl
     }
 
     @Override
-    public List<RelatedProduct> getCumulativeCrossSaleProducts() {
-        Set<RelatedProduct> returnProductsSet = new LinkedHashSet<RelatedProduct>();
-
-        List<Category> categoryHierarchy = buildDefaultParentCategoryPath(null);
-        for (Category category : categoryHierarchy) {
-            returnProductsSet.addAll(category.getCrossSaleProducts());
-        }
-        ArrayList<RelatedProduct> result = new ArrayList<RelatedProduct>(returnProductsSet);
-        // all of the individual result sets were sorted, we need to sort the full result set
-        Collections.sort(result, sequenceComparator);
-        return result;
-    }
-
-    @Override
-    public List<RelatedProduct> getCumulativeUpSaleProducts() {
-        Set<RelatedProduct> returnProductsSet = new LinkedHashSet<RelatedProduct>();
-
-        List<Category> categoryHierarchy = buildDefaultParentCategoryPath(null);
-        for (Category category : categoryHierarchy) {
-            returnProductsSet.addAll(category.getUpSaleProducts());
-        }
-        ArrayList<RelatedProduct> result = new ArrayList<RelatedProduct>(returnProductsSet);
-        // all of the individual result sets were sorted, we need to sort the full result set
-        Collections.sort(result, sequenceComparator);
-        return result;
-    }
-
-    @Override
-    public List<FeaturedProduct> getCumulativeFeaturedProducts() {
-        Set<FeaturedProduct> returnProductsSet = new LinkedHashSet<FeaturedProduct>();
-
-        List<Category> categoryHierarchy = buildDefaultParentCategoryPath(null);
-        for (Category category : categoryHierarchy) {
-            returnProductsSet.addAll(category.getFeaturedProducts());
-        }
-        ArrayList<FeaturedProduct> result = new ArrayList<FeaturedProduct>(returnProductsSet);
-        // all of the individual result sets were sorted, we need to sort the full result set
-        Collections.sort(result, sequenceComparator);
-        return result;
-    }
-
-    @Override
     public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
         this.upSaleProducts.clear();
         for (RelatedProduct relatedProduct : upSaleProducts) {
@@ -1058,8 +1027,50 @@ public class CategoryImpl
     }
 
     @Override
+    public List<RelatedProduct> getCumulativeCrossSaleProducts() {
+        Set<RelatedProduct> returnProductsSet = new LinkedHashSet<>();
+
+        List<Category> categoryHierarchy = buildDefaultParentCategoryPath(null);
+        for (Category category : categoryHierarchy) {
+            returnProductsSet.addAll(category.getCrossSaleProducts());
+        }
+        ArrayList<RelatedProduct> result = new ArrayList<>(returnProductsSet);
+        // all of the individual result sets were sorted, we need to sort the full result set
+        Collections.sort(result, sequenceComparator);
+        return result;
+    }
+
+    @Override
+    public List<RelatedProduct> getCumulativeUpSaleProducts() {
+        Set<RelatedProduct> returnProductsSet = new LinkedHashSet<>();
+
+        List<Category> categoryHierarchy = buildDefaultParentCategoryPath(null);
+        for (Category category : categoryHierarchy) {
+            returnProductsSet.addAll(category.getUpSaleProducts());
+        }
+        ArrayList<RelatedProduct> result = new ArrayList<>(returnProductsSet);
+        // all of the individual result sets were sorted, we need to sort the full result set
+        Collections.sort(result, sequenceComparator);
+        return result;
+    }
+
+    @Override
+    public List<FeaturedProduct> getCumulativeFeaturedProducts() {
+        Set<FeaturedProduct> returnProductsSet = new LinkedHashSet<>();
+
+        List<Category> categoryHierarchy = buildDefaultParentCategoryPath(null);
+        for (Category category : categoryHierarchy) {
+            returnProductsSet.addAll(category.getFeaturedProducts());
+        }
+        ArrayList<FeaturedProduct> result = new ArrayList<>(returnProductsSet);
+        // all of the individual result sets were sorted, we need to sort the full result set
+        Collections.sort(result, sequenceComparator);
+        return result;
+    }
+
+    @Override
     public List<CategoryProductXref> getActiveProductXrefs() {
-        List<CategoryProductXref> result = new ArrayList<CategoryProductXref>();
+        List<CategoryProductXref> result = new ArrayList<>();
         for (CategoryProductXref product : allProductXrefs) {
             if (product.getProduct().isActive()) {
                 result.add(product);
@@ -1082,7 +1093,7 @@ public class CategoryImpl
     @Override
     @Deprecated
     public List<Product> getActiveProducts() {
-        List<Product> result = new ArrayList<Product>();
+        List<Product> result = new ArrayList<>();
         for (CategoryProductXref product : allProductXrefs) {
             if (product.getProduct().isActive()) {
                 result.add(product.getProduct());
@@ -1094,7 +1105,7 @@ public class CategoryImpl
     @Override
     @Deprecated
     public List<Product> getAllProducts() {
-        List<Product> result = new ArrayList<Product>();
+        List<Product> result = new ArrayList<>();
         for (CategoryProductXref product : allProductXrefs) {
             result.add(product.getProduct());
         }
@@ -1187,7 +1198,7 @@ public class CategoryImpl
     @Override
     public List<CategorySearchFacet> getCumulativeSearchFacets(Set<Category> categoryHierarchy) {
         categoryHierarchy.add(this);
-        List<CategorySearchFacet> returnCategoryFacets = new ArrayList<CategorySearchFacet>();
+        List<CategorySearchFacet> returnCategoryFacets = new ArrayList<>();
         returnCategoryFacets.addAll(getSearchFacets());
         Collections.sort(returnCategoryFacets, facetPositionComparator);
 
@@ -1217,7 +1228,6 @@ public class CategoryImpl
             returnCategoryFacets.addAll(parentFacets);
         }
 
-
         return returnCategoryFacets;
     }
 
@@ -1238,7 +1248,9 @@ public class CategoryImpl
         this.categoryMedia.clear();
         this.legacyCategoryMedia.clear();
         for (Map.Entry<String, Media> entry : categoryMedia.entrySet()) {
-            this.categoryMedia.put(entry.getKey(), new CategoryMediaXrefImpl(this, entry.getValue(), entry.getKey()));
+            this.categoryMedia.put(entry.getKey(), new CategoryMediaXrefImpl(
+                    this, entry.getValue(), entry.getKey()
+            ));
         }
     }
 
@@ -1259,7 +1271,7 @@ public class CategoryImpl
 
     @Override
     public void setCategoryAttributesMap(Map<String, CategoryAttribute> categoryAttributes) {
-        List<CategoryAttribute> categoryAttributeList = new ArrayList<CategoryAttribute>();
+        List<CategoryAttribute> categoryAttributeList = new ArrayList<>();
 
         if (categoryAttributes instanceof MultiValueMap) {
             Iterator<String> it = categoryAttributes.keySet().iterator();
@@ -1285,7 +1297,6 @@ public class CategoryImpl
     @Override
     public void setCategoryAttributes(List<CategoryAttribute> categoryAttributes) {
         this.categoryAttributes = categoryAttributes;
-
     }
 
     @Override
@@ -1300,7 +1311,7 @@ public class CategoryImpl
 
     @Override
     public Map<String, CategoryAttribute> getMappedCategoryAttributes() {
-        Map<String, CategoryAttribute> map = new HashMap<String, CategoryAttribute>();
+        Map<String, CategoryAttribute> map = new HashMap<>();
         for (CategoryAttribute attr : getCategoryAttributes()) {
             map.put(attr.getName(), attr);
         }
@@ -1380,30 +1391,10 @@ public class CategoryImpl
         return true;
     }
 
-    protected static Comparator<CategorySearchFacet> facetPositionComparator =
-            new Comparator<CategorySearchFacet>() {
-                @Override
-                public int compare(CategorySearchFacet o1, CategorySearchFacet o2) {
-                    return o1.getSequence().compareTo(o2.getSequence());
-                }
-            };
-
-    protected static Comparator sequenceComparator = new Comparator() {
-
-        @Override
-        public int compare(Object o1, Object o2) {
-            try {
-                return ((Comparable) PropertyUtils.getProperty(o1, "sequence")).compareTo(PropertyUtils.getProperty(o2, "sequence"));
-            } catch (Exception e) {
-                LOG.warn("Trying to compare objects that do not have a sequence property, assuming they are the same order");
-                return 0;
-            }
-        }
-    };
-
     @Override
     public <G extends Category> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -1427,37 +1418,32 @@ public class CategoryImpl
             cloned.getAllParentCategoryXrefs().add(clonedEntry);
         }
         if (getDefaultParentCategory() != null) {
-            cloned.setParentCategory(
-                    getDefaultParentCategory().createOrRetrieveCopyInstance(context).getClone());
+            cloned.setParentCategory(getDefaultParentCategory().createOrRetrieveCopyInstance(context).getClone());
         }
         for (CategoryXref entry : allChildCategoryXrefs) {
             CategoryXref clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getAllChildCategoryXrefs().add(clonedEntry);
         }
         for (Map.Entry<String, CategoryAttribute> entry : getCategoryAttributesMap().entrySet()) {
-            CategoryAttribute clonedEntry =
-                    entry.getValue().createOrRetrieveCopyInstance(context).getClone();
+            CategoryAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
             cloned.getCategoryAttributesMap().put(entry.getKey(), clonedEntry);
         }
         for (CategorySearchFacet entry : searchFacets) {
-            CategorySearchFacet clonedEntry =
-                    entry.createOrRetrieveCopyInstance(context).getClone();
+            CategorySearchFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getSearchFacets().add(clonedEntry);
         }
         for (CategoryExcludedSearchFacet entry : excludedSearchFacets) {
-            CategoryExcludedSearchFacet clonedEntry =
-                    entry.createOrRetrieveCopyInstance(context).getClone();
+            CategoryExcludedSearchFacet clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             cloned.getExcludedSearchFacets().add(clonedEntry);
         }
         for (Map.Entry<String, CategoryMediaXref> entry : categoryMedia.entrySet()) {
-            CategoryMediaXrefImpl clonedEntry =
-                    ((CategoryMediaXrefImpl) entry.getValue()).createOrRetrieveCopyInstance(context)
-                            .getClone();
+            CategoryMediaXrefImpl clonedEntry = ((CategoryMediaXrefImpl) entry.getValue())
+                    .createOrRetrieveCopyInstance(context)
+                    .getClone();
             cloned.getCategoryMediaXref().put(entry.getKey(), clonedEntry);
         }
 
         //Don't clone the references to products - those will be handled by another MultiTenantCopier call
-
         return createResponse;
     }
 

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,21 +26,21 @@ import org.springframework.mail.javamail.JavaMailSender;
 import java.util.Map;
 
 public class NullMessageCreator extends MessageCreator {
-    
+
     private static final Log LOG = LogFactory.getLog(NullMessageCreator.class);
-    
+
     public NullMessageCreator(JavaMailSender mailSender) {
-        super(mailSender);  
+        super(mailSender);
     }
-    
+
     @Override
-    public String buildMessageBody(EmailInfo info, Map<String,Object> props) {
+    public String buildMessageBody(EmailInfo info, Map<String, Object> props) {
         return info.getEmailTemplate();
     }
-    
+
     @Override
-    public void sendMessage(final Map<String,Object> props) throws MailException {
+    public void sendMessage(final Map<String, Object> props) throws MailException {
         LOG.warn("NullMessageCreator is defined -- specify a real message creator to send emails");
     }
-    
+
 }

@@ -10,13 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.profile.core.domain;
 
+import java.io.Serial;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -34,8 +35,9 @@ import jakarta.persistence.TemporalType;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PASSWORD_TOKEN")
-public class CustomerForgotPasswordSecurityTokenImpl
-        implements CustomerForgotPasswordSecurityToken {
+public class CustomerForgotPasswordSecurityTokenImpl implements CustomerForgotPasswordSecurityToken {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -117,4 +119,5 @@ public class CustomerForgotPasswordSecurityTokenImpl
     public int hashCode() {
         return token != null ? token.hashCode() : 0;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,14 +35,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Provides a PostConstruct method that sorts the {@link ResourceResolver}, {@link ResourceTransformer}, 
+ * Provides a PostConstruct method that sorts the {@link ResourceResolver}, {@link ResourceTransformer},
  * or location ({@link Resource}) collections based on the {@link Ordered} interface.
- *  
- * @author bpolster
  *
+ * @author bpolster
  */
 public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHandler {
-    
+
     @Resource(name = "blBroadleafContextUtil")
     protected BroadleafContextUtil blcContextUtil;
 
@@ -65,11 +64,10 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
             Collections.sort(getResourceTransformers(), oc);
         }
     }
-    
+
     @Override
-    public void handleRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         try {
             blcContextUtil.establishThinRequestContext(true);
             super.handleRequest(request, response);
@@ -79,8 +77,11 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     }
 
     @Override
-    protected void setHeaders(HttpServletResponse response, org.springframework.core.io.Resource resource, MediaType
-            mediaType) throws IOException {
+    protected void setHeaders(
+            HttpServletResponse response,
+            org.springframework.core.io.Resource resource,
+            MediaType mediaType
+    ) throws IOException {
         super.setHeaders(response, resource, mediaType);
         //Add public to cache control for universal CDN recognition
         if (isUseCacheControlHeader() && cacheSeconds > 0) {
@@ -94,11 +95,10 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
 
     /**
      * Items that implement Ordered will sort by the value of {@link Ordered#getOrder()}.
-     * 
+     *
      * <p>
-     * Nulls are considered greater except that a getOrder with a value of Integer.MAX_VALUE 
-     * will always sort at the end (even after nulls). 
-     *      
+     * Nulls are considered greater except that a getOrder with a value of Integer.MAX_VALUE
+     * will always sort at the end (even after nulls).
      */
     protected class OrderedComparator implements Comparator<Object> {
 
@@ -129,6 +129,6 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
             // Neither is ordered (respect the natural order)
             return 0;
         }
-
     }
+
 }

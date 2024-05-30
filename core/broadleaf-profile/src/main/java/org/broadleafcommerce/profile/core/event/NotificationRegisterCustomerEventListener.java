@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -57,7 +57,8 @@ public class NotificationRegisterCustomerEventListener extends AbstractBroadleaf
         Customer customer = customerService.readCustomerById(event.getCustomerId());
         if (customer == null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Unable to send registration email for customer with id " + event.getCustomerId() + ". No such customer found.");
+                LOG.debug("Unable to send registration email for customer with id " + event.getCustomerId()
+                        + ". No such customer found.");
             }
             return;
         }
@@ -65,7 +66,9 @@ public class NotificationRegisterCustomerEventListener extends AbstractBroadleaf
         Map<String, Object> context = createContext(customer, event);
 
         try {
-            notificationDispatcher.dispatchNotification(new EmailNotification(customer.getEmailAddress(), NotificationEventType.REGISTER_CUSTOMER, context));
+            notificationDispatcher.dispatchNotification(
+                    new EmailNotification(customer.getEmailAddress(), NotificationEventType.REGISTER_CUSTOMER, context)
+            );
         } catch (ServiceException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Unable to send registration email for customer with email " + customer.getEmailAddress(), e);
@@ -73,7 +76,9 @@ public class NotificationRegisterCustomerEventListener extends AbstractBroadleaf
         }
 
         try {
-            notificationDispatcher.dispatchNotification(new SMSNotification(NotificationEventType.REGISTER_CUSTOMER, context));
+            notificationDispatcher.dispatchNotification(
+                    new SMSNotification(NotificationEventType.REGISTER_CUSTOMER, context)
+            );
         } catch (ServiceException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Unable to send registration sms for customer", e);
@@ -91,4 +96,5 @@ public class NotificationRegisterCustomerEventListener extends AbstractBroadleaf
     public boolean isAsynchronous() {
         return true;
     }
+
 }

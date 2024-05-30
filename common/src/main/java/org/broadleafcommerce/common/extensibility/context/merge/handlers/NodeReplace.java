@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,9 +26,8 @@ import java.util.List;
  * with the same nodes from the patch document. This handler will replace
  * all nodes with the same name entirely, regardless of differences in
  * attributes.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class NodeReplace extends NodeReplaceInsert {
 
@@ -46,7 +45,7 @@ public class NodeReplace extends NodeReplaceInsert {
 
     protected boolean replaceNode(Node[] primaryNodes, Node testNode, List<Node> usedNodes) {
         boolean foundItem = false;
-        for (int j=0;j<primaryNodes.length;j++){
+        for (int j = 0; j < primaryNodes.length; j++) {
             if (primaryNodes[j].getNodeName().equals(testNode.getNodeName())) {
                 Node newNode = primaryNodes[j].getOwnerDocument().importNode(testNode.cloneNode(true), true);
                 primaryNodes[j].getParentNode().replaceChild(newNode, primaryNodes[j]);
@@ -57,4 +56,5 @@ public class NodeReplace extends NodeReplaceInsert {
 
         return foundItem;
     }
+
 }

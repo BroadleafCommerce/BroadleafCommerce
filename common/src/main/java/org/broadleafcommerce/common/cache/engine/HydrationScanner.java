@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,29 +37,19 @@ import java.util.Map;
 import jakarta.persistence.Id;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class HydrationScanner implements ClassVisitor, FieldVisitor, AnnotationVisitor {
-    
+
     private static final int CLASSSTAGE = 0;
     private static final int FIELDSTAGE = 1;
-    
-    @SuppressWarnings("unchecked")
-    public HydrationScanner(Class topEntityClass, Class entityClass) {
-        this.topEntityClass = topEntityClass;
-        this.entityClass = entityClass;
-    }
-    
-    private String cacheRegion;
-    private Map<String, Method[]> idMutators = new HashMap<String, Method[]>();
-    private Map<String, HydrationItemDescriptor> cacheMutators = new HashMap<String, HydrationItemDescriptor>();
     @SuppressWarnings("unchecked")
     private final Class entityClass;
     @SuppressWarnings("unchecked")
     private final Class topEntityClass;
-    
+    private String cacheRegion;
+    private Map<String, Method[]> idMutators = new HashMap<>();
+    private Map<String, HydrationItemDescriptor> cacheMutators = new HashMap<>();
     private int stage = CLASSSTAGE;
     @SuppressWarnings("unchecked")
     private Class clazz;
@@ -67,18 +57,27 @@ public class HydrationScanner implements ClassVisitor, FieldVisitor, AnnotationV
     private String fieldName;
     @SuppressWarnings("unchecked")
     private Class fieldClass;
-    
+    @SuppressWarnings("unchecked")
+    public HydrationScanner(Class topEntityClass, Class entityClass) {
+        this.topEntityClass = topEntityClass;
+        this.entityClass = entityClass;
+    }
+
     public void init() {
         try {
-            InputStream in = HydrationScanner.class.getClassLoader().getResourceAsStream(topEntityClass.getName().replace('.', '/') + ".class");
+            InputStream in = HydrationScanner.class.getClassLoader().getResourceAsStream(
+                    topEntityClass.getName().replace('.', '/') + ".class"
+            );
             new ClassReader(in).accept(this, ClassReader.SKIP_DEBUG);
-            in = HydrationScanner.class.getClassLoader().getResourceAsStream(entityClass.getName().replace('.', '/') + ".class");
+            in = HydrationScanner.class.getClassLoader().getResourceAsStream(
+                    entityClass.getName().replace('.', '/') + ".class"
+            );
             new ClassReader(in).accept(this, ClassReader.SKIP_DEBUG);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
-    
+
     public String getCacheRegion() {
         return cacheRegion;
     }
@@ -94,42 +93,42 @@ public class HydrationScanner implements ClassVisitor, FieldVisitor, AnnotationV
     //Common
     public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
         Type annotationType = Type.getType(arg0);
-        switch(stage) {
-        case CLASSSTAGE: {
-            if (annotationType.getClassName().equals(Cache.class.getName())){
-                annotation = Cache.class.getName();
+        switch (stage) {
+            case CLASSSTAGE: {
+                if (annotationType.getClassName().equals(Cache.class.getName())) {
+                    annotation = Cache.class.getName();
+                }
+                break;
             }
-            break;
-        }
-        case FIELDSTAGE: {
-            if (annotationType.getClassName().equals(Id.class.getName())){
-                idMutators.put(fieldName, retrieveMutators());
+            case FIELDSTAGE: {
+                if (annotationType.getClassName().equals(Id.class.getName())) {
+                    idMutators.put(fieldName, retrieveMutators());
+                }
+                if (annotationType.getClassName().equals(Hydrated.class.getName())) {
+                    annotation = Hydrated.class.getName();
+                }
+                break;
             }
-            if (annotationType.getClassName().equals(Hydrated.class.getName())){
-                annotation = Hydrated.class.getName();
+            default: {
+                annotation = null;
+                fieldName = null;
+                break;
             }
-            break;
-        }
-        default : {
-            annotation = null;
-            fieldName = null;
-            break;
-        }
         }
         return this;
     }
-    
+
     private Method[] retrieveMutators() {
-        String mutatorName = fieldName.substring(0,1).toUpperCase() + fieldName.substring(1, fieldName.length());
+        String mutatorName = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1, fieldName.length());
         Method getMethod = null;
         try {
-            getMethod = clazz.getMethod("get"+mutatorName, new Class[]{});
+            getMethod = clazz.getMethod("get" + mutatorName, new Class[]{});
         } catch (Exception e) {
             //do nothing
         }
         if (getMethod == null) {
             try {
-                getMethod = clazz.getMethod("is"+mutatorName, new Class[]{});
+                getMethod = clazz.getMethod("is" + mutatorName, new Class[]{});
             } catch (Exception e) {
                 //do nothing
             }
@@ -143,12 +142,15 @@ public class HydrationScanner implements ClassVisitor, FieldVisitor, AnnotationV
         }
         Method setMethod = null;
         try {
-            setMethod = clazz.getMethod("set"+mutatorName, new Class[]{fieldClass});
+            setMethod = clazz.getMethod("set" + mutatorName, new Class[]{fieldClass});
         } catch (Exception e) {
             //do nothing
         }
         if (getMethod == null || setMethod == null) {
-            throw new RuntimeException("Unable to find a getter and setter method for the AdminPresentation field: " + fieldName + ". Make sure you have a getter method entitled: get" + mutatorName + "(), or is" + mutatorName + "(), or " + fieldName + "(). Make sure you have a setter method entitled: set" + mutatorName + "(..).");
+            throw new RuntimeException("Unable to find a getter and setter method for the AdminPresentation field: "
+                    + fieldName + ". Make sure you have a getter method entitled: get" + mutatorName + "(), or is"
+                    + mutatorName + "(), or " + fieldName + "(). Make sure you have a setter method entitled: set"
+                    + mutatorName + "(..).");
         }
         return new Method[]{getMethod, setMethod};
     }
@@ -176,38 +178,38 @@ public class HydrationScanner implements ClassVisitor, FieldVisitor, AnnotationV
         stage = FIELDSTAGE;
         fieldName = arg1;
         Type fieldType = Type.getType(arg2);
-        switch(fieldType.getSort()){
-        case Type.BOOLEAN:
-            fieldClass = boolean.class;
-            break;
-        case Type.BYTE:
-            fieldClass = byte.class;
-            break;
-        case Type.CHAR:
-            fieldClass = char.class;
-            break;
-        case Type.DOUBLE:
-            fieldClass = double.class;
-            break;
-        case Type.FLOAT:
-            fieldClass = float.class;
-            break;
-        case Type.INT:
-            fieldClass = int.class;
-            break;
-        case Type.LONG:
-            fieldClass = long.class;
-            break;
-        case Type.SHORT:
-            fieldClass = short.class;
-            break;
-        case Type.OBJECT:
-            try {
-                fieldClass = Class.forName(Type.getType(arg2).getClassName());
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            break;
+        switch (fieldType.getSort()) {
+            case Type.BOOLEAN:
+                fieldClass = boolean.class;
+                break;
+            case Type.BYTE:
+                fieldClass = byte.class;
+                break;
+            case Type.CHAR:
+                fieldClass = char.class;
+                break;
+            case Type.DOUBLE:
+                fieldClass = double.class;
+                break;
+            case Type.FLOAT:
+                fieldClass = float.class;
+                break;
+            case Type.INT:
+                fieldClass = int.class;
+                break;
+            case Type.LONG:
+                fieldClass = long.class;
+                break;
+            case Type.SHORT:
+                fieldClass = short.class;
+                break;
+            case Type.OBJECT:
+                try {
+                    fieldClass = Class.forName(Type.getType(arg2).getClassName());
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
         }
         return this;
     }

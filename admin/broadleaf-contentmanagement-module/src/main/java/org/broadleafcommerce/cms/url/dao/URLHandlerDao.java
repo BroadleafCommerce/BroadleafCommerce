@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,26 +21,24 @@ import org.broadleafcommerce.cms.url.domain.URLHandler;
 
 import java.util.List;
 
-
 /**
  * Created by ppatel.
  */
 public interface URLHandlerDao {
 
-
-    public URLHandler findURLHandlerByURI(String uri);
+    URLHandler findURLHandlerByURI(String uri);
 
     /**
      * Gets all the URL handlers configured in the system
      *
      * @return
      */
-    public List<URLHandler> findAllURLHandlers();
+    List<URLHandler> findAllURLHandlers();
 
-    public URLHandler saveURLHandler(URLHandler handler);
+    URLHandler saveURLHandler(URLHandler handler);
 
-    public URLHandler findURLHandlerById(Long id);
+    URLHandler findURLHandlerById(Long id);
 
-    public List<URLHandler> findAllRegexURLHandlers();
+    List<URLHandler> findAllRegexURLHandlers();
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,115 +46,116 @@ import java.io.Serializable;
  * implementations should also have a FulfillmentPricingProvider that can handle operations (estimation and calculation) for
  * pricing a FulfillmentGroup. Typical third-party implementations of this paradigm would have a 1 FulfillmentOption
  * entity implementation and 1 FulfillmentPricingProvider implementation for that particular service.
- * 
+ *
  * <p>
  * <b>Note: even though the default Broadleaf implementation of this is non-abstract ({@link FulfillmentOptionImpl}),
  * it is very rare that you would actually want to instantiate a raw {@link FulfillmentOptionImpl} rather than using
  * a subclass of this.
  * </p>
+ *
  * @author Phillip Verheyden
  * @see {@link FulfillmentPricingProvider}, {@link FulfillmentGroup}
  */
 public interface FulfillmentOption extends Serializable, MultiTenantCloneable<FulfillmentOption> {
-    
-    public Long getId();
-    
-    public void setId(Long id);
-    
+
+    Long getId();
+
+    void setId(Long id);
+
     /**
      * Gets the name displayed to the user when they selected the FulfillmentOption for
      * their order. This might be "2-day" or "Super-saver shipping"
-     * 
+     *
      * @return the display name for this option
      */
-    public String getName();
+    String getName();
 
     /**
      * Set the display name for this option that will be shown to the user to select from
      * such as "2-day" or "Express" or "Super-saver shipping"
-     * 
+     *
      * @param name - the display name for this option
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Gets the long description for this option which can be shown to the user
      * to provide more information about the option they are selecting. An example
      * might be that this is shipped the next business day or that it requires additional
      * processing time
-     * 
+     *
      * @return the description to display to the user
      */
-    public String getLongDescription();
+    String getLongDescription();
 
     /**
      * Sets the long description for this option to show to the user when they select an option
-     * for fulfilling their order 
-     * 
+     * for fulfilling their order
+     *
      * @param longDescription - the description to show to the user
      */
-    public void setLongDescription(String longDescription);
+    void setLongDescription(String longDescription);
 
     /**
      * Tells the {@link FulfillmentPricingProvider} whether it should try to use the
      * flat rate cost for a {@link Sku} rather than try to factor that {@link Sku}
      * into its shipping calculation. This defaults to <b>true</b>
-     * 
-     * @return <b>true</b> if the {@link FulfillmentPricingProvider} should use 
+     *
+     * @return <b>true</b> if the {@link FulfillmentPricingProvider} should use
      * the flat rate on a {@link Sku} when it's available rather than try to calculate
      * shipping for it, <b>false</b> otherwise. Default value is <b>true</b>
      */
-    public Boolean getUseFlatRates();
+    Boolean getUseFlatRates();
 
     /**
      * Tells the {@link FulfillmentPricingProvider} whether it should try to use the
      * flat rate cost for a {@link Sku} rather than try to factor that {@link Sku}
      * into its shipping calculation
-     * 
+     *
      * @param useFlatRates
      */
-    public void setUseFlatRates(Boolean useFlatRates);
+    void setUseFlatRates(Boolean useFlatRates);
 
     /**
      * Gets the type of fulfillment that this option supports
-     * 
+     *
      * @return the type of this option
      */
-    public FulfillmentType getFulfillmentType();
+    FulfillmentType getFulfillmentType();
 
     /**
      * Sets the type of fulfillment that this option supports
-     * 
+     *
      * @param fulfillmentType
      */
-    public void setFulfillmentType(FulfillmentType fulfillmentType);
-    
-    /**
-     * Sets the taxCode of the particular option
-     * 
-     * @param taxCode
-     */
-    public void setTaxCode(String taxCode);
+    void setFulfillmentType(FulfillmentType fulfillmentType);
 
     /**
      * Returns taxCode of option
-     * 
+     *
      * @return
      */
-    public String getTaxCode();
+    String getTaxCode();
+
+    /**
+     * Sets the taxCode of the particular option
+     *
+     * @param taxCode
+     */
+    void setTaxCode(String taxCode);
 
     /**
      * Returns if option is taxable
-     * 
+     *
      * @return
      */
-    public Boolean getTaxable();
+    Boolean getTaxable();
 
     /**
      * Sets taxability of option
-     * 
+     *
      * @param taxable
      */
-    public void setTaxable(Boolean taxable);
+    void setTaxable(Boolean taxable);
 
 }

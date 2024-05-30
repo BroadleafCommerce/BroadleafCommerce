@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,7 +38,7 @@ public interface IndexFieldDao {
      * @param field the Field we are looking for the IndexField for
      * @return a IndexField instance for the given field
      */
-    public IndexField readIndexFieldForField(Field field);
+    IndexField readIndexFieldForField(Field field);
 
     /**
      * Returns the IndexField instance associated with the given field parameter, or null if non exists.
@@ -46,7 +46,7 @@ public interface IndexFieldDao {
      * @param fieldId the Field we are looking for the IndexField for
      * @return a IndexField instance for the given field
      */
-    public IndexField readIndexFieldByFieldId(Long fieldId);
+    IndexField readIndexFieldByFieldId(Long fieldId);
 
     /**
      * Finds all of the {@link IndexField}s associated with the given field parameter, or null if non exists.
@@ -54,23 +54,26 @@ public interface IndexFieldDao {
      * @param fieldId the Field we are looking for the IndexField for
      * @return
      */
-    public List<IndexField> readAllIndexFieldsByFieldId(Long fieldId);
-    
+    List<IndexField> readAllIndexFieldsByFieldId(Long fieldId);
+
     /**
      * Finds all of the {@link IndexField}s based on the entity type.
+     *
      * @param entityType
      * @return
      */
-    public List<IndexField> readFieldsByEntityType(FieldEntity entityType);
+    List<IndexField> readFieldsByEntityType(FieldEntity entityType);
 
     /**
      * Reads all of the {@link IndexField}s that are searchable on the entity type
+     *
      * @param entityType
      * @return
      */
-    public List<IndexField> readSearchableFieldsByEntityType(FieldEntity entityType);
+    List<IndexField> readSearchableFieldsByEntityType(FieldEntity entityType);
 
     List<IndexFieldType> getIndexFieldTypesByAbbreviation(String abbreviation);
+
     List<IndexFieldType> getIndexFieldTypesByAbbreviationAndEntityType(String abbreviation, FieldEntity entityType);
 
     List<IndexFieldType> getIndexFieldTypesByAbbreviationOrPropertyName(String name);
@@ -78,6 +81,7 @@ public interface IndexFieldDao {
     List<IndexFieldType> getIndexFieldTypes(FieldType facetFieldType);
 
     IndexField readIndexFieldByAbbreviation(String abbreviation);
+
     IndexField readIndexFieldByAbbreviationAndEntityType(String abbreviation, FieldEntity entityType);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,18 +21,18 @@ import java.io.File;
 
 /**
  * Represents a temporary location on the fileSystem.
- * 
+ * <p>
  * Used by the file-service as a reference point when managing files for a user.
- * 
- * @author bpolster
  *
+ * @author bpolster
  */
 public class FileWorkArea {
 
     protected String filePathLocation;
-    
+
     /**
      * Gets the file path location representing this work area ending with an appropriate system-specific separator
+     *
      * @return
      */
     public String getFilePathLocation() {
@@ -42,7 +42,7 @@ public class FileWorkArea {
             return filePathLocation;
         }
     }
-    
+
     public void setFilePathLocation(String filePathLocation) {
         if (!filePathLocation.endsWith(File.separator)) {
             this.filePathLocation = filePathLocation + File.separator;
@@ -50,5 +50,5 @@ public class FileWorkArea {
             this.filePathLocation = filePathLocation;
         }
     }
-    
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,16 +23,16 @@ import java.io.Serializable;
 
 public interface CustomerOffer extends Serializable {
 
-    public Long getId() ;
+    Long getId();
 
-    public void setId(Long id) ;
+    void setId(Long id);
 
-    public Customer getCustomer() ;
+    Customer getCustomer();
 
-    public void setCustomer(Customer customer) ;
+    void setCustomer(Customer customer);
 
-    public Offer getOffer() ;
+    Offer getOffer();
 
-    public void setOffer(Offer offer) ;
+    void setOffer(Offer offer);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -64,37 +64,29 @@ import jakarta.annotation.Resource;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
+
     private static final Log LOG = LogFactory.getLog(CustomerServiceImpl.class);
     private static final int PASSWORD_LENGTH = 16;
-
+    protected final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<>();
     @Autowired
     @Qualifier("blApplicationEventPublisher")
     protected BroadleafApplicationEventPublisher eventPublisher;
-
-    @Resource(name="blCustomerDao")
+    @Resource(name = "blCustomerDao")
     protected CustomerDao customerDao;
-
-    @Resource(name="blCustomerAddressDao")
+    @Resource(name = "blCustomerAddressDao")
     protected CustomerAddressDao customerAddressDao;
-
     @Resource(name = "blIdGenerationService")
     protected IdGenerationService idGenerationService;
-
     @Resource(name = "blCustomerForgotPasswordSecurityTokenDao")
     protected CustomerForgotPasswordSecurityTokenDao customerForgotPasswordSecurityTokenDao;
-
     @Resource(name = "blPasswordEncoder")
     protected PasswordEncoder passwordEncoderBean;
-
     @Resource(name = "blRoleDao")
     protected RoleDao roleDao;
-
     protected int tokenExpiredMinutes = 30;
     protected int passwordTokenLength = 20;
-
-    protected final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
-    protected List<PasswordUpdatedHandler> passwordResetHandlers = new ArrayList<PasswordUpdatedHandler>();
-    protected List<PasswordUpdatedHandler> passwordChangedHandlers = new ArrayList<PasswordUpdatedHandler>();
+    protected List<PasswordUpdatedHandler> passwordResetHandlers = new ArrayList<>();
+    protected List<PasswordUpdatedHandler> passwordChangedHandlers = new ArrayList<>();
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
@@ -131,7 +123,8 @@ public class CustomerServiceImpl implements CustomerService {
         // let's make sure they entered a new challenge answer (we will populate
         // the password field with hashed values so check that they have changed
         // id
-        if (customer.getUnencodedChallengeAnswer() != null && !customer.getUnencodedChallengeAnswer().equals(customer.getChallengeAnswer())) {
+        if (customer.getUnencodedChallengeAnswer() != null
+                && !customer.getUnencodedChallengeAnswer().equals(customer.getChallengeAnswer())) {
             customer.setChallengeAnswer(encodePassword(customer.getUnencodedChallengeAnswer()));
         }
         return customerDao.save(customer);
@@ -150,7 +143,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setUnencodedPassword(password);
         Customer retCustomer = saveCustomer(customer);
         createRegisteredCustomerRoles(retCustomer);
-        
+
         eventPublisher.publishEvent(new RegisterCustomerEvent(this, retCustomer.getId()));
         notifyPostRegisterListeners(retCustomer);
 
@@ -347,7 +340,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (CollectionUtils.isEmpty(customers)) {
             response.addErrorCode("notFound");
         } else {
-            List<String> activeUsernames = new ArrayList<String>();
+            List<String> activeUsernames = new ArrayList<>();
             for (Customer customer : customers) {
                 if (!customer.isDeactivated()) {
                     activeUsernames.add(customer.getUsername());
@@ -388,9 +381,9 @@ public class CustomerServiceImpl implements CustomerService {
 
             if (!StringUtils.isEmpty(resetPasswordUrl)) {
                 if (resetPasswordUrl.contains("?")) {
-                    resetPasswordUrl = resetPasswordUrl+"&token="+token;
+                    resetPasswordUrl = resetPasswordUrl + "&token=" + token;
                 } else {
-                    resetPasswordUrl = resetPasswordUrl+"?token="+token;
+                    resetPasswordUrl = resetPasswordUrl + "?token=" + token;
                 }
             }
 
@@ -424,7 +417,8 @@ public class CustomerServiceImpl implements CustomerService {
             if (customer == null) {
                 fpst = customerForgotPasswordSecurityTokenDao.readToken(encodePassword(token));
             } else {
-                List<CustomerForgotPasswordSecurityToken> fpstoks = customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(customer.getId());
+                List<CustomerForgotPasswordSecurityToken> fpstoks = customerForgotPasswordSecurityTokenDao
+                        .readUnusedTokensByCustomerId(customer.getId());
                 for (CustomerForgotPasswordSecurityToken fpstok : fpstoks) {
                     if (isPasswordValid(rawToken, fpstok.getToken())) {
                         fpst = fpstok;
@@ -458,7 +452,8 @@ public class CustomerServiceImpl implements CustomerService {
         if (!response.getHasErrors()) {
             if (!customer.getId().equals(fpst.getCustomerId())) {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("Password reset attempt tried with mismatched customer and token " + customer.getId() + ", " + StringUtil.sanitize(token));
+                    LOG.warn("Password reset attempt tried with mismatched customer and token " + customer.getId()
+                            + ", " + StringUtil.sanitize(token));
                 }
                 response.addErrorCode("invalidToken");
             }
@@ -475,7 +470,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     protected void invalidateAllTokensForCustomer(Customer customer) {
-        List<CustomerForgotPasswordSecurityToken> tokens = customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(customer.getId());
+        List<CustomerForgotPasswordSecurityToken> tokens = customerForgotPasswordSecurityTokenDao
+                .readUnusedTokensByCustomerId(customer.getId());
         for (CustomerForgotPasswordSecurityToken token : tokens) {
             token.setTokenUsedFlag(true);
             customerForgotPasswordSecurityTokenDao.saveToken(token);
@@ -524,8 +520,6 @@ public class CustomerServiceImpl implements CustomerService {
         this.passwordTokenLength = passwordTokenLength;
     }
 
-
-
     @Override
     public List<Customer> readBatchCustomers(int start, int pageSize) {
         return customerDao.readBatchCustomers(start, pageSize);
@@ -535,4 +529,5 @@ public class CustomerServiceImpl implements CustomerService {
     public Long readNumberOfCustomers() {
         return customerDao.readNumberOfCustomers();
     }
+
 }

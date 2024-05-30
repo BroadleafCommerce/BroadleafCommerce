@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,16 +46,14 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
         implements UpdateCartServiceExtensionHandler {
 
     protected static final Log LOG = LogFactory.getLog(i18nUpdateCartServiceExtensionHandler.class);
+    @Resource(name = "blCatalogService")
+    protected CatalogService catalogService;
+    @Resource(name = "blUpdateCartServiceExtensionManager")
+    protected UpdateCartServiceExtensionManager extensionManager;
 
     protected boolean getClearCartOnLocaleSwitch() {
         return BLCSystemProperty.resolveBooleanSystemProperty("clearCartOnLocaleSwitch");
     }
-
-    @Resource(name = "blCatalogService")
-    protected CatalogService catalogService;
-
-    @Resource(name = "blUpdateCartServiceExtensionManager")
-    protected UpdateCartServiceExtensionManager extensionManager;
 
     @PostConstruct
     public void init() {
@@ -70,11 +68,11 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
 
     /**
      * If the locale of the cart does not match the current locale, then this extension handler will
-     * attempt to translate the order items.  
-     * 
-     * The property "clearCartOnLocaleSwitch" can be set to true if the implementation desires to 
+     * attempt to translate the order items.
+     * <p>
+     * The property "clearCartOnLocaleSwitch" can be set to true if the implementation desires to
      * create a new cart when the locale is switched (3.0.6 and prior behavior).
-     * 
+     *
      * @param cart
      * @param resultHolder
      * @return
@@ -136,4 +134,5 @@ public class i18nUpdateCartServiceExtensionHandler extends AbstractUpdateCartSer
             }
         }
     }
+
 }

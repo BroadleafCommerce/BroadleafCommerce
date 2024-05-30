@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,7 @@ import java.util.Set;
 /**
  * Processor used in conjunction with {@link FixedPriceFulfillmentOption}. Simply takes the
  * flat rate defined on the option and sets that to the total shipping price of the {@link FulfillmentGroup}
- * 
+ *
  * @author Phillip Verheyden
  * @see {@link FixedPriceFulfillmentOption}
  */
@@ -43,7 +43,7 @@ public class FixedPriceFulfillmentPricingProvider implements FulfillmentPricingP
     @Override
     public FulfillmentGroup calculateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws FulfillmentPriceException {
         if (canCalculateCostForFulfillmentGroup(fulfillmentGroup, fulfillmentGroup.getFulfillmentOption())) {
-            Money price = ((FixedPriceFulfillmentOption)fulfillmentGroup.getFulfillmentOption()).getPrice();
+            Money price = ((FixedPriceFulfillmentOption) fulfillmentGroup.getFulfillmentOption()).getPrice();
             fulfillmentGroup.setRetailShippingPrice(price);
             fulfillmentGroup.setSaleShippingPrice(price);
             fulfillmentGroup.setShippingPrice(price);
@@ -55,10 +55,13 @@ public class FixedPriceFulfillmentPricingProvider implements FulfillmentPricingP
     }
 
     @Override
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws FulfillmentPriceException {
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(
+            FulfillmentGroup fulfillmentGroup,
+            Set<FulfillmentOption> options
+    ) throws FulfillmentPriceException {
 
         FulfillmentEstimationResponse response = new FulfillmentEstimationResponse();
-        HashMap<FulfillmentOption, Money> shippingPrices = new HashMap<FulfillmentOption, Money>();
+        HashMap<FulfillmentOption, Money> shippingPrices = new HashMap<>();
         response.setFulfillmentOptionPrices(shippingPrices);
 
         for (FulfillmentOption option : options) {

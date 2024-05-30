@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,6 +31,7 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Polymorphism;
 import org.hibernate.annotations.PolymorphismType;
 
+import java.io.Serial;
 import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
@@ -53,21 +54,13 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
 @AdminPresentationClass(excludeFromPolymorphism = false)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blProductRelationships")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    public SkuProductOptionValueXrefImpl() {}
-
-    public SkuProductOptionValueXrefImpl(Sku sku, ProductOptionValue val) {
-        this.sku = sku;
-        this.productOptionValue = val;
-    }
-
     @Id
     @GeneratedValue(generator = "SkuProductOptionValueXrefId")
     @GenericGenerator(
@@ -81,15 +74,20 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
     )
     @Column(name = "SKU_OPTION_VALUE_XREF_ID")
     protected Long id;
-
     @ManyToOne(targetEntity = SkuImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "SKU_ID")
     protected Sku sku;
-
-    @ManyToOne(targetEntity = ProductOptionValueImpl.class, optional = false,
-            cascade = CascadeType.REFRESH)
+    @ManyToOne(targetEntity = ProductOptionValueImpl.class, optional = false, cascade = CascadeType.REFRESH)
     @JoinColumn(name = "PRODUCT_OPTION_VALUE_ID")
     protected ProductOptionValue productOptionValue;
+
+    public SkuProductOptionValueXrefImpl() {
+    }
+
+    public SkuProductOptionValueXrefImpl(Sku sku, ProductOptionValue val) {
+        this.sku = sku;
+        this.productOptionValue = val;
+    }
 
     @Override
     public Long getId() {
@@ -123,7 +121,8 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
 
     @Override
     public <G extends SkuProductOptionValueXref> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -150,14 +149,14 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
         if (o == null || getClass() != o.getClass())
             return false;
         SkuProductOptionValueXrefImpl that = (SkuProductOptionValueXrefImpl) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(getSku(), that.getSku()) &&
-                Objects.equals(getProductOptionValue(), that.getProductOptionValue());
+        return Objects.equals(id, that.id)
+                && Objects.equals(getSku(), that.getSku())
+                && Objects.equals(getProductOptionValue(), that.getProductOptionValue());
     }
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, getSku(), getProductOptionValue());
     }
+
 }

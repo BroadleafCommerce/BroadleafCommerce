@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -62,7 +62,7 @@ public class StatisticsServiceImpl implements DynamicMBean, StatisticsService, S
 
     protected StatisticsServiceLogAdapter adapter;
 
-    protected Map<String, CacheStat> cacheStats = Collections.synchronizedMap(new HashMap<String, CacheStat>());
+    protected Map<String, CacheStat> cacheStats = Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public void addCacheStat(String key, boolean isHit) {
@@ -194,34 +194,34 @@ public class StatisticsServiceImpl implements DynamicMBean, StatisticsService, S
                     false); // isIs
         }
         attrs = ArrayUtils.add(attrs, new MBeanAttributeInfo(
-                            "LOG_RESOLUTION",
-                            "java.lang.Double",
-                            "LOG_RESOLUTION",
-                            true,   // isReadable
-                            true,   // isWritable
-                            false) // isIs
+                "LOG_RESOLUTION",
+                "java.lang.Double",
+                "LOG_RESOLUTION",
+                true,   // isReadable
+                true,   // isWritable
+                false) // isIs
         );
         MBeanOperationInfo[] opers = {
-            new MBeanOperationInfo(
-                    "activate",
-                    "Activate statistic logging",
-                    null,   // no parameters
-                    "void",
-                    MBeanOperationInfo.ACTION),
-            new MBeanOperationInfo(
-                    "disable",
-                    "Disable statistic logging",
-                    null,   // no parameters
-                    "void",
-                    MBeanOperationInfo.ACTION)
+                new MBeanOperationInfo(
+                        "activate",
+                        "Activate statistic logging",
+                        null,   // no parameters
+                        "void",
+                        MBeanOperationInfo.ACTION),
+                new MBeanOperationInfo(
+                        "disable",
+                        "Disable statistic logging",
+                        null,   // no parameters
+                        "void",
+                        MBeanOperationInfo.ACTION)
         };
         return new MBeanInfo(
-            "org.broadleafcommerce:name=StatisticsService." + appName,
-            "Runtime Statistics",
-            attrs,
-            null,  // constructors
-            opers,
-            null); // notifications
+                "org.broadleafcommerce:name=StatisticsService." + appName,
+                "Runtime Statistics",
+                attrs,
+                null,  // constructors
+                opers,
+                null); // notifications
     }
 
     public StatisticsServiceLogAdapter getAdapter() {
@@ -231,4 +231,5 @@ public class StatisticsServiceImpl implements DynamicMBean, StatisticsService, S
     public void setAdapter(StatisticsServiceLogAdapter adapter) {
         this.adapter = adapter;
     }
+
 }

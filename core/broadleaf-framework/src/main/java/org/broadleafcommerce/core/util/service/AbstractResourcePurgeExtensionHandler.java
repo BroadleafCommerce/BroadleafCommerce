@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,14 +25,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AbstractResourcePurgeExtensionHandler extends AbstractExtensionHandler implements ResourcePurgeExtensionHandler{
+public class AbstractResourcePurgeExtensionHandler extends AbstractExtensionHandler implements ResourcePurgeExtensionHandler {
+
     @Override
     public ExtensionResultStatusType addPurgeStatements(Statement statement, String id) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
     @Override
-    public ExtensionResultStatusType addPurgeDependencies(Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies) {
+    public ExtensionResultStatusType addPurgeDependencies(
+            Map<String, List<DeleteStatementGeneratorImpl.PathElement>> dependencies
+    ) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
 
@@ -40,4 +43,5 @@ public class AbstractResourcePurgeExtensionHandler extends AbstractExtensionHand
     public ExtensionResultStatusType addPurgeExclusions(Set<String> exclusions) {
         return null;
     }
+
 }

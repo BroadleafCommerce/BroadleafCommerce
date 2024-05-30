@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,27 +20,25 @@ package org.broadleafcommerce.common.cache.engine;
 import java.lang.reflect.Method;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class HydrationItemDescriptor {
-    
+
     private String factoryMethod;
     private Method[] mutators;
-    
+
     public String getFactoryMethod() {
         return factoryMethod;
     }
-    
+
     public void setFactoryMethod(String factoryMethod) {
         this.factoryMethod = factoryMethod;
     }
-    
+
     public Method[] getMutators() {
         return mutators;
     }
-    
+
     public void setMutators(Method[] mutators) {
         this.mutators = mutators;
     }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,36 +28,30 @@ import org.broadleafcommerce.core.order.service.call.ConfigurableOrderItemReques
 public interface OrderItemServiceExtensionHandler extends ExtensionHandler {
 
     /**
-     *
-     *
      * @param item
      * @return
      */
-    public ExtensionResultStatusType modifyOrderItemPrices(OrderItem item);
+    ExtensionResultStatusType modifyOrderItemPrices(OrderItem item);
 
     /**
      * Allows a module to append additional rule variables that may be needed for order item evaluation
+     *
      * @param orderItem - the promotable order item in consideration
      * @return
      */
     ExtensionResultStatusType applyAdditionalOrderItemProperties(OrderItem orderItem);
 
-
     /**
-     *
-     *
      * @param configurableOrderItem
      * @return
      */
-    public ExtensionResultStatusType modifyOrderItemRequest(ConfigurableOrderItemRequest configurableOrderItem);
+    ExtensionResultStatusType modifyOrderItemRequest(ConfigurableOrderItemRequest configurableOrderItem);
 
     /**
-     *
-     *
      * @param itemRequest
      * @param orderItem
      * @return
      */
-    public ExtensionResultStatusType mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem);
+    ExtensionResultStatusType mergeOrderItemRequest(ConfigurableOrderItemRequest itemRequest, OrderItem orderItem);
 
 }

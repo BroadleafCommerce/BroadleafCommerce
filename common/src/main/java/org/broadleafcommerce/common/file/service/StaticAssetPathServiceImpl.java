@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -49,19 +49,19 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
      * This method will take in a content string (e.g. StructuredContentDTO or PageDTO HTML/ASSET_LOOKUP/STRING field value)
      * and replace any instances of "staticAssetUrlPrefix" in the string with the "staticAssetEnvironmentUrlPrefix"
      * or the "staticAssetEnvironmentSecureUrlPrefix" depending on if the request was secure and if it was configured.
-     *
+     * <p>
      * Given asset.server.url.prefix.internal=cmsstatic
      * Given asset.server.url.prefix=http://static.mydomain.com/cmsstatic
      * Given asset.server.url.prefix.secure=https://static.mydomain.com/cmsstatic
-     *
+     * <p>
      * Example 1:
      * Given content = "<p><img src="/cmsstatic/my_image.jpg"/></p>"
-     *
+     * <p>
      * The result should yield: "<p><img src="http://static.mydomain.com/cmsstatic/my_image.jpg"/></p>"
-     *
+     * <p>
      * Example 2:
      * Given content = "<p><img src="cmsstatic/my_image_2.jpg"/></p>"
-     *
+     * <p>
      * The result should yield: "<p><img src="http://static.mydomain.com/cmsstatic/my_image_2.jpg"/></p>"
      *
      * @param content       - The content string to rewrite if it contains a cms managed asset
@@ -74,10 +74,10 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
     public String convertAllAssetPathsInContent(String content, boolean secureRequest) {
         String returnValue = content;
 
-        if (StringUtils.isNotBlank(content) &&
-                StringUtils.isNotBlank(getStaticAssetUrlPrefix()) &&
-                StringUtils.isNotBlank(getStaticAssetEnvironmentUrlPrefix()) &&
-                content.contains(getStaticAssetUrlPrefix())) {
+        if (StringUtils.isNotBlank(content)
+                && StringUtils.isNotBlank(getStaticAssetUrlPrefix())
+                && StringUtils.isNotBlank(getStaticAssetEnvironmentUrlPrefix())
+                && content.contains(getStaticAssetUrlPrefix())) {
 
             final String envPrefix;
             if (secureRequest) {
@@ -91,11 +91,10 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
                 if (envPrefix.endsWith(File.separator)) {
                     trailing = File.separator;
                 }
-                returnValue = returnValue.replaceAll(getStaticAssetUrlPrefix()+trailing, envPrefix);
+                returnValue = returnValue.replaceAll(getStaticAssetUrlPrefix() + trailing, envPrefix);
                 //Catch any scenario where there is a leading "/" after the replacement
                 returnValue = returnValue.replaceAll(File.separator + envPrefix, envPrefix);
             }
-
         }
 
         return addThemeContextIfNeeded(returnValue);
@@ -104,28 +103,28 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
     /**
      * This method will take in an assetPath (think image url) and prepend the
      * staticAssetUrlPrefix if one exists.
-     *
+     * <p>
      * Will append any contextPath onto the request.    If the incoming assetPath contains
      * the internalStaticAssetPrefix and the image is being prepended, the prepend will be
      * removed.
-     *
+     * <p>
      * Example 1:
      * Given asset.server.url.prefix.internal=cmsstatic
      * Given asset.server.url.prefix=http://static.mydomain.com/cmsstatic
      * Given asset.server.url.prefix.secure=https://static.mydomain.com/cmsstatic
      * Given assetPath = "/cmsstatic/my_image.jpg"
-     *
+     * <p>
      * The result should yield: "http://static.mydomain.com/cmsstatic/my_image.jpg"
-     *
+     * <p>
      * Example 2:
      * Given asset.server.url.prefix.internal=cmsstatic
      * Given asset.server.url.prefix=
      * Given asset.server.url.prefix.secure=
      * Given assetPath = "/cmsstatic/my_image.jpg"
      * Given contextPath = "myApp"
-     *
+     * <p>
      * The result should yield: "/myApp/cmsstatic/my_image.jpg"
-     *
+     * <p>
      * Also, since all paths are intended to be URLs, there should be no system-specific separator characters like '\' for
      * Windows. All paths should be unix file paths as URLs.
      *
@@ -140,7 +139,8 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
     public String convertAssetPath(String assetPath, String contextPath, boolean secureRequest) {
         String returnValue = assetPath;
 
-        if (assetPath != null && getStaticAssetEnvironmentUrlPrefix() != null && ! "".equals(getStaticAssetEnvironmentUrlPrefix())) {
+        if (assetPath != null && getStaticAssetEnvironmentUrlPrefix() != null
+                && !"".equals(getStaticAssetEnvironmentUrlPrefix())) {
             String envPrefix;
             if (secureRequest) {
                 envPrefix = getStaticAssetEnvironmentSecureUrlPrefix();
@@ -167,14 +167,14 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
                 returnValue = envPrefix + returnValue;
             }
         } else {
-            if (returnValue != null && ! UrlUtil.isAbsoluteUrl(returnValue)) {
-                if (! returnValue.startsWith("/")) {
+            if (returnValue != null && !UrlUtil.isAbsoluteUrl(returnValue)) {
+                if (!returnValue.startsWith("/")) {
                     returnValue = "/" + returnValue;
                 }
 
                 // Add context path
-                if (contextPath != null && ! contextPath.equals("")) {
-                    if (! contextPath.equals("/")) {
+                if (contextPath != null && !contextPath.equals("")) {
+                    if (!contextPath.equals("/")) {
                         // Shouldn't be the case, but let's handle it anyway
                         if (contextPath.endsWith("/")) {
                             returnValue = returnValue.substring(1);
@@ -215,8 +215,11 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
     @Override
     public String getStaticAssetEnvironmentSecureUrlPrefix() {
         if (StringUtils.isEmpty(staticAssetEnvironmentSecureUrlPrefix)) {
-            if (!StringUtils.isEmpty(staticAssetEnvironmentUrlPrefix) && staticAssetEnvironmentUrlPrefix.indexOf("http:") >= 0) {
-                staticAssetEnvironmentSecureUrlPrefix = staticAssetEnvironmentUrlPrefix.replace("http:", "https:");
+            if (!StringUtils.isEmpty(staticAssetEnvironmentUrlPrefix)
+                    && staticAssetEnvironmentUrlPrefix.indexOf("http:") >= 0) {
+                staticAssetEnvironmentSecureUrlPrefix = staticAssetEnvironmentUrlPrefix.replace(
+                        "http:", "https:"
+                );
             }
         }
         return fixEnvironmentUrlPrefix(staticAssetEnvironmentSecureUrlPrefix);
@@ -251,7 +254,6 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
         return urlPrefix;
     }
 
-    
     protected String addThemeContextIfNeeded(String assetURL) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         Object themeChanged = brc.getAdditionalProperties().get(BroadleafThemeResolver.BRC_THEME_CHANGE_STATUS);
@@ -260,10 +262,11 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
             try {
                 assetURL = new URIBuilder(assetURL).addParameter("themeConfigId", theme.getId().toString()).build().toString();
             } catch (URISyntaxException e) {
-                LOG.error(String.format("URI syntax error building %s with parameter %s and themeId %s", assetURL, "themeConfigId", theme.getId().toString()));
+                LOG.error(String.format("URI syntax error building %s with parameter %s and themeId %s", assetURL,
+                        "themeConfigId", theme.getId().toString()));
             }
         }
         return assetURL;
-        
     }
+
 }

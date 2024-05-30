@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,6 +41,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
@@ -69,7 +70,8 @@ import jakarta.persistence.Transient;
         friendlyName = "OrderItemAdjustmentImpl_baseOrderItemAdjustment")
 public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCodeIdentifiable {
 
-    public static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "OrderItemAdjustmentId")
@@ -98,8 +100,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable = false)
-    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason",
-            order = 2000)
+    @AdminPresentation(friendlyName = "OrderItemAdjustmentImpl_Item_Adjustment_Reason", order = 2000)
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable = false, precision = 19, scale = 5)
@@ -144,6 +145,11 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
     }
 
     @Override
+    public void setOrderItem(OrderItem orderItem) {
+        this.orderItem = orderItem;
+    }
+
+    @Override
     public Offer getOffer() {
         if (deproxiedOffer == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
@@ -161,6 +167,11 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
         return deproxiedOffer;
     }
 
+    public void setOffer(Offer offer) {
+        this.offer = offer;
+        deproxiedOffer = null;
+    }
+
     @Override
     public String getReason() {
         return reason;
@@ -169,16 +180,6 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
     @Override
     public void setReason(String reason) {
         this.reason = reason;
-    }
-
-    @Override
-    public void setOrderItem(OrderItem orderItem) {
-        this.orderItem = orderItem;
-    }
-
-    public void setOffer(Offer offer) {
-        this.offer = offer;
-        deproxiedOffer = null;
     }
 
     @Override

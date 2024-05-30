@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,7 +56,9 @@ public class IgnorableOpenEntityManagerInViewFilter extends OpenEntityManagerInV
     }
 
     protected boolean isIgnored(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(new ServletWebRequest(httpServletRequest, httpServletResponse));
+        boolean isUriSecurityIgnored = BLCRequestUtils.isFilteringIgnoredForUri(
+                new ServletWebRequest(httpServletRequest, httpServletResponse)
+        );
         return isUriSecurityIgnored;
     }
 
@@ -64,4 +66,5 @@ public class IgnorableOpenEntityManagerInViewFilter extends OpenEntityManagerInV
     public int getOrder() {
         return FilterOrdered.PRE_SECURITY_HIGH;
     }
+
 }

@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -144,11 +143,9 @@ import static org.broadleafcommerce.common.presentation.client.SupportedFieldTyp
 @Scope("prototype")
 public class BasicPersistenceModule implements PersistenceModule, RecordHelper, ApplicationContextAware {
 
-    private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
-
     public static final String MAIN_ENTITY_NAME_PROPERTY = "MAIN_ENTITY_NAME";
     public static final String ALTERNATE_ID_PROPERTY = "ALTERNATE_ID";
-
+    private static final Log LOG = LogFactory.getLog(BasicPersistenceModule.class);
     protected ApplicationContext applicationContext;
     protected PersistenceManager persistenceManager;
 
@@ -239,7 +236,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         if (metadata == null) {
             return null;
         }
-        Map<String, FieldMetadata> newMap = new HashMap<String, FieldMetadata>();
+        Map<String, FieldMetadata> newMap = new HashMap<>();
         for (Map.Entry<String, FieldMetadata> entry : metadata.entrySet()) {
             String fieldName = entry.getKey();
             FieldMetadata md = entry.getValue();
@@ -288,13 +285,13 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public Serializable createPopulatedInstance(Serializable instance, Entity entity,
-            Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException {
+                                                Map<String, FieldMetadata> unfilteredProperties, Boolean setId) throws ValidationException {
         return createPopulatedInstance(instance, entity, unfilteredProperties, setId, true);
     }
 
     @Override
     public Serializable createPopulatedInstance(Serializable instance, Entity entity,
-            Map<String, FieldMetadata> unfilteredProperties, Boolean setId, Boolean validateUnsubmittedProperties) throws ValidationException {
+                                                Map<String, FieldMetadata> unfilteredProperties, Boolean setId, Boolean validateUnsubmittedProperties) throws ValidationException {
         final Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(unfilteredProperties);
         FieldManager fieldManager = getFieldManager();
         boolean handled = false;
@@ -377,7 +374,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     if (metadata.getFieldType().equals(SupportedFieldType.BOOLEAN)) {
                         if (value == null) {
                             String defaultValue = metadata.getDefaultValue();
-                            value = StringUtils.isBlank(defaultValue)? "false" : defaultValue;
+                            value = StringUtils.isBlank(defaultValue) ? "false" : defaultValue;
                         }
                     } else if (metadata.getFieldType().equals(SupportedFieldType.DATE)) {
                         if (StringUtils.isEmpty(value)) {
@@ -570,7 +567,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 entity = recordEntity;
             }
             Entity entityItem = new Entity();
-            entityItem.setType(new String[] { entity.getClass().getName() });
+            entityItem.setType(new String[]{entity.getClass().getName()});
             entities[j] = entityItem;
 
             List<Property> props = new ArrayList<Property>(primaryMergedProperties.size());
@@ -583,7 +580,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             try {
                 Property p = new Property();
                 p.setName(MAIN_ENTITY_NAME_PROPERTY);
-                String mainEntityName = ((AdminMainEntity)entity).getMainEntityName();
+                String mainEntityName = ((AdminMainEntity) entity).getMainEntityName();
                 p.setValue(mainEntityName);
                 props.add(p);
             } catch (Exception e) {
@@ -596,11 +593,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 for (Entry<String, FieldMetadata> entry : alternateMergedProperties.entrySet()) {
                     if (entry.getValue() instanceof BasicFieldMetadata) {
                         if (((BasicFieldMetadata) entry.getValue()).getFieldType() == SupportedFieldType.ID) {
-                            Map<String, FieldMetadata> alternateOnEntity = new HashMap<String, FieldMetadata>();
+                            Map<String, FieldMetadata> alternateOnEntity = new HashMap<>();
                             alternateOnEntity.put(entry.getKey(), entry.getValue());
-                            List<Property> props2 = new ArrayList<Property>();
+                            List<Property> props2 = new ArrayList<>();
                             extractPropertiesFromPersistentEntity(alternateOnEntity, recordEntity, props2, customCriteria);
-                            List<Property> filtered = new ArrayList<Property>();
+                            List<Property> filtered = new ArrayList<>();
                             for (Property prop : props2) {
                                 if (!prop.getName().startsWith("__")) {
                                     filtered.add(prop);
@@ -691,11 +688,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     Object value = null;
                     try {
                         value = fieldManager.getFieldValue(entity, property);
-                        if(value != null && BROADLEAF_ENUMERATION == metadata.getFieldType()){
+                        if (value != null && BROADLEAF_ENUMERATION == metadata.getFieldType()) {
                             try {
                                 Class<?> aClass = Class.forName(metadata.getEnumerationClass());
                                 Method method = aClass.getMethod("getInstance", String.class);
-                                value = method.invoke(null,value);
+                                value = method.invoke(null, value);
                             } catch (NoSuchMethodException e) {
                             }
                         }
@@ -738,11 +735,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                             try {
                                 //try a 'get' prefixed mutator first
                                 String temp = "get" + property.substring(0, 1).toUpperCase() + property.substring(1, property.length());
-                                method = entity.getClass().getMethod(temp, new Class[] {});
+                                method = entity.getClass().getMethod(temp, new Class[]{});
                             } catch (NoSuchMethodException e) {
-                                method = entity.getClass().getMethod(property, new Class[] {});
+                                method = entity.getClass().getMethod(property, new Class[]{});
                             }
-                            value = method.invoke(entity, new String[] {});
+                            value = method.invoke(entity, new String[]{});
                             Property propertyItem = new Property();
                             propertyItem.setName(property);
                             if (props.contains(propertyItem)) {
@@ -802,8 +799,8 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                 strVal = getDecimalFormatter().format(value);
             } else if (BigDecimal.class.isAssignableFrom(value.getClass())) {
                 strVal = getDecimalFormatter().format(value);
-            } else if (BroadleafEnumerationType.class.isAssignableFrom(value.getClass())){
-                strVal = ((BroadleafEnumerationType)value).getFriendlyType();
+            } else if (BroadleafEnumerationType.class.isAssignableFrom(value.getClass())) {
+                strVal = ((BroadleafEnumerationType) value).getFriendlyType();
             } else {
                 strVal = value.toString();
             }
@@ -833,7 +830,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     persistencePerspective.getExcludeFields(),
                     persistencePerspective.getConfigurationKey(),
                     ""
-                    );
+            );
             if (primaryKey == null) {
                 primaryKey = getPrimaryKey(entity, mergedProperties);
             }
@@ -929,10 +926,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective,
-            CriteriaTransferObject cto,
-            String ceilingEntityFullyQualifiedClassname,
-            Map<String, FieldMetadata> mergedUnfilteredProperties,
-            RestrictionFactory customRestrictionFactory) {
+                                                 CriteriaTransferObject cto,
+                                                 String ceilingEntityFullyQualifiedClassname,
+                                                 Map<String, FieldMetadata> mergedUnfilteredProperties,
+                                                 RestrictionFactory customRestrictionFactory) {
         Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
         List<FilterMapping> filterMappings = new ArrayList<FilterMapping>();
 
@@ -940,22 +937,22 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
             boolean found = mergedProperties.containsKey(realPropertyId);
             String propertyId = realPropertyId;
-            if(!found && propertyId.equals("id")){
+            if (!found && propertyId.equals("id")) {
                 propertyId = getIdPropertyName(mergedProperties);
                 found = mergedProperties.containsKey(propertyId);
             }
             if (found) {
                 boolean handled = false;
                 AddSearchMappingRequest addSearchMappingRequest;
-                if(realPropertyId.equals(propertyId)) {
+                if (realPropertyId.equals(propertyId)) {
                     addSearchMappingRequest = new AddSearchMappingRequest(persistencePerspective, cto,
                             ceilingEntityFullyQualifiedClassname, mergedProperties,
                             propertyId, getFieldManager(), this, this, customRestrictionFactory == null ? restrictionFactory
                             : customRestrictionFactory);
-                }else{
+                } else {
                     addSearchMappingRequest = new AddSearchMappingRequest(persistencePerspective, cto,
                             ceilingEntityFullyQualifiedClassname, mergedProperties,
-                            propertyId, realPropertyId,getFieldManager(), this, this, customRestrictionFactory == null ? restrictionFactory
+                            propertyId, realPropertyId, getFieldManager(), this, this, customRestrictionFactory == null ? restrictionFactory
                             : customRestrictionFactory);
                 }
                 for (FieldPersistenceProvider fieldPersistenceProvider : fieldPersistenceProviders) {
@@ -979,9 +976,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public List<FilterMapping> getFilterMappings(PersistencePerspective persistencePerspective,
-            CriteriaTransferObject cto,
-            String ceilingEntityFullyQualifiedClassname,
-            Map<String, FieldMetadata> mergedUnfilteredProperties) {
+                                                 CriteriaTransferObject cto,
+                                                 String ceilingEntityFullyQualifiedClassname,
+                                                 Map<String, FieldMetadata> mergedUnfilteredProperties) {
         return getFilterMappings(persistencePerspective, cto, ceilingEntityFullyQualifiedClassname, mergedUnfilteredProperties, null);
     }
 
@@ -1004,10 +1001,11 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             Property prop = new Property();
             FieldMetadata metadata = mergedProperties.get(property);
             prop.setName(property);
- 
+
             int pos = Collections.binarySearch(properties, prop, comparator);
             if (pos >= 0 && MergedPropertyType.MAPSTRUCTUREKEY != type && MergedPropertyType.MAPSTRUCTUREVALUE != type) {
-                logWarn: {
+                logWarn:
+                {
                     if ((metadata instanceof BasicFieldMetadata) && SupportedFieldType.ID.equals(((BasicFieldMetadata) metadata).getFieldType())) {
                         //don't warn for id field collisions, but still ignore the colliding fields
                         break logWarn;
@@ -1045,7 +1043,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     persistencePerspective.getExcludeFields(),
                     persistencePerspective.getConfigurationKey(),
                     ""
-                    );
+            );
             allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
         } catch (Exception e) {
             throw new ServiceException("Unable to fetch results for " + ceilingEntityFullyQualifiedClassname, e);
@@ -1092,7 +1090,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     persistencePerspective.getExcludeFields(),
                     persistencePerspective.getConfigurationKey(),
                     ""
-                    );
+            );
             Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
 
             String idProperty = null;
@@ -1163,7 +1161,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     persistencePerspective.getExcludeFields(),
                     persistencePerspective.getConfigurationKey(),
                     ""
-                    );
+            );
             Map<String, FieldMetadata> mergedProperties = filterOutCollectionMetadata(mergedUnfilteredProperties);
             Object primaryKey = getPrimaryKey(entity, mergedProperties);
             Serializable instance = persistenceManager.getDynamicEntityDao().retrieve(Class.forName(entity.getType()[0]), primaryKey);
@@ -1212,7 +1210,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     }
 
     public Map<String, FieldMetadata> getMergedProperties(PersistencePackage persistencePackage,
-            CriteriaTransferObject cto) throws ServiceException {
+                                                          CriteriaTransferObject cto) throws ServiceException {
         PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
         String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
 
@@ -1235,7 +1233,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                     persistencePerspective.getExcludeFields(),
                     persistencePerspective.getConfigurationKey(),
                     ""
-                    );
+            );
 
             return mergedProperties;
         } catch (Exception e) {
@@ -1293,7 +1291,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return new DynamicResultSet(null, payload, totalRecords);
     }
 
-    private void addTranslationSearchIfNeeded(CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties) {
+    protected void addTranslationSearchIfNeeded(CriteriaTransferObject cto, Map<String, FieldMetadata> mergedProperties) {
         Map<String, FilterAndSortCriteria> criteriaMap = cto.getCriteriaMap();
         FilterAndSortCriteria fsc = criteriaMap.get("translationLocale");
         List<String> filterValues = new ArrayList<>();
@@ -1307,7 +1305,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             String currentLocaleCode = filterValues.get(0);
             List<org.broadleafcommerce.common.locale.domain.Locale> locales = localeService.findAllLocales();
             for (org.broadleafcommerce.common.locale.domain.Locale locale : locales) {
-                if (!locale.getLocaleCode().equals(currentLocaleCode) && currentLocaleCode.equals(locale.getLocaleCode().substring(0,2))) {
+                if (!locale.getLocaleCode().equals(currentLocaleCode) && currentLocaleCode.equals(locale.getLocaleCode().substring(0, 2))) {
                     filterValues.add(locale.getLocaleCode());
                 }
             }
@@ -1318,7 +1316,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
             final String key = next.getKey();
             FieldMetadata fieldMetadata = mergedProperties.get(key);
-            if (fieldMetadata != null && fieldMetadata instanceof BasicFieldMetadata && ((BasicFieldMetadata) fieldMetadata).getTranslatable()!=null && ((BasicFieldMetadata) fieldMetadata).getTranslatable()) {
+            if (fieldMetadata != null && fieldMetadata instanceof BasicFieldMetadata && ((BasicFieldMetadata) fieldMetadata).getTranslatable() != null && ((BasicFieldMetadata) fieldMetadata).getTranslatable()) {
                 BasicFieldMetadata basicFieldMetadata = ((BasicFieldMetadata) fieldMetadata);
                 if (next.getValue().getFilterValues().size() > 0) {
                     final String value = next.getValue().getFilterValues().get(0);
@@ -1451,14 +1449,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
 
     @Override
     public boolean validate(Entity entity, Serializable populatedInstance, Map<String, FieldMetadata> mergedProperties,
-            boolean validateUnsubmittedProperties) {
+                            boolean validateUnsubmittedProperties) {
         entityValidatorService.validate(entity, populatedInstance, mergedProperties, this, validateUnsubmittedProperties);
         return !entity.isValidationFailure();
-    }
-
-    @Override
-    public void setPersistenceManager(PersistenceManager persistenceManager) {
-        this.persistenceManager = persistenceManager;
     }
 
     @Override
@@ -1510,14 +1503,19 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         return persistenceManager;
     }
 
+    @Override
+    public void setPersistenceManager(PersistenceManager persistenceManager) {
+        this.persistenceManager = persistenceManager;
+    }
+
     /**
      * Use an alternate approach to generating a fetch query for a collection located inside of an @Embeddable object. Related
      * to https://hibernate.atlassian.net/browse/HHH-8802. The alternate approach leverages HQL rather than JPA criteria,
      * which seems to alleviate the problem.
      *
      * @param embeddedCollectionPath the path to the collection field itself
-     * @param filterMappings all the fetch restrictions for this request
-     * @param collectionClass the type of the collection members
+     * @param filterMappings         all the fetch restrictions for this request
+     * @param collectionClass        the type of the collection members
      * @return the builder capable of generating an appropriate HQL query
      */
     protected TypedQueryBuilder getSpecialCaseQueryBuilder(FieldPath embeddedCollectionPath, List<FilterMapping> filterMappings, String collectionClass) {
@@ -1556,16 +1554,17 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     /**
      * Generate LIKE or EQUALS restrictions for any filter property specified on the root entity (not the collection field in the @Embeddable object)
      *
-     * @see #getSpecialCaseQueryBuilder(org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath, java.util.List, String)
      * @param embeddedCollectionPath the path for the collection field in the @Embeddable object - this is what caused the whole thing
-     * @param filterMappings all the fetch restrictions for this request
+     * @param filterMappings         all the fetch restrictions for this request
      * @return the list of restrictions on the root entity
+     * @see #getSpecialCaseQueryBuilder(org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath, java.util.List, String)
      */
     protected List<TQRestriction> buildStandardRestrictions(FieldPath embeddedCollectionPath, List<FilterMapping> filterMappings) {
         String expression = embeddedCollectionPath.getTargetProperty().substring(0, embeddedCollectionPath.getTargetProperty().lastIndexOf("."));
         List<TQRestriction> restrictions = new ArrayList<TQRestriction>();
         for (FilterMapping mapping : filterMappings) {
-            checkProperty: {
+            checkProperty:
+            {
                 String mappingProperty = mapping.getFieldPath() == null ? null : mapping.getFieldPath().getTargetProperty();
                 if (StringUtils.isEmpty(mappingProperty)) {
                     mappingProperty = mapping.getFullPropertyName();
@@ -1598,10 +1597,10 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
     /**
      * Generate EQUALS restrictions for any filter property specified on the entity member of the collection field in the @Embeddable object
      *
-     * @see #getSpecialCaseQueryBuilder(org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath, java.util.List, String)
      * @param specialExpression the String representation of the path for the collection field in the @Embeddable object
-     * @param filterMappings all the fetch restrictions for this request
+     * @param filterMappings    all the fetch restrictions for this request
      * @return the list of restrictions on the collection in the @Embeddable object
+     * @see #getSpecialCaseQueryBuilder(org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPath, java.util.List, String)
      */
     protected List<TQRestriction> buildSpecialRestrictions(String specialExpression, List<FilterMapping> filterMappings) {
         List<TQRestriction> restrictions = new ArrayList<TQRestriction>();

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,21 +35,20 @@ import javax.cache.CacheManager;
 
 import jakarta.annotation.Resource;
 
-
 /**
  * Support for any class that wishes to utilize a query miss cache. This cache is capable of caching a query miss
  * (the query returns no results). This is beneficial since standard level 2 cache does not maintain misses.
- *
+ * <p>
  * NOTE, special cache invalidation support must be added to address this cache if a change is made to one or more of
  * the cached missed items.
  *
  * @author Jeff Fischer
  */
 public abstract class AbstractCacheMissAware<T> {
-    
-    @Resource(name="blStatisticsService")
+
+    @Resource(name = "blStatisticsService")
     protected StatisticsService statisticsService;
-    
+
     @Resource(name = "blCacheManager")
     protected CacheManager cacheManager;
 
@@ -74,7 +73,7 @@ public abstract class AbstractCacheMissAware<T> {
         }
         Site site = context.getNonPersistentSite();
         if (site != null) {
-            key = key + "_" +  site.getId();
+            key = key + "_" + site.getId();
         }
         return key;
     }
@@ -82,9 +81,8 @@ public abstract class AbstractCacheMissAware<T> {
     /**
      * Retrieve the missed cache item from the specified cache.
      *
-     * @param key the unique key for the cache item
+     * @param key       the unique key for the cache item
      * @param cacheName the name of the cache - this is the cache region name from ehcache config
-     * @param <T> the type of the cache item
      * @return the cache item instance
      */
     protected T getObjectFromCache(String key, String cacheName) {
@@ -106,7 +104,7 @@ public abstract class AbstractCacheMissAware<T> {
      * Remove a specific cache item from the underlying cache
      *
      * @param cacheName the name of the cache - the ehcache region name
-     * @param params the appropriate params comprising a unique key for this cache item
+     * @param params    the appropriate params comprising a unique key for this cache item
      */
     protected void removeItemFromCache(String cacheName, String... params) {
         String key = buildKey(params);
@@ -134,12 +132,13 @@ public abstract class AbstractCacheMissAware<T> {
      * cache miss.
      *
      * @param responseClass the class representing the type of the cache item
-     * @param <T> the type of the cache item
      * @return the null representation for the cache item
      */
     protected synchronized T getNullObject(final Class<T> responseClass) {
         if (nullObject == null) {
-            Class<?>[] interfaces = (Class<?>[]) ArrayUtils.add(ClassUtils.getAllInterfacesForClass(responseClass), Serializable.class);
+            Class<?>[] interfaces = (Class<?>[]) ArrayUtils.add(
+                    ClassUtils.getAllInterfacesForClass(responseClass), Serializable.class
+            );
             nullObject = Proxy.newProxyInstance(getClass().getClassLoader(), interfaces, new InvocationHandler() {
                 @Override
                 public Object invoke(Object o, Method method, Object[] objects) throws Throwable {
@@ -160,16 +159,21 @@ public abstract class AbstractCacheMissAware<T> {
     /**
      * This is the main entry point for retrieving an object from this cache.
      *
-     * @see org.broadleafcommerce.common.cache.StatisticsService
-     * @param responseClass the class representing the type of the cache item
-     * @param cacheName the name of the cache - the ehcache region name
+     * @param responseClass  the class representing the type of the cache item
+     * @param cacheName      the name of the cache - the ehcache region name
      * @param statisticsName the name to use for cache hit statistics
-     * @param retrieval the block of code to execute if a cache miss is not found in this cache
-     * @param params the appropriate params comprising a unique key for this cache item
-     * @param <T> the type of the cache item
+     * @param retrieval      the block of code to execute if a cache miss is not found in this cache
+     * @param params         the appropriate params comprising a unique key for this cache item
      * @return The object retrieved from the executiom of the PersistentRetrieval, or null if a cache miss was found in this cache
+     * @see org.broadleafcommerce.common.cache.StatisticsService
      */
-    protected T getCachedObject(Class<T> responseClass, String cacheName, String statisticsName, PersistentRetrieval<T> retrieval, String... params) {
+    protected T getCachedObject(
+            Class<T> responseClass,
+            String cacheName,
+            String statisticsName,
+            PersistentRetrieval<T> retrieval,
+            String... params
+    ) {
         T nullResponse = getNullObject(responseClass);
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         String key = buildKey(params);
@@ -177,7 +181,7 @@ public abstract class AbstractCacheMissAware<T> {
         boolean allowL2Cache = false;
         if (context != null) {
             allowL2Cache = context.isProductionSandBox()
-                || (context.getAdditionalProperties().containsKey("allowLevel2Cache")
+                    || (context.getAdditionalProperties().containsKey("allowLevel2Cache")
                     && (Boolean) context.getAdditionalProperties().get("allowLevel2Cache"));
         }
         if (allowL2Cache) {
@@ -204,12 +208,13 @@ public abstract class AbstractCacheMissAware<T> {
         }
         return response;
     }
-    
+
     /**
      * To provide more accurate logging, this abstract cache should utilize a logger from its child
      * implementation.
-     * 
+     *
      * @return a {@link Log} instance from the subclass of this abstract class
      */
     protected abstract Log getLogger();
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,14 +22,12 @@ import org.springframework.jmx.export.metadata.InvalidMetadataException;
 import org.springframework.jmx.export.metadata.ManagedResource;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class AnnotationJmxAttributeSource extends org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource {
-    
+
     private final String appName;
-    
+
     public AnnotationJmxAttributeSource(String appName) {
         this.appName = appName;
     }
@@ -40,12 +38,12 @@ public class AnnotationJmxAttributeSource extends org.springframework.jmx.export
         ManagedResource resource = super.getManagedResource(beanClass);
         if (resource != null && appName != null) {
             String objectName = resource.getObjectName();
-            if(StringUtils.isNotBlank(objectName)) {
+            if (StringUtils.isNotBlank(objectName)) {
                 objectName += "." + appName;
             }
             resource.setObjectName(objectName);
         }
         return resource;
     }
-    
+
 }

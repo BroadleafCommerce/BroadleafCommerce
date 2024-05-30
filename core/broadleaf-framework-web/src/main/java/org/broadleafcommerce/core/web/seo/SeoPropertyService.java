@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.seo;
 
 import org.broadleafcommerce.common.page.dto.PageDTO;
@@ -28,7 +27,7 @@ import java.util.Map;
 
 /**
  * The SeoPropertyService is responsible for generating the appropriate properties representing the known metadata about that page.
- * 
+ *
  * @author Chris Kittrell (ckittrell)
  */
 public interface SeoPropertyService {
@@ -36,10 +35,10 @@ public interface SeoPropertyService {
     /**
      * Returns a Map<String, String> that contains the known additional attributes for the current context. This method
      * understands how to extract additional attributes for products.
-     *
+     * <p>
      * Note that this method will extract the values of the {@link ProductAttribute}s from their respective entities.
      * It does not filter these attributes, and it is quite likely that some of these attributes will not be SEO related.
-     *
+     * <p>
      * Individual resolvers for these attributes will skip ones that do not apply.
      *
      * @param product
@@ -50,10 +49,10 @@ public interface SeoPropertyService {
     /**
      * Returns a Map<String, String> that contains the known additional attributes for the current context. This method
      * understands how to extract additional attributes for products, categories, and pages.
-     *
+     * <p>
      * Note that this method will extract the values of the {@link CategoryAttribute}s from their respective entities.
      * It does not filter these attributes, and it is quite likely that some of these attributes will not be SEO related.
-     *
+     * <p>
      * Individual resolvers for these attributes will skip ones that do not apply.
      *
      * @param category
@@ -64,10 +63,10 @@ public interface SeoPropertyService {
     /**
      * Returns a Map<String, String> that contains the known additional attributes for the current context. This method
      * understands how to extract additional attributes for products, categories, and pages.
-     *
+     * <p>
      * Note that this method will extract the values of the {@link PageAttribute}s from their respective entities.
      * It does not filter these attributes, and it is quite likely that some of these attributes will not be SEO related.
-     *
+     * <p>
      * Individual resolvers for these attributes will skip ones that do not apply.
      *
      * @param page

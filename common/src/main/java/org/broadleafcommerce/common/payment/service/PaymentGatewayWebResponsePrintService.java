@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.service;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,13 +26,12 @@ import jakarta.servlet.http.HttpServletRequest;
  * but can be injected anywhere you need to get the attributes or paraeters from an HTTPServletRequest
  * as a String.</p>
  *
+ * @author Elbert Bautista (elbertbautista)
  * @see {@link PaymentGatewayWebResponseService}
  * @see {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO}
- *
- * @author Elbert Bautista (elbertbautista)
  */
 public interface PaymentGatewayWebResponsePrintService {
 
-    public String printRequest(HttpServletRequest request);
+    String printRequest(HttpServletRequest request);
 
 }

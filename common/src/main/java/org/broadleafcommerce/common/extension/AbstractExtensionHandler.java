@@ -10,20 +10,18 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.extension;
 
-
-
 /**
  * Base {@link ExtensionHandler} class that provide basic extension handler properties including
  * priority (which drives the execution order of handlers) and enabled (which if false informs the
  * manager to skip this handler).
- * 
+ *
  * @author bpolster
  */
 public abstract class AbstractExtensionHandler implements ExtensionHandler {
@@ -33,6 +31,7 @@ public abstract class AbstractExtensionHandler implements ExtensionHandler {
 
     /**
      * Determines the priority of this extension handler.
+     *
      * @return
      */
     @Override
@@ -52,5 +51,5 @@ public abstract class AbstractExtensionHandler implements ExtensionHandler {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-    
+
 }

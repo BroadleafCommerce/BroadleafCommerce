@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,10 +33,9 @@ import java.util.Map;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 
-
 /**
  * Adds a product breadcrumb using the product on the BroadleafRequestContext.
- * 
+ *
  * @author bpolster
  */
 @Service("blProductBreadcrumbServiceExtensionHandler")
@@ -52,8 +51,11 @@ public class ProductBreadcrumbServiceExtensionHandler extends AbstractBreadcrumb
         }
     }
 
-    public ExtensionResultStatusType modifyBreadcrumbList(String url, Map<String, String[]> params,
-            ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
+    public ExtensionResultStatusType modifyBreadcrumbList(
+            String url,
+            Map<String, String[]> params,
+            ExtensionResultHolder<List<BreadcrumbDTO>> holder
+    ) {
         Product product = determineProduct(url, params, holder);
 
         if (product != null) {
@@ -69,8 +71,11 @@ public class ProductBreadcrumbServiceExtensionHandler extends AbstractBreadcrumb
         return ExtensionResultStatusType.HANDLED_CONTINUE;
     }
 
-    protected Product determineProduct(String url, Map<String, String[]> params,
-            ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
+    protected Product determineProduct(
+            String url,
+            Map<String, String[]> params,
+            ExtensionResultHolder<List<BreadcrumbDTO>> holder
+    ) {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc != null) {
             return (Product) brc.getRequestAttribute("currentProduct"); // see ProductHandlerMapping
@@ -83,12 +88,16 @@ public class ProductBreadcrumbServiceExtensionHandler extends AbstractBreadcrumb
     }
 
     /**
-     * Remove the productId and the last fragment of the URL     
-     * 
+     * Remove the productId and the last fragment of the URL
+     *
      * @param params
      * @param holder
      */
-    protected void updateContextMap(String origUrl, Map<String, String[]> params, ExtensionResultHolder<List<BreadcrumbDTO>> holder) {
+    protected void updateContextMap(
+            String origUrl,
+            Map<String, String[]> params,
+            ExtensionResultHolder<List<BreadcrumbDTO>> holder
+    ) {
         Map<String, Object> contextMap = holder.getContextMap();
 
         if (params != null && params.containsKey(getProductIdParam())) {
@@ -111,4 +120,5 @@ public class ProductBreadcrumbServiceExtensionHandler extends AbstractBreadcrumb
     public int getDefaultPriority() {
         return BreadcrumbHandlerDefaultPriorities.PRODUCT_CRUMB;
     }
+
 }

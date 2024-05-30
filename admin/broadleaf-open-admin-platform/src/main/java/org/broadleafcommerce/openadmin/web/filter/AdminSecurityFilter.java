@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.web.filter;
-
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,16 +47,15 @@ import jakarta.servlet.http.HttpServletResponse;
  * applicationContext-admin-security should reference this class as follows:
  * </p>
  * {@code
- *      ...
- *       <sec:custom-filter ref="blPreSecurityFilterChain" before="CHANNEL_FILTER"/>
- *        <sec:custom-filter ref="blSecurityFilter" before="FORM_LOGIN_FILTER"/>
- *        <sec:custom-filter ref="blAdminFilterSecurityInterceptor" after="EXCEPTION_TRANSLATION_FILTER"/>
- *        <sec:custom-filter ref="blPostSecurityFilterChain" after="SWITCH_USER_FILTER"/>
- *    </sec:http>
- *   <bean id="blSecurityFilter" class="org.broadleafcommerce.openadmin.web.filter.AdminSecurityFilter" />
- *   ...
+ * ...
+ * <sec:custom-filter ref="blPreSecurityFilterChain" before="CHANNEL_FILTER"/>
+ * <sec:custom-filter ref="blSecurityFilter" before="FORM_LOGIN_FILTER"/>
+ * <sec:custom-filter ref="blAdminFilterSecurityInterceptor" after="EXCEPTION_TRANSLATION_FILTER"/>
+ * <sec:custom-filter ref="blPostSecurityFilterChain" after="SWITCH_USER_FILTER"/>
+ * </sec:http>
+ * <bean id="blSecurityFilter" class="org.broadleafcommerce.openadmin.web.filter.AdminSecurityFilter" />
+ * ...
  * }
- *
  *
  * @author trevorleffert, Jeff Fischer
  */
@@ -71,7 +69,11 @@ public class AdminSecurityFilter extends SecurityFilter {
     protected AuthenticationFailureHandler failureHandler;
 
     @Override
-    public void doFilterInternal(HttpServletRequest baseRequest, HttpServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
+    public void doFilterInternal(
+            HttpServletRequest baseRequest,
+            HttpServletResponse baseResponse,
+            FilterChain chain
+    ) throws IOException, ServletException {
         try {
             super.doFilterInternal(baseRequest, baseResponse, chain);
         } catch (ServletException e) {
@@ -84,7 +86,9 @@ public class AdminSecurityFilter extends SecurityFilter {
                 //if authentication is null and CSRF token is invalid, must be session time out
                 if (SecurityContextHolder.getContext().getAuthentication() == null && failureHandler != null) {
                     baseRequest.setAttribute("sessionTimeout", true);
-                    failureHandler.onAuthenticationFailure(baseRequest, baseResponse, new SessionAuthenticationException("Session Time Out"));
+                    failureHandler.onAuthenticationFailure(
+                            baseRequest, baseResponse, new SessionAuthenticationException("Session Time Out")
+                    );
                 } else {
                     throw e;
                 }
@@ -93,4 +97,5 @@ public class AdminSecurityFilter extends SecurityFilter {
             }
         }
     }
+
 }

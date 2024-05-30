@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,61 +40,61 @@ import java.util.Map;
 
 /**
  * This class serves to allow reuse of logic between the core offer service and related offer service extensions.
- * 
+ * <p>
  * Changes here likely affect other modules including advanced offer and subscription.
- * 
- * @author bpolster
  *
+ * @author bpolster
  */
 public interface OfferServiceUtilities {
 
     /**
-     * Used in {@link ItemOfferProcessorImpl#applyItemQualifiersAndTargets(PromotableCandidateItemOffer, PromotableOrder)} 
-     * Allow for customized sorting for which qualifier items should be attempted to be used first for a promotion. 
-     * 
+     * Used in {@link ItemOfferProcessorImpl#applyItemQualifiersAndTargets(PromotableCandidateItemOffer, PromotableOrder)}
+     * Allow for customized sorting for which qualifier items should be attempted to be used first for a promotion.
+     * <p>
      * Default behavior is to sort descending, so higher-value items are attempted to be discounted first.
-    */
+     */
     void sortTargetItemDetails(List<PromotableOrderItemPriceDetail> itemPriceDetails, boolean applyToSalePrice);
 
     /**
-     * Used in {@link ItemOfferProcessorImpl#applyItemQualifiersAndTargets(PromotableCandidateItemOffer, PromotableOrder)} 
-     * Allow for customized sorting for which qualifier items should be attempted to be used first for a promotion. 
-     * 
+     * Used in {@link ItemOfferProcessorImpl#applyItemQualifiersAndTargets(PromotableCandidateItemOffer, PromotableOrder)}
+     * Allow for customized sorting for which qualifier items should be attempted to be used first for a promotion.
+     * <p>
      * Default behavior is to sort descending, so higher-value items are attempted to be qualified first.
-    */
+     */
     void sortQualifierItemDetails(List<PromotableOrderItemPriceDetail> itemPriceDetails, boolean applyToSalePrice);
 
     /**
-     * Given an orderItem, finds the top most parent order item.  
+     * Given an orderItem, finds the top most parent order item.
+     *
      * @param relatedQualifier
      * @return
      */
     OrderItem findRelatedQualifierRoot(OrderItem relatedQualifier);
 
     /**
-     * Return false if a totalitarian or non-combinable offer has already been applied or if this offer is 
+     * Return false if a totalitarian or non-combinable offer has already been applied or if this offer is
      * totalitarian or non-combinable  and this order already has adjustments applied.
-     *      
+     *
      * @param order
      * @param details
      * @return
      */
-    public boolean itemOfferCanBeApplied(PromotableCandidateItemOffer itemOffer,
-            List<PromotableOrderItemPriceDetail> details);
+    boolean itemOfferCanBeApplied(PromotableCandidateItemOffer itemOffer, List<PromotableOrderItemPriceDetail> details);
 
     /**
-     * Returns the number of qualifiers marked for the passed in itemCriteria    
+     * Returns the number of qualifiers marked for the passed in itemCriteria
+     *
      * @param itemOffer
      * @param itemCriteria
      * @param priceDetails
      * @return
      */
     int markQualifiersForCriteria(PromotableCandidateItemOffer itemOffer, OfferItemCriteria itemCriteria,
-            List<PromotableOrderItemPriceDetail> priceDetails);
-    
+                                  List<PromotableOrderItemPriceDetail> priceDetails);
+
     /**
      * Returns the number of targets marked for the passed in itemCriteria
-     *     
+     *
      * @param itemOffer
      * @param relatedQualifier
      * @param checkOnly
@@ -106,16 +106,16 @@ public interface OfferServiceUtilities {
      * @return
      */
     int markTargetsForCriteria(PromotableCandidateItemOffer itemOffer, OrderItem relatedQualifier, boolean checkOnly,
-            Offer promotion, OrderItem relatedQualifierRoot, OfferItemCriteria itemCriteria,
-            List<PromotableOrderItemPriceDetail> priceDetails, int targetQtyNeeded);
+                               Offer promotion, OrderItem relatedQualifierRoot, OfferItemCriteria itemCriteria,
+                               List<PromotableOrderItemPriceDetail> priceDetails, int targetQtyNeeded);
 
     boolean markTargetsForOfferPriceData(PromotableCandidateItemOffer itemOffer, OrderItem relatedQualifier,
-                                         boolean checkOnly, Offer promotion, OrderItem relatedQualifierRoot, OfferPriceData offerPriceData,
-                                         List<PromotableOrderItemPriceDetail> priceDetails);
+                                         boolean checkOnly, Offer promotion, OrderItem relatedQualifierRoot,
+                                         OfferPriceData offerPriceData, List<PromotableOrderItemPriceDetail> priceDetails);
 
     /**
      * Returns the number of targets marked for the passed in itemCriteria
-     * 
+     *
      * @param itemOffer
      * @param order
      * @param orderItemHolder
@@ -124,18 +124,19 @@ public interface OfferServiceUtilities {
      * @return
      */
     int markRelatedQualifiersAndTargetsForItemCriteria(PromotableCandidateItemOffer itemOffer, PromotableOrder order,
-            OrderItemHolder orderItemHolder, OfferItemCriteria itemCriteria,
-            List<PromotableOrderItemPriceDetail> priceDetails, ItemOfferMarkTargets itemOfferMarkTargets);
+                                                       OrderItemHolder orderItemHolder, OfferItemCriteria itemCriteria,
+                                                       List<PromotableOrderItemPriceDetail> priceDetails,
+                                                       ItemOfferMarkTargets itemOfferMarkTargets);
 
     /**
-     * Takes in a list of {@link PromotableOrderItemPriceDetail}s  and applies adjustments for all of the 
+     * Takes in a list of {@link PromotableOrderItemPriceDetail}s  and applies adjustments for all of the
      * discounts that match the passed in offer.
-     * 
+     *
      * @param itemOffer
      * @param itemPriceDetails
      */
     void applyAdjustmentsForItemPriceDetails(PromotableCandidateItemOffer itemOffer,
-            List<PromotableOrderItemPriceDetail> itemPriceDetails);
+                                             List<PromotableOrderItemPriceDetail> itemPriceDetails);
 
     /**
      * Determines whether or not the {@link OrderItem} was added by a Product Add-On
@@ -144,19 +145,19 @@ public interface OfferServiceUtilities {
      * @return
      */
     boolean isAddOnOrderItem(OrderItem orderItem);
-      
+
     /**
      * Used by applyAdjustments to create an OrderItemAdjustment from a CandidateOrderOffer
      * and associates the OrderItemAdjustment to the OrderItem.
      *
-     * @param orderOffer a CandidateOrderOffer to apply to an Order
+     * @param itemOffer a CandidateOrderOffer to apply to an Order
      */
     void applyOrderItemAdjustment(PromotableCandidateItemOffer itemOffer, PromotableOrderItemPriceDetail itemPriceDetail);
 
     /**
-     * Builds the list of order-items at the level they are being priced which includes splitting bundles that are 
+     * Builds the list of order-items at the level they are being priced which includes splitting bundles that are
      * being priced at the item level.
-     * 
+     *
      * @param order
      * @return
      */
@@ -164,6 +165,7 @@ public interface OfferServiceUtilities {
 
     /**
      * Builds a map from orderItem to promotableOrderItem.
+     *
      * @param promotableOrder
      * @return
      */
@@ -171,14 +173,15 @@ public interface OfferServiceUtilities {
 
     /**
      * Builds a map from itemDetails for adjustment processing.
+     *
      * @param itemDetail
      * @return
      */
     Map<Long, OrderItemPriceDetailAdjustment> buildItemDetailAdjustmentMap(OrderItemPriceDetail itemDetail);
 
-
     /**
      * Updates the passed in price detail and its associated adjustments.
+     *
      * @param itemDetail
      * @param promotableDetail
      */
@@ -186,22 +189,25 @@ public interface OfferServiceUtilities {
 
     /**
      * Removes price details from the iterator that are contained in the passed in map.
+     *
      * @param unmatchedDetailsMap
      * @param pdIterator
      */
     void removeUnmatchedPriceDetails(Map<Long, ? extends OrderItemPriceDetail> unmatchedDetailsMap,
-            Iterator<? extends OrderItemPriceDetail> pdIterator);
-    
+                                     Iterator<? extends OrderItemPriceDetail> pdIterator);
+
     /**
      * Removes qualifiers from the iterator that are contained in the passed in map.
+     *
      * @param unmatchedQualifiersMap
      * @param qIterator
      */
     void removeUnmatchedQualifiers(Map<Long, ? extends OrderItemQualifier> unmatchedQualifiersMap,
-            Iterator<? extends OrderItemQualifier> qIterator);
+                                   Iterator<? extends OrderItemQualifier> qIterator);
 
     /**
      * Determines whether or not an {@link PromotableOrder} meets the qualifying subtotal requirement of an {@link Offer}
+     *
      * @param order
      * @param offer
      * @param qualifiersMap
@@ -211,6 +217,7 @@ public interface OfferServiceUtilities {
 
     /**
      * Determines whether or not an {@link PromotableOrder} meets the target subtotal requirement of an {@link Offer}
+     *
      * @param order
      * @param offer
      * @param targetsMap
@@ -220,9 +227,11 @@ public interface OfferServiceUtilities {
 
     /**
      * Determines whether or not an {@link PromotableOrder} meets the subtotal requirement of an {@link Offer}
+     *
      * @param order
      * @param offer
      * @return boolean
      */
     boolean orderMeetsSubtotalRequirements(PromotableOrder order, Offer offer);
+
 }

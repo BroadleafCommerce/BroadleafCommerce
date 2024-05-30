@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,18 +20,20 @@ package org.broadleafcommerce.core.offer.service.discount;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 
+import java.io.Serial;
 
 /**
  * Wraps the promotion qualifier.   Serves as a useful starting point for extension.
- * 
+ *
  * @author bpolster
  */
 public class PromotionQualifierWrapper extends PromotionQualifier {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     private PromotionQualifier wrappedQualifier;
-    
+
     public PromotionQualifierWrapper(PromotionQualifier pq) {
         wrappedQualifier = pq;
     }
@@ -44,20 +46,12 @@ public class PromotionQualifierWrapper extends PromotionQualifier {
         wrappedQualifier.setPromotion(promotion);
     }
 
-    public void setItemCriteria(OfferItemCriteria itemCriteria) {
-        wrappedQualifier.setItemCriteria(itemCriteria);
-    }
-
     public int getQuantity() {
         return wrappedQualifier.getQuantity();
     }
 
     public void setQuantity(int quantity) {
         wrappedQualifier.setQuantity(quantity);
-    }
-
-    public void setFinalizedQuantity(int finalizedQuantity) {
-        wrappedQualifier.setFinalizedQuantity(finalizedQuantity);
     }
 
     public PromotionQualifier copy() {
@@ -72,8 +66,16 @@ public class PromotionQualifierWrapper extends PromotionQualifier {
         return wrappedQualifier.getItemCriteria();
     }
 
+    public void setItemCriteria(OfferItemCriteria itemCriteria) {
+        wrappedQualifier.setItemCriteria(itemCriteria);
+    }
+
     public int getFinalizedQuantity() {
         return wrappedQualifier.getFinalizedQuantity();
+    }
+
+    public void setFinalizedQuantity(int finalizedQuantity) {
+        wrappedQualifier.setFinalizedQuantity(finalizedQuantity);
     }
 
     public int hashCode() {
@@ -99,4 +101,5 @@ public class PromotionQualifierWrapper extends PromotionQualifier {
     public String toString() {
         return wrappedQualifier.toString();
     }
+
 }

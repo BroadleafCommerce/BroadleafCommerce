@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,9 @@ public class BroadleafUrlParamUtils {
     public static String addPaginationParam(String url, String paginationParamName, Integer pageNumber) {
         try {
             if (pageNumber > 1) {
-                return new URIBuilder(url).addParameter(paginationParamName, String.valueOf(pageNumber)).build().toString();
+                return new URIBuilder(url).addParameter(paginationParamName, String.valueOf(pageNumber))
+                        .build()
+                        .toString();
             }
         } catch (URISyntaxException e) {
             // If we run into trouble, do nothing - we'll just return the url that we were given.

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,6 +27,7 @@ import java.util.Stack;
  * @author Elbert Bautista (elbertbautista)
  */
 public class GroupingTranslator {
+
     public static final String GROUPSTARTCHAR = "(";
     public static final String GROUPENDCHAR = ")";
     public static final String STATEMENTENDCHAR = ";";
@@ -57,7 +58,7 @@ public class GroupingTranslator {
                 eof = true;
                 continue;
             }
-            char preChar = segment.charAt(startIndex-1);
+            char preChar = segment.charAt(startIndex - 1);
             if (preChar == '!' || preChar == '&' || preChar == '|') {
                 eof = true;
                 continue;
@@ -70,14 +71,14 @@ public class GroupingTranslator {
     protected int findGroupEnd(String segment, int subgroupStartIndex) throws MVELTranslationException {
         Stack<Integer> leftParenPos = new Stack<Integer>();
         char[] characters = segment.toCharArray();
-        for (int j=subgroupStartIndex;j<characters.length;j++) {
-            if (characters[j]=='(') {
+        for (int j = subgroupStartIndex; j < characters.length; j++) {
+            if (characters[j] == '(') {
                 leftParenPos.push(j);
                 continue;
             }
-            if (characters[j]==')') {
+            if (characters[j] == ')') {
                 leftParenPos.pop();
-                if(leftParenPos.isEmpty()) {
+                if (leftParenPos.isEmpty()) {
                     return j + 1;
                 }
             }
@@ -111,7 +112,7 @@ public class GroupingTranslator {
                         subGroup.setOperatorType(BLCOperator.NOT);
                     }
                 }
-                parseGroups(subGroup, segment.substring(subgroupStartIndex+1, subgroupEndIndex-1).trim());
+                parseGroups(subGroup, segment.substring(subgroupStartIndex + 1, subgroupEndIndex - 1).trim());
                 startPos = subgroupEndIndex;
                 if (startPos == segment.length()) {
                     eol = true;
@@ -183,8 +184,7 @@ public class GroupingTranslator {
         }
     }
 
-    protected void setGroupOperator(String segment, Group myGroup, boolean isAnd, boolean isOr, boolean isNot)
-            throws MVELTranslationException {
+    protected void setGroupOperator(String segment, Group myGroup, boolean isAnd, boolean isOr, boolean isNot) throws MVELTranslationException {
         if (myGroup.getOperatorType() == null) {
             if (isAnd) {
                 myGroup.setOperatorType(BLCOperator.AND);
@@ -196,7 +196,7 @@ public class GroupingTranslator {
         } else {
             if (
                     (isOr && !myGroup.getOperatorType().toString().equals(BLCOperator.OR.toString()))
-                    ) {
+            ) {
                 throw new MVELTranslationException(MVELTranslationException.INCOMPATIBLE_RULE, "Segment logical operator is not compatible with the group " +
                         "logical operator: (" + segment + ")");
             }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,15 +24,15 @@ import java.util.Locale;
 
 /**
  * Convenience class to provide dynamic field translations.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class DynamicTranslationProvider {
-    
+
     /**
      * If translations are enabled, this method will look for a translation for the specified field. If translations are
      * disabled or if this particular field did not have a translation, it will return back the defaultValue.
-     * 
+     *
      * @param obj
      * @param field
      * @param defaultValue
@@ -53,7 +53,7 @@ public class DynamicTranslationProvider {
                 valueToReturn = translationService.getDefaultTranslationValue(obj, field, locale, defaultValue);
             }
         }
-            
+
         return valueToReturn;
     }
 

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,10 +32,10 @@ import jakarta.annotation.Resource;
 public class TaxActivity extends BaseActivity<ProcessContext<Order>> {
 
     public static final int ORDER = 7000;
-    
+
     @Resource(name = "blTaxService")
     protected TaxService taxService;
-    
+
     public TaxActivity() {
         setOrder(ORDER);
     }
@@ -53,7 +53,6 @@ public class TaxActivity extends BaseActivity<ProcessContext<Order>> {
         context.setSeedData(order);
         return context;
     }
-
 
     public void setTaxService(TaxService taxService) {
         this.taxService = taxService;

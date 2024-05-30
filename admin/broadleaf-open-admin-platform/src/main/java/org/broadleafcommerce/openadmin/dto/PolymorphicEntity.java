@@ -10,41 +10,41 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
- * 
  * @author jfischer
- *
  */
 public class PolymorphicEntity implements Serializable {
-    
+
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     private String name;
     private String type;
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public String getType() {
         return type;
     }
-    
+
     public void setType(String type) {
         this.type = type;
     }
-    
+
 }

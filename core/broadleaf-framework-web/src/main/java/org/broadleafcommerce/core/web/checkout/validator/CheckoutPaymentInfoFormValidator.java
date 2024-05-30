@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,18 +42,25 @@ public class CheckoutPaymentInfoFormValidator extends PaymentInfoFormValidator {
         PaymentInfoForm paymentInfoForm = (PaymentInfoForm) obj;
 
         if (paymentInfoForm.getShouldUseCustomerPayment()) {
-            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "customerPaymentId", "checkout.paymentMethod.customerPaymentId.required");
+            ValidationUtils.rejectIfEmptyOrWhitespace(
+                    errors, "customerPaymentId", "checkout.paymentMethod.customerPaymentId.required"
+            );
         } else {
             super.validate(obj, errors);
 
             String emailAddress = paymentInfoForm.getEmailAddress();
-            emailAddress = Boolean.parseBoolean(environment.getProperty("blc.site.enable.xssWrapper", "false")) ? ESAPIEncoder.getInstance().decodeForHTML(emailAddress) : emailAddress;
+            emailAddress = Boolean.parseBoolean(environment.getProperty("blc.site.enable.xssWrapper", "false"))
+                    ? ESAPIEncoder.getInstance().decodeForHTML(emailAddress)
+                    : emailAddress;
             if (!EmailValidator.getInstance().isValid(emailAddress)) {
-                errors.rejectValue("emailAddress", "emailAddress.invalid", null, null);
+                errors.rejectValue(
+                        "emailAddress", "emailAddress.invalid", null, null
+                );
                 if (StringUtils.isNotEmpty(emailAddress)) {
                     paymentInfoForm.setEmailAddress(HtmlUtils.htmlEscape(emailAddress));
                 }
             }
         }
     }
+
 }

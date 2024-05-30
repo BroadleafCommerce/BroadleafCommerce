@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,6 +44,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
@@ -61,17 +62,15 @@ import jakarta.persistence.Transient;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM_DTL_ADJ")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-        {
-                @AdminPresentationMergeOverride(name = "", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                        booleanOverrideValue = true))
-        }
-)
-public class OrderItemPriceDetailAdjustmentImpl
-        implements OrderItemPriceDetailAdjustment, CurrencyCodeIdentifiable {
+@AdminPresentationMergeOverrides({
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
+public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailAdjustment, CurrencyCodeIdentifiable {
 
-    public static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "OrderItemPriceDetailAdjustmentId")
@@ -162,6 +161,11 @@ public class OrderItemPriceDetailAdjustmentImpl
     }
 
     @Override
+    public void setOrderItemPriceDetail(OrderItemPriceDetail orderItemPriceDetail) {
+        this.orderItemPriceDetail = orderItemPriceDetail;
+    }
+
+    @Override
     public Offer getOffer() {
         if (deproxiedOffer == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
@@ -179,9 +183,24 @@ public class OrderItemPriceDetailAdjustmentImpl
         return deproxiedOffer;
     }
 
+    public void setOffer(Offer offer) {
+        this.offer = offer;
+        deproxiedOffer = null;
+        if (offer != null) {
+            this.offerName = offer.getMarketingMessage() != null
+                    ? offer.getMarketingMessage()
+                    : offer.getName();
+        }
+    }
+
     @Override
     public String getOfferName() {
         return offerName;
+    }
+
+    @Override
+    public void setOfferName(String offerName) {
+        this.offerName = offerName;
     }
 
     @Override
@@ -196,26 +215,6 @@ public class OrderItemPriceDetailAdjustmentImpl
         } else if (this.offerName != null) {
             this.reason = this.offerName;
         }
-    }
-
-    @Override
-    public void setOrderItemPriceDetail(OrderItemPriceDetail orderItemPriceDetail) {
-        this.orderItemPriceDetail = orderItemPriceDetail;
-    }
-
-    public void setOffer(Offer offer) {
-        this.offer = offer;
-        deproxiedOffer = null;
-        if (offer != null) {
-            this.offerName = offer.getMarketingMessage() != null
-                    ? offer.getMarketingMessage()
-                    : offer.getName();
-        }
-    }
-
-    @Override
-    public void setOfferName(String offerName) {
-        this.offerName = offerName;
     }
 
     protected BroadleafCurrency getCurrency() {
@@ -367,7 +366,8 @@ public class OrderItemPriceDetailAdjustmentImpl
 
     @Override
     public <G extends OrderItemPriceDetailAdjustment> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -382,4 +382,5 @@ public class OrderItemPriceDetailAdjustmentImpl
         cloned.setFutureCredit(isFutureCredit());
         return createResponse;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,6 +39,8 @@ import java.util.Map;
  */
 public class FieldMetadataOverride extends MetadataOverride {
 
+    protected Boolean isDerived;
+    protected Integer gridOrder;
     //fields everyone depends on
     private Boolean excluded;
     private String friendlyName;
@@ -46,39 +48,6 @@ public class FieldMetadataOverride extends MetadataOverride {
     private String securityLevel;
     private Boolean lazyFetch;
     private Boolean manualFetch;
-
-    public Boolean getExcluded() {
-        return excluded;
-    }
-
-    public void setExcluded(Boolean excluded) {
-        this.excluded = excluded;
-    }
-
-    public String getFriendlyName() {
-        return friendlyName;
-    }
-
-    public void setFriendlyName(String friendlyName) {
-        this.friendlyName = friendlyName;
-    }
-
-    public String getAddFriendlyName() {
-        return addFriendlyName;
-    }
-
-    public void setAddFriendlyName(String addFriendlyName) {
-        this.addFriendlyName = addFriendlyName;
-    }
-
-    public String getSecurityLevel() {
-        return securityLevel;
-    }
-
-    public void setSecurityLevel(String securityLevel) {
-        this.securityLevel = securityLevel;
-    }
-
     //basic fields
     private SupportedFieldType fieldType;
     private SupportedFieldType secondaryType = SupportedFieldType.INTEGER;
@@ -94,14 +63,11 @@ public class FieldMetadataOverride extends MetadataOverride {
     private MergedPropertyType mergedPropertyType;
     private String[][] enumerationValues;
     private String enumerationClass;
-    protected Boolean isDerived;
-
     //@AdminPresentation derived fields
     private String name;
     private VisibilityEnum visibility;
     private String group;
     private Integer groupOrder;
-    protected Integer gridOrder;
     private String tab;
     private Integer tabOrder;
     private Boolean groupCollapsed;
@@ -139,13 +105,84 @@ public class FieldMetadataOverride extends MetadataOverride {
     private String defaultValue;
     private Boolean canLinkToExternalEntity;
     private String associatedFieldName;
-
     //@AdminPresentationMapField derived fields
     private Boolean searchable;
     private String mapFieldValueClass;
-
     //Not a user definable field
     private Boolean toOneLookupCreatedViaAnnotation;
+    //collection fields
+    private String[] customCriteria;
+    private OperationType addType;
+    private OperationType removeType;
+    private OperationType updateType;
+    private OperationType fetchType;
+    private OperationType inspectType;
+    private Boolean useServerSideInspectionCache;
+    private String selectizeVisibleField;
+    //basic collection fields
+    private AddMethodType addMethodType;
+    private String manyToField;
+    //Adorned target fields
+    private String parentObjectProperty;
+    private String parentObjectIdProperty;
+    private String targetObjectProperty;
+    private String[] maintainedAdornedTargetFields;
+    private String[] gridVisibleFields;
+    private String targetObjectIdProperty;
+    private String joinEntityClass;
+    private String sortProperty;
+    private Boolean sortAscending;
+    private Boolean ignoreAdornedProperties;
+    private AdornedTargetAddMethodType adornedTargetAddMethodType;
+    //Map fields
+    private String keyClass;
+    private String keyPropertyFriendlyName;
+    private String valueClass;
+    private Boolean deleteEntityUponRemove;
+    private String valuePropertyFriendlyName;
+    private UnspecifiedBooleanType isSimpleValue;
+    private String mediaField;
+    private String[][] keys;
+    private String mapKeyValueProperty;
+    private String mapKeyOptionEntityClass;
+    private String mapKeyOptionEntityDisplayField;
+    private String mapKeyOptionEntityValueField;
+    private String currencyCodeField;
+    private Boolean forceFreeFormKeys;
+    private String toOneTargetProperty;
+    private String toOneParentProperty;
+
+    public Boolean getExcluded() {
+        return excluded;
+    }
+
+    public void setExcluded(Boolean excluded) {
+        this.excluded = excluded;
+    }
+
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+
+    public String getAddFriendlyName() {
+        return addFriendlyName;
+    }
+
+    public void setAddFriendlyName(String addFriendlyName) {
+        this.addFriendlyName = addFriendlyName;
+    }
+
+    public String getSecurityLevel() {
+        return securityLevel;
+    }
+
+    public void setSecurityLevel(String securityLevel) {
+        this.securityLevel = securityLevel;
+    }
 
     public Boolean getToOneLookupCreatedViaAnnotation() {
         return toOneLookupCreatedViaAnnotation;
@@ -266,7 +303,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setEnumerationClass(String enumerationClass) {
         this.enumerationClass = enumerationClass;
     }
-    
+
     public Boolean getIsDerived() {
         return isDerived;
     }
@@ -379,15 +416,18 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.gridFieldComponentRenderer = gridFieldComponentRenderer;
     }
 
-
     public Boolean getReadOnly() {
         return readOnly;
     }
-    
+
+    public void setReadOnly(Boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
     public Boolean getTranslatable() {
         return translatable;
     }
-    
+
     public void setTranslatable(Boolean translatable) {
         this.translatable = translatable;
     }
@@ -397,11 +437,13 @@ public class FieldMetadataOverride extends MetadataOverride {
     }
 
     public void setDefaultValue(String defaultValue) {
-        if(getSecondaryType().equals(SupportedFieldType.DECIMAL) || getSecondaryType().equals(SupportedFieldType.INTEGER)
-        ||getFieldType().equals(SupportedFieldType.INTEGER) || getFieldType().equals(SupportedFieldType.DECIMAL)){
-            DecimalFormat instance = (DecimalFormat) NumberFormat.getInstance(BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale());
-            if('.'!=instance.getDecimalFormatSymbols().getDecimalSeparator()){
-                if(defaultValue.contains(".")){
+        if (getSecondaryType().equals(SupportedFieldType.DECIMAL) || getSecondaryType().equals(SupportedFieldType.INTEGER)
+                || getFieldType().equals(SupportedFieldType.INTEGER) || getFieldType().equals(SupportedFieldType.DECIMAL)) {
+            DecimalFormat instance = (DecimalFormat) NumberFormat.getInstance(
+                    BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale()
+            );
+            if ('.' != instance.getDecimalFormatSymbols().getDecimalSeparator()) {
+                if (defaultValue.contains(".")) {
                     defaultValue = defaultValue.replace('.', instance.getDecimalFormatSymbols().getDecimalSeparator());
                 }
             }
@@ -435,10 +477,6 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.tabOrder = tabOrder;
     }
 
-    public void setReadOnly(Boolean readOnly) {
-        this.readOnly = readOnly;
-    }
-
     @Deprecated
     public Integer getGroupOrder() {
         return groupOrder;
@@ -448,7 +486,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setGroupOrder(Integer groupOrder) {
         this.groupOrder = groupOrder;
     }
-    
+
     public Integer getGridOrder() {
         return gridOrder;
     }
@@ -522,15 +560,15 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setLookupDisplayProperty(String lookupDisplayProperty) {
         this.lookupDisplayProperty = lookupDisplayProperty;
     }
-    
+
     public Boolean getForcePopulateChildProperties() {
         return forcePopulateChildProperties;
     }
-    
+
     public void setForcePopulateChildProperties(Boolean forcePopulateChildProperties) {
         this.forcePopulateChildProperties = forcePopulateChildProperties;
     }
-    
+
     public Boolean getEnableTypeaheadLookup() {
         return enableTypeaheadLookup;
     }
@@ -611,16 +649,6 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.canLinkToExternalEntity = canLinkToExternalEntity;
     }
 
-    //collection fields
-    private String[] customCriteria;
-    private OperationType addType;
-    private OperationType removeType;
-    private OperationType updateType;
-    private OperationType fetchType;
-    private OperationType inspectType;
-    private Boolean useServerSideInspectionCache;
-    private String selectizeVisibleField;
-
     public String[] getCustomCriteria() {
         return customCriteria;
     }
@@ -685,10 +713,6 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.selectizeVisibleField = selectizeVisibleField;
     }
 
-    //basic collection fields
-    private AddMethodType addMethodType;
-    private String manyToField;
-
     public AddMethodType getAddMethodType() {
         return addMethodType;
     }
@@ -704,19 +728,6 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setManyToField(String manyToField) {
         this.manyToField = manyToField;
     }
-
-    //Adorned target fields
-    private String parentObjectProperty;
-    private String parentObjectIdProperty;
-    private String targetObjectProperty;
-    private String[] maintainedAdornedTargetFields;
-    private String[] gridVisibleFields;
-    private String targetObjectIdProperty;
-    private String joinEntityClass;
-    private String sortProperty;
-    private Boolean sortAscending;
-    private Boolean ignoreAdornedProperties;
-    private AdornedTargetAddMethodType adornedTargetAddMethodType;
 
     public String[] getGridVisibleFields() {
         return gridVisibleFields;
@@ -806,24 +817,6 @@ public class FieldMetadataOverride extends MetadataOverride {
         this.adornedTargetAddMethodType = adornedTargetAddMethodType;
     }
 
-    //Map fields
-    private String keyClass;
-    private String keyPropertyFriendlyName;
-    private String valueClass;
-    private Boolean deleteEntityUponRemove;
-    private String valuePropertyFriendlyName;
-    private UnspecifiedBooleanType isSimpleValue;
-    private String mediaField;
-    private String[][] keys;
-    private String mapKeyValueProperty;
-    private String mapKeyOptionEntityClass;
-    private String mapKeyOptionEntityDisplayField;
-    private String mapKeyOptionEntityValueField;
-    private String currencyCodeField;
-    private Boolean forceFreeFormKeys;
-    private String toOneTargetProperty;
-    private String toOneParentProperty;
-
     public Boolean isDeleteEntityUponRemove() {
         return deleteEntityUponRemove;
     }
@@ -847,7 +840,6 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setKeyClass(String keyClass) {
         this.keyClass = keyClass;
     }
-    
 
     public String getKeyPropertyFriendlyName() {
         return keyPropertyFriendlyName;
@@ -952,7 +944,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setCurrencyCodeField(String currencyCodeField) {
         this.currencyCodeField = currencyCodeField;
     }
-    
+
     public LookupType getLookupType() {
         return lookupType;
     }
@@ -968,7 +960,7 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setForceFreeFormKeys(Boolean forceFreeFormKeys) {
         this.forceFreeFormKeys = forceFreeFormKeys;
     }
-    
+
     public String getMapKeyValueProperty() {
         return mapKeyValueProperty;
     }
@@ -1000,4 +992,5 @@ public class FieldMetadataOverride extends MetadataOverride {
     public void setAllowNoValueEnumOption(Boolean allowNoValueEnumOption) {
         this.allowNoValueEnumOption = allowNoValueEnumOption;
     }
+
 }

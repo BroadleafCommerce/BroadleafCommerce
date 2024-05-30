@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,12 +30,12 @@ import java.util.List;
  * <p>
  * Deferred import loader that, when used in an {@link @Configuration} class, executes _after_ the set
  * of Spring {@link EnableAutoConfiguration} classes brought in by the {@Link AutoConfigurationImportSelector}.
- * 
+ *
  * <p>
  * Particularly useful when you want to do something in absence of autoconfiguration where Broadleaf is still
  * required to have a particular component. This allows you to confidently use annotations like {@code @ConditionalOnMissingBean}
  * to only create things if Spring autoconfiguration didn't already.
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link PostAutoConfigurationImport}
  * @see {@link org.springframework.context.annotation.ConfigurationClassParser}
@@ -45,8 +45,8 @@ public class PostAutoConfigurationDefferedImportSelector implements DeferredImpo
     @Override
     @SuppressWarnings("unchecked")
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-        MultiValueMap<String, Object> attributes = 
-            importingClassMetadata.getAllAnnotationAttributes(PostAutoConfigurationImport.class.getName(), true);
+        MultiValueMap<String, Object> attributes =
+                importingClassMetadata.getAllAnnotationAttributes(PostAutoConfigurationImport.class.getName(), true);
         Object importAttributes = attributes.get("value");
         List<String> imports = new ArrayList<>();
         for (String[] classes : (List<String[]>) importAttributes) {
@@ -54,4 +54,5 @@ public class PostAutoConfigurationDefferedImportSelector implements DeferredImpo
         }
         return imports.toArray(new String[imports.size()]);
     }
+
 }

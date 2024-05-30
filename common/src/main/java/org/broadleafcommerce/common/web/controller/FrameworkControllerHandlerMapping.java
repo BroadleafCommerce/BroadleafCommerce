@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -74,7 +74,7 @@ import java.lang.reflect.Method;
 @Component
 public class FrameworkControllerHandlerMapping extends RequestMappingHandlerMapping {
 
-    public static final int REQUEST_MAPPING_ORDER =  Ordered.LOWEST_PRECEDENCE - 2;
+    public static final int REQUEST_MAPPING_ORDER = Ordered.LOWEST_PRECEDENCE - 2;
 
     public FrameworkControllerHandlerMapping() {
         setOrder(REQUEST_MAPPING_ORDER);
@@ -82,7 +82,8 @@ public class FrameworkControllerHandlerMapping extends RequestMappingHandlerMapp
 
     @Override
     protected boolean isHandler(Class<?> beanType) {
-        return (beanType.getAnnotation(FrameworkController.class) != null) || (beanType.getAnnotation(FrameworkRestController.class) != null);
+        return (beanType.getAnnotation(FrameworkController.class) != null)
+                || (beanType.getAnnotation(FrameworkRestController.class) != null);
     }
 
     @Override
@@ -104,7 +105,9 @@ public class FrameworkControllerHandlerMapping extends RequestMappingHandlerMapp
         if (frameworkMapping != null) {
             frameworkMapping = AnnotationUtils.synthesizeAnnotation(frameworkMapping, null);
         }
-        return (frameworkMapping != null ? createRequestMappingInfo(convertFrameworkMappingToRequestMapping(frameworkMapping), null) : null);
+        return (frameworkMapping != null
+                ? createRequestMappingInfo(convertFrameworkMappingToRequestMapping(frameworkMapping), null)
+                : null);
     }
 
     private RequestMapping convertFrameworkMappingToRequestMapping(final FrameworkMapping frameworkMapping) {
@@ -155,4 +158,5 @@ public class FrameworkControllerHandlerMapping extends RequestMappingHandlerMapp
             }
         };
     }
+
 }

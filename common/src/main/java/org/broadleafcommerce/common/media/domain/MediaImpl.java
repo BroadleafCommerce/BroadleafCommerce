@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -54,18 +54,18 @@ import jakarta.persistence.Table;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
-    
+
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator= "MediaId")
+    @GeneratedValue(generator = "MediaId")
     @GenericGenerator(
-        name="MediaId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="MediaImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.common.media.domain.MediaImpl")
-        }
+            name = "MediaId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "MediaImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.media.domain.MediaImpl")
+            }
     )
     @Column(name = "MEDIA_ID")
     protected Long id;
@@ -74,15 +74,15 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     @AdminPresentation(friendlyName = "MediaImpl_Media_Url", order = 1, gridOrder = 4, prominent = true,
             fieldType = SupportedFieldType.ASSET_LOOKUP)
     protected String url;
-    
+
     @Column(name = "TITLE")
     @AdminPresentation(friendlyName = "MediaImpl_Media_Title", order = 2, gridOrder = 2, prominent = true, translatable = true)
     protected String title;
-    
+
     @Column(name = "ALT_TEXT")
     @AdminPresentation(friendlyName = "MediaImpl_Media_Alt_Text", order = 3, gridOrder = 3, prominent = true, translatable = true)
     protected String altText;
-    
+
     @Column(name = "TAGS")
     @AdminPresentation(friendlyName = "MediaImpl_Media_Tags")
     protected String tags;
@@ -96,7 +96,7 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @Override
     public String getUrl() {
         return url;
@@ -134,7 +134,7 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     public void setAltText(String altText) {
         this.altText = altText;
     }
-    
+
     @Override
     public String getTags() {
         return tags;
@@ -179,7 +179,7 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-        
+
         if (title == null) {
             if (other.title != null)
                 return false;
@@ -212,6 +212,7 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
         cloned.setTags(tags);
         cloned.setTitle(title);
         cloned.setUrl(url);
-        return  createResponse;
+        return createResponse;
     }
+
 }

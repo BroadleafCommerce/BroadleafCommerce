@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,14 +40,14 @@ import java.util.Map;
  * </p>
  * Add a cookie configuration to your Spring xml or Java configuration. Sample below demonstrated Java-based config:
  * {@code
- *    @Merge("blCookieRuleConfigs")
- *    public RuleDTOConfig myCookieRuleDTOConfig() {
- *        RuleDTOConfig config = new RuleDTOConfig("myFieldName", "myLabel");
- *        config.setAlternateName("cookieName");
- *        return config;
- *    }
- * }
+ *
  * @author Jeff Fischer
+ * @Merge("blCookieRuleConfigs") public RuleDTOConfig myCookieRuleDTOConfig() {
+ * RuleDTOConfig config = new RuleDTOConfig("myFieldName", "myLabel");
+ * config.setAlternateName("cookieName");
+ * return config;
+ * }
+ * }
  */
 public class CookieRuleRequestProcessor extends AbstractBroadleafWebRequestProcessor {
 
@@ -72,7 +72,10 @@ public class CookieRuleRequestProcessor extends AbstractBroadleafWebRequestProce
                 proxy = getVals(servletWebRequest);
                 BLCRequestUtils.setSessionAttributeIfOk(request, COOKIE_ATTRIBUTE_NAME, proxy);
             }
-            BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(COOKIE_ATTRIBUTE_NAME, proxy);
+            BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties().put(
+                    COOKIE_ATTRIBUTE_NAME,
+                    proxy
+            );
 
             Map<String, Object> ruleMap = getRuleMapFromRequest(request);
             ruleMap.put(COOKIE_ATTRIBUTE_NAME, proxy);
@@ -80,8 +83,11 @@ public class CookieRuleRequestProcessor extends AbstractBroadleafWebRequestProce
         }
     }
 
-    protected Map<String,Object> getRuleMapFromRequest(WebRequest request) {
-        Map<String,Object> ruleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM, WebRequest.SCOPE_REQUEST);
+    protected Map<String, Object> getRuleMapFromRequest(WebRequest request) {
+        Map<String, Object> ruleMap = (Map<String, Object>) request.getAttribute(
+                BLC_RULE_MAP_PARAM,
+                WebRequest.SCOPE_REQUEST
+        );
         if (ruleMap == null) {
             ruleMap = new HashMap<>();
         }
@@ -89,7 +95,7 @@ public class CookieRuleRequestProcessor extends AbstractBroadleafWebRequestProce
     }
 
     protected Map<String, String> getVals(ServletWebRequest request) {
-        Map<String, String> vals = new HashMap<String, String>();
+        Map<String, String> vals = new HashMap<>();
         for (RuleDTOConfig config : configs) {
             if (config.getAlternateName() != null) {
                 String val = cookieUtils.getCookieValue(request.getRequest(), config.getAlternateName());
@@ -100,4 +106,5 @@ public class CookieRuleRequestProcessor extends AbstractBroadleafWebRequestProce
         }
         return vals;
     }
+
 }

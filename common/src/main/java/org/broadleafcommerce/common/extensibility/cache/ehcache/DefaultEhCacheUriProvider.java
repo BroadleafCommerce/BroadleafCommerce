@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -45,7 +45,8 @@ public class DefaultEhCacheUriProvider extends DefaultJCacheUriProvider implemen
     @jakarta.annotation.Resource(name = "blMergedCacheConfigLocations")
     protected Set<String> mergedCacheConfigLocations;
 
-    protected URI cacheManagerUri = new File(System.getProperty("java.io.tmpdir"), "broadleaf-merged-jcache.xml").toURI();
+    protected URI cacheManagerUri = new File(System.getProperty("java.io.tmpdir"), "broadleaf-merged-jcache.xml")
+            .toURI();
 
     protected List<Resource> configLocations;
 
@@ -82,7 +83,7 @@ public class DefaultEhCacheUriProvider extends DefaultJCacheUriProvider implemen
         Resource mergeResource = merge.getMergedConfigResource(sources);
         createTemporaryMergeXml(mergeResource);
     }
-    
+
     protected File createTemporaryMergeXml(Resource mergedJcacheResource) throws FileNotFoundException, IOException {
         File file = new File(getJCacheUri());
         if (!file.exists()) {

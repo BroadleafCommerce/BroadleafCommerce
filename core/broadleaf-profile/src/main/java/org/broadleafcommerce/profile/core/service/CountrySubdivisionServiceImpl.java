@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,7 +32,7 @@ import jakarta.annotation.Resource;
 @Service("blCountrySubdivisionService")
 public class CountrySubdivisionServiceImpl implements CountrySubdivisionService {
 
-    @Resource(name="blCountrySubdivisionDao")
+    @Resource(name = "blCountrySubdivisionDao")
     protected CountrySubdivisionDao countrySubdivisionDao;
 
     @Override
@@ -70,4 +70,5 @@ public class CountrySubdivisionServiceImpl implements CountrySubdivisionService 
     public CountrySubdivision save(CountrySubdivision subdivision) {
         return countrySubdivisionDao.save(subdivision);
     }
+
 }

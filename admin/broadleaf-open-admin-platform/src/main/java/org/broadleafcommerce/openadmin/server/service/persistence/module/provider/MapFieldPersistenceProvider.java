@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -76,7 +76,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                     parent = populateValueRequest.getFieldManager().getFieldValue(instance,
                             populateValueRequest.getProperty().getName());
                     if (parent instanceof List) {
-                        parent = ((List)parent).get(0);
+                        parent = ((List) parent).get(0);
                     }
                     if (parent == null) {
                         parent = startingValueType.newInstance();
@@ -91,13 +91,14 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
                 } catch (FieldNotAvailableException e) {
                     throw new IllegalArgumentException(e);
                 }
-                dirty = persistValue || (assignableValue != null && ObjectUtils.notEqual(assignableValue.getValue(), populateValueRequest.getProperty().getValue()));
+                dirty = persistValue || (assignableValue != null
+                        && ObjectUtils.notEqual(assignableValue.getValue(), populateValueRequest.getProperty().getValue()));
                 if (dirty) {
                     updateAssignableValue(populateValueRequest, instance, parent, valueType, persistValue, assignableValue);
                 }
             } else {
                 //handle the map value set itself
-                if (MetadataProviderResponse.NOT_HANDLED==super.populateValue(populateValueRequest, instance)) {
+                if (MetadataProviderResponse.NOT_HANDLED == super.populateValue(populateValueRequest, instance)) {
                     return MetadataProviderResponse.NOT_HANDLED;
                 }
             }
@@ -109,12 +110,12 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
     }
 
     @Override
-    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property)
-            throws PersistenceException {
+    public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (!canHandleExtraction(extractValueRequest, property)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
-        checkValue:{
+        checkValue:
+        {
             if (extractValueRequest.getRequestedValue() != null) {
                 Object requestedValue = extractValueRequest.getRequestedValue();
                 if (!StringUtils.isEmpty(extractValueRequest.getMetadata().getToOneTargetProperty())) {
@@ -143,8 +144,10 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
     }
 
     @Override
-    public MetadataProviderResponse addSearchMapping(AddSearchMappingRequest addSearchMappingRequest,
-                                                  List<FilterMapping> filterMappings) {
+    public MetadataProviderResponse addSearchMapping(
+            AddSearchMappingRequest addSearchMappingRequest,
+            List<FilterMapping> filterMappings
+    ) {
         return MetadataProviderResponse.NOT_HANDLED;
     }
 
@@ -158,9 +161,14 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         return true;
     }
 
-    protected void updateAssignableValue(PopulateValueRequest populateValueRequest, Serializable instance, Object parent, Class<?>
-            valueType, boolean persistValue, ValueAssignable assignableValue)
-            throws IllegalAccessException, FieldNotAvailableException, InstantiationException {
+    protected void updateAssignableValue(
+            PopulateValueRequest populateValueRequest,
+            Serializable instance,
+            Object parent,
+            Class<?> valueType,
+            boolean persistValue,
+            ValueAssignable assignableValue
+    ) throws IllegalAccessException, FieldNotAvailableException, InstantiationException {
         if (!persistValue) {
             //pre-merge (can result in a clone for enterprise)
             parent = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(parent);
@@ -168,18 +176,22 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         }
         if (populateValueRequest.getRequestedValue() == null) {
             populateValueRequest.getPersistenceManager().getDynamicEntityDao()
-                .getStandardEntityManager().remove(assignableValue);
+                    .getStandardEntityManager().remove(assignableValue);
             return;
         }
-        String key = populateValueRequest.getProperty().getName().substring(populateValueRequest
-                .getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager
-                .MAPFIELDSEPARATOR.length(), populateValueRequest.getProperty().getName().length());
+        String key = populateValueRequest.getProperty().getName().substring(
+                populateValueRequest.getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR)
+                        + FieldManager.MAPFIELDSEPARATOR.length(),
+                populateValueRequest.getProperty().getName().length()
+        );
         populateValueRequest.getProperty().setOriginalValue(String.valueOf(assignableValue));
         populateValueRequest.getProperty().setOriginalDisplayValue(String.valueOf(assignableValue));
         assignableValue.setName(key);
         assignableValue.setValue(populateValueRequest.getRequestedValue());
-        String fieldName = populateValueRequest.getProperty().getName().substring(0,
-                populateValueRequest.getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR));
+        String fieldName = populateValueRequest.getProperty().getName().substring(
+                0,
+                populateValueRequest.getProperty().getName().indexOf(FieldManager.MAPFIELDSEPARATOR)
+        );
         Field field = populateValueRequest.getFieldManager().getField(instance.getClass(), fieldName);
         FieldInfo fieldInfo = buildFieldInfo(field);
         String manyToField = null;
@@ -197,13 +209,11 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
             Object middleInstance = instance;
             if (propertyName.contains(".")) {
                 propertyName = propertyName.substring(0, propertyName.lastIndexOf("."));
-                middleInstance = populateValueRequest.getFieldManager().getFieldValue(instance,
-                        propertyName);
+                middleInstance = populateValueRequest.getFieldManager().getFieldValue(instance, propertyName);
             }
-            populateValueRequest.getFieldManager().setFieldValue(assignableValue, manyToField,
-                    middleInstance);
-            if (!populateValueRequest.getPersistenceManager().getDynamicEntityDao()
-                    .getStandardEntityManager().contains(middleInstance)) {
+            populateValueRequest.getFieldManager().setFieldValue(assignableValue, manyToField, middleInstance);
+            if (!populateValueRequest.getPersistenceManager().getDynamicEntityDao().getStandardEntityManager()
+                    .contains(middleInstance)) {
                 //if this is part of an add for the manyToField object, don't persist this map value,
                 // since it would result in a
                 //transient object exception on the manyToField object (which itself has not been saved yet)
@@ -215,8 +225,10 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         }
     }
 
-    protected ValueAssignable establishAssignableValue(PopulateValueRequest populateValueRequest, Object parent)
-            throws IllegalAccessException, FieldNotAvailableException {
+    protected ValueAssignable establishAssignableValue(
+            PopulateValueRequest populateValueRequest,
+            Object parent
+    ) throws IllegalAccessException, FieldNotAvailableException {
         ValueAssignable assignableValue;
         if (!StringUtils.isEmpty(populateValueRequest.getMetadata().getToOneTargetProperty())) {
             assignableValue = (ValueAssignable) populateValueRequest.getFieldManager().getFieldValue(parent,
@@ -227,29 +239,40 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         return assignableValue;
     }
 
-    protected void setupJoinEntityParent(PopulateValueRequest populateValueRequest, Serializable instance, Object parent)
-            throws IllegalAccessException, FieldNotAvailableException, InstantiationException {
+    protected void setupJoinEntityParent(
+            PopulateValueRequest populateValueRequest,
+            Serializable instance,
+            Object parent
+    ) throws IllegalAccessException, FieldNotAvailableException, InstantiationException {
         //this is a join-entity type
         Object parentsParent = instance;
         String parentsParentName = populateValueRequest.getProperty().getName();
         if (parentsParentName.contains(".")) {
-            parentsParent = populateValueRequest.getFieldManager().getFieldValue(instance,
-                    parentsParentName.substring(0, parentsParentName.lastIndexOf(".")));
+            parentsParent = populateValueRequest.getFieldManager().getFieldValue(
+                    instance,
+                    parentsParentName.substring(0, parentsParentName.lastIndexOf("."))
+            );
         }
-        populateValueRequest.getFieldManager().setFieldValue(parent, populateValueRequest.getMetadata().
-                getToOneParentProperty(), parentsParent);
-        populateValueRequest.getFieldManager().setFieldValue(parent, populateValueRequest.getMetadata().
-                getMapKeyValueProperty(), parentsParentName.substring(parentsParentName.indexOf(
-                        FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
-                parentsParentName.length()));
+        populateValueRequest.getFieldManager().setFieldValue(
+                parent, populateValueRequest.getMetadata().getToOneParentProperty(), parentsParent
+        );
+        populateValueRequest.getFieldManager().setFieldValue(
+                parent,
+                populateValueRequest.getMetadata().getMapKeyValueProperty(),
+                parentsParentName.substring(
+                        parentsParentName.indexOf(FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
+                        parentsParentName.length()
+                )
+        );
         populateValueRequest.getPersistenceManager().getDynamicEntityDao().persist(parent);
     }
 
     protected Class<?> getValueType(PopulateValueRequest populateValueRequest, Class<?> startingValueType) {
         Class<?> valueType = startingValueType;
         if (!StringUtils.isEmpty(populateValueRequest.getMetadata().getToOneTargetProperty())) {
-            Field nestedField = FieldManager.getSingleField(valueType, populateValueRequest.getMetadata()
-                    .getToOneTargetProperty());
+            Field nestedField = FieldManager.getSingleField(
+                    valueType, populateValueRequest.getMetadata().getToOneTargetProperty()
+            );
             ManyToOne manyToOne = nestedField.getAnnotation(ManyToOne.class);
             if (manyToOne != null && !manyToOne.targetEntity().getName().equals(void.class.getName())) {
                 valueType = manyToOne.targetEntity();
@@ -263,8 +286,7 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         return valueType;
     }
 
-    protected Class<?> getStartingValueType(PopulateValueRequest populateValueRequest)
-            throws ClassNotFoundException, IllegalAccessException {
+    protected Class<?> getStartingValueType(PopulateValueRequest populateValueRequest) throws ClassNotFoundException, IllegalAccessException {
         Class<?> startingValueType = null;
         String valueClassName = populateValueRequest.getMetadata().getMapFieldValueClass();
         if (valueClassName != null) {
@@ -279,4 +301,5 @@ public class MapFieldPersistenceProvider extends BasicFieldPersistenceProvider {
         }
         return startingValueType;
     }
+
 }

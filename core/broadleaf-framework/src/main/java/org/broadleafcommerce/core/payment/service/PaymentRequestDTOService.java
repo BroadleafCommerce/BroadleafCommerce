@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,15 +27,17 @@ public interface PaymentRequestDTOService {
 
     /**
      * Uses customer information to populate the {@link PaymentRequestDTO#customer()} object
-     *  @param requestDTO the {@link PaymentRequestDTO} that should be populated
-     * @param customer the {@link Customer} to get data from
+     *
+     * @param requestDTO the {@link PaymentRequestDTO} that should be populated
+     * @param customer   the {@link Customer} to get data from
      */
     PaymentRequestDTO populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer);
 
     /**
      * Uses customer information to populate the {@link PaymentRequestDTO#customer()} object
-     *  @param requestDTO the {@link PaymentRequestDTO} that should be populated
-     * @param customer the {@link Customer} to get data from
+     *
+     * @param requestDTO          the {@link PaymentRequestDTO} that should be populated
+     * @param customer            the {@link Customer} to get data from
      * @param defaultEmailAddress the default email address to use if {@link Customer#getEmailAddress()} returns `null`
      */
     PaymentRequestDTO populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer, String defaultEmailAddress);

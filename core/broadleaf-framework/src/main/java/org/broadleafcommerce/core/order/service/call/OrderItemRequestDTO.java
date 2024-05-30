@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,20 +29,19 @@ import java.util.Map;
 
 /**
  * Only the product and quantity are required to add an item to an order.
- *
+ * <p>
  * The category can be inferred from the product's default category.
- *
+ * <p>
  * The sku can be inferred from either the passed in attributes as they are compared to the product's options or
  * the sku can be determined from the product's default sku.
- * 
+ * <p>
  * When adding a bundle using this DTO, you MUST have the {@link ProductBundle} included in the productId for it to
  * properly instantiate the {@link BundleOrderItem}
- * 
+ * <p>
  * Important Note:  To protect against misuse, the {@link OrderService}'s addItemToCart method will blank out
  * any values passed in on this DTO for the overrideSalePrice or overrideRetailPrice.
- * 
+ * <p>
  * Instead, implementors should call the more explicit addItemWithPriceOverrides.
- *
  */
 public class OrderItemRequestDTO {
 
@@ -53,25 +52,26 @@ public class OrderItemRequestDTO {
     private Integer quantity;
     private Money overrideSalePrice;
     private Money overrideRetailPrice;
-    private Map<String,String> itemAttributes = new HashMap<String,String>();
-    private List<OrderItemRequestDTO> childOrderItems = new ArrayList<OrderItemRequestDTO>();
+    private Map<String, String> itemAttributes = new HashMap<>();
+    private List<OrderItemRequestDTO> childOrderItems = new ArrayList<>();
     private Long parentOrderItemId;
-    private Map<String,String> additionalAttributes = new HashMap<String,String>();
+    private Map<String, String> additionalAttributes = new HashMap<>();
     private Boolean hasConfigurationError;
 
-    public OrderItemRequestDTO() {}
-    
+    public OrderItemRequestDTO() {
+    }
+
     public OrderItemRequestDTO(Long productId, Integer quantity) {
         setProductId(productId);
         setQuantity(quantity);
     }
-    
+
     public OrderItemRequestDTO(Long productId, Long skuId, Integer quantity) {
         setProductId(productId);
         setSkuId(skuId);
         setQuantity(quantity);
     }
-    
+
     public OrderItemRequestDTO(Long productId, Long skuId, Long categoryId, Integer quantity) {
         setProductId(productId);
         setSkuId(skuId);
@@ -123,7 +123,7 @@ public class OrderItemRequestDTO {
         this.itemAttributes = itemAttributes;
         return this;
     }
-    
+
     public Long getOrderItemId() {
         return orderItemId;
     }
@@ -152,7 +152,7 @@ public class OrderItemRequestDTO {
     public List<OrderItemRequestDTO> getChildOrderItems() {
         return childOrderItems;
     }
-    
+
     public void setChildOrderItems(List<OrderItemRequestDTO> childOrderItems) {
         this.childOrderItems = childOrderItems;
     }
@@ -183,4 +183,5 @@ public class OrderItemRequestDTO {
     public void setHasConfigurationError(Boolean hasConfigurationError) {
         this.hasConfigurationError = hasConfigurationError;
     }
+
 }

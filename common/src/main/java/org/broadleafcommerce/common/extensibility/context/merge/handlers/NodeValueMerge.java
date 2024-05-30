@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,9 +30,8 @@ import java.util.Set;
  * delimited text values of a source and patch node. This merge takes into
  * account the same values from both nodes, such that the resulting string
  * is a union of the two without any repeat values.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class NodeValueMerge extends BaseHandler {
 
@@ -59,7 +58,7 @@ public class NodeValueMerge extends BaseHandler {
         node2.setNodeValue(sb.toString());
 
         Node[] response = new Node[nodeList2.size()];
-        for (int j=0;j<response.length;j++){
+        for (int j = 0; j < response.length; j++) {
             response[j] = nodeList2.get(j);
         }
         return response;
@@ -68,7 +67,7 @@ public class NodeValueMerge extends BaseHandler {
     protected Set<String> getMergedNodeValues(Node node1, Node node2) {
         String[] items1 = node1.getNodeValue().split(getRegEx());
         String[] items2 = node2.getNodeValue().split(getRegEx());
-        Set<String> finalItems = new LinkedHashSet<String>();
+        Set<String> finalItems = new LinkedHashSet<>();
         for (String anItems1 : items1) {
             finalItems.add(anItems1.trim());
         }
@@ -85,4 +84,5 @@ public class NodeValueMerge extends BaseHandler {
     public String getRegEx() {
         return regex;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -68,63 +68,53 @@ import jakarta.persistence.spi.PersistenceUnitInfo;
  * urls, class names and mapping file names that include the comprehensive collection of these
  * values from all persistence.xml files.
  *
- *
  * @author jfischer, jjacobs
  */
 public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     private static final Log LOG = LogFactory.getLog(MergePersistenceUnitManager.class);
-
-    protected HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<>();
-    protected List<BroadleafClassTransformer> classTransformers = new ArrayList<>();
-
-    @Resource(name="blMergedPersistenceXmlLocations")
-    protected Set<String> mergedPersistenceXmlLocations;
-
-    @Resource(name="blMergedDataSources")
-    protected Map<String, DataSource> mergedDataSources;
-    
-    @Resource(name="blMergedClassTransformers")
-    protected Set<BroadleafClassTransformer> mergedClassTransformers;
-
-    @Resource(name="blEntityMarkerClassTransformer")
-    protected EntityMarkerClassTransformer entityMarkerClassTransformer;
-    
-    @Autowired(required = false)
-    @Qualifier("blAutoDDLStatusExporter")
-    protected MBeanExporter mBeanExporter;
-    
-    @Autowired
-    protected ApplicationContext applicationContext;
-
-    @Autowired
-    protected Environment environment;
-
-    @Autowired(required = false)
-    protected List<QueryConfiguration> queryConfigurations = new ArrayList<>();
-    
+    /**
+     * used in transformers to know from what persistentUnit classes are currently loaded
+     */
+    public static String currentProcessingPersistenceUnit;
     /**
      * This should only be used in a test context to deal with the Spring ApplicationContext refreshing between different
      * test classes but not needing to do a new transformation of classes every time. This bean will get
      * re-initialized but all the classes have already been transformed
      */
     protected static boolean transformed = false;
-
-    /**
-     * used in transformers to know from what persistentUnit classes are currently loaded
-     */
-    public static String currentProcessingPersistenceUnit;
+    protected HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<>();
+    protected List<BroadleafClassTransformer> classTransformers = new ArrayList<>();
+    @Resource(name = "blMergedPersistenceXmlLocations")
+    protected Set<String> mergedPersistenceXmlLocations;
+    @Resource(name = "blMergedDataSources")
+    protected Map<String, DataSource> mergedDataSources;
+    @Resource(name = "blMergedClassTransformers")
+    protected Set<BroadleafClassTransformer> mergedClassTransformers;
+    @Resource(name = "blEntityMarkerClassTransformer")
+    protected EntityMarkerClassTransformer entityMarkerClassTransformer;
+    @Autowired(required = false)
+    @Qualifier("blAutoDDLStatusExporter")
+    protected MBeanExporter mBeanExporter;
+    @Autowired
+    protected ApplicationContext applicationContext;
+    @Autowired
+    protected Environment environment;
+    @Autowired(required = false)
+    protected List<QueryConfiguration> queryConfigurations = new ArrayList<>();
 
     @Override
     protected boolean isPersistenceUnitOverrideAllowed() {
         return true;
     }
-    
+
     @PostConstruct
     public void configureMergedItems() {
         String[] tempLocations;
         try {
-            Field persistenceXmlLocations = DefaultPersistenceUnitManager.class.getDeclaredField("persistenceXmlLocations");
+            Field persistenceXmlLocations = DefaultPersistenceUnitManager.class.getDeclaredField(
+                    "persistenceXmlLocations"
+            );
             persistenceXmlLocations.setAccessible(true);
             tempLocations = (String[]) persistenceXmlLocations.get(this);
         } catch (Exception e) {
@@ -136,7 +126,9 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 mergedPersistenceXmlLocations.add(legacyLocation);
             }
         }
-        setPersistenceXmlLocations(mergedPersistenceXmlLocations.toArray(new String[mergedPersistenceXmlLocations.size()]));
+        setPersistenceXmlLocations(mergedPersistenceXmlLocations.toArray(
+                new String[mergedPersistenceXmlLocations.size()]
+        ));
 
         if (!mergedDataSources.isEmpty()) {
             setDataSources(mergedDataSources);
@@ -162,25 +154,25 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         }
         return (MutablePersistenceUnitInfo) mergedPus.get(persistenceUnitName);
     }
-    
+
     @Override
-    @SuppressWarnings({ "unchecked", "ToArrayCallWithZeroLengthArrayArgument" })
+    @SuppressWarnings({"unchecked", "ToArrayCallWithZeroLengthArrayArgument"})
     public void preparePersistenceUnitInfos() {
         super.preparePersistenceUnitInfos();
         try {
             boolean weaverRegistered = addTransformersToPersistenceUnits();
-            
+
             // Only validate transformation results if there was a LoadTimeWeaver registered in the first place
             if (weaverRegistered && !transformed) {
                 exceptionIfEntityMarkerNotFound();
-                
+
                 triggerClassLoadForManagedClasses();
-                
+
                 List<String> nonTransformedClasses = detectNonTransformedClasses();
                 if (CollectionUtils.isNotEmpty(nonTransformedClasses)) {
                     exceptionWithNonTransformed(nonTransformedClasses);
                 }
-                
+
                 transformed = true;
             }
             if (transformed) {
@@ -193,6 +185,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     /**
      * Adds all of the configured {@link #classTransformers} to all of the persistence units
+     *
      * @return whether or not there was a LoadTimeWeaver registered
      * @throws Exception if there was an undetectable problem during transformer addition
      */
@@ -201,15 +194,16 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         for (PersistenceUnitInfo pui : mergedPus.values()) {
             for (BroadleafClassTransformer transformer : classTransformers) {
                 try {
-                    boolean isTransformerQualified = !(transformer instanceof NullClassTransformer) &&
-                        (
-                            pui.getPersistenceUnitName().equals("blPU") &&
-                            !(transformer instanceof BroadleafPersistenceUnitDeclaringClassTransformer)
-                        ) ||
-                        (
+                    boolean isTransformerQualified = !(transformer instanceof NullClassTransformer)
+                            && (
+                            pui.getPersistenceUnitName().equals("blPU")
+                                    && !(transformer instanceof BroadleafPersistenceUnitDeclaringClassTransformer)
+                    )
+                            || (
                             (transformer instanceof BroadleafPersistenceUnitDeclaringClassTransformer) &&
-                            pui.getPersistenceUnitName().equals(((BroadleafPersistenceUnitDeclaringClassTransformer) transformer).getPersistenceUnitName())
-                        );
+                                    pui.getPersistenceUnitName().equals(((BroadleafPersistenceUnitDeclaringClassTransformer) transformer)
+                                            .getPersistenceUnitName())
+                    );
                     if (isTransformerQualified) {
                         if (this.getLoadTimeWeaver() == null) {
                             weaverRegistered = false;
@@ -223,7 +217,6 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             }
         }
         weaverRegistered = addNamedQueriesToPersistenceUnits(weaverRegistered);
-
 
         return weaverRegistered;
     }
@@ -248,7 +241,9 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 }
             }
             if (!namedQueries.isEmpty() || !nativeQueries.isEmpty()) {
-                QueryConfigurationClassTransformer transformer = new QueryConfigurationClassTransformer(namedQueries, nativeQueries, pui.getManagedClassNames());
+                QueryConfigurationClassTransformer transformer = new QueryConfigurationClassTransformer(
+                        namedQueries, nativeQueries, pui.getManagedClassNames()
+                );
                 try {
                     pui.addTransformer(transformer);
                 } catch (Exception e) {
@@ -265,7 +260,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         if (refined instanceof IllegalStateException) {
             LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring " +
                     "reported a problem (likely that a LoadTimeWeaver is not registered). As a result, " +
-                    "the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is " +
+                    "the Broadleaf Commerce ClassTransformer (" + transformer.getClass().getName() + ") is " +
                     "not being registered with the persistence unit. To resove this add a -javaagent:/path/to/spring-instrument.jar to the JVM args of the server");
             weaverRegistered = false;
         } else {
@@ -275,14 +270,13 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     }
 
     /**
-     * 
      * @param nonTransformedClasses the classes that were detected as having not been transformed
      * @throws ClassNotFoundException
      */
     protected void exceptionWithNonTransformed(List<String> nonTransformedClasses) throws ClassNotFoundException {
         exceptionIfRootBeanDefinition(nonTransformedClasses);
         boolean devtoolsFound = detectSpringBootDevtools();
-        
+
         String msg = "The classes\n" + Arrays.toString(nonTransformedClasses.toArray()) + "\nare managed classes within the MergePersistenceUnitManager"
                 + "\nbut were not detected as being transformed by the EntityMarkerClassTransformer. There can be multiple causes for this:"
                 + "\n1. Session persistence is enabled in your servlet container (like Tomcat) and an entity object has been loaded by the container before"
@@ -295,14 +289,14 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                 + " Debugging on sun.instrument.InstrumentationImpl:transform may help catch when the classes are being loaded with a condition like this 'var2 != null && var2.contains(\"my/company/customer/MyCustomer\")'.";
         if (devtoolsFound) {
             msg += "\n5. Spring Boot Devtools is on the classpath and the Restarter capabilities are interfering. Spring Boot Devtools restarter functionality works by creating multiple ClassLoaders"
-                + " and there is a check in InstrumentationLoadTimeWeaver to ensure that the ClassLoader for that class is the same as the ClassLoader for the entity class before"
-                + " performing transformation. These ClassLoaders are different with Spring Devtools. You can attempt to disable just the Devtools restarter functionality while still utilizing"
-                + " the other Devtools features by setting a JVM argument for spring.devtools.restart.enabled=false. See http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-devtools-restart-disable"
-                + "\n for more information";
+                    + " and there is a check in InstrumentationLoadTimeWeaver to ensure that the ClassLoader for that class is the same as the ClassLoader for the entity class before"
+                    + " performing transformation. These ClassLoaders are different with Spring Devtools. You can attempt to disable just the Devtools restarter functionality while still utilizing"
+                    + " the other Devtools features by setting a JVM argument for spring.devtools.restart.enabled=false. See http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-devtools-restart-disable"
+                    + "\n for more information";
         }
         throw new IllegalStateException(msg);
     }
-    
+
     /**
      * Detects whether or not Spring Devtools is on the classpath
      */
@@ -310,9 +304,10 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         String devtoolsClassname = "org.springframework.boot.devtools.restart.Restarter";
         return ClassUtils.isPresent(devtoolsClassname, getClass().getClassLoader());
     }
-    
+
     /**
      * Validates whether or not the given <b>nonTransformedClasses</b> are contained in the root ApplicationContext and throws an IllegalStateException if so, else this does nothing
+     *
      * @param nonTransformedClasses classes that were not detected as having undergone class transformation
      * @throws IllegalStateException if any of the <b>nonTransformedClasses</b> are in the root ApplicationContext
      */
@@ -322,22 +317,26 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         for (String className : nonTransformedClasses) {
             String[] beanIds = applicationContext.getBeanNamesForType(Class.forName(className));
             for (String beanId : beanIds) {
-                incorrectEntityBeanDefs.add(((BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory()).getBeanDefinition(beanId));
+                incorrectEntityBeanDefs.add(
+                        ((BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory())
+                                .getBeanDefinition(beanId)
+                );
             }
         }
         if (CollectionUtils.isNotEmpty(incorrectEntityBeanDefs)) {
             String msg = "The following bean definitions for entity classes were detected in the Spring root ApplicationContext which prevents them from being correctly transformed. Ensure that bean definitions"
-                + " for entity classes used for overriding are only in applicationContext-entity.xml-like files configured with the blMergedEntityContexts bean and do not undergo component scanning or any other"
-                + " Spring ApplicationContext configuration."
-                + "\n" + Arrays.toString(incorrectEntityBeanDefs.toArray());
+                    + " for entity classes used for overriding are only in applicationContext-entity.xml-like files configured with the blMergedEntityContexts bean and do not undergo component scanning or any other"
+                    + " Spring ApplicationContext configuration."
+                    + "\n" + Arrays.toString(incorrectEntityBeanDefs.toArray());
             throw new IllegalStateException(msg);
         }
     }
-    
+
     /**
      * If a class happened to be loaded by the ClassLoader before we had a chance to set up our instrumentation,
      * it may not be in a consistent state. This verifies with the EntityMarkerClassTransformer that it
      * actually saw the classes loaded by the above process
+     *
      * @return the list of classes that were detected as not transformed representing an error state
      */
     protected List<String> detectNonTransformedClasses() {
@@ -368,9 +367,9 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
     /**
      * Triggers a class load via this class's {@link ClassLoader} for all of the classes in all of the persistence units
-     * 
-     * @throws ClassNotFoundException if there was a problem in the class load
+     *
      * @return all of the classes that were loaded via this process
+     * @throws ClassNotFoundException if there was a problem in the class load
      */
     protected List<String> triggerClassLoadForManagedClasses() throws ClassNotFoundException {
         List<String> managedClassNames = new ArrayList<>();
@@ -387,34 +386,34 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         }
         return managedClassNames;
     }
-    
+
     /**
      * Detects the presence of the {@link EntityMarkerClassTransformer} and throws an exception if this is misconfigured. If there
      * are no class transformes within {@link #mergedClassTransformers} then this does nothing
      */
     protected void exceptionIfEntityMarkerNotFound() {
         if (CollectionUtils.isNotEmpty(mergedClassTransformers)) {
-            boolean foundEntityMarkerTransformer = IterableUtils.find(mergedClassTransformers, new Predicate<BroadleafClassTransformer>(){
-    
+            boolean foundEntityMarkerTransformer = IterableUtils.find(mergedClassTransformers, new Predicate<BroadleafClassTransformer>() {
+
                 @Override
                 public boolean evaluate(BroadleafClassTransformer object) {
                     return EntityMarkerClassTransformer.class.isAssignableFrom(object.getClass());
                 }
-                
+
             }) != null;
-            
+
             if (!foundEntityMarkerTransformer) {
                 BeanDefinition transformersBeanDef = ((BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory()).getBeanDefinition("blMergedClassTransformers");
                 String msg = "The EntityMarkerClassTransformer was not detected as registered in the the list of blMergedClassTransformers. This is"
-                    + " usually caused the blMergedClassTransformers being overridden in a different configuration. Without this transformer Broadleaf"
-                    + " is unable to validate whether or not class transformation happened as expected. This bean was registered as " + transformersBeanDef
-                    + " but it should have been detected as registerd in bl-common-applicationContext.xml. Change the definition in " + transformersBeanDef.getResourceDescription()
-                    + " to instead utilize the EarlyStageMergeBeanPostProcessor in XML or an @Merge(targetRef=\"blMergedClassTransformers\" early = true) in a Java configuration class";
+                        + " usually caused the blMergedClassTransformers being overridden in a different configuration. Without this transformer Broadleaf"
+                        + " is unable to validate whether or not class transformation happened as expected. This bean was registered as " + transformersBeanDef
+                        + " but it should have been detected as registerd in bl-common-applicationContext.xml. Change the definition in " + transformersBeanDef.getResourceDescription()
+                        + " to instead utilize the EarlyStageMergeBeanPostProcessor in XML or an @Merge(targetRef=\"blMergedClassTransformers\" early = true) in a Java configuration class";
                 throw new IllegalStateException(msg);
             }
         }
     }
-    
+
     @Override
     protected void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo newPU) {
         super.postProcessPersistenceUnitInfo(newPU);
@@ -423,7 +422,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         MutablePersistenceUnitInfo pui = getMergedUnit(persistenceUnitName, newPU);
 
         List<String> managedClassNames = newPU.getManagedClassNames();
-        for (String managedClassName : managedClassNames){
+        for (String managedClassName : managedClassNames) {
             if (!pui.getManagedClassNames().contains(managedClassName)) {
                 pui.addManagedClassName(managedClassName);
             }
@@ -515,7 +514,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
                             new Object[]{persistenceUnitName}, new String[]{String.class.getName()});
                     if (response == null) {
                         mBeanExporter.getServer().invoke(ObjectName.getInstance("bean:name=autoDDLCreateStatusTestBean"), "setStartedWithCreate",
-                            new Object[]{persistenceUnitName, true}, new String[]{String.class.getName(), Boolean.class.getName()});
+                                new Object[]{persistenceUnitName, true}, new String[]{String.class.getName(), Boolean.class.getName()});
                     } else {
                         detectedCreate = true;
                     }
@@ -528,4 +527,5 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
             pui.getProperties().setProperty("hibernate.hbm2ddl.auto", "none");
         }
     }
+
 }

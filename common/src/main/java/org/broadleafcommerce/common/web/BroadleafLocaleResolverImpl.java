@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,24 +38,21 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 @Component("blLocaleResolver")
 public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
-    private final Log LOG = LogFactory.getLog(BroadleafLocaleResolverImpl.class);
-    
+
     /**
      * Parameter/Attribute name for the current language
      */
     public static String LOCALE_VAR = "blLocale";
-
     /**
      * Parameter/Attribute name for the current language
      */
     public static String LOCALE_CODE_PARAM = "blLocaleCode";
-
     /**
-     * Attribute indicating that the LOCALE was pulled from session.   Other filters may want to 
+     * Attribute indicating that the LOCALE was pulled from session.   Other filters may want to
      * behave differently if this is the case.
      */
     public static String LOCALE_PULLED_FROM_SESSION = "blLocalePulledFromSession";
-
+    private final Log LOG = LogFactory.getLog(BroadleafLocaleResolverImpl.class);
     @Resource(name = "blLocaleService")
     private LocaleService localeService;
 
@@ -93,14 +90,13 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
             if (locale != null) {
                 request.setAttribute(LOCALE_PULLED_FROM_SESSION, Boolean.TRUE, WebRequest.SCOPE_REQUEST);
             }
-
         }
 
         // Finally, use the default
         if (locale == null) {
             Site nonPersistentSite = BroadleafRequestContext.getBroadleafRequestContext().getNonPersistentSite();
             Locale defaultSiteLocale = null;
-            if(nonPersistentSite != null) {
+            if (nonPersistentSite != null) {
                 defaultSiteLocale = nonPersistentSite.getDefaultLocale();
             }
             locale = defaultSiteLocale == null ? localeService.findDefaultLocale() : defaultSiteLocale;
@@ -111,7 +107,7 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
                 LOG.trace("Locale set to default locale " + locale);
             }
         }
-        
+
         // Set the default locale to override Spring's cookie resolver
         request.setAttribute(LOCALE_VAR, locale, WebRequest.SCOPE_REQUEST);
         java.util.Locale javaLocale = BroadleafRequestContext.convertLocaleToJavaLocale(locale);
@@ -122,4 +118,5 @@ public class BroadleafLocaleResolverImpl implements BroadleafLocaleResolver {
         }
         return locale;
     }
+
 }

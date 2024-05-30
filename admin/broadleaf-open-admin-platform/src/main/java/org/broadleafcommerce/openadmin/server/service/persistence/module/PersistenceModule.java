@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,26 +32,24 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 
  * @author jfischer
- *
  */
 public interface PersistenceModule {
 
-    public boolean isCompatible(OperationType operationType);
-    
-    public Entity add(PersistencePackage persistencePackage) throws ServiceException;
-    
-    public void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties) throws ServiceException;
-    
-    public void extractProperties(Class<?>[] inheritanceLine, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties);
-    
-    public Entity update(PersistencePackage persistencePackage) throws ServiceException;
-    
-    public void remove(PersistencePackage persistencePackage) throws ServiceException;
-    
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
-    
-    public void setPersistenceManager(PersistenceManager persistenceManager);
-    
+    boolean isCompatible(OperationType operationType);
+
+    Entity add(PersistencePackage persistencePackage) throws ServiceException;
+
+    void updateMergedProperties(PersistencePackage persistencePackage, Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties) throws ServiceException;
+
+    void extractProperties(Class<?>[] inheritanceLine, Map<MergedPropertyType, Map<String, FieldMetadata>> mergedProperties, List<Property> properties);
+
+    Entity update(PersistencePackage persistencePackage) throws ServiceException;
+
+    void remove(PersistencePackage persistencePackage) throws ServiceException;
+
+    DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto) throws ServiceException;
+
+    void setPersistenceManager(PersistenceManager persistenceManager);
+
 }

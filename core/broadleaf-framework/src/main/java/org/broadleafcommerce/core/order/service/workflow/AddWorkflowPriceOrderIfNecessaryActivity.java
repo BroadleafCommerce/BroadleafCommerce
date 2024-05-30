@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,7 +44,7 @@ import jakarta.annotation.Resource;
 /**
  * As of Broadleaf version 3.1.0, saves of individual aspects of an Order (such as OrderItems and FulfillmentGroupItems) no
  * longer happen in their respective activities. Instead, we will now handle these saves in this activity exclusively.
- *
+ * <p>
  * This provides the ability for an implementation to not require a transactional wrapper around the entire workflow and
  * instead only requires it around this particular activity. This is only recommended if there are long running steps in
  * the workflow, such as an external service call to check availability.
@@ -127,7 +127,7 @@ public class AddWorkflowPriceOrderIfNecessaryActivity extends BaseActivity<Proce
                 // We first need to save the discrete order items that are part of this bundle. Once they're saved, we'll
                 // mark them and remove them from this bundle.
                 List<DiscreteOrderItem> doisToAdd = new ArrayList<>();
-                ListIterator<DiscreteOrderItem> li = ((BundleOrderItem) oi ).getDiscreteOrderItems().listIterator();
+                ListIterator<DiscreteOrderItem> li = ((BundleOrderItem) oi).getDiscreteOrderItems().listIterator();
                 while (li.hasNext()) {
                     DiscreteOrderItem doi = li.next();
                     getOiFgiMap(order, oiFgiMap, doi);
@@ -197,7 +197,7 @@ public class AddWorkflowPriceOrderIfNecessaryActivity extends BaseActivity<Proce
      * If found, populates and returns true.
      *
      * @param request
-     * @param orderItem
+     * @param order
      * @return
      */
     protected void updateChildOrderItem(CartOperationRequest request, Order order) {

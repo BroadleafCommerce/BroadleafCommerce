@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,13 +27,11 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 
  * @author jfischer
- *
  */
 @JsonAutoDetect
 public class Property implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     @JsonProperty
@@ -82,7 +80,7 @@ public class Property implements Serializable {
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -96,7 +94,7 @@ public class Property implements Serializable {
         if (unHtmlEncodedValue == null && value != null) {
             setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml4(value));
         }
-        
+
         if (rawValue == null && value != null) {
             setRawValue(value);
         }
@@ -194,7 +192,7 @@ public class Property implements Serializable {
         sb.append("name='").append(name).append('\'');
         String temp = value;
         if (temp != null && temp.length() > 200) {
-            temp = temp.substring(0,199) + "...";
+            temp = temp.substring(0, 199) + "...";
         }
         sb.append(", value='").append(temp).append('\'');
         sb.append(", isDirty=").append(isDirty);

@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.service;
 
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
@@ -31,10 +30,10 @@ import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
  */
 public interface PaymentGatewayCustomerService {
 
-    public PaymentResponseDTO createGatewayCustomer(PaymentRequestDTO requestDTO) throws PaymentException;
+    PaymentResponseDTO createGatewayCustomer(PaymentRequestDTO requestDTO) throws PaymentException;
 
-    public PaymentResponseDTO updateGatewayCustomer(PaymentRequestDTO requestDTO) throws PaymentException;
+    PaymentResponseDTO updateGatewayCustomer(PaymentRequestDTO requestDTO) throws PaymentException;
 
-    public PaymentResponseDTO deleteGatewayCustomer(PaymentRequestDTO requestDTO) throws PaymentException;
+    PaymentResponseDTO deleteGatewayCustomer(PaymentRequestDTO requestDTO) throws PaymentException;
 
 }

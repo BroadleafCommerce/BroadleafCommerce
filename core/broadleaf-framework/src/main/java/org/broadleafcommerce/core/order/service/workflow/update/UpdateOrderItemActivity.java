@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,31 +34,32 @@ import jakarta.annotation.Resource;
 public class UpdateOrderItemActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
 
     public static final int ORDER = 3000;
-    
+
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
+
     public UpdateOrderItemActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
         Order order = request.getOrder();
-        
+
         OrderItem orderItem = null;
         for (OrderItem oi : order.getOrderItems()) {
             if (oi.getId().equals(orderItemRequestDTO.getOrderItemId())) {
                 orderItem = oi;
             }
         }
-        
+
         if (orderItem == null || !order.getOrderItems().contains(orderItem)) {
-            throw new ItemNotFoundException("Order Item (" + orderItemRequestDTO.getOrderItemId() + ") not found in Order (" + order.getId() + ")");
+            throw new ItemNotFoundException("Order Item (" + orderItemRequestDTO.getOrderItemId()
+                    + ") not found in Order (" + order.getId() + ")");
         }
-        
+
         OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(orderItem));
         if (orderItemRequestDTO.getQuantity() >= 0) {
             int previousQty = itemFromOrder.getQuantity();

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,27 +21,28 @@ import java.io.Serializable;
 
 public interface Phone extends Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public String getCountryCode();
+    String getCountryCode();
 
-    public void setCountryCode(String countryCode);
+    void setCountryCode(String countryCode);
 
-    public String getPhoneNumber();
+    String getPhoneNumber();
 
-    public void setPhoneNumber(String phoneNumber);
+    void setPhoneNumber(String phoneNumber);
 
-    public String getExtension();
+    String getExtension();
 
-    public void setExtension(String extension);
+    void setExtension(String extension);
 
-    public boolean isDefault();
+    boolean isDefault();
 
-    public void setDefault(boolean isDefault);
+    void setDefault(boolean isDefault);
 
-    public boolean isActive();
+    boolean isActive();
 
-    public void setActive(boolean isActive);
+    void setActive(boolean isActive);
+
 }

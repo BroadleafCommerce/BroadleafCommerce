@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,28 +19,28 @@ package org.broadleafcommerce.core.store.domain;
 
 public interface ZipCode {
 
-    public String getId();
+    String getId();
 
-    public void setId(String id);
+    void setId(String id);
 
-    public Integer getZipcode();
+    Integer getZipcode();
 
-    public void setZipcode(Integer zipcode);
+    void setZipcode(Integer zipcode);
 
-    public String getZipState();
+    String getZipState();
 
-    public void setZipState(String zipState);
+    void setZipState(String zipState);
 
-    public String getZipCity();
+    String getZipCity();
 
-    public void setZipCity(String zipCity);
+    void setZipCity(String zipCity);
 
-    public double getZipLongitude();
+    double getZipLongitude();
 
-    public void setZipLongitude(double zipLongitude);
+    void setZipLongitude(double zipLongitude);
 
-    public double getZipLatitude();
+    double getZipLatitude();
 
-    public void setZipLatitude(double zipLatitude);
+    void setZipLatitude(double zipLatitude);
 
 }

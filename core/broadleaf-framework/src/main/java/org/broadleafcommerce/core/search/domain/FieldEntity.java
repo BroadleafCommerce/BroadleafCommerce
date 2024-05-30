@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.search.domain;
 import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,14 +31,14 @@ import java.util.Map;
 
 /**
  * An extensible enumeration of entities that are used for searching and reporting
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class FieldEntity implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, FieldEntity> TYPES = new LinkedHashMap<String, FieldEntity>();
+    private static final Map<String, FieldEntity> TYPES = new LinkedHashMap<>();
 
     public static final FieldEntity PRODUCT = new FieldEntity("PRODUCT", "Product");
     public static final FieldEntity SKU = new FieldEntity("SKU", "Sku");
@@ -48,13 +49,9 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
     public static final FieldEntity OFFER = new FieldEntity("OFFER", "Offer");
     public static final FieldEntity FULFILLMENT_ORDER = new FieldEntity("FULFILLMENT_ORDER", "Fulfillment Order");
 
-    public static FieldEntity getInstance(final String type) {
-        return TYPES.get(type);
-    }
-
+    protected List<String> additionalLookupTypes = new ArrayList<>();
     private String type;
     private String friendlyType;
-    protected List<String> additionalLookupTypes = new ArrayList<>();;
 
     public FieldEntity() {
         //do nothing
@@ -65,27 +62,38 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static FieldEntity getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     @Override
     public String getType() {
         return type;
+    }
+
+    protected void setType(final String type) {
+        this.type = type;
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
+        }
     }
 
     @Override
     public String getFriendlyType() {
         return friendlyType;
     }
-    
+
     public void addAditionalLookupType(String additionalLookupType) {
         if (additionalLookupTypes == null) {
             additionalLookupTypes = new ArrayList<>();
         }
         additionalLookupTypes.add(additionalLookupType);
     }
-    
+
     public List<String> getAdditionalLookupTypes() {
         return Collections.unmodifiableList(additionalLookupTypes);
     }
-    
+
     public List<String> getAllLookupTypes() {
         if (CollectionUtils.isNotEmpty(getAdditionalLookupTypes())) {
             List<String> result = new ArrayList<>(getAdditionalLookupTypes());
@@ -93,13 +101,6 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
             return Collections.unmodifiableList(result);
         } else {
             return Arrays.asList(getType());
-        }
-    }
-
-    private void setType(final String type) {
-        this.type = type;
-        if (!TYPES.containsKey(type)) {
-            TYPES.put(type, this);
         }
     }
 
@@ -127,4 +128,5 @@ public class FieldEntity implements Serializable, BroadleafEnumerationType {
             return false;
         return true;
     }
+
 }

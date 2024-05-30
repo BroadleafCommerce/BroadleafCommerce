@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,19 +28,18 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * This class provides an LRUMap structure that defaults to a more efficient ConcurrentHashMap if the
  * size has not yet been reached.
- * 
+ * <p>
  * In Broadleaf, there are many instances where an LRUMap could be used to guard against implementations
  * where Map sizes grow in unexpected ways.    However, the large majority of cases would fit well within the
  * max bounds of the LRUMap.
- * 
+ * <p>
  * This class provides an approach that provides the benefits of a LRUMap for memory protection while
  * allowing concurrent access under normal circumstances.
- * 
- * For the first [n] entries, the underlying implementation will be a ConcurrentHashMap.   On the "n+1"th 
- * entry, this implementation will switch its underlying implementation to a synchronized LRUMap. 
- * 
+ * <p>
+ * For the first [n] entries, the underlying implementation will be a ConcurrentHashMap.   On the "n+1"th
+ * entry, this implementation will switch its underlying implementation to a synchronized LRUMap.
+ *
  * @author bpolster
- * 
  */
 public class EfficientLRUMap<K, V> implements Map<K, V> {
 
@@ -48,10 +47,10 @@ public class EfficientLRUMap<K, V> implements Map<K, V> {
     private Map<K, V> lruMap;
     private int maxEntries;
     private boolean usingLRUMap = false;
-    
+
     public EfficientLRUMap(int maxEntries) {
         this.maxEntries = maxEntries;
-        concurrentMap = new ConcurrentHashMap<K, V>();
+        concurrentMap = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -195,7 +194,7 @@ public class EfficientLRUMap<K, V> implements Map<K, V> {
             return concurrentMap.entrySet();
         }
     }
-    
+
     protected Class getUnderlyingMapClass() {
         if (usingLRUMap) {
             return lruMap.getClass();
@@ -203,4 +202,5 @@ public class EfficientLRUMap<K, V> implements Map<K, V> {
             return concurrentMap.getClass();
         }
     }
+
 }

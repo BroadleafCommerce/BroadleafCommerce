@@ -10,20 +10,23 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.order.service.exception;
 
-public class MinQuantityNotFulfilledException extends RuntimeException{
+import java.io.Serial;
 
+public class MinQuantityNotFulfilledException extends RuntimeException {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Long productId;
 
-    public MinQuantityNotFulfilledException (String message, Long productId) {
+    public MinQuantityNotFulfilledException(String message, Long productId) {
         super(message);
         setProductId(productId);
     }
@@ -43,4 +46,5 @@ public class MinQuantityNotFulfilledException extends RuntimeException{
     public void setProductId(Long productId) {
         this.productId = productId;
     }
+
 }

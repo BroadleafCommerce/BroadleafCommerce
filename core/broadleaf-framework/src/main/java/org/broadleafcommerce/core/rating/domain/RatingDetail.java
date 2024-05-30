@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,24 +23,24 @@ import java.util.Date;
 
 public interface RatingDetail {
 
-    public Long getId();
-    
-    public void setId(Long id);
-    
-    public Double getRating();
-    
-    public void setRating(Double newRating);
-    
-    public Customer getCustomer();
-    
-    public void setCustomer(Customer customer);
-    
-    public Date getRatingSubmittedDate();
-    
-    public void setRatingSubmittedDate(Date ratingSubmittedDate);
-    
-    public RatingSummary getRatingSummary();
-    
-    public void setRatingSummary(RatingSummary ratingSummary);
+    Long getId();
+
+    void setId(Long id);
+
+    Double getRating();
+
+    void setRating(Double newRating);
+
+    Customer getCustomer();
+
+    void setCustomer(Customer customer);
+
+    Date getRatingSubmittedDate();
+
+    void setRatingSubmittedDate(Date ratingSubmittedDate);
+
+    RatingSummary getRatingSummary();
+
+    void setRatingSummary(RatingSummary ratingSummary);
 
 }

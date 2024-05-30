@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,39 +36,40 @@ import org.apache.solr.common.util.NamedList;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 /**
- * Wrapper implementation of Solr that delegates to an {@link HttpSolrClient}.  With older versions of SolrJ, there was no ability to specify a 
- * a collection on an {@link HttpSolrClient}.  As a result, you needed two different clients, one for each collection.  For example, you might have 
+ * Wrapper implementation of Solr that delegates to an {@link HttpSolrClient}.  With older versions of SolrJ, there was no ability to specify a
+ * a collection on an {@link HttpSolrClient}.  As a result, you needed two different clients, one for each collection.  For example, you might have
  * a client with the base URL: http://localhost:8983/solr/catalogs and another with the base URL of http://localhost:8983/solr/catalogs_reindex.
  * <p/>
- * What this class allows for is a "defaultCollection".  If the base URL is http://localhost:8983/solr for example, and the default collection is "catalog", then a call 
+ * What this class allows for is a "defaultCollection".  If the base URL is http://localhost:8983/solr for example, and the default collection is "catalog", then a call
  * to {@link DelegatingHttpSolrClient#query(new SolrQuery("foo:bar")} will search the "catalog" index, or http://localhost:8983/solr/catalogs.  Alternatively, a call to
  * {@link DelegatingHttpSolrClient#query("catalogs_reindex", new SolrQuery("foo:bar"))} will search the "catalogs_reindex" index, or http://localhost:8983/solr/catalogs_reindex.
- * 
+ * <p>
  * The same thing goes for writes.  This class simply delegates to the delegate passed into the constructor.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 public class DelegatingHttpSolrClient extends SolrClient {
-    
+
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     protected final HttpSolrClient delegate;
     protected final String defaultCollection;
     protected final String defaultCollectionPath;
-    
+
     public DelegatingHttpSolrClient(HttpSolrClient delegate) {
         Assert.notNull(delegate, "SolrClient cannot be null.");
         this.delegate = delegate;
         this.defaultCollection = null;
         defaultCollectionPath = null;
     }
-    
+
     public DelegatingHttpSolrClient(HttpSolrClient delegate, String defaultCollection) {
         Assert.notNull(delegate, "SolrClient cannot be null.");
         this.delegate = delegate;
@@ -82,7 +83,10 @@ public class DelegatingHttpSolrClient extends SolrClient {
     }
 
     @Override
-    public NamedList<Object> request(@SuppressWarnings("rawtypes") SolrRequest request, String collection) throws SolrServerException, IOException {
+    public NamedList<Object> request(
+            @SuppressWarnings("rawtypes") SolrRequest request,
+            String collection
+    ) throws SolrServerException, IOException {
         if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.request(request);
         } else {
@@ -546,7 +550,11 @@ public class DelegatingHttpSolrClient extends SolrClient {
     }
 
     @Override
-    public QueryResponse queryAndStreamResponse(String collection, SolrParams params, StreamingResponseCallback callback) throws SolrServerException, IOException {
+    public QueryResponse queryAndStreamResponse(
+            String collection,
+            SolrParams params,
+            StreamingResponseCallback callback
+    ) throws SolrServerException, IOException {
         if (StringUtils.isBlank(collection) || delegate.getBaseURL().endsWith('/' + collection)) {
             return delegate.queryAndStreamResponse(params, callback);
         } else {
@@ -644,12 +652,13 @@ public class DelegatingHttpSolrClient extends SolrClient {
     public void close() throws IOException {
         delegate.close();
     }
-    
+
     public HttpSolrClient getDelegate() {
         return delegate;
     }
-    
+
     public String getDefaultCollection() {
         return defaultCollection;
     }
+
 }

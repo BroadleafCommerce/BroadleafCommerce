@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,12 +33,11 @@ import java.util.Map;
  * The filter automatically adjusts tonal range for problem photographs, making sure the tones are
  * equally distributed from black to white. Note, a marginal clipping does occur at the highs and lows to account
  * for aberrant pixels in those quadrants that might erroneously effect the calculation.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class AutoLevelsRGB extends BaseFilter {
-    
+
     private static final double TOPCLIP = 0.01D;
     private static final double BOTTOMCLIP = 0.01D;
 
@@ -51,7 +50,7 @@ public class AutoLevelsRGB extends BaseFilter {
     public AutoLevelsRGB(RenderingHints hints) {
         this.hints = hints;
     }
-    
+
     @Override
     public Operation buildOperation(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
         String key = FilterTypeEnum.AUTOLEVELSRGB.toString().toLowerCase();
@@ -76,88 +75,85 @@ public class AutoLevelsRGB extends BaseFilter {
         if (src == dst) {
             throw new IllegalArgumentException("src image cannot be the same as the dst image");
         }
-        
+
         boolean needToConvert = false;
         ColorModel srcCM = src.getColorModel();
         ColorModel dstCM;
         BufferedImage origDst = dst;
-        
+
         if (srcCM instanceof IndexColorModel) {
             IndexColorModel icm = (IndexColorModel) srcCM;
             src = icm.convertToIntDiscrete(src.getRaster(), false);
             srcCM = src.getColorModel();
         }
-        
+
         if (dst == null) {
             dst = createCompatibleDestImage(src, null);
             dstCM = srcCM;
             origDst = dst;
-        }
-        else {
+        } else {
             dstCM = dst.getColorModel();
             if (srcCM.getColorSpace().getType() !=
-                dstCM.getColorSpace().getType())
-            {
+                    dstCM.getColorSpace().getType()) {
                 needToConvert = true;
                 dst = createCompatibleDestImage(src, null);
                 dstCM = dst.getColorModel();
-            }
-            else if (dstCM instanceof IndexColorModel) {
+            } else if (dstCM instanceof IndexColorModel) {
                 dst = createCompatibleDestImage(src, null);
                 dstCM = dst.getColorModel();
             }
         }
-        
+
         int[] originalPixels = ImageConverter.getPixels(src);
         int imageWidth = dst.getWidth();
         int imageHeight = dst.getHeight();
-        
+
         /*
          * Sort all the red pixels from low to high and establish
-         * the clipping regions. We also note the delta from the 
+         * the clipping regions. We also note the delta from the
          * lowest and highest leftover pixels to black and white,
          * respectively.
          */
         int[] redPixels = new int[originalPixels.length];
-        for (int j=0;j<originalPixels.length;j++){
+        for (int j = 0; j < originalPixels.length; j++) {
             redPixels[j] = (originalPixels[j] >> 16) & 0xff;
         }
         Arrays.sort(redPixels);
-        int redStart = redPixels[(int) (redPixels.length * BOTTOMCLIP )];
-        int redEnd = redPixels[redPixels.length-(int) (redPixels.length * TOPCLIP)];
+        int redStart = redPixels[(int) (redPixels.length * BOTTOMCLIP)];
+        int redEnd = redPixels[redPixels.length - (int) (redPixels.length * TOPCLIP)];
         int redEndDelta = 255 - redEnd;
         int redStartDelta = redStart;
-        
+
         int[] greenPixels = new int[originalPixels.length];
-        for (int j=0;j<originalPixels.length;j++){
+        for (int j = 0; j < originalPixels.length; j++) {
             greenPixels[j] = (originalPixels[j] >> 8) & 0xff;
         }
         Arrays.sort(greenPixels);
-        int greenStart = greenPixels[(int) (greenPixels.length * BOTTOMCLIP )];
-        int greenEnd = greenPixels[greenPixels.length-(int) (greenPixels.length * TOPCLIP)];
+        int greenStart = greenPixels[(int) (greenPixels.length * BOTTOMCLIP)];
+        int greenEnd = greenPixels[greenPixels.length - (int) (greenPixels.length * TOPCLIP)];
         int greenEndDelta = 255 - greenEnd;
         int greenStartDelta = greenStart;
-        
+
         int[] bluePixels = new int[originalPixels.length];
-        for (int j=0;j<originalPixels.length;j++){
+        for (int j = 0; j < originalPixels.length; j++) {
             bluePixels[j] = (originalPixels[j] >> 0) & 0xff;
         }
         Arrays.sort(bluePixels);
-        int blueStart = bluePixels[(int) (bluePixels.length * BOTTOMCLIP )];
-        int blueEnd = bluePixels[bluePixels.length-(int) (bluePixels.length * TOPCLIP)];
+        int blueStart = bluePixels[(int) (bluePixels.length * BOTTOMCLIP)];
+        int blueEnd = bluePixels[bluePixels.length - (int) (bluePixels.length * TOPCLIP)];
         int blueEndDelta = 255 - blueEnd;
         int blueStartDelta = blueStart;
-        
-        int r=0;
-        int g=0;
-        int b=0;
-        int index=0;
-        for (int y=0;y<imageHeight;y++){
-            for (int x=0;x<imageWidth;x++){
+
+        int r = 0;
+        int g = 0;
+        int b = 0;
+        int index = 0;
+        for (int y = 0; y < imageHeight; y++) {
+            for (int x = 0; x < imageWidth; x++) {
                 r = (originalPixels[index] >> 16) & 0xff;
                 g = (originalPixels[index] >> 8) & 0xff;
                 b = (originalPixels[index] >> 0) & 0xff;
-                
+
                 if (r > redStart && r < redEnd) {
                     if (redEndDelta > 0) {
                         if (redEnd - r == 0) {
@@ -176,7 +172,7 @@ public class AutoLevelsRGB extends BaseFilter {
                             /*
                              * If there was a black shift, distribute all the pixels proportionally down
                              */
-                            r = redEnd - (((redEnd -(redStart - redStartDelta)) * (redEnd - r))/(redEnd - redStart));
+                            r = redEnd - (((redEnd - (redStart - redStartDelta)) * (redEnd - r)) / (redEnd - redStart));
                         }
                     }
                 } else if (r <= redStart) {
@@ -184,20 +180,20 @@ public class AutoLevelsRGB extends BaseFilter {
                 } else {
                     r = 255;
                 }
-                
+
                 if (g > greenStart && g < greenEnd) {
-                    if (greenEndDelta > 0){
+                    if (greenEndDelta > 0) {
                         if (greenEnd - g == 0) {
                             g = 255;
                         } else {
                             g = greenEnd + greenEndDelta - (((greenEnd - g) * (greenEnd + greenEndDelta)) / greenEnd);
                         }
                     }
-                    if (greenStartDelta > 0){
+                    if (greenStartDelta > 0) {
                         if (g - greenStartDelta == 0) {
                             g = 0;
                         } else {
-                            g = greenEnd - (((greenEnd -(greenStart - greenStartDelta)) * (greenEnd - g))/(greenEnd - greenStart));
+                            g = greenEnd - (((greenEnd - (greenStart - greenStartDelta)) * (greenEnd - g)) / (greenEnd - greenStart));
                         }
                     }
                 } else if (g <= greenStart) {
@@ -205,20 +201,20 @@ public class AutoLevelsRGB extends BaseFilter {
                 } else {
                     g = 255;
                 }
-                
+
                 if (b > blueStart && b < blueEnd) {
-                    if (blueEndDelta > 0){
+                    if (blueEndDelta > 0) {
                         if (blueEnd - b == 0) {
                             b = 255;
                         } else {
                             b = blueEnd + blueEndDelta - (((blueEnd - b) * (blueEnd + blueEndDelta)) / blueEnd);
                         }
                     }
-                    if (blueStartDelta > 0){
+                    if (blueStartDelta > 0) {
                         if (b - blueStartDelta == 0) {
                             b = 0;
                         } else {
-                            b = blueEnd - (((blueEnd -(blueStart - blueStartDelta)) * (blueEnd - b))/(blueEnd - blueStart));
+                            b = blueEnd - (((blueEnd - (blueStart - blueStartDelta)) * (blueEnd - b)) / (blueEnd - blueStart));
                         }
                     }
                 } else if (b <= blueStart) {
@@ -235,24 +231,23 @@ public class AutoLevelsRGB extends BaseFilter {
                 if (b > 255) b = 255;
                 if (b < 0) b = 0;
 
-                originalPixels[index] = (originalPixels[index] & 0xff000000)  | (r << 16) | (g << 8) | (b << 0);
+                originalPixels[index] = (originalPixels[index] & 0xff000000) | (r << 16) | (g << 8) | (b << 0);
                 index++;
             }
         }
-        
+
         dst = ImageConverter.getImage(originalPixels, imageWidth, imageHeight);
-         
+
         if (needToConvert) {
             ColorConvertOp ccop = new ColorConvertOp(hints);
             ccop.filter(dst, origDst);
-        }
-        else if (origDst != dst) {
+        } else if (origDst != dst) {
             java.awt.Graphics2D g2 = origDst.createGraphics();
-        try {
-            g2.drawImage(dst, 0, 0, null);
-        } finally {
-            g2.dispose();
-        }
+            try {
+                g2.drawImage(dst, 0, 0, null);
+            } finally {
+                g2.dispose();
+            }
         }
 
         return origDst;

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,7 +41,15 @@ public class Resize extends BaseFilter {
         //do nothing
     }
 
-    public Resize(int targetWidth, int targetHeight, boolean highQuality, boolean maintainAspectRatio, boolean reduceOnly, boolean remainUnderBoundsWhileKeepingAspectRatio, RenderingHints hints) {
+    public Resize(
+            int targetWidth,
+            int targetHeight,
+            boolean highQuality,
+            boolean maintainAspectRatio,
+            boolean reduceOnly,
+            boolean remainUnderBoundsWhileKeepingAspectRatio,
+            RenderingHints hints
+    ) {
         this.hints = hints;
         this.targetWidth = targetWidth;
         this.targetHeight = targetHeight;
@@ -63,7 +71,7 @@ public class Resize extends BaseFilter {
         Operation operation = new Operation();
         operation.setName(key);
         String factor = parameterMap.get(key + "-factor");
-        operation.setFactor(factor==null?null:Double.valueOf(factor));
+        operation.setFactor(factor == null ? null : Double.valueOf(factor));
 
         UnmarshalledParameter targetWidth = new UnmarshalledParameter();
         String targetWidthApplyFactor = parameterMap.get(key + "-width-apply-factor");
@@ -82,24 +90,43 @@ public class Resize extends BaseFilter {
         UnmarshalledParameter highQuality = new UnmarshalledParameter();
         highQuality.setName("high-quality");
         highQuality.setType(ParameterTypeEnum.BOOLEAN.toString());
-        highQuality.setValue(parameterMap.get(key + "-high-quality")==null?"false":parameterMap.get(key + "-high-quality"));
+        highQuality.setValue(
+                parameterMap.get(key + "-high-quality") == null ? "false" : parameterMap.get(key + "-high-quality"
+                ));
 
         UnmarshalledParameter maintainAspectRatio = new UnmarshalledParameter();
         maintainAspectRatio.setName("maintain-aspect-ratio");
         maintainAspectRatio.setType(ParameterTypeEnum.BOOLEAN.toString());
-        maintainAspectRatio.setValue(parameterMap.get(key + "-maintain-aspect-ratio") == null ? "false" : parameterMap.get(key + "-maintain-aspect-ratio"));
+        maintainAspectRatio.setValue(
+                parameterMap.get(key + "-maintain-aspect-ratio") == null
+                        ? "false"
+                        : parameterMap.get(key + "-maintain-aspect-ratio")
+        );
 
         UnmarshalledParameter reduceOnly = new UnmarshalledParameter();
         reduceOnly.setName("reduce-only");
         reduceOnly.setType(ParameterTypeEnum.BOOLEAN.toString());
-        reduceOnly.setValue(parameterMap.get(key + "-reduce-only") == null ? "false" : parameterMap.get(key + "-reduce-only"));
+        reduceOnly.setValue(
+                parameterMap.get(key + "-reduce-only") == null ? "false" : parameterMap.get(key + "-reduce-only")
+        );
 
         UnmarshalledParameter remainUnderBoundsWhileKeepingAspectRatio = new UnmarshalledParameter();
         remainUnderBoundsWhileKeepingAspectRatio.setName("remain-under-bounds-while-keeping-aspect-ratio");
         remainUnderBoundsWhileKeepingAspectRatio.setType(ParameterTypeEnum.BOOLEAN.toString());
-        remainUnderBoundsWhileKeepingAspectRatio.setValue(parameterMap.get(key + "-remain-under-bounds-while-keeping-aspect-ratio") == null ? "false" : parameterMap.get(key + "-remain-under-bounds-while-keeping-aspect-ratio"));
+        remainUnderBoundsWhileKeepingAspectRatio.setValue(
+                parameterMap.get(key + "-remain-under-bounds-while-keeping-aspect-ratio") == null
+                        ? "false"
+                        : parameterMap.get(key + "-remain-under-bounds-while-keeping-aspect-ratio")
+        );
 
-        operation.setParameters(new UnmarshalledParameter[]{targetWidth, targetHeight, highQuality, maintainAspectRatio, reduceOnly, remainUnderBoundsWhileKeepingAspectRatio});
+        operation.setParameters(new UnmarshalledParameter[]{
+                targetWidth,
+                targetHeight,
+                highQuality,
+                maintainAspectRatio,
+                reduceOnly,
+                remainUnderBoundsWhileKeepingAspectRatio
+        });
         return operation;
     }
 
@@ -111,16 +138,18 @@ public class Resize extends BaseFilter {
             throw new NullPointerException("src image is null");
         }
         if (src == dst) {
-            throw new IllegalArgumentException("src image cannot be the "+
-                                               "same as the dst image");
+            throw new IllegalArgumentException("src image cannot be the " +
+                    "same as the dst image");
         }
 
         if (src.getWidth() <= targetWidth && src.getHeight() <= targetHeight && reduceOnly) {
             return src;
         }
-        
-        BufferedImage temp = getScaledInstance(src, targetWidth, targetHeight, hint, highQuality, maintainAspectRatio, reduceOnly);
-        
+
+        BufferedImage temp = getScaledInstance(
+                src, targetWidth, targetHeight, hint, highQuality, maintainAspectRatio, reduceOnly
+        );
+
         if (dst != null) {
             Graphics g = dst.createGraphics();
             g.drawImage(temp, 0, 0, temp.getWidth(), temp.getHeight(), null);
@@ -128,11 +157,19 @@ public class Resize extends BaseFilter {
         } else {
             dst = temp;
         }
-        
+
         return dst;
     }
-    
-    private BufferedImage getScaledInstance(BufferedImage img, int targetWidth, int targetHeight, Object hint, boolean higherQuality, boolean maintainAspectRatio, boolean reduceOnly) {
+
+    private BufferedImage getScaledInstance(
+            BufferedImage img,
+            int targetWidth,
+            int targetHeight,
+            Object hint,
+            boolean higherQuality,
+            boolean maintainAspectRatio,
+            boolean reduceOnly
+    ) {
         BufferedImage ret = (BufferedImage) img;
         int w, h, destW, destH;
 
@@ -141,18 +178,18 @@ public class Resize extends BaseFilter {
             int hDiff = Math.abs(img.getHeight() - targetHeight);
             if (wDiff > hDiff) {
                 destH = targetHeight;
-                destW = Double.valueOf((((double) img.getWidth()) * ((double) destH))/((double) img.getHeight())).intValue();
+                destW = Double.valueOf((((double) img.getWidth()) * ((double) destH)) / ((double) img.getHeight())).intValue();
                 if (remainUnderBoundsWhileKeepingAspectRatio && destW > targetWidth) {
                     int newW = targetWidth;
-                    destH = Double.valueOf((((double) destH) * ((double) newW))/((double) destW)).intValue();
+                    destH = Double.valueOf((((double) destH) * ((double) newW)) / ((double) destW)).intValue();
                     destW = newW;
                 }
             } else {
                 destW = targetWidth;
-                destH = Double.valueOf((((double) img.getHeight()) * ((double) destW))/((double) img.getWidth())).intValue();
+                destH = Double.valueOf((((double) img.getHeight()) * ((double) destW)) / ((double) img.getWidth())).intValue();
                 if (remainUnderBoundsWhileKeepingAspectRatio && destH > targetHeight) {
                     int newH = targetHeight;
-                    destW = Double.valueOf((((double) destW) * ((double) newH))/((double) destH)).intValue();
+                    destW = Double.valueOf((((double) destW) * ((double) newH)) / ((double) destH)).intValue();
                     destH = newH;
                 }
             }
@@ -204,7 +241,8 @@ public class Resize extends BaseFilter {
                 }
             }
             int type;
-            if (img.getType()!=BufferedImage.TYPE_INT_ARGB && img.getType()!=BufferedImage.TYPE_INT_RGB && !"bmp".equalsIgnoreCase(imageFormat)) {
+            if (img.getType() != BufferedImage.TYPE_INT_ARGB && img.getType() != BufferedImage.TYPE_INT_RGB
+                    && !"bmp".equalsIgnoreCase(imageFormat)) {
                 type = BufferedImage.TYPE_INT_ARGB;
             } else {
                 type = img.getType();

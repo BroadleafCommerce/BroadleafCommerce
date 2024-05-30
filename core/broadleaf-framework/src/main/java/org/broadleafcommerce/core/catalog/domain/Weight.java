@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -31,27 +32,26 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 /**
- * 
  * @author jfischer
- *
  */
 @Embeddable
 public class Weight implements Serializable, MultiTenantCloneable<Weight> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Column(name = "WEIGHT")
     @AdminPresentation(friendlyName = "ProductWeight_Product_Weight",
-        group = SkuAdminPresentation.GroupName.ShippingFulfillment, order = SkuAdminPresentation.FieldOrder.WEIGHT)
+            group = SkuAdminPresentation.GroupName.ShippingFulfillment, order = SkuAdminPresentation.FieldOrder.WEIGHT)
     protected BigDecimal weight;
 
-        
     @Column(name = "WEIGHT_UNIT_OF_MEASURE")
     @AdminPresentation(friendlyName = "ProductWeight_Product_Weight_Units",
-        group = SkuAdminPresentation.GroupName.ShippingFulfillment, order = SkuAdminPresentation.FieldOrder.WEIGHT_UNIT_OF_MEASURE,
-        fieldType= SupportedFieldType.BROADLEAF_ENUMERATION, 
-        broadleafEnumeration="org.broadleafcommerce.common.util.WeightUnitOfMeasureType",
-        defaultValue = "KILOGRAMS")
+            group = SkuAdminPresentation.GroupName.ShippingFulfillment,
+            order = SkuAdminPresentation.FieldOrder.WEIGHT_UNIT_OF_MEASURE,
+            fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
+            broadleafEnumeration = "org.broadleafcommerce.common.util.WeightUnitOfMeasureType",
+            defaultValue = "KILOGRAMS")
     protected String weightUnitOfMeasure;
 
     public WeightUnitOfMeasureType getWeightUnitOfMeasure() {
@@ -105,4 +105,5 @@ public class Weight implements Serializable, MultiTenantCloneable<Weight> {
         result = 31 * result + (weightUnitOfMeasure != null ? weightUnitOfMeasure.hashCode() : 0);
         return result;
     }
+
 }

@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.dao.provider.metadata;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -72,7 +71,6 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
-
 /**
  * @author Jeff Fischer
  */
@@ -82,37 +80,60 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
 
     private static final Log LOG = LogFactory.getLog(BasicFieldMetadataProvider.class);
 
-    protected boolean canHandleFieldForConfiguredMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    protected boolean canHandleFieldForConfiguredMetadata(
+            AddFieldMetadataRequest addMetadataRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         AdminPresentation annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentation.class);
         return annot != null;
     }
 
-    protected boolean canHandleAnnotationOverride(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
-        return overrideViaAnnotationRequest.getRequestedEntity().getAnnotation(AdminPresentationMergeOverrides.class) != null;
+    protected boolean canHandleAnnotationOverride(
+            OverrideViaAnnotationRequest overrideViaAnnotationRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
+        return overrideViaAnnotationRequest.getRequestedEntity()
+                .getAnnotation(AdminPresentationMergeOverrides.class) != null;
     }
 
     @Override
-    public MetadataProviderResponse addMetadata(AddFieldMetadataRequest addMetadataRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse addMetadata(
+            AddFieldMetadataRequest addMetadataRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         if (!canHandleFieldForConfiguredMetadata(addMetadataRequest, metadata)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
         AdminPresentation annot = addMetadataRequest.getRequestedField().getAnnotation(AdminPresentation.class);
         FieldInfo info = buildFieldInfo(addMetadataRequest.getRequestedField());
-        FieldMetadataOverride override = constructBasicMetadataOverride(annot, addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationToOneLookup.class),
-                addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationDataDrivenEnumeration.class));
-        buildBasicMetadata(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info, override, addMetadataRequest.getDynamicEntityDao());
+        FieldMetadataOverride override = constructBasicMetadataOverride(
+                annot,
+                addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationToOneLookup.class),
+                addMetadataRequest.getRequestedField().getAnnotation(AdminPresentationDataDrivenEnumeration.class)
+        );
+        buildBasicMetadata(
+                addMetadataRequest.getParentClass(),
+                addMetadataRequest.getTargetClass(),
+                metadata,
+                info,
+                override,
+                addMetadataRequest.getDynamicEntityDao()
+        );
         setClassOwnership(addMetadataRequest.getParentClass(), addMetadataRequest.getTargetClass(), metadata, info);
         return MetadataProviderResponse.HANDLED;
     }
 
     @Override
-    public MetadataProviderResponse overrideViaAnnotation(OverrideViaAnnotationRequest overrideViaAnnotationRequest, Map<String, FieldMetadata> metadata) {
+    public MetadataProviderResponse overrideViaAnnotation(
+            OverrideViaAnnotationRequest overrideViaAnnotationRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
         if (!canHandleAnnotationOverride(overrideViaAnnotationRequest, metadata)) {
             return MetadataProviderResponse.NOT_HANDLED;
         }
 
-        AdminPresentationMergeOverrides myMergeOverrides = overrideViaAnnotationRequest.getRequestedEntity().
-                getAnnotation(AdminPresentationMergeOverrides.class);
+        AdminPresentationMergeOverrides myMergeOverrides = overrideViaAnnotationRequest.getRequestedEntity()
+                .getAnnotation(AdminPresentationMergeOverrides.class);
         if (myMergeOverrides != null) {
             for (AdminPresentationMergeOverride override : myMergeOverrides.value()) {
                 String propertyName = override.name();
@@ -144,8 +165,8 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                                         info.setName(fieldName);
                                     }
                                     FieldMetadataOverride fieldMetadataOverride = overrideMergeMetadata(override);
-                                    if (serverMetadata.getExcluded() != null && serverMetadata.getExcluded() &&
-                                            (fieldMetadataOverride.getExcluded() == null || fieldMetadataOverride.getExcluded())) {
+                                    if (serverMetadata.getExcluded() != null && serverMetadata.getExcluded()
+                                            && (fieldMetadataOverride.getExcluded() == null || fieldMetadataOverride.getExcluded())) {
                                         continue;
                                     }
                                     buildBasicMetadata(parentClass, targetClass, temp, info, fieldMetadataOverride,
@@ -166,8 +187,15 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
     }
 
     @Override
-    public MetadataProviderResponse overrideViaXml(OverrideViaXmlRequest overrideViaXmlRequest, Map<String, FieldMetadata> metadata) {
-        Map<String, MetadataOverride> overrides = getTargetedOverride(overrideViaXmlRequest.getDynamicEntityDao(), overrideViaXmlRequest.getRequestedConfigKey(), overrideViaXmlRequest.getRequestedCeilingEntity());
+    public MetadataProviderResponse overrideViaXml(
+            OverrideViaXmlRequest overrideViaXmlRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
+        Map<String, MetadataOverride> overrides = getTargetedOverride(
+                overrideViaXmlRequest.getDynamicEntityDao(),
+                overrideViaXmlRequest.getRequestedConfigKey(),
+                overrideViaXmlRequest.getRequestedCeilingEntity()
+        );
         if (overrides != null) {
             for (String propertyName : overrides.keySet()) {
                 MetadataOverride localMetadata = overrides.get(propertyName);
@@ -185,12 +213,13 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                                             parentClass = Class.forName(serverMetadata.getOwningClass());
                                         }
                                         String fieldName = serverMetadata.getFieldName();
-                                        Field field = overrideViaXmlRequest.getDynamicEntityDao().getFieldManager().getField(targetClass, fieldName);
+                                        Field field = overrideViaXmlRequest.getDynamicEntityDao().getFieldManager()
+                                                .getField(targetClass, fieldName);
                                         Map<String, FieldMetadata> temp = new HashMap<>(1);
                                         temp.put(field.getName(), serverMetadata);
                                         FieldInfo info = buildFieldInfo(field);
                                         buildBasicMetadata(parentClass, targetClass, temp, info, localFieldMetadata,
-                                            overrideViaXmlRequest.getDynamicEntityDao());
+                                                overrideViaXmlRequest.getDynamicEntityDao());
                                         serverMetadata = (BasicFieldMetadata) temp.get(field.getName());
                                         metadata.put(key, serverMetadata);
                                         if (overrideViaXmlRequest.getParentExcluded()) {
@@ -231,9 +260,11 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 fieldMetadataOverride.setColumnWidth(stringValue);
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.BROADLEAFENUMERATION)) {
                 fieldMetadataOverride.setBroadleafEnumeration(stringValue);
-            }  else if (entry.getKey().equals(PropertyType.AdminPresentation.HIDEENUMERATIONIFEMPTY)) {
-                fieldMetadataOverride.setHideEnumerationIfEmpty(StringUtils.isEmpty(stringValue) ? entry.getValue().booleanOverrideValue() :
-                        Boolean.parseBoolean(stringValue));
+            } else if (entry.getKey().equals(PropertyType.AdminPresentation.HIDEENUMERATIONIFEMPTY)) {
+                fieldMetadataOverride.setHideEnumerationIfEmpty(StringUtils.isEmpty(stringValue)
+                        ? entry.getValue().booleanOverrideValue()
+                        : Boolean.parseBoolean(stringValue)
+                );
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.FIELDCOMPONENTRENDERER)) {
                 fieldMetadataOverride.setFieldComponentRenderer(SupportedFieldType.valueOf(stringValue));
             } else if (entry.getKey().equals(PropertyType.AdminPresentation.FIELDCOMPONENTRENDERERTEMPLATE)) {
@@ -350,8 +381,11 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         return fieldMetadataOverride;
     }
 
-    protected FieldMetadataOverride constructBasicMetadataOverride(AdminPresentation annot, AdminPresentationToOneLookup toOneLookup,
-            AdminPresentationDataDrivenEnumeration dataDrivenEnumeration) {
+    protected FieldMetadataOverride constructBasicMetadataOverride(
+            AdminPresentation annot,
+            AdminPresentationToOneLookup toOneLookup,
+            AdminPresentationDataDrivenEnumeration dataDrivenEnumeration
+    ) {
         if (annot != null) {
             FieldMetadataOverride override = new FieldMetadataOverride();
             override.setBroadleafEnumeration(annot.broadleafEnumeration());
@@ -447,29 +481,39 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 itemMap.put(item.itemName(), item.itemValue());
             }
             if (override.getValidationConfigurations() == null) {
-                override.setValidationConfigurations(new LinkedHashMap<String, List<Map<String, String>>>(5));
+                override.setValidationConfigurations(new LinkedHashMap<>(5));
             }
-            List<Map<String, String>> configItems = override.getValidationConfigurations().get(configuration.validationImplementation());
+            List<Map<String, String>> configItems = override.getValidationConfigurations()
+                    .get(configuration.validationImplementation());
             if (configItems == null) {
                 configItems = new ArrayList<>();
             }
             configItems.add(itemMap);
-            
+
             override.getValidationConfigurations().put(configuration.validationImplementation(), configItems);
         }
     }
 
-    protected void processShowIfFieldEqualsAnnotations(FieldValueConfiguration[] configurations, FieldMetadataOverride override) {
+    protected void processShowIfFieldEqualsAnnotations(
+            FieldValueConfiguration[] configurations,
+            FieldMetadataOverride override
+    ) {
         if (override.getShowIfFieldEquals() == null) {
-            override.setShowIfFieldEquals(new HashMap<String, List<String>>());
+            override.setShowIfFieldEquals(new HashMap<>());
         }
         for (FieldValueConfiguration configuration : configurations) {
             override.getShowIfFieldEquals().put(configuration.fieldName(), Arrays.asList(configuration.fieldValues()));
         }
     }
 
-    protected void buildBasicMetadata(Class<?> parentClass, Class<?> targetClass, Map<String, FieldMetadata> attributes,
-            FieldInfo field, FieldMetadataOverride basicFieldMetadata, DynamicEntityDao dynamicEntityDao) {
+    protected void buildBasicMetadata(
+            Class<?> parentClass,
+            Class<?> targetClass,
+            Map<String, FieldMetadata> attributes,
+            FieldInfo field,
+            FieldMetadataOverride basicFieldMetadata,
+            DynamicEntityDao dynamicEntityDao
+    ) {
         BasicFieldMetadata serverMetadata = (BasicFieldMetadata) attributes.get(field.getName());
 
         BasicFieldMetadata metadata;
@@ -524,7 +568,8 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
         if (metadata.getExplicitFieldType() == SupportedFieldType.ADDITIONAL_FOREIGN_KEY) {
             //this is a lookup - exclude the fields on this OneToOne or ManyToOne field
-            if (basicFieldMetadata.getForcePopulateChildProperties() == null || !basicFieldMetadata.getForcePopulateChildProperties()) {
+            if (basicFieldMetadata.getForcePopulateChildProperties() == null
+                    || !basicFieldMetadata.getForcePopulateChildProperties()) {
                 metadata.setChildrenExcluded(true);
             }
         }
@@ -567,7 +612,8 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (basicFieldMetadata.getBroadleafEnumeration() != null) {
             metadata.setBroadleafEnumeration(basicFieldMetadata.getBroadleafEnumeration());
         }
-        if (!StringUtils.isEmpty(metadata.getBroadleafEnumeration()) && metadata.getFieldType() == SupportedFieldType.BROADLEAF_ENUMERATION) {
+        if (!StringUtils.isEmpty(metadata.getBroadleafEnumeration())
+                && metadata.getFieldType() == SupportedFieldType.BROADLEAF_ENUMERATION) {
             try {
                 setupBroadleafEnumeration(metadata.getBroadleafEnumeration(), metadata, dynamicEntityDao);
             } catch (Exception e) {
@@ -620,7 +666,8 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (basicFieldMetadata.getOptionListEntity() != null) {
             metadata.setOptionListEntity(basicFieldMetadata.getOptionListEntity());
         }
-        if (metadata.getOptionListEntity() != null && metadata.getOptionListEntity().equals(DataDrivenEnumerationValueImpl.class.getName())) {
+        if (metadata.getOptionListEntity() != null
+                && metadata.getOptionListEntity().equals(DataDrivenEnumerationValueImpl.class.getName())) {
             metadata.setOptionValueFieldName("key");
             metadata.setOptionDisplayFieldName("display");
         } else {
@@ -631,8 +678,11 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 metadata.setOptionDisplayFieldName(basicFieldMetadata.getOptionDisplayFieldName());
             }
         }
-        if (!StringUtils.isEmpty(metadata.getOptionListEntity()) && (StringUtils.isEmpty(metadata.getOptionValueFieldName()) || StringUtils.isEmpty(metadata.getOptionDisplayFieldName()))) {
-            throw new IllegalArgumentException("Problem setting up data driven enumeration for (" + field.getName() + "). The optionListEntity, optionValueFieldName and optionDisplayFieldName properties must all be included if not using DataDrivenEnumerationValueImpl as the optionListEntity.");
+        if (!StringUtils.isEmpty(metadata.getOptionListEntity())
+                && (StringUtils.isEmpty(metadata.getOptionValueFieldName())
+                || StringUtils.isEmpty(metadata.getOptionDisplayFieldName()))) {
+            throw new IllegalArgumentException("Problem setting up data driven enumeration for (" + field.getName()
+                    + "). The optionListEntity, optionValueFieldName and optionDisplayFieldName properties must all be included if not using DataDrivenEnumerationValueImpl as the optionListEntity.");
         }
         if (basicFieldMetadata.getOptionFilterValues() != null) {
             String[][] options = new String[basicFieldMetadata.getOptionFilterValues().length][3];
@@ -653,9 +703,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         if (basicFieldMetadata.getValidationConfigurations() != null) {
             metadata.setValidationConfigurations(basicFieldMetadata.getValidationConfigurations());
         }
-        if ((basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_SIMPLE ||
-                basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY ||
-                basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_SIMPLE_TIME)
+        if ((basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_SIMPLE
+                || basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_WITH_QUANTITY
+                || basicFieldMetadata.getFieldType() == SupportedFieldType.RULE_SIMPLE_TIME)
                 && basicFieldMetadata.getRuleIdentifier() == null) {
             throw new IllegalArgumentException("ruleIdentifier property must be set on AdminPresentation when the fieldType is RULE_SIMPLE,  RULE_WITH_QUANTITY");
         }
@@ -714,7 +764,9 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                                 current = current.get(parts[j]);
                             }
                         }
-                        restrictions.add(builder.equal(current, convertType(param[1], OptionFilterParamType.valueOf(param[2]))));
+                        restrictions.add(
+                                builder.equal(current, convertType(param[1], OptionFilterParamType.valueOf(param[2])))
+                        );
                     }
                 }
             }
@@ -730,8 +782,11 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
                 enumerationValues[j][0] = String.valueOf(fieldManager.getFieldValue(param, metadata.getOptionValueFieldName()));
                 j++;
             }
-            if (!CollectionUtils.isEmpty(results) && metadata.getOptionListEntity().equals(DataDrivenEnumerationValueImpl.class.getName())) {
-                metadata.setOptionCanEditValues((Boolean) fieldManager.getFieldValue(results.get(0), "type.modifiable"));
+            if (!CollectionUtils.isEmpty(results)
+                    && metadata.getOptionListEntity().equals(DataDrivenEnumerationValueImpl.class.getName())) {
+                metadata.setOptionCanEditValues(
+                        (Boolean) fieldManager.getFieldValue(results.get(0), "type.modifiable")
+                );
             }
             metadata.setEnumerationValues(enumerationValues);
         } catch (Exception e) {
@@ -739,7 +794,7 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
         }
     }
 
-    public void refreshDataDrivenEnumMetadata(BasicFieldMetadata metadata){
+    public void refreshDataDrivenEnumMetadata(BasicFieldMetadata metadata) {
         buildDataDrivenEnumList(metadata);
     }
 
@@ -747,4 +802,5 @@ public class BasicFieldMetadataProvider extends FieldMetadataProviderAdapter {
     public int getOrder() {
         return FieldMetadataProvider.BASIC;
     }
+
 }

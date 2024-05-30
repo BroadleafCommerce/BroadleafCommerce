@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,13 +32,11 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class BroadleafOrderHistoryController extends AbstractAccountController {
 
-    @Value("${validate.customer.owned.data:true}")
-    protected boolean validateCustomerOwnedData;
-
     protected static String orderHistoryView = "account/orderHistory";
     protected static String orderDetailsView = "account/partials/orderDetails";
     protected static String orderDetailsRedirectView = "account/partials/orderDetails";
-
+    @Value("${validate.customer.owned.data:true}")
+    protected boolean validateCustomerOwnedData;
     @Resource(name = "blOrderHistoryService")
     protected OrderHistoryService orderHistoryService;
 
@@ -74,4 +72,5 @@ public class BroadleafOrderHistoryController extends AbstractAccountController {
     protected void validateCustomerOwnedData(Order order) {
         orderHistoryService.validateCustomerOwnedData(order);
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,29 +56,29 @@ public class TranslationDaoImpl implements TranslationDao {
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Resource(name="blTranslationServiceExtensionManager")
+    @Resource(name = "blTranslationServiceExtensionManager")
     protected TranslationServiceExtensionManager extensionManager;
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
     protected DynamicDaoHelper dynamicDaoHelper = new DynamicDaoHelperImpl();
-    
+
     @Override
     public Translation save(Translation translation) {
         return em.merge(translation);
     }
-    
+
     @Override
     public Translation create() {
         return (Translation) entityConfiguration.createEntityInstance(Translation.class.getName());
     }
-    
+
     @Override
     public void delete(Translation translation) {
         em.remove(translation);
     }
-    
+
     @Override
     public Map<String, Object> getIdPropertyMetadata(TranslatedEntity entity) {
         Class<?> implClass = entityConfiguration.lookupEntityClass(entity.getType());
@@ -89,12 +89,12 @@ public class TranslationDaoImpl implements TranslationDao {
     public Class<?> getEntityImpl(TranslatedEntity entity) {
         return entityConfiguration.lookupEntityClass(entity.getType());
     }
-    
+
     @Override
     public Translation readTranslationById(Long translationId) {
         return em.find(TranslationImpl.class, translationId);
     }
-    
+
     @Override
     public List<Translation> readTranslations(TranslatedEntity entity, String entityId, String fieldName) {
         entityId = getUpdatedEntityId(entity, entityId);
@@ -105,8 +105,8 @@ public class TranslationDaoImpl implements TranslationDao {
 
         criteria.select(translation);
         criteria.where(builder.equal(translation.get("entityType"), entity.getFriendlyType()),
-            builder.equal(translation.get("entityId"), entityId),
-            builder.equal(translation.get("fieldName"), fieldName)
+                builder.equal(translation.get("entityId"), entityId),
+                builder.equal(translation.get("fieldName"), fieldName)
         );
 
         TypedQuery<Translation> query = em.createQuery(criteria);
@@ -125,9 +125,9 @@ public class TranslationDaoImpl implements TranslationDao {
 
         criteria.select(translation);
         criteria.where(builder.equal(translation.get("entityType"), entity.getFriendlyType()),
-            builder.equal(translation.get("entityId"), entityId),
-            builder.equal(translation.get("fieldName"), fieldName),
-            builder.equal(translation.get("localeCode"), localeCode)
+                builder.equal(translation.get("entityId"), entityId),
+                builder.equal(translation.get("fieldName"), fieldName),
+                builder.equal(translation.get("localeCode"), localeCode)
         );
         TypedQuery<Translation> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -164,8 +164,8 @@ public class TranslationDaoImpl implements TranslationDao {
             return getUpdatedEntityId(entityType, (Long) idValue);
         }
 
-        throw new IllegalArgumentException(String.format("Could not retrieve value for id property. Object: [%s], " +
-                "ID Property: [%s], ID Type: [%s]", entity, idProperty, idType));
+        throw new IllegalArgumentException(String.format("Could not retrieve value for id property. Object: [%s], "
+                + "ID Property: [%s], ID Type: [%s]", entity, idProperty, idType));
     }
 
     @Override
@@ -174,7 +174,7 @@ public class TranslationDaoImpl implements TranslationDao {
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
         criteria.select(builder.count(root));
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.equal(root.get("entityType"), entityType.getFriendlyType()));
         try {
             Class<?> aClass = entityConfiguration.createEntityInstance(entityType.getType()).getClass();
@@ -201,13 +201,17 @@ public class TranslationDaoImpl implements TranslationDao {
     public List<Translation> readAllTranslationEntries(TranslatedEntity entityType, ResultType stage) {
         return readAllTranslationEntries(entityType, stage, null);
     }
-    
-    public List<Translation> readAllTranslationEntries(TranslatedEntity entityType, ResultType stage, List<String> entityIds) {
+
+    public List<Translation> readAllTranslationEntries(
+            TranslatedEntity entityType,
+            ResultType stage,
+            List<String> entityIds
+    ) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
         criteria.select(root);
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.equal(root.get("entityType"), entityType.getFriendlyType()));
         if (CollectionUtils.isNotEmpty(entityIds)) {
             restrictions.add(root.get("entityId").in(entityIds));
@@ -239,18 +243,25 @@ public class TranslationDaoImpl implements TranslationDao {
         if (extensionManager == null) {
             throw new IllegalStateException("extensionManager cannot be null");
         }
-        ExtensionResultHolder<List<StandardCacheItem>> response = new ExtensionResultHolder<List<StandardCacheItem>>();
+        ExtensionResultHolder<List<StandardCacheItem>> response = new ExtensionResultHolder<>();
         extensionManager.getProxy().buildStatus(TranslationImpl.class, results, response);
         return response.getResult();
     }
 
     @Override
-    public Translation readTranslation(TranslatedEntity entityType, String entityId, String fieldName, String localeCode, String localeCountryCode, ResultType stage) {
+    public Translation readTranslation(
+            TranslatedEntity entityType,
+            String entityId,
+            String fieldName,
+            String localeCode,
+            String localeCountryCode,
+            ResultType stage
+    ) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Translation> criteria = builder.createQuery(Translation.class);
         Root<TranslationImpl> root = criteria.from(TranslationImpl.class);
         criteria.select(root);
-        List<Predicate> restrictions = new ArrayList<Predicate>();
+        List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.equal(root.get("entityType"), entityType.getFriendlyType()));
         restrictions.add(builder.equal(root.get("entityId"), entityId));
         restrictions.add(builder.equal(root.get("fieldName"), fieldName));
@@ -291,7 +302,9 @@ public class TranslationDaoImpl implements TranslationDao {
     }
 
     protected String getUpdatedEntityId(TranslatedEntity entityType, Long idValue) {
-        SandBoxHelper.OriginalIdResponse originalIdResponse = sandBoxHelper.getOriginalId(getEntityImpl(entityType), idValue);
+        SandBoxHelper.OriginalIdResponse originalIdResponse = sandBoxHelper.getOriginalId(
+                getEntityImpl(entityType), idValue
+        );
         if (originalIdResponse.isRecordFound() && originalIdResponse.getOriginalId() != null) {
             idValue = originalIdResponse.getOriginalId();
             originalIdResponse = sandBoxHelper.getProductionOriginalId(getEntityImpl(entityType), idValue);

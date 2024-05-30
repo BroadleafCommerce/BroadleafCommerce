@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,7 +27,7 @@ public enum BLCOperator {
     INOT_CONTAINS, INOT_STARTS_WITH, INOT_ENDS_WITH, REGEXP, IREGEXP, IS_NULL, NOT_NULL, IN_SET, NOT_IN_SET,
     EQUALS_FIELD, NOT_EQUAL_FIELD, GREATER_THAN_FIELD, LESS_THAN_FIELD, GREATER_OR_EQUAL_FIELD, LESS_OR_EQUAL_FIELD,
     CONTAINS_FIELD, STARTS_WITH_FIELD, ENDS_WITH_FIELD, AND, NOT, OR, BETWEEN, BETWEEN_INCLUSIVE, COUNT_GREATER_THAN,
-    COUNT_GREATER_OR_EQUAL, COUNT_LESS_THAN, COUNT_LESS_OR_EQUAL, COUNT_EQUALS, COLLECTION_IN, COLLECTION_NOT_IN, 
+    COUNT_GREATER_OR_EQUAL, COUNT_LESS_THAN, COUNT_LESS_OR_EQUAL, COUNT_EQUALS, COLLECTION_IN, COLLECTION_NOT_IN,
     WITHIN_DAYS
 
 }

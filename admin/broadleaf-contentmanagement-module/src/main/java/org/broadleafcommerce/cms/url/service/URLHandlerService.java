@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,7 +34,7 @@ public interface URLHandlerService {
      * @param uri
      * @return
      */
-    public URLHandler findURLHandlerByURI(String uri);
+    URLHandler findURLHandlerByURI(String uri);
 
     /**
      * Be cautious when calling this.  If there are a large number of records, this can cause performance and
@@ -42,7 +42,7 @@ public interface URLHandlerService {
      *
      * @return
      */
-    public List<URLHandler> findAllURLHandlers();
+    List<URLHandler> findAllURLHandlers();
 
     /**
      * Persists the URLHandler to the DB.
@@ -50,7 +50,7 @@ public interface URLHandlerService {
      * @param handler
      * @return
      */
-    public URLHandler saveURLHandler(URLHandler handler);
+    URLHandler saveURLHandler(URLHandler handler);
 
     /**
      * Finds a URLHandler by its ID.
@@ -58,7 +58,7 @@ public interface URLHandlerService {
      * @param id
      * @return
      */
-    public URLHandler findURLHandlerById(Long id);
+    URLHandler findURLHandlerById(Long id);
 
     /**
      * This is assumed to be a relatively small list of regex URLHandlers (perhaps in the dozens or hundreds of
@@ -67,10 +67,10 @@ public interface URLHandlerService {
      *
      * @return
      */
-    public List<URLHandler> findAllRegexURLHandlers();
+    List<URLHandler> findAllRegexURLHandlers();
 
-    public String buildURLHandlerCacheKey(Site site, String requestUri);
+    String buildURLHandlerCacheKey(Site site, String requestUri);
 
-    public Boolean removeURLHandlerFromCache(String mapKey);
+    Boolean removeURLHandlerFromCache(String mapKey);
 
 }

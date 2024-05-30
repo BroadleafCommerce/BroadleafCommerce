@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,7 +32,7 @@ import jakarta.annotation.Resource;
 @Service("blAdminSectionCustomCriteriaService")
 public class AdminSectionCustomCriteriaServiceImpl implements AdminSectionCustomCriteriaService {
 
-    @Resource(name="blSectionCustomCriteriaMap")
+    @Resource(name = "blSectionCustomCriteriaMap")
     protected Map<String, ArrayList<String>> customCriteria;
 
     @Resource(name = "blAdminSectionCustomCriteriaExtensionManager")
@@ -40,7 +40,7 @@ public class AdminSectionCustomCriteriaServiceImpl implements AdminSectionCustom
 
     @Override
     public String[] mergeSectionCustomCriteria(String ceilingEntityClassName, String[] controllerCriteria) {
-        ArrayList<String> sectionCriteria = new ArrayList<String>();
+        ArrayList<String> sectionCriteria = new ArrayList<>();
         if (controllerCriteria != null) {
             sectionCriteria = new ArrayList<>(Arrays.asList(controllerCriteria));
         }
@@ -58,11 +58,12 @@ public class AdminSectionCustomCriteriaServiceImpl implements AdminSectionCustom
         // This is an extension point for more complex criteria assignment.
         // Some controllers do not have a specific ceilingEntity, only perform if ceilingEntity is provided
         if (ceilingEntityClassName != null) {
-            ArrayList<String> extensionCriteria = new ArrayList<String>();
+            ArrayList<String> extensionCriteria = new ArrayList<>();
             extensionManager.getProxy().addAdditionalSectionCustomCriteria(extensionCriteria, ceilingEntityClassName);
             sectionCriteria.removeAll(extensionCriteria);
             sectionCriteria.addAll(extensionCriteria);
         }
         return sectionCriteria.toArray(new String[sectionCriteria.size()]);
     }
+
 }

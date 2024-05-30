@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,14 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class PomEvaluator {
 
     private static String SEPARATOR = "============================================================";
-    
+
     private static Map<String, Category> knownLibraries = new HashMap<>();
     private static Map<LicenseType, List<Dependency>> licenseDependencyMap = new HashMap<>();
-    
+
     private static Category SPRING = new Category("Spring Framework", LicenseType.APACHE2, FrameworkType.GENERAL);
     private static Category HIBERNATE = new Category("Hibernate Framework", LicenseType.LGPL, FrameworkType.PERSISTENCE);
     private static Category GOOGLE = new Category("Google", LicenseType.APACHE2, FrameworkType.GENERAL);
@@ -45,7 +44,7 @@ public class PomEvaluator {
     private static Category LOG4J2 = new Category("log4j2", LicenseType.APACHE2, FrameworkType.LOGGING);
     private static Category OTHER = new Category("Other", LicenseType.OTHER, FrameworkType.OTHER);
     private static Category YAHOO = new Category("Yahoo", LicenseType.YAHOO_YUI, FrameworkType.UI);
-    
+
     // CODEHAUS is used by Apache and Spring Framework
     private static Category JACKSON = new Category("Codehaus Jackson Library", LicenseType.APACHE2, FrameworkType.XML, SPRING, APACHE_FOUNDATION);
     private static Category PLEXUS = new Category("Codehaus Plexus Library", LicenseType.APACHE2, FrameworkType.XML, SPRING, APACHE_FOUNDATION);
@@ -53,7 +52,7 @@ public class PomEvaluator {
     private static Category CGLIB = new Category("CGLIB libraries", LicenseType.APACHE2, FrameworkType.GENERAL, SPRING, HIBERNATE);
     private static Category JERSEY = new Category("Jersey Libraries", LicenseType.LGPL, FrameworkType.XML);
     private static Category XSTREAM = new Category("Codehaus XML parsing library", LicenseType.XSTREAM_BSD, FrameworkType.XML);
-    private static Category TRANSMORPH = new Category("Entropy Transmorph - SalesForce.com", LicenseType.APACHE2, FrameworkType.UTILITY);    
+    private static Category TRANSMORPH = new Category("Entropy Transmorph - SalesForce.com", LicenseType.APACHE2, FrameworkType.UTILITY);
     private static Category QUARTZ = new Category("Teracotta Quartz", LicenseType.APACHE2, FrameworkType.SCHEDULER);
     private static Category EHCACHE = new Category("Teracotta ehCache", LicenseType.APACHE2, FrameworkType.CACHE);
     private static Category ANTLR = new Category("Antlr Runtime", LicenseType.ANTLR_BSD, FrameworkType.UTILITY, APACHE_FOUNDATION);
@@ -62,9 +61,6 @@ public class PomEvaluator {
     private static Category ORO = new Category("ORO regular expressions", LicenseType.APACHE2, FrameworkType.RULES);
     private static Category JAVA_ASSIST = new Category("Java Assist", LicenseType.APACHE2, FrameworkType.GENERAL);
     private static Category ANTISAMMY = new Category("Anti-Sammy", LicenseType.ANTISAMMY_BSD, FrameworkType.GENERAL);
-    
-    
-
 
     private static void initializeKnownLibraries() {
         // Spring
@@ -123,7 +119,7 @@ public class PomEvaluator {
         // CodeHaus - JSON / XML processing
         knownLibraries.put("org.codehaus.jackson", JACKSON);
         knownLibraries.put("org.codehaus.plexus", PLEXUS);
-        
+
         // ASM
         knownLibraries.put("asm", ASM);
 
@@ -167,7 +163,6 @@ public class PomEvaluator {
 
         // OWASP
         knownLibraries.put("com.yahoo.platform.yui", YAHOO);
-
     }
 
 /*
@@ -241,17 +236,16 @@ public class PomEvaluator {
         for (Dependency d : dependencies) {
             dependencyNames.add(d.toString());
         }
-        
+
         Collections.sort(dependencyNames);
 
         System.out.println(category);
         System.out.println(SEPARATOR);
-        
+
         for (String name : dependencyNames) {
             System.out.println(name);
         }
         System.out.println("Total count for category " + category.categoryName + ": " + dependencyNames.size() + "\r\r");
-        
     }
 
     public static List<Dependency> populateDependencies(BufferedReader br) throws IOException {
@@ -297,6 +291,20 @@ public class PomEvaluator {
         return false;
     }
 
+    static enum FrameworkType {
+        PERSISTENCE,
+        GENERAL,
+        LOGGING,
+        UI,
+        XML,
+        UTILITY,
+        SCHEDULER,
+        CACHE,
+        RULES,
+        ECOMMERCE,
+        OTHER
+    }
+
     static class Dependency {
 
         String groupId;
@@ -313,9 +321,6 @@ public class PomEvaluator {
 
     static class LicenseType {
 
-        private String name;
-        private String url;
-
         public static LicenseType APACHE2 = new LicenseType("APACHE2", "http://www.apache.org/licenses/LICENSE-2.0.html");
         public static LicenseType LGPL = new LicenseType("LGPL", "http://www.gnu.org/licenses/lgpl-3.0.html, http://www.gnu.org/licenses/lgpl-2.1.html,");
         public static LicenseType MIT = new LicenseType("MIT", "http://opensource.org/licenses/MIT");
@@ -327,6 +332,8 @@ public class PomEvaluator {
         public static LicenseType OTHER = new LicenseType("OTHER", "Unknown");
         public static LicenseType ECLIPSE_PUBLIC = new LicenseType("ECLIPSE PUBLIC", "http://www.eclipse.org/legal/epl-v10.html");
         public static LicenseType YAHOO_YUI = new LicenseType("YAHOO YUI", "http://yuilibrary.com/license/");
+        private String name;
+        private String url;
 
         public LicenseType(String name, String url) {
             this.name = name;
@@ -338,20 +345,6 @@ public class PomEvaluator {
             return name.toString() + ":" + url;
         }
     }
-
-    static enum FrameworkType {
-        PERSISTENCE,
-        GENERAL,
-        LOGGING,
-        UI,
-        XML,
-        UTILITY,
-        SCHEDULER,
-        CACHE,
-        RULES,
-        ECOMMERCE,
-        OTHER
-    }        
 
     static class Category {
 

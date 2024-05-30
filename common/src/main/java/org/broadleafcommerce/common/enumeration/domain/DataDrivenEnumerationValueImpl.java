@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,6 +29,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -53,12 +55,12 @@ import jakarta.persistence.Table;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blDataDrivenEnumeration")
 @AdminPresentationClass(friendlyName = "DataDrivenEnumerationValueImpl_friendyName")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE)
 })
 public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValue {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -80,18 +82,15 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     protected DataDrivenEnumeration type;
 
     @Column(name = "ENUM_KEY")
-    @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Key", order = 1,
-            gridOrder = 1, prominent = true)
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Key", order = 1, gridOrder = 1, prominent = true)
     protected String key;
 
     @Column(name = "DISPLAY")
-    @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Display", order = 2,
-            gridOrder = 2, prominent = true)
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Display", order = 2, gridOrder = 2, prominent = true)
     protected String display;
 
     @Column(name = "HIDDEN")
-    @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Hidden", order = 3,
-            gridOrder = 3, prominent = true)
+    @AdminPresentation(friendlyName = "DataDrivenEnumerationValueImpl_Hidden", order = 3, gridOrder = 3, prominent = true)
     protected Boolean hidden = false;
 
     @Override
@@ -164,4 +163,5 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
         }
         return createResponse;
     }
+
 }

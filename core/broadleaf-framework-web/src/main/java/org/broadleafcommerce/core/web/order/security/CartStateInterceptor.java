@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,14 +26,13 @@ import org.springframework.web.context.request.WebRequestInterceptor;
 
 import jakarta.annotation.Resource;
 
-
 /**
  * Interceptor responsible for putting the current cart on the request. Carts are defined in BLC as an {@link Order} with
  * a status of IN_PROCESS. This interceptor should go after {@link CustomerStateInterceptor} since it relies on
  * {@link CustomerState}.
- * 
+ * <p>
  * Note that in servlet applications you should be using {@link CartStateFilter}
- * 
+ *
  * @author Phillip Verheyden
  * @see {@link CartState}
  */

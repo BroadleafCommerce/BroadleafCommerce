@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,12 +21,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @see org.broadleafcommerce.common.extensibility.jpa.AutoDDLCreateStatusTestBean
  * @author Jeff Fischer
+ * @see org.broadleafcommerce.common.extensibility.jpa.AutoDDLCreateStatusTestBean
  */
 public class AutoDDLCreateStatusTestBeanImpl implements AutoDDLCreateStatusTestBean {
 
-    protected Map<String, Boolean> startedWithCreate = new HashMap<String, Boolean>();
+    protected Map<String, Boolean> startedWithCreate = new HashMap<>();
 
     public Boolean getStartedWithCreate(String pu) {
         return startedWithCreate.get(pu);

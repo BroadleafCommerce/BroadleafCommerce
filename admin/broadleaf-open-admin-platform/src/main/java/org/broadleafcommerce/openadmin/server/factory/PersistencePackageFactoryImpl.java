@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,7 +56,7 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         PersistencePerspective persistencePerspective = new PersistencePerspective();
 
         persistencePerspective.setAdditionalForeignKeys(request.getAdditionalForeignKeys());
-        persistencePerspective.setAdditionalNonPersistentProperties(new String[] {});
+        persistencePerspective.setAdditionalNonPersistentProperties(new String[]{});
 
         if (request.getForeignKey() != null) {
             persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY,
@@ -170,10 +170,13 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
             String className = (section == null) ? sectionKey : section.getCeilingEntity();
 
             if (className == null) {
-                throw new RuntimeException("Could not determine the class related to the following Section: " + section.getName());
+                throw new RuntimeException("Could not determine the class related to the following Section: "
+                        + section.getName());
             }
 
-            Class<?>[] entities = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(Class.forName(className), true, true);
+            Class<?>[] entities = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(
+                    Class.forName(className), true, true
+            );
 
             return entities[entities.length - 1].getName();
         } catch (ClassNotFoundException e) {
@@ -185,4 +188,5 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(className);
         return persistenceManager.getDynamicEntityDao().getStandardEntityManager();
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,7 +46,7 @@ public class RoleDaoImpl implements RoleDao {
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         return query.getResultList();
     }
-    
+
     public Role readRoleByName(String name) {
         Query query = em.createNamedQuery("BC_READ_ROLE_BY_NAME");
         query.setParameter("name", name);
@@ -57,11 +57,12 @@ public class RoleDaoImpl implements RoleDao {
     public void addRoleToCustomer(CustomerRole customerRole) {
         em.persist(customerRole);
     }
-    
+
     public void removeCustomerRolesByCustomerId(Long customerId) {
-    	List<CustomerRole> roles = readCustomerRolesByCustomerId(customerId);
-    	for (CustomerRole r : roles) {
-    		em.remove(r);
-    	}
+        List<CustomerRole> roles = readCustomerRolesByCustomerId(customerId);
+        for (CustomerRole r : roles) {
+            em.remove(r);
+        }
     }
+
 }

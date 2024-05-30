@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,7 +51,7 @@ import jakarta.annotation.Resource;
 @Service("blFulfillmentGroupService")
 public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
-    @Resource(name="blFulfillmentGroupDao")
+    @Resource(name = "blFulfillmentGroupDao")
     protected FulfillmentGroupDao fulfillmentGroupDao;
 
     @Resource(name = "blFulfillmentGroupItemDao")
@@ -68,8 +68,8 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
         if (fulfillmentGroup.getSequence() == null) {
             fulfillmentGroup.setSequence(
-                    fulfillmentGroupDao.readNextFulfillmentGroupSequnceForOrder(
-                            fulfillmentGroup.getOrder()));
+                    fulfillmentGroupDao.readNextFulfillmentGroupSequnceForOrder(fulfillmentGroup.getOrder())
+            );
         }
 
         return fulfillmentGroupDao.save(fulfillmentGroup);
@@ -93,7 +93,10 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
     @Override
     @Transactional("blTransactionManager")
-    public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException {
+    public FulfillmentGroup addFulfillmentGroupToOrder(
+            FulfillmentGroupRequest fulfillmentGroupRequest,
+            boolean priceOrder
+    ) throws PricingException {
         FulfillmentGroup fg = fulfillmentGroupDao.create();
         fg.setAddress(fulfillmentGroupRequest.getAddress());
         fg.setOrder(fulfillmentGroupRequest.getOrder());
@@ -106,7 +109,8 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             request.setFulfillmentGroup(fg);
             request.setOrder(fulfillmentGroupRequest.getOrder());
 
-            boolean shouldPriceOrder = (priceOrder && (i == (fulfillmentGroupRequest.getFulfillmentGroupItemRequests().size() - 1)));
+            boolean shouldPriceOrder = (priceOrder
+                    && (i == (fulfillmentGroupRequest.getFulfillmentGroupItemRequests().size() - 1)));
             fg = addItemToFulfillmentGroup(request, shouldPriceOrder);
         }
 
@@ -115,15 +119,20 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
     @Override
     //@Transactional("blTransactionManager")
-    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest,
-            boolean priceOrder) throws PricingException {
+    public FulfillmentGroup addItemToFulfillmentGroup(
+            FulfillmentGroupItemRequest fulfillmentGroupItemRequest,
+            boolean priceOrder
+    ) throws PricingException {
         return addItemToFulfillmentGroup(fulfillmentGroupItemRequest, priceOrder, true);
     }
 
     @Override
     //@Transactional("blTransactionManager")
-    public FulfillmentGroup addItemToFulfillmentGroup(FulfillmentGroupItemRequest fulfillmentGroupItemRequest,
-            boolean priceOrder, boolean save) throws PricingException {
+    public FulfillmentGroup addItemToFulfillmentGroup(
+            FulfillmentGroupItemRequest fulfillmentGroupItemRequest,
+            boolean priceOrder,
+            boolean save
+    ) throws PricingException {
         if (priceOrder && !save) {
             throw new IllegalArgumentException("Pricing requires a save");
         }
@@ -163,7 +172,9 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             order.getFulfillmentGroups().add(fulfillmentGroup);
         }
 
-        FulfillmentGroupItem fgi = createFulfillmentGroupItemFromOrderItem(item, fulfillmentGroup, fulfillmentGroupItemRequest.getQuantity());
+        FulfillmentGroupItem fgi = createFulfillmentGroupItemFromOrderItem(
+                item, fulfillmentGroup, fulfillmentGroupItemRequest.getQuantity()
+        );
         if (save) {
             fgi = fulfillmentGroupItemDao.save(fgi);
         }
@@ -190,7 +201,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                 } else if (orderItem instanceof BundleOrderItem) {
                     BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
                     for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
-                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)){
+                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)) {
                             fgis.add(fulfillmentGroupItem);
                             break;
                         }
@@ -216,7 +227,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
                 } else if (orderItem instanceof BundleOrderItem) {
                     BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
                     for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
-                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)){
+                        if (fulfillmentGroupItem.getOrderItem().equals(discreteOrderItem)) {
                             itr.remove();
                             fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
                             break;
@@ -234,10 +245,10 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             return order;
         }
 
-        List<FulfillmentGroup> shippableFulfillmentGroupList =  new ArrayList<FulfillmentGroup>();
+        List<FulfillmentGroup> shippableFulfillmentGroupList = new ArrayList<FulfillmentGroup>();
         List<FulfillmentGroup> nonShippableFulfillmentGroupList = new ArrayList<FulfillmentGroup>();
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            if(isShippable(fulfillmentGroup.getType())) {
+            if (isShippable(fulfillmentGroup.getType())) {
                 shippableFulfillmentGroupList.add(fulfillmentGroup);
             } else {
                 nonShippableFulfillmentGroupList.add(fulfillmentGroup);
@@ -256,7 +267,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         order.setFulfillmentGroups(newFulfillmentGroupList);
 
         // Build out a map representing the default shippable fgs items keyed by OrderItem id
-        Map<Long, FulfillmentGroupItem> fgOrderItemMap = new HashMap<Long, FulfillmentGroupItem>();
+        Map<Long, FulfillmentGroupItem> fgOrderItemMap = new HashMap<>();
         for (FulfillmentGroupItem fgi : collapsedFg.getFulfillmentGroupItems()) {
             fgOrderItemMap.put(fgi.getOrderItem().getId(), fgi);
         }
@@ -290,19 +301,18 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
             fgIter.remove();
         }
 
-
         return orderService.save(order, priceOrder);
     }
 
     @Override
     @Transactional("blTransactionManager")
     public Order matchFulfillmentGroupsToMultishipOptions(Order order, boolean priceOrder) throws PricingException {
-        List<OrderMultishipOption> multishipOptions =  orderMultishipOptionService.findOrderMultishipOptions(order.getId());
+        List<OrderMultishipOption> multishipOptions = orderMultishipOptionService.findOrderMultishipOptions(order.getId());
 
         // Build map of fulfillmentGroupItemId --> FulfillmentGroupItem.quantity
         // Also build map of addressId:fulfillmentOptionId --> FulfillmentGroup
         Map<Long, Integer> fgItemQuantityMap = new HashMap<Long, Integer>();
-        Map<String, FulfillmentGroup> multishipGroups = new HashMap<String, FulfillmentGroup>();
+        Map<String, FulfillmentGroup> multishipGroups = new HashMap<>();
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             if (!isShippable(fg.getType())) {
                 continue;
@@ -316,7 +326,11 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         }
 
         for (OrderMultishipOption option : multishipOptions) {
-            String key = getKey(option.getAddress(), option.getFulfillmentOption(), ((DiscreteOrderItem) option.getOrderItem()).getSku().getFulfillmentType());
+            String key = getKey(
+                    option.getAddress(),
+                    option.getFulfillmentOption(),
+                    ((DiscreteOrderItem) option.getOrderItem()).getSku().getFulfillmentType()
+            );
             FulfillmentGroup fg = multishipGroups.get(key);
 
             // Get or create a fulfillment group that matches this OrderMultishipOption destination
@@ -435,7 +449,11 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         return addressKey + ":" + fulfillmentOptionKey + ":" + fulfillmentTypeKey;
     }
 
-    protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, FulfillmentGroup fulfillmentGroup, int quantity) {
+    protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(
+            OrderItem orderItem,
+            FulfillmentGroup fulfillmentGroup,
+            int quantity
+    ) {
         FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();
         fgi.setFulfillmentGroup(fulfillmentGroup);
         fgi.setOrderItem(orderItem);
@@ -447,7 +465,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     @Transactional("blTransactionManager")
     public Order removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException {
         if (order.getFulfillmentGroups() != null) {
-            for (Iterator<FulfillmentGroup> iterator = order.getFulfillmentGroups().iterator(); iterator.hasNext();) {
+            for (Iterator<FulfillmentGroup> iterator = order.getFulfillmentGroups().iterator(); iterator.hasNext(); ) {
                 FulfillmentGroup fulfillmentGroup = iterator.next();
                 iterator.remove();
                 fulfillmentGroupDao.delete(fulfillmentGroup);
@@ -463,27 +481,27 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     }
 
     @Override
-    public List<FulfillmentGroup> findUnfulfilledFulfillmentGroups(int start,
-            int maxResults) {
+    public List<FulfillmentGroup> findUnfulfilledFulfillmentGroups(int start, int maxResults) {
         return fulfillmentGroupDao.readUnfulfilledFulfillmentGroups(start, maxResults);
     }
 
     @Override
-    public List<FulfillmentGroup> findPartiallyFulfilledFulfillmentGroups(
-            int start, int maxResults) {
+    public List<FulfillmentGroup> findPartiallyFulfilledFulfillmentGroups(int start, int maxResults) {
         return fulfillmentGroupDao.readPartiallyFulfilledFulfillmentGroups(start, maxResults);
     }
 
     @Override
-    public List<FulfillmentGroup> findUnprocessedFulfillmentGroups(int start,
-            int maxResults) {
+    public List<FulfillmentGroup> findUnprocessedFulfillmentGroups(int start, int maxResults) {
         return fulfillmentGroupDao.readUnprocessedFulfillmentGroups(start, maxResults);
     }
 
     @Override
     public List<FulfillmentGroup> findFulfillmentGroupsByStatus(
-            FulfillmentGroupStatusType status, int start, int maxResults,
-            boolean ascending) {
+            FulfillmentGroupStatusType status,
+            int start,
+            int maxResults,
+            boolean ascending
+    ) {
         return fulfillmentGroupDao.readFulfillmentGroupsByStatus(status, start, maxResults, ascending);
     }
 
@@ -495,7 +513,8 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
     @Override
     public boolean isShippable(FulfillmentType fulfillmentType) {
-        if (fulfillmentType.GIFT_CARD.equals(fulfillmentType) || fulfillmentType.DIGITAL.equals(fulfillmentType) || fulfillmentType.PHYSICAL_PICKUP.equals(fulfillmentType)) {
+        if (fulfillmentType.GIFT_CARD.equals(fulfillmentType) || fulfillmentType.DIGITAL.equals(fulfillmentType)
+                || fulfillmentType.PHYSICAL_PICKUP.equals(fulfillmentType)) {
             return false;
         }
         return true;
@@ -522,7 +541,7 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     @Override
     public List<FulfillmentGroup> getAllShippableFulfillmentGroups(Order order) {
         List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
-        List<FulfillmentGroup> shippable = new ArrayList<FulfillmentGroup>();
+        List<FulfillmentGroup> shippable = new ArrayList<>();
         if (fulfillmentGroups != null) {
             for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
                 if (isShippable(fulfillmentGroup.getType())) {

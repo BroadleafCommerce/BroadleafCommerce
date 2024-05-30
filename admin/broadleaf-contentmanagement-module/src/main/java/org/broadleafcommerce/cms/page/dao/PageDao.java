@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,14 +33,14 @@ import jakarta.annotation.Nonnull;
 public interface PageDao {
 
     Page readPageById(Long id);
-    
+
     List<PageField> readPageFieldsByPageId(Long pageId);
 
     PageTemplate readPageTemplateById(Long id);
-    
+
     /**
      * Saves the given {@link PageTemplate}
-     * 
+     *
      * @param template the {@link PageTemplate} to save
      * @return the database-saved {@link PageTemplate}
      */
@@ -54,14 +54,15 @@ public interface PageDao {
 
     /**
      * Returns all pages, regardless of any sandbox they are apart of
+     *
      * @return all Pages configured in the system
      */
     List<Page> readAllPages();
-    
+
     /**
      * Retrieve a subset of all online and site map included Pages
      *
-     * @param limit the maximum number of results
+     * @param limit  the maximum number of results
      * @param offset the starting point in the record set
      * @param sortBy the column to sort by
      * @return
@@ -71,12 +72,13 @@ public interface PageDao {
 
     /**
      * Returns all page templates, regardless of any sandbox they are apart of
+     *
      * @return all {@link PageTemplate}s configured in the system
      */
     List<PageTemplate> readAllPageTemplates();
 
     List<Page> findPageByURI(String uri);
-    
+
     List<Page> findPageByURI(Locale fullLocale, Locale languageOnlyLocale, String uri);
 
     List<Page> findPageByURI(Locale locale, String uri);
@@ -84,7 +86,7 @@ public interface PageDao {
     /**
      * Returns pages that match the given URI and are within 1 day of the active date (potentially cached).
      * This will only cache for 1 day.
-     * 
+     *
      * @param uri
      * @param activeDate
      * @return
@@ -96,4 +98,5 @@ public interface PageDao {
     Long getCurrentDateResolution();
 
     void setCurrentDateResolution(Long currentDateResolution);
+
 }

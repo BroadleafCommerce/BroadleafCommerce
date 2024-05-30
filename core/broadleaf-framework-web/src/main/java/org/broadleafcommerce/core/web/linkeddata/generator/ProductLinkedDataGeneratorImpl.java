@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,8 +44,8 @@ import jakarta.servlet.http.HttpServletRequest;
 /**
  * This generator generates structured data specific to product pages.
  * <p>
- * See <a href="http://schema.org/Product" target="_blank">http://schema.org/Product</a>, 
- * <a href="http://schema.org/Offer" target="_blank">http://schema.org/Offer</a>, 
+ * See <a href="http://schema.org/Product" target="_blank">http://schema.org/Product</a>,
+ * <a href="http://schema.org/Offer" target="_blank">http://schema.org/Offer</a>,
  * and <a href="http://schema.org/AggregateOffer" target="_blank">http://schema.org/AggregateOffer</a>
  *
  * @author Jacob Mitash
@@ -53,6 +53,7 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 @Service(value = "blProductLinkedDataGenerator")
 public class ProductLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator {
+
     protected static final String IN_STOCK = "InStock";
     protected static final String OUT_OF_STOCK = "OutOfStock";
     protected final static DateFormat ISO_8601_FORMAT = new SimpleDateFormat("YYYY-MM-DD");
@@ -63,57 +64,63 @@ public class ProductLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
-    @Override 
+    @Override
     public boolean canHandle(final HttpServletRequest request) {
         return request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME) != null;
     }
 
     @Override
-    protected JSONArray getLinkedDataJsonInternal(final String url, final HttpServletRequest request,
-                                                  final JSONArray schemaObjects) throws JSONException {
+    protected JSONArray getLinkedDataJsonInternal(
+            final String url,
+            final HttpServletRequest request,
+            final JSONArray schemaObjects
+    ) throws JSONException {
         final Product product = getProduct(request);
 
         if (product != null) {
             final JSONObject productData = addProductData(request, product, url);
             addReviewData(request, product, productData);
-            
+
             schemaObjects.put(productData);
         }
 
         return schemaObjects;
     }
-    
+
     protected Product getProduct(final HttpServletRequest request) {
         Product product = (Product) request.getAttribute(ProductHandlerMapping.CURRENT_PRODUCT_ATTRIBUTE_NAME);
         product = catalogService.findProductById(product.getId());
         return product;
     }
-    
-    protected JSONObject addProductData(final HttpServletRequest request, final Product product, final String url) 
-            throws JSONException {
+
+    protected JSONObject addProductData(
+            final HttpServletRequest request,
+            final Product product,
+            final String url
+    ) throws JSONException {
         final JSONObject productData = new JSONObject();
         productData.put("@context", DEFAULT_STRUCTURED_CONTENT_CONTEXT);
         productData.put("@type", "Product");
         productData.put("name", product.getName());
 
         addImageUrl(product, productData);
-        
+
         productData.put("description", product.getLongDescription());
         productData.put("brand", product.getManufacturer());
         productData.put("url", url);
         productData.put("sku", product.getDefaultSku().getId());
         productData.put("category", product.getCategory().getName());
-        
+
         addSkus(request, product, productData, url);
 
         extensionManager.getProxy().addProductData(request, product, productData);
 
         return productData;
     }
-    
+
     protected void addImageUrl(final Product product, final JSONObject productData) throws JSONException {
         final Map<String, Media> media = product.getMedia();
-        
+
         if (media.size() > 0) {
             final String url;
             final String urlPrefix = getImageUrlPrefix();
@@ -123,7 +130,7 @@ public class ProductLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator 
             } else {
                 url = media.entrySet().iterator().next().getValue().getUrl();
             }
-            
+
             if (urlPrefix.contains("/cmsstatic/") && url.contains("/cmsstatic/")) {
                 productData.put("image", url.replace("/cmsstatic/", urlPrefix));
             } else {
@@ -154,9 +161,13 @@ public class ProductLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator 
 
         return prefix;
     }
-    
-    protected void addSkus(final HttpServletRequest request, final Product product, final JSONObject productData, final String url) 
-            throws JSONException {
+
+    protected void addSkus(
+            final HttpServletRequest request,
+            final Product product,
+            final JSONObject productData,
+            final String url
+    ) throws JSONException {
         final JSONArray offers = new JSONArray();
         final String currency = product.getRetailPrice().getCurrency().getCurrencyCode();
         BigDecimal highPrice = BigDecimal.ZERO;
@@ -214,25 +225,32 @@ public class ProductLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator 
 
     protected String determineAvailability(final Sku sku) {
         boolean purchasable = false;
-        
+
         if (sku.isActive()) {
             if (sku.getInventoryType() != null) {
                 if (sku.getInventoryType().equals(InventoryType.ALWAYS_AVAILABLE)) {
                     purchasable = true;
                 } else if (sku.getInventoryType().equals(InventoryType.CHECK_QUANTITY)
-                           && sku.getQuantityAvailable() != null && sku.getQuantityAvailable() > 0) {
+                        && sku.getQuantityAvailable() != null && sku.getQuantityAvailable() > 0) {
                     purchasable = true;
                 }
             } else {
                 purchasable = true;
             }
         }
-        
+
         return purchasable ? IN_STOCK : OUT_OF_STOCK;
     }
 
-    protected void addReviewData(final HttpServletRequest request, final Product product, final JSONObject productData) throws JSONException {
-        final RatingSummary ratingSummary = ratingService.readRatingSummary(product.getId().toString(), RatingType.PRODUCT);
+    protected void addReviewData(
+            final HttpServletRequest request,
+            final Product product,
+            final JSONObject productData
+    ) throws JSONException {
+        final RatingSummary ratingSummary = ratingService.readRatingSummary(
+                product.getId().toString(),
+                RatingType.PRODUCT
+        );
 
         if (ratingSummary != null && ratingSummary.getNumberOfRatings() > 0) {
             final JSONObject aggregateRating = new JSONObject();
@@ -240,7 +258,7 @@ public class ProductLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator 
             aggregateRating.put("ratingValue", ratingSummary.getAverageRating());
 
             extensionManager.getProxy().addAggregateReviewData(request, product, aggregateRating);
-            
+
             productData.put("aggregateRating", aggregateRating);
 
             final JSONArray reviews = new JSONArray();
@@ -248,16 +266,20 @@ public class ProductLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator 
             for (final ReviewDetail reviewDetail : ratingSummary.getReviews()) {
                 final JSONObject review = new JSONObject();
                 review.put("reviewBody", reviewDetail.getReviewText());
-                review.put("reviewRating", new JSONObject().put("ratingValue", reviewDetail.getRatingDetail().getRating()));
+                review.put("reviewRating", new JSONObject().put(
+                        "ratingValue",
+                        reviewDetail.getRatingDetail().getRating())
+                );
                 review.put("author", reviewDetail.getCustomer().getFirstName());
                 review.put("datePublished", ISO_8601_FORMAT.format(reviewDetail.getReviewSubmittedDate()));
 
                 extensionManager.getProxy().addReviewData(request, product, review);
-                
+
                 reviews.put(review);
             }
 
             productData.put("review", reviews);
         }
     }
+
 }

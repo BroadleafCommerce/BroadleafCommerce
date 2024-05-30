@@ -10,16 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.handler;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.domain.SystemProperty;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.exception.ServiceException;
@@ -37,12 +34,11 @@ import jakarta.annotation.Resource;
 
 /**
  * Custom persistence handler for SystemProperty to ensure that the value is validated against the type appropriately.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Component("blSystemPropertyCustomPersistenceHandler")
 public class SystemPropertyCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-    private final Log LOG = LogFactory.getLog(SystemPropertyCustomPersistenceHandler.class);
 
     @Resource(name = "blSystemPropertiesService")
     protected SystemPropertiesService spService;
@@ -63,16 +59,22 @@ public class SystemPropertyCustomPersistenceHandler extends CustomPersistenceHan
     }
 
     @Override
-    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) 
+    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper)
             throws ServiceException {
         Entity entity = persistencePackage.getEntity();
         try {
             // Get an instance of SystemProperty with the updated values from the form
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(SystemProperty.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    SystemProperty.class.getName(), persistencePerspective
+            );
             Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
-            SystemProperty adminInstance = (SystemProperty) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            adminInstance = (SystemProperty) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            SystemProperty adminInstance = (SystemProperty) dynamicEntityDao.retrieve(
+                    Class.forName(entity.getType()[0]), primaryKey
+            );
+            adminInstance = (SystemProperty) helper.createPopulatedInstance(
+                    adminInstance, entity, adminProperties, false
+            );
 
             // Verify that the value entered matches up with the type of this property
             Entity errorEntity = validateTypeAndValueCombo(adminInstance);
@@ -97,16 +99,20 @@ public class SystemPropertyCustomPersistenceHandler extends CustomPersistenceHan
             // Get an instance of SystemProperty with the updated values from the form
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             SystemProperty adminInstance = (SystemProperty) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(SystemProperty.class.getName(), persistencePerspective);
-            adminInstance = (SystemProperty) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    SystemProperty.class.getName(), persistencePerspective
+            );
+            adminInstance = (SystemProperty) helper.createPopulatedInstance(
+                    adminInstance, entity, adminProperties, false
+            );
+
             // Verify that the value entered matches up with the type of this property
             Entity errorEntity = validateTypeAndValueCombo(adminInstance);
             if (errorEntity != null) {
                 entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
             }
-            
+
             adminInstance = (SystemProperty) dynamicEntityDao.merge(adminInstance);
 
             // Fill out the DTO and add in the product option value properties to it
@@ -115,7 +121,7 @@ public class SystemPropertyCustomPersistenceHandler extends CustomPersistenceHan
             throw new ServiceException("Unable to perform fetch for entity: " + SystemProperty.class.getName(), e);
         }
     }
-    
+
     protected Entity validateTypeAndValueCombo(SystemProperty prop) {
         if (!spService.isValueValidForType(prop.getValue(), prop.getPropertyType())) {
             Entity errorEntity = new Entity();
@@ -125,4 +131,5 @@ public class SystemPropertyCustomPersistenceHandler extends CustomPersistenceHan
 
         return null;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,36 +25,36 @@ import java.util.Date;
 
 public interface ModuleConfiguration extends Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public String getModuleName();
+    String getModuleName();
 
-    public void setModuleName(String name);
+    void setModuleName(String name);
 
-    public void setActiveStartDate(Date startDate);
+    Date getActiveStartDate();
 
-    public Date getActiveStartDate();
+    void setActiveStartDate(Date startDate);
 
-    public void setActiveEndDate(Date startDate);
+    Date getActiveEndDate();
 
-    public Date getActiveEndDate();
+    void setActiveEndDate(Date startDate);
 
-    public void setIsDefault(Boolean isDefault);
+    Boolean getIsDefault();
 
-    public Boolean getIsDefault();
-    
-    public boolean isDefault();
+    void setIsDefault(Boolean isDefault);
 
-    public void setPriority(Integer priority);
+    boolean isDefault();
 
-    public Integer getPriority();
+    Integer getPriority();
 
-    public ModuleConfigurationType getModuleConfigurationType();
+    void setPriority(Integer priority);
 
-    public void setAuditable(Auditable auditable);
+    ModuleConfigurationType getModuleConfigurationType();
 
-    public Auditable getAuditable();
+    Auditable getAuditable();
+
+    void setAuditable(Auditable auditable);
 
 }

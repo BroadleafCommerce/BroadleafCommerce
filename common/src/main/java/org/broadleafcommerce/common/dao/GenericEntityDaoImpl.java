@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.dao;
 
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -48,12 +47,20 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
-
 @Repository("blGenericEntityDao")
 public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
     private static GenericEntityDaoImpl dao;
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+    @Resource(name = "blPersistenceService")
+    protected PersistenceService persistenceService;
+    @Resource(name = "blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
+    @Resource(name = "blStreamingTransactionCapableUtil")
+    protected StreamingTransactionCapableUtil transactionUtil;
+    protected DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
 
     public static GenericEntityDaoImpl getGenericEntityDao() {
         if (applicationContext == null) {
@@ -64,20 +71,6 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
         }
         return dao;
     }
-
-    @PersistenceContext(unitName = "blPU")
-    protected EntityManager em;
-
-    @Resource(name="blPersistenceService")
-    protected PersistenceService persistenceService;
-
-    @Resource(name = "blEntityConfiguration")
-    protected EntityConfiguration entityConfiguration;
-
-    @Resource(name = "blStreamingTransactionCapableUtil")
-    protected StreamingTransactionCapableUtil transactionUtil;
-
-    protected DynamicDaoHelperImpl daoHelper = new DynamicDaoHelperImpl();
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -90,7 +83,7 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
         //We need to get PU dynamically to handle cases when class is not in blPU, e.g ScheduledJobImpl
         EntityManager emForClass = getEntityManager(clazz);
         Map<String, Object> md = daoHelper.getIdMetadata(clazz, emForClass);
-        Type type = (Type)md.get("type");
+        Type type = (Type) md.get("type");
         Class<?> returnedClass = type.getReturnedClass();
         if (returnedClass.isAssignableFrom(Long.class)) {
             id = Long.parseLong(String.valueOf(id));
@@ -162,13 +155,20 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
         transactionUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
             @Override
             public void execute() throws Throwable {
-                Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz[0], true, true);
+                Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(
+                        clazz[0], true, true
+                );
                 if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
                     clazz[0] = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz[0]);
-                    entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz[0], true, true);
+                    entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(
+                            clazz[0], true, true
+                    );
                 }
                 if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
-                    throw new IllegalArgumentException(String.format("Unable to find ceiling implementation for the requested class name (%s)", className));
+                    throw new IllegalArgumentException(
+                            String.format("Unable to find ceiling implementation for the requested class name (%s)",
+                                    className)
+                    );
                 }
                 clazz[0] = entitiesFromCeiling[entitiesFromCeiling.length - 1];
             }
@@ -238,4 +238,5 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     protected EntityManager getEntityManager(Class clazz) {
         return persistenceService.identifyEntityManager(clazz);
     }
+
 }

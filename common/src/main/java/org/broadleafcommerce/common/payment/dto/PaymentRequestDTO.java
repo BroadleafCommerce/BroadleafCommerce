@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.dto;
 
 import org.broadleafcommerce.common.payment.PaymentGatewayRequestType;
@@ -28,16 +27,16 @@ import java.util.Map;
 
 /**
  * <p>
- *     A DTO that is comprised of all the information that is sent to a Payment Gateway
- *     to complete a transaction. This DTO uses a modified builder pattern in order to
- *     provide an easy way of constructing the request. You can construct a DTO
- *     using the following notation:
+ * A DTO that is comprised of all the information that is sent to a Payment Gateway
+ * to complete a transaction. This DTO uses a modified builder pattern in order to
+ * provide an easy way of constructing the request. You can construct a DTO
+ * using the following notation:
  * </p>
  * <p>
- *     IMPORTANT: note that some of the convenience methods generate a new instance of the object.
- *     (e.g. billTo, shipTo, etc...) So, if you need to modify the shipping or billing information
- *     after you have invoked requestDTO.shipTo()..., use the getShipTo() method to append more information.
- *     Otherwise, you will overwrite the shipping information with a new instance.
+ * IMPORTANT: note that some of the convenience methods generate a new instance of the object.
+ * (e.g. billTo, shipTo, etc...) So, if you need to modify the shipping or billing information
+ * after you have invoked requestDTO.shipTo()..., use the getShipTo() method to append more information.
+ * Otherwise, you will overwrite the shipping information with a new instance.
  * </p>
  *
  * <pre><code>
@@ -109,10 +108,10 @@ public class PaymentRequestDTO {
     protected boolean completeCheckoutOnCallback = true;
 
     public PaymentRequestDTO() {
-        this.giftCards = new ArrayList<GiftCardDTO<PaymentRequestDTO>>();
-        this.customerCredits = new ArrayList<CustomerCreditDTO<PaymentRequestDTO>>();
-        this.lineItems = new ArrayList<LineItemDTO>();
-        this.additionalFields = new HashMap<String, Object>();
+        this.giftCards = new ArrayList<>();
+        this.customerCredits = new ArrayList<>();
+        this.lineItems = new ArrayList<>();
+        this.additionalFields = new HashMap<>();
     }
 
     /**
@@ -120,7 +119,7 @@ public class PaymentRequestDTO {
      * if called more than once. Use the getter if you need to append more information later.
      */
     public GatewayCustomerDTO<PaymentRequestDTO> customer() {
-        customer = new GatewayCustomerDTO<PaymentRequestDTO>(this);
+        customer = new GatewayCustomerDTO<>(this);
         return customer;
     }
 

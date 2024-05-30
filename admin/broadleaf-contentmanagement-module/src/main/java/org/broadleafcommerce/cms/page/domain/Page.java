@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,27 +29,27 @@ import jakarta.annotation.Nullable;
 /**
  * Created by bpolster.
  */
-public interface Page extends Serializable,MultiTenantCloneable<Page> {
+public interface Page extends Serializable, MultiTenantCloneable<Page> {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public String getFullUrl();
+    String getFullUrl();
 
-    public void setFullUrl(String fullUrl);
+    void setFullUrl(String fullUrl);
 
-    public String getDescription();
+    String getDescription();
 
-    public void setDescription(String description);
+    void setDescription(String description);
 
-    public PageTemplate getPageTemplate();
+    PageTemplate getPageTemplate();
 
-    public void setPageTemplate(PageTemplate pageTemplate);
+    void setPageTemplate(PageTemplate pageTemplate);
 
-    public Map<String, PageField> getPageFields();
+    Map<String, PageField> getPageFields();
 
-    public void setPageFields(Map<String, PageField> pageFields);
+    void setPageFields(Map<String, PageField> pageFields);
 
     /**
      * Returns the offlineFlag.   True indicates that the page should no longer appear on the site.
@@ -59,16 +59,15 @@ public interface Page extends Serializable,MultiTenantCloneable<Page> {
      * @return true if this item is offline
      */
     @Nullable
-    public Boolean getOfflineFlag();
+    Boolean getOfflineFlag();
 
     /**
      * Sets the offline flag.
      *
      * @param offlineFlag
      */
-    public void setOfflineFlag(@Nullable Boolean offlineFlag);
-    
-    
+    void setOfflineFlag(@Nullable Boolean offlineFlag);
+
     /**
      * Gets the integer priority of this content item.   Items with a lower priority should
      * be displayed before items with a higher priority.
@@ -76,47 +75,47 @@ public interface Page extends Serializable,MultiTenantCloneable<Page> {
      * @return the priority as a numeric value
      */
     @Nullable
-    public Integer getPriority();
+    Integer getPriority();
 
     /**
      * Sets the display priority of this item.   Lower priorities should be displayed first.
      *
      * @param priority
      */
-    public void setPriority(@Nullable Integer priority);
-    
+    void setPriority(@Nullable Integer priority);
+
     /**
      * Returns a map of the targeting rules associated with this page.
-     *
+     * <p>
      * Targeting rules are defined in the content mangagement system and used to
      * enforce which page is returned to the client.
      *
      * @return
      */
     @Nullable
-    public Map<String, PageRule> getPageMatchRules();
+    Map<String, PageRule> getPageMatchRules();
 
     /**
      * Sets the targeting rules for this content item.
      *
      * @param pageRules
      */
-    public void setPageMatchRules(@Nullable Map<String, PageRule> pageRules);
-    
+    void setPageMatchRules(@Nullable Map<String, PageRule> pageRules);
+
     /**
      * Returns the item (or cart) based rules associated with this content item.
      *
      * @return
      */
     @Nullable
-    public Set<PageItemCriteria> getQualifyingItemCriteria();
+    Set<PageItemCriteria> getQualifyingItemCriteria();
 
     /**
      * Sets the item (e.g. cart) based rules associated with this content item.
      *
      * @param qualifyingItemCriteria
      */
-    public void setQualifyingItemCriteria(@Nullable Set<PageItemCriteria> qualifyingItemCriteria);
+    void setQualifyingItemCriteria(@Nullable Set<PageItemCriteria> qualifyingItemCriteria);
 
     /**
      * Returns the excludeFromSiteMap flag.  True indicates that the page should be excluded from the site map.
@@ -124,33 +123,33 @@ public interface Page extends Serializable,MultiTenantCloneable<Page> {
      * @return true if this page is excluded from the site map
      */
     @Nullable
-    public boolean getExcludeFromSiteMap();
+    boolean getExcludeFromSiteMap();
 
     /**
      * Sets the excludeFromSiteMap flag.
-     * 
+     *
      * @param excludeFromSiteMap
      */
-    public void setExcludeFromSiteMap(boolean excludeFromSiteMap);
+    void setExcludeFromSiteMap(boolean excludeFromSiteMap);
 
-    public Map<String, PageAttribute> getAdditionalAttributes();
+    Map<String, PageAttribute> getAdditionalAttributes();
 
-    public void setAdditionalAttributes(Map<String, PageAttribute> additionalAttributes);
-    
-    public Date getActiveStartDate();
-    
-    public void setActiveStartDate(Date activeStartDate);
-    
-    public Date getActiveEndDate();
-    
-    public void setActiveEndDate(Date activeEndDate);
-    
-    public String getMetaTitle();
-    
-    public void setMetaTitle(String metaTitle);
-    
-    public String getMetaDescription();
-    
-    public void setMetaDescription(String metaDescription);
+    void setAdditionalAttributes(Map<String, PageAttribute> additionalAttributes);
+
+    Date getActiveStartDate();
+
+    void setActiveStartDate(Date activeStartDate);
+
+    Date getActiveEndDate();
+
+    void setActiveEndDate(Date activeEndDate);
+
+    String getMetaTitle();
+
+    void setMetaTitle(String metaTitle);
+
+    String getMetaDescription();
+
+    void setMetaDescription(String metaDescription);
 
 }

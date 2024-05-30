@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -59,21 +59,16 @@ import jakarta.persistence.criteria.Root;
 public class PageDaoImpl implements PageDao {
 
     private static final SandBox DUMMY_SANDBOX = new SandBoxImpl();
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+    @Resource(name = "blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
+    protected Long currentDateResolution = 10 * 60 * 1000L;
+    protected Date cachedDate = SystemTime.asDate();
 
     {
         DUMMY_SANDBOX.setId(-1l);
     }
-
-    @PersistenceContext(unitName = "blPU")
-    protected EntityManager em;
-
-    @Resource(name = "blEntityConfiguration")
-    protected EntityConfiguration entityConfiguration;
-
-    protected Long currentDateResolution = 10 * 60 * 1000L;
-
-    protected Date cachedDate = SystemTime.asDate();
-
 
     @Override
     public Page readPageById(Long id) {
@@ -100,7 +95,6 @@ public class PageDaoImpl implements PageDao {
     public PageTemplate readPageTemplateById(Long id) {
         return em.find(PageTemplateImpl.class, id);
     }
-
 
     @Override
     public PageTemplate savePageTemplate(PageTemplate template) {
@@ -131,7 +125,7 @@ public class PageDaoImpl implements PageDao {
         CriteriaQuery<Page> criteriaQuery = builder.createQuery(Page.class);
         Root pageRoot = criteriaQuery.from(PageImpl.class);
         criteriaQuery.select(pageRoot);
-        
+
         List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.equal(pageRoot.get("fullUrl"), uri));
 
@@ -141,11 +135,17 @@ public class PageDaoImpl implements PageDao {
         addOfflineRestriction(builder, pageRoot, restrictions);
 
         criteriaQuery.where(restrictions.toArray(new Predicate[restrictions.size()]));
-        
+
         return getResultForQueryAndCache(criteriaQuery);
     }
-    
-    protected void addActiveDateRestrictions(final CriteriaBuilder builder, final Root pageRoot, final List<Predicate> restrictions, Date afterStartDate, Date beforeEndDate) {
+
+    protected void addActiveDateRestrictions(
+            final CriteriaBuilder builder,
+            final Root pageRoot,
+            final List<Predicate> restrictions,
+            Date afterStartDate,
+            Date beforeEndDate
+    ) {
         restrictions.add(builder.or(
                 builder.isNull(pageRoot.get("activeStartDate")),
                 builder.lessThanOrEqualTo(pageRoot.get("activeStartDate").as(Date.class), afterStartDate)));
@@ -154,12 +154,16 @@ public class PageDaoImpl implements PageDao {
                 builder.greaterThanOrEqualTo(pageRoot.get("activeEndDate").as(Date.class), beforeEndDate)));
     }
 
-    protected void addOfflineRestriction(final CriteriaBuilder builder, final Root pageRoot, final List<Predicate> restrictions) {
+    protected void addOfflineRestriction(
+            final CriteriaBuilder builder,
+            final Root pageRoot,
+            final List<Predicate> restrictions
+    ) {
         restrictions.add(builder.or(
                 builder.isNull(pageRoot.get("offlineFlag")),
                 builder.isFalse(pageRoot.get("offlineFlag"))));
     }
-    
+
     protected List<Page> getResultForQueryAndCache(final CriteriaQuery<Page> criteriaQuery) {
         TypedQuery<Page> q = em.createQuery(criteriaQuery);
         q.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -171,7 +175,7 @@ public class PageDaoImpl implements PageDao {
             return Collections.emptyList();
         }
     }
-    
+
     @Override
     public List<Page> findPageByURIAndActiveDate(final String uri, final Date activeDate) {
         final CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -186,20 +190,20 @@ public class PageDaoImpl implements PageDao {
 
         addOfflineRestriction(builder, pageRoot, restrictions);
         addActiveDateRestrictions(builder, pageRoot, restrictions, nextDay, activeDate);
-        
+
         criteriaQuery.where(restrictions.toArray(new Predicate[restrictions.size()]));
 
         List<Page> pages = getResultForQueryAndCache(criteriaQuery);
-        
+
         return filterInactive(pages);
     }
-    
+
     protected List<Page> filterInactive(final List<Page> pages) {
         final ListIterator<Page> pagesIterator = pages.listIterator();
-        
+
         while (pagesIterator.hasNext()) {
             final Page page = pagesIterator.next();
-            
+
             if (!isActiveNow(page)) {
                 pagesIterator.remove();
             }
@@ -207,14 +211,14 @@ public class PageDaoImpl implements PageDao {
 
         return pages;
     }
-    
+
     protected boolean isActiveNow(final Page page) {
         final Date now = new Date();
         final Date activeStartDate = page.getActiveStartDate();
         final Date activeEndDate = page.getActiveEndDate();
 
         return !((activeStartDate != null && now.before(activeStartDate))
-                 || (activeEndDate != null && now.after(activeEndDate)));
+                || (activeEndDate != null && now.after(activeEndDate)));
     }
 
     @Override

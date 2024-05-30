@@ -10,30 +10,30 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Reasonsable set of SiteMap URL priorities
- * 
+ *
  * @author bpolster
  */
 public class SiteMapPriorityType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, SiteMapPriorityType> TYPES = new LinkedHashMap<String, SiteMapPriorityType>();
+    private static final Map<String, SiteMapPriorityType> TYPES = new LinkedHashMap<>();
 
     public static final SiteMapPriorityType ZERO = new SiteMapPriorityType("0.0", "0.0");
     public static final SiteMapPriorityType POINT1 = new SiteMapPriorityType("0.1", "0.1");
@@ -47,10 +47,6 @@ public class SiteMapPriorityType implements Serializable, BroadleafEnumerationTy
     public static final SiteMapPriorityType POINT9 = new SiteMapPriorityType("0.9", "0.9");
     public static final SiteMapPriorityType ONE = new SiteMapPriorityType("1.0", "1.0");
 
-    public static SiteMapPriorityType getInstance(final String type) {
-        return TYPES.get(type);
-    }
-
     private String type;
     private String friendlyType;
 
@@ -63,19 +59,23 @@ public class SiteMapPriorityType implements Serializable, BroadleafEnumerationTy
         setType(type);
     }
 
+    public static SiteMapPriorityType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,6 +39,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,41 +63,42 @@ import jakarta.persistence.Transient;
 @AdminPresentationClass(friendlyName = "BundleOrderItemImpl_bundleOrderItem")
 public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderItem {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @OneToMany(mappedBy = "bundleOrderItem", targetEntity = DiscreteOrderItemImpl.class, fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Discrete_Order_Items",
-            tab=OrderItemImpl.Presentation.Tab.Name.Advanced,
+    @AdminPresentationCollection(friendlyName = "BundleOrderItemImpl_Discrete_Order_Items",
+            tab = OrderItemImpl.Presentation.Tab.Name.Advanced,
             tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
-    protected List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
-    
-    @OneToMany(mappedBy = "bundleOrderItem", targetEntity = BundleOrderItemFeePriceImpl.class, fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="BundleOrderItemImpl_Item_Fee_Prices",
-            tab=OrderItemImpl.Presentation.Tab.Name.Advanced,
-            tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
-    protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<BundleOrderItemFeePrice>();
+    protected List<DiscreteOrderItem> discreteOrderItems = new ArrayList<>();
 
-    @Column(name="BASE_RETAIL_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Base_Retail_Price", order=2, group = "BundleOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
+    @OneToMany(mappedBy = "bundleOrderItem", targetEntity = BundleOrderItemFeePriceImpl.class, fetch = FetchType.LAZY, cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName = "BundleOrderItemImpl_Item_Fee_Prices",
+            tab = OrderItemImpl.Presentation.Tab.Name.Advanced,
+            tabOrder = OrderItemImpl.Presentation.Tab.Order.Advanced)
+    protected List<BundleOrderItemFeePrice> bundleOrderItemFeePrices = new ArrayList<>();
+
+    @Column(name = "BASE_RETAIL_PRICE", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Base_Retail_Price", order = 2, group = "BundleOrderItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal baseRetailPrice;
 
-    @Column(name="BASE_SALE_PRICE", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Base_Sale_Price", order=2, group = "BundleOrderItemImpl_Pricing", fieldType= SupportedFieldType.MONEY)
+    @Column(name = "BASE_SALE_PRICE", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Base_Sale_Price", order = 2, group = "BundleOrderItemImpl_Pricing", fieldType = SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
 
     @ManyToOne(targetEntity = SkuImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "SKU_ID")
-    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Sku", order=Presentation.FieldOrder.SKU,
+    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Sku", order = Presentation.FieldOrder.SKU,
             group = OrderItemImpl.Presentation.Group.Name.Catalog,
             groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
-    protected Sku sku;  
+    protected Sku sku;
 
     @ManyToOne(targetEntity = ProductBundleImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCT_BUNDLE_ID")
-    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Product", order=Presentation.FieldOrder.PRODUCT,
+    @AdminPresentation(friendlyName = "BundleOrderItemImpl_Product", order = Presentation.FieldOrder.PRODUCT,
             group = OrderItemImpl.Presentation.Group.Name.Catalog,
             groupOrder = OrderItemImpl.Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
@@ -128,16 +130,16 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public void setSku(Sku sku) {
-       this.sku = sku;
+        this.sku = sku;
         if (sku != null) {
-           if (sku.getRetailPrice() != null) {
-               this.baseRetailPrice = sku.getRetailPrice().getAmount();
-           }
-           if (sku.getSalePrice() != null) {
-               this.baseSalePrice = sku.getSalePrice().getAmount();
-           }
-           this.itemTaxable = sku.isTaxable();
-           setName(sku.getName());
+            if (sku.getRetailPrice() != null) {
+                this.baseRetailPrice = sku.getRetailPrice().getAmount();
+            }
+            if (sku.getSalePrice() != null) {
+                this.baseSalePrice = sku.getSalePrice().getAmount();
+            }
+            this.itemTaxable = sku.isTaxable();
+            setName(sku.getName());
         }
     }
 
@@ -223,8 +225,12 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             Money currentBundleTaxablePrice = BroadleafCurrencyUtils.getMoney(getOrder().getCurrency());
             for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                 BigDecimal currentItemTaxablePrice = discreteOrderItem.getTaxablePrice().getAmount();
-                BigDecimal priceWithQuantity = currentItemTaxablePrice.multiply(new BigDecimal(discreteOrderItem.getQuantity()));
-                currentBundleTaxablePrice = currentBundleTaxablePrice.add(BroadleafCurrencyUtils.getMoney(priceWithQuantity, getOrder().getCurrency()));
+                BigDecimal priceWithQuantity = currentItemTaxablePrice.multiply(
+                        new BigDecimal(discreteOrderItem.getQuantity())
+                );
+                currentBundleTaxablePrice = currentBundleTaxablePrice.add(
+                        BroadleafCurrencyUtils.getMoney(priceWithQuantity, getOrder().getCurrency())
+                );
             }
             for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
                 if (fee.isTaxable()) {
@@ -257,7 +263,9 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                 BigDecimal itemRetailPrice = discreteOrderItem.getRetailPrice().getAmount();
                 BigDecimal quantityPrice = itemRetailPrice.multiply(new BigDecimal(discreteOrderItem.getQuantity()));
-                bundleRetailPrice = bundleRetailPrice.add(BroadleafCurrencyUtils.getMoney(quantityPrice, getOrder().getCurrency()));
+                bundleRetailPrice = bundleRetailPrice.add(BroadleafCurrencyUtils.getMoney(
+                        quantityPrice, getOrder().getCurrency())
+                );
             }
             for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
                 bundleRetailPrice = bundleRetailPrice.add(fee.getAmount());
@@ -267,7 +275,6 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             return super.getRetailPrice();
         }
     }
-
 
     @Override
     public Money getSalePrice() {
@@ -284,7 +291,9 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
                         itemSalePrice = discreteOrderItem.getRetailPrice().getAmount();
                     }
                     BigDecimal quantityPrice = itemSalePrice.multiply(new BigDecimal(discreteOrderItem.getQuantity()));
-                    bundleSalePrice = bundleSalePrice.add(BroadleafCurrencyUtils.getMoney(quantityPrice, getOrder().getCurrency()));
+                    bundleSalePrice = bundleSalePrice.add(BroadleafCurrencyUtils.getMoney(
+                            quantityPrice, getOrder().getCurrency())
+                    );
                 }
                 for (BundleOrderItemFeePrice fee : getBundleOrderItemFeePrices()) {
                     bundleSalePrice = bundleSalePrice.add(fee.getAmount());
@@ -303,7 +312,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public void setBaseRetailPrice(Money baseRetailPrice) {
-        this.baseRetailPrice = baseRetailPrice==null?null:baseRetailPrice.getAmount();
+        this.baseRetailPrice = baseRetailPrice == null ? null : baseRetailPrice.getAmount();
     }
 
     @Override
@@ -313,7 +322,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public void setBaseSalePrice(Money baseSalePrice) {
-        this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
+        this.baseSalePrice = baseSalePrice == null ? null : baseSalePrice.getAmount();
     }
 
     private boolean hasSaleItems() {
@@ -324,20 +333,20 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
         return false;
     }
-    
+
     @Override
     public boolean hasAdjustedItems() {
         //TODO:  Handle this for bundle order items.
         return false;
     }
-    
+
     private boolean updateSalePrice() {
         if (isSalePriceOverride()) {
             return false;
         }
         // Only need to update prices if we are not summing the contained items to determine
         // the price.
-        if (! shouldSumItems()) {
+        if (!shouldSumItems()) {
             if (getSku() != null && getSku().getSalePrice() != null && !getSku().getSalePrice().equals(salePrice)) {
                 baseSalePrice = getSku().getSalePrice().getAmount();
                 salePrice = getSku().getSalePrice().getAmount();
@@ -353,7 +362,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         }
         // Only need to update prices if we are not summing the contained items to determine
         // the price.
-        if (! shouldSumItems()) {
+        if (!shouldSumItems()) {
             if (getSku() != null && !getSku().getRetailPrice().equals(retailPrice)) {
                 baseRetailPrice = getSku().getRetailPrice().getAmount();
                 retailPrice = getSku().getRetailPrice().getAmount();
@@ -382,7 +391,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             return false;
         }
         BundleOrderItemImpl other = (BundleOrderItemImpl) obj;
-        
+
         if (!super.equals(obj)) {
             return false;
         }
@@ -469,7 +478,9 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
-    public CreateResponse<BundleOrderItem> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public CreateResponse<BundleOrderItem> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<BundleOrderItem> createResponse = super.createOrRetrieveCopyInstance(context);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -479,7 +490,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         cloned.setBaseSalePrice(getBaseSalePrice());
         cloned.setProductBundle(productBundle);
         cloned.setSku(sku);
-        return  createResponse;
+        return createResponse;
     }
 
     public static class Presentation {
@@ -506,4 +517,5 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             public static final int SKU = 3000;
         }
     }
+
 }

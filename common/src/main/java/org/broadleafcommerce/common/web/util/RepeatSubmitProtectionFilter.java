@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,7 +38,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class RepeatSubmitProtectionFilter implements Filter {
 
-    private final Map<String, List<String>> requests = new HashMap<String, List<String>>(100);
+    private final Map<String, List<String>> requests = new HashMap<>(100);
 
     @Override
     public void destroy() {
@@ -60,7 +60,7 @@ public class RepeatSubmitProtectionFilter implements Filter {
         if (useSession) {
             String sessionId;
             String requestURI;
-            synchronized(requests) {
+            synchronized (requests) {
                 sessionId = ((HttpServletRequest) request).getSession().getId();
                 requestURI = ((HttpServletRequest) request).getRequestURI();
                 if (requests.containsKey(sessionId) && requests.get(sessionId).contains(requestURI)) {
@@ -70,7 +70,7 @@ public class RepeatSubmitProtectionFilter implements Filter {
                 }
                 List<String> myRequests = requests.get(sessionId);
                 if (myRequests == null) {
-                    myRequests = new ArrayList<String>();
+                    myRequests = new ArrayList<>();
                     requests.put(sessionId, myRequests);
                 }
                 myRequests.add(requestURI);

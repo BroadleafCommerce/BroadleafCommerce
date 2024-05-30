@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,10 +29,9 @@ import java.util.List;
 public class DefaultErrorHandler implements ErrorHandler {
 
     private static final Log LOG = LogFactory.getLog(DefaultErrorHandler.class);
+    protected List<String> unloggedExceptionClasses = new ArrayList<>();
     @SuppressWarnings("unused")
     private String name;
-    
-    protected List<String> unloggedExceptionClasses = new ArrayList<>();
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.workflow.ErrorHandler#handleError(org.broadleafcommerce.core.workflow.ProcessContext, java.lang.Throwable)
@@ -54,9 +53,10 @@ public class DefaultErrorHandler implements ErrorHandler {
             }
         }
         if (shouldLog) {
-            LOG.error(String.format("An error occurred during the %s workflow", RollbackStateLocal.getRollbackStateLocal().getWorkflowId()), th);
+            LOG.error(String.format("An error occurred during the %s workflow",
+                    RollbackStateLocal.getRollbackStateLocal().getWorkflowId()), th);
         }
-        
+
         throw new WorkflowException(th);
     }
 
@@ -75,5 +75,5 @@ public class DefaultErrorHandler implements ErrorHandler {
     public void setUnloggedExceptionClasses(List<String> unloggedExceptionClasses) {
         this.unloggedExceptionClasses = unloggedExceptionClasses;
     }
-    
+
 }

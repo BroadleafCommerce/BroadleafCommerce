@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,15 +20,17 @@ package org.broadleafcommerce.core.offer.service.exception;
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
 
+import java.io.Serial;
 
 public class OfferException extends CheckoutException {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public OfferException() {
         super();
     }
-    
+
     public OfferException(String message) {
         super(message, null);
     }
@@ -44,4 +46,5 @@ public class OfferException extends CheckoutException {
     public OfferException(Throwable cause, CheckoutSeed seed) {
         super(cause, seed);
     }
+
 }

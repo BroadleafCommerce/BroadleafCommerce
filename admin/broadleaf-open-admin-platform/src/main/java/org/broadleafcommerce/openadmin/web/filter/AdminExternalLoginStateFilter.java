@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,7 +51,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * SOURCE SUCH AS LDAP.
  *
  * @deprecated NO LONGER REQUIRED AND SHOULD NOT BE USED. SEE BroadleafAdminLdapUserDetailsMapper.
- *
+ * <p>
  * <p/>
  * User: Kelly Tisdell
  * Date: 6/19/12
@@ -72,19 +72,20 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-        HttpServletRequest request = (HttpServletRequest)servletRequest;
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
         if (request.getSession(true).getAttribute(BLC_ADMIN_PROVISION_USER_CHECK) == null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication != null && authentication.isAuthenticated()) {
-                if (authentication.getPrincipal() instanceof UserDetails){
-                    UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+                if (authentication.getPrincipal() instanceof UserDetails) {
+                    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
                     if (userDetails != null && userDetails.getUsername() != null) {
                         AdminUser user = adminSecurityService.readAdminUserByUserName(userDetails.getUsername());
                         if (userDetails instanceof BroadleafExternalAuthenticationUserDetails) {
-                            BroadleafExternalAuthenticationUserDetails broadleafUser = (BroadleafExternalAuthenticationUserDetails)userDetails;
+                            BroadleafExternalAuthenticationUserDetails broadleafUser =
+                                    (BroadleafExternalAuthenticationUserDetails) userDetails;
                             if (user == null) {
                                 //Provision a new user...
-                                user = (AdminUser)entityConfiguration.createEntityInstance(AdminUser.class.getName());
+                                user = (AdminUser) entityConfiguration.createEntityInstance(AdminUser.class.getName());
                             }
                             saveAdminUser(broadleafUser, user);
                             request.getSession().setAttribute(BLC_ADMIN_PROVISION_USER_CHECK, Boolean.TRUE);
@@ -124,23 +125,23 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
 
         Set<AdminRole> roleSet = user.getAllRoles();
         //First, remove all roles associated with the user if they already existed
-        if (roleSet != null){
+        if (roleSet != null) {
             roleSet.clear();
         } else {
-            roleSet = new HashSet<AdminRole>();
+            roleSet = new HashSet<>();
             user.setAllRoles(roleSet);
         }
 
         //Now add the appropriate roles back in
         List<AdminRole> availableRoles = adminSecurityService.readAllAdminRoles();
         if (availableRoles != null) {
-            HashMap<String, AdminRole> roleMap = new HashMap<String, AdminRole>();
+            HashMap<String, AdminRole> roleMap = new HashMap<>();
             for (AdminRole role : availableRoles) {
-               roleMap.put(role.getName(), role);
+                roleMap.put(role.getName(), role);
             }
             Collection<GrantedAuthority> authorities = broadleafUser.getAuthorities();
             for (GrantedAuthority authority : authorities) {
-                if (roleMap.get(authority.getAuthority()) != null){
+                if (roleMap.get(authority.getAuthority()) != null) {
                     roleSet.add(roleMap.get(authority.getAuthority()));
                 }
             }
@@ -148,4 +149,5 @@ public class AdminExternalLoginStateFilter extends GenericFilterBean {
         //Save the user data and all of the roles...
         adminSecurityService.saveAdminUser(user);
     }
+
 }

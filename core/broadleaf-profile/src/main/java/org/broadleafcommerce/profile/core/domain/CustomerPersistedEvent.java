@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.profile.core.domain;
 
 import org.springframework.context.ApplicationEvent;
 
+import java.io.Serial;
 
 /**
  * An event for whenever a {@link CustomerImpl} has been persisted
@@ -28,6 +29,7 @@ import org.springframework.context.ApplicationEvent;
  */
 public class CustomerPersistedEvent extends ApplicationEvent {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -36,14 +38,14 @@ public class CustomerPersistedEvent extends ApplicationEvent {
     public CustomerPersistedEvent(Customer customer) {
         super(customer);
     }
-    
+
     /**
      * Gets the newly-persisted {@link Customer} set by the {@link CustomerPersistedEntityListener}
-     * 
+     *
      * @return
      */
     public Customer getCustomer() {
-        return (Customer)source;
+        return (Customer) source;
     }
 
 }

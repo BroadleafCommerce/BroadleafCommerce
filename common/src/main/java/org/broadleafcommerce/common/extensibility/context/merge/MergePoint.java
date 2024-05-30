@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,38 +35,37 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 /**
- * This class provides the xml merging apparatus at a defined XPath merge point in 
+ * This class provides the xml merging apparatus at a defined XPath merge point in
  * 2 xml documents. The MergeHandler that embodies the XPath point can have
  * embedded XPath merge points, resulting in a cumulative effect with varying
  * merge behavior for a sector of the documents. For example, it may be desirable
  * to replace all the child nodes of a given node with all the child nodes from the same
  * parent node in the patch document, with the exception of a single node. That single
  * node may instead contribute its contents in a additive fashion (rather than replace).
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class MergePoint {
-    
+
     private static final Log LOG = LogFactory.getLog(MergePoint.class);
-    
+
     private MergeHandler handler;
     private Document doc1;
     private Document doc2;
     private XPath xPath;
-    
+
     public MergePoint(MergeHandler handler, Document doc1, Document doc2) {
         this.handler = handler;
         this.doc1 = doc1;
         this.doc2 = doc2;
-        XPathFactory factory=XPathFactory.newInstance();
-        xPath=factory.newXPath();
+        XPathFactory factory = XPathFactory.newInstance();
+        xPath = factory.newXPath();
     }
-    
+
     /**
      * Execute the merge operation and also provide a list of nodes that have already been
      * merged. It is up to the handler implementation to respect or ignore this list.
-     * 
+     *
      * @param exhaustedNodes
      * @return list of merged nodes
      * @throws XPathExpressionException
@@ -74,7 +73,7 @@ public class MergePoint {
     public Node[] merge(List<Node> exhaustedNodes) throws XPathExpressionException, TransformerException {
         return merge(handler, exhaustedNodes);
     }
-    
+
     private Node[] merge(MergeHandler handler, List<Node> exhaustedNodes) throws XPathExpressionException, TransformerException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Processing handler: " + handler.getXPath());
@@ -95,14 +94,14 @@ public class MergePoint {
             NodeList temp1 = (NodeList) xPath.evaluate(xPathVal, doc1, XPathConstants.NODESET);
             if (temp1 != null) {
                 int length = temp1.getLength();
-                for (int j=0;j<length;j++) {
+                for (int j = 0; j < length; j++) {
                     nodeList1.add(temp1.item(j));
                 }
             }
             NodeList temp2 = (NodeList) xPath.evaluate(xPathVal, doc2, XPathConstants.NODESET);
             if (temp2 != null) {
                 int length = temp2.getLength();
-                for (int j=0;j<length;j++) {
+                for (int j = 0; j < length; j++) {
                     nodeList2.add(temp2.item(j));
                 }
             }
@@ -112,4 +111,5 @@ public class MergePoint {
         }
         return null;
     }
+
 }

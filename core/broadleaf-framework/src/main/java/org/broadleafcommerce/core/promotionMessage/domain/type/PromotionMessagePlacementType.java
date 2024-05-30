@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,29 +19,25 @@ package org.broadleafcommerce.core.promotionMessage.domain.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of promotion message location types.
- *
  */
 public class PromotionMessagePlacementType implements Serializable, BroadleafEnumerationType, Comparable<PromotionMessagePlacementType> {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, PromotionMessagePlacementType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, PromotionMessagePlacementType> TYPES = new LinkedHashMap<String, PromotionMessagePlacementType>();
     public static final PromotionMessagePlacementType PRODUCT_DETAIL = new PromotionMessagePlacementType("PRODUCT_DETAIL", "Product Detail", 1000);
     public static final PromotionMessagePlacementType BROWSE = new PromotionMessagePlacementType("BROWSE", "Browse", 2000);
     public static final PromotionMessagePlacementType SEARCH_RESULTS = new PromotionMessagePlacementType("SEARCH_RESULTS", "Search Results", 3000);
     public static final PromotionMessagePlacementType CART = new PromotionMessagePlacementType("CART", "Cart", 4000);
     public static final PromotionMessagePlacementType EVERYWHERE = new PromotionMessagePlacementType("EVERYWHERE", "Everywhere", 5000);
-
-
-    public static PromotionMessagePlacementType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -57,6 +53,14 @@ public class PromotionMessagePlacementType implements Serializable, BroadleafEnu
         setOrder(order);
     }
 
+    public static PromotionMessagePlacementType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
@@ -64,14 +68,10 @@ public class PromotionMessagePlacementType implements Serializable, BroadleafEnu
         }
     }
 
-    public String getType() {
-        return type;
-    }
-
     public String getFriendlyType() {
         return friendlyType;
     }
-    
+
     public int getOrder() {
         return order;
     }
@@ -104,7 +104,7 @@ public class PromotionMessagePlacementType implements Serializable, BroadleafEnu
             return false;
         return true;
     }
-    
+
     @Override
     public int compareTo(PromotionMessagePlacementType arg0) {
         return this.order - arg0.order;

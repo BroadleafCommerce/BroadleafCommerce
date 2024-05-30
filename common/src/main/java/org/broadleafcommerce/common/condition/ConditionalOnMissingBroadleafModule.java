@@ -10,13 +10,10 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
- */
-/**
- *
  */
 package org.broadleafcommerce.common.condition;
 
@@ -65,10 +62,10 @@ import java.lang.annotation.Target;
  * </pre>
  *
  * @author Brandon Hines
- * @since 5.2
  * @see {@link ModulePresentUtil}
+ * @since 5.2
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Conditional(OnMissingBroadleafModuleCondition.class)
@@ -78,12 +75,12 @@ public @interface ConditionalOnMissingBroadleafModule {
      * Which module to check for the absence of. This should generally be preferred to using {@link #moduleName()}
      * but can be used as as stop-gap measurement if the module is not explicitly defined in {@link BroadleafModuleEnum}.
      */
-    public BroadleafModuleEnum value() default BroadleafModuleEnum.IGNORED;
+    BroadleafModuleEnum value() default BroadleafModuleEnum.IGNORED;
 
     /**
      * This should only be used if the module you are checking for has not yet been added to the {@link BroadleafModuleEnum} as that.
      * Generally you should seek to use the {@link #value()} parameter and add additional modules as needed.
      */
-    public String moduleName() default "";
+    String moduleName() default "";
 
 }

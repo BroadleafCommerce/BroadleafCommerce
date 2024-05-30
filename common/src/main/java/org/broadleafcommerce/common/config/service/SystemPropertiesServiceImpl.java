@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -43,7 +43,7 @@ import jakarta.annotation.Resource;
  * @author bpolster
  */
 @Service("blSystemPropertiesService")
-public class SystemPropertiesServiceImpl implements SystemPropertiesService{
+public class SystemPropertiesServiceImpl implements SystemPropertiesService {
 
     public static final String PROPERTY_SOURCE_NAME = "systemPropertySource";
     protected static final String ENV_CACHE_PREFIX = "ORIGIN_FROM_ENV";
@@ -53,13 +53,15 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
      * If the property resoltion comes from the Spring Environment I don't want to try to re-resolve a property from the Environment. This
      * ensures that we don't get a StackOverflowException
      */
-    protected static final ThreadLocal<Boolean> originatedFromEnvironment = ThreadLocalManager.createThreadLocal(Boolean.class, false);
+    protected static final ThreadLocal<Boolean> originatedFromEnvironment = ThreadLocalManager.createThreadLocal(
+            Boolean.class, false
+    );
 
     private static final String NULL_RESPONSE = "*NULL_RESPONSE*";
 
     protected Cache<String, String> systemPropertyCache;
 
-    @Resource(name="blSystemPropertiesDao")
+    @Resource(name = "blSystemPropertiesDao")
     protected SystemPropertiesDao systemPropertiesDao;
 
     @Resource(name = "blSystemPropertyServiceExtensionManager")
@@ -67,7 +69,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
     @Value("${system.property.cache.timeout}")
     protected int systemPropertyCacheTimeout;
-    
+
     @Resource(name = "blCacheManager")
     protected CacheManager cacheManager;
 
@@ -96,14 +98,14 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
         String result;
         // We don't want to utilize this cache for sandboxes
         if (BroadleafRequestContext.getBroadleafRequestContext() == null
-            || BroadleafRequestContext.getBroadleafRequestContext().getSandBox() == null) {
+                || BroadleafRequestContext.getBroadleafRequestContext().getSandBox() == null) {
             result = getPropertyFromCache(name);
         } else {
             result = null;
         }
 
         if (result != null) {
-            return result.equals(NULL_RESPONSE)?null:result;
+            return result.equals(NULL_RESPONSE) ? null : result;
         }
 
         SystemProperty property = systemPropertiesDao.readSystemPropertyByName(name);
@@ -129,7 +131,7 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
             result = NULL_RESPONSE;
         }
         addPropertyToCache(name, result);
-        return result.equals(NULL_RESPONSE)?null:result;
+        return result.equals(NULL_RESPONSE) ? null : result;
     }
 
     protected void addPropertyToCache(String propertyName, String propertyValue) {
@@ -170,7 +172,8 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     protected String buildKey(SystemProperty systemProperty) {
         String propertyName = systemProperty.getName();
         Long siteId = null;
-        if (systemProperty instanceof SiteDiscriminator && ((SiteDiscriminator) systemProperty).getSiteDiscriminator() != null) {
+        if (systemProperty instanceof SiteDiscriminator
+                && ((SiteDiscriminator) systemProperty).getSiteDiscriminator() != null) {
             siteId = ((SiteDiscriminator) systemProperty).getSiteDiscriminator();
         }
         return buildKey(propertyName, siteId);
@@ -179,7 +182,8 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
     protected String buildKey(SystemProperty systemProperty, boolean forceEnvPrefix) {
         String propertyName = systemProperty.getName();
         Long siteId = null;
-        if (systemProperty instanceof SiteDiscriminator && ((SiteDiscriminator) systemProperty).getSiteDiscriminator() != null) {
+        if (systemProperty instanceof SiteDiscriminator
+                && ((SiteDiscriminator) systemProperty).getSiteDiscriminator() != null) {
             siteId = ((SiteDiscriminator) systemProperty).getSiteDiscriminator();
         }
         return buildKey(propertyName, siteId, forceEnvPrefix);
@@ -312,4 +316,5 @@ public class SystemPropertiesServiceImpl implements SystemPropertiesService{
 
         return false;
     }
+
 }

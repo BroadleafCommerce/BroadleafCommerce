@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,16 +21,16 @@ import java.io.Serializable;
 
 public interface FulfillmentPriceExceptionResponse extends Serializable {
 
-    public boolean isErrorDetected();
+    boolean isErrorDetected();
 
-    public void setErrorDetected(boolean isErrorDetected);
+    void setErrorDetected(boolean isErrorDetected);
 
-    public String getErrorCode();
+    String getErrorCode();
 
-    public void setErrorCode(String errorCode);
+    void setErrorCode(String errorCode);
 
-    public String getErrorText();
+    String getErrorText();
 
-    public void setErrorText(String errorText);
+    void setErrorText(String errorText);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,7 +51,7 @@ public class RemoveAnnotationClassTransformer extends AbstractClassTransformer i
     private static final Log logger = LogFactory.getLog(RemoveAnnotationClassTransformer.class);
 
     protected String moduleName;
-    protected List<String> classNames = new ArrayList<String>();
+    protected List<String> classNames = new ArrayList<>();
     protected String annotationClass;
     protected String conditionalPropertyName;
     protected ConfigurableBeanFactory beanFactory;
@@ -71,8 +71,13 @@ public class RemoveAnnotationClassTransformer extends AbstractClassTransformer i
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
+    public byte[] transform(
+            ClassLoader loader,
+            String className,
+            Class<?> classBeingRedefined,
+            ProtectionDomain protectionDomain,
+            byte[] classfileBuffer
+    ) throws TransformerException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -85,13 +90,10 @@ public class RemoveAnnotationClassTransformer extends AbstractClassTransformer i
         try {
             String convertedClassName = className.replace('/', '.');
             if (
-                    !classNames.isEmpty() &&
-                    classNames.contains(convertedClassName) &&
-                    (
-                        conditionalPropertyName == null ||
-                        isPropertyEnabled(conditionalPropertyName))
-                    )
-             {
+                    !classNames.isEmpty()
+                            && classNames.contains(convertedClassName)
+                            && (conditionalPropertyName == null || isPropertyEnabled(conditionalPropertyName))
+            ) {
                 ClassPool classPool = ClassPool.getDefault();
                 clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
                 clazz.defrost();
@@ -134,7 +136,9 @@ public class RemoveAnnotationClassTransformer extends AbstractClassTransformer i
 
     protected AnnotationsAttribute stripAnnotation(ConstPool constantPool, List<?> attributes) {
         Iterator<?> itr = attributes.iterator();
-        AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
+        AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(
+                constantPool, AnnotationsAttribute.visibleTag
+        );
 
         while (itr.hasNext()) {
             Object object = itr.next();
@@ -205,4 +209,5 @@ public class RemoveAnnotationClassTransformer extends AbstractClassTransformer i
     public void setConditionalPropertyName(String conditionalPropertyName) {
         this.conditionalPropertyName = conditionalPropertyName;
     }
+
 }

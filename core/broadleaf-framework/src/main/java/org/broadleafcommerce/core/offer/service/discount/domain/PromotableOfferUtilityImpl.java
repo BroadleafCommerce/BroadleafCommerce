@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -63,32 +63,58 @@ public class PromotableOfferUtilityImpl implements PromotableOfferUtility {
     }
 
     @Override
-    public Money computeRetailAdjustmentValue(PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup) {
-        return computeAdjustmentValue(promotableCandidateFulfillmentGroupOffer, promotableFulfillmentGroup, false);
+    public Money computeRetailAdjustmentValue(
+            PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer,
+            PromotableFulfillmentGroup promotableFulfillmentGroup
+    ) {
+        return computeAdjustmentValue(
+                promotableCandidateFulfillmentGroupOffer, promotableFulfillmentGroup, false
+        );
     }
 
     @Override
-    public Money computeSalesAdjustmentValue(PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup) {
-        return computeAdjustmentValue(promotableCandidateFulfillmentGroupOffer, promotableFulfillmentGroup, true);
+    public Money computeSalesAdjustmentValue(
+            PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer,
+            PromotableFulfillmentGroup promotableFulfillmentGroup
+    ) {
+        return computeAdjustmentValue(
+                promotableCandidateFulfillmentGroupOffer, promotableFulfillmentGroup, true
+        );
     }
 
     @Override
-    public Money computeAdjustmentValue(PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer, PromotableFulfillmentGroup promotableFulfillmentGroup, boolean allowSalePrice) {
+    public Money computeAdjustmentValue(
+            PromotableCandidateFulfillmentGroupOffer promotableCandidateFulfillmentGroupOffer,
+            PromotableFulfillmentGroup promotableFulfillmentGroup,
+            boolean allowSalePrice
+    ) {
         Money currentPriceDetailValue = promotableFulfillmentGroup.calculatePriceWithAdjustments(allowSalePrice);
         Offer offer = promotableCandidateFulfillmentGroupOffer.getOffer();
         BroadleafCurrency currency = promotableFulfillmentGroup.getFulfillmentGroup().getOrder().getCurrency();
         BigDecimal offerUnitValue = determineOfferUnitValue(offer, null);
         OfferDiscountType discountType = offer.getDiscountType();
-        return computeAdjustmentValue(currentPriceDetailValue, offerUnitValue, currency, discountType, promotableCandidateFulfillmentGroupOffer);
+        return computeAdjustmentValue(
+                currentPriceDetailValue,
+                offerUnitValue,
+                currency,
+                discountType,
+                promotableCandidateFulfillmentGroupOffer
+        );
     }
 
     @Override
-    public Money computeRetailAdjustmentValue(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItemPriceDetail orderItemPriceDetail) {
+    public Money computeRetailAdjustmentValue(
+            PromotableCandidateItemOffer promotableCandidateItemOffer,
+            PromotableOrderItemPriceDetail orderItemPriceDetail
+    ) {
         return computeAdjustmentValue(promotableCandidateItemOffer, orderItemPriceDetail, false);
     }
 
     @Override
-    public Money computeSalesAdjustmentValue(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItemPriceDetail orderItemPriceDetail) {
+    public Money computeSalesAdjustmentValue(
+            PromotableCandidateItemOffer promotableCandidateItemOffer,
+            PromotableOrderItemPriceDetail orderItemPriceDetail
+    ) {
         if (promotableCandidateItemOffer.getOffer().getApplyDiscountToSalePrice()) {
             return computeAdjustmentValue(promotableCandidateItemOffer, orderItemPriceDetail, true);
         } else {
@@ -100,47 +126,86 @@ public class PromotableOfferUtilityImpl implements PromotableOfferUtility {
     }
 
     @Override
-    public Money computeAdjustmentValue(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItemPriceDetail orderItemPriceDetail, boolean allowSalePrice) {
+    public Money computeAdjustmentValue(
+            PromotableCandidateItemOffer promotableCandidateItemOffer,
+            PromotableOrderItemPriceDetail orderItemPriceDetail,
+            boolean allowSalePrice
+    ) {
         Money currentPriceDetailValue = orderItemPriceDetail.calculateItemUnitPriceWithAdjustments(allowSalePrice);
         PromotableOrderItem promotableOrderItem = orderItemPriceDetail.getPromotableOrderItem();
         BroadleafCurrency currency = promotableOrderItem.getCurrency();
-        Tuple<OfferDiscountType, BigDecimal> discountVariables = computeDiscountVariables(promotableCandidateItemOffer, promotableOrderItem, promotableCandidateItemOffer.calculateTargetQuantityForTieredOffer());
-        return computeAdjustmentValue(currentPriceDetailValue, discountVariables.getSecond(), currency, discountVariables.getFirst(), promotableCandidateItemOffer);
+        Tuple<OfferDiscountType, BigDecimal> discountVariables = computeDiscountVariables(
+                promotableCandidateItemOffer,
+                promotableOrderItem,
+                promotableCandidateItemOffer.calculateTargetQuantityForTieredOffer()
+        );
+        return computeAdjustmentValue(
+                currentPriceDetailValue,
+                discountVariables.getSecond(),
+                currency,
+                discountVariables.getFirst(),
+                promotableCandidateItemOffer
+        );
     }
 
     @Override
-    public Money calculateSavingsForOrderItem(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItem promotableOrderItem, int qtyToReceiveSavings) {
+    public Money calculateSavingsForOrderItem(
+            PromotableCandidateItemOffer promotableCandidateItemOffer,
+            PromotableOrderItem promotableOrderItem,
+            int qtyToReceiveSavings
+    ) {
         Offer offer = promotableCandidateItemOffer.getOffer();
         Money originalPrice = promotableOrderItem.getPriceBeforeAdjustments(offer.getApplyDiscountToSalePrice());
         BroadleafCurrency currency = promotableOrderItem.getCurrency();
-        Tuple<OfferDiscountType, BigDecimal> discountVariables = computeDiscountVariables(promotableCandidateItemOffer, promotableOrderItem, qtyToReceiveSavings);
-        Money savings = computeAdjustmentValue(originalPrice, discountVariables.getSecond(), currency, discountVariables.getFirst(), promotableCandidateItemOffer);
+        Tuple<OfferDiscountType, BigDecimal> discountVariables = computeDiscountVariables(
+                promotableCandidateItemOffer, promotableOrderItem, qtyToReceiveSavings
+        );
+        Money savings = computeAdjustmentValue(
+                originalPrice,
+                discountVariables.getSecond(),
+                currency,
+                discountVariables.getFirst(),
+                promotableCandidateItemOffer
+        );
         return savings.multiply(qtyToReceiveSavings);
     }
 
     /**
      * Computes the discount type and unit value for the given PromotableOrderItem.
+     *
      * @param promotableCandidateItemOffer
      * @param promotableOrderItem
      * @param quantity
      * @return
      */
-    protected Tuple<OfferDiscountType, BigDecimal> computeDiscountVariables(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItem promotableOrderItem, int quantity) {
+    protected Tuple<OfferDiscountType, BigDecimal> computeDiscountVariables(
+            PromotableCandidateItemOffer promotableCandidateItemOffer,
+            PromotableOrderItem promotableOrderItem,
+            int quantity
+    ) {
         Offer offer = promotableCandidateItemOffer.getOffer();
         BigDecimal offerUnitValue;
         OfferDiscountType discountType;
-        if (BooleanUtils.isTrue(offer.getUseListForDiscounts()) && MapUtils.isNotEmpty(promotableCandidateItemOffer.getCandidateFixedTargetsMap())) {
-            OfferPriceData offerPriceData = findMatchingOfferPriceData(promotableCandidateItemOffer, promotableOrderItem);
+        if (BooleanUtils.isTrue(offer.getUseListForDiscounts())
+                && MapUtils.isNotEmpty(promotableCandidateItemOffer.getCandidateFixedTargetsMap())) {
+            OfferPriceData offerPriceData = findMatchingOfferPriceData(
+                    promotableCandidateItemOffer, promotableOrderItem
+            );
             discountType = offerPriceData.getDiscountType();
             offerUnitValue = offerPriceData.getAmount();
         } else {
             discountType = offer.getDiscountType();
-            offerUnitValue = determineOfferUnitValue(offer, promotableCandidateItemOffer.calculateTargetQuantityForTieredOffer());
+            offerUnitValue = determineOfferUnitValue(
+                    offer, promotableCandidateItemOffer.calculateTargetQuantityForTieredOffer()
+            );
         }
         return new Tuple<>(discountType, offerUnitValue);
     }
 
-    protected OfferPriceData findMatchingOfferPriceData(PromotableCandidateItemOffer promotableCandidateItemOffer, PromotableOrderItem orderItem) {
+    protected OfferPriceData findMatchingOfferPriceData(
+            PromotableCandidateItemOffer promotableCandidateItemOffer,
+            PromotableOrderItem orderItem
+    ) {
         for (OfferPriceData offerPriceData : promotableCandidateItemOffer.getCandidateFixedTargetsMap().keySet()) {
             if (itemMatchesOfferPriceData(offerPriceData, orderItem)) {
                 return offerPriceData;
@@ -149,7 +214,13 @@ public class PromotableOfferUtilityImpl implements PromotableOfferUtility {
         return null;
     }
 
-    protected Money computeAdjustmentValue(Money currentPriceDetailValue, BigDecimal offerUnitValue, BroadleafCurrency currency, OfferDiscountType discountType, PromotionRounding rounding) {
+    protected Money computeAdjustmentValue(
+            Money currentPriceDetailValue,
+            BigDecimal offerUnitValue,
+            BroadleafCurrency currency,
+            OfferDiscountType discountType,
+            PromotionRounding rounding
+    ) {
         Money adjustmentValue;
         if (currency != null) {
             adjustmentValue = new Money(currency);
@@ -225,4 +296,5 @@ public class PromotableOfferUtilityImpl implements PromotableOfferUtility {
         }
         return offer.getValue();
     }
+
 }

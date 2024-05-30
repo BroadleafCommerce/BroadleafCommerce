@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,28 +25,27 @@ import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
 
 /**
  * Mainly a marker interface denoting that the entity should be indexed for search
- * 
+ *
+ * @author Phillip Verheyden (phillipuniverse)
  * @see {@link SolrIndexService}
  * @see {@link SolrSearchServiceImpl}
- * 
- * @author Phillip Verheyden (phillipuniverse)
  */
 public interface Indexable {
 
     /**
      * The primary key for this indexable item that gets stored in the search index
-     * 
+     * <p>
      * {@see SolrHelperService#getIndexableIdFieldName()}
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Which type of {@link Field} should be queried for when looking up database-driven search fields to store in the
      * search index
-     * 
+     *
      * @see SolrIndexService#buildIncrementalIndex(String, java.util.List, org.apache.solr.client.solrj.SolrClient)
      * @see FieldDao#readFieldsByEntityType(FieldEntity)
      */
-    public FieldEntity getFieldEntityType();
-    
+    FieldEntity getFieldEntityType();
+
 }

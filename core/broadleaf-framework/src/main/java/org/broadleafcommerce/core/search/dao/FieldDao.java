@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * DAO to facilitate interaction with Broadleaf fields.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public interface FieldDao {
@@ -33,11 +33,11 @@ public interface FieldDao {
      * Given an abbreviation, returns the Field object that maps to this abbreviation.
      * Note that the default Broadleaf implementation of Field will enforce a uniqueness
      * constraint on the abbreviation field and this method will reliably return one field
-     * 
+     *
      * @param abbreviation
      * @return the Field that has this abbreviation
      */
-    public Field readFieldByAbbreviation(String abbreviation);
+    Field readFieldByAbbreviation(String abbreviation);
 
     List<Field> readAllProductFields();
 
@@ -45,10 +45,11 @@ public interface FieldDao {
 
     /**
      * Finds all fields based on the entity type.
+     *
      * @param entityType
      * @return
      */
-    public List<Field> readFieldsByEntityType(FieldEntity entityType);
+    List<Field> readFieldsByEntityType(FieldEntity entityType);
 
     /**
      * Persist an instance to the data layer.
@@ -56,5 +57,6 @@ public interface FieldDao {
      * @param field the instance to persist
      * @return the instance after it has been persisted
      */
-    public Field save(Field field);
+    Field save(Field field);
+
 }

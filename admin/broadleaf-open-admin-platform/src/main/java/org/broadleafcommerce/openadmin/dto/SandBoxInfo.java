@@ -10,19 +10,21 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class SandBoxInfo implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     protected Long sandBox;
     protected boolean commitImmediately = true;
     protected Long siteId;
@@ -39,7 +41,7 @@ public class SandBoxInfo implements Serializable {
     public boolean isCommitImmediately() {
         return commitImmediately;
     }
-    
+
     public void setCommitImmediately(boolean commitImmediately) {
         this.commitImmediately = commitImmediately;
     }
@@ -59,4 +61,5 @@ public class SandBoxInfo implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
 }

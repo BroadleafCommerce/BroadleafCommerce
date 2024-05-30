@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,10 +24,11 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
-public class AbstractSiteMapExtensionHandler extends AbstractExtensionHandler
-        implements SiteMapExtensionHandler {
+public class AbstractSiteMapExtensionHandler extends AbstractExtensionHandler implements SiteMapExtensionHandler {
+
     @Override
     public ExtensionResultStatusType modifyQuery(CriteriaQuery criteriaQuery, CriteriaBuilder builder, Root root) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
 }

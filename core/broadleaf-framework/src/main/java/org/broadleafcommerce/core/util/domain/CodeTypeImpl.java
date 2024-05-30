@@ -10,12 +10,20 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.util.domain;
+
+import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,11 +33,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 @Entity
 @Table(name = "BLC_CODE_TYPES")
@@ -38,7 +41,8 @@ import org.hibernate.annotations.Parameter;
 @Deprecated
 public class CodeTypeImpl implements CodeType {
 
-    public static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "CodeTypeId", strategy = GenerationType.TABLE)
@@ -130,14 +134,11 @@ public class CodeTypeImpl implements CodeType {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((codeType == null) ? 0 : codeType.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((codeType == null) ? 0 : codeType.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((key == null) ? 0 : key.hashCode());
-        result = prime * result
-                + ((modifiable == null) ? 0 : modifiable.hashCode());
+        result = prime * result + ((modifiable == null) ? 0 : modifiable.hashCode());
         return result;
     }
 
@@ -175,6 +176,5 @@ public class CodeTypeImpl implements CodeType {
         } else
             return modifiable.equals(other.modifiable);
     }
-
 
 }

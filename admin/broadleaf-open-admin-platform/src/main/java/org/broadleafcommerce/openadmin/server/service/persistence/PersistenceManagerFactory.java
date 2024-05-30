@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,13 +38,12 @@ import jakarta.persistence.EntityManager;
 @Service("blPersistenceManagerFactory")
 public class PersistenceManagerFactory implements ApplicationContextAware {
 
-    private static ApplicationContext applicationContext;
-    private static final Map<Integer, PersistenceManager> persistenceManagers = new HashMap<Integer, PersistenceManager>();
     public static final String DEFAULTPERSISTENCEMANAGERREF = "blPersistenceManager";
+    private static final Map<Integer, PersistenceManager> persistenceManagers = new HashMap<>();
     protected static String persistenceManagerRef = DEFAULTPERSISTENCEMANAGERREF;
-
     protected static PersistenceService persistenceService;
     protected static EntityConfiguration entityConfiguration;
+    private static ApplicationContext applicationContext;
 
     @Autowired
     public PersistenceManagerFactory(PersistenceService persistenceService, EntityConfiguration entityConfiguration) {
@@ -52,18 +51,13 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
         PersistenceManagerFactory.entityConfiguration = entityConfiguration;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        PersistenceManagerFactory.applicationContext = applicationContext;
-    }
-
     /**
      * This method should only be used within the context of a thread with an established {@link PersistenceManagerContext}
-     *  and the operation to be performed is on an entity that is managed by the {@link EntityManager} identified
-     *  by {@link #startPersistenceManager(TargetModeType)}.
-     *
+     * and the operation to be performed is on an entity that is managed by the {@link EntityManager} identified
+     * by {@link #startPersistenceManager(TargetModeType)}.
+     * <p>
      * See {@link PersistenceThreadManager#operation(TargetModeType, Persistable)} and {@link #startPersistenceManager(TargetModeType)}
-     *  for an example of how the context is established.
+     * for an example of how the context is established.
      */
     public static PersistenceManager getPersistenceManager() {
         if (PersistenceManagerContext.getPersistenceManagerContext() != null) {
@@ -88,7 +82,7 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
 
     /**
      * This method produces a {@link PersistenceManager} with a blPU-based standardEntityManager.
-     *  It also uses a {@link TargetModeType} of {@link TargetModeType#SANDBOX}
+     * It also uses a {@link TargetModeType} of {@link TargetModeType#SANDBOX}
      */
     public static PersistenceManager getDefaultPersistenceManager() {
         return getDefaultPersistenceManager(TargetModeType.SANDBOX);
@@ -96,13 +90,15 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
 
     /**
      * This method produces a {@link PersistenceManager} with a blPU-based standardEntityManager
-     *  using the passed in {@link TargetModeType}
+     * using the passed in {@link TargetModeType}
      */
     public static PersistenceManager getDefaultPersistenceManager(TargetModeType targetModeType) {
         synchronized (DynamicDaoHelperImpl.LOCK_OBJECT) {
             Integer cacheKey = persistenceService.identifyDefaultEntityManager(targetModeType).hashCode();
             if (!persistenceManagers.containsKey(cacheKey)) {
-                PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+                PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(
+                        persistenceManagerRef
+                );
                 persistenceManager.setTargetMode(targetModeType);
                 persistenceManager.configureDefaultDynamicEntityDao(targetModeType);
 
@@ -116,7 +112,9 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
         synchronized (DynamicDaoHelperImpl.LOCK_OBJECT) {
             Integer cacheKey = persistenceService.identifyEntityManager(entityClass, targetModeType).hashCode();
             if (!persistenceManagers.containsKey(cacheKey)) {
-                PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(persistenceManagerRef);
+                PersistenceManager persistenceManager = (PersistenceManager) applicationContext.getBean(
+                        persistenceManagerRef
+                );
                 persistenceManager.setTargetMode(targetModeType);
                 persistenceManager.configureDynamicEntityDao(entityClass, targetModeType);
                 persistenceManagers.put(cacheKey, persistenceManager);
@@ -169,4 +167,10 @@ public class PersistenceManagerFactory implements ApplicationContextAware {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        PersistenceManagerFactory.applicationContext = applicationContext;
+    }
+
 }

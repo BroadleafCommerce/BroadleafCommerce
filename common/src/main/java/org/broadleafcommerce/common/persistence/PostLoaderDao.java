@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,13 +19,13 @@ package org.broadleafcommerce.common.persistence;
 
 /**
  * Utility class for working with proxied entities.
- *
+ * <p>
  * The {@link DefaultPostLoaderDao} in core delegates functionally to
  * {@link jakarta.persistence.EntityManager}, while more interesting
  * functionality is provided by the enterprise version.
  *
- * @see DefaultPostLoaderDao
  * @author Nathan Moore (nathanmoore).
+ * @see DefaultPostLoaderDao
  */
 public interface PostLoaderDao {
     /**
@@ -33,14 +33,14 @@ public interface PostLoaderDao {
      * the persistence context, return the deproxied version.
      *
      * @param clazz entity class
-     * @param id primary key
+     * @param id    primary key
      * @return deproxied entity or null if not found
      */
     <T> T find(Class<T> clazz, Object id);
 
     /**
      * If within the context of a sandbox, return the sandbox entity by primary key and class.
-     *
+     * <p>
      * This purposefully uses the Entity Manager in order to trigger the hibernate filters.
      *
      * @param clazz
@@ -53,4 +53,5 @@ public interface PostLoaderDao {
     void evict(Class<?> clazz, Object id);
 
     void evict(Object entity);
+
 }

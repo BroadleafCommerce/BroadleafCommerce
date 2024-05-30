@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,7 +23,6 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 
 import java.util.List;
 
-
 /**
  * @author bpolster
  */
@@ -34,4 +33,5 @@ public class AbstractRuleBuilderFieldServiceExtensionHandler extends AbstractExt
     public ExtensionResultStatusType addFields(List<FieldData> fields, String name, String dtoClassName) {
         return ExtensionResultStatusType.NOT_HANDLED;
     }
+
 }

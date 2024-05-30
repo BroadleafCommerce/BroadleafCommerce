@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,25 +23,31 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
-public class PromotableCandidateFulfillmentGroupOfferImpl extends AbstractPromotionRounding implements PromotableCandidateFulfillmentGroupOffer {
+public class PromotableCandidateFulfillmentGroupOfferImpl extends AbstractPromotionRounding implements Serializable, PromotableCandidateFulfillmentGroupOffer {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
-    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<OfferItemCriteria, List<PromotableOrderItem>>();
+
+    protected HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateQualifiersMap = new HashMap<>();
     protected Offer offer;
     protected PromotableFulfillmentGroup promotableFulfillmentGroup;
-    
-    public PromotableCandidateFulfillmentGroupOfferImpl(PromotableFulfillmentGroup promotableFulfillmentGroup, Offer offer) {
-        assert(offer != null);
-        assert(promotableFulfillmentGroup != null);
+
+    public PromotableCandidateFulfillmentGroupOfferImpl(
+            PromotableFulfillmentGroup promotableFulfillmentGroup,
+            Offer offer
+    ) {
+        assert (offer != null);
+        assert (promotableFulfillmentGroup != null);
         this.offer = offer;
         this.promotableFulfillmentGroup = promotableFulfillmentGroup;
     }
-    
+
     @Override
     public HashMap<OfferItemCriteria, List<PromotableOrderItem>> getCandidateQualifiersMap() {
         return candidateQualifiersMap;
@@ -51,27 +57,35 @@ public class PromotableCandidateFulfillmentGroupOfferImpl extends AbstractPromot
     public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<PromotableOrderItem>> candidateItemsMap) {
         this.candidateQualifiersMap = candidateItemsMap;
     }
-    
+
     protected Money getBasePrice() {
         Money priceToUse = null;
         if (promotableFulfillmentGroup.getFulfillmentGroup().getRetailFulfillmentPrice() != null) {
             priceToUse = promotableFulfillmentGroup.getFulfillmentGroup().getRetailFulfillmentPrice();
-            if ((offer.getApplyDiscountToSalePrice()) && (promotableFulfillmentGroup.getFulfillmentGroup().getSaleFulfillmentPrice() != null)) {
+            if ((offer.getApplyDiscountToSalePrice())
+                    && (promotableFulfillmentGroup.getFulfillmentGroup().getSaleFulfillmentPrice() != null)) {
                 priceToUse = promotableFulfillmentGroup.getFulfillmentGroup().getSaleFulfillmentPrice();
             }
         }
         return priceToUse;
     }
-    
+
     @Override
     public Money computeDiscountedAmount() {
         Money discountedAmount = new Money(0);
         Money priceToUse = getBasePrice();
         if (priceToUse != null) {
             if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                discountedAmount = BroadleafCurrencyUtils.getMoney(offer.getValue(), promotableFulfillmentGroup.getFulfillmentGroup().getOrder().getCurrency());
+                discountedAmount = BroadleafCurrencyUtils.getMoney(
+                        offer.getValue(), promotableFulfillmentGroup.getFulfillmentGroup().getOrder().getCurrency()
+                );
             } else if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                discountedAmount = priceToUse.subtract(BroadleafCurrencyUtils.getMoney(offer.getValue(), promotableFulfillmentGroup.getFulfillmentGroup().getOrder().getCurrency()));
+                discountedAmount = priceToUse.subtract(
+                        BroadleafCurrencyUtils.getMoney(
+                                offer.getValue(),
+                                promotableFulfillmentGroup.getFulfillmentGroup().getOrder().getCurrency()
+                        )
+                );
             } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                 discountedAmount = priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")));
             }
@@ -82,7 +96,7 @@ public class PromotableCandidateFulfillmentGroupOfferImpl extends AbstractPromot
 
         return discountedAmount;
     }
-    
+
     @Override
     public Money getDiscountedPrice() {
         return getBasePrice().subtract(computeDiscountedAmount());
@@ -97,7 +111,7 @@ public class PromotableCandidateFulfillmentGroupOfferImpl extends AbstractPromot
     public Offer getOffer() {
         return offer;
     }
-    
+
     @Override
     public PromotableFulfillmentGroup getFulfillmentGroup() {
         return promotableFulfillmentGroup;
@@ -106,4 +120,5 @@ public class PromotableCandidateFulfillmentGroupOfferImpl extends AbstractPromot
     public int getPriority() {
         return offer.getPriority();
     }
+
 }

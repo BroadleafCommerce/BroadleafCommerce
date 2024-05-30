@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -93,7 +93,9 @@ public class CartStateServiceImpl implements CartStateService {
             if (orderPayment.isActive() && orderPayment.getType().isCreditCardType()) {
                 List<PaymentTransaction> transactions = orderPayment.getTransactions();
                 for (PaymentTransaction transaction : transactions) {
-                    String orderPaymentToken = transaction.getAdditionalFields().get(PaymentAdditionalFieldType.TOKEN.getType());
+                    String orderPaymentToken = transaction.getAdditionalFields().get(
+                            PaymentAdditionalFieldType.TOKEN.getType()
+                    );
 
                     if (ObjectUtils.equals(orderPaymentToken, paymentToken)) {
                         return true;
@@ -110,7 +112,7 @@ public class CartStateServiceImpl implements CartStateService {
         Order cart = CartState.getCart();
 
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
-        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments))  {
+        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments)) {
             boolean isCreditCartPayment = payment.getType().isCreditCardType();
             boolean isTemporaryPaymentGateway = PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType());
 
@@ -126,7 +128,7 @@ public class CartStateServiceImpl implements CartStateService {
         Order cart = CartState.getCart();
 
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
-        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments))  {
+        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments)) {
             boolean isCreditCartPayment = payment.getType().isCreditCardType();
 
             if (payment.isActive() && isCreditCartPayment) {
@@ -141,7 +143,7 @@ public class CartStateServiceImpl implements CartStateService {
         Order cart = CartState.getCart();
 
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
-        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments))  {
+        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments)) {
             if (payment.isActive() && PaymentType.THIRD_PARTY_ACCOUNT.equals(payment.getType())) {
                 return true;
             }
@@ -159,7 +161,7 @@ public class CartStateServiceImpl implements CartStateService {
 
         Order cart = CartState.getCart();
         List<OrderPayment> orderPayments = orderPaymentService.readPaymentsForOrder(cart);
-        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments))  {
+        for (OrderPayment payment : CollectionUtils.emptyIfNull(orderPayments)) {
             boolean isCreditCartPayment = payment.getType().isCreditCardType();
             boolean isTemporaryPaymentGateway = PaymentGatewayType.TEMPORARY.equals(payment.getGatewayType());
 

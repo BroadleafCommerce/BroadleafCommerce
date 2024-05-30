@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,12 +19,12 @@ package org.broadleafcommerce.openadmin.web.rulebuilder;
 
 import org.broadleafcommerce.common.exception.TranslatableException;
 
+import java.io.Serial;
+
 /**
  * @author Elbert Bautista (elbertbautista)
  */
 public class MVELTranslationException extends TranslatableException {
-
-    private static final long serialVersionUID = 1L;
 
     public static final int SPECIFIED_FIELD_NOT_FOUND = 100;
     public static final int NO_FIELD_FOUND_IN_RULE = 101;
@@ -35,8 +35,11 @@ public class MVELTranslationException extends TranslatableException {
     public static final int INCOMPATIBLE_INTEGER_VALUE = 106;
     public static final int INCOMPATIBLE_RULE = 107;
     public static final int SUB_GROUP_DETECTED = 108;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     public MVELTranslationException(int code, String message) {
         super(code, message);
     }
+
 }

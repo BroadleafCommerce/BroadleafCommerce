@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,16 +32,20 @@ public class PaymentRequestDTOServiceImpl implements PaymentRequestDTOService {
     }
 
     @Override
-    public PaymentRequestDTO populateCustomerInfo(PaymentRequestDTO requestDTO, Customer customer, String defaultEmailAddress) {
+    public PaymentRequestDTO populateCustomerInfo(
+            PaymentRequestDTO requestDTO,
+            Customer customer,
+            String defaultEmailAddress
+    ) {
         String phoneNumber = null;
 
         for (CustomerPhone phone : ListUtils.emptyIfNull(customer.getCustomerPhones())) {
             if (phone.getPhone().isDefault()) {
-                phoneNumber =  phone.getPhone().getPhoneNumber();
+                phoneNumber = phone.getPhone().getPhoneNumber();
             }
         }
 
-        String emailAddress = (customer.getEmailAddress() == null)? defaultEmailAddress : customer.getEmailAddress();
+        String emailAddress = (customer.getEmailAddress() == null) ? defaultEmailAddress : customer.getEmailAddress();
 
         return requestDTO.customer()
                 .customerId(customer.getId().toString())
@@ -51,4 +55,5 @@ public class PaymentRequestDTOServiceImpl implements PaymentRequestDTOService {
                 .phone(phoneNumber)
                 .done();
     }
+
 }

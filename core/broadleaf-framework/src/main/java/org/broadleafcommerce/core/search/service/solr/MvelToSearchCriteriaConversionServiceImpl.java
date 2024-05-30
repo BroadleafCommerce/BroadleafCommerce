@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -49,10 +49,9 @@ import jakarta.annotation.Resource;
 @Service("blMvelToSearchCriteriaConversionService")
 public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCriteriaConversionService {
 
+    public static final String CATEGORY_FORMAT_REGEX =
+            "^CollectionUtils\\.intersection\\(product\\.\\?allParentCategoryIds,\\[\\\"([0-9]+)(,\\\"[0-9]+\\\")*\\\"\\]\\)\\.size\\(\\)>0$";
     private static final Log LOG = LogFactory.getLog(MvelToSearchCriteriaConversionServiceImpl.class);
-
-    public static final String CATEGORY_FORMAT_REGEX = "^CollectionUtils\\.intersection\\(product\\.\\?allParentCategoryIds,\\[\\\"([0-9]+)(,\\\"[0-9]+\\\")*\\\"\\]\\)\\.size\\(\\)>0$";
-
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
@@ -151,7 +150,9 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                 boolean exclude = fragment.contains("!=") || fragment.startsWith("!");
                 boolean isWildCardSearch = isWildCardSearch(fieldValue);
                 fieldName = convertFieldName(fieldName);
-                List<IndexFieldType> indexFieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviationOrPropertyName(fieldName);
+                List<IndexFieldType> indexFieldTypes = indexFieldDao.getIndexFieldTypesByAbbreviationOrPropertyName(
+                        fieldName
+                );
                 boolean isCatalog = false;
                 if ("embeddableCatalogTenantDiscriminator.catalogDiscriminator".equals(fieldName)) {
                     fieldName = solrHelperService.getCatalogFieldName();
@@ -160,7 +161,9 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                     indexFieldTypes.add(new IndexFieldTypeImpl());
                 }
                 if (indexFieldTypes.size() > 0) {
-                    Boolean translatable = isCatalog ? Boolean.FALSE : indexFieldTypes.get(0).getIndexField().getField().getTranslatable();
+                    Boolean translatable = isCatalog
+                            ? Boolean.FALSE
+                            : indexFieldTypes.get(0).getIndexField().getField().getTranslatable();
                     List<Locale> allLocales;
                     if (translatable == null || !translatable) {
                         allLocales = new ArrayList<>();
@@ -171,7 +174,9 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                         allLocales = localeService.findAllLocales();
                     }
                     List<String> tmpFilters = new ArrayList<>();
-                    String abbreviation = isCatalog ? "" : indexFieldTypes.get(0).getIndexField().getField().getAbbreviation();
+                    String abbreviation = isCatalog
+                            ? ""
+                            : indexFieldTypes.get(0).getIndexField().getField().getAbbreviation();
                     for (Locale locale : allLocales) {
                         for (IndexFieldType indexFieldType : indexFieldTypes) {
                             String type = isCatalog ? "" : indexFieldType.getFieldType().getType();
@@ -227,8 +232,7 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
                         //if we exclude we don't want to see if at all so "AND" is ok
                         filters.addAll(tmpFilters);
                     }
-                }
-                else {
+                } else {
                     return Collections.emptyList();
                 }
             }
@@ -265,7 +269,8 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
         //parse the last segment removing the method prefix (e.g. get)
         String methodSegment = segments[segments.length - 1].replaceFirst("(^get)", "");
         //lowercase first char and remove the ()
-        segments[segments.length - 1] = Character.toLowerCase(methodSegment.charAt(0)) + methodSegment.substring(1, methodSegment.length() - 2);
+        segments[segments.length - 1] = Character.toLowerCase(methodSegment.charAt(0))
+                + methodSegment.substring(1, methodSegment.length() - 2);
         return String.join(".", segments);
     }
 
@@ -293,7 +298,8 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
 
             return mvelRule.substring(startIndex, endIndex);
         } else {
-            if (mvelRule.contains("org.apache.commons.lang3.StringUtils.contains") || mvelRule.contains(".startsWith") || mvelRule.contains(".endsWith")) {
+            if (mvelRule.contains("org.apache.commons.lang3.StringUtils.contains") || mvelRule.contains(".startsWith")
+                    || mvelRule.contains(".endsWith")) {
                 int startIndex = mvelRule.indexOf("(");
                 int endIndex = mvelRule.indexOf(",");
                 mvelRule = mvelRule.substring(startIndex + 1, endIndex);
@@ -395,6 +401,5 @@ public class MvelToSearchCriteriaConversionServiceImpl implements MvelToSearchCr
         }
         return customFieldValue;
     }
-
 
 }

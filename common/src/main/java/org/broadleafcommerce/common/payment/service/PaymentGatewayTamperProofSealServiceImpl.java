@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.payment.service;
 
 import org.apache.commons.codec.binary.Base64;
@@ -37,8 +36,11 @@ import javax.crypto.spec.SecretKeySpec;
 public class PaymentGatewayTamperProofSealServiceImpl implements PaymentGatewayTamperProofSealService {
 
     @Override
-    public String createTamperProofSeal(String secretKey, String customerId, String orderId)
-            throws NoSuchAlgorithmException, InvalidKeyException {
+    public String createTamperProofSeal(
+            String secretKey,
+            String customerId,
+            String orderId
+    ) throws NoSuchAlgorithmException, InvalidKeyException {
 
         //Create a URL-Safe Base64 encoder as some of these may get passed back as URL GET parameters
         Base64 encoder = new Base64(true);

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,6 +28,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.util.Date;
 
 import jakarta.persistence.Column;
@@ -69,6 +70,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     /**
      * The Constant serialVersionUID.
      */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -94,32 +96,28 @@ public class SkuAvailabilityImpl implements SkuAvailability {
      * The sale price.
      */
     @Column(name = "SKU_ID")
-    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Sku_ID",
-            visibility = VisibilityEnum.HIDDEN_ALL)
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Sku_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long skuId;
 
     /**
      * The retail price.
      */
     @Column(name = "LOCATION_ID")
-    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Location_ID",
-            group = "SkuAvailabilityImpl_Description")
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Location_ID", group = "SkuAvailabilityImpl_Description")
     protected Long locationId;
 
     /**
      * The quantity on hand.
      */
     @Column(name = "QTY_ON_HAND")
-    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Quantity_On_Hand",
-            group = "SkuAvailabilityImpl_Description")
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Quantity_On_Hand", group = "SkuAvailabilityImpl_Description")
     protected Integer quantityOnHand;
 
     /**
      * The reserve quantity.
      */
     @Column(name = "RESERVE_QTY")
-    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Reserve_Quantity",
-            group = "SkuAvailabilityImpl_Description")
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Reserve_Quantity", group = "SkuAvailabilityImpl_Description")
     protected Integer reserveQuantity;
 
     /**
@@ -136,8 +134,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
      * The date this product will be available.
      */
     @Column(name = "AVAILABILITY_DATE")
-    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Available_Date",
-            group = "SkuAvailabilityImpl_Description")
+    @AdminPresentation(friendlyName = "SkuAvailabilityImpl_Available_Date", group = "SkuAvailabilityImpl_Description")
     protected Date availabilityDate;
 
     @Override
@@ -146,23 +143,13 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     }
 
     @Override
-    public Long getLocationId() {
-        return locationId;
-    }
-
-    @Override
-    public Integer getQuantityOnHand() {
-        return quantityOnHand;
-    }
-
-    @Override
-    public Long getSkuId() {
-        return skuId;
-    }
-
-    @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public Long getLocationId() {
+        return locationId;
     }
 
     @Override
@@ -171,8 +158,18 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     }
 
     @Override
+    public Integer getQuantityOnHand() {
+        return quantityOnHand;
+    }
+
+    @Override
     public void setQuantityOnHand(Integer qoh) {
         this.quantityOnHand = qoh;
+    }
+
+    @Override
+    public Long getSkuId() {
+        return skuId;
     }
 
     @Override
@@ -270,4 +267,5 @@ public class SkuAvailabilityImpl implements SkuAvailability {
             return false;
         return true;
     }
+
 }

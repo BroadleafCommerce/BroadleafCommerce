@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,7 +37,7 @@ import jakarta.annotation.Resource;
 
 /**
  * Checks to make sure that the TargetItemCriteria is not empty if required
- * 
+ *
  * @author Jaci Eckert
  */
 @Component("blOfferTargetCriteriaItemValidator")
@@ -46,19 +46,20 @@ public class OfferTargetItemCriteriaValidator extends ValidationConfigurationBas
     @Resource(name = "blRuleFieldExtractionUtility")
     protected RuleFieldExtractionUtility ruleFieldExtractionUtility;
 
-
     @Override
-    public PropertyValidationResult validate(Entity entity,
+    public PropertyValidationResult validate(
+            Entity entity,
             Serializable instance,
             Map<String, FieldMetadata> entityFieldMetadata,
             Map<String, String> validationConfiguration,
             BasicFieldMetadata propertyMetadata,
             String propertyName,
-            String value) {
-
+            String value
+    ) {
         Property offerTypeProperty = entity.findProperty("type");
         Property useListForDiscountsProperty = entity.findProperty("useListForDiscounts");
-        if(OfferType.ORDER_ITEM.getType().equals(offerTypeProperty.getValue()) && BooleanUtils.isNotTrue(Boolean.parseBoolean(useListForDiscountsProperty.getValue()))) {
+        if (OfferType.ORDER_ITEM.getType().equals(offerTypeProperty.getValue())
+                && BooleanUtils.isNotTrue(Boolean.parseBoolean(useListForDiscountsProperty.getValue()))) {
             String targetItemCriteriaJson = entity.findProperty("targetItemCriteria").getUnHtmlEncodedValue();
             if (targetItemCriteriaJson == null) {
                 targetItemCriteriaJson = entity.findProperty("targetItemCriteriaJson").getUnHtmlEncodedValue();
@@ -72,4 +73,5 @@ public class OfferTargetItemCriteriaValidator extends ValidationConfigurationBas
 
         return new PropertyValidationResult(true);
     }
+
 }

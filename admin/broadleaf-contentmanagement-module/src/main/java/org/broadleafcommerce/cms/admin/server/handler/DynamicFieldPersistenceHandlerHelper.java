@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -60,7 +60,8 @@ public class DynamicFieldPersistenceHandlerHelper {
         fieldMetadata.setForeignKeyCollection(false);
         fieldMetadata.setMergedPropertyType(MergedPropertyType.PRIMARY);
         fieldMetadata.setLength(definition.getMaxLength());
-        if (definition.getDataDrivenEnumeration() != null && !CollectionUtils.isEmpty(definition.getDataDrivenEnumeration().getEnumValues())) {
+        if (definition.getDataDrivenEnumeration() != null
+                && !CollectionUtils.isEmpty(definition.getDataDrivenEnumeration().getEnumValues())) {
             int count = definition.getDataDrivenEnumeration().getEnumValues().size();
             String[][] enumItems = new String[count][2];
             for (int j = 0; j < count; j++) {
@@ -110,13 +111,13 @@ public class DynamicFieldPersistenceHandlerHelper {
      * Builds all of the metadata for all of the dynamic properties within a {@link StructuredContentType}, gleaned from
      * the {@link FieldGroup}s and {@link FieldDefinition}s.
      *
-     * @param fieldGroups groups that the {@link Property}s are built from
+     * @param fieldGroups   groups that the {@link Property}s are built from
      * @param inheritedType the value that each built {@link FieldMetadata} for each property will use to notate where the
-     * dynamic field actually came from (meaning {@link FieldMetadata#setAvailableToTypes(String[])} and {@link FieldMetadata#setInheritedFromType(String)}
+     *                      dynamic field actually came from (meaning {@link FieldMetadata#setAvailableToTypes(String[])} and {@link FieldMetadata#setInheritedFromType(String)}
      * @return
      */
     public Property[] buildDynamicPropertyList(List<FieldGroup> fieldGroups, Class<?> inheritedType) {
-        List<Property> propertiesList = new ArrayList<Property>();
+        List<Property> propertiesList = new ArrayList<>();
         for (FieldGroup group : fieldGroups) {
             constructPropertiesFromFieldGroup(inheritedType, propertiesList, group, 0l);
         }
@@ -183,7 +184,12 @@ public class DynamicFieldPersistenceHandlerHelper {
         return property;
     }
 
-    private void constructPropertiesFromFieldGroup(Class<?> inheritedType, List<Property> propertiesList, FieldGroup group, Long groupOrder) {
+    protected void constructPropertiesFromFieldGroup(
+            Class<?> inheritedType,
+            List<Property> propertiesList,
+            FieldGroup group,
+            Long groupOrder
+    ) {
         List<FieldDefinition> definitions = group.getFieldDefinitions();
         for (FieldDefinition def : definitions) {
             Property property = buildDynamicProperty(def, inheritedType);
@@ -196,7 +202,7 @@ public class DynamicFieldPersistenceHandlerHelper {
     }
 
     public Property[] buildDynamicPropertyList(Map<FieldGroup, Long> fieldGroups, Class<?> inheritedType) {
-        List<Property> propertiesList = new ArrayList<Property>();
+        List<Property> propertiesList = new ArrayList<>();
         for (Map.Entry<FieldGroup, Long> group : fieldGroups.entrySet()) {
             constructPropertiesFromFieldGroup(inheritedType, propertiesList, group.getKey(), group.getValue());
         }

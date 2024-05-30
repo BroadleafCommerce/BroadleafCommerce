@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,11 +50,11 @@ import javassist.util.proxy.ProxyFactory;
 public class DynamicDaoHelperImpl implements DynamicDaoHelper {
 
     public static final String HIBERNATE_PROXY = "$HibernateProxy";
-    private static final Log LOG = LogFactory.getLog(DynamicDaoHelperImpl.class);
     public static final Object LOCK_OBJECT = new Object();
     public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE = new LRUMap<>(1000);
     public static final Map<Class<?>, Class<?>[]> POLYMORPHIC_ENTITY_CACHE_WO_EXCLUSIONS = new LRUMap<>(1000);
     public static final String JAVASSIST_PROXY_KEY_PHRASE = "_$$_";
+    private static final Log LOG = LogFactory.getLog(DynamicDaoHelperImpl.class);
 
     public static Class<?> getNonProxyImplementationClassIfNecessary(Class<?> candidate) {
         Class<?> response = candidate;
@@ -66,7 +66,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
             //so that we're aware of it.
             if (!candidate.getName().contains(JAVASSIST_PROXY_KEY_PHRASE)) {
                 throw new ProxyDetectionException(String.format("Cannot determine the original implementation class for " +
-                        "the javassist proxy. Expected to find the keyphrase (%s) in the proxy classname (%s).",
+                                "the javassist proxy. Expected to find the keyphrase (%s) in the proxy classname (%s).",
                         JAVASSIST_PROXY_KEY_PHRASE, candidate.getName()));
             }
             String implName = candidate.getName().substring(0, candidate.getName().lastIndexOf(JAVASSIST_PROXY_KEY_PHRASE));
@@ -74,7 +74,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         } else if (HibernateProxy.class.isAssignableFrom(candidate)) {
             if (!candidate.getName().contains(HIBERNATE_PROXY)) {
                 throw new ProxyDetectionException(String.format("Cannot determine the original implementation class for " +
-                        "the Hibernate proxy. Expected to find the keyphrase (%s) in the proxy classname (%s).",
+                                "the Hibernate proxy. Expected to find the keyphrase (%s) in the proxy classname (%s).",
                         HIBERNATE_PROXY, candidate.getName()));
             }
             String implName = candidate.getName().substring(0, candidate.getName().lastIndexOf(HIBERNATE_PROXY));
@@ -95,10 +95,14 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     }
 
     @Override
-    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, boolean includeUnqualifiedPolymorphicEntities, boolean useCache) {
+    public Class<?>[] getAllPolymorphicEntitiesFromCeiling(
+            Class<?> ceilingClass,
+            boolean includeUnqualifiedPolymorphicEntities,
+            boolean useCache
+    ) {
         ceilingClass = getNonProxyImplementationClassIfNecessary(ceilingClass);
         Class<?>[] cache = null;
-        synchronized(LOCK_OBJECT) {
+        synchronized (LOCK_OBJECT) {
             if (useCache) {
                 if (includeUnqualifiedPolymorphicEntities) {
                     cache = getCachedPolymorphicEntityList(POLYMORPHIC_ENTITY_CACHE, ceilingClass);
@@ -145,14 +149,23 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         return cache;
     }
 
-    protected Class<?>[] getCachedPolymorphicEntityList(Map<Class<?>, Class<?>[]> polymorphicEntityCache, Class<?> ceilingClass) {
+    protected Class<?>[] getCachedPolymorphicEntityList(
+            Map<Class<?>, Class<?>[]> polymorphicEntityCache,
+            Class<?> ceilingClass
+    ) {
         Class<?>[] polymorphicEntities = polymorphicEntityCache.get(ceilingClass);
         return polymorphicEntities == null ? null : polymorphicEntities;
     }
 
     @Override
-    public Class<?>[] getUpDownInheritance(Class<?> testClass, boolean includeUnqualifiedPolymorphicEntities, boolean useCache) {
-        Class<?>[] pEntities = getAllPolymorphicEntitiesFromCeiling(testClass, includeUnqualifiedPolymorphicEntities, useCache);
+    public Class<?>[] getUpDownInheritance(
+            Class<?> testClass,
+            boolean includeUnqualifiedPolymorphicEntities,
+            boolean useCache
+    ) {
+        Class<?>[] pEntities = getAllPolymorphicEntitiesFromCeiling(
+                testClass, includeUnqualifiedPolymorphicEntities, useCache
+        );
         if (ArrayUtils.isEmpty(pEntities)) {
             return pEntities;
         }
@@ -189,9 +202,10 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
             boolean topLevelClassFound = false;
             for (Class<?> stageItem : stageItems) {
                 Iterator<Class<?>> itr = entities.iterator();
-                while(itr.hasNext()) {
+                while (itr.hasNext()) {
                     Class<?> entity = itr.next();
-                    checkitem: {
+                    checkitem:
+                    {
                         if (ArrayUtils.contains(entity.getInterfaces(), stageItem) || entity.equals(stageItem)) {
                             topLevelClassFound = true;
                             break checkitem;
@@ -214,7 +228,8 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
                 }
             }
             if (newStageItems.isEmpty()) {
-                throw new IllegalArgumentException("There was a gap in the inheritance hierarchy for (" + ceilingClass.getName() + ")");
+                throw new IllegalArgumentException("There was a gap in the inheritance hierarchy for ("
+                        + ceilingClass.getName() + ")");
             }
             stageItems = newStageItems;
         }
@@ -230,7 +245,9 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
         }
 
         //We filter out classes that are marked to exclude from polymorphism
-        AdminPresentationClass adminPresentationClass = AnnotationUtils.findAnnotation(clazz, AdminPresentationClass.class);
+        AdminPresentationClass adminPresentationClass = AnnotationUtils.findAnnotation(
+                clazz, AdminPresentationClass.class
+        );
         if (adminPresentationClass == null) {
             return false;
         } else if (adminPresentationClass.excludeFromPolymorphism()) {
@@ -250,7 +267,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
             // ((SessionImpl) session).getTypeConfiguration().getBasicTypeForJavaType(itemClass);
             // is not null? if so this is a "primitive" not entity...
             sessionFactory.getMetamodel().entity(entityClass);
-        }catch (IllegalArgumentException ex){
+        } catch (IllegalArgumentException ex) {
             isEntity = false;
         }
         if (!isEntity) {
@@ -295,8 +312,11 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     @Override
     public Field getIdField(Class<?> clazz) {
         clazz = getNonProxyImplementationClassIfNecessary(clazz);
-        Field idField = ReflectionUtils.findField(clazz, HibernateMappingProvider.getMapping(clazz.getName()).getIdentifierProperty().getName());
+        Field idField = ReflectionUtils.findField(
+                clazz, HibernateMappingProvider.getMapping(clazz.getName()).getIdentifierProperty().getName()
+        );
         idField.setAccessible(true);
         return idField;
     }
+
 }

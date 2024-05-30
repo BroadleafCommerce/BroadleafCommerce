@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,25 +35,25 @@ public interface BundleOrderItem extends OrderItem, OrderItemContainer, SkuAcces
     void setDiscreteOrderItems(List<DiscreteOrderItem> discreteOrderItems);
 
     Money getTaxablePrice();
-    
-    public List<BundleOrderItemFeePrice> getBundleOrderItemFeePrices();
 
-    public void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices);
+    List<BundleOrderItemFeePrice> getBundleOrderItemFeePrices();
 
-    public boolean hasAdjustedItems();
+    void setBundleOrderItemFeePrices(List<BundleOrderItemFeePrice> bundleOrderItemFeePrices);
 
-    public Money getBaseRetailPrice();
+    boolean hasAdjustedItems();
 
-    public void setBaseRetailPrice(Money baseRetailPrice);
+    Money getBaseRetailPrice();
 
-    public Money getBaseSalePrice();
+    void setBaseRetailPrice(Money baseRetailPrice);
 
-    public void setBaseSalePrice(Money baseSalePrice);
+    Money getBaseSalePrice();
+
+    void setBaseSalePrice(Money baseSalePrice);
 
     /**
      * For BundleOrderItem created from a ProductBundle, this will represent the default sku of
      * the product bundle.
-     *
+     * <p>
      * This can be null for implementations that programatically create product bundles.
      *
      * @return
@@ -64,7 +64,7 @@ public interface BundleOrderItem extends OrderItem, OrderItemContainer, SkuAcces
 
     /**
      * Returns the associated ProductBundle or null if not applicable.
-     *
+     * <p>
      * If null, then this ProductBundle was manually created.
      *
      * @return
@@ -83,5 +83,6 @@ public interface BundleOrderItem extends OrderItem, OrderItemContainer, SkuAcces
      */
     Product getProduct();
 
-    public boolean shouldSumItems();
+    boolean shouldSumItems();
+
 }

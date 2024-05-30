@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,9 +33,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 /**
- *
  * @author jfischer
- *
  */
 public class MergeXmlConfigResource {
 
@@ -71,7 +69,9 @@ public class MergeXmlConfigResource {
             throw new FatalBeanException("Unable to merge source and patch locations", e);
         } finally {
             if (merged != null) {
-                try{ merged.close(); } catch (Throwable e) {
+                try {
+                    merged.close();
+                } catch (Throwable e) {
                     LOG.error("Unable to merge source and patch locations", e);
                 }
             }
@@ -86,15 +86,15 @@ public class MergeXmlConfigResource {
         ResourceInputStream response = null;
         ResourceInputStream[] pair = new ResourceInputStream[2];
         pair[0] = sources[0];
-        for (int j=1;j<sources.length;j++){
+        for (int j = 1; j < sources.length; j++) {
             pair[1] = sources[j];
             response = mergeItems(pair[0], pair[1]);
-            try{
+            try {
                 pair[0].close();
             } catch (Throwable e) {
                 LOG.error("Unable to merge source and patch locations", e);
             }
-            try{
+            try {
                 pair[1].close();
             } catch (Throwable e) {
                 LOG.error("Unable to merge source and patch locations", e);
@@ -105,7 +105,10 @@ public class MergeXmlConfigResource {
         return response;
     }
 
-    protected ResourceInputStream mergeItems(ResourceInputStream sourceLocationFirst, ResourceInputStream sourceLocationSecond) throws MergeException, MergeManagerSetupException {
+    protected ResourceInputStream mergeItems(
+            ResourceInputStream sourceLocationFirst,
+            ResourceInputStream sourceLocationSecond
+    ) throws MergeException, MergeManagerSetupException {
         ResourceInputStream response = new MergeManager().merge(sourceLocationFirst, sourceLocationSecond);
 
         return response;
@@ -141,7 +144,9 @@ public class MergeXmlConfigResource {
             LOG.error("Unable to merge source and patch locations", e);
         } finally {
             if (reader != null) {
-                try{ reader.close(); } catch (Throwable e) {
+                try {
+                    reader.close();
+                } catch (Throwable e) {
                     LOG.error("Unable to merge source and patch locations", e);
                 }
             }
@@ -153,7 +158,7 @@ public class MergeXmlConfigResource {
     protected byte[] buildArrayFromStream(InputStream source) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         boolean eof = false;
-        try{
+        try {
             while (!eof) {
                 int temp = source.read();
                 if (temp == -1) {
@@ -163,11 +168,14 @@ public class MergeXmlConfigResource {
                 }
             }
         } finally {
-            try{ source.close(); } catch (Throwable e) {
+            try {
+                source.close();
+            } catch (Throwable e) {
                 LOG.error("Unable to merge source and patch locations", e);
             }
         }
 
         return baos.toByteArray();
     }
+
 }

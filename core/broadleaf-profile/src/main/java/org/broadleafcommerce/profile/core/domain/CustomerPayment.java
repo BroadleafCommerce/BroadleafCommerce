@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
@@ -27,44 +26,44 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * <p>This entity is designed to deal with payments associated to an {@link Customer} and is used to refer to a saved 
- * payment that is stored at the Payment Gateway level. This entity can be used to represent any type of payment, 
+ * <p>This entity is designed to deal with payments associated to an {@link Customer} and is used to refer to a saved
+ * payment that is stored at the Payment Gateway level. This entity can be used to represent any type of payment,
  * such as credit cards, PayPal accounts, etc.</p>
  */
 public interface CustomerPayment extends AdditionalFields, Serializable, MultiTenantCloneable<CustomerPayment> {
 
-    public void setId(Long id);
+    Long getId();
 
-    public Long getId();
+    void setId(Long id);
 
-    public Customer getCustomer();
+    Customer getCustomer();
 
-    public void setCustomer(Customer customer);
+    void setCustomer(Customer customer);
 
-    public Address getBillingAddress();
+    Address getBillingAddress();
 
-    public void setBillingAddress(Address billingAddress);
+    void setBillingAddress(Address billingAddress);
 
-    public String getPaymentToken();
+    String getPaymentToken();
 
-    public void setPaymentToken(String paymentToken);
+    void setPaymentToken(String paymentToken);
 
-    public PaymentType getPaymentType();
+    PaymentType getPaymentType();
 
-    public void setPaymentType(PaymentType paymentType);
+    void setPaymentType(PaymentType paymentType);
 
-    public PaymentGatewayType getPaymentGatewayType();
+    PaymentGatewayType getPaymentGatewayType();
 
-    public void setPaymentGatewayType(PaymentGatewayType paymentGatewayType);
+    void setPaymentGatewayType(PaymentGatewayType paymentGatewayType);
 
-    public boolean isDefault();
+    boolean isDefault();
 
-    public void setIsDefault(boolean isDefault);
-
-    @Override
-    public Map<String, String> getAdditionalFields();
+    void setIsDefault(boolean isDefault);
 
     @Override
-    public void setAdditionalFields(Map<String, String> additionalFields);
+    Map<String, String> getAdditionalFields();
+
+    @Override
+    void setAdditionalFields(Map<String, String> additionalFields);
 
 }

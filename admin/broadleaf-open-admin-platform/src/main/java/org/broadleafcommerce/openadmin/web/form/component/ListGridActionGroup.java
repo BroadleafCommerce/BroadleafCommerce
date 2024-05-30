@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.openadmin.web.form.component;
-
 
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.util.TypedPredicate;
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * Grouping of buttons to display on the frontend for a list grid. These will be displayed at the top of the {@link ListGrid} that they
  * are related to.
- * 
+ *
  * @author Chris Kittrell (ckittrell)
  * @see {@link ListGrid#addRowActionGroup(ListGridActionGroup)}
  * @see {@link ListGrid#addToolbarActionGroup(ListGridActionGroup)}
@@ -36,8 +35,8 @@ public class ListGridActionGroup implements Cloneable {
 
     protected String name = "";
     protected String actionGroupClass = "";
-    protected List<ListGridAction> listGridActions = new ArrayList<ListGridAction>();
-    
+    protected List<ListGridAction> listGridActions = new ArrayList<>();
+
     /**
      * @see {@link #setName(String)}
      */
@@ -45,7 +44,7 @@ public class ListGridActionGroup implements Cloneable {
         setName(name);
         return this;
     }
-    
+
     /**
      * @see {@link #setActionGroupClass(String)}
      */
@@ -109,7 +108,7 @@ public class ListGridActionGroup implements Cloneable {
     public void setListGridActions(List<ListGridAction> listGridActions) {
         this.listGridActions = listGridActions;
     }
-    
+
     @Override
     public ListGridActionGroup clone() {
         ListGridActionGroup cloned = new ListGridActionGroup();
@@ -118,4 +117,5 @@ public class ListGridActionGroup implements Cloneable {
         cloned.listGridActions = listGridActions;
         return cloned;
     }
+
 }

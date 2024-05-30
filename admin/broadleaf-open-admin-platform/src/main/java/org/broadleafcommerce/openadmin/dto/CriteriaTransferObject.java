@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.dto;
 
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
@@ -29,7 +28,7 @@ import java.util.Map;
 /**
  * Generic persistent entity criteria transfer object.
  * Provides a storage mechanism for query related information regarding an entity.
- * 
+ *
  * @author Jeff Fischer
  */
 public class CriteriaTransferObject {
@@ -44,10 +43,10 @@ public class CriteriaTransferObject {
     private Boolean folderLookup;
     private Long folderId;
 
-    private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<String, FilterAndSortCriteria>();
+    private Map<String, FilterAndSortCriteria> criteriaMap = new HashMap<>();
 
-    private List<FilterMapping> additionalFilterMappings = new ArrayList<FilterMapping>();
-    private List<FilterMapping> nonCountAdditionalFilterMappings = new ArrayList<FilterMapping>();
+    private List<FilterMapping> additionalFilterMappings = new ArrayList<>();
+    private List<FilterMapping> nonCountAdditionalFilterMappings = new ArrayList<>();
 
     /**
      * The index of records in the database for which a fetch will start.
@@ -128,7 +127,7 @@ public class CriteriaTransferObject {
     /**
      * Add a {@link FilterAndSortCriteria} instance. Contains information about which records are retrieved
      * and in what direction they're sorted.
-     * 
+     *
      * @param criteria {@link FilterAndSortCriteria}
      */
     public void add(FilterAndSortCriteria criteria) {
@@ -138,7 +137,7 @@ public class CriteriaTransferObject {
     /**
      * Add all {@link FilterAndSortCriteria} instances. Contains information about which records are retrieved
      * and in what direction they're sorted.
-     * 
+     *
      * @param criterias the list of {@link FilterAndSortCriteria} instances to add
      */
     public void addAll(Collection<FilterAndSortCriteria> criterias) {
@@ -191,7 +190,7 @@ public class CriteriaTransferObject {
     /**
      * This list holds additional filter mappings that might have been constructed in a custom persistence
      * handler. This is only used when very custom filtering needs to occur.
-     *
+     * <p>
      * These filter mappings will NOT be applied to the query that gathers the total number of results.
      * This especially applies to queries that include join fetches where the total number of results
      * should not include the join fetched items. An example of this is defaultSku and defaultCategory
@@ -209,6 +208,7 @@ public class CriteriaTransferObject {
 
     /**
      * Tells if this is a foldered fetch
+     *
      * @return true if this is a folder lookup, false otherwise
      */
     public boolean isFolderLookup() {
@@ -222,6 +222,7 @@ public class CriteriaTransferObject {
     /**
      * Gets the folder ID to filter a fetch on so that only entities in a folder will be shown. If this is null while
      * {@link #folderLookup} is true, this means find entities not assigned to a folder.
+     *
      * @return the folder ID
      */
     public Long getFolderId() {
@@ -231,4 +232,5 @@ public class CriteriaTransferObject {
     public void setFolderId(Long folderId) {
         this.folderId = folderId;
     }
+
 }

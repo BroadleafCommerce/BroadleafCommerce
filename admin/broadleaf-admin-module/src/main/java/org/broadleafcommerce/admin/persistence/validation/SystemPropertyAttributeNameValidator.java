@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,11 +38,10 @@ import java.util.regex.Pattern;
 
 /**
  * Validates that a SystemProperty's AttributeName field does not contain a reserved key word surrounded by ".".
- *  AttributeNames such as "should.not.fail" will be converted to "should__not__fail" by JSCompatibilityHelper.
- *  This will later lead to a Thymeleaf exception when it attempts to process #fields.hasErrors('fields[should__not__fail].value')
- *  in entityForm.html.
- * 
- * 
+ * AttributeNames such as "should.not.fail" will be converted to "should__not__fail" by JSCompatibilityHelper.
+ * This will later lead to a Thymeleaf exception when it attempts to process #fields.hasErrors('fields[should__not__fail].value')
+ * in entityForm.html.
+ *
  * @author Chris Kittrell (ckittrell)
  */
 @Component("blSystemPropertyAttributeNameValidator")
@@ -55,9 +54,15 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
     private static final String DISALLOWED_CHARACTERS_ERROR_MESSAGE = "SystemPropertyImpl_name_disallowedCharactersError";
 
     @Override
-    public PropertyValidationResult validate(Entity entity, Serializable instance, Map<String, FieldMetadata> entityFieldMetadata,
-            Map<String, String> validationConfiguration, BasicFieldMetadata propertyMetadata, String propertyName,
-            String value) {
+    public PropertyValidationResult validate(
+            Entity entity,
+            Serializable instance,
+            Map<String, FieldMetadata> entityFieldMetadata,
+            Map<String, String> validationConfiguration,
+            BasicFieldMetadata propertyMetadata,
+            String propertyName,
+            String value
+    ) {
         String attributeName = entity.findProperty("name") == null ? null : entity.findProperty("name").getValue();
 
         if (attributeName != null) {
@@ -75,22 +80,25 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
         return new PropertyValidationResult(true);
     }
 
-    private boolean containsWhiteSpace(String attributeName) {
+    protected boolean containsWhiteSpace(String attributeName) {
         return Pattern.compile("\\s").matcher(attributeName).find();
     }
 
-    private boolean containsOnlyLettersNumbersPeriodsDashes(String attributeName) {
-        return attributeName.replaceAll("\\.", "").replaceAll("-", "").matches("([a-zA-Z0-9])\\w+");
+    protected boolean containsOnlyLettersNumbersPeriodsDashes(String attributeName) {
+        return attributeName
+                .replaceAll("\\.", "")
+                .replaceAll("-", "")
+                .matches("([a-zA-Z0-9])\\w+");
     }
 
-    private Set<String> retrieveContainedReservedKeywords(String attributeName) {
+    protected Set<String> retrieveContainedReservedKeywords(String attributeName) {
         Set<String> containedReservedKeywords = new LinkedHashSet<>();
 
         List<String> attributeNamePieces = new ArrayList<>(Arrays.asList(attributeName.split("\\.")));
 
         attributeNamePieces = removeFirstAndLastPieces(attributeNamePieces);
 
-        for (String attributeNamePiece: attributeNamePieces) {
+        for (String attributeNamePiece : attributeNamePieces) {
             if (reservedKeywords.contains(attributeNamePiece)) {
                 containedReservedKeywords.add(attributeNamePiece);
             }
@@ -101,7 +109,7 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
     /**
      * Remove the first & last elements since we know they cannot be surrounded by "."
      */
-    private List<String> removeFirstAndLastPieces(List<String> attributeNamePieces) {
+    protected List<String> removeFirstAndLastPieces(List<String> attributeNamePieces) {
         attributeNamePieces.remove(0);
 
         // The last element should only be removed if there are more than two elements
@@ -114,19 +122,22 @@ public class SystemPropertyAttributeNameValidator extends ValidationConfiguratio
         return attributeNamePieces;
     }
 
-    private PropertyValidationResult createDisallowedCharactersValidationResult() {
+    protected PropertyValidationResult createDisallowedCharactersValidationResult() {
         return new PropertyValidationResult(false, getDisallowedCharactersErrorMesssage());
     }
 
-    private String getDisallowedCharactersErrorMesssage() {
+    protected String getDisallowedCharactersErrorMesssage() {
         return BLCMessageUtils.getMessage(DISALLOWED_CHARACTERS_ERROR_MESSAGE);
     }
 
-    private PropertyValidationResult createContainsReservedKeywordsValidationResult(Set<String> containedReservedKeywords) {
-        return new PropertyValidationResult(false, getReservedWordErrorMessage() + " " + containedReservedKeywords.toString());
+    protected PropertyValidationResult createContainsReservedKeywordsValidationResult(Set<String> containedReservedKeywords) {
+        return new PropertyValidationResult(
+                false, getReservedWordErrorMessage() + " " + containedReservedKeywords.toString()
+        );
     }
 
-    private String getReservedWordErrorMessage() {
+    protected String getReservedWordErrorMessage() {
         return BLCMessageUtils.getMessage(RESERVED_WORD_ERROR_MESSAGE);
     }
+
 }

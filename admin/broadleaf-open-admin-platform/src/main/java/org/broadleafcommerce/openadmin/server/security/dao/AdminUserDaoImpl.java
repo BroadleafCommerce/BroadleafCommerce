@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,9 +35,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 
 /**
- * 
  * @author jfischer
- *
  */
 @Repository("blAdminUserDao")
 public class AdminUserDaoImpl implements AdminUserDao {
@@ -45,20 +43,32 @@ public class AdminUserDaoImpl implements AdminUserDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public void deleteAdminUser(AdminUser user) {
         if (!em.contains(user)) {
-            user = em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminUser", AdminUser.class), user.getId());
+            user = em.find(
+                    entityConfiguration.lookupEntityClass(
+                            "org.broadleafcommerce.openadmin.server.security.domain.AdminUser",
+                            AdminUser.class
+                    ),
+                    user.getId()
+            );
         }
         em.remove(user);
     }
 
     public AdminUser readAdminUserById(Long id) {
-        return em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.AdminUser", AdminUser.class), id);
+        return em.find
+                (entityConfiguration.lookupEntityClass(
+                                "org.broadleafcommerce.openadmin.server.security.domain.AdminUser",
+                                AdminUser.class
+                        ),
+                        id
+                );
     }
-    
+
     @Override
     public List<AdminUser> readAdminUsersByIds(Set<Long> ids) {
         TypedQueryBuilder<AdminUser> tqb = new TypedQueryBuilder<>(AdminUserImpl.class, "au", AdminUser.class);
@@ -88,10 +98,10 @@ public class AdminUserDaoImpl implements AdminUserDao {
         List<AdminUser> users = query.getResultList();
         //TODO rewrite on streams when upgraded to java 8
         Iterator<AdminUser> iterator = users.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             AdminUser user = iterator.next();
-            if(Status.class.isAssignableFrom(user.getClass())) {
-                if('Y' == ((Status)user).getArchived()) {
+            if (Status.class.isAssignableFrom(user.getClass())) {
+                if ('Y' == ((Status) user).getArchived()) {
                     iterator.remove();
                 }
             }
@@ -115,4 +125,5 @@ public class AdminUserDaoImpl implements AdminUserDao {
         query.setParameter("email", emailAddress);
         return query.getResultList();
     }
+
 }

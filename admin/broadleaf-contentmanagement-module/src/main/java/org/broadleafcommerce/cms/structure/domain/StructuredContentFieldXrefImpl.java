@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,6 +33,7 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.persistence.CascadeType;
@@ -58,7 +59,10 @@ import jakarta.persistence.Table;
 public class StructuredContentFieldXrefImpl
         implements StructuredContentFieldXref, Serializable, ProfileEntity {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -95,16 +99,11 @@ public class StructuredContentFieldXrefImpl
     }
 
     public StructuredContentFieldXrefImpl(StructuredContent sc,
-            StructuredContentField scField,
-            String key) {
+                                          StructuredContentField scField,
+                                          String key) {
         this.structuredContent = sc;
         this.structuredContentField = scField;
         this.key = key;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
     }
 
     @Override
@@ -113,13 +112,18 @@ public class StructuredContentFieldXrefImpl
     }
 
     @Override
-    public void setStructuredContent(StructuredContent sc) {
-        this.structuredContent = sc;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
     public StructuredContent getStructuredContent() {
         return structuredContent;
+    }
+
+    @Override
+    public void setStructuredContent(StructuredContent sc) {
+        this.structuredContent = sc;
     }
 
     @Override
@@ -133,13 +137,13 @@ public class StructuredContentFieldXrefImpl
     }
 
     @Override
-    public void setKey(String key) {
-        this.key = key;
+    public String getKey() {
+        return key;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     @Override

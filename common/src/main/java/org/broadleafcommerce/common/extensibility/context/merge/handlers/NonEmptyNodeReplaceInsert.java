@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,9 +26,9 @@ import java.util.List;
 
 /**
  * This handler is responsible for replacing nodes in the source document
-  * with the same nodes from the patch document. Note, additional nodes
-  * from the patch document that are not present in the source document
-  * are simply appended to the source document. This handler differs from its
+ * with the same nodes from the patch document. Note, additional nodes
+ * from the patch document that are not present in the source document
+ * are simply appended to the source document. This handler differs from its
  * parent in that it will not replace an existing node with a node from
  * the patch document if that patch node contains no child nodes.
  *
@@ -43,7 +43,7 @@ public class NonEmptyNodeReplaceInsert extends NodeReplaceInsert {
         }
         //filter out primary nodes that don't have the attribute
         ArrayList<Node> filterList = new ArrayList<Node>();
-        for (int j=0;j<primaryNodes.length;j++){
+        for (int j = 0; j < primaryNodes.length; j++) {
             if (primaryNodes[j].getAttributes().getNamedItem(attribute) != null) {
                 filterList.add(primaryNodes[j]);
             }
@@ -63,7 +63,8 @@ public class NonEmptyNodeReplaceInsert extends NodeReplaceInsert {
         Arrays.sort(filtered, idCompare);
         int pos = Arrays.binarySearch(filtered, testNode, idCompare);
         if (pos >= 0) {
-            evaluate:{
+            evaluate:
+            {
                 if (!testNode.hasChildNodes()) {
                     break evaluate;
                 }
@@ -75,4 +76,5 @@ public class NonEmptyNodeReplaceInsert extends NodeReplaceInsert {
         }
         return false;
     }
+
 }

@@ -10,22 +10,24 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.email.domain;
 
+import java.io.Serial;
 import java.util.Arrays;
 
 /**
  * Basic implementation of EmailTarget
- * 
+ *
  * @author bpolster
  */
 public class EmailTargetImpl implements EmailTarget {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected String[] bccAddresses;
@@ -36,27 +38,8 @@ public class EmailTargetImpl implements EmailTarget {
      * (non-Javadoc)
      * @see org.broadleafcommerce.common.email.domain.EmailTarget#getBCCAddresses()
      */
-
     public String[] getBCCAddresses() {
         return bccAddresses;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.common.email.domain.EmailTarget#getCCAddresses()
-     */
-
-    public String[] getCCAddresses() {
-        return ccAddresses;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.common.email.domain.EmailTarget#getEmailAddress()
-     */
-
-    public String getEmailAddress() {
-        return emailAddress;
     }
 
     /*
@@ -65,9 +48,16 @@ public class EmailTargetImpl implements EmailTarget {
      * org.broadleafcommerce.common.email.domain.EmailTarget#setBCCAddresses(java.lang
      * .String[])
      */
-
     public void setBCCAddresses(String[] bccAddresses) {
         this.bccAddresses = bccAddresses;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.broadleafcommerce.common.email.domain.EmailTarget#getCCAddresses()
+     */
+    public String[] getCCAddresses() {
+        return ccAddresses;
     }
 
     /*
@@ -76,9 +66,16 @@ public class EmailTargetImpl implements EmailTarget {
      * org.broadleafcommerce.common.email.domain.EmailTarget#setCCAddresses(java.lang
      * .String[])
      */
-
     public void setCCAddresses(String[] ccAddresses) {
         this.ccAddresses = ccAddresses;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.broadleafcommerce.common.email.domain.EmailTarget#getEmailAddress()
+     */
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
     /*
@@ -87,7 +84,6 @@ public class EmailTargetImpl implements EmailTarget {
      * org.broadleafcommerce.common.email.domain.EmailTarget#setEmailAddress(java.lang
      * .String)
      */
-
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }

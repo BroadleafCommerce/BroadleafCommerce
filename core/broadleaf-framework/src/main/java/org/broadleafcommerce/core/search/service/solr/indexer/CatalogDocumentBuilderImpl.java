@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -56,30 +56,33 @@ import jakarta.annotation.Resource;
 
 /**
  * Default implementation of the {@link DocumentBuilder} to build {@link SolrInputDocument}s from {@link Product}s.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 @Component("blCatalogDocumentBuilder")
 public class CatalogDocumentBuilderImpl implements CatalogDocumentBuilder {
-    
+
     private static final Log LOG = LogFactory.getLog(CatalogDocumentBuilderImpl.class);
-    
+
     @Resource(name = "blSolrHelperService")
     protected SolrHelperService shs;
-    
+
     @Resource(name = "blSolrIndexServiceExtensionManager")
     protected SolrIndexServiceExtensionManager extensionManager;
-    
+
     @Qualifier("blCatalogSolrConfiguration")
     @Autowired(required = false)
     protected SolrConfiguration solrConfiguration;
-    
+
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
     @Override
-    public SolrInputDocument buildDocument(final Indexable indexable, final List<IndexField> fields, final List<Locale> locales) {
+    public SolrInputDocument buildDocument(
+            final Indexable indexable,
+            final List<IndexField> fields,
+            final List<Locale> locales
+    ) {
         try {
             final SolrInputDocument document = new SolrInputDocument();
             HibernateUtils.executeWithoutCache(new GenericOperation<Void>() {
@@ -95,12 +98,18 @@ public class CatalogDocumentBuilderImpl implements CatalogDocumentBuilder {
             modifyDocument(indexable, fields, locales);
             return document;
         } catch (Exception e) {
-            LOG.warn("An error occured trying to build a SolrInputDocument for Indexable of type, " + indexable.getClass().getName() + " with an ID of " + indexable.getId(), e);
+            LOG.warn("An error occured trying to build a SolrInputDocument for Indexable of type, "
+                    + indexable.getClass().getName() + " with an ID of " + indexable.getId(), e);
             return null;
         }
     }
-    
-    protected void attachIndexableDocumentFields(SolrInputDocument document, Indexable indexable, List<IndexField> fields, List<Locale> locales) {
+
+    protected void attachIndexableDocumentFields(
+            SolrInputDocument document,
+            Indexable indexable,
+            List<IndexField> fields,
+            List<Locale> locales
+    ) {
         for (IndexField indexField : fields) {
             try {
                 // If we find an IndexField entry for this field, then we need to store it in the index
@@ -110,9 +119,13 @@ public class CatalogDocumentBuilderImpl implements CatalogDocumentBuilder {
                     // For each of its search field types, get the property values, and add a field to the document for each property value
                     for (IndexFieldType sft : searchableFieldTypes) {
                         FieldType fieldType = sft.getFieldType();
-                        Map<String, Object> propertyValues = getPropertyValues(indexable, indexField.getField(), fieldType, locales);
+                        Map<String, Object> propertyValues = getPropertyValues(
+                                indexable, indexField.getField(), fieldType, locales
+                        );
 
-                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForIndexField(document, indexField, fieldType, propertyValues);
+                        ExtensionResultStatusType result = extensionManager.getProxy().populateDocumentForIndexField(
+                                document, indexField, fieldType, propertyValues
+                        );
 
                         if (ExtensionResultStatusType.NOT_HANDLED.equals(result)) {
                             // Build out the field for every prefix
@@ -134,24 +147,24 @@ public class CatalogDocumentBuilderImpl implements CatalogDocumentBuilder {
                 }
 
             } catch (Exception e) {
-                LOG.error("Could not get value for property[" + indexField.getField().getQualifiedFieldName() + "] for product id["
-                        + indexable.getId() + "]", e);
+                LOG.error("Could not get value for property[" + indexField.getField().getQualifiedFieldName()
+                        + "] for product id[" + indexable.getId() + "]", e);
                 throw ExceptionHelper.refineException(e);
             }
         }
     }
-    
+
     protected void attachAdditionalDocumentFields(Indexable indexable, SolrInputDocument document) {
         //Empty implementation. Placeholder for others to extend and add additional fields
         extensionManager.getProxy().attachAdditionalDocumentFields(indexable, document);
     }
-    
+
     protected void attachBasicDocumentFields(Indexable indexable, SolrInputDocument document) {
         CatalogStructure cache = SolrIndexCachedOperation.getCache();
         if (cache == null) {
             String msg = "SolrIndexService.performCachedOperation() must be used in conjuction with"
-                + " solrIndexDao.populateProductCatalogStructure() in order to correctly build catalog documents or should"
-                + " be invoked from buildIncrementalIndex()";
+                    + " solrIndexDao.populateProductCatalogStructure() in order to correctly build catalog documents or should"
+                    + " be invoked from buildIncrementalIndex()";
             throw new IllegalStateException(msg);
         }
 
@@ -190,19 +203,24 @@ public class CatalogDocumentBuilderImpl implements CatalogDocumentBuilder {
                     displayOrderKey = shs.getCategoryId(categoryId) + "-" + cacheKey;
                     displayOrder = convertDisplayOrderToLong(cache, displayOrderKey);
                 }
-                
+
                 if (document.getField(categorySortFieldName) == null && displayOrder != null) {
                     document.addField(categorySortFieldName, displayOrder);
                 }
 
                 // This is the entire tree of every category defined on the product
-                buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<Long>());
+                buildFullCategoryHierarchy(document, cache, categoryId, new HashSet<>());
             }
         }
     }
-    
-    protected void buildFullCategoryHierarchy(SolrInputDocument document, CatalogStructure cache, Long categoryId, Set<Long> indexedParents) {
-        Long catIdToAdd = shs.getCategoryId(categoryId); 
+
+    protected void buildFullCategoryHierarchy(
+            SolrInputDocument document,
+            CatalogStructure cache,
+            Long categoryId,
+            Set<Long> indexedParents
+    ) {
+        Long catIdToAdd = shs.getCategoryId(categoryId);
 
         Collection<Object> existingValues = document.getFieldValues(shs.getCategoryFieldName());
         if (existingValues == null || !existingValues.contains(catIdToAdd)) {
@@ -217,18 +235,24 @@ public class CatalogDocumentBuilderImpl implements CatalogDocumentBuilder {
             }
         }
     }
-    
-    protected Map<String, Object> getPropertyValues(Indexable indexedItem, Field field, FieldType fieldType, List<Locale> locales)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+
+    protected Map<String, Object> getPropertyValues(
+            Indexable indexedItem,
+            Field field,
+            FieldType fieldType,
+            List<Locale> locales
+    ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
         String propertyName = field.getPropertyName();
         Map<String, Object> values = new HashMap<>();
 
         ExtensionResultStatusType extensionResult = ExtensionResultStatusType.NOT_HANDLED;
         if (extensionManager != null) {
-            extensionResult = extensionManager.getProxy().addPropertyValues(indexedItem, field, fieldType, values, propertyName, locales);
+            extensionResult = extensionManager.getProxy().addPropertyValues(
+                    indexedItem, field, fieldType, values, propertyName, locales
+            );
         }
-        
+
         if (ExtensionResultStatusType.NOT_HANDLED.equals(extensionResult)) {
             Object propertyValue = shs.getPropertyValue(indexedItem, field);
             if (propertyValue != null) {
@@ -238,10 +262,10 @@ public class CatalogDocumentBuilderImpl implements CatalogDocumentBuilder {
 
         return values;
     }
-    
+
     /**
-     *  We multiply the BigDecimal by 1,000,000 to maintain any possible decimals in use the
-     *  displayOrder value.
+     * We multiply the BigDecimal by 1,000,000 to maintain any possible decimals in use the
+     * displayOrder value.
      *
      * @param cache
      * @param displayOrderKey
@@ -256,9 +280,10 @@ public class CatalogDocumentBuilderImpl implements CatalogDocumentBuilder {
 
         return displayOrder.multiply(BigDecimal.valueOf(1000000)).longValue();
     }
-    
+
     /**
      * This is a simple hook point to allow implementors to override and modify the documents after the default functionality has created them.
+     *
      * @param indexable
      * @param fields
      * @param locales
@@ -266,5 +291,5 @@ public class CatalogDocumentBuilderImpl implements CatalogDocumentBuilder {
     protected void modifyDocument(final Indexable indexable, final List<IndexField> fields, final List<Locale> locales) {
         //Do nothing by default.
     }
-    
+
 }

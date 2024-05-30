@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,7 +44,7 @@ import jakarta.annotation.Resource;
 
 /**
  * Responsible for generating site map entries for Category.
- * 
+ *
  * @author Joshua Skorton (jskorton)
  */
 @Component("blCategorySiteMapGenerator")
@@ -82,7 +82,12 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
         }
     }
 
-    protected void addCategorySiteMapEntries(Category parentCategory, int currentDepth, CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder) {
+    protected void addCategorySiteMapEntries(
+            Category parentCategory,
+            int currentDepth,
+            CategorySiteMapGeneratorConfiguration categorySMGC,
+            SiteMapBuilder siteMapBuilder
+    ) {
         // If we've reached beyond the ending depth, don't proceed
         if (currentDepth > categorySMGC.getEndingDepth()) {
             return;
@@ -109,7 +114,11 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
         } while (categories.size() == rowLimit);
     }
 
-    protected void constructSiteMapURLs(CategorySiteMapGeneratorConfiguration categorySMGC, SiteMapBuilder siteMapBuilder, Category category) {
+    protected void constructSiteMapURLs(
+            CategorySiteMapGeneratorConfiguration categorySMGC,
+            SiteMapBuilder siteMapBuilder,
+            Category category
+    ) {
         Integer categoryPageCount = getPageCountForCategory(category);
 
         for (int pageNumber = 1; pageNumber <= categoryPageCount; pageNumber++) {
@@ -146,7 +155,7 @@ public class CategorySiteMapGenerator implements SiteMapGenerator {
     protected Integer getPageCountForCategory(Category category) {
         int activeProductCount = category.getActiveProductXrefs().size();
 
-        return (activeProductCount == 0)? 1 : (int) Math.ceil(activeProductCount * 1.0 / getDefaultPageSize());
+        return (activeProductCount == 0) ? 1 : (int) Math.ceil(activeProductCount * 1.0 / getDefaultPageSize());
     }
 
     protected String generateUrl(SiteMapBuilder siteMapBuilder, Category category, int pageNumber) {

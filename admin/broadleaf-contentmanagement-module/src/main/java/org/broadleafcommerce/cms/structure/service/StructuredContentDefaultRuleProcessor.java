@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,19 +32,19 @@ import java.util.Map;
  * into a single MVEL expression.
  *
  * @author bpolster.
- *
  */
 @Service("blContentDefaultRuleProcessor")
 public class StructuredContentDefaultRuleProcessor extends AbstractRuleProcessor<StructuredContentDTO> {
+
     private static final Log LOG = LogFactory.getLog(StructuredContentDefaultRuleProcessor.class);
 
     /**
      * Returns true if all of the rules associated with the passed in <code>StructuredContent</code>
      * item match based on the passed in vars.
-     *
+     * <p>
      * Also returns true if no rules are present for the passed in item.
      *
-     * @param sc - a structured content item to test
+     * @param sc   - a structured content item to test
      * @param vars - a map of objects used by the rule MVEL expressions
      * @return the result of the rule checks
      */
@@ -53,13 +53,15 @@ public class StructuredContentDefaultRuleProcessor extends AbstractRuleProcessor
         String ruleExpression = sc.getRuleExpression();
 
         if (ruleExpression != null) {
-            if (LOG.isTraceEnabled())  {
-                LOG.trace("Processing content rule for StructuredContent with id " + sc.getId() +".   Value = " + ruleExpression);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Processing content rule for StructuredContent with id " + sc.getId() + ".   Value = "
+                        + ruleExpression);
             }
             boolean result = executeExpression(ruleExpression, vars);
-            if (! result) {
+            if (!result) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Content failed to pass rule and will not be included for StructuredContent with id " + sc.getId() +".   Value = " + ruleExpression);
+                    LOG.debug("Content failed to pass rule and will not be included for StructuredContent with id "
+                            + sc.getId() + ".   Value = " + ruleExpression);
                 }
             }
 
@@ -69,16 +71,16 @@ public class StructuredContentDefaultRuleProcessor extends AbstractRuleProcessor
             return true;
         }
     }
-    
+
     @Override
     @SuppressWarnings("serial")
     public Map<String, String> getContextClassNames() {
-        return new HashMap<String, String>(){{
+        return new HashMap<>() {{
             put("customer", "org.broadleafcommerce.profile.core.domain.Customer");
             put("product", "org.broadleafcommerce.core.catalog.domain.Product");
             put("time", "org.broadleafcommerce.common.TimeDTO");
             put("request", "org.broadleafcommerce.common.RequestDTO");
         }};
     }
-    
+
 }

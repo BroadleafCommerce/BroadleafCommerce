@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.site.domain.Site;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import java.io.Serial;
 import java.util.Collection;
 
 /**
@@ -31,31 +32,51 @@ import java.util.Collection;
  * Date: 6/19/12
  */
 public class BroadleafExternalAuthenticationUserDetails extends User {
-    
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private String firstName;
-    
+
     private String lastName;
-    
+
     private String email;
-    
+
     private Site site;
 
     /**
-     * This sets the username, password, and authorities.  
+     * This sets the username, password, and authorities.
      * It also set the enabled, accountNonExpired, credentialsNonExpired, and accountNonLocked properties to true.
+     *
      * @param username
      * @param password
      * @param authorities
      */
-    public BroadleafExternalAuthenticationUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, true, true, true, true, authorities);
+    public BroadleafExternalAuthenticationUserDetails(
+            String username,
+            String password,
+            Collection<? extends GrantedAuthority> authorities
+    ) {
+        super(
+                username,
+                password,
+                true,
+                true,
+                true,
+                true,
+                authorities
+        );
     }
 
-    public BroadleafExternalAuthenticationUserDetails(String username, String password,
-            boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,
-            boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public BroadleafExternalAuthenticationUserDetails(
+            String username,
+            String password,
+            boolean enabled,
+            boolean accountNonExpired,
+            boolean credentialsNonExpired,
+            boolean accountNonLocked,
+            Collection<? extends GrantedAuthority> authorities
+    ) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
     }
 

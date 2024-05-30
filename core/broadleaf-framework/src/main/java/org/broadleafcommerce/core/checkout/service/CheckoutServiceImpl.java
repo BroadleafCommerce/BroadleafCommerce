@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,23 +42,24 @@ import jakarta.annotation.Resource;
 @Service("blCheckoutService")
 public class CheckoutServiceImpl implements CheckoutService {
 
-    @Resource(name="blCheckoutWorkflow")
+    @Resource(name = "blCheckoutWorkflow")
     protected Processor<CheckoutSeed, CheckoutSeed> checkoutWorkflow;
 
     @Autowired
     @Qualifier("blApplicationEventPublisher")
     protected BroadleafApplicationEventPublisher eventPublisher;
 
-    @Resource(name="blOrderService")
+    @Resource(name = "blOrderService")
     protected OrderService orderService;
 
     @Override
     public CheckoutResponse performCheckout(Order order) throws CheckoutException {
         // Immediately fail if this order has already been checked out previously
         if (hasOrderBeenCompleted(order)) {
-            throw new CheckoutException("This order has already been submitted or cancelled, unable to checkout order -- id: " + order.getId(), new CheckoutSeed(order, new HashMap<String, Object>()));
+            throw new CheckoutException("This order has already been submitted or cancelled, unable to checkout order -- id: "
+                    + order.getId(), new CheckoutSeed(order, new HashMap<>()));
         }
-        
+
         CheckoutSeed seed = null;
         try {
             // Do a final save of the order before going through with the checkout workflow
@@ -72,7 +73,9 @@ public class CheckoutServiceImpl implements CheckoutService {
             order.getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
             seed.setOrder(order);
 
-            OrderSubmittedEvent event = new OrderSubmittedEvent(this, seed.getOrder().getId(), seed.getOrder().getOrderNumber());
+            OrderSubmittedEvent event = new OrderSubmittedEvent(
+                    this, seed.getOrder().getId(), seed.getOrder().getOrderNumber()
+            );
             eventPublisher.publishEvent(event);
 
             return seed;
@@ -84,10 +87,10 @@ public class CheckoutServiceImpl implements CheckoutService {
             throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e.getCause(), seed);
         }
     }
-    
+
     /**
      * Checks if the <b>order</b> has already been gone through the checkout workflow.
-     * 
+     *
      * @param order
      * @return
      */

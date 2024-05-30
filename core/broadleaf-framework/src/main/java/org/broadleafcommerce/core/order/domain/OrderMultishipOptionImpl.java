@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,6 +27,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
@@ -48,16 +49,17 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     @Id
     @GeneratedValue(generator = "OrderMultishipOptionId")
     @GenericGenerator(
-        name="OrderMultishipOptionId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="OrderMultishipOptionImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl")
-        }
+            name = "OrderMultishipOptionId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OrderMultishipOptionImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl")
+            }
     )
     @Column(name = "ORDER_MULTISHIP_OPTION_ID")
     protected Long id;
-    
+
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
@@ -69,7 +71,7 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     @ManyToOne(targetEntity = AddressImpl.class)
     @JoinColumn(name = "ADDRESS_ID")
     protected Address address;
-    
+
     @ManyToOne(targetEntity = FulfillmentOptionImpl.class)
     @JoinColumn(name = "FULFILLMENT_OPTION_ID")
     protected FulfillmentOption fulfillmentOption;
@@ -123,9 +125,11 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     public void setFulfillmentOption(FulfillmentOption fulfillmentOption) {
         this.fulfillmentOption = fulfillmentOption;
     }
-    
+
     @Override
-    public CreateResponse<OrderMultishipOption> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public CreateResponse<OrderMultishipOption> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<OrderMultishipOption> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -135,6 +139,7 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
         cloned.setFulfillmentOption(fulfillmentOption.createOrRetrieveCopyInstance(context).getClone());
         cloned.setOrder(order);
         cloned.setOrderItem(orderItem.createOrRetrieveCopyInstance(context).getClone());
-        return  createResponse;
+        return createResponse;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,6 +18,8 @@
 package org.broadleafcommerce.cms.url.domain;
 
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
+
+import java.io.Serial;
 
 /**
  * A Null instance of a URLHandler.   Used by the default URLHandlerServiceImpl implementation to
@@ -27,13 +29,15 @@ import org.broadleafcommerce.cms.url.type.URLRedirectType;
  */
 public class NullURLHandler extends URLHandlerDTO {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public NullURLHandler() {
         this(null, null);
     }
-    
+
     public NullURLHandler(String newUrl, URLRedirectType redirectType) {
         super(newUrl, redirectType);
     }
+
 }

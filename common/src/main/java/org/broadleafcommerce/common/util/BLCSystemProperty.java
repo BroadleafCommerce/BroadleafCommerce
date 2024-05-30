@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,10 +28,10 @@ import org.springframework.stereotype.Service;
 
 /**
  * Convenience class to faciliate getting system properties
- * 
+ * <p>
  * Note that this class is scanned as a bean to pick up the applicationContext, but the methods
  * this class provides should be invoked statically.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  * @deprecated this class should not be used to statically obtain referenes to properties. Instead, you should either inject
  * an instead of the {@link SystemPropertiesService} directly _or_ inject an {@link Environment} to get properties that way,
@@ -42,14 +42,14 @@ import org.springframework.stereotype.Service;
 public class BLCSystemProperty implements ApplicationContextAware {
 
     protected static ApplicationContext applicationContext;
-    
+
     /**
      * @see SystemPropertiesService#resolveSystemProperty(String)
      */
     public static String resolveSystemProperty(String name) {
         return getSystemPropertiesService().resolveSystemProperty(name);
     }
-    
+
     public static String resolveSystemProperty(String name, String defaultValue) {
         return getSystemPropertiesService().resolveSystemProperty(name, defaultValue);
     }
@@ -60,7 +60,7 @@ public class BLCSystemProperty implements ApplicationContextAware {
     public static int resolveIntSystemProperty(String name) {
         return getSystemPropertiesService().resolveIntSystemProperty(name);
     }
-    
+
     public static int resolveIntSystemProperty(String name, int defaultValue) {
         return getSystemPropertiesService().resolveIntSystemProperty(name, defaultValue);
     }
@@ -71,7 +71,7 @@ public class BLCSystemProperty implements ApplicationContextAware {
     public static boolean resolveBooleanSystemProperty(String name) {
         return getSystemPropertiesService().resolveBooleanSystemProperty(name);
     }
-    
+
     public static boolean resolveBooleanSystemProperty(String name, boolean defaultValue) {
         return getSystemPropertiesService().resolveBooleanSystemProperty(name, defaultValue);
     }
@@ -82,11 +82,11 @@ public class BLCSystemProperty implements ApplicationContextAware {
     public static long resolveLongSystemProperty(String name) {
         return getSystemPropertiesService().resolveLongSystemProperty(name);
     }
-    
+
     public static long resolveLongSystemProperty(String name, long defaultValue) {
         return getSystemPropertiesService().resolveLongSystemProperty(name, defaultValue);
     }
-    
+
     /**
      * @return the "blSystemPropertiesService" bean from the application context
      */

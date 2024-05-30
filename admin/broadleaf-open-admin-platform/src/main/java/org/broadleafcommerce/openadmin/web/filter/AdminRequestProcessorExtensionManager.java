@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,28 +38,42 @@ public class AdminRequestProcessorExtensionManager extends ExtensionManager<Admi
     public static final ExtensionManagerOperation retrieveProfiles = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((AdminRequestProcessorExtensionHandler) handler).retrieveProfiles((Site) params[0], (ExtensionResultHolder<Set<Site>>) params[1]);
+            return ((AdminRequestProcessorExtensionHandler) handler).retrieveProfiles(
+                    (Site) params[0],
+                    (ExtensionResultHolder<Set<Site>>) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation retrieveCatalogs = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((AdminRequestProcessorExtensionHandler) handler).retrieveCatalogs((Site) params[0], (ExtensionResultHolder<Set<Catalog>>) params[1]);
+            return ((AdminRequestProcessorExtensionHandler) handler).retrieveCatalogs(
+                    (Site) params[0],
+                    (ExtensionResultHolder<Set<Catalog>>) params[1]
+            );
         }
     };
 
     public static final ExtensionManagerOperation overrideCurrentCatalog = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((AdminRequestProcessorExtensionHandler) handler).overrideCurrentCatalog((WebRequest) params[0], (Site) params[1], (ExtensionResultHolder<Catalog>) params[2]);
+            return ((AdminRequestProcessorExtensionHandler) handler).overrideCurrentCatalog(
+                    (WebRequest) params[0],
+                    (Site) params[1],
+                    (ExtensionResultHolder<Catalog>) params[2]
+            );
         }
     };
 
     public static final ExtensionManagerOperation overrideCurrentProfile = new ExtensionManagerOperation() {
         @Override
         public ExtensionResultStatusType execute(ExtensionHandler handler, Object... params) {
-            return ((AdminRequestProcessorExtensionHandler) handler).overrideCurrentProfile((WebRequest) params[0], (Site) params[1], (ExtensionResultHolder<Site>) params[2]);
+            return ((AdminRequestProcessorExtensionHandler) handler).overrideCurrentProfile(
+                    (WebRequest) params[0],
+                    (Site) params[1],
+                    (ExtensionResultHolder<Site>) params[2]
+            );
         }
     };
 
@@ -78,14 +92,20 @@ public class AdminRequestProcessorExtensionManager extends ExtensionManager<Admi
     }
 
     @Override
-    public ExtensionResultStatusType overrideCurrentCatalog(WebRequest request, Site currentSite,
-                                                            ExtensionResultHolder<Catalog> result) {
+    public ExtensionResultStatusType overrideCurrentCatalog(
+            WebRequest request,
+            Site currentSite,
+            ExtensionResultHolder<Catalog> result
+    ) {
         return execute(overrideCurrentCatalog, request, currentSite, result);
     }
 
     @Override
-    public ExtensionResultStatusType overrideCurrentProfile(WebRequest request, Site currentSite,
-                                                            ExtensionResultHolder<Site> result) {
+    public ExtensionResultStatusType overrideCurrentProfile(
+            WebRequest request,
+            Site currentSite,
+            ExtensionResultHolder<Site> result
+    ) {
         return execute(overrideCurrentProfile, request, currentSite, result);
     }
 
@@ -93,4 +113,5 @@ public class AdminRequestProcessorExtensionManager extends ExtensionManager<Admi
     public boolean isEnabled() {
         return true;
     }
+
 }

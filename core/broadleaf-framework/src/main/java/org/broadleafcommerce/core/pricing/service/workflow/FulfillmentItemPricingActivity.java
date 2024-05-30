@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,26 +39,26 @@ import java.util.Map;
 
 /**
  * Called during the pricing workflow to set each item's merchandise total and taxable total
- * 
- * @author Brian Polster 
+ *
+ * @author Brian Polster
  */
 @Component("blFulfillmentItemPricingActivity")
 public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<Order>> {
-    
-    private static final Log LOG = LogFactory.getLog(FulfillmentItemPricingActivity.class);
 
     public static final int ORDER = 3000;
-    
+    private static final Log LOG = LogFactory.getLog(FulfillmentItemPricingActivity.class);
+
     public FulfillmentItemPricingActivity() {
         setOrder(ORDER);
     }
-    
+
     protected BroadleafCurrency getCurrency(FulfillmentGroup fg) {
         return fg.getOrder().getCurrency();
     }
-    
+
     /**
      * Returns the order adjustment value or zero if none exists
+     *
      * @param order
      * @return
      */
@@ -67,7 +67,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
             return new Money(order.getCurrency());
         } else {
             Money adjustmentValue = order.getOrderAdjustmentsValue();
-            
+
             Money orderSubTotal = order.getSubTotal();
             if (orderSubTotal == null || orderSubTotal.lessThan(adjustmentValue)) {
                 if (LOG.isWarnEnabled()) {
@@ -75,25 +75,25 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
                             "No distribution is taking place.");
                 }
                 return new Money(order.getCurrency());
-            } 
+            }
             return adjustmentValue;
         }
     }
-    
+
     @Override
     public ProcessContext<Order> execute(ProcessContext<Order> context) throws Exception {
         Order order = context.getSeedData();
-        Map<OrderItem,List<FulfillmentGroupItem>> partialOrderItemMap = new HashMap<>();
+        Map<OrderItem, List<FulfillmentGroupItem>> partialOrderItemMap = new HashMap<>();
 
         // Calculate the fulfillmentGroupItem total
         populateItemTotalAmount(order, partialOrderItemMap);
         fixItemTotalRoundingIssues(order, partialOrderItemMap);
-        
+
         // Calculate the fulfillmentGroupItem prorated orderSavings
         Money totalAllItemsAmount = calculateTotalPriceForAllFulfillmentItems(order);
         Money totalOrderAdjustmentDistributed = distributeOrderSavingsToItems(order, totalAllItemsAmount.getAmount());
         fixOrderSavingsRoundingIssues(order, totalOrderAdjustmentDistributed);
-        
+
         // Step 3: Finalize the taxable amounts
         updateTaxableAmountsOnItems(order);
         context.setSeedData(order);
@@ -102,9 +102,9 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
     }
 
     /**
-     * Sets the fulfillment amount which includes the relative portion of the total price for 
+     * Sets the fulfillment amount which includes the relative portion of the total price for
      * the corresponding order item.
-     * 
+     *
      * @param order
      * @param partialOrderItemMap
      */
@@ -136,16 +136,19 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
     /**
      * Because an item may have multiple price details that don't round cleanly, we may have pennies
      * left over that need to be distributed.
-     * 
+     * <p>
      * This method may not be needed because the sum of the item amounts is derived from a double price (OrderItem's total)
      * being multiplied and divided by whole numbers of which guarantees that each item amount is a clean multiple
      * of the price of a single unit of that item. This behavior being enforced in populateItemTotalAmount. So we will
      * never get a fraction of a cent that could cause totalItemAmount and totalFGItemAmount to be different values.
-     * 
+     *
      * @param order
      * @param partialOrderItemMap
      */
-    protected void fixItemTotalRoundingIssues(Order order, Map<OrderItem, List<FulfillmentGroupItem>> partialOrderItemMap) {
+    protected void fixItemTotalRoundingIssues(
+            Order order,
+            Map<OrderItem, List<FulfillmentGroupItem>> partialOrderItemMap
+    ) {
         for (OrderItem orderItem : partialOrderItemMap.keySet()) {
             Money totalItemAmount = orderItem.getTotalPrice();
             Money totalFGItemAmount = sumItemAmount(partialOrderItemMap.get(orderItem), order);
@@ -167,6 +170,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
 
     /**
      * Returns the total price for all fulfillment items.
+     *
      * @param order
      * @return
      */
@@ -182,6 +186,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
 
     /**
      * Distributes the order adjustments (if any) to the individual fulfillment group items.
+     *
      * @param order
      * @param totalAllItems
      * @return
@@ -194,7 +199,9 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
                 BigDecimal fgItemAmount = fgItem.getTotalItemAmount().getAmount();
-                BigDecimal proratedAdjAmt = totalAllItems.compareTo(BigDecimal.ZERO) == 0 ? totalAllItems : orderAdjAmt.multiply(fgItemAmount).divide(totalAllItems, RoundingMode.FLOOR);
+                BigDecimal proratedAdjAmt = totalAllItems.compareTo(BigDecimal.ZERO) == 0
+                        ? totalAllItems
+                        : orderAdjAmt.multiply(fgItemAmount).divide(totalAllItems, RoundingMode.FLOOR);
                 fgItem.setProratedOrderAdjustmentAmount(new Money(proratedAdjAmt, order.getCurrency()));
                 returnAmount = returnAmount.add(fgItem.getProratedOrderAdjustmentAmount());
             }
@@ -203,10 +210,11 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
     }
 
     /**
-     * It is possible due to rounding that the order adjustments do not match the 
+     * It is possible due to rounding that the order adjustments do not match the
      * total.   This method fixes by adding or removing the pennies.
+     *
      * @param order
-     * @param partialOrderItemMap
+     * @param totalOrderAdjustmentDistributed
      */
     protected void fixOrderSavingsRoundingIssues(Order order, Money totalOrderAdjustmentDistributed) {
         if (!order.getHasOrderAdjustments()) {
@@ -234,6 +242,7 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
 
     /**
      * Returns the total price for all fulfillment items.
+     *
      * @param order
      * @return
      */
@@ -250,9 +259,9 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
                     }
                 } else {
                     fgItem.setTotalItemTaxableAmount(zero);
-                }              
+                }
             }
-        }        
+        }
     }
 
     protected Money sumItemAmount(List<FulfillmentGroupItem> items, Order order) {
@@ -272,13 +281,15 @@ public class FulfillmentItemPricingActivity extends BaseActivity<ProcessContext<
     }
 
     public long countNumberOfUnits(Money difference) {
-        double numUnits = difference.multiply(Math.pow(10, difference.getCurrency().getDefaultFractionDigits())).doubleValue();
+        double numUnits = difference.multiply(Math.pow(10, difference.getCurrency().getDefaultFractionDigits()))
+                .doubleValue();
         return Math.round(Math.abs(numUnits));
     }
 
     /**
      * Returns the unit amount (e.g. .01 for US)
-     * @param currency
+     *
+     * @param difference
      * @return
      */
     public Money getUnitAmount(Money difference) {

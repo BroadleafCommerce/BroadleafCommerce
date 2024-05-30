@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,16 +33,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Simple utility to assist in basic operations related to Zookeeper.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 public class ZookeeperUtil {
-    
+
     /**
-     * Recursively deletes a path in Zookeeper.  For example, if you have a path like /path/to/my/element, then passing "/path" to this method will delete the 
+     * Recursively deletes a path in Zookeeper.  For example, if you have a path like /path/to/my/element, then passing "/path" to this method will delete the
      * directory tree recursively.
-     * 
+     *
      * @param path
      * @param zk
      * @throws KeeperException
@@ -55,7 +54,7 @@ public class ZookeeperUtil {
     /**
      * Creates a path in Zookeeper, if it does not already exist, with CreateMode.PERSISTENT for the create mode and ZooDefs.Ids.OPEN_ACL_UNSAFE for ACLs.
      * If any part of the path exists, then the rest of this path will be appended to it..
-     * 
+     *
      * @param path
      * @param zk
      * @throws KeeperException
@@ -64,24 +63,24 @@ public class ZookeeperUtil {
     public static void makePath(String path, final ZooKeeper zk) throws KeeperException, InterruptedException {
         makePath(path, null, zk, CreateMode.PERSISTENT);
     }
-    
+
     public static void makePath(String path, final byte[] data, final ZooKeeper zk) throws KeeperException, InterruptedException {
         makePath(path, data, zk, CreateMode.PERSISTENT);
     }
-    
+
     public static void makePath(String path, final byte[] data, final ZooKeeper zk, CreateMode createMode) throws KeeperException, InterruptedException {
         makePath(path, data, zk, createMode, ZooDefs.Ids.OPEN_ACL_UNSAFE);
     }
-    
+
     /**
-     * Creates a path in Zookeeper, specified by the path argument.  For example: /path/to/my/element.  If part or all of the path already exists, then it will not be 
-     * created.  If the data byte array is not null and has a size greater than 0, then it will be added to the final node of the path.  If the final node 
+     * Creates a path in Zookeeper, specified by the path argument.  For example: /path/to/my/element.  If part or all of the path already exists, then it will not be
+     * created.  If the data byte array is not null and has a size greater than 0, then it will be added to the final node of the path.  If the final node
      * of the path already exists, then the data will be ignored.
-     * 
+     * <p>
      * If the ACLs are null or empty, then ZooDefs.Ids.OPEN_ACL_UNSAFE will be used.
-     * 
+     * <p>
      * If createMode is null, then CreateMode.PERSISTENT will be used.
-     * 
+     *
      * @param path
      * @param data
      * @param zk
@@ -90,28 +89,34 @@ public class ZookeeperUtil {
      * @throws KeeperException
      * @throws InterruptedException
      */
-    public static void makePath(String path, final byte[] data, final ZooKeeper zk, CreateMode createMode, final List<ACL> acls) throws KeeperException, InterruptedException {
+    public static void makePath(
+            String path,
+            final byte[] data,
+            final ZooKeeper zk,
+            CreateMode createMode,
+            final List<ACL> acls
+    ) throws KeeperException, InterruptedException {
         if (path.startsWith("/")) {
             path = path.substring(1);
         }
-        
+
         final String[] tokens = path.split("/");
         final List<Op> ops = new ArrayList<>();
-        
+
         final CreateMode mode;
         if (createMode == null) {
             mode = CreateMode.PERSISTENT;
         } else {
             mode = createMode;
         }
-        
+
         final List<ACL> acl;
-        if (acls != null && ! acls.isEmpty()) {
+        if (acls != null && !acls.isEmpty()) {
             acl = acls;
         } else {
             acl = ZooDefs.Ids.OPEN_ACL_UNSAFE;
         }
-        
+
         try {
             final AtomicInteger tokenCount = new AtomicInteger(1);
             final StringBuilder sb = new StringBuilder();
@@ -123,7 +128,7 @@ public class ZookeeperUtil {
                     } else {
                         ops.add(Op.create(sb.toString(), null, acl, mode));
                     }
-                    
+
                 }
                 tokenCount.incrementAndGet();
             }
@@ -140,7 +145,7 @@ public class ZookeeperUtil {
             throw new RuntimeException("An error occured creating the path, " + path + ", in Zookeeper.", e);
         }
     }
-    
+
     public static boolean exists(final String path, final ZooKeeper zk) throws KeeperException, InterruptedException {
         try {
             return GenericOperationUtil.executeRetryableOperation(new GenericOperation<Boolean>() {
@@ -155,5 +160,5 @@ public class ZookeeperUtil {
             throw new RuntimeException("An error occured determining if " + path + " exists in Zookeeper.", e);
         }
     }
-    
+
 }

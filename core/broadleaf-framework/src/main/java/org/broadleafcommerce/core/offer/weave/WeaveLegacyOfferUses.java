@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,8 +25,8 @@ import jakarta.persistence.Embedded;
  * Provide a template class that holds interfaces, fields and methods to be optionally, dynamically introduced
  * into OfferImpl at runtime.
  *
- * @see LegacyOfferUses
  * @author Jeff Fischer
+ * @see LegacyOfferUses
  */
 public abstract class WeaveLegacyOfferUses implements LegacyOfferUses {
 
@@ -39,6 +39,11 @@ public abstract class WeaveLegacyOfferUses implements LegacyOfferUses {
     }
 
     @Override
+    public void setMaxUses(int maxUses) {
+        getEmbeddableLegacyOfferUses(true).setMaxUses(maxUses);
+    }
+
+    @Override
     public int getUses() {
         return getEmbeddableLegacyOfferUses(false).getUses();
     }
@@ -46,11 +51,6 @@ public abstract class WeaveLegacyOfferUses implements LegacyOfferUses {
     @Override
     public void setUses(int uses) {
         getEmbeddableLegacyOfferUses(true).setUses(uses);
-    }
-
-    @Override
-    public void setMaxUses(int maxUses) {
-        getEmbeddableLegacyOfferUses(true).setMaxUses(maxUses);
     }
 
     protected LegacyOfferUsesImpl getEmbeddableLegacyOfferUses(boolean assign) {

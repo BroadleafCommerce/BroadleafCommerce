@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -41,9 +41,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.EntityManager;
 
 /**
- *
  * @author jfischer
- *
  */
 public interface DynamicEntityDao {
 
@@ -68,6 +66,7 @@ public interface DynamicEntityDao {
     /**
      * Convenience method that obtains all of the {@link MergedPropertyType#PRIMARY} properties for a given class. Delegates to
      * {@link #getMergedProperties(String, Class[], ForeignKey, String[], ForeignKey[], MergedPropertyType, Boolean, String[], String[], String, String)}
+     *
      * @param cls
      * @return
      */

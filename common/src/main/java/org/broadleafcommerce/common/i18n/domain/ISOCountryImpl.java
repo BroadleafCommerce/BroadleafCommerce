@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,13 +27,14 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
-
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -48,15 +49,16 @@ import jakarta.persistence.Table;
 })
 public class ISOCountryImpl implements ISOCountry, AdminMainEntity {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "ALPHA_2")
-    @AdminPresentation(friendlyName = "ISOCountryImpl_Alpha2", order=1, group = "ISOCountryImpl_Details", prominent = true)
+    @AdminPresentation(friendlyName = "ISOCountryImpl_Alpha2", order = 1, group = "ISOCountryImpl_Details", prominent = true)
     protected String alpha2;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "ISOCountryImpl_Name", order=2, group = "ISOCountryImpl_Details", prominent = true)
+    @AdminPresentation(friendlyName = "ISOCountryImpl_Name", order = 2, group = "ISOCountryImpl_Details", prominent = true)
     protected String name;
 
     @Column(name = "ALPHA_3")

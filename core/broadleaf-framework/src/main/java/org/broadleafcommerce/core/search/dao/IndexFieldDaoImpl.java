@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -51,7 +51,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override
@@ -107,7 +107,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
         CriteriaQuery<IndexField> criteria = builder.createQuery(IndexField.class);
 
         Root<IndexFieldImpl> root = criteria.from(IndexFieldImpl.class);
-        
+
         criteria.select(root);
         criteria.where(root.get("field").get("entityType").as(String.class).in(entityType.getAllLookupTypes()));
 
@@ -142,7 +142,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
     public List<IndexFieldType> getIndexFieldTypesByAbbreviation(String abbreviation) {
         return getIndexFieldTypesByAbbreviationAndEntityType(abbreviation, null);
     }
-    
+
     @Override
     public List<IndexFieldType> getIndexFieldTypesByAbbreviationAndEntityType(String abbreviation, FieldEntity entityType) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -153,13 +153,13 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
         criteria.select(root);
         if (entityType == null) {
             criteria.where(
-                builder.equal(root.get("indexField").get("field").get("abbreviation").as(String.class), abbreviation)
+                    builder.equal(root.get("indexField").get("field").get("abbreviation").as(String.class), abbreviation)
             );
         } else {
             criteria.where(
                     builder.and(
-                        builder.equal(root.get("indexField").get("field").get("abbreviation").as(String.class), abbreviation),
-                        builder.equal(root.get("indexField").get("field").get("entityType").as(String.class), entityType.getType())
+                            builder.equal(root.get("indexField").get("field").get("abbreviation").as(String.class), abbreviation),
+                            builder.equal(root.get("indexField").get("field").get("entityType").as(String.class), entityType.getType())
                     )
             );
         }
@@ -170,7 +170,6 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
 
         return query.getResultList();
     }
-
 
     @Override
     public List<IndexFieldType> getIndexFieldTypesByAbbreviationOrPropertyName(String name) {
@@ -219,7 +218,7 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
     public IndexField readIndexFieldByAbbreviation(String abbreviation) {
         return readIndexFieldByAbbreviationAndEntityType(abbreviation, null);
     }
-    
+
     @Override
     public IndexField readIndexFieldByAbbreviationAndEntityType(String abbreviation, FieldEntity entityType) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
@@ -230,13 +229,13 @@ public class IndexFieldDaoImpl implements IndexFieldDao {
         criteria.select(root);
         if (entityType == null) {
             criteria.where(
-                builder.equal(root.get("field").get("abbreviation").as(String.class), abbreviation)
+                    builder.equal(root.get("field").get("abbreviation").as(String.class), abbreviation)
             );
         } else {
             criteria.where(
                     builder.and(
-                        builder.equal(root.get("field").get("abbreviation").as(String.class), abbreviation),
-                        builder.equal(root.get("field").get("entityType").as(String.class), entityType.getType())
+                            builder.equal(root.get("field").get("abbreviation").as(String.class), abbreviation),
+                            builder.equal(root.get("field").get("entityType").as(String.class), entityType.getType())
                     )
             );
         }

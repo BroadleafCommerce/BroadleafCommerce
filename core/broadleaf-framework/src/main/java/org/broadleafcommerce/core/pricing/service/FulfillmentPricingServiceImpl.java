@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,12 +36,12 @@ import jakarta.annotation.Resource;
 
 @Service("blFulfillmentPricingService")
 public class FulfillmentPricingServiceImpl implements FulfillmentPricingService {
-    
-    protected static final Log LOG  = LogFactory.getLog(FulfillmentPricingServiceImpl.class);
+
+    protected static final Log LOG = LogFactory.getLog(FulfillmentPricingServiceImpl.class);
 
     @Resource(name = "blFulfillmentPricingProviders")
     protected List<FulfillmentPricingProvider> providers;
-    
+
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
 
@@ -55,7 +55,7 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
             fulfillmentGroup.setSaleFulfillmentPrice(Money.ZERO);
             return fulfillmentGroup;
         }
-        
+
         for (FulfillmentPricingProvider provider : providers) {
             if (provider.canCalculateCostForFulfillmentGroup(fulfillmentGroup, fulfillmentGroup.getFulfillmentOption())) {
                 return provider.calculateCostForFulfillmentGroup(fulfillmentGroup);
@@ -63,20 +63,25 @@ public class FulfillmentPricingServiceImpl implements FulfillmentPricingService 
         }
 
         throw new FulfillmentPriceException("No valid processor was found to calculate the FulfillmentGroup cost with " +
-                "FulfillmentOption id: " + fulfillmentGroup.getFulfillmentOption().getId() + 
-                        " and name: " + fulfillmentGroup.getFulfillmentOption().getName());
+                "FulfillmentOption id: " + fulfillmentGroup.getFulfillmentOption().getId() +
+                " and name: " + fulfillmentGroup.getFulfillmentOption().getName());
     }
-    
+
     @Override
-    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Set<FulfillmentOption> options) throws FulfillmentPriceException {
+    public FulfillmentEstimationResponse estimateCostForFulfillmentGroup(
+            FulfillmentGroup fulfillmentGroup,
+            Set<FulfillmentOption> options
+    ) throws FulfillmentPriceException {
         FulfillmentEstimationResponse response = new FulfillmentEstimationResponse();
-        HashMap<FulfillmentOption, Money> prices = new HashMap<FulfillmentOption, Money>();
+        HashMap<FulfillmentOption, Money> prices = new HashMap<>();
         response.setFulfillmentOptionPrices(prices);
         for (FulfillmentPricingProvider provider : providers) {
             //Leave it up to the providers to determine if they can respond to a pricing estimate.  If they can't, or if one or more of the options that are passed in can't be responded
             //to, then the response from the pricing provider should not include the options that it could not respond to.
             try {
-                FulfillmentEstimationResponse processorResponse = provider.estimateCostForFulfillmentGroup(fulfillmentGroup, options);
+                FulfillmentEstimationResponse processorResponse = provider.estimateCostForFulfillmentGroup(
+                        fulfillmentGroup, options
+                );
                 if (processorResponse != null
                         && processorResponse.getFulfillmentOptionPrices() != null
                         && processorResponse.getFulfillmentOptionPrices().size() > 0) {

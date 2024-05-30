@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,51 +21,51 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration
 
 /**
  * CategorySiteMapGenerator is controlled by this configuration.
- * 
+ *
  * @author Joshua Skorton (jskorton)
  */
 public interface CategorySiteMapGeneratorConfiguration extends SiteMapGeneratorConfiguration {
 
     /**
      * Returns the root category.
-     * 
+     *
      * @return
      */
-    public Category getRootCategory();
+    Category getRootCategory();
 
     /**
      * Sets the root category.
-     * 
+     *
      * @param rootCategory
      */
-    public void setRootCategory(Category rootCategory);
+    void setRootCategory(Category rootCategory);
 
     /**
      * Returns the starting depth.
-     * 
+     *
      * @return
      */
-    public int getStartingDepth();
+    int getStartingDepth();
 
     /**
      * Sets the starting depth.
-     * 
+     *
      * @param startingDepth
      */
-    public void setStartingDepth(int startingDepth);
+    void setStartingDepth(int startingDepth);
 
     /**
      * Returns the ending depth.
-     * 
+     *
      * @return
      */
-    public int getEndingDepth();
+    int getEndingDepth();
 
     /**
      * Sets the ending depth.
-     * 
+     *
      * @param endingDepth
      */
-    public void setEndingDepth(int endingDepth);
+    void setEndingDepth(int endingDepth);
 
 }

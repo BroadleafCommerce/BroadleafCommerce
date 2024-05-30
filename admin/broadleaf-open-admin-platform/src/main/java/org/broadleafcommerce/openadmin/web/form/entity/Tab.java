@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.web.form.entity;
 
 import org.apache.commons.lang3.StringUtils;
@@ -38,9 +37,7 @@ public class Tab {
     protected Boolean isMultiColumn;
     protected Boolean wantsFullScreen = false;
     protected String customTemplate;
-    private boolean isTabsPresent = false;
-
-    TreeSet<FieldGroup> fieldGroups = new TreeSet<FieldGroup>(new Comparator<FieldGroup>() {
+    TreeSet<FieldGroup> fieldGroups = new TreeSet<>(new Comparator<>() {
         @Override
         public int compare(FieldGroup o1, FieldGroup o2) {
             return new CompareToBuilder()
@@ -50,8 +47,7 @@ public class Tab {
                     .toComparison();
         }
     });
-
-    Set<ListGrid> listGrids = new TreeSet<ListGrid>(new Comparator<ListGrid>() {
+    Set<ListGrid> listGrids = new TreeSet<>(new Comparator<>() {
         @Override
         public int compare(ListGrid o1, ListGrid o2) {
             return new CompareToBuilder()
@@ -60,6 +56,7 @@ public class Tab {
                     .toComparison();
         }
     });
+    private boolean isTabsPresent = false;
 
     public Tab withTitle(String title) {
         setTitle(title);
@@ -90,7 +87,7 @@ public class Tab {
         setCustomTemplate(customTemplate);
         return this;
     }
-    
+
     public Boolean getIsVisible() {
         if (listGrids.size() > 0 || isTabsPresent) {
             return true;
@@ -140,9 +137,9 @@ public class Tab {
         }
         return null;
     }
-    
+
     public List<Field> getFields() {
-        List<Field> fields = new ArrayList<Field>();
+        List<Field> fields = new ArrayList<>();
         for (FieldGroup fg : getFieldGroups()) {
             fields.addAll(fg.getFields());
         }
@@ -152,13 +149,17 @@ public class Tab {
     public void removeFieldGroup(FieldGroup fieldGroup) {
         fieldGroups.remove(fieldGroup);
     }
-    
+
     public void removeListGrid(ListGrid listGrid) {
         listGrids.remove(listGrid);
     }
 
     public String getTabClass() {
         return StringUtils.isBlank(tabClass) ? "" : " " + tabClass;
+    }
+
+    public void setTabClass(String tabClass) {
+        this.tabClass = tabClass;
     }
 
     public String getTitle() {
@@ -208,10 +209,6 @@ public class Tab {
         this.listGrids = listGrids;
     }
 
-    public void setTabClass(String tabClass) {
-        this.tabClass = tabClass;
-    }
-
     public Boolean getIsMultiColumn() {
         return isMultiColumn == null ? false : isMultiColumn;
     }
@@ -243,6 +240,7 @@ public class Tab {
     public void setCustomTemplate(String customTemplate) {
         this.customTemplate = customTemplate;
     }
+
 }
 
 

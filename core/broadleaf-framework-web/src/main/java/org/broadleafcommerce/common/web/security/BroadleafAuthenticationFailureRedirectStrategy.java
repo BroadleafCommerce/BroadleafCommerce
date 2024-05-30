@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,15 +29,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Extends the Spring DefaultRedirectStrategy with support for ajax redirects.
- * 
+ * <p>
  * Designed for use with SpringSecurity when errors are present.
- * 
+ * <p>
  * Tacks on the BLC_AJAX_PARAMETER=true to the redirect request if the request is an ajax request.   This will cause the
- * resulting controller (e.g. LoginController) to treat the request as if it is coming from Ajax and 
+ * resulting controller (e.g. LoginController) to treat the request as if it is coming from Ajax and
  * return the related page fragment rather than returning the full view of the page.
- * 
- * @author bpolster
  *
+ * @author bpolster
  */
 @Component("blAuthenticationFailureRedirectStrategy")
 public class BroadleafAuthenticationFailureRedirectStrategy implements RedirectStrategy {
@@ -47,7 +46,7 @@ public class BroadleafAuthenticationFailureRedirectStrategy implements RedirectS
     @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
         if (BroadleafControllerUtility.isAjaxRequest(request)) {
-             url = updateUrlForAjax(url);
+            url = updateUrlForAjax(url);
         }
         redirectStrategy.sendRedirect(request, response, url);
     }
@@ -61,7 +60,7 @@ public class BroadleafAuthenticationFailureRedirectStrategy implements RedirectS
         }
         return url;
     }
-    
+
     public RedirectStrategy getRedirectStrategy() {
         return redirectStrategy;
     }
@@ -69,4 +68,5 @@ public class BroadleafAuthenticationFailureRedirectStrategy implements RedirectS
     public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
         this.redirectStrategy = redirectStrategy;
     }
+
 }

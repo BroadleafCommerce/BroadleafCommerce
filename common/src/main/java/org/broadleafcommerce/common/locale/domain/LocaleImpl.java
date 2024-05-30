@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import java.io.Serial;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -44,7 +46,7 @@ import jakarta.persistence.Transient;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_LOCALE")
-@Cache(usage= CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blCMSElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blCMSElements")
 @AdminPresentationClass(friendlyName = "LocaleImpl_baseLocale")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
@@ -52,43 +54,44 @@ import jakarta.persistence.Transient;
 })
 public class LocaleImpl implements Locale, AdminMainEntity {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column (name = "LOCALE_CODE")
-    @AdminPresentation(friendlyName = "LocaleImpl_Locale_Code", order = 1, 
-        group = "LocaleImpl_Details", 
-        prominent = true, gridOrder = 2)
+    @Column(name = "LOCALE_CODE")
+    @AdminPresentation(friendlyName = "LocaleImpl_Locale_Code", order = 1,
+            group = "LocaleImpl_Details",
+            prominent = true, gridOrder = 2)
     protected String localeCode;
 
-    @Column (name = "FRIENDLY_NAME")
-    @AdminPresentation(friendlyName = "LocaleImpl_Name", order = 2, 
-        group = "LocaleImpl_Details", 
-        prominent = true, gridOrder = 1)
+    @Column(name = "FRIENDLY_NAME")
+    @AdminPresentation(friendlyName = "LocaleImpl_Name", order = 2,
+            group = "LocaleImpl_Details",
+            prominent = true, gridOrder = 1)
     protected String friendlyName;
 
-    @Column (name = "DEFAULT_FLAG")
-    @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order = 3, 
-        group = "LocaleImpl_Details", 
-        prominent = false, gridOrder = 3)
+    @Column(name = "DEFAULT_FLAG")
+    @AdminPresentation(friendlyName = "LocaleImpl_Is_Default", order = 3,
+            group = "LocaleImpl_Details",
+            prominent = false, gridOrder = 3)
     protected Boolean defaultFlag = false;
 
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
-    @AdminPresentation(friendlyName = "LocaleImpl_Currency", order = 4, 
-        group = "LocaleImpl_Details", 
-        prominent = false)
+    @AdminPresentation(friendlyName = "LocaleImpl_Currency", order = 4,
+            group = "LocaleImpl_Details",
+            prominent = false)
     protected BroadleafCurrency defaultCurrency;
 
-    @Column (name = "USE_IN_SEARCH_INDEX")
-    @AdminPresentation(friendlyName = "LocaleImpl_Use_In_Search_Index", order = 5, 
-        group = "LocaleImpl_Details", 
-        prominent = false, gridOrder = 3)
+    @Column(name = "USE_IN_SEARCH_INDEX")
+    @AdminPresentation(friendlyName = "LocaleImpl_Use_In_Search_Index", order = 5,
+            group = "LocaleImpl_Details",
+            prominent = false, gridOrder = 3)
     protected Boolean useInSearchIndex = false;
-    
+
     @Transient
     protected java.util.Locale javaLocale;
-    
+
     @Override
     public String getLocaleCode() {
         return localeCode;
@@ -110,17 +113,17 @@ public class LocaleImpl implements Locale, AdminMainEntity {
     }
 
     @Override
-    public void setDefaultFlag(Boolean defaultFlag) {
-        this.defaultFlag = defaultFlag;
-    }
-
-    @Override
     public Boolean getDefaultFlag() {
         if (defaultFlag == null) {
             return Boolean.FALSE;
         } else {
             return defaultFlag;
         }
+    }
+
+    @Override
+    public void setDefaultFlag(Boolean defaultFlag) {
+        this.defaultFlag = defaultFlag;
     }
 
     @Override
@@ -132,7 +135,7 @@ public class LocaleImpl implements Locale, AdminMainEntity {
     public void setDefaultCurrency(BroadleafCurrency defaultCurrency) {
         this.defaultCurrency = defaultCurrency;
     }
-    
+
     @Override
     public Boolean getUseCountryInSearchIndex() {
         return useInSearchIndex == null ? false : useInSearchIndex;
@@ -142,7 +145,7 @@ public class LocaleImpl implements Locale, AdminMainEntity {
     public void setUseCountryInSearchIndex(Boolean useInSearchIndex) {
         this.useInSearchIndex = useInSearchIndex;
     }
-    
+
     public java.util.Locale getJavaLocale() {
         if (javaLocale == null && getLocaleCode() != null) {
             String localeString = getLocaleCode();

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,6 +21,7 @@ package org.broadleafcommerce.openadmin.exception;
  * Created by Jon on 6/24/15.
  */
 public class EntityNotFoundException extends IllegalArgumentException {
+
     /**
      * Constructs an <code>EntityNotFoundException</code> with no
      * detail message.
@@ -33,9 +34,10 @@ public class EntityNotFoundException extends IllegalArgumentException {
      * Constructs an <code>EntityNotFoundException</code> with the
      * specified detail message.
      *
-     * @param   s   the detail message.
+     * @param s the detail message.
      */
     public EntityNotFoundException(String s) {
         super(s);
     }
+
 }

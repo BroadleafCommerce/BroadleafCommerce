@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,24 +26,23 @@ import java.util.Map;
 import jakarta.servlet.ServletOutputStream;
 
 /**
- * 
  * @author Phillip Verheyden
  */
 public interface AdminExporter {
 
     /**
      * The name of this exporter. Should be unique
-     * 
+     *
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * The friendly name of this exporter to display to the user to select from
-     * 
+     *
      * @return
      */
-    public String getFriendlyName();
+    String getFriendlyName();
 
     /**
      * <p>
@@ -70,13 +69,13 @@ public interface AdminExporter {
      * fields:
      * <pre>
      * {@code
-     *  List<Property> criteria = new ArrayList<Property>();
+     *  List<Property> criteria = new ArrayList<>();
      *  Property startDate = new Property();
      *  startDate.setName("startDate");
      *  startDate.getMetadata().getPresentationAttributes().setFriendlyName("Start Date");
      *  startDate.getMetadata().setFieldType(SupportedFieldType.DATE);
      *  criteria.add(startDate);
-     *   
+     *
      *  Property endDate = new Property();
      *  endDate.setName("endDate");
      *  endDate.getMetadata().getPresentationAttributes().setFriendlyName("End Date");
@@ -86,23 +85,25 @@ public interface AdminExporter {
      * }
      * </pre>
      * </p>
+     *
      * @return <b>null</b> if no additional criteria is needed
      */
-    public List<Property> getCriteriaFields();
+    List<Property> getCriteriaFields();
 
     /**
      * The type of this exporter
+     *
      * @return
      */
-    public String getType();
+    String getType();
 
     /**
      * The file name used in the Content-Disposition header for "attachment"
-     * 
+     *
      * @return
      */
-    public String getFileName();
+    String getFileName();
 
-    public void writeExport(ServletOutputStream out, Map<String, String> params) throws IOException;
-    
+    void writeExport(ServletOutputStream out, Map<String, String> params) throws IOException;
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,7 +42,7 @@ import org.springframework.core.Ordered;
  */
 public interface CustomPersistenceHandler extends Ordered {
 
-    public static final int DEFAULT_ORDER = Integer.MAX_VALUE;
+    int DEFAULT_ORDER = Integer.MAX_VALUE;
 
     /**
      * Is this persistence handler capable of dealing with an inspect request from the admin
@@ -50,7 +50,7 @@ public interface CustomPersistenceHandler extends Ordered {
      * @param persistencePackage details about the inspect operation
      * @return whether or not this handler supports inspects
      */
-    public Boolean canHandleInspect(PersistencePackage persistencePackage);
+    Boolean canHandleInspect(PersistencePackage persistencePackage);
 
     /**
      * Is this persistence handler capable of dealing with an fetch request from the admin
@@ -58,7 +58,7 @@ public interface CustomPersistenceHandler extends Ordered {
      * @param persistencePackage details about the fetch operation
      * @return whether or not this handler supports fetches
      */
-    public Boolean canHandleFetch(PersistencePackage persistencePackage);
+    Boolean canHandleFetch(PersistencePackage persistencePackage);
 
     /**
      * Is this persistence handler capable of dealing with an add request from the admin
@@ -66,7 +66,7 @@ public interface CustomPersistenceHandler extends Ordered {
      * @param persistencePackage details about the add operation
      * @return whether or not this handler supports adds
      */
-    public Boolean canHandleAdd(PersistencePackage persistencePackage);
+    Boolean canHandleAdd(PersistencePackage persistencePackage);
 
     /**
      * Is this persistence handler capable of dealing with a remove request from the admin
@@ -74,7 +74,7 @@ public interface CustomPersistenceHandler extends Ordered {
      * @param persistencePackage details about the remove operation
      * @return whether or not this handler supports remove
      */
-    public Boolean canHandleRemove(PersistencePackage persistencePackage);
+    Boolean canHandleRemove(PersistencePackage persistencePackage);
 
     /**
      * Is this persistence handler capable of dealing with an update request from the admin
@@ -82,17 +82,18 @@ public interface CustomPersistenceHandler extends Ordered {
      * @param persistencePackage details about the update operation
      * @return whether or not this handler supports updatess
      */
-    public Boolean canHandleUpdate(PersistencePackage persistencePackage);
-    public Boolean willHandleSecurity(PersistencePackage persistencePackage);
-    
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException;
+    Boolean canHandleUpdate(PersistencePackage persistencePackage);
 
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
-    
-    public Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
-    
-    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
-    
-    public Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
-    
+    Boolean willHandleSecurity(PersistencePackage persistencePackage);
+
+    DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, InspectHelper helper) throws ServiceException;
+
+    DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+
+    Entity add(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+
+    void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+
+    Entity update(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException;
+
 }

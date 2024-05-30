@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,9 +31,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 
 /**
- * 
  * @author bpolster
- *
  */
 @Repository("blForgotPasswordSecurityTokenDao")
 public class ForgotPasswordSecurityTokenDaoImpl implements ForgotPasswordSecurityTokenDao {
@@ -41,17 +39,26 @@ public class ForgotPasswordSecurityTokenDaoImpl implements ForgotPasswordSecurit
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override
     public ForgotPasswordSecurityToken readToken(String token) {
-        return (ForgotPasswordSecurityToken) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken"), token);        
+        return (ForgotPasswordSecurityToken) em.find(
+                entityConfiguration.lookupEntityClass(
+                        "org.broadleafcommerce.openadmin.server.security.domain.ForgotPasswordSecurityToken"
+                ),
+                token
+        );
     }
 
     @Override
     public List<ForgotPasswordSecurityToken> readUnusedTokensByAdminUserId(Long adminUserId) {
-        TypedQuery<ForgotPasswordSecurityToken> query = new TypedQueryBuilder<>(ForgotPasswordSecurityTokenImpl.class, "token", ForgotPasswordSecurityToken.class)
+        TypedQuery<ForgotPasswordSecurityToken> query = new TypedQueryBuilder<>(
+                ForgotPasswordSecurityTokenImpl.class,
+                "token",
+                ForgotPasswordSecurityToken.class
+        )
                 .addRestriction("token.adminUserId", "=", adminUserId)
                 .addRestriction("token.tokenUsedFlag", "=", false)
                 .toQuery(em);
@@ -62,4 +69,5 @@ public class ForgotPasswordSecurityTokenDaoImpl implements ForgotPasswordSecurit
     public ForgotPasswordSecurityToken saveToken(ForgotPasswordSecurityToken token) {
         return em.merge(token);
     }
+
 }

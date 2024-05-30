@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -87,13 +87,13 @@ public class SandBoxConnection implements Connection {
     }
 
     @Override
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-        delegate.setAutoCommit(autoCommit);
+    public boolean getAutoCommit() throws SQLException {
+        return delegate.getAutoCommit();
     }
 
     @Override
-    public boolean getAutoCommit() throws SQLException {
-        return delegate.getAutoCommit();
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+        delegate.setAutoCommit(autoCommit);
     }
 
     @Override
@@ -126,18 +126,13 @@ public class SandBoxConnection implements Connection {
     }
 
     @Override
-    public void setReadOnly(boolean readOnly) throws SQLException {
-        delegate.setReadOnly(readOnly);
-    }
-
-    @Override
     public boolean isReadOnly() throws SQLException {
         return delegate.isReadOnly();
     }
 
     @Override
-    public void setCatalog(String catalog) throws SQLException {
-        delegate.setCatalog(catalog);
+    public void setReadOnly(boolean readOnly) throws SQLException {
+        delegate.setReadOnly(readOnly);
     }
 
     @Override
@@ -146,13 +141,18 @@ public class SandBoxConnection implements Connection {
     }
 
     @Override
-    public void setTransactionIsolation(int level) throws SQLException {
-        delegate.setTransactionIsolation(level);
+    public void setCatalog(String catalog) throws SQLException {
+        delegate.setCatalog(catalog);
     }
 
     @Override
     public int getTransactionIsolation() throws SQLException {
         return delegate.getTransactionIsolation();
+    }
+
+    @Override
+    public void setTransactionIsolation(int level) throws SQLException {
+        delegate.setTransactionIsolation(level);
     }
 
     @Override
@@ -166,21 +166,18 @@ public class SandBoxConnection implements Connection {
     }
 
     @Override
-    public Statement createStatement(int resultSetType, int resultSetConcurrency)
-            throws SQLException {
+    public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
         return delegate.createStatement(resultSetType, resultSetConcurrency);
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql, int resultSetType,
-            int resultSetConcurrency) throws SQLException {
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
         return delegate.prepareStatement(sql, resultSetType,
                 resultSetConcurrency);
     }
 
     @Override
-    public CallableStatement prepareCall(String sql, int resultSetType,
-            int resultSetConcurrency) throws SQLException {
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
         return delegate.prepareCall(sql, resultSetType, resultSetConcurrency);
     }
 
@@ -195,13 +192,13 @@ public class SandBoxConnection implements Connection {
     }
 
     @Override
-    public void setHoldability(int holdability) throws SQLException {
-        delegate.setHoldability(holdability);
+    public int getHoldability() throws SQLException {
+        return delegate.getHoldability();
     }
 
     @Override
-    public int getHoldability() throws SQLException {
-        return delegate.getHoldability();
+    public void setHoldability(int holdability) throws SQLException {
+        delegate.setHoldability(holdability);
     }
 
     @Override
@@ -225,44 +222,42 @@ public class SandBoxConnection implements Connection {
     }
 
     @Override
-    public Statement createStatement(int resultSetType,
-            int resultSetConcurrency, int resultSetHoldability)
-            throws SQLException {
-        return delegate.createStatement(resultSetType, resultSetConcurrency,
-                resultSetHoldability);
+    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+        return delegate.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql, int resultSetType,
-            int resultSetConcurrency, int resultSetHoldability)
-            throws SQLException {
-        return delegate.prepareStatement(sql, resultSetType,
-                resultSetConcurrency, resultSetHoldability);
+    public PreparedStatement prepareStatement(
+            String sql,
+            int resultSetType,
+            int resultSetConcurrency,
+            int resultSetHoldability
+    ) throws SQLException {
+        return delegate.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
     @Override
-    public CallableStatement prepareCall(String sql, int resultSetType,
-            int resultSetConcurrency, int resultSetHoldability)
-            throws SQLException {
-        return delegate.prepareCall(sql, resultSetType, resultSetConcurrency,
-                resultSetHoldability);
+    public CallableStatement prepareCall(
+            String sql,
+            int resultSetType,
+            int resultSetConcurrency,
+            int resultSetHoldability
+    ) throws SQLException {
+        return delegate.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
-            throws SQLException {
+    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
         return delegate.prepareStatement(sql, autoGeneratedKeys);
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql, int[] columnIndexes)
-            throws SQLException {
+    public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
         return delegate.prepareStatement(sql, columnIndexes);
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql, String[] columnNames)
-            throws SQLException {
+    public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
         return delegate.prepareStatement(sql, columnNames);
     }
 
@@ -292,15 +287,8 @@ public class SandBoxConnection implements Connection {
     }
 
     @Override
-    public void setClientInfo(String name, String value)
-            throws SQLClientInfoException {
+    public void setClientInfo(String name, String value) throws SQLClientInfoException {
         delegate.setClientInfo(name, value);
-    }
-
-    @Override
-    public void setClientInfo(Properties properties)
-            throws SQLClientInfoException {
-        delegate.setClientInfo(properties);
     }
 
     @Override
@@ -314,15 +302,38 @@ public class SandBoxConnection implements Connection {
     }
 
     @Override
-    public Array createArrayOf(String typeName, Object[] elements)
-            throws SQLException {
+    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+        delegate.setClientInfo(properties);
+    }
+
+    @Override
+    public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
         return delegate.createArrayOf(typeName, elements);
     }
 
     @Override
-    public Struct createStruct(String typeName, Object[] attributes)
-            throws SQLException {
+    public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
         return delegate.createStruct(typeName, attributes);
+    }
+
+    public String getSchema() throws SQLException {
+        String returnValue = null;
+        try {
+            Class<? extends Connection> delegateClass = delegate.getClass();
+            Method method = delegateClass.getMethod("getSchema");
+            returnValue = method.invoke(delegate).toString();
+        } catch (SecurityException e) {
+            // ignore exceptions
+        } catch (NoSuchMethodException e) {
+            // ignore exceptions
+        } catch (IllegalArgumentException e) {
+            // ignore exceptions
+        } catch (IllegalAccessException e) {
+            // ignore exceptions
+        } catch (InvocationTargetException e) {
+            // ignore exceptions
+        }
+        return returnValue;
     }
 
     public void setSchema(String schema) throws SQLException {
@@ -346,26 +357,6 @@ public class SandBoxConnection implements Connection {
         } catch (InvocationTargetException e) {
             // ignore exceptions
         }
-    }
-
-    public String getSchema() throws SQLException {
-        String returnValue = null;
-        try {
-            Class<? extends Connection> delegateClass = delegate.getClass();
-            Method method = delegateClass.getMethod("getSchema");
-            returnValue = method.invoke(delegate).toString();
-        } catch (SecurityException e) {
-            // ignore exceptions
-        } catch (NoSuchMethodException e) {
-            // ignore exceptions
-        } catch (IllegalArgumentException e) {
-            // ignore exceptions
-        } catch (IllegalAccessException e) {
-            // ignore exceptions
-        } catch (InvocationTargetException e) {
-            // ignore exceptions
-        }
-        return returnValue;
     }
 
     public void abort(Executor executor) throws SQLException {
@@ -412,7 +403,6 @@ public class SandBoxConnection implements Connection {
         } catch (InvocationTargetException e) {
             // ignore exceptions
         }
-
     }
 
     public int getNetworkTimeout() throws SQLException {
@@ -434,4 +424,5 @@ public class SandBoxConnection implements Connection {
         }
         return returnValue;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,16 +25,18 @@ import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * A form to model adding a shipping address with shipping options.
- * 
+ *
  * @author Elbert Bautista (ebautista)
  * @author Andre Azzolini (apazzolini)
  */
 public class ShippingInfoForm implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Address address = new AddressImpl();
@@ -55,11 +57,11 @@ public class ShippingInfoForm implements Serializable {
     public Long getFulfillmentOptionId() {
         return fulfillmentOptionId;
     }
-    
+
     public void setFulfillmentOptionId(Long fulfillmentOptionId) {
         this.fulfillmentOptionId = fulfillmentOptionId;
     }
-    
+
     public FulfillmentOption getFulfillmentOption() {
         return fulfillmentOption;
     }
@@ -82,22 +84,22 @@ public class ShippingInfoForm implements Serializable {
 
     public void setAddressName(String addressName) {
         this.addressName = addressName;
-    } 
-    
+    }
+
     public String getDeliveryMessage() {
         return deliveryMessage;
     }
-    
+
     public void setDeliveryMessage(String deliveryMessage) {
         this.deliveryMessage = deliveryMessage;
     }
-    
-    public void setPersonalMessage(PersonalMessage personalMessage) {
-        this.personalMessage = personalMessage;
-    }
-    
+
     public PersonalMessage getPersonalMessage() {
         return personalMessage;
+    }
+
+    public void setPersonalMessage(PersonalMessage personalMessage) {
+        this.personalMessage = personalMessage;
     }
 
     @Deprecated
@@ -105,12 +107,12 @@ public class ShippingInfoForm implements Serializable {
         return useBillingAddress;
     }
 
-    public boolean shouldUseBillingAddress() {
-        return useBillingAddress;
-    }
-
     public void setUseBillingAddress(boolean useBillingAddress) {
         this.useBillingAddress = useBillingAddress;
+    }
+
+    public boolean shouldUseBillingAddress() {
+        return useBillingAddress;
     }
 
     public boolean isSaveAsDefault() {
@@ -129,4 +131,5 @@ public class ShippingInfoForm implements Serializable {
                 && StringUtils.isNotBlank(getAddress().getAddressLine1())
                 && StringUtils.isNotBlank(getAddress().getCity());
     }
+
 }

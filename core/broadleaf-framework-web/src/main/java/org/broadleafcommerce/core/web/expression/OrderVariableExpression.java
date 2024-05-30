@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,15 +26,13 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import jakarta.annotation.Resource;
 
 /**
- * 
- * 
  * @author Phillip Verheyden (phillipuniverse)
  */
 public class OrderVariableExpression implements BroadleafVariableExpression {
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
+
     @Override
     public String getName() {
         return "orders";
@@ -43,8 +41,9 @@ public class OrderVariableExpression implements BroadleafVariableExpression {
     public Order getNamedOrderForCurrentCustomer(String orderName) {
         return getNamedOrderForCustomer(orderName, CustomerState.getCustomer());
     }
-    
+
     public Order getNamedOrderForCustomer(String orderName, Customer customer) {
         return orderService.findNamedOrderForCustomer(orderName, customer);
     }
+
 }

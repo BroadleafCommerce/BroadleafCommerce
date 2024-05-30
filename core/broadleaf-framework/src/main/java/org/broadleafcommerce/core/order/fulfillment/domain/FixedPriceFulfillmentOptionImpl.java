@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,6 +29,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.core.order.domain.FulfillmentOptionImpl;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
@@ -40,7 +41,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /**
- * 
  * @author Phillip Verheyden
  */
 @Entity
@@ -49,12 +49,14 @@ import jakarta.persistence.Table;
 @AdminPresentationClass(friendlyName = "Fixed Price Fulfillment")
 public class FixedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl implements FixedPriceFulfillmentOption {
 
+    @Serial
     private static final long serialVersionUID = 2L;
 
-    @Column(name = "PRICE", precision=19, scale=5, nullable=false)
-    @AdminPresentation(friendlyName = "FixedPriceFulfillmentOptionImpl_price", order = Presentation.FieldOrder.DESCRIPTION + 1000)
+    @Column(name = "PRICE", precision = 19, scale = 5, nullable = false)
+    @AdminPresentation(friendlyName = "FixedPriceFulfillmentOptionImpl_price",
+            order = Presentation.FieldOrder.DESCRIPTION + 1000)
     protected BigDecimal price;
-    
+
     @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(excluded = true)
@@ -109,8 +111,9 @@ public class FixedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl imple
     }
 
     @Override
-    public CreateResponse<FixedPriceFulfillmentOption> createOrRetrieveCopyInstance(MultiTenantCopyContext context)
-            throws CloneNotSupportedException {
+    public CreateResponse<FixedPriceFulfillmentOption> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<FixedPriceFulfillmentOption> createResponse = super.createOrRetrieveCopyInstance(context);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -121,4 +124,5 @@ public class FixedPriceFulfillmentOptionImpl extends FulfillmentOptionImpl imple
 
         return createResponse;
     }
+
 }

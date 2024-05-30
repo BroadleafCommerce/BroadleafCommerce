@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,22 +39,17 @@ import jakarta.servlet.http.HttpServletRequest;
 
 public class BroadleafUpdateAccountController extends BroadleafAbstractController {
 
-    @Value("${use.email.for.site.login:true}")
-    protected boolean useEmailForLogin;
-    
-    @Resource(name="blUserDetailsService")
-    private UserDetailsService userDetailsService;
-
-    @Resource(name = "blCustomerService")
-    protected CustomerService customerService;
-    
-    @Resource(name = "blUpdateAccountValidator")
-    protected UpdateAccountValidator updateAccountValidator;
-
-    protected String accountUpdatedMessage = "Account successfully updated";
-    
     protected static String updateAccountView = "account/updateAccount";
     protected static String accountRedirectView = "redirect:/account";
+    @Value("${use.email.for.site.login:true}")
+    protected boolean useEmailForLogin;
+    @Resource(name = "blCustomerService")
+    protected CustomerService customerService;
+    @Resource(name = "blUpdateAccountValidator")
+    protected UpdateAccountValidator updateAccountValidator;
+    protected String accountUpdatedMessage = "Account successfully updated";
+    @Resource(name = "blUserDetailsService")
+    private UserDetailsService userDetailsService;
 
     public String viewUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form) {
         Customer customer = CustomerState.getCustomer();
@@ -64,36 +59,44 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
         return getUpdateAccountView();
     }
 
-    public String processUpdateAccount(HttpServletRequest request, Model model, UpdateAccountForm form, BindingResult result, RedirectAttributes redirectAttributes) throws ServiceException {
+    public String processUpdateAccount(
+            HttpServletRequest request,
+            Model model,
+            UpdateAccountForm form,
+            BindingResult result,
+            RedirectAttributes redirectAttributes
+    ) throws ServiceException {
         updateAccountValidator.validate(form, result);
-        
+
         if (result.hasErrors()) {
             return getUpdateAccountView();
         }
-        
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated()) {
-    		throw new AuthenticationCredentialsNotFoundException("Authentication was null, not authenticated, or not logged in.");
-    	}
-        
+            throw new AuthenticationCredentialsNotFoundException("Authentication was null, not authenticated, or not logged in.");
+        }
+
         Customer customer = CustomerState.getCustomer();
         customer.setEmailAddress(form.getEmailAddress());
         customer.setFirstName(form.getFirstName());
         customer.setLastName(form.getLastName());
-        
+
         if (useEmailForLogin) {
             customer.setUsername(form.getEmailAddress());
         }
-        
+
         customer = customerService.saveCustomer(customer);
-        
+
         if (useEmailForLogin) {
-        	UserDetails principal = userDetailsService.loadUserByUsername(customer.getUsername());
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), auth.getAuthorities());
-            
+            UserDetails principal = userDetailsService.loadUserByUsername(customer.getUsername());
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                    principal, principal.getPassword(), auth.getAuthorities()
+            );
+
             SecurityContextHolder.getContext().setAuthentication(token);
         }
-        
+
         redirectAttributes.addFlashAttribute("successMessage", getAccountUpdatedMessage());
         return getAccountRedirectView();
     }
@@ -101,11 +104,11 @@ public class BroadleafUpdateAccountController extends BroadleafAbstractControlle
     public String getUpdateAccountView() {
         return updateAccountView;
     }
-    
+
     public String getAccountRedirectView() {
         return accountRedirectView;
     }
-    
+
     public String getAccountUpdatedMessage() {
         return accountUpdatedMessage;
     }

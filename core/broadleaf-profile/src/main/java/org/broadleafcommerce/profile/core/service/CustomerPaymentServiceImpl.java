@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,11 +30,13 @@ import jakarta.annotation.Resource;
 @Service("blCustomerPaymentService")
 public class CustomerPaymentServiceImpl implements CustomerPaymentService {
 
-    /** Services */
-    @Resource(name="blCustomerPaymentDao")
+    /**
+     * Services
+     */
+    @Resource(name = "blCustomerPaymentDao")
     protected CustomerPaymentDao customerPaymentDao;
 
-    @Resource(name="blCustomerService")
+    @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
     @Override
@@ -77,7 +79,9 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
     }
 
     public CustomerPayment findDefaultPaymentForCustomer(Customer customer) {
-        if (customer == null) { return null; }
+        if (customer == null) {
+            return null;
+        }
         List<CustomerPayment> payments = readCustomerPaymentsByCustomerId(customer.getId());
         for (CustomerPayment payment : payments) {
             if (payment.isDefault()) {
@@ -120,7 +124,7 @@ public class CustomerPaymentServiceImpl implements CustomerPaymentService {
                 break;
             }
         }
-       return customerService.saveCustomer(customer);
+        return customerService.saveCustomer(customer);
     }
 
 }

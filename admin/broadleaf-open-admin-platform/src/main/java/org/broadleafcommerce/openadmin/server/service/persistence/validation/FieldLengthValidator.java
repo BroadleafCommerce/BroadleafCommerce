@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,36 +28,38 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.util.Map;
 
-
 /**
  * Ensures that field values submitted in the admin are less than or equal to the length specified in the metadata
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blFieldLengthValidator")
 public class FieldLengthValidator implements GlobalPropertyValidator {
 
     @Override
-    public PropertyValidationResult validate(Entity entity,
+    public PropertyValidationResult validate(
+            Entity entity,
             Serializable instance,
             Map<String, FieldMetadata> entityFieldMetadata,
             BasicFieldMetadata propertyMetadata,
             String propertyName,
-            String value) {
+            String value
+    ) {
         boolean valid = true;
         String errorMessage = "";
         if (propertyMetadata.getLength() != null) {
             valid = StringUtils.length(value) <= propertyMetadata.getLength();
         }
-        
+
         if (!valid) {
             BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
             MessageSource messages = context.getMessageSource();
             errorMessage = messages.getMessage("fieldLengthValidationFailure",
-                    new Object[] {propertyMetadata.getLength(), StringUtils.length(value) },
-                    context.getJavaLocale());
+                    new Object[]{propertyMetadata.getLength(), StringUtils.length(value)},
+                    context.getJavaLocale()
+            );
         }
-        
+
         return new PropertyValidationResult(valid, errorMessage);
     }
 

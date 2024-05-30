@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,13 +36,12 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its children.
- *
+ * <p>
  * Operations that are shared between controllers that deal with Customer Addresses belong here.
  *
  * @author Elbert Bautista (elbertbautista)
  */
 public class AbstractCustomerAddressController extends BroadleafAbstractController {
-
 
     protected static String customerAddressesView = "account/manageCustomerAddresses";
     protected static String customerAddressesRedirect = "redirect:/account/addresses";
@@ -78,7 +77,6 @@ public class AbstractCustomerAddressController extends BroadleafAbstractControll
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
         initBinderService.configAddressInitBinder(binder);
     }
-
 
     protected List<Country> populateCountries() {
         return countryService.findCountries();

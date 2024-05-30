@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,20 +39,20 @@ public class FieldDaoImpl implements FieldDao {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
-    
-    @Resource(name="blEntityConfiguration")
+
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-    
+
     @Override
     public Field readFieldByAbbreviation(String abbreviation) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<Field> criteria = builder.createQuery(Field.class);
-        
+
         Root<FieldImpl> root = criteria.from(FieldImpl.class);
-        
+
         criteria.select(root);
         criteria.where(
-            builder.equal(root.get("abbreviation").as(String.class), abbreviation)
+                builder.equal(root.get("abbreviation").as(String.class), abbreviation)
         );
 
         TypedQuery<Field> query = em.createQuery(criteria);
@@ -66,7 +66,7 @@ public class FieldDaoImpl implements FieldDao {
             return null;
         }
     }
-    
+
     @Override
     public List<Field> readAllProductFields() {
         return readFieldsByEntityType(FieldEntity.PRODUCT);
@@ -88,7 +88,7 @@ public class FieldDaoImpl implements FieldDao {
         criteria.select(root);
         criteria.where(
                 root.get("entityType").as(String.class).in(entityType.getAllLookupTypes())
-                );
+        );
 
         TypedQuery<Field> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -101,4 +101,5 @@ public class FieldDaoImpl implements FieldDao {
     public Field save(Field field) {
         return em.merge(field);
     }
+
 }

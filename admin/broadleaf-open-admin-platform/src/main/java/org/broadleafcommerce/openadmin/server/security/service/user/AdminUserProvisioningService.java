@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,22 +21,21 @@ import org.broadleafcommerce.common.security.BroadleafExternalAuthenticationUser
 
 /**
  * Utility to add or update the AdminUser object in the database after authentication from an external system.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 public interface AdminUserProvisioningService {
 
     /**
-     * This method uses the details argument to add or update an AdminUser object in the database, 
-     * along with appropriate roles and permissions.  The result of the call to this should be an instance of 
+     * This method uses the details argument to add or update an AdminUser object in the database,
+     * along with appropriate roles and permissions.  The result of the call to this should be an instance of
      * AdminUserDetails.
-     * 
+     * <p>
      * NOTE: IT IS GENERALLY EXPECTED THAT THIS METHOD WILL BE CALLED AFTER A USER HAS BEEN AUTHENTICATED.
-     * 
+     *
      * @param details
      * @return
      */
-    public AdminUserDetails provisionAdminUser(BroadleafExternalAuthenticationUserDetails details);
+    AdminUserDetails provisionAdminUser(BroadleafExternalAuthenticationUserDetails details);
 
 }

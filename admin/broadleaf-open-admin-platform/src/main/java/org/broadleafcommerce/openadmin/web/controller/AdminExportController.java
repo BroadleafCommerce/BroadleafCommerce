@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,15 +30,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * 
  * @author Phillip Verheyden
  */
 public class AdminExportController extends AdminAbstractController {
-    
+
     @Resource(name = "blAdminExporters")
     protected List<AdminExporter> exporters;
 
-    public ModelAndView export(HttpServletRequest request, HttpServletResponse response, Map<String, String> params) throws IOException {
+    public ModelAndView export(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Map<String, String> params
+    ) throws IOException {
         String exporterName = params.get("exporter");
         AdminExporter exporter = null;
         for (AdminExporter test : exporters) {
@@ -49,22 +52,22 @@ public class AdminExportController extends AdminAbstractController {
         if (exporter == null) {
             throw new RuntimeException("Could not find exporter with name: " + exporterName);
         }
-        
+
         response.setContentType("application/download");
         String fileName = exporter.getFileName();
         response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-        
+
         ServletOutputStream stream = response.getOutputStream();
         exporter.writeExport(stream, params);
         stream.flush();
-        
+
         return null;
     }
 
     public List<AdminExporter> getExporters() {
         return exporters;
     }
-    
+
     public void setExporters(List<AdminExporter> exporters) {
         this.exporters = exporters;
     }

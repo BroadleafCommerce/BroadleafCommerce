@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,55 +35,54 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
 /**
  * Extension handler for methods present in {@link AdminAbstractController}.
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public interface AdminAbstractControllerExtensionHandler extends ExtensionHandler {
-    
-    public static final String NEW_CLASS_NAME = "newClassName";
+
+    String NEW_CLASS_NAME = "newClassName";
 
     /**
      * Invoked every time {@link AdminBasicEntityController#viewEntityList()} is invoked to allow additional
      * main form actions to be contributed.
-     * 
-     * @param model
-     * @param sectionKey
+     *
+     * @param sectionClassName
+     * @param actions
      * @return
      */
-    public ExtensionResultStatusType addAdditionalMainActions(String sectionClassName, List<EntityFormAction> actions);
+    ExtensionResultStatusType addAdditionalMainActions(String sectionClassName, List<EntityFormAction> actions);
 
     /**
      * Extension point to override the actions that are added by default when viewing a ceiling entity for a particular
      * section (for instance, a list of Products in the 'Product' section). Assuming that the user has proper permissions,
      * the mainActions list would have {@link org.broadleafcommerce.openadmin.web.form.entity.DefaultMainActions#ADD}
      *
-     * @param cmd the metadata for the ceiling entity that is being displayed
+     * @param cmd         the metadata for the ceiling entity that is being displayed
      * @param mainActions the actions that are added to the main form by default. Use this list to add more actions
      */
-    public ExtensionResultStatusType modifyMainActions(ClassMetadata cmd, List<EntityFormAction> mainActions);
+    ExtensionResultStatusType modifyMainActions(ClassMetadata cmd, List<EntityFormAction> mainActions);
 
     /**
      * Invoked every time {@link AdminAbstractController#setModelAttributes(Model, String)} is invoked.
-     * 
+     *
      * @param model
      * @param sectionKey
      * @return the extension result status
      */
-    public ExtensionResultStatusType setAdditionalModelAttributes(Model model, String sectionKey);
+    ExtensionResultStatusType setAdditionalModelAttributes(Model model, String sectionKey);
 
     /**
-     * Invoked whenever {@link AdminAbstractController#getBlankDynamicFieldTemplateForm} or 
+     * Invoked whenever {@link AdminAbstractController#getBlankDynamicFieldTemplateForm} or
      * {@link AdminAbstractController#getDynamicFieldTemplateForm} is invoked. This method provides the ability to modify
      * the dynamic form that is created as a result of those two methods.
-     * 
+     *
      * @param form
      * @param parentEntityId
      * @return
      */
-    public ExtensionResultStatusType modifyDynamicForm(EntityForm form, String parentEntityId);
+    ExtensionResultStatusType modifyDynamicForm(EntityForm form, String parentEntityId);
 
     /**
      * Extension point to modify the model for specific collection types
@@ -91,12 +90,15 @@ public interface AdminAbstractControllerExtensionHandler extends ExtensionHandle
      * @param md
      * @return
      */
-    public ExtensionResultStatusType modifyModelForAddCollectionType(HttpServletRequest request,
-                                                                     HttpServletResponse response,
-                                                                     Model model,
-                                                                     String sectionKey,
-                                                                     String id,
-                                                                     MultiValueMap<String, String> requestParams, MapMetadata md);
+    ExtensionResultStatusType modifyModelForAddCollectionType(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            String sectionKey,
+            String id,
+            MultiValueMap<String, String> requestParams,
+            MapMetadata md
+    );
 
     /**
      * Extension point to determine if the entity requested is a new empty add request.
@@ -104,11 +106,10 @@ public interface AdminAbstractControllerExtensionHandler extends ExtensionHandle
      * @param entity
      * @return
      */
-    public ExtensionResultStatusType isAddRequest(Entity entity, ExtensionResultHolder<Boolean> resultHolder);
+    ExtensionResultStatusType isAddRequest(Entity entity, ExtensionResultHolder<Boolean> resultHolder);
 
     /**
      * Extension point to determine if the current save transaction is the first valid save.
-     *
      *
      * @param response
      * @param hasValidationErrors
@@ -116,7 +117,10 @@ public interface AdminAbstractControllerExtensionHandler extends ExtensionHandle
      * @param id
      * @return
      */
-    public ExtensionResultStatusType overrideSaveEntityJsonResponse(HttpServletResponse response, boolean hasValidationErrors, String sectionKey, String id, ExtensionResultHolder<String> resultHolder);
+    ExtensionResultStatusType overrideSaveEntityJsonResponse(
+            HttpServletResponse response, boolean hasValidationErrors, String sectionKey, String id,
+            ExtensionResultHolder<String> resultHolder
+    );
 
     /**
      * Extension point for setting values on an EntityForm before the initial object is persisted.
@@ -125,5 +129,6 @@ public interface AdminAbstractControllerExtensionHandler extends ExtensionHandle
      * @param pathVars
      * @return
      */
-    public ExtensionResultStatusType modifyPreAddEntityForm(EntityForm entityForm, ClassMetadata cmd, Map<String, String> pathVars);
+    ExtensionResultStatusType modifyPreAddEntityForm(EntityForm entityForm, ClassMetadata cmd, Map<String, String> pathVars);
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,18 +19,18 @@ package org.broadleafcommerce.common.util;
 
 /**
  * Allows for a generic operation that can be executed in a particular context.
- * 
- * @author Kelly Tisdell
  *
+ * @author Kelly Tisdell
  */
 public interface GenericOperation<R> {
 
     /**
-     * Returns R, the return value and throws T, the Throwable.  Use {@link Void} as the return type 
+     * Returns R, the return value and throws T, the Throwable.  Use {@link Void} as the return type
      * and return null if void is the expected return type.
+     *
      * @return
-     * @throws T
+     * @throws Exception
      */
-    public R execute() throws Exception;
-    
+    R execute() throws Exception;
+
 }

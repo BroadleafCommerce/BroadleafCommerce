@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,11 +21,13 @@ import org.broadleafcommerce.core.catalog.domain.Sku;
 
 /**
  * Interface indicating that an item contains a getSku method.
- *
+ * <p>
  * Intended for use by subclasses of OrderItem that contain a sku.
- *
+ * <p>
  * Created by bpolster.
  */
 public interface SkuAccessor {
+
     Sku getSku();
+
 }

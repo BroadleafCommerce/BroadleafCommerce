@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,7 +27,7 @@ import org.broadleafcommerce.core.workflow.WorkflowException;
 
 /**
  * Implementation to "confirm" an unconfirmed transaction.
- *
+ * <p>
  * Default implementation is to:
  * - If it is an unconfirmed {@link org.broadleafcommerce.common.payment.PaymentType#CREDIT_CARD},
  * then it will attempt to either "Authorize" or "Authorize and Capture" it at this time.
@@ -42,10 +42,11 @@ public interface OrderPaymentConfirmationStrategy {
     /**
      * Strategy to determine how to "confirm" an OrderPayment at checkout
      */
-    public PaymentResponseDTO confirmTransaction(PaymentTransaction tx, ProcessContext<CheckoutSeed> context) throws PaymentException, WorkflowException, CheckoutException;
+    PaymentResponseDTO confirmTransaction(PaymentTransaction tx, ProcessContext<CheckoutSeed> context) throws PaymentException, WorkflowException, CheckoutException;
 
     /**
      * Strategy to determine how to "confirm" a PENDING OrderPayment post-checkout
      */
-    public PaymentResponseDTO confirmPendingTransaction(PaymentTransaction tx, ProcessContext<CheckoutSeed> context) throws PaymentException, WorkflowException, CheckoutException;
+    PaymentResponseDTO confirmPendingTransaction(PaymentTransaction tx, ProcessContext<CheckoutSeed> context) throws PaymentException, WorkflowException, CheckoutException;
+
 }

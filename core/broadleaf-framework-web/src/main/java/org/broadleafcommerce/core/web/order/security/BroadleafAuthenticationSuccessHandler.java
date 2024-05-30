@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,8 +31,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Designed to be manually instantiated in client-specific security settings
- * 
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -40,9 +39,12 @@ public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuth
     protected static final String SESSION_ATTR = "SFP-ActiveID";
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) throws ServletException, IOException {
-        
+    public void onAuthenticationSuccess(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication
+    ) throws ServletException, IOException {
+
         String targetUrl = request.getParameter(getTargetUrlParameter());
         if (BLCRequestUtils.isOKtoUseSession(new ServletWebRequest(request))) {
             request.getSession().removeAttribute(SESSION_ATTR);
@@ -53,4 +55,5 @@ public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuth
             super.onAuthenticationSuccess(request, response, authentication);
         }
     }
+
 }

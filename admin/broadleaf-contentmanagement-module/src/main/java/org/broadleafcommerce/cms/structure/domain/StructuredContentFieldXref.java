@@ -10,32 +10,31 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.cms.structure.domain;
 
-
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 public interface StructuredContentFieldXref extends MultiTenantCloneable<StructuredContentFieldXref> {
 
-    public void setId(Long id);
+    Long getId();
 
-    public Long getId();
+    void setId(Long id);
 
-    public void setStructuredContent(StructuredContent sc);
+    StructuredContent getStructuredContent();
 
-    public StructuredContent getStructuredContent();
+    void setStructuredContent(StructuredContent sc);
 
-    public void setStrucuturedContentField(StructuredContentField scField);
+    void setStrucuturedContentField(StructuredContentField scField);
 
-    public StructuredContentField getStructuredContentField();
+    StructuredContentField getStructuredContentField();
 
-    public void setKey(String key);
+    String getKey();
 
-    public String getKey();
+    void setKey(String key);
 
 }

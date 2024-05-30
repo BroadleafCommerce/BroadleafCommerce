@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 
 /**
- *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Service("blDefaultCurrentPaymentRequestService")
@@ -47,7 +46,7 @@ public class DefaultCurrentOrderPaymentRequestService implements CurrentOrderPay
 
     @Resource(name = "blOrderService")
     protected OrderService orderService;
-    
+
     @Override
     public PaymentRequestDTO getPaymentRequestFromCurrentOrder() {
         Order currentCart = CartState.getCart();
@@ -64,7 +63,7 @@ public class DefaultCurrentOrderPaymentRequestService implements CurrentOrderPay
     public void addOrderAttributeToOrder(Long orderId, String orderAttributeKey, String orderAttributeValue) throws PaymentException {
         Order currentCart = CartState.getCart();
         Long currentCartId = currentCart.getId();
-        
+
         if (orderId != null && !currentCartId.equals(orderId)) {
             logWarningIfCartMismatch(currentCartId, orderId);
             currentCart = orderService.findOrderById(orderId);
@@ -86,7 +85,7 @@ public class DefaultCurrentOrderPaymentRequestService implements CurrentOrderPay
             throw new PaymentException(e);
         }
     }
-    
+
     protected void logWarningIfCartMismatch(Long currentCartId, Long orderId) {
         if (LOG.isWarnEnabled()) {
             LOG.warn(String.format("The current cart resolved from cart state [%s] is not the same as the requested order ID [%s]. Session may have expired or local cart state was lost. This may need manual review.", currentCartId, orderId));
@@ -102,7 +101,7 @@ public class DefaultCurrentOrderPaymentRequestService implements CurrentOrderPay
     public String retrieveOrderAttributeFromOrder(Long orderId, String orderAttributeKey) {
         Order currentCart = CartState.getCart();
         Long currentCartId = currentCart.getId();
-        
+
         if (orderId != null && !currentCartId.equals(orderId)) {
             logWarningIfCartMismatch(currentCartId, orderId);
             currentCart = orderService.findOrderById(orderId);

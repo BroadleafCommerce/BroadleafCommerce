@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,7 +29,7 @@ import jakarta.annotation.Resource;
  * Generic Address Validator not specific to a particular Country.
  * Some modules may provide custom validation which can be enabled by setting
  * the {@link org.broadleafcommerce.common.config.domain.SystemProperty} "validator.custom.enabled"
- *
+ * <p>
  * If a custom validation is not performed, a generic set of address validation is used.
  * You may configure this validator to only validate a Full Name rather than a separate first and last name,
  * by setting the {@link org.broadleafcommerce.common.config.domain.SystemProperty} "validator.address.fullNameOnly"
@@ -50,7 +50,7 @@ public class BroadleafCommonAddressValidator {
     }
 
     public void validate(BroadleafFormType formType, Address address, Errors errors) {
-        if (isCustomValidationEnabled())  {
+        if (isCustomValidationEnabled()) {
             validatorExtensionManager.getProxy().validate(formType, address, errors);
             return;
         }

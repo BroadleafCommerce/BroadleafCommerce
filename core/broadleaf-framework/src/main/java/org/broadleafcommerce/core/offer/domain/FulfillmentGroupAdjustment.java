@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,33 +22,34 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 
 public interface FulfillmentGroupAdjustment extends Adjustment {
 
-    public FulfillmentGroup getFulfillmentGroup();
+    FulfillmentGroup getFulfillmentGroup();
 
-    public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason);
+    void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
-    public void setValue(Money value);
+    void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason);
 
-    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
+    void setValue(Money value);
 
     /**
-     * Future credit means that the associated adjustment will be discounted at a later time to the customer 
-     * via a credit. It is up to the implementor to decide how to achieve this. This field is used to determine 
+     * Future credit means that the associated adjustment will be discounted at a later time to the customer
+     * via a credit. It is up to the implementor to decide how to achieve this. This field is used to determine
      * if the adjustment originated from an offer marked as FUTURE_CREDIT.
-     *
+     * <p>
      * See {@link Offer#getAdjustmentType()} for more info
-     * 
+     *
      * @return
      */
     Boolean isFutureCredit();
 
     /**
-     * Future credit means that the associated adjustment will be discounted at a later time to the customer 
-     * via a credit. It is up to the implementor to decide how to achieve this. This field is used to determine 
+     * Future credit means that the associated adjustment will be discounted at a later time to the customer
+     * via a credit. It is up to the implementor to decide how to achieve this. This field is used to determine
      * if the adjustment originated from an offer marked as FUTURE_CREDIT.
-     *
+     * <p>
      * See {@link Offer#getAdjustmentType()} for more info
      *
      * @param futureCredit
      */
     void setFutureCredit(Boolean futureCredit);
+
 }

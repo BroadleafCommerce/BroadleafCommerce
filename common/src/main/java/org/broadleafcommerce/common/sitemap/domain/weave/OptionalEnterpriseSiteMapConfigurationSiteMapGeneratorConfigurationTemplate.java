@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,21 +31,21 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
 
 /**
- * This class is meant as a template to provide overriding of the annotations on fields in 
+ * This class is meant as a template to provide overriding of the annotations on fields in
  * <code>org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl</code>.  This provides a
- * stop gap measure to allow someone to weave in the appropriate annotations in 4.0.x without forcing a schema change on those 
+ * stop gap measure to allow someone to weave in the appropriate annotations in 4.0.x without forcing a schema change on those
  * who prefer not to use it.  This should likely be removed in 4.1 for fixed annotations on the entity itself.
- * 
- * @author Jeff Fischer
  *
+ * @author Jeff Fischer
  */
 @Deprecated
 public abstract class OptionalEnterpriseSiteMapConfigurationSiteMapGeneratorConfigurationTemplate {
 
-    @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "siteMapConfiguration", targetEntity = SiteMapGeneratorConfigurationImpl.class,
+            cascade = {CascadeType.ALL}, orphanRemoval = true)
     @AdminPresentationCollection(friendlyName = "SiteMapConfigurationImpl_Generator_Configurations",
             tab = AbstractModuleConfigurationAdminPresentation.TabName.General)
     @SiteDiscriminatable(type = SiteDiscriminatableType.SITE)
-    protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<SiteMapGeneratorConfiguration>();
+    protected List<SiteMapGeneratorConfiguration> siteMapGeneratorConfigurations = new ArrayList<>();
 
 }

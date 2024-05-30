@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,13 +22,13 @@ import org.springframework.core.io.Resource;
 import java.util.List;
 
 /**
- * Tracks a bundle version name and path/file information for a dynamically created resource bundle.  This information can be used later to 
+ * Tracks a bundle version name and path/file information for a dynamically created resource bundle.  This information can be used later to
  * rebuild a bundle resource should that resource be found to not exist.
- * 
- * @author dcolgrove
  *
+ * @author dcolgrove
  */
 public class BundledResourceInfo {
+
     protected Resource resource;
     protected String versionedBundleName;
     protected List<String> bundledFilePaths;
@@ -50,7 +50,7 @@ public class BundledResourceInfo {
     public String getVersionedBundleName() {
         return versionedBundleName;
     }
-    
+
     public void setVersionedBundleName(String versionedBundleName) {
         this.versionedBundleName = versionedBundleName;
     }
@@ -58,10 +58,9 @@ public class BundledResourceInfo {
     public List<String> getBundledFilePaths() {
         return bundledFilePaths;
     }
-    
+
     public void setBundledFilePaths(List<String> bundledFilePaths) {
         this.bundledFilePaths = bundledFilePaths;
     }
 
-        
 }

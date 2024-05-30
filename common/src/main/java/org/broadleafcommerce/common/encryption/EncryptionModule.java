@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,25 +24,28 @@ public interface EncryptionModule {
 
     /**
      * Encrypt a text string
+     *
      * @param plainText
      * @return
      */
-    public String encrypt(String plainText);
+    String encrypt(String plainText);
 
     /**
      * Decrypt a encrypted string
+     *
      * @param cipherText
      * @return
      */
-    public String decrypt(String cipherText);
+    String decrypt(String cipherText);
 
     /**
      * Check to see if a text string matches a generated encrypted token.
      * This is useful for encoders that always generate a unique hash.
+     *
      * @param raw
      * @param encrypted
      * @return
      */
-    public Boolean matches(String raw, String encrypted);
+    Boolean matches(String raw, String encrypted);
 
 }

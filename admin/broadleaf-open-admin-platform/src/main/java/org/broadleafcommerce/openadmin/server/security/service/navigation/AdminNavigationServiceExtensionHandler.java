@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,7 +25,7 @@ import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 
 /**
  * Extension handler for methods present in {@link AdminNavigationService}.
- * 
+ *
  * @author Jeff Fischer
  */
 public interface AdminNavigationServiceExtensionHandler extends ExtensionHandler {
@@ -35,7 +35,7 @@ public interface AdminNavigationServiceExtensionHandler extends ExtensionHandler
     /**
      * Invoked whenever {@link AdminAbstractController#getClassNameForSection(String)} is invoked. If an extension
      * handler sets the {@link #NEW_CLASS_NAME} variable in the ExtensionResultHolder, the overriden value will be used.
-     * 
+     *
      * @param erh
      * @param sectionKey
      * @param section

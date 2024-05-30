@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,28 +19,25 @@ package org.broadleafcommerce.core.inventory.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Enumeration to specify whether inventory should be checked or not.
- * 
+ *
  * @author Kelly Tisdell
  */
 public class InventoryType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, InventoryType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, InventoryType> TYPES = new LinkedHashMap<String, InventoryType>();
-    
-    public static final InventoryType ALWAYS_AVAILABLE  = new InventoryType("ALWAYS_AVAILABLE", "Always Available");
-    public static final InventoryType UNAVAILABLE  = new InventoryType("UNAVAILABLE", "Unavailable");
+    public static final InventoryType ALWAYS_AVAILABLE = new InventoryType("ALWAYS_AVAILABLE", "Always Available");
+    public static final InventoryType UNAVAILABLE = new InventoryType("UNAVAILABLE", "Unavailable");
     public static final InventoryType CHECK_QUANTITY = new InventoryType("CHECK_QUANTITY", "Check Quantity");
-
-    public static InventoryType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -54,23 +51,28 @@ public class InventoryType implements Serializable, BroadleafEnumerationType {
         setType(type);
     }
 
+    public static InventoryType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     @Override
     public String getType() {
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         } else {
-            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
+            throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via "
+                    + getInstance(type).getClass().getName());
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override

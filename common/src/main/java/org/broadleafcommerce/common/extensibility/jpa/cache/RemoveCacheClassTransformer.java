@@ -10,13 +10,12 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.extensibility.jpa.cache;
-
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,15 +47,15 @@ import javassist.bytecode.annotation.StringMemberValue;
 
 /**
  * Strip the cache annotation from classes and the class fields
- * 
+ * <p>
  * Example configuration
- * 
+ *
  * <pre>
  * {@code
  * @Merge("blMergedClassTransformers")
  * public RemoveCacheClassTransformer RemoveProductCache() {
  *     RemoveCacheClassTransformer transformer = new RemoveCacheClassTransformer("Remove Product Cache");
- *     List<String> cacheRegions = new ArrayList<String>();
+ *     List<String> cacheRegions = new ArrayList<>();
  *     cacheRegions.add("blCustomerElements");
  *     cacheRegions.add("blOrderElements");
  *     transformer.setCacheRegions(cacheRegions);
@@ -64,9 +63,9 @@ import javassist.bytecode.annotation.StringMemberValue;
  * }
  * }
  * </pre>
- * 
+ * <p>
  * This feature requires that the property "remove.order.customer.entity.l2cache" be enabled (true).
- * 
+ *
  * @author Jeff Fischer
  * @author Daniel Colgrove
  */
@@ -75,14 +74,14 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
     private static final Log logger = LogFactory.getLog(RemoveCacheClassTransformer.class);
 
     protected String moduleName;
-    protected List<String> classNames = new ArrayList<String>();
-    protected List<String> cacheRegions = new ArrayList<String>();
+    protected List<String> classNames = new ArrayList<>();
+    protected List<String> cacheRegions = new ArrayList<>();
     protected String annotationClass = "org.hibernate.annotations.Cache";
     protected ConfigurableBeanFactory beanFactory;
 
     @Value("${remove.order.customer.entity.l2cache:false}")
     protected Boolean removeOrderCustomerEntityL2Cache;
-    
+
     public RemoveCacheClassTransformer(String moduleName) {
         this.moduleName = moduleName;
     }
@@ -98,8 +97,13 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
     }
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
+    public byte[] transform(
+            ClassLoader loader,
+            String className,
+            Class<?> classBeingRedefined,
+            ProtectionDomain protectionDomain,
+            byte[] classfileBuffer
+    ) throws TransformerException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -111,7 +115,7 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
         CtClass clazz = null;
         try {
             String convertedClassName = className.replace('/', '.');
-            
+
             // If there is a class list specified, make sure the current class qualifies to have the annotation removed
             if (removeOrderCustomerEntityL2Cache && !cacheRegions.isEmpty() && classQualifies(convertedClassName)) {
                 ClassPool classPool = ClassPool.getDefault();
@@ -134,7 +138,6 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
                     }
 
                     return clazz.toBytecode();
-                    
                 }
             }
         } catch (ClassCircularityError error) {
@@ -157,15 +160,15 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
 
     // Checks that the passes class name qualifies to be transformed
     protected Boolean classQualifies(String className) {
-        Boolean classQualifies = classNames.isEmpty() || ( !classNames.isEmpty() && classNames.contains(className) );
+        Boolean classQualifies = classNames.isEmpty() || (!classNames.isEmpty() && classNames.contains(className));
         return classQualifies;
     }
 
     // Checks is the annotation matches the "annotationClass"
     protected Boolean annotationQualifies(ConstPool constantPool, List<?> attributes) {
         boolean qualifies = false;
-        
-        Iterator<?> itr = attributes.iterator();        
+
+        Iterator<?> itr = attributes.iterator();
         while (itr.hasNext()) {
             Object object = itr.next();
             if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
@@ -180,7 +183,7 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
                 }
             }
         }
-        return qualifies;        
+        return qualifies;
     }
 
     // Checks that the Annotation "region" is in the list of cacheRegions to be removed
@@ -198,7 +201,9 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
     // Assumes the annotation qualifies to be removed (e.g. the annotationQualifies has already been verified)
     protected AnnotationsAttribute stripAnnotation(ConstPool constantPool, List<?> attributes) {
         Iterator<?> itr = attributes.iterator();
-        AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(constantPool, AnnotationsAttribute.visibleTag);
+        AnnotationsAttribute annotationsAttribute = new AnnotationsAttribute(
+                constantPool, AnnotationsAttribute.visibleTag
+        );
 
         while (itr.hasNext()) {
             Object object = itr.next();
@@ -218,7 +223,7 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
         }
         return annotationsAttribute;
     }
-    
+
     protected Boolean isPropertyEnabled(String propertyName) {
         Boolean shouldProceed;
         try {
@@ -255,7 +260,7 @@ public class RemoveCacheClassTransformer extends AbstractClassTransformer implem
     public void setCacheRegions(List<String> cacheRegions) {
         this.cacheRegions = cacheRegions;
     }
-    
+
     /**
      * The fully-qualified classname of the annotation to remove at the class and field level
      *

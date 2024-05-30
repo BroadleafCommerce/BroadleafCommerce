@@ -10,22 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.core.order.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -43,35 +34,46 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_DISC_ITEM_FEE_PRICE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 @AdminPresentationClass(friendlyName = "DiscreteOrderItemFeePriceImpl_baseDiscreteOrderItemFreePrice")
-@AdminPresentationMergeOverrides(
-    {
+@AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
-)
-public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice  {
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
+public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice {
 
     public static final Log LOG = LogFactory.getLog(DiscreteOrderItemFeePriceImpl.class);
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "DiscreteOrderItemFeePriceId")
     @GenericGenerator(
-        name="DiscreteOrderItemFeePriceId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="DiscreteOrderItemFeePriceImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl")
-        }
+            name = "DiscreteOrderItemFeePriceId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "DiscreteOrderItemFeePriceImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.DiscreteOrderItemFeePriceImpl")
+            }
     )
     @Column(name = "DISC_ITEM_FEE_PRICE_ID")
     protected Long id;
@@ -80,16 +82,16 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected DiscreteOrderItem discreteOrderItem;
 
-    @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Amount", order=2, prominent=true)
+    @Column(name = "AMOUNT", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Amount", order = 2, prominent = true)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Name", order=1, prominent=true)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Name", order = 1, prominent = true)
     private String name;
 
     @Column(name = "REPORTING_CODE")
-    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Reporting_Code", order=3, prominent=true)
+    @AdminPresentation(friendlyName = "DiscreteOrderItemFeePriceImpl_Reporting_Code", order = 3, prominent = true)
     private String reportingCode;
 
     @Override
@@ -144,7 +146,8 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
 
     public void checkCloneable(DiscreteOrderItemFeePrice discreteFeePrice) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = discreteFeePrice.getClass().getMethod("clone");
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") && !discreteFeePrice.getClass().getName().startsWith("org.broadleafcommerce")) {
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
+                && !discreteFeePrice.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in order to guarantee split and merge operations are performed accurately");
         }
@@ -163,7 +166,8 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
             try {
                 checkCloneable(clone);
             } catch (CloneNotSupportedException e) {
-                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: " + clone.getClass().getName(), e);
+                LOG.warn("Clone implementation missing in inheritance hierarchy outside of Broadleaf: "
+                        + clone.getClass().getName(), e);
             }
             clone.setAmount(convertToMoney(amount));
             clone.setName(name);
@@ -175,19 +179,21 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
 
         return clone;
     }
-    
+
     @Override
-    public CreateResponse<DiscreteOrderItemFeePrice> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public CreateResponse<DiscreteOrderItemFeePrice> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<DiscreteOrderItemFeePrice> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
         }
         DiscreteOrderItemFeePrice cloned = createResponse.getClone();
         cloned.setAmount(amount == null ? null : new Money(amount));
-        cloned.setDiscreteOrderItem((DiscreteOrderItem)discreteOrderItem.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setDiscreteOrderItem((DiscreteOrderItem) discreteOrderItem.createOrRetrieveCopyInstance(context).getClone());
         cloned.setName(name);
         cloned.setReportingCode(reportingCode);
-        return  createResponse;
+        return createResponse;
     }
 
     @Override
@@ -247,4 +253,5 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
         } else
             return reportingCode.equals(other.reportingCode);
     }
+
 }

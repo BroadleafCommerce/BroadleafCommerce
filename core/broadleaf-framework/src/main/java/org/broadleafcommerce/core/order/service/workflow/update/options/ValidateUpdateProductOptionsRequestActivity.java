@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,21 +30,21 @@ import jakarta.annotation.Resource;
 
 @Component("blValidateUpdateProductOptionsRequestActivity")
 public class ValidateUpdateProductOptionsRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
-    
+
     public static final int ORDER = 1000;
-    
+
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
-    
+
     public ValidateUpdateProductOptionsRequestActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
-        
+
         // Throw an exception if the user did not specify an orderItemId
         if (orderItemRequestDTO.getOrderItemId() == null) {
             throw new IllegalArgumentException("OrderItemId must be specified to locate the order item");
@@ -54,7 +54,7 @@ public class ValidateUpdateProductOptionsRequestActivity extends BaseActivity<Pr
         if (request.getOrder() == null) {
             throw new IllegalArgumentException("Order is required when updating items in the order");
         }
-        
+
         // Throw an exception if the user is trying to update an order item that is part of a bundle
         OrderItem orderItem = orderItemService.readOrderItemById(orderItemRequestDTO.getOrderItemId());
         if (orderItem != null && orderItem instanceof DiscreteOrderItem) {
@@ -63,8 +63,8 @@ public class ValidateUpdateProductOptionsRequestActivity extends BaseActivity<Pr
                 //then its ok , since we are just updating the product options
             }
         }
-        
+
         return context;
     }
-    
+
 }

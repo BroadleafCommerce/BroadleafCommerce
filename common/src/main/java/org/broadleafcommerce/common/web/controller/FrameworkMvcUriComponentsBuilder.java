@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,7 +30,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.broadleafcommerce.common.web.controller;
 
 import org.aopalliance.intercept.MethodInterceptor;
@@ -90,7 +89,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * {@link FrameworkMapping} annotations. Since this class isn't extensible due to heavy usage of {@code private}
  * we had to copy and modify the whole class. Spring version updates should seek to take in changes from {@link MvcUriComponentsBuilder}
  * into this class.
- *
+ * <p>
  * Creates instances of {@link org.springframework.web.util.UriComponentsBuilder}
  * by pointing to Spring MVC controllers and {@code @RequestMapping} methods.
  *
@@ -119,7 +118,6 @@ public class FrameworkMvcUriComponentsBuilder {
      */
     public static final String MVC_URI_COMPONENTS_CONTRIBUTOR_BEAN_NAME = "mvcUriComponentsContributor";
 
-
     private static final Log logger = LogFactory.getLog(FrameworkMvcUriComponentsBuilder.class);
 
     private static final SpringObjenesis objenesis = new SpringObjenesis();
@@ -132,14 +130,16 @@ public class FrameworkMvcUriComponentsBuilder {
 
     static {
         defaultUriComponentsContributor = new CompositeUriComponentsContributor(
-                new PathVariableMethodArgumentResolver(), new RequestParamMethodArgumentResolver(false));
+                new PathVariableMethodArgumentResolver(),
+                new RequestParamMethodArgumentResolver(false)
+        );
     }
 
     private final UriComponentsBuilder baseUrl;
 
-
     /**
      * Default constructor. Protected to prevent direct instantiation.
+     *
      * @see #fromController(Class)
      * @see #fromMethodName(Class, String, Object...)
      * @see #fromMethodCall(Object)
@@ -151,7 +151,6 @@ public class FrameworkMvcUriComponentsBuilder {
         this.baseUrl = baseUrl;
     }
 
-
     /**
      * Create an instance of this class with a base URL. After that calls to one
      * of the instance based {@code withXxx(...}} methods will create URLs relative
@@ -161,11 +160,11 @@ public class FrameworkMvcUriComponentsBuilder {
         return new FrameworkMvcUriComponentsBuilder(baseUrl);
     }
 
-
     /**
      * Create a {@link UriComponentsBuilder} from the mapping of a controller class
      * and current request information including Servlet mapping. If the controller
      * contains multiple mappings, only the first one is used.
+     *
      * @param controllerType the controller to build a URI for
      * @return a UriComponentsBuilder instance (never {@code null})
      */
@@ -178,14 +177,13 @@ public class FrameworkMvcUriComponentsBuilder {
      * {@code UriComponentsBuilder} representing the base URL. This is useful
      * when using MvcUriComponentsBuilder outside the context of processing a
      * request or to apply a custom baseUrl not matching the current request.
-     * @param builder the builder for the base URL; the builder will be cloned
-     * and therefore not modified and may be re-used for further calls.
+     *
+     * @param builder        the builder for the base URL; the builder will be cloned
+     *                       and therefore not modified and may be re-used for further calls.
      * @param controllerType the controller to build a URI for
      * @return a UriComponentsBuilder instance (never {@code null})
      */
-    public static UriComponentsBuilder fromController(UriComponentsBuilder builder,
-                                                      Class<?> controllerType) {
-
+    public static UriComponentsBuilder fromController(UriComponentsBuilder builder, Class<?> controllerType) {
         builder = getBaseUrlToUse(builder);
         String mapping = getTypeRequestMapping(controllerType);
         return builder.path(mapping);
@@ -195,16 +193,15 @@ public class FrameworkMvcUriComponentsBuilder {
      * Create a {@link UriComponentsBuilder} from the mapping of a controller
      * method and an array of method argument values. This method delegates
      * to {@link #fromMethod(Class, Method, Object...)}.
+     *
      * @param controllerType the controller
-     * @param methodName the method name
-     * @param args the argument values
+     * @param methodName     the method name
+     * @param args           the argument values
      * @return a UriComponentsBuilder instance, never {@code null}
      * @throws IllegalArgumentException if there is no matching or
-     * if there is more than one matching method
+     *                                  if there is more than one matching method
      */
-    public static UriComponentsBuilder fromMethodName(Class<?> controllerType,
-                                                      String methodName, Object... args) {
-
+    public static UriComponentsBuilder fromMethodName(Class<?> controllerType, String methodName, Object... args) {
         Method method = getMethod(controllerType, methodName, args);
         return fromMethodInternal(null, controllerType, method, args);
     }
@@ -214,18 +211,22 @@ public class FrameworkMvcUriComponentsBuilder {
      * accepts a {@code UriComponentsBuilder} representing the base URL. This is
      * useful when using MvcUriComponentsBuilder outside the context of processing
      * a request or to apply a custom baseUrl not matching the current request.
-     * @param builder the builder for the base URL; the builder will be cloned
-     * and therefore not modified and may be re-used for further calls.
+     *
+     * @param builder        the builder for the base URL; the builder will be cloned
+     *                       and therefore not modified and may be re-used for further calls.
      * @param controllerType the controller
-     * @param methodName the method name
-     * @param args the argument values
+     * @param methodName     the method name
+     * @param args           the argument values
      * @return a UriComponentsBuilder instance, never {@code null}
      * @throws IllegalArgumentException if there is no matching or
-     * if there is more than one matching method
+     *                                  if there is more than one matching method
      */
-    public static UriComponentsBuilder fromMethodName(UriComponentsBuilder builder,
-                                                      Class<?> controllerType, String methodName, Object... args) {
-
+    public static UriComponentsBuilder fromMethodName(
+            UriComponentsBuilder builder,
+            Class<?> controllerType,
+            String methodName,
+            Object... args
+    ) {
         Method method = getMethod(controllerType, methodName, args);
         return fromMethodInternal(builder, controllerType, method, args);
     }
@@ -261,8 +262,9 @@ public class FrameworkMvcUriComponentsBuilder {
      * controller.getAddressesForCountry("US")
      * builder = MvcUriComponentsBuilder.fromMethodCall(controller);
      * </pre>
+     *
      * @param info either the value returned from a "mock" controller
-     * invocation or the "mock" controller itself after an invocation
+     *             invocation or the "mock" controller itself after an invocation
      * @return a UriComponents instance
      */
     public static UriComponentsBuilder fromMethodCall(Object info) {
@@ -279,10 +281,11 @@ public class FrameworkMvcUriComponentsBuilder {
      * {@code UriComponentsBuilder} representing the base URL. This is useful
      * when using MvcUriComponentsBuilder outside the context of processing a
      * request or to apply a custom baseUrl not matching the current request.
+     *
      * @param builder the builder for the base URL; the builder will be cloned
-     * and therefore not modified and may be re-used for further calls.
-     * @param info either the value returned from a "mock" controller
-     * invocation or the "mock" controller itself after an invocation
+     *                and therefore not modified and may be re-used for further calls.
+     * @param info    either the value returned from a "mock" controller
+     *                invocation or the "mock" controller itself after an invocation
      * @return a UriComponents instance
      */
     public static UriComponentsBuilder fromMethodCall(UriComponentsBuilder builder, Object info) {
@@ -319,7 +322,7 @@ public class FrameworkMvcUriComponentsBuilder {
      *
      * }
      * </pre>
-     *
+     * <p>
      * A JSP can prepare a URL to the controller method as follows:
      *
      * <pre class="code">
@@ -329,10 +332,11 @@ public class FrameworkMvcUriComponentsBuilder {
      * </pre>
      * <p>Note that it's not necessary to specify all arguments. Only the ones
      * required to prepare the URL, mainly {@code @RequestParam} and {@code @PathVariable}).
+     *
      * @param mappingName the mapping name
      * @return a builder to prepare the URI String
      * @throws IllegalArgumentException if the mapping name is not found or
-     * if there is no unique match
+     *                                  if there is no unique match
      * @since 4.1
      */
     public static MethodArgumentBuilder fromMappingName(String mappingName) {
@@ -344,12 +348,13 @@ public class FrameworkMvcUriComponentsBuilder {
      * {@code UriComponentsBuilder} representing the base URL. This is useful
      * when using MvcUriComponentsBuilder outside the context of processing a
      * request or to apply a custom baseUrl not matching the current request.
+     *
      * @param builder the builder for the base URL; the builder will be cloned
-     * and therefore not modified and may be re-used for further calls.
-     * @param name the mapping name
+     *                and therefore not modified and may be re-used for further calls.
+     * @param name    the mapping name
      * @return a builder to prepare the URI String
      * @throws IllegalArgumentException if the mapping name is not found or
-     * if there is no unique match
+     *                                  if there is no unique match
      * @since 4.2
      */
     public static MethodArgumentBuilder fromMappingName(UriComponentsBuilder builder, String name) {
@@ -376,9 +381,10 @@ public class FrameworkMvcUriComponentsBuilder {
      * {@link org.springframework.web.method.support.UriComponentsContributor
      * UriComponentsContributor}) while remaining argument values are ignored and
      * can be {@code null}.
+     *
      * @param controllerType the controller type
-     * @param method the controller method
-     * @param args argument values for the controller method
+     * @param method         the controller method
+     * @param args           argument values for the controller method
      * @return a UriComponentsBuilder instance, never {@code null}
      * @since 4.2
      */
@@ -392,19 +398,27 @@ public class FrameworkMvcUriComponentsBuilder {
      * This is useful when using MvcUriComponentsBuilder outside the context of
      * processing a request or to apply a custom baseUrl not matching the
      * current request.
-     * @param baseUrl the builder for the base URL; the builder will be cloned
-     * and therefore not modified and may be re-used for further calls.
+     *
+     * @param baseUrl        the builder for the base URL; the builder will be cloned
+     *                       and therefore not modified and may be re-used for further calls.
      * @param controllerType the controller type
-     * @param method the controller method
-     * @param args argument values for the controller method
+     * @param method         the controller method
+     * @param args           argument values for the controller method
      * @return a UriComponentsBuilder instance (never {@code null})
      * @since 4.2
      */
-    public static UriComponentsBuilder fromMethod(UriComponentsBuilder baseUrl,
-                                                  Class<?> controllerType, Method method, Object... args) {
-
-        return fromMethodInternal(baseUrl,
-                (controllerType != null ? controllerType : method.getDeclaringClass()), method, args);
+    public static UriComponentsBuilder fromMethod(
+            UriComponentsBuilder baseUrl,
+            Class<?> controllerType,
+            Method method,
+            Object... args
+    ) {
+        return fromMethodInternal(
+                baseUrl,
+                (controllerType != null ? controllerType : method.getDeclaringClass()),
+                method,
+                args
+        );
     }
 
     /**
@@ -418,9 +432,12 @@ public class FrameworkMvcUriComponentsBuilder {
         return fromMethodInternal(null, method.getDeclaringClass(), method, args);
     }
 
-    private static UriComponentsBuilder fromMethodInternal(UriComponentsBuilder baseUrl,
-                                                           Class<?> controllerType, Method method, Object... args) {
-
+    private static UriComponentsBuilder fromMethodInternal(
+            UriComponentsBuilder baseUrl,
+            Class<?> controllerType,
+            Method method,
+            Object... args
+    ) {
         baseUrl = getBaseUrlToUse(baseUrl);
         String typePath = getTypeRequestMapping(controllerType);
         String methodPath = getMethodRequestMapping(method);
@@ -433,8 +450,7 @@ public class FrameworkMvcUriComponentsBuilder {
     private static UriComponentsBuilder getBaseUrlToUse(UriComponentsBuilder baseUrl) {
         if (baseUrl != null) {
             return baseUrl.cloneBuilder();
-        }
-        else {
+        } else {
             return ServletUriComponentsBuilder.fromCurrentServletMapping();
         }
     }
@@ -505,13 +521,11 @@ public class FrameworkMvcUriComponentsBuilder {
         Set<Method> methods = MethodIntrospector.selectMethods(controllerType, selector);
         if (methods.size() == 1) {
             return methods.iterator().next();
-        }
-        else if (methods.size() > 1) {
+        } else if (methods.size() > 1) {
             throw new IllegalArgumentException(String.format(
                     "Found two methods named '%s' accepting arguments %s in controller %s: [%s]",
                     methodName, Arrays.asList(args), controllerType.getName(), methods));
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("No method named '" + methodName + "' with " + args.length +
                     " arguments found in controller " + controllerType.getName());
         }
@@ -554,8 +568,7 @@ public class FrameworkMvcUriComponentsBuilder {
         }
         try {
             return wac.getBean(MVC_URI_COMPONENTS_CONTRIBUTOR_BEAN_NAME, CompositeUriComponentsContributor.class);
-        }
-        catch (NoSuchBeanDefinitionException ex) {
+        } catch (NoSuchBeanDefinitionException ex) {
             if (logger.isDebugEnabled()) {
                 logger.debug("No CompositeUriComponentsContributor bean with name '" +
                         MVC_URI_COMPONENTS_CONTRIBUTOR_BEAN_NAME + "'");
@@ -569,11 +582,9 @@ public class FrameworkMvcUriComponentsBuilder {
         Assert.notNull(wac, "Cannot lookup handler method mappings without WebApplicationContext");
         try {
             return wac.getBean(RequestMappingInfoHandlerMapping.class);
-        }
-        catch (NoUniqueBeanDefinitionException ex) {
+        } catch (NoUniqueBeanDefinitionException ex) {
             throw new IllegalStateException("More than one RequestMappingInfoHandlerMapping beans found", ex);
-        }
-        catch (NoSuchBeanDefinitionException ex) {
+        } catch (NoSuchBeanDefinitionException ex) {
             throw new IllegalStateException("No RequestMappingInfoHandlerMapping bean", ex);
         }
     }
@@ -605,6 +616,7 @@ public class FrameworkMvcUriComponentsBuilder {
      * <pre class="code">
      * MvcUriComponentsBuilder.fromMethodCall(on(FooController.class).getFoo(1)).build();
      * </pre>
+     *
      * @param controllerType the target controller
      */
     public static <T> T on(Class<T> controllerType) {
@@ -627,6 +639,7 @@ public class FrameworkMvcUriComponentsBuilder {
      * fooController.saveFoo(2, null);
      * builder = MvcUriComponentsBuilder.fromMethodCall(fooController);
      * </pre>
+     *
      * @param controllerType the target controller
      */
     public static <T> T controller(Class<T> controllerType) {
@@ -642,12 +655,10 @@ public class FrameworkMvcUriComponentsBuilder {
             factory.addInterface(MethodInvocationInfo.class);
             factory.addAdvice(interceptor);
             return (T) factory.getProxy();
-        }
-
-        else {
+        } else {
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(type);
-            enhancer.setInterfaces(new Class<?>[] {MethodInvocationInfo.class});
+            enhancer.setInterfaces(new Class<?>[]{MethodInvocationInfo.class});
             enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
             enhancer.setCallbackType(org.springframework.cglib.proxy.MethodInterceptor.class);
 
@@ -657,8 +668,7 @@ public class FrameworkMvcUriComponentsBuilder {
             if (objenesis.isWorthTrying()) {
                 try {
                     proxy = objenesis.newInstance(proxyClass, enhancer.getUseCache());
-                }
-                catch (ObjenesisException ex) {
+                } catch (ObjenesisException ex) {
                     logger.debug("Unable to instantiate controller proxy using Objenesis, " +
                             "falling back to regular construction", ex);
                 }
@@ -667,14 +677,13 @@ public class FrameworkMvcUriComponentsBuilder {
             if (proxy == null) {
                 try {
                     proxy = proxyClass.newInstance();
-                }
-                catch (Throwable ex) {
+                } catch (Throwable ex) {
                     throw new IllegalStateException("Unable to instantiate controller proxy using Objenesis, " +
                             "and regular controller instantiation via default constructor fails as well", ex);
                 }
             }
 
-            ((Factory) proxy).setCallbacks(new Callback[] {interceptor});
+            ((Factory) proxy).setCallbacks(new Callback[]{interceptor});
             return (T) proxy;
         }
     }
@@ -682,6 +691,7 @@ public class FrameworkMvcUriComponentsBuilder {
     /**
      * An alternative to {@link #fromController(Class)} for use with an instance
      * of this class created via a call to {@link #relativeTo}.
+     *
      * @since 4.2
      */
     public UriComponentsBuilder withController(Class<?> controllerType) {
@@ -691,6 +701,7 @@ public class FrameworkMvcUriComponentsBuilder {
     /**
      * An alternative to {@link #fromMethodName(Class, String, Object...)}} for
      * use with an instance of this class created via {@link #relativeTo}.
+     *
      * @since 4.2
      */
     public UriComponentsBuilder withMethodName(Class<?> controllerType, String methodName, Object... args) {
@@ -700,6 +711,7 @@ public class FrameworkMvcUriComponentsBuilder {
     /**
      * An alternative to {@link #fromMethodCall(Object)} for use with an instance
      * of this class created via {@link #relativeTo}.
+     *
      * @since 4.2
      */
     public UriComponentsBuilder withMethodCall(Object invocationInfo) {
@@ -709,6 +721,7 @@ public class FrameworkMvcUriComponentsBuilder {
     /**
      * An alternative to {@link #fromMappingName(String)} for use with an instance
      * of this class created via {@link #relativeTo}.
+     *
      * @since 4.2
      */
     public MethodArgumentBuilder withMappingName(String mappingName) {
@@ -718,12 +731,21 @@ public class FrameworkMvcUriComponentsBuilder {
     /**
      * An alternative to {@link #fromMethod(Class, Method, Object...)}
      * for use with an instance of this class created via {@link #relativeTo}.
+     *
      * @since 4.2
      */
     public UriComponentsBuilder withMethod(Class<?> controllerType, Method method, Object... args) {
         return fromMethod(this.baseUrl, controllerType, method, args);
     }
 
+    public interface MethodInvocationInfo {
+
+        Method getControllerMethod();
+
+        Object[] getArgumentValues();
+
+        Class<?> getControllerType();
+    }
 
     private static class ControllerMethodInvocationInterceptor
             implements org.springframework.cglib.proxy.MethodInterceptor, MethodInterceptor {
@@ -751,17 +773,13 @@ public class FrameworkMvcUriComponentsBuilder {
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) {
             if (getControllerMethod.equals(method)) {
                 return this.controllerMethod;
-            }
-            else if (getArgumentValues.equals(method)) {
+            } else if (getArgumentValues.equals(method)) {
                 return this.argumentValues;
-            }
-            else if (getControllerType.equals(method)) {
+            } else if (getControllerType.equals(method)) {
                 return this.controllerType;
-            }
-            else if (ReflectionUtils.isObjectMethod(method)) {
+            } else if (ReflectionUtils.isObjectMethod(method)) {
                 return ReflectionUtils.invokeMethod(method, obj, args);
-            }
-            else {
+            } else {
                 this.controllerMethod = method;
                 this.argumentValues = args;
                 Class<?> returnType = method.getReturnType();
@@ -774,17 +792,6 @@ public class FrameworkMvcUriComponentsBuilder {
             return intercept(inv.getThis(), inv.getMethod(), inv.getArguments(), null);
         }
     }
-
-
-    public interface MethodInvocationInfo {
-
-        Method getControllerMethod();
-
-        Object[] getArgumentValues();
-
-        Class<?> getControllerType();
-    }
-
 
     public static class MethodArgumentBuilder {
 
@@ -843,8 +850,12 @@ public class FrameworkMvcUriComponentsBuilder {
         }
 
         public String buildAndExpand(Object... uriVars) {
-            return fromMethodInternal(this.baseUrl, this.controllerType, this.method,
-                    this.argumentValues).build(false).expand(uriVars).encode().toString();
+            return fromMethodInternal(
+                    this.baseUrl,
+                    this.controllerType,
+                    this.method,
+                    this.argumentValues
+            ).build(false).expand(uriVars).encode().toString();
         }
     }
 

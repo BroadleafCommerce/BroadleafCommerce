@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,6 +38,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,6 +91,7 @@ import jakarta.persistence.UniqueConstraint;
         })
 public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -156,13 +158,13 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Override
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     @Override
@@ -204,9 +206,7 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
         //support legacy customer payments that may have stored the type on the additional fields map
         return !additionalFields.containsKey(PaymentAdditionalFieldType.PAYMENT_TYPE.getType())
                 ? null
-                :
-                        PaymentType.getInstance(additionalFields.get(
-                                PaymentAdditionalFieldType.PAYMENT_TYPE.getType()));
+                : PaymentType.getInstance(additionalFields.get(PaymentAdditionalFieldType.PAYMENT_TYPE.getType()));
     }
 
     @Override
@@ -246,7 +246,8 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
 
     @Override
     public <G extends CustomerPayment> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

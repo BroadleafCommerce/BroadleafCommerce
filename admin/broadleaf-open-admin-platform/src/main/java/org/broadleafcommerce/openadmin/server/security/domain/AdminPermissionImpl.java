@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -119,7 +119,7 @@ public class AdminPermissionImpl implements AdminPermission {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
     @BatchSize(size = 50)
     @AdminPresentation(excluded = true)
-    protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
+    protected Set<AdminRole> allRoles = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminUserImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF",
@@ -130,7 +130,7 @@ public class AdminPermissionImpl implements AdminPermission {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
     @BatchSize(size = 50)
     @AdminPresentation(excluded = true)
-    protected Set<AdminUser> allUsers = new HashSet<AdminUser>();
+    protected Set<AdminUser> allUsers = new HashSet<>();
 
     @OneToMany(mappedBy = "adminPermission",
             targetEntity = AdminPermissionQualifiedEntityImpl.class, cascade = {CascadeType.ALL},
@@ -249,7 +249,7 @@ public class AdminPermissionImpl implements AdminPermission {
 
     public void checkCloneable(AdminPermission adminPermission)
             throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
-        Method cloneMethod = adminPermission.getClass().getMethod("clone", new Class[] {});
+        Method cloneMethod = adminPermission.getClass().getMethod("clone", new Class[]{});
         if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
                 && !adminPermission.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method

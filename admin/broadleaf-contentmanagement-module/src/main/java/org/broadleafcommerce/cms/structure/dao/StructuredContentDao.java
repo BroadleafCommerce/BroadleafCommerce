@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,6 +26,7 @@ import java.util.List;
 
 /**
  * Responsible for querying and updating {@link StructuredContent} items
+ *
  * @author bpolster
  */
 public interface StructuredContentDao {
@@ -33,31 +34,34 @@ public interface StructuredContentDao {
     /**
      * Returns the <code>StructuredContent</code> item that matches
      * the passed in Id.
+     *
      * @param contentId
      * @return the found item or null if it does not exist
      */
-    public StructuredContent findStructuredContentById(Long contentId);
+    StructuredContent findStructuredContentById(Long contentId);
 
     /**
      * Returns the <code>StructuredContentType</code> that matches
      * the passed in contentTypeId.
+     *
      * @param contentTypeId
      * @return the found item or null if it does not exist
      */
-    public StructuredContentType findStructuredContentTypeById(Long contentTypeId);
+    StructuredContentType findStructuredContentTypeById(Long contentTypeId);
 
     /**
      * Returns the list of all <code>StructuredContentType</code>s.
      *
      * @return the list of found items
      */
-    public List<StructuredContentType> retrieveAllStructuredContentTypes();
-    
+    List<StructuredContentType> retrieveAllStructuredContentTypes();
+
     /**
      * Finds all content regardless of the {@link SandBox} they are a member of
+     *
      * @return the list of {@link StructuredContent}, an empty list of none are found
      */
-    public List<StructuredContent> findAllContentItems();
+    List<StructuredContent> findAllContentItems();
 
     /**
      * Persists the changes or saves a new content item.
@@ -65,41 +69,41 @@ public interface StructuredContentDao {
      * @param content
      * @return the newly saved or persisted item
      */
-    public StructuredContent addOrUpdateContentItem(StructuredContent content);
+    StructuredContent addOrUpdateContentItem(StructuredContent content);
 
     /**
      * Removes the passed in item from the underlying storage.
      *
      * @param content
      */
-    public void delete(StructuredContent content);
-    
+    void delete(StructuredContent content);
+
     /**
      * Saves the given <b>type</b> and returns the merged instance
      */
-    public StructuredContentType saveStructuredContentType(StructuredContentType type);
+    StructuredContentType saveStructuredContentType(StructuredContentType type);
 
     /**
      * Pass through function for backwards compatibility to get a list of structured content.
      *
-     * @param type of content to search for
+     * @param type   of content to search for
      * @param locale to restrict the search to
      * @return a list of all matching content
      * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
      */
-    public List<StructuredContent> findActiveStructuredContentByType(StructuredContentType type, Locale locale);
+    List<StructuredContent> findActiveStructuredContentByType(StructuredContentType type, Locale locale);
 
     /**
      * Called by the <code>DisplayContentTag</code> to locate content based
      * on the current SandBox, StructuredContentType, fullLocale and/or languageOnlyLocale.
      *
-     * @param type of content to search for
-     * @param fullLocale to restrict the search to
+     * @param type               of content to search for
+     * @param fullLocale         to restrict the search to
      * @param languageOnlyLocale locale based only on a language specified
      * @return a list of all matching content
      * @see org.broadleafcommerce.cms.web.structure.DisplayContentTag
      */
-    public List<StructuredContent> findActiveStructuredContentByType(StructuredContentType type, Locale fullLocale, Locale languageOnlyLocale);
+    List<StructuredContent> findActiveStructuredContentByType(StructuredContentType type, Locale fullLocale, Locale languageOnlyLocale);
 
     /**
      * Pass through function for backwards compatibility to get a list of structured content.
@@ -109,7 +113,7 @@ public interface StructuredContentDao {
      * @param locale
      * @return
      */
-    public List<StructuredContent> findActiveStructuredContentByNameAndType(StructuredContentType type, String name, Locale locale);
+    List<StructuredContent> findActiveStructuredContentByNameAndType(StructuredContentType type, String name, Locale locale);
 
     /**
      * Called by the <code>DisplayContentTag</code> to locate content based
@@ -121,7 +125,9 @@ public interface StructuredContentDao {
      * @param languageOnlyLocale
      * @return
      */
-    public List<StructuredContent> findActiveStructuredContentByNameAndType(StructuredContentType type, String name, Locale fullLocale, Locale languageOnlyLocale);
+    List<StructuredContent> findActiveStructuredContentByNameAndType(
+            StructuredContentType type, String name, Locale fullLocale, Locale languageOnlyLocale
+    );
 
     /**
      * Pass through function for backwards compatibility to get a list of structured content.
@@ -130,7 +136,7 @@ public interface StructuredContentDao {
      * @param locale
      * @return
      */
-    public List<StructuredContent> findActiveStructuredContentByName(String name, Locale locale);
+    List<StructuredContent> findActiveStructuredContentByName(String name, Locale locale);
 
     /**
      * Called by the <code>DisplayContentTag</code> to locate content based
@@ -141,8 +147,7 @@ public interface StructuredContentDao {
      * @param languageOnlyLocale
      * @return
      */
-    public List<StructuredContent> findActiveStructuredContentByName(String name, Locale fullLocale, Locale languageOnlyLocale);
-
+    List<StructuredContent> findActiveStructuredContentByName(String name, Locale fullLocale, Locale languageOnlyLocale);
 
     /**
      * Used to lookup the StructuredContentType by name.
@@ -150,7 +155,7 @@ public interface StructuredContentDao {
      * @param name
      * @return
      */
-    public StructuredContentType findStructuredContentTypeByName(String name);
+    StructuredContentType findStructuredContentTypeByName(String name);
 
     /**
      * Detaches the item from the JPA session.   This is intended for internal
@@ -159,5 +164,6 @@ public interface StructuredContentDao {
      *
      * @param sc - the item to detach
      */
-    public void detach(StructuredContent sc);
+    void detach(StructuredContent sc);
+
 }

@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.apache.commons.lang3.StringUtils;
@@ -92,7 +91,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
 
     /**
      * Processes the request to save a single shipping address.  Allows modules to add module specific shipping logic.
-     *
+     * <p>
      * Note:  the default Broadleaf implementation creates an order
      * with a single fulfillment group. In the case of shipping to multiple addresses,
      * the multiship methods should be used.
@@ -104,11 +103,16 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
      * @return the return path
      * @throws org.broadleafcommerce.common.exception.ServiceException
      */
-    public String saveSingleShip(HttpServletRequest request, HttpServletResponse response, Model model,
-                                 ShippingInfoForm shippingForm, BindingResult result) throws PricingException, ServiceException {
+    public String saveSingleShip(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            ShippingInfoForm shippingForm,
+            BindingResult result
+    ) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
 
-        if (shippingForm.shouldUseBillingAddress()){
+        if (shippingForm.shouldUseBillingAddress()) {
             copyBillingAddressToShippingAddress(cart, shippingForm);
         }
 
@@ -118,16 +122,16 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
             return getCheckoutView();
         }
 
-        if ((shippingForm.getAddress().getPhonePrimary() != null) &&
-                (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
+        if ((shippingForm.getAddress().getPhonePrimary() != null)
+                && (StringUtils.isEmpty(shippingForm.getAddress().getPhonePrimary().getPhoneNumber()))) {
             shippingForm.getAddress().setPhonePrimary(null);
         }
-        if ((shippingForm.getAddress().getPhoneSecondary() != null) &&
-                (StringUtils.isEmpty(shippingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
+        if ((shippingForm.getAddress().getPhoneSecondary() != null)
+                && (StringUtils.isEmpty(shippingForm.getAddress().getPhoneSecondary().getPhoneNumber()))) {
             shippingForm.getAddress().setPhoneSecondary(null);
         }
-        if ((shippingForm.getAddress().getPhoneFax() != null) &&
-                (StringUtils.isEmpty(shippingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
+        if ((shippingForm.getAddress().getPhoneFax() != null)
+                && (StringUtils.isEmpty(shippingForm.getAddress().getPhoneFax().getPhoneNumber()))) {
             shippingForm.getAddress().setPhoneFax(null);
         }
 
@@ -149,7 +153,9 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
                 shippableFulfillmentGroup.setPersonalMessage(shippingForm.getPersonalMessage());
             }
             shippableFulfillmentGroup.setDeliveryInstruction(shippingForm.getDeliveryMessage());
-            FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(shippingForm.getFulfillmentOptionId());
+            FulfillmentOption fulfillmentOption = fulfillmentOptionService.readFulfillmentOptionById(
+                    shippingForm.getFulfillmentOptionId()
+            );
             shippableFulfillmentGroup.setFulfillmentOption(fulfillmentOption);
 
             cart = orderService.save(cart, true);
@@ -188,7 +194,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
     /**
      * Renders the multiship page. This page is used by the user when shipping items
      * to different locations (or with different FulfillmentOptions) is desired.
-     *
+     * <p>
      * Note that the default Broadleaf implementation will require the user to input
      * an Address and FulfillmentOption for each quantity of each DiscreteOrderItem.
      *
@@ -200,8 +206,14 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
     public String showMultiship(HttpServletRequest request, HttpServletResponse response, Model model) {
         Customer customer = CustomerState.getCustomer();
         Order cart = CartState.getCart();
-        model.addAttribute("orderMultishipOptions", orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart));
-        model.addAttribute("customerAddresses", customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()));
+        model.addAttribute(
+                "orderMultishipOptions",
+                orderMultishipOptionService.getOrGenerateOrderMultishipOptions(cart)
+        );
+        model.addAttribute(
+                "customerAddresses",
+                customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId())
+        );
         model.addAttribute("fulfillmentOptions", fulfillmentOptionService.readAllFulfillmentOptions());
         return getMultishipView();
     }
@@ -210,8 +222,6 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
      * Processes the given options for multiship. Validates that all options are
      * selected before performing any actions.  Allows modules to add module specific shipping logic.
      *
-     * @see #showMultiship(HttpServletRequest, HttpServletResponse, Model)
-     *
      * @param request
      * @param response
      * @param model
@@ -219,9 +229,15 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
      * @return a redirect to the checkout page
      * @throws PricingException
      * @throws ServiceException
+     * @see #showMultiship(HttpServletRequest, HttpServletResponse, Model)
      */
-    public String saveMultiship(HttpServletRequest request, HttpServletResponse response, Model model,
-                                OrderMultishipOptionForm orderMultishipOptionForm, BindingResult result) throws PricingException, ServiceException {
+    public String saveMultiship(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            OrderMultishipOptionForm orderMultishipOptionForm,
+            BindingResult result
+    ) throws PricingException, ServiceException {
         Order cart = CartState.getCart();
         orderMultishipOptionService.saveOrderMultishipOptions(cart, orderMultishipOptionForm.getOptions());
         cart = fulfillmentGroupService.matchFulfillmentGroupsToMultishipOptions(cart, true);
@@ -258,8 +274,13 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
      * @return the return path to the multiship page
      * @throws ServiceException
      */
-    public String saveMultishipAddAddress(HttpServletRequest request, HttpServletResponse response, Model model,
-                                          ShippingInfoForm addressForm, BindingResult result) throws ServiceException {
+    public String saveMultishipAddAddress(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            ShippingInfoForm addressForm,
+            BindingResult result
+    ) throws ServiceException {
         addressService.populateAddressISOCountrySub(addressForm.getAddress());
         multishipAddAddressFormValidator.validate(addressForm, result);
         if (result.hasErrors()) {
@@ -267,7 +288,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
         }
 
         removeUnusedPhones(addressForm);
-        
+
         CustomerAddress customerAddress = customerAddressService.create();
         customerAddress.setAddressName(addressForm.getAddressName());
         customerAddress.setAddress(addressForm.getAddress());
@@ -278,8 +299,12 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
         return getMultishipAddAddressSuccessView() + "?_=" + System.currentTimeMillis();
     }
 
-    public String saveMultiShipInstruction(HttpServletRequest request, HttpServletResponse response, Model model,
-                                           MultiShipInstructionForm instructionForm) throws ServiceException, PricingException {
+    public String saveMultiShipInstruction(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            MultiShipInstructionForm instructionForm
+    ) throws ServiceException, PricingException {
         Order cart = CartState.getCart();
         FulfillmentGroup fulfillmentGroup = null;
 
@@ -295,7 +320,7 @@ public class BroadleafShippingInfoController extends AbstractCheckoutController 
         fulfillmentGroupService.save(fulfillmentGroup);
 
         //append current time to redirect to fix a problem with ajax caching in IE
-        return getCheckoutPageRedirect()+ "?_=" + System.currentTimeMillis();
+        return getCheckoutPageRedirect() + "?_=" + System.currentTimeMillis();
     }
 
     public void removeUnusedPhones(ShippingInfoForm form) {

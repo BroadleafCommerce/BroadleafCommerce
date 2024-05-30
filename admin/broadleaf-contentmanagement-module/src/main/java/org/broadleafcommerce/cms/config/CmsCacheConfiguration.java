@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,9 +23,8 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Configuration class for defining cache regions via Java config when either not using ehcache or when jcache.create.cache.forceJavaConfig is true
- * 
- * @author Jay Aisenbrey (cja769)
  *
+ * @author Jay Aisenbrey (cja769)
  */
 @Configuration
 public class CmsCacheConfiguration {
@@ -64,4 +63,5 @@ public class CmsCacheConfiguration {
     public JCacheRegionConfiguration blUrlHandler() {
         return new JCacheRegionConfiguration("blUrlHandler", 86400, 1000);
     }
+
 }

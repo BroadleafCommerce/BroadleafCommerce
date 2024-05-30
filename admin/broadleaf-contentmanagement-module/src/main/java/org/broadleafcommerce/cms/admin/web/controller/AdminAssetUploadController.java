@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -52,10 +52,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * AdminAssetUploadController handles uploading or selecting assets.
- *     
- * Used with entities like {@link SkuImpl} and {@link CategoryImpl} that have {@link CustomPersistenceHandler} 
+ * <p>
+ * Used with entities like {@link SkuImpl} and {@link CategoryImpl} that have {@link CustomPersistenceHandler}
  * configurations that provide support for adding maps of Media objects.
- * 
+ *
  * @author Brian Polster (bpolster)
  */
 @Controller("blAdminAssetUploadController")
@@ -64,25 +64,25 @@ public class AdminAssetUploadController extends AdminAbstractController {
 
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-    
+
     @Resource(name = "blStaticAssetStorageService")
     protected StaticAssetStorageService staticAssetStorageService;
-    
+
     @Resource(name = "blStaticAssetService")
     protected StaticAssetService staticAssetService;
-    
+
     @Resource(name = "blAdminAssetController")
     protected AdminAssetController assetController;
 
     @RequestMapping(value = "/{id}/chooseAsset", method = RequestMethod.GET)
-    public String chooseMediaForMapKey(HttpServletRequest request, HttpServletResponse response, Model model, 
-            @PathVariable(value = "sectionKey") String sectionKey, 
-            @PathVariable(value = "id") String id,
-            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+    public String chooseMediaForMapKey(HttpServletRequest request, HttpServletResponse response, Model model,
+                                       @PathVariable(value = "sectionKey") String sectionKey,
+                                       @PathVariable(value = "id") String id,
+                                       @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         Map<String, String> pathVars = new HashMap<String, String>();
         pathVars.put("sectionKey", AdminAssetController.SECTION_KEY);
         assetController.viewEntityList(request, response, model, pathVars, requestParams);
-        
+
         ListGrid listGrid = (ListGrid) model.asMap().get("listGrid");
         listGrid.setPathOverride("/" + sectionKey + "/" + id + "/chooseAsset");
         listGrid.setListGridType(Type.ASSET);
@@ -90,29 +90,29 @@ public class AdminAssetUploadController extends AdminAbstractController {
 
         String userAgent = request.getHeader("User-Agent");
         model.addAttribute("isIE", userAgent.contains("MSIE"));
-        
+
         model.addAttribute("viewType", "modal/selectAsset");
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         model.addAttribute("modalHeaderType", ModalHeaderType.SELECT_ASSET.getType());
 
         model.addAttribute("currentParams", new ObjectMapper().writeValueAsString(requestParams));
-        
+
         // We need these attributes to be set appropriately here
         model.addAttribute("entityId", id);
         model.addAttribute("sectionKey", sectionKey);
         return MODAL_CONTAINER_VIEW;
     }
-    
+
     @RequestMapping(value = "/{id}/uploadAsset", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> upload(HttpServletRequest request,
-            @RequestParam("file") MultipartFile file, 
-            @PathVariable(value="sectionKey") String sectionKey, @PathVariable(value="id") String id) throws IOException {
+                                                      @RequestParam("file") MultipartFile file,
+                                                      @PathVariable(value = "sectionKey") String sectionKey, @PathVariable(value = "id") String id) throws IOException {
         Map<String, Object> responseMap = new HashMap<String, Object>();
-        
+
         Map<String, String> properties = new HashMap<String, String>();
         properties.put("entityType", sectionKey);
         properties.put("entityId", id);
-        
+
         StaticAsset staticAsset = staticAssetService.createStaticAssetFromFile(file, properties);
         staticAssetStorageService.createStaticAssetStorageFromFile(file, staticAsset);
 
@@ -121,7 +121,7 @@ public class AdminAssetUploadController extends AdminAbstractController {
             staticAssetUrlPrefix = "/" + staticAssetUrlPrefix;
         }
 
-        String assetUrl =  staticAssetUrlPrefix + staticAsset.getFullUrl();
+        String assetUrl = staticAssetUrlPrefix + staticAsset.getFullUrl();
 
         responseMap.put("adminDisplayAssetUrl", request.getContextPath() + assetUrl);
         responseMap.put("assetUrl", assetUrl);
@@ -168,20 +168,20 @@ public class AdminAssetUploadController extends AdminAbstractController {
 
     @RequestMapping(value = "/{addlSectionKey}/{id}/chooseAsset", method = RequestMethod.GET)
     public String chooseMediaForMapKey(HttpServletRequest request, HttpServletResponse response, Model model,
-            @PathVariable(value = "sectionKey") String sectionKey,
-            @PathVariable(value = "addlSectionKey") String addlSectionKey,
-            @PathVariable(value = "id") String id,
-            @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
+                                       @PathVariable(value = "sectionKey") String sectionKey,
+                                       @PathVariable(value = "addlSectionKey") String addlSectionKey,
+                                       @PathVariable(value = "id") String id,
+                                       @RequestParam MultiValueMap<String, String> requestParams) throws Exception {
         return chooseMediaForMapKey(request, response, model, sectionKey, id, requestParams);
     }
 
     @RequestMapping(value = "/{addlSectionKey}/{id}/uploadAsset",
             method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> upload(HttpServletRequest request,
-            @RequestParam("file") MultipartFile file,            
-            @PathVariable(value = "sectionKey") String sectionKey,
-            @PathVariable(value = "addlSectionKey") String addlSectionKey,
-            @PathVariable(value = "id") String id) throws IOException {
+                                                      @RequestParam("file") MultipartFile file,
+                                                      @PathVariable(value = "sectionKey") String sectionKey,
+                                                      @PathVariable(value = "addlSectionKey") String addlSectionKey,
+                                                      @PathVariable(value = "id") String id) throws IOException {
         return upload(request, file, sectionKey, id);
     }
 }

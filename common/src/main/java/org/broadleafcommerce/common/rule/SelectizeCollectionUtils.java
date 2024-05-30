@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,32 +29,32 @@ import java.util.List;
 /**
  * {@link org.apache.commons.collections4.CollectionUtils} wrapper
  * to support collection intersection methods needed for rule builder selectize components.
- *
+ * <p>
  * Any changes to this class should be approved by Jeff Fischer.
- * 
+ *
  * @author Elbert Bautista (elbertbautista)
  */
 public class SelectizeCollectionUtils {
-	
-	/**
-	 * Important:  The generic "Object" parameters for this utility class are 
-	 * included as a work around to a known, MVEL issue.   
-	 * 
-	 * Prior to this commit, this class had two "intersect" methods (see commit history).
-	 * 
-	 * MVEL compiled expressions would sometimes be associated with the wrong method.   This was
-	 * difficult to produce and also to recreate.
-	 * 
-	 * Any changes to this class should be approved by Jeff Fischer.
-	 */
-	public static Collection intersection(final Object a, final Object b) {
-	    if (a == null || b == null) {
-	        return Collections.EMPTY_LIST;
+
+    /**
+     * Important:  The generic "Object" parameters for this utility class are
+     * included as a work around to a known, MVEL issue.
+     * <p>
+     * Prior to this commit, this class had two "intersect" methods (see commit history).
+     * <p>
+     * MVEL compiled expressions would sometimes be associated with the wrong method.   This was
+     * difficult to produce and also to recreate.
+     * <p>
+     * Any changes to this class should be approved by Jeff Fischer.
+     */
+    public static Collection intersection(final Object a, final Object b) {
+        if (a == null || b == null) {
+            return Collections.EMPTY_LIST;
         }
         Iterable iterableA = a instanceof Iterable ? (Iterable) a : Collections.singletonList(String.valueOf(a));
         Iterable iterableB = b instanceof Iterable ? (Iterable) b : Collections.singletonList(String.valueOf(b));
         return intersectIterable(iterableA, iterableB);
-	}
+    }
 
     private static Collection intersectIterable(final Iterable a, final Iterable b) {
         Collection response;
@@ -75,7 +75,10 @@ public class SelectizeCollectionUtils {
         return response;
     }
 
-    private static Collection<String> valueAssignableIntersection(final Iterable<ValueAssignable> a, final Iterable<String> b) {
+    private static Collection<String> valueAssignableIntersection(
+            final Iterable<ValueAssignable> a,
+            final Iterable<String> b
+    ) {
         List<String> temp = new ArrayList<>();
 
         if (!IterableUtils.isEmpty(a)) {

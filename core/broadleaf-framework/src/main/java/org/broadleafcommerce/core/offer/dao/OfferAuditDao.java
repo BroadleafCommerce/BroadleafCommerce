@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,32 +31,32 @@ import java.util.List;
  *
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link VerifyCustomerMaxOfferUsesActivity}, {@link RecordOfferUsageActivity},
- * {@link OfferService#verifyMaxCustomerUsageThreshold(Order, OfferCode)}, 
+ * {@link OfferService#verifyMaxCustomerUsageThreshold(Order, OfferCode)},
  * {@link OfferService#verifyMaxCustomerUsageThreshold(Order, OfferCode)}
  */
 public interface OfferAuditDao {
-    
+
     OfferAudit readAuditById(Long offerAuditId);
-    
+
     /**
      * Persists an audit record to the database
      */
     OfferAudit save(OfferAudit offerAudit);
-    
+
     void delete(OfferAudit offerAudit);
 
     /**
      * Creates a new offer audit
      */
     OfferAudit create();
-    
+
     /**
-     * Counts how many times the an offer has been used by a customer. 
-     * This method will take into account if the Offer has already been 
-     * applied to the Order so as not to prevent the Offer from applying 
+     * Counts how many times the an offer has been used by a customer.
+     * This method will take into account if the Offer has already been
+     * applied to the Order so as not to prevent the Offer from applying
      * to new items added to the Order by a CRS.
-     * 
-     * @param order 
+     *
+     * @param order
      * @param customerId
      * @param offerId
      * @return number of times and offer has been used by a customer
@@ -64,9 +64,9 @@ public interface OfferAuditDao {
     Long countUsesByCustomer(Order order, Long customerId, Long offerId);
 
     /**
-     * Counts how many times the an offer has been used by a customer (within the number of passed in days if provided). 
-     * This method will take into account if the Offer has already been 
-     * applied to the Order so as not to prevent the Offer from applying 
+     * Counts how many times the an offer has been used by a customer (within the number of passed in days if provided).
+     * This method will take into account if the Offer has already been
+     * applied to the Order so as not to prevent the Offer from applying
      * to new items added to the Order by a CRS.
      *
      * @param order
@@ -77,12 +77,12 @@ public interface OfferAuditDao {
     Long countUsesByCustomer(Order order, Long customerId, Long offerId, Long minimumDaysPerUsage);
 
     /**
-     * Counts how many times the an offer has been used by an account. 
-     * This method will take into account if the Offer has already been 
-     * applied to the Order so as not to prevent the Offer from applying 
+     * Counts how many times the an offer has been used by an account.
+     * This method will take into account if the Offer has already been
+     * applied to the Order so as not to prevent the Offer from applying
      * to new items added to the Order by a CRS.
-     * 
-     * @param order 
+     *
+     * @param order
      * @param accountId
      * @param offerId
      * @return number of times and offer has been used by a customer
@@ -90,9 +90,9 @@ public interface OfferAuditDao {
     Long countUsesByAccount(Order order, Long accountId, Long offerId);
 
     /**
-     * Counts how many times the an offer has been used by an account (within the number of passed in days if provided). 
-     * This method will take into account if the Offer has already been 
-     * applied to the Order so as not to prevent the Offer from applying 
+     * Counts how many times the an offer has been used by an account (within the number of passed in days if provided).
+     * This method will take into account if the Offer has already been
+     * applied to the Order so as not to prevent the Offer from applying
      * to new items added to the Order by a CRS.
      *
      * @param order
@@ -113,12 +113,12 @@ public interface OfferAuditDao {
     Long countUsesByCustomer(Long customerId, Long offerId);
 
     /**
-     * Counts how many times the given offer code has been used in the system. 
-     * This method will take into account if the OfferCode has already been 
-     * applied to the Order so as not to prevent the OfferCODE from applying 
+     * Counts how many times the given offer code has been used in the system.
+     * This method will take into account if the OfferCode has already been
+     * applied to the Order so as not to prevent the OfferCODE from applying
      * to new items added to the Order by a CRS.
-     * 
-     * @param order 
+     *
+     * @param order
      * @param offerCodeId
      * @return number of times the offer code has been used
      */
@@ -134,9 +134,9 @@ public interface OfferAuditDao {
     @Deprecated
     Long countOfferCodeUses(Long offerCodeId);
 
-
     /**
      * Return all offer audits for a particular order
+     *
      * @param orderId
      * @return
      */
@@ -145,4 +145,5 @@ public interface OfferAuditDao {
     Long getCurrentDateResolution();
 
     void setCurrentDateResolution(Long currentDateResolution);
+
 }

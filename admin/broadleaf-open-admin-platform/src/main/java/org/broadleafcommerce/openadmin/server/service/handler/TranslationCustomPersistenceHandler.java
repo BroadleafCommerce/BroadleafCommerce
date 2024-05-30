@@ -10,17 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.openadmin.server.service.handler;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.i18n.domain.Translation;
@@ -42,13 +39,11 @@ import jakarta.annotation.Resource;
 /**
  * Custom persistence handler for Translations, it verifies on "add" that the combination of the 4 "key" fields
  * is not repeated (as in a software-enforced unique index, which is not utilized because of sandboxing and multitenancy concerns).
- * 
+ *
  * @author gdiaz
  */
 @Component("blTranslationCustomPersistenceHandler")
 public class TranslationCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
-
-    private final Log LOG = LogFactory.getLog(TranslationCustomPersistenceHandler.class);
 
     @Resource(name = "blSystemPropertiesService")
     protected SystemPropertiesService spService;
@@ -56,7 +51,7 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
     @Resource(name = "blTranslationService")
     protected TranslationService translationService;
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
     protected Boolean classMatches(PersistencePackage persistencePackage) {
@@ -81,20 +76,32 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
             // Get an instance of SystemProperty with the updated values from the form
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Translation adminInstance = (Translation) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Translation.class.getName(), persistencePerspective);
-            adminInstance = (Translation) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    Translation.class.getName(), persistencePerspective
+            );
+            adminInstance = (Translation) helper.createPopulatedInstance(
+                    adminInstance, entity, adminProperties, false
+            );
 
             // We only want to check for duplicates during a save
             if (!sandBoxHelper.isReplayOperation()) {
-                Translation res = translationService.getTranslation(adminInstance.getEntityType(), adminInstance.getEntityId(), adminInstance.getFieldName(), adminInstance.getLocaleCode());
+                Translation res = translationService.getTranslation(
+                        adminInstance.getEntityType(),
+                        adminInstance.getEntityId(),
+                        adminInstance.getFieldName(),
+                        adminInstance.getLocaleCode()
+                );
                 if (res != null) {
                     Entity errorEntity = new Entity();
-                    errorEntity.setType(new String[] { res.getClass().getName() });
+                    errorEntity.setType(new String[]{res.getClass().getName()});
                     errorEntity.addValidationError("localeCode", "translation.record.exists.for.locale");
                     return errorEntity;
                 }
             }
-            persistencePackage.setRequestingEntityName(adminInstance.getEntityType().getFriendlyType() + "|" + adminInstance.getFieldName() + "|" + adminInstance.getLocaleCode());
+            persistencePackage.setRequestingEntityName(
+                    adminInstance.getEntityType().getFriendlyType() + "|" + adminInstance.getFieldName()
+                            + "|" + adminInstance.getLocaleCode()
+            );
             adminInstance = dynamicEntityDao.merge(adminInstance);
             return helper.getRecord(adminProperties, adminInstance, null, null);
         } catch (Exception e) {
@@ -108,10 +115,17 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             Translation adminInstance = (Translation) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(Translation.class.getName(), persistencePerspective);
-            adminInstance = (Translation) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
-            if(StringUtils.isEmpty(persistencePackage.getRequestingEntityName())) {
-                persistencePackage.setRequestingEntityName(adminInstance.getEntityType().getFriendlyType() + "|" + adminInstance.getFieldName() + "|" + adminInstance.getLocaleCode());
+            Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                    Translation.class.getName(), persistencePerspective
+            );
+            adminInstance = (Translation) helper.createPopulatedInstance(
+                    adminInstance, entity, adminProperties, false
+            );
+            if (StringUtils.isEmpty(persistencePackage.getRequestingEntityName())) {
+                persistencePackage.setRequestingEntityName(
+                        adminInstance.getEntityType().getFriendlyType() + "|" + adminInstance.getFieldName()
+                                + "|" + adminInstance.getLocaleCode()
+                );
             }
             OperationType updateType = persistencePackage.getPersistencePerspective().getOperationTypes().getUpdateType();
             return helper.getCompatibleModule(updateType).update(persistencePackage);
@@ -119,5 +133,5 @@ public class TranslationCustomPersistenceHandler extends CustomPersistenceHandle
             throw new ServiceException("Unable to perform add for entity: " + Translation.class.getName(), e);
         }
     }
-    
+
 }

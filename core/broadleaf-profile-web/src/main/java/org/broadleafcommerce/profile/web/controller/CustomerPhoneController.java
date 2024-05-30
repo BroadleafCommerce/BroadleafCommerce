@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,20 +47,21 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller("blCustomerPhoneController")
 @RequestMapping("/myaccount/phone")
 public class CustomerPhoneController {
+
     private static final String prefix = "myAccount/phone/customerPhones";
     private static final String redirect = "redirect:/myaccount/phone/viewPhone.htm";
 
-    @Resource(name="blCustomerPhoneService")
+    @Resource(name = "blCustomerPhoneService")
     private CustomerPhoneService customerPhoneService;
-    @Resource(name="blCustomerPhoneValidator")
+    @Resource(name = "blCustomerPhoneValidator")
     private CustomerPhoneValidator customerPhoneValidator;
-    @Resource(name="blCustomerState")
+    @Resource(name = "blCustomerState")
     private CustomerState customerState;
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     private EntityConfiguration entityConfiguration;
-    @Resource(name="blPhoneFormatter")
+    @Resource(name = "blPhoneFormatter")
     private PhoneFormatter phoneFormatter;
-    @Resource(name="blPhoneValidator")
+    @Resource(name = "blPhoneValidator")
     private PhoneValidator phoneValidator;
 
     /* ??? -
@@ -76,17 +77,16 @@ public class CustomerPhoneController {
 
     /**
      * Completely deletes the customerPhone with the given customerPhoneId from the database.
-     * 
+     *
      * @param customerPhoneId
      * @param request
-     *
      * @return
      */
-    @RequestMapping(value="deletePhone", method =  {
+    @RequestMapping(value = "deletePhone", method = {
             RequestMethod.GET, RequestMethod.POST}
     )
     public String deletePhone(@RequestParam(required = true)
-            Long customerPhoneId, HttpServletRequest request) {
+                              Long customerPhoneId, HttpServletRequest request) {
         customerPhoneService.deleteCustomerPhoneById(customerPhoneId);
 
         request.setAttribute("phone.deletedPhone", "true");
@@ -96,17 +96,17 @@ public class CustomerPhoneController {
 
     /**
      * Called before each and every request comes into the controller, and is placed on the request for use by those methods.
-     * 
      *
      * @param request
      * @param model
-     *
      * @return
      */
     @ModelAttribute("phoneNameForm")
     public PhoneNameForm initPhoneNameForm(HttpServletRequest request, Model model) {
         PhoneNameForm form = new PhoneNameForm();
-        form.setPhone((Phone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.Phone"));
+        form.setPhone((Phone) entityConfiguration.createEntityInstance(
+                "org.broadleafcommerce.profile.core.domain.Phone"
+        ));
 
         return form;
     }
@@ -116,14 +116,15 @@ public class CustomerPhoneController {
      *
      * @param customerPhoneId
      * @param request
-     *
      * @return
      */
-    @RequestMapping(value="makePhoneDefault", method =  {
+    @RequestMapping(value = "makePhoneDefault", method = {
             RequestMethod.GET, RequestMethod.POST}
     )
-    public String makePhoneDefault(@RequestParam(required = true)
-            Long customerPhoneId, HttpServletRequest request) {
+    public String makePhoneDefault(
+            @RequestParam(required = true) Long customerPhoneId,
+            HttpServletRequest request
+    ) {
         CustomerPhone customerPhone = customerPhoneService.readCustomerPhoneById(customerPhoneId);
         customerPhoneService.makeCustomerPhoneDefault(customerPhone.getId(), customerPhone.getCustomer().getId());
 
@@ -134,28 +135,30 @@ public class CustomerPhoneController {
 
     /**
      * Creates a new phone if no customerPhoneId & phoneId are passed in; otherwise, it creates a new customerPhone object otherwise.  If they are passed in,
-     *  it is assumed that there is an update.
+     * it is assumed that there is an update.
      *
      * @param phoneNameForm
      * @param errors
      * @param request
      * @param customerPhoneId DOCUMENT ME!
-     * @param phoneId DOCUMENT ME!
-     *
+     * @param phoneId         DOCUMENT ME!
      * @return
      */
-    @RequestMapping(value="savePhone", method =  {
+    @RequestMapping(value = "savePhone", method = {
             RequestMethod.GET, RequestMethod.POST}
     )
-    public String savePhone(@ModelAttribute("phoneNameForm")
-            PhoneNameForm phoneNameForm, BindingResult errors, HttpServletRequest request, @RequestParam(required = false)
-            Long customerPhoneId, @RequestParam(required = false)
-            Long phoneId) {
+    public String savePhone(
+            @ModelAttribute("phoneNameForm") PhoneNameForm phoneNameForm,
+            BindingResult errors,
+            HttpServletRequest request,
+            @RequestParam(required = false) Long customerPhoneId,
+            @RequestParam(required = false) Long phoneId
+    ) {
         if (GenericValidator.isBlankOrNull(phoneNameForm.getPhoneName())) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneName", "phoneName.required");
         }
 
-        if(phoneId != null){
+        if (phoneId != null) {
             phoneNameForm.getPhone().setId(phoneId);
         }
 
@@ -165,7 +168,9 @@ public class CustomerPhoneController {
         errors.popNestedPath();
 
         if (!errors.hasErrors()) {
-            CustomerPhone customerPhone = (CustomerPhone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.CustomerPhone");
+            CustomerPhone customerPhone = (CustomerPhone) entityConfiguration.createEntityInstance(
+                    "org.broadleafcommerce.profile.core.domain.CustomerPhone"
+            );
             customerPhone.setCustomer(customerState.getCustomer(request));
             customerPhone.setPhoneName(phoneNameForm.getPhoneName());
             customerPhone.setPhone(phoneNameForm.getPhone());
@@ -238,21 +243,23 @@ public class CustomerPhoneController {
 
     /**
      * Provides a blank template for a new Customer Phone to be created if no customerPhoneId is provided.
-     *  Otherwise, when a customerPhoneId is provided, the associated customerPhone object is retrieved,
-     *  and placed on the request.
-     * 
+     * Otherwise, when a customerPhoneId is provided, the associated customerPhone object is retrieved,
+     * and placed on the request.
+     *
      * @param customerPhoneId
      * @param request
      * @param phoneNameForm
      * @param errors
      * @return
      */
-    @RequestMapping(value="viewPhone", method =  {
+    @RequestMapping(value = "viewPhone", method = {
             RequestMethod.GET, RequestMethod.POST}
     )
-    public String viewPhone(@RequestParam(required = false)
-            Long customerPhoneId, HttpServletRequest request, @ModelAttribute("phoneNameForm")
-            PhoneNameForm phoneNameForm, BindingResult errors) {
+    public String viewPhone(
+            @RequestParam(required = false) Long customerPhoneId,
+            HttpServletRequest request, @ModelAttribute("phoneNameForm") PhoneNameForm phoneNameForm,
+            BindingResult errors
+    ) {
         if (customerPhoneId == null) {
             return viewPhoneSuccessView;
         } else {
@@ -277,4 +284,5 @@ public class CustomerPhoneController {
             }
         }
     }
+
 }

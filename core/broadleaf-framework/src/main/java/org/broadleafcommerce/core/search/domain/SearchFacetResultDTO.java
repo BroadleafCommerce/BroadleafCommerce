@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,18 +25,18 @@ import java.net.URLEncoder;
  * @author Andre Azzolini (apazzolini)
  */
 public class SearchFacetResultDTO {
-    
+
     protected SearchFacet facet;
-    
+
     protected String value;
-    
+
     protected BigDecimal minValue;
     protected BigDecimal maxValue;
-    
+
     protected Integer quantity;
-    
+
     protected boolean active;
-    
+
     public SearchFacet getFacet() {
         return facet;
     }
@@ -48,7 +48,7 @@ public class SearchFacetResultDTO {
     public String getValue() {
         return value;
     }
-    
+
     public void setValue(String value) {
         this.value = value;
     }
@@ -72,7 +72,7 @@ public class SearchFacetResultDTO {
     public Integer getQuantity() {
         return quantity;
     }
-    
+
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
@@ -84,7 +84,7 @@ public class SearchFacetResultDTO {
     public void setActive(boolean active) {
         this.active = active;
     }
-    
+
     public String getValueKey() {
         String value = getUnencodedValueKey();
 
@@ -97,12 +97,12 @@ public class SearchFacetResultDTO {
 
     public String getUnencodedValueKey() {
         String value = getValue();
-        
+
         if (value == null) {
             value = "range[" + getMinValue() + ":" + getMaxValue() + "]";
         }
-        
+
         return value;
     }
-    
+
 }

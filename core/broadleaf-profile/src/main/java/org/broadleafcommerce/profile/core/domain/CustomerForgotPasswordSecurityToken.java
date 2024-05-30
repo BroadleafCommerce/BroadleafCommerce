@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,67 +21,74 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 
  * @author bpolster
- *
  */
 public interface CustomerForgotPasswordSecurityToken extends Serializable {
-    
+
     /**
      * Returns the security token.
+     *
      * @return
      */
-    public String getToken();
-    
+    String getToken();
+
     /**
      * Sets the security token.
+     *
      * @return
      */
-    public void setToken(String token);
+    void setToken(String token);
 
     /**
      * Date the token was created
+     *
      * @return
      */
-    public Date getCreateDate();
+    Date getCreateDate();
 
     /**
      * Set the generation date for the token.
+     *
      * @return
      */
-    public void setCreateDate(Date date);
+    void setCreateDate(Date date);
 
     /**
      * Date the token was used to reset the password.
+     *
      * @return
      */
-    public Date getTokenUsedDate();
+    Date getTokenUsedDate();
 
     /**
      * Set the date the token was used to reset the password.
+     *
      * @return
      */
-    public void setTokenUsedDate(Date date);
+    void setTokenUsedDate(Date date);
 
     /**
      * Id associated with this forgot password token.
+     *
      * @return
      */
-    public Long getCustomerId();
+    Long getCustomerId();
 
     /**
      * Id associated with this forgot password token.
+     *
      * @return
      */
-    public void setCustomerId(Long customerId);
+    void setCustomerId(Long customerId);
 
     /**
      * Returns true if the token has already been used.
      */
-    public boolean isTokenUsedFlag();
+    boolean isTokenUsedFlag();
 
     /**
-     * Sets the token used flag. 
+     * Sets the token used flag.
      */
-    public void setTokenUsedFlag(boolean tokenUsed);
+    void setTokenUsedFlag(boolean tokenUsed);
+
 }

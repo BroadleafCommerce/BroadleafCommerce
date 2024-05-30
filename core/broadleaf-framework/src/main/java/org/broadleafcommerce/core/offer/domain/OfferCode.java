@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,72 +27,72 @@ import java.util.List;
 
 public interface OfferCode extends Status, Serializable, MultiTenantCloneable<OfferCode> {
 
-    public Long getId() ;
+    Long getId();
 
-    public void setId(Long id) ;
+    void setId(Long id);
 
-    public Offer getOffer() ;
+    Offer getOffer();
 
-    public void setOffer(Offer offer) ;
+    void setOffer(Offer offer);
 
-    public String getOfferCode();
+    String getOfferCode();
 
-    public void setOfferCode(String offerCode);
+    void setOfferCode(String offerCode);
 
-    public Date getStartDate();
+    Date getStartDate();
 
-    public void setStartDate(Date startDate);
+    void setStartDate(Date startDate);
 
-    public Date getEndDate();
+    Date getEndDate();
 
-    public void setEndDate(Date endDate);
+    void setEndDate(Date endDate);
 
     /**
      * Returns the maximum number of times that this code can be used regardless of Order or Customer
-     *
+     * <p>
      * 0 indicates unlimited usage.
      *
      * @return
      */
-    public int getMaxUses();
+    int getMaxUses();
 
     /**
      * Sets the maximum number of times that this code can be used regardless of Order or Customer
-     *
+     * <p>
      * 0 indicates unlimited usage.
      *
      * @param maxUses
      */
-    public void setMaxUses(int maxUses);
+    void setMaxUses(int maxUses);
 
-    public String getEmailAddress();
+    String getEmailAddress();
 
-    public void setEmailAddress(String emailAddress);
+    void setEmailAddress(String emailAddress);
 
     /**
      * Indicates that this is an unlimited-use code. By default this is true if {@link #getMaxUses()} == 0
      */
-    public boolean isUnlimitedUse();
-    
+    boolean isUnlimitedUse();
+
     /**
      * Indicates that this code has a limit on how many times it can be used. By default this is true if {@link #getMaxUses()} > 0
      */
-    public boolean isLimitedUse();
-    
-    /**
-     * @deprecated replaced by the {@link OfferAudit} table
-     */
-    @Deprecated
-    public int getUses() ;
+    boolean isLimitedUse();
 
     /**
      * @deprecated replaced by the {@link OfferAudit} table
      */
     @Deprecated
-    public void setUses(int uses);
+    int getUses();
 
-    public List<Order> getOrders();
+    /**
+     * @deprecated replaced by the {@link OfferAudit} table
+     */
+    @Deprecated
+    void setUses(int uses);
 
-    public void setOrders(List<Order> orders);
+    List<Order> getOrders();
+
+    void setOrders(List<Order> orders);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,6 +21,7 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.broadleafcommerce.common.util.FormatUtil;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,14 +33,15 @@ import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Representation of SiteMapURLEntry that can be used to generate an XML element.
- * 
+ *
  * @author bpolster
  */
 @XmlRootElement(name = "url")
-@XmlType(propOrder = { "loc", "lastmod", "changefreq", "priority", "siteMapImageWrappers" })
+@XmlType(propOrder = {"loc", "lastmod", "changefreq", "priority", "siteMapImageWrappers"})
 public class SiteMapURLWrapper implements Serializable {
 
-    private static final long serialVersionUID = 1L;   
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     protected String loc;
 
@@ -110,7 +112,7 @@ public class SiteMapURLWrapper implements Serializable {
     public void setChangefreq(String changefreq) {
         this.changefreq = changefreq;
     }
-    
+
     public String getPriority() {
         return priority;
     }
@@ -119,4 +121,5 @@ public class SiteMapURLWrapper implements Serializable {
     public void setPriority(String priority) {
         this.priority = priority;
     }
+
 }

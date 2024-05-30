@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,6 +31,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
@@ -48,7 +49,7 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
 /**
  * The Class CategoryProductXrefImpl is the default implmentation of {@link Category}. This entity
  * is only used for executing a named query.
- *
+ * <p>
  * If you want to add fields specific to your implementation of BroadLeafCommerce you should extend
  * this class and add your fields.  If you need to make significant changes to the class then you
  * should implement your own version of {@link Category}.
@@ -66,13 +67,15 @@ import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.MANUAL_DU
 @AdminPresentationClass(excludeFromPolymorphism = false)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryProduct")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class CategoryProductXrefImpl implements CategoryProductXref {
 
-    /** The Constant serialVersionUID. */
+    /**
+     * The Constant serialVersionUID.
+     */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -99,12 +102,16 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     //todo: 6.3 cascade refresh was deleted due to potential hiberante issue, when after a clone process
     //we refresh original & clone records, and after refresh it will be flushed at some point
     //and during flush there will be exception about shared collection in sku.skuPriceData
-    /** The product. */
+    /**
+     * The product.
+     */
     @ManyToOne(targetEntity = ProductImpl.class, optional = false)
     @JoinColumn(name = "PRODUCT_ID")
     protected Product product = new ProductImpl();
 
-    /** The display order. */
+    /**
+     * The display order.
+     */
     @Column(name = "DISPLAY_ORDER", precision = 10, scale = 6)
     @AdminPresentation(friendlyName = "CategoryProductXrefImpl_displayOrder",
             visibility = VisibilityEnum.HIDDEN_ALL)
@@ -213,4 +220,5 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
         }
         return createResponse;
     }
+
 }

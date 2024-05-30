@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,37 +19,29 @@ package org.broadleafcommerce.core.catalog.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * An extendible enumeration of product option validation strategy types.
- * 
- * @author ppatel
  *
+ * @author ppatel
  */
 public class ProductOptionValidationStrategyType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, ProductOptionValidationStrategyType> TYPES = new LinkedHashMap<String, ProductOptionValidationStrategyType>();
+    private static final Map<String, ProductOptionValidationStrategyType> TYPES = new LinkedHashMap<>();
 
     public static final ProductOptionValidationStrategyType NONE = new ProductOptionValidationStrategyType("NONE", 1000, "None");
     public static final ProductOptionValidationStrategyType ADD_ITEM = new ProductOptionValidationStrategyType("ADD_ITEM", 2000, "Validate On Add Item");
     public static final ProductOptionValidationStrategyType SUBMIT_ORDER = new ProductOptionValidationStrategyType("SUBMIT_ORDER", 3000, "Validate On Submit");
 
-    public static ProductOptionValidationStrategyType getInstance(final String type) {
-        return TYPES.get(type);
-    }
-
     private String type;
     private String friendlyType;
     private Integer rank;
-
-    public Integer getRank() {
-        return rank;
-    }
 
     public ProductOptionValidationStrategyType() {
         //do nothing
@@ -61,21 +53,29 @@ public class ProductOptionValidationStrategyType implements Serializable, Broadl
         this.rank = rank;
     }
 
+    public static ProductOptionValidationStrategyType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public Integer getRank() {
+        return rank;
+    }
+
     @Override
     public String getType() {
         return type;
     }
 
-    @Override
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    @Override
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -102,4 +102,5 @@ public class ProductOptionValidationStrategyType implements Serializable, Broadl
             return false;
         return true;
     }
+
 }

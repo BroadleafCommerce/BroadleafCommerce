@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -48,7 +48,7 @@ import jakarta.persistence.criteria.Predicate;
 @Component("blProductOptionValuesCustomPersistenceHandler")
 public class ProductOptionValuesCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
     @Override
@@ -73,13 +73,15 @@ public class ProductOptionValuesCustomPersistenceHandler extends CustomPersisten
             dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Long optionId = getOptionKey(persistencePackage);
         if (optionId != null) {
-            FilterMapping filterMapping = new FilterMapping().withDirectFilterValues(sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, optionId)).withRestriction(new Restriction()
-                .withPredicateProvider(new PredicateProvider() {
-                    public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
-                                                    String ceilingEntity, String fullPropertyName, Path explicitPath, List directValues) {
-                        return root.get("productOption").get("id").in(directValues);
-                    }
-                }));
+            FilterMapping filterMapping = new FilterMapping()
+                    .withDirectFilterValues(sandBoxHelper.mergeCloneIds(ProductOptionImpl.class, optionId))
+                    .withRestriction(new Restriction()
+                            .withPredicateProvider(new PredicateProvider() {
+                                public Predicate buildPredicate(CriteriaBuilder builder, FieldPathBuilder fieldPathBuilder, From root,
+                                                                String ceilingEntity, String fullPropertyName, Path explicitPath, List directValues) {
+                                    return root.get("productOption").get("id").in(directValues);
+                                }
+                            }));
             cto.getAdditionalFilterMappings().add(filterMapping);
         }
         return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
@@ -96,4 +98,5 @@ public class ProductOptionValuesCustomPersistenceHandler extends CustomPersisten
         }
         return response;
     }
+
 }

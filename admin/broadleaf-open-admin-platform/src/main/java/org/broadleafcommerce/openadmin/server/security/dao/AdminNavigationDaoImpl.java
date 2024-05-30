@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,9 +39,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- *
  * @author elbertbautista
- *
  */
 @Repository("blAdminNavigationDao")
 public class AdminNavigationDaoImpl implements AdminNavigationDao {
@@ -49,9 +47,9 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
-    
+
     @Override
     public AdminSection save(AdminSection adminSection) {
         adminSection = em.merge(adminSection);
@@ -75,7 +73,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         List<AdminModule> modules = query.getResultList();
         return modules;
     }
-    
+
     @Override
     public AdminModule readAdminModuleByModuleKey(String moduleKey) {
         TypedQuery<AdminModule> q = new TypedQueryBuilder<>(AdminModuleImpl.class, "am", AdminModule.class)
@@ -92,11 +90,11 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         List<AdminSection> sections = query.getResultList();
         return sections;
     }
-    
+
     @Override
     public AdminSection readAdminSectionByClassAndSectionId(Class<?> clazz, String sectionId) {
         String className = clazz.getName();
-        
+
         // Try to find a section for the exact input received
         List<AdminSection> sections = readAdminSectionForClassName(className);
         if (CollectionUtils.isEmpty(sections)) {
@@ -107,7 +105,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
                 sections = readAdminSectionForClassName(className);
             }
         }
-        
+
         if (!CollectionUtils.isEmpty(sections)) {
             AdminSection returnSection = sections.get(0);
             if (sectionId == null) {
@@ -129,13 +127,13 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
 
             return returnSection;
         }
-        
+
         return null;
     }
-    
+
     public List<AdminSection> readAdminSectionForClassName(String className) {
         TypedQuery<AdminSection> q = em.createQuery(
-            "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
+                "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
         q.setParameter("className", className);
         q.setHint(org.hibernate.jpa.QueryHints.HINT_CACHEABLE, true);
         List<AdminSection> result = q.getResultList();
@@ -153,9 +151,9 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
         AdminSection adminSection = null;
         try {
-             adminSection = (AdminSection) query.getSingleResult();
+            adminSection = (AdminSection) query.getSingleResult();
         } catch (NoResultException e) {
-           //do nothing
+            //do nothing
         }
         return adminSection;
     }
@@ -199,4 +197,5 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         }
         return null;
     }
+
 }

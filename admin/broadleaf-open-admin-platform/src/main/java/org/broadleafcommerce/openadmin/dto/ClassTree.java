@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -61,7 +61,7 @@ public class ClassTree implements Serializable {
     public int finalizeStructure(int start) {
         left = start;
         start++;
-        for (int i = children.length-1;i >= 0; i--) {
+        for (int i = children.length - 1; i >= 0; i--) {
             start = children[i].finalizeStructure(start);
             start++;
         }
@@ -71,7 +71,7 @@ public class ClassTree implements Serializable {
     }
 
     public List<ClassTree> getCollapsedClassTrees() {
-        List<ClassTree> list = new ArrayList<ClassTree>();
+        List<ClassTree> list = new ArrayList<>();
         addChildren(this, list);
         return list;
     }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,25 +36,38 @@ public class DefaultFetchWrapper implements FetchWrapper {
 
     @Override
     public List<Serializable> getPersistentRecords(FetchRequest fetchRequest) {
-        return getBasicPersistenceModule().getPersistentRecords(fetchRequest.getCeilingEntity(),
-                            fetchRequest.getFilterMappings(), fetchRequest.getCto().getFirstResult(), fetchRequest.getCto().getMaxResults());
+        return getBasicPersistenceModule().getPersistentRecords(
+                fetchRequest.getCeilingEntity(),
+                fetchRequest.getFilterMappings(),
+                fetchRequest.getCto().getFirstResult(),
+                fetchRequest.getCto().getMaxResults()
+        );
     }
 
     @Override
     public Integer getTotalRecords(FetchRequest fetchRequest) {
-        return getBasicPersistenceModule().getTotalRecords(fetchRequest.getCeilingEntity(), fetchRequest.getFilterMappings());
+        return getBasicPersistenceModule().getTotalRecords(
+                fetchRequest.getCeilingEntity(),
+                fetchRequest.getFilterMappings()
+        );
     }
 
     protected BasicPersistenceModule getBasicPersistenceModule() {
         PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager();
-        BasicPersistenceModule basicPersistenceModule = (BasicPersistenceModule) ((InspectHelper) persistenceManager).getCompatibleModule(OperationType.BASIC);
+        BasicPersistenceModule basicPersistenceModule = (BasicPersistenceModule) ((InspectHelper) persistenceManager)
+                .getCompatibleModule(OperationType.BASIC);
         return basicPersistenceModule;
     }
 
     @Override
     public Entity[] getRecords(FetchExtractionRequest fetchExtractionRequest) {
-        return getBasicPersistenceModule().getRecords(fetchExtractionRequest.getPrimaryUnfilteredMergedProperties(),
-                fetchExtractionRequest.getRecords(), fetchExtractionRequest.getAlternateUnfilteredMergedProperties(),
-                fetchExtractionRequest.getPathToTargetObject(), fetchExtractionRequest.getPersistencePackage().getCustomCriteria());
+        return getBasicPersistenceModule().getRecords(
+                fetchExtractionRequest.getPrimaryUnfilteredMergedProperties(),
+                fetchExtractionRequest.getRecords(),
+                fetchExtractionRequest.getAlternateUnfilteredMergedProperties(),
+                fetchExtractionRequest.getPathToTargetObject(),
+                fetchExtractionRequest.getPersistencePackage().getCustomCriteria()
+        );
     }
+
 }

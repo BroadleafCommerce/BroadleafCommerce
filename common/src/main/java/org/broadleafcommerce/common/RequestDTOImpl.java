@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +22,7 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.web.context.request.WebRequest;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,18 +34,15 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public class RequestDTOImpl implements RequestDTO, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
+    Map<String, String> requestContextAttributes = new HashMap<>();
     @AdminPresentation(friendlyName = "RequestDTOImpl_Request_URI")
     private String requestURI;
-
     @AdminPresentation(friendlyName = "RequestDTOImpl_Full_Url")
     private String fullUrlWithQueryString;
-
     @AdminPresentation(friendlyName = "RequestDTOImpl_Is_Secure")
     private Boolean secure;
-
-    Map<String, String> requestContextAttributes = new HashMap<String, String>();
 
     public RequestDTOImpl() {
     }
@@ -57,7 +54,7 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
             fullUrlWithQueryString += "?" + request.getQueryString();
         }
         secure = ("HTTPS".equalsIgnoreCase(request.getScheme()) || request.isSecure());
-        for(Object key : request.getParameterMap().keySet()) {
+        for (Object key : request.getParameterMap().keySet()) {
             String paramKey = key.toString();
             requestContextAttributes.put(paramKey, request.getParameter(paramKey));
         }
@@ -66,17 +63,21 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
     public RequestDTOImpl(WebRequest request) {
         // Page level targeting does not work for WebRequest.
         secure = request.isSecure();
-        for(String key : request.getParameterMap().keySet()) {
+        for (String key : request.getParameterMap().keySet()) {
             requestContextAttributes.put(key, request.getParameter(key));
         }
     }
 
     /**
-     * @return  returns the request not including the protocol, domain, or query string
+     * @return returns the request not including the protocol, domain, or query string
      */
     @Override
     public String getRequestURI() {
         return requestURI;
+    }
+
+    public void setRequestURI(String requestURI) {
+        this.requestURI = requestURI;
     }
 
     /**
@@ -119,10 +120,6 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
         this.secure = secure;
     }
 
-    public void setRequestURI(String requestURI) {
-        this.requestURI = requestURI;
-    }
-
     public Map<String, Object> getProperties() {
         if (BroadleafRequestContext.getBroadleafRequestContext() != null) {
             return BroadleafRequestContext.getBroadleafRequestContext().getAdditionalProperties();
@@ -130,4 +127,5 @@ public class RequestDTOImpl implements RequestDTO, Serializable {
             return null;
         }
     }
+
 }

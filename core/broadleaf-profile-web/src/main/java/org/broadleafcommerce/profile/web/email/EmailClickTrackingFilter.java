@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,17 +37,14 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- *
  * @author jfischer
- *
  */
 public class EmailClickTrackingFilter implements Filter {
-
-    private EmailTrackingManager emailTrackingManager;
 
     @Autowired
     @Qualifier("blCustomerState")
     protected CustomerState customerState;
+    private EmailTrackingManager emailTrackingManager;
 
     /* (non-Javadoc)
      * @see javax.servlet.Filter#destroy()
@@ -62,37 +59,39 @@ public class EmailClickTrackingFilter implements Filter {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain) throws IOException, ServletException {
+    public void doFilter(
+            ServletRequest request,
+            ServletResponse response,
+            FilterChain chain
+    ) throws IOException, ServletException {
         String emailId = request.getParameter("email_id");
-        if ( emailId != null ) {
+        if (emailId != null) {
             /*
              * The direct parameter map from the request object returns its values
              * in arrays (at least for the tomcat implementation). We make our own
              * parameter map to avoid this situation.
              */
-            Map<String, String> parameterMap = new HashMap<String, String>();
+            Map<String, String> parameterMap = new HashMap<>();
             Enumeration names = request.getParameterNames();
 
             String customerId = request.getParameter("customerId");
-            while(names.hasMoreElements()) {
+            while (names.hasMoreElements()) {
                 String name = (String) names.nextElement();
-                if (! "customerId".equals(name)) {
+                if (!"customerId".equals(name)) {
                     parameterMap.put(name, request.getParameter(name));
                 }
             }
 
             if (customerId == null) {
                 // Attempt to get customerId from current cookied customer
-                Customer customer = customerState.getCustomer((HttpServletRequest)  request);
+                Customer customer = customerState.getCustomer((HttpServletRequest) request);
                 if (customer != null && customer.getId() != null) {
                     customerId = customer.getId().toString();
                 }
-
             }
-            Map<String, String> extraValues = new HashMap<String, String>();
+            Map<String, String> extraValues = new HashMap<>();
             extraValues.put("requestUri", ((HttpServletRequest) request).getRequestURI());
-            emailTrackingManager.recordClick( Long.valueOf(emailId) , parameterMap, customerId, extraValues);
+            emailTrackingManager.recordClick(Long.valueOf(emailId), parameterMap, customerId, extraValues);
         }
         chain.doFilter(request, response);
     }

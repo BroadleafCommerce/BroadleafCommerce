@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -107,7 +107,7 @@ public @interface AdminPresentationCollection {
      * collection item removal operation, you should specify a removeType
      * of OperationType.NONDESTRUCTIVEREMOVE in {@link #operationTypes()}
      * param for this annotation.</p>
-     * 
+     *
      * <p>If the type is set to LOOKUP_FOR_UPDATE, the system will trigger
      * an update call on the target entity instead of an add. This is typically
      * used when the target entity also has a to-one lookup to this field.</p>
@@ -146,9 +146,9 @@ public @interface AdminPresentationCollection {
 
     /**
      * Optional - only required if you want the field to appear under a different tab
-     * 
+     * <p>
      * Specify a GUI tab for this field
-     * 
+     *
      * @return the tab for this field
      */
     @Deprecated
@@ -156,12 +156,12 @@ public @interface AdminPresentationCollection {
 
     /**
      * Optional - only required if you want to order the appearance of the tabs in the UI
-     * 
-     * Specify an order for this tab. Tabs will be sorted int he resulting form in 
+     * <p>
+     * Specify an order for this tab. Tabs will be sorted int he resulting form in
      * ascending order based on this parameter.
-     * 
+     * <p>
      * The default tab will render with an order of 99999.
-     * 
+     *
      * @return the order for this tab
      */
     @Deprecated
@@ -188,7 +188,10 @@ public @interface AdminPresentationCollection {
      *
      * @return the operation type
      */
-    AdminPresentationOperationTypes operationTypes() default @AdminPresentationOperationTypes(addType = OperationType.BASIC, fetchType = OperationType.BASIC, inspectType = OperationType.BASIC, removeType = OperationType.BASIC, updateType = OperationType.BASIC);
+    AdminPresentationOperationTypes operationTypes() default @AdminPresentationOperationTypes(
+            addType = OperationType.BASIC, fetchType = OperationType.BASIC, inspectType = OperationType.BASIC,
+            removeType = OperationType.BASIC, updateType = OperationType.BASIC
+    );
 
     /**
      * <p>Optional - propertyName , only required if you want hide the field based on this property's value</p>
@@ -196,10 +199,9 @@ public @interface AdminPresentationCollection {
      * <p>If the property is defined and found to be set to false, in the AppConfiguraionService, then this field will be excluded in the
      * admin presentation layer</p>
      *
-     * @return name of the property 
+     * @return name of the property
      */
     String showIfProperty() default "";
-
 
     /**
      * <p>Optional - only required if you want hide the field based on the supplied field's value</p>
@@ -215,7 +217,6 @@ public @interface AdminPresentationCollection {
      * Optional - If you have FieldType set to SupportedFieldType.MONEY,      *
      * then you can specify a money currency property field.
      *
-     *
      * @return the currency property field
      */
     String currencyCodeField() default "";
@@ -223,7 +224,6 @@ public @interface AdminPresentationCollection {
     /**
      * <p>Optional - only required if the collection
      * a field used for sorting</p>  Enables the reorder functionality in list grids.
-     * 
      *
      * @return the sort field in the target entity
      */
@@ -238,8 +238,7 @@ public @interface AdminPresentationCollection {
      * @return the sort direction
      */
     boolean sortAscending() default true;
-    
-    
+
     /**
      * <p>Optional - fields are eagerly fetched by default</p>
      *
@@ -260,14 +259,14 @@ public @interface AdminPresentationCollection {
 
     /**
      * Used to map the collection to a group defined in AdminPresentationClass using AdminGroupPresentation.
-     *
+     * <p>
      * If the group cannot be found in AdminPresentationClass, then the tab specified in AdminPresentationCollection
      * is used to map the collection to a tab defined in AdminPresentationClass using AdminTabPresentation.
      * If the tab cannot be found, then the collection will be placed in a tab created using the information
      * specified in AdminPresentationCollection.
-     *
+     * <p>
      * Optional - only required if you want the field to appear under a specific group
-     *
+     * <p>
      * Specify a GUI group for this collection
      *
      * @return the group for this collection
@@ -284,4 +283,5 @@ public @interface AdminPresentationCollection {
      * @return Field visible in the selectize collection UI in the admin tool
      */
     String selectizeVisibleField() default "";
+
 }

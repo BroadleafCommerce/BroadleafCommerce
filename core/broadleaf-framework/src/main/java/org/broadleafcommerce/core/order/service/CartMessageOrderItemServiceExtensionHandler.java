@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -57,7 +57,7 @@ public class CartMessageOrderItemServiceExtensionHandler extends AbstractOrderSe
             extensionManager.registerHandler(this);
         }
     }
-    
+
     @Override
     public ExtensionResultStatusType attachAdditionalDataToOrder(Order order, boolean priceOrder) {
         for (OrderItem orderItem : order.getOrderItems()) {
@@ -109,7 +109,10 @@ public class CartMessageOrderItemServiceExtensionHandler extends AbstractOrderSe
         return cartMessages;
     }
 
-    protected void addPromotionMessagesForType(List<PromotionMessageDTO> messageDTOs, List<PromotionMessageDTO> messages) {
+    protected void addPromotionMessagesForType(
+            List<PromotionMessageDTO> messageDTOs,
+            List<PromotionMessageDTO> messages
+    ) {
         if (CollectionUtils.isNotEmpty(messages)) {
             messageDTOs.addAll(messages);
         }
@@ -119,4 +122,5 @@ public class CartMessageOrderItemServiceExtensionHandler extends AbstractOrderSe
     public int getPriority() {
         return Integer.MAX_VALUE;
     }
+
 }

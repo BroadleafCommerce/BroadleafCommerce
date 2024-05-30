@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,28 +36,28 @@ import jakarta.annotation.Resource;
 
 @Component("blValidateUpdateRequestActivity")
 public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {
-    
+
     public static final int ORDER = 1000;
-    
+
     @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
 
     @Resource(name = "blOrderItemRequestValidationService")
     protected OrderItemRequestValidationService orderItemRequestValidationService;
-    
+
     public ValidateUpdateRequestActivity() {
         setOrder(ORDER);
     }
-    
+
     @Override
     public ProcessContext<CartOperationRequest> execute(ProcessContext<CartOperationRequest> context) throws Exception {
         CartOperationRequest request = context.getSeedData();
         OrderItemRequestDTO orderItemRequestDTO = request.getItemRequest();
-        
+
         Map<String, String> attributes = new HashMap<>();
         OrderItem requestedOrderItem = new OrderItemImpl();
         for (OrderItem oi : request.getOrder().getOrderItems()) {
-            if (oi.getId() == orderItemRequestDTO.getOrderItemId()){
+            if (oi.getId() == orderItemRequestDTO.getOrderItemId()) {
                 requestedOrderItem = oi;
             }
         }
@@ -67,7 +67,7 @@ public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<C
         }
 
         orderItemRequestDTO.setItemAttributes(attributes);
-        
+
         // Throw an exception if the user did not specify an orderItemId
         if (orderItemRequestDTO.getOrderItemId() == null) {
             throw new IllegalArgumentException("OrderItemId must be specified when removing from order");
@@ -89,7 +89,7 @@ public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<C
         if (request.getOrder() == null) {
             throw new IllegalArgumentException("Order is required when updating item quantities");
         }
-        
+
         // Throw an exception if the user is trying to update an order item that is part of a bundle
         OrderItem orderItem = orderItemService.readOrderItemById(orderItemRequestDTO.getOrderItemId());
         if (orderItem != null && orderItem instanceof DiscreteOrderItem) {
@@ -98,8 +98,8 @@ public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<C
                 throw new IllegalArgumentException("Cannot update an item that is part of a bundle");
             }
         }
-        
+
         return context;
     }
-    
+
 }

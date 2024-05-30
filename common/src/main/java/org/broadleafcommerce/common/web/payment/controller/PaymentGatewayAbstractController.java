@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.web.payment.controller;
 
 import org.apache.commons.logging.Log;
@@ -53,9 +52,8 @@ import jakarta.servlet.http.HttpServletRequest;
  */
 public abstract class PaymentGatewayAbstractController extends BroadleafAbstractController {
 
-    protected static final Log LOG = LogFactory.getLog(PaymentGatewayAbstractController.class);
     public static final String PAYMENT_PROCESSING_ERROR = "PAYMENT_PROCESSING_ERROR";
-
+    protected static final Log LOG = LogFactory.getLog(PaymentGatewayAbstractController.class);
     protected static String baseRedirect = "redirect:/";
     protected static String baseErrorView = "/error";
     protected static String baseOrderReviewRedirect = "redirect:/checkout";
@@ -66,12 +64,20 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
     protected static String processingErrorMessage = "cart.paymentProcessingError";
     protected static String cartReqAttributeNotProvidedMessage = "cart.requiredAttributeNotProvided";
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("blPaymentGatewayCheckoutService")
     protected PaymentGatewayCheckoutService paymentGatewayCheckoutService;
 
     @Resource(name = "blPaymentGatewayWebResponsePrintService")
     protected PaymentGatewayWebResponsePrintService webResponsePrintService;
+
+    public static String getProcessingErrorMessage() {
+        return processingErrorMessage;
+    }
+
+    public static String getCartReqAttributeNotProvidedMessage() {
+        return cartReqAttributeNotProvidedMessage;
+    }
 
     public Long applyPaymentToOrder(PaymentResponseDTO responseDTO) throws IllegalArgumentException {
         if (LOG.isErrorEnabled()) {
@@ -85,6 +91,10 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
         }
         return null;
     }
+
+    // ***********************************************
+    // Common Checkout Result Processing
+    // ***********************************************
 
     public String initiateCheckout(Long orderId) throws Exception {
         String orderNumber = null;
@@ -128,51 +138,51 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
         return orderNumber;
     }
 
-    // ***********************************************
-    // Common Checkout Result Processing
-    // ***********************************************
     /**
      * This method is intended to initiate the final steps in checkout either
      * via a request coming directly from a Payment Gateway (i.e. a Transparent Redirect) or from
      * some sort of tokenization mechanism client-side.
-     *
+     * <p>
      * The assumption is that the implementing gateway's controller that extends this class
      * will have implemented a {@link org.broadleafcommerce.common.payment.service.PaymentGatewayWebResponseService}
      * with the ability to translate an {@link jakarta.servlet.http.HttpServletRequest} into a
      * {@link org.broadleafcommerce.common.payment.dto.PaymentResponseDTO} which will then be used by the framework
      * to create the appropriate order payments and transactions as well as invoke the checkout workflow
      * if configured to do so.
-     *
+     * <p>
      * The general flow is as follows:
-     *
+     * <p>
      * try {
-     *   translate http request to DTO
-     *   apply payment to order (if unsuccessful, payment will be archived)
-     *   if (not successful or not valid)
-     *     redirect to error view
-     *   if (complete checkout on callback == true)
-     *     initiateCheckout(order id);
-     *   else
-     *     show review page;
+     * translate http request to DTO
+     * apply payment to order (if unsuccessful, payment will be archived)
+     * if (not successful or not valid)
+     * redirect to error view
+     * if (complete checkout on callback == true)
+     * initiateCheckout(order id);
+     * else
+     * show review page;
      * } catch (Exception e) {
-     *     log error
-     *     handle processing exception
+     * log error
+     * handle processing exception
      * }
      *
-     * @param model - Spring MVC model
-     * @param request - the HTTPServletRequest (originating either from a Payment Gateway or from the implementing checkout engine)
+     * @param model              - Spring MVC model
+     * @param request            - the HTTPServletRequest (originating either from a Payment Gateway or from the implementing checkout engine)
      * @param redirectAttributes - Spring MVC redirect attributes
      * @return the resulting view
      * @throws PaymentException
      */
-    public String process(Model model, HttpServletRequest request,
-                          final RedirectAttributes redirectAttributes) throws PaymentException {
+    public String process(
+            Model model,
+            HttpServletRequest request,
+            final RedirectAttributes redirectAttributes
+    ) throws PaymentException {
         Long orderPaymentId = null;
 
         try {
             PaymentResponseDTO responseDTO = getWebResponseService().translateWebResponse(request);
             if (LOG.isTraceEnabled()) {
-                LOG.trace("HTTPRequest translated to Raw Response: " +  responseDTO.getRawResponse());
+                LOG.trace("HTTPRequest translated to Raw Response: " + responseDTO.getRawResponse());
             }
 
             orderPaymentId = applyPaymentToOrder(responseDTO);
@@ -213,7 +223,6 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
 
                 return getOrderReviewRedirect();
             }
-
         } catch (Exception e) {
 
             if (LOG.isTraceEnabled()) {
@@ -226,7 +235,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
                         "mark the payment as invalid and delegating to the payment module to handle any other " +
                         "exception processing", e);
             }
-            
+
             if (paymentGatewayCheckoutService != null && orderPaymentId != null) {
                 paymentGatewayCheckoutService.markPaymentAsInvalid(orderPaymentId);
             }
@@ -237,11 +246,13 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
         return getErrorViewRedirect();
     }
 
-    public abstract void handleProcessingException(Exception e, final RedirectAttributes redirectAttributes)
-            throws PaymentException;
+    public abstract void handleProcessingException(Exception e, final RedirectAttributes redirectAttributes) throws PaymentException;
 
-    public abstract void handleUnsuccessfulTransaction(Model model, final RedirectAttributes redirectAttributes,
-                                                       PaymentResponseDTO responseDTO) throws PaymentException;
+    public abstract void handleUnsuccessfulTransaction(
+            Model model,
+            final RedirectAttributes redirectAttributes,
+            PaymentResponseDTO responseDTO
+    ) throws PaymentException;
 
     public abstract String getGatewayContextKey();
 
@@ -249,14 +260,19 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
 
     public abstract PaymentGatewayConfiguration getConfiguration();
 
-    public abstract String returnEndpoint(Model model, HttpServletRequest request,
-                                          final RedirectAttributes redirectAttributes,
-                                          Map<String, String> pathVars) throws PaymentException;
+    public abstract String returnEndpoint(
+            Model model,
+            HttpServletRequest request,
+            final RedirectAttributes redirectAttributes,
+            Map<String, String> pathVars
+    ) throws PaymentException;
 
-    public abstract String errorEndpoint(Model model, HttpServletRequest request,
-                                         final RedirectAttributes redirectAttributes,
-                                         Map<String, String> pathVars) throws PaymentException;
-
+    public abstract String errorEndpoint(
+            Model model,
+            HttpServletRequest request,
+            final RedirectAttributes redirectAttributes,
+            Map<String, String> pathVars
+    ) throws PaymentException;
 
     protected String getErrorViewRedirect() {
         //delegate to the modules endpoint as there may be additional processing that is involved
@@ -267,7 +283,7 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
         return baseCartRedirect;
     }
 
-    public String getOrderReviewRedirect()  {
+    public String getOrderReviewRedirect() {
         return baseOrderReviewRedirect;
     }
 
@@ -279,11 +295,4 @@ public abstract class PaymentGatewayAbstractController extends BroadleafAbstract
         return getBaseConfirmationRedirect() + "/" + orderNumber;
     }
 
-    public static String getProcessingErrorMessage() {
-        return processingErrorMessage;
-    }
-
-    public static String getCartReqAttributeNotProvidedMessage() {
-        return cartReqAttributeNotProvidedMessage;
-    }
 }

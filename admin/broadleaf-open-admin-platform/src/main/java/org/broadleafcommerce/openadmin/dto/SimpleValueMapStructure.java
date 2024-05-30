@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,22 +19,23 @@ package org.broadleafcommerce.openadmin.dto;
 
 import org.broadleafcommerce.openadmin.dto.visitor.PersistencePerspectiveItemVisitor;
 
+import java.io.Serial;
+
 /**
- * 
  * @author jfischer
- *
  */
 public class SimpleValueMapStructure extends MapStructure {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     private String valuePropertyName;
     private String valuePropertyFriendlyName;
-    
+
     public SimpleValueMapStructure() {
         super();
     }
-    
+
     /**
      * @param keyClassName
      * @param keyPropertyName
@@ -42,8 +43,25 @@ public class SimpleValueMapStructure extends MapStructure {
      * @param valueClassName
      * @param mapProperty
      */
-    public SimpleValueMapStructure(String keyClassName, String keyPropertyName, String keyPropertyFriendlyName, String valueClassName, String valuePropertyName, String valuePropertyFriendlyName, String mapProperty, String mapKeyValueProperty) {
-        super(keyClassName, keyPropertyName, keyPropertyFriendlyName, valueClassName, mapProperty, false, mapKeyValueProperty);
+    public SimpleValueMapStructure(
+            String keyClassName,
+            String keyPropertyName,
+            String keyPropertyFriendlyName,
+            String valueClassName,
+            String valuePropertyName,
+            String valuePropertyFriendlyName,
+            String mapProperty,
+            String mapKeyValueProperty
+    ) {
+        super(
+                keyClassName,
+                keyPropertyName,
+                keyPropertyFriendlyName,
+                valueClassName,
+                mapProperty,
+                false,
+                mapKeyValueProperty
+        );
         this.valuePropertyFriendlyName = valuePropertyFriendlyName;
         this.valuePropertyName = valuePropertyName;
     }
@@ -51,19 +69,19 @@ public class SimpleValueMapStructure extends MapStructure {
     public String getValuePropertyName() {
         return valuePropertyName;
     }
-    
+
     public void setValuePropertyName(String valuePropertyName) {
         this.valuePropertyName = valuePropertyName;
     }
-    
+
     public String getValuePropertyFriendlyName() {
         return valuePropertyFriendlyName;
     }
-    
+
     public void setValuePropertyFriendlyName(String valuePropertyFriendlyName) {
         this.valuePropertyFriendlyName = valuePropertyFriendlyName;
     }
-    
+
     public void accept(PersistencePerspectiveItemVisitor visitor) {
         visitor.visit(this);
     }
@@ -117,4 +135,5 @@ public class SimpleValueMapStructure extends MapStructure {
         result = 31 * result + (valuePropertyFriendlyName != null ? valuePropertyFriendlyName.hashCode() : 0);
         return result;
     }
+
 }

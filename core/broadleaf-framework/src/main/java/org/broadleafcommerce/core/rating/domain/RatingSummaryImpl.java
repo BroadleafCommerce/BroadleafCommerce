@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +49,10 @@ import jakarta.persistence.Table;
         @Index(name = "RATINGSUMM_ITEM_INDEX", columnList = "ITEM_ID"),
         @Index(name = "RATINGSUMM_TYPE_INDEX", columnList = "RATING_TYPE")
 })
-@AdminPresentationClass(friendlyName = "RatingSummary",
-        populateToOneFields = PopulateToOneFieldsEnum.TRUE)
+@AdminPresentationClass(friendlyName = "RatingSummary", populateToOneFields = PopulateToOneFieldsEnum.TRUE)
 public class RatingSummaryImpl implements RatingSummary, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -73,8 +74,7 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
     protected String itemId;
 
     @Column(name = "RATING_TYPE", nullable = false)
-    @AdminPresentation(friendlyName = "RatingSummary_ratingType",
-            prominent = true,
+    @AdminPresentation(friendlyName = "RatingSummary_ratingType", prominent = true,
             fieldType = SupportedFieldType.BROADLEAF_ENUMERATION,
             broadleafEnumeration = "org.broadleafcommerce.core.rating.service.type.RatingType")
     protected String ratingTypeStr;
@@ -86,12 +86,12 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
     @OneToMany(mappedBy = "ratingSummary", targetEntity = RatingDetailImpl.class,
             cascade = {CascadeType.ALL})
     @AdminPresentationCollection(friendlyName = "RatingSummary_ratings")
-    protected List<RatingDetail> ratings = new ArrayList<RatingDetail>();
+    protected List<RatingDetail> ratings = new ArrayList<>();
 
     @OneToMany(mappedBy = "ratingSummary", targetEntity = ReviewDetailImpl.class,
             cascade = {CascadeType.ALL})
     @AdminPresentationCollection(friendlyName = "RatingSummary_reviews")
-    protected List<ReviewDetail> reviews = new ArrayList<ReviewDetail>();
+    protected List<ReviewDetail> reviews = new ArrayList<>();
 
     @Override
     public Long getId() {

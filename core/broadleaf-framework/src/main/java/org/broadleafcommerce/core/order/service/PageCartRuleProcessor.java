@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -35,7 +35,8 @@ public class PageCartRuleProcessor extends AbstractCartRuleProcessor<PageDTO> {
      * Uses the customer to locate the cart and then loops through the items in the current
      * cart and checks to see if the cart items rules are met.
      *
-     * @param sc
+     * @param page
+     * @param valueMap
      */
     @Override
     public boolean checkForMatch(PageDTO page, Map<String, Object> valueMap) {
@@ -49,7 +50,7 @@ public class PageCartRuleProcessor extends AbstractCartRuleProcessor<PageDTO> {
             }
 
             for (ItemCriteriaDTO itemCriteria : itemCriterias) {
-                if (! checkItemCriteria(itemCriteria, order.getOrderItems())) {
+                if (!checkItemCriteria(itemCriteria, order.getOrderItems())) {
                     // Item criteria check failed.
                     return false;
                 }

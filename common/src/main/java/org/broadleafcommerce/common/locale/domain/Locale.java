@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,36 +29,37 @@ public interface Locale extends Serializable {
     String getLocaleCode();
 
     void setLocaleCode(String localeCode);
-    
-    public java.util.Locale getJavaLocale();
 
-    public String getFriendlyName();
+    java.util.Locale getJavaLocale();
 
-    public void setFriendlyName(String friendlyName);
+    String getFriendlyName();
 
-    public void setDefaultFlag(Boolean defaultFlag);
+    void setFriendlyName(String friendlyName);
 
-    public Boolean getDefaultFlag();
+    Boolean getDefaultFlag();
 
-    public BroadleafCurrency getDefaultCurrency();
+    void setDefaultFlag(Boolean defaultFlag);
 
-    public void setDefaultCurrency(BroadleafCurrency currency);
+    BroadleafCurrency getDefaultCurrency();
+
+    void setDefaultCurrency(BroadleafCurrency currency);
 
     /**
      * If true then the country portion of the locale will be used when building the search index.
      * If null or false then only the language will be used.
-     * 
+     * <p>
      * For example, if false, a locale of en_US will only index the results based
      * on the root of "en".
-     * 
+     *
      * @return
      */
-    public Boolean getUseCountryInSearchIndex();
-    
+    Boolean getUseCountryInSearchIndex();
+
     /**
      * Sets whether or not to use the country portion of the locale in the search index.
+     *
      * @param useInSearchIndex
      */
-    public void setUseCountryInSearchIndex(Boolean useInSearchIndex);
+    void setUseCountryInSearchIndex(Boolean useInSearchIndex);
 
 }

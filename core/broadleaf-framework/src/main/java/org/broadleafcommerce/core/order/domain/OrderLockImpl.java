@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.core.order.domain;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
@@ -35,22 +36,20 @@ import jakarta.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class OrderLockImpl implements OrderLock {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    @EmbeddedId
-    OrderLockPk orderLockPK = new OrderLockPk();
-
     @Column(name = "LOCKED")
     protected Character locked = 'N';
-
     @Column(name = "LAST_UPDATED")
     protected Long lastUpdated;
+    @EmbeddedId
+    OrderLockPk orderLockPK = new OrderLockPk();
 
     @Override
     public Long getOrderId() {
         return orderLockPK.getOrderId();
     }
-    
+
     @Override
     public void setOrderId(Long orderId) {
         this.orderLockPK.setOrderId(orderId);
@@ -93,6 +92,7 @@ public class OrderLockImpl implements OrderLock {
     @Embeddable
     public static class OrderLockPk implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = 1L;
 
         @Column(name = "ORDER_ID")
@@ -116,7 +116,7 @@ public class OrderLockImpl implements OrderLock {
         public void setKey(String key) {
             this.key = key;
         }
-        
+
         @Override
         public boolean equals(Object obj) {
             if (obj == this) {
@@ -125,19 +125,20 @@ public class OrderLockImpl implements OrderLock {
             if (obj != null && getClass().isAssignableFrom(obj.getClass())) {
                 OrderLockPk other = (OrderLockPk) obj;
                 return new EqualsBuilder()
-                    .append(orderId, other.orderId)
-                    .append(key, other.key)
-                    .build();
+                        .append(orderId, other.orderId)
+                        .append(key, other.key)
+                        .build();
             }
             return false;
         }
-        
+
         @Override
         public int hashCode() {
             return new HashCodeBuilder()
-                .append(orderId)
-                .append(key)
-                .build();
+                    .append(orderId)
+                    .append(key)
+                    .build();
         }
     }
+
 }

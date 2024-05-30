@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,12 +40,12 @@ public class FormatUtil {
         formatter.setTimeZone(BroadleafRequestContext.getBroadleafRequestContext().getTimeZone());
         return formatter;
     }
-    
+
     /**
      * Used with dates in rules since they are not stored as a Timestamp type (and thus not converted to a specific database
      * timezone on a save). In order to provide accurate information, the timezone must also be preserved in the MVEL rule
      * expression
-     * 
+     *
      * @return
      */
     public static SimpleDateFormat getTimeZoneFormat() {
@@ -56,10 +56,10 @@ public class FormatUtil {
 
     /**
      * Use to produce date Strings in the W3C date format
-     * 
+     *
      * @param date
      * @return
-     * @throws DatatypeConfigurationException 
+     * @throws DatatypeConfigurationException
      */
     public static String formatDateUsingW3C(Date date) {
         String w3cDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(date);
@@ -76,7 +76,7 @@ public class FormatUtil {
     public static String dateToSting(Date date, TimeZone timeZone) {
         SimpleDateFormat formatter = new SimpleDateFormat("MMM d, y @ hh:mma");
         DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-        symbols.setAmPmStrings(new String[] { "am", "pm" });
+        symbols.setAmPmStrings(new String[]{"am", "pm"});
         formatter.setDateFormatSymbols(symbols);
         formatter.setTimeZone(timeZone);
         return formatter.format(date);

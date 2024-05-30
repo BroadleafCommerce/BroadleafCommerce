@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * Specific Spring component to override the default behavior of {@link CookieLocaleResolver} so that the default Broadleaf
  * Locale looked up in the database is used. This should be hooked up in applicationContext-servlet.xml in place of Spring's
  * {@link CookieResolver}.
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link BroadleafLocaleResolverImpl}
  */
@@ -36,7 +36,7 @@ public class BroadleafCookieLocaleResolver extends CookieLocaleResolver {
 
     @Resource(name = "blLocaleService")
     private LocaleService localeService;
-    
+
     @Override
     protected java.util.Locale determineDefaultLocale(HttpServletRequest request) {
         java.util.Locale defaultLocale = getDefaultLocale();
@@ -50,5 +50,5 @@ public class BroadleafCookieLocaleResolver extends CookieLocaleResolver {
         }
         return defaultLocale;
     }
-    
+
 }

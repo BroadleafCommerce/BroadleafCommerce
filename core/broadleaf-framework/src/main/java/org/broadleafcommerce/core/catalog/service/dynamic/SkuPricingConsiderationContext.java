@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Convenient place to store the pricing considerations context and the pricing service on thread local. This class is
  * usually filled out by a DynamicSkuPricingFilter. The default implementation of this is DefaultDynamicSkuPricingFilter.
- * 
+ *
  * @author jfischer
  * @see {@link SkuImpl#getRetailPrice}
  * @see {@link SkuImpl#getSalePrice}
@@ -43,11 +43,15 @@ public class SkuPricingConsiderationContext {
 
     protected static final ConcurrentHashMap<String, Field> FIELD_CACHE = new ConcurrentHashMap<>();
     private static final ThreadLocal<SkuPricingConsiderationContext> skuPricingConsiderationContext = ThreadLocalManager.createThreadLocal(SkuPricingConsiderationContext.class);
+    protected DynamicSkuPricingService pricingService;
+    protected HashMap considerations;
+    protected boolean isActive = false;
+    protected HashMap<Long, DynamicSkuPrices> pricesBySku = new HashMap<>();
 
     public static HashMap getSkuPricingConsiderationContext() {
         return SkuPricingConsiderationContext.skuPricingConsiderationContext.get().considerations;
     }
-    
+
     public static void setSkuPricingConsiderationContext(HashMap skuPricingConsiderations) {
         SkuPricingConsiderationContext.skuPricingConsiderationContext.get().considerations = skuPricingConsiderations;
     }
@@ -55,7 +59,7 @@ public class SkuPricingConsiderationContext {
     public static DynamicSkuPricingService getSkuPricingService() {
         return SkuPricingConsiderationContext.skuPricingConsiderationContext.get().pricingService;
     }
-    
+
     public static void setSkuPricingService(DynamicSkuPricingService skuPricingService) {
         SkuPricingConsiderationContext.skuPricingConsiderationContext.get().pricingService = skuPricingService;
     }
@@ -71,13 +75,11 @@ public class SkuPricingConsiderationContext {
     public static boolean isPricingConsiderationActive() {
         return SkuPricingConsiderationContext.skuPricingConsiderationContext.get().isActive;
     }
-    
+
     public static boolean hasDynamicPricing() {
-        return (
-            getSkuPricingConsiderationContext() != null &&
-            getSkuPricingConsiderationContext().size() >= 0 &&
-            getSkuPricingService() != null
-        );
+        return getSkuPricingConsiderationContext() != null
+                && getSkuPricingConsiderationContext().size() >= 0
+                && getSkuPricingService() != null;
     }
 
     public static Map<Long, DynamicSkuPrices> getThreadCache() {
@@ -101,7 +103,9 @@ public class SkuPricingConsiderationContext {
                     SkuPriceWrapper wrapper = new SkuPriceWrapper(sku);
                     SkuPricingConsiderationContext.startPricingConsideration();
                     try {
-                        prices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+                        prices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(
+                                wrapper, SkuPricingConsiderationContext.getSkuPricingConsiderationContext()
+                        );
                     } finally {
                         SkuPricingConsiderationContext.endPricingConsideration();
                     }
@@ -144,8 +148,4 @@ public class SkuPricingConsiderationContext {
         return field;
     }
 
-    protected DynamicSkuPricingService pricingService;
-    protected HashMap considerations;
-    protected boolean isActive = false;
-    protected HashMap<Long, DynamicSkuPrices> pricesBySku = new HashMap<>();
 }

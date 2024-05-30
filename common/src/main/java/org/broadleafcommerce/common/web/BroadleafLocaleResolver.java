@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,14 +27,14 @@ import jakarta.servlet.http.HttpServletRequest;
  *
  * @author bpolster
  */
-public interface BroadleafLocaleResolver  {
+public interface BroadleafLocaleResolver {
 
     /**
      * @deprecated Use {@link #resolveLocale(WebRequest)} instead
      */
     @Deprecated
-    public Locale resolveLocale(HttpServletRequest request);
+    Locale resolveLocale(HttpServletRequest request);
 
-    public Locale resolveLocale(WebRequest request);
+    Locale resolveLocale(WebRequest request);
 
 }

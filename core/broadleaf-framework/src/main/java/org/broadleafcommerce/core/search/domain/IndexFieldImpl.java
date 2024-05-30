@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,6 +37,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Where;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,16 +60,15 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_INDEX_FIELD",
-        indexes = {@Index(name = "INDEX_FIELD_SEARCHABLE_INDEX", columnList = "SEARCHABLE")})
+@Table(name = "BLC_INDEX_FIELD", indexes = {@Index(name = "INDEX_FIELD_SEARCHABLE_INDEX", columnList = "SEARCHABLE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
-public class IndexFieldImpl
-        implements IndexField, Serializable, IndexFieldAdminPresentation, AdminMainEntity {
+public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdminPresentation, AdminMainEntity {
 
+    @Serial
     private static final long serialVersionUID = 2915813511754425605L;
 
     @Id
@@ -97,15 +97,13 @@ public class IndexFieldImpl
 
     @ManyToOne(optional = false, targetEntity = FieldImpl.class)
     @JoinColumn(name = "FIELD_ID")
-    @AdminPresentation(friendlyName = "IndexFieldImpl_field", order = 1000,
-            group = GroupName.General,
+    @AdminPresentation(friendlyName = "IndexFieldImpl_field", order = 1000, group = GroupName.General,
             prominent = true, gridOrder = 1000)
     @AdminPresentationToOneLookup(lookupDisplayProperty = "friendlyName",
             customCriteria = {"fieldImplOnly"})
     protected Field field;
 
-    @OneToMany(mappedBy = "indexField", targetEntity = IndexFieldTypeImpl.class,
-            cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "indexField", targetEntity = IndexFieldTypeImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
     @BatchSize(size = 50)
     @Where(clause = "(ARCHIVED != 'Y' OR ARCHIVED IS NULL)")
@@ -154,7 +152,8 @@ public class IndexFieldImpl
 
     @Override
     public <G extends IndexField> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -193,4 +192,5 @@ public class IndexFieldImpl
     public String getMainEntityName() {
         return getField().getFriendlyName();
     }
+
 }

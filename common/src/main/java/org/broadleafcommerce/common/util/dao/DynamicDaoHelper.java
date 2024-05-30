@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.util.dao;
 
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -71,7 +70,7 @@ public interface DynamicDaoHelper {
      *
      * @param ceilingClass
      * @param includeUnqualifiedPolymorphicEntities Some entities may be excluded from polymorphism (Abstract class and those marked with {@link AdminPresentationClass#excludeFromPolymorphism()}). Override that exlusion behavior.
-     * @param useCache Cache the polymorphic types discovered for the ceilingClass.
+     * @param useCache                              Cache the polymorphic types discovered for the ceilingClass.
      * @return The list of Hibernate registered entities that derive from the ceilingClass (including the ceilingClass)
      */
     Class<?>[] getAllPolymorphicEntitiesFromCeiling(Class<?> ceilingClass, boolean includeUnqualifiedPolymorphicEntities, boolean useCache);
@@ -116,9 +115,9 @@ public interface DynamicDaoHelper {
      * classes both above and below the testClass. The type list passed back is ordered with the ceiling class appearing
      * first and the most derived classes appearing last.
      *
-     * @param testClass An entity class to look for polymorphic types both above and below
+     * @param testClass                             An entity class to look for polymorphic types both above and below
      * @param includeUnqualifiedPolymorphicEntities Some entities may be excluded from polymorphism (Abstract class and those marked with {@link AdminPresentationClass#excludeFromPolymorphism()}). Override that exlusion behavior.
-     * @param useCache Cache the polymorphic types discovered for the ceilingClass.
+     * @param useCache                              Cache the polymorphic types discovered for the ceilingClass.
      * @return The list of Hibernate registered entities that appear above and below the testClass in an entity inheritance hierarchy
      */
     Class<?>[] getUpDownInheritance(Class<?> testClass, boolean includeUnqualifiedPolymorphicEntities, boolean useCache);

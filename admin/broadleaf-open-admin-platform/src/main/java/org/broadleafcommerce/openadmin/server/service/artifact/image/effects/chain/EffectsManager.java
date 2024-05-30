@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -47,9 +47,9 @@ import jakarta.annotation.Resource;
 @Service("blImageEffectsManager")
 public class EffectsManager {
 
-    @Resource(name="blImageConversionManager")
+    @Resource(name = "blImageConversionManager")
     protected ConversionManager conversionManager;
-    protected Map<String, OperationBuilder> filters = new HashMap<String, OperationBuilder>();
+    protected Map<String, OperationBuilder> filters = new HashMap<>();
 
     public EffectsManager() {
         filters.put(FilterTypeEnum.ALTERHSB.toString().toLowerCase(), new AlterHSB());
@@ -63,7 +63,7 @@ public class EffectsManager {
     }
 
     public Operation[] buildOperations(Map<String, String> parameterMap, InputStream artifactStream, String mimeType) {
-        List<Operation> operations = new ArrayList<Operation>();
+        List<Operation> operations = new ArrayList<>();
         for (OperationBuilder builder : filters.values()) {
             Operation operation = builder.buildOperation(parameterMap, artifactStream, mimeType);
             if (operation != null) {
@@ -74,11 +74,22 @@ public class EffectsManager {
         return operations.toArray(new Operation[]{});
     }
 
-    public BufferedImage renderEffect(String effectName, Double factor, UnmarshalledParameter[] parameters, BufferedImage src) throws Exception {
+    public BufferedImage renderEffect(
+            String effectName,
+            Double factor,
+            UnmarshalledParameter[] parameters,
+            BufferedImage src
+    ) throws Exception {
         return renderEffect(effectName, factor, parameters, src, null);
     }
 
-    public BufferedImage renderEffect(String effectName, Double factor, UnmarshalledParameter[] parameters, BufferedImage src, String formatName) throws Exception {
+    public BufferedImage renderEffect(
+            String effectName,
+            Double factor,
+            UnmarshalledParameter[] parameters,
+            BufferedImage src,
+            String formatName
+    ) throws Exception {
         /*
          * retrieve the injected filter, instantiate the filter instance using reflection and execute the operation
          */
@@ -92,19 +103,21 @@ public class EffectsManager {
         Object[] args = new Object[1];
         if (parameters != null) {
             Parameter[] marshalledParameters = new Parameter[parameters.length];
-            for (int j=0;j<parameters.length;j++) {
-                marshalledParameters[j] = conversionManager.convertParameter(parameters[j].getValue(), parameters[j].getType(), factor, parameters[j].isApplyFactor());
+            for (int j = 0; j < parameters.length; j++) {
+                marshalledParameters[j] = conversionManager.convertParameter(
+                        parameters[j].getValue(), parameters[j].getType(), factor, parameters[j].isApplyFactor()
+                );
             }
 
             types = new Class[marshalledParameters.length + 1];
             args = new Object[marshalledParameters.length + 1];
-            for (int j=0;j<types.length-1;j++){
+            for (int j = 0; j < types.length - 1; j++) {
                 types[j] = marshalledParameters[j].getParameterClass();
                 args[j] = marshalledParameters[j].getParameterInstance();
             }
         }
-        types[types.length-1] = RenderingHints.class;
-        args[types.length-1] = null;
+        types[types.length - 1] = RenderingHints.class;
+        args[types.length - 1] = null;
         Constructor constructor = filterClass.getConstructor(types);
         Object filterInstance = constructor.newInstance(args);
 
@@ -113,7 +126,7 @@ public class EffectsManager {
 
         Method filterMethod = filterClass.getMethod("filter", new Class[]{BufferedImage.class, BufferedImage.class});
         Object result = filterMethod.invoke(filterInstance, new Object[]{src, null});
-        
+
         return (BufferedImage) result;
     }
 
@@ -144,4 +157,5 @@ public class EffectsManager {
     public void setConversionManager(ConversionManager conversionManager) {
         this.conversionManager = conversionManager;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,9 +26,8 @@ import java.util.List;
  * instance and only override a subset of the functionality, instead of
  * having to provide an independent, full implementation of the MergeHandler
  * interface.
- * 
- * @author jfischer
  *
+ * @author jfischer
  */
 public class MergeHandlerAdapter implements MergeHandler {
 
@@ -36,37 +35,37 @@ public class MergeHandlerAdapter implements MergeHandler {
         return null;
     }
 
-    public String getName() {
-        return null;
-    }
-
-    public int getPriority() {
-        return 0;
-    }
-
-    public String getXPath() {
-        return null;
-    }
-
-    public Node[] merge(List<Node> nodeList1, List<Node> nodeList2,
-            List<Node> exhaustedNodes) {
-        return null;
-    }
-
     public void setChildren(MergeHandler[] children) {
         //do nothing
+    }
+
+    public String getName() {
+        return null;
     }
 
     public void setName(String name) {
         //do nothing
     }
 
+    public int getPriority() {
+        return 0;
+    }
+
     public void setPriority(int priority) {
         //do nothing
     }
 
+    public String getXPath() {
+        return null;
+    }
+
     public void setXPath(String xpath) {
         //do nothing
+    }
+
+    public Node[] merge(List<Node> nodeList1, List<Node> nodeList2,
+                        List<Node> exhaustedNodes) {
+        return null;
     }
 
 }

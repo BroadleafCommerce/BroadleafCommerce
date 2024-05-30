@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -27,6 +27,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
@@ -43,22 +44,23 @@ import org.hibernate.proxy.HibernateProxy;
 
 @Entity
 @Table(name = "BLC_ITEM_OFFER_QUALIFIER")
-@Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 public class OrderItemQualifierImpl implements OrderItemQualifier {
 
     public static final Log LOG = LogFactory.getLog(OrderItemQualifierImpl.class);
-    public static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "OrderItemQualifierId")
     @GenericGenerator(
-        name = "OrderItemQualifierId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name = "segment_value", value = "OrderItemQualifierImpl"),
-            @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl")
-        }
+            name = "OrderItemQualifierId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OrderItemQualifierImpl"),
+                    @Parameter(name = "entity_name",
+                            value = "org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl")
+            }
     )
     @Column(name = "ITEM_OFFER_QUALIFIER_ID")
     protected Long id;
@@ -67,7 +69,7 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 
-    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional = false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 
@@ -98,12 +100,6 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
     }
 
     @Override
-    public void setOffer(Offer offer) {
-        this.offer = offer;
-        deproxiedOffer = null;
-    }
-
-    @Override
     public Offer getOffer() {
         if (deproxiedOffer == null) {
             PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
@@ -122,13 +118,19 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
     }
 
     @Override
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
+    public void setOffer(Offer offer) {
+        this.offer = offer;
+        deproxiedOffer = null;
     }
 
     @Override
     public Long getQuantity() {
         return quantity;
+    }
+
+    @Override
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
     }
 
     @Override

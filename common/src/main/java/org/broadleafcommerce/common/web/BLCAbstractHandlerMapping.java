@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,9 +24,9 @@ import org.springframework.web.servlet.handler.AbstractHandlerMapping;
 /**
  * Adds some convenience methods to the Spring AbstractHandlerMapping for
  * BLC specific HandlerMappings.
- * 
- * Always returns null from defaultHandlerMapping 
- * 
+ * <p>
+ * Always returns null from defaultHandlerMapping
+ *
  * @author bpolster
  */
 public abstract class BLCAbstractHandlerMapping extends AbstractHandlerMapping {
@@ -42,11 +42,12 @@ public abstract class BLCAbstractHandlerMapping extends AbstractHandlerMapping {
      */
     @Override
     public Object getDefaultHandler() {
-        return null;        
+        return null;
     }
-    
+
     /**
      * Returns the controllerName if set or "blPageController" by default.
+     *
      * @return
      */
     public String getControllerName() {
@@ -56,7 +57,7 @@ public abstract class BLCAbstractHandlerMapping extends AbstractHandlerMapping {
     /**
      * Sets the name of the bean to use as the Handler.  Typically the name of
      * a controller bean.
-     * 
+     *
      * @param controllerName
      */
     public void setControllerName(String controllerName) {
@@ -70,4 +71,5 @@ public abstract class BLCAbstractHandlerMapping extends AbstractHandlerMapping {
     public boolean allowCategoryResolutionUsingIdParam() {
         return env.getProperty("allowCategoryResolutionUsingIdParam", boolean.class, false);
     }
+
 }

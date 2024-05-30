@@ -10,13 +10,14 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.sitemap.wrapper;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.xml.bind.annotation.XmlElement;
@@ -28,6 +29,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "image", namespace = "http://www.google.com/schemas/sitemap-image/1.1")
 public class SiteMapImageWrapper implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected String loc;
@@ -40,5 +42,5 @@ public class SiteMapImageWrapper implements Serializable {
     public void setLoc(String loc) {
         this.loc = loc;
     }
-    
+
 }

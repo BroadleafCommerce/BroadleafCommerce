@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,12 +29,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.WebRequest;
 
-
 /**
  * {@link ApplicationListener} responsible for updating {@link CartState} with a new version that was persisted.
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
- * 
  * @see {@link OrderPersistedEntityListener}
  * @see {@link OrderPersistedEvent}
  */
@@ -46,7 +44,7 @@ public class CartStateRefresher implements ApplicationListener<OrderPersistedEve
      * the {@link Order} that has been persisted is the {@link OrderStatus#IN_PROCESS} {@link Order} for the active
      * {@link Customer} (as determined by {@link CustomerState#getCustomer()}. If {@link CartState} was <b>not</b> empty,
      * then it will be replaced only if this newly persisted {@link Order} has the same id.</p>
-     * 
+     *
      * <p>This ensures that whatever is returned from {@link CartState#getCart()} will always be the most up-to-date
      * database version (meaning, safe to write to the DB).</p>
      */
@@ -54,12 +52,13 @@ public class CartStateRefresher implements ApplicationListener<OrderPersistedEve
     public void onApplicationEvent(final OrderPersistedEvent event) {
         WebRequest request = BroadleafRequestContext.getBroadleafRequestContext().getWebRequest();
         if (request != null) {
-             Order dbOrder = event.getOrder();
+            Order dbOrder = event.getOrder();
             //Update the cart state ONLY IF the IDs of the newly persisted order and whatever is already in CartState match
             boolean emptyCartState = CartState.getCart() == null || CartState.getCart() instanceof NullOrderImpl;
             if (emptyCartState) {
                 //If cart state is empty, set it to this newly persisted order if it's the active Customer's cart
-                if (CustomerState.getCustomer() != null && CustomerState.getCustomer().getId()!=null && CustomerState.getCustomer().getId().equals(dbOrder.getCustomer().getId())
+                if (CustomerState.getCustomer() != null && CustomerState.getCustomer().getId() != null
+                        && CustomerState.getCustomer().getId().equals(dbOrder.getCustomer().getId())
                         && OrderStatus.IN_PROCESS.equals(dbOrder.getStatus())) {
                     CartState.setCart(dbOrder);
                 }

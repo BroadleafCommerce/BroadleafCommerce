@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,9 +22,9 @@ import org.springframework.context.ApplicationEvent;
 /**
  * Spring event published at key transaction lifecycle points.
  *
+ * @author Jeff Fischer
  * @see LifecycleAwareJpaTransactionManager
  * @see TransactionLifecycleMonitor
- * @author Jeff Fischer
  */
 public class TransactionLifecycleEvent extends ApplicationEvent {
 
@@ -50,4 +50,5 @@ public class TransactionLifecycleEvent extends ApplicationEvent {
     public Throwable getException() {
         return e;
     }
+
 }

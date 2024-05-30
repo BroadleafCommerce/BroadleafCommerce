@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,6 +37,7 @@ import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
@@ -51,7 +52,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_TRANSLATION", indexes = {@Index(name = "TRANSLATION_INDEX", columnList =  "ENTITY_TYPE, ENTITY_ID, FIELD_NAME, LOCALE_CODE")})
+@Table(name = "BLC_TRANSLATION", indexes = {@Index(name = "TRANSLATION_INDEX", columnList = "ENTITY_TYPE, ENTITY_ID, FIELD_NAME, LOCALE_CODE")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blTranslationElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "TranslationImpl_baseTranslation")
 @DirectCopyTransform({
@@ -61,6 +62,7 @@ import jakarta.persistence.Table;
 })
 public class TranslationImpl implements Serializable, Translation {
 
+    @Serial
     private static final long serialVersionUID = -122818474469147685L;
 
     @Id

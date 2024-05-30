@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,11 +37,11 @@ import java.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * Wraps Spring's {@link CachingResourceResolver} but adds in support to disable with 
+ * Wraps Spring's {@link CachingResourceResolver} but adds in support to disable with
  * environment properties.
- * 
- *  {@code }
- * 
+ * <p>
+ * {@code }
+ *
  * @author Brian Polster
  * @since Broadleaf 4.0
  */
@@ -49,15 +49,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public class BroadleafCachingResourceTransformer extends CachingResourceTransformer implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(BroadleafCachingResourceTransformer.class);
-    private int order = BroadleafResourceTransformerOrder.BLC_CACHE_RESOURCE_TRANSFORMER;
-    
-    @jakarta.annotation.Resource(name = "blSpringCacheManager")
-    private CacheManager cacheManager;
-    
     private static final String DEFAULT_CACHE_NAME = "blResourceTransformerCacheElements";
-
     @Value("${resource.transformer.caching.enabled:true}")
     protected boolean resourceTransformerCachingEnabled;
+    private int order = BroadleafResourceTransformerOrder.BLC_CACHE_RESOURCE_TRANSFORMER;
+    @jakarta.annotation.Resource(name = "blSpringCacheManager")
+    private CacheManager cacheManager;
 
     @Autowired
     public BroadleafCachingResourceTransformer(@Qualifier("blSpringCacheManager") CacheManager cacheManager) {
@@ -70,8 +67,11 @@ public class BroadleafCachingResourceTransformer extends CachingResourceTransfor
     }
 
     @Override
-    public Resource transform(HttpServletRequest request, Resource resource, ResourceTransformerChain transformerChain)
-            throws IOException {
+    public Resource transform(
+            HttpServletRequest request,
+            Resource resource,
+            ResourceTransformerChain transformerChain
+    ) throws IOException {
         if (resourceTransformerCachingEnabled) {
             return super.transform(request, resource, transformerChain);
         } else {

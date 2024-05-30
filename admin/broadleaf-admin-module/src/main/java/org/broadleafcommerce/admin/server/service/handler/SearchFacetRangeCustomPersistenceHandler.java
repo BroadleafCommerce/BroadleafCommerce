@@ -10,16 +10,13 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.admin.server.service.handler;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.core.search.domain.SearchFacetRange;
@@ -45,9 +42,7 @@ import java.util.Map;
 @Component("blSearchFacetRangeCustomPersistenceHandler")
 public class SearchFacetRangeCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
-    private static final Log LOG = LogFactory.getLog(SearchFacetRangeCustomPersistenceHandler.class);
-
-    private static String[] sortFields = new String[] { "embeddablePriceList.priceList", "minValue", "maxValue" };
+    private static String[] sortFields = new String[]{"embeddablePriceList.priceList", "minValue", "maxValue"};
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
@@ -65,10 +60,17 @@ public class SearchFacetRangeCustomPersistenceHandler extends CustomPersistenceH
     }
 
     @Override
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    public DynamicResultSet fetch(
+            PersistencePackage persistencePackage,
+            CriteriaTransferObject cto,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
         addDefaultSort(cto);
 
-        PersistenceModule myModule = helper.getCompatibleModule(persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType());
+        PersistenceModule myModule = helper.getCompatibleModule(
+                persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType()
+        );
         DynamicResultSet results = myModule.fetch(persistencePackage, cto);
         return results;
     }
@@ -96,8 +98,7 @@ public class SearchFacetRangeCustomPersistenceHandler extends CustomPersistenceH
     }
 
     @Override
-    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper)
-            throws ServiceException {
+    public void remove(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
         Entity entity = persistencePackage.getEntity();
 
         try {
@@ -111,14 +112,21 @@ public class SearchFacetRangeCustomPersistenceHandler extends CustomPersistenceH
         }
     }
 
-    protected SearchFacetRange getAdminInstance(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao, RecordHelper helper,
-                                       Entity entity) throws ClassNotFoundException {
+    protected SearchFacetRange getAdminInstance(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper,
+            Entity entity
+    ) throws ClassNotFoundException {
         PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-        Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(SearchFacetRange.class.getName(), persistencePerspective);
+        Map<String, FieldMetadata> adminProperties = helper.getSimpleMergedProperties(
+                SearchFacetRange.class.getName(), persistencePerspective
+        );
         Object primaryKey = helper.getPrimaryKey(entity, adminProperties);
         String type = entity.getType()[0];
         SearchFacetRange adminInstance = (SearchFacetRange) dynamicEntityDao.retrieve(Class.forName(type), primaryKey);
 
         return adminInstance;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -52,7 +52,9 @@ public class LifecycleAwareJpaTransactionManager extends JpaTransactionManager {
         Object transaction = super.doGetTransaction();
         if (isEnabled()) {
             try {
-                publisher.publishEvent(new TransactionLifecycleEvent(this, TransactionLifecycle.GET_TRANSACTION, null, transaction));
+                publisher.publishEvent(new TransactionLifecycleEvent(
+                        this, TransactionLifecycle.GET_TRANSACTION, null, transaction
+                ));
             } catch (Throwable e) {
                 LOG.error("Problem while publishing GET_TRANSACTION lifecycle event. Exception is logged but not bubbled.", e);
             }
@@ -65,7 +67,9 @@ public class LifecycleAwareJpaTransactionManager extends JpaTransactionManager {
         super.doBegin(transaction, definition);
         if (isEnabled()) {
             try {
-                publisher.publishEvent(new TransactionLifecycleEvent(this, TransactionLifecycle.BEGIN, null, transaction, definition));
+                publisher.publishEvent(new TransactionLifecycleEvent(
+                        this, TransactionLifecycle.BEGIN, null, transaction, definition
+                ));
             } catch (Throwable e) {
                 LOG.error("Problem while publishing BEGIN lifecycle event. Exception is logged but not bubbled.", e);
             }
@@ -78,7 +82,9 @@ public class LifecycleAwareJpaTransactionManager extends JpaTransactionManager {
             super.doCommit(status);
             if (isEnabled()) {
                 try {
-                    publisher.publishEvent(new TransactionLifecycleEvent(this, TransactionLifecycle.COMMIT, null, status));
+                    publisher.publishEvent(new TransactionLifecycleEvent(
+                            this, TransactionLifecycle.COMMIT, null, status
+                    ));
                 } catch (Throwable e) {
                     LOG.error("Problem while publishing COMMIT lifecycle event. Exception is logged but not bubbled.", e);
                 }
@@ -86,7 +92,9 @@ public class LifecycleAwareJpaTransactionManager extends JpaTransactionManager {
         } catch (RuntimeException e) {
             if (isEnabled()) {
                 try {
-                    publisher.publishEvent(new TransactionLifecycleEvent(this, TransactionLifecycle.COMMIT, e, status));
+                    publisher.publishEvent(new TransactionLifecycleEvent(
+                            this, TransactionLifecycle.COMMIT, e, status
+                    ));
                 } catch (Throwable ex) {
                     LOG.error("Problem while publishing COMMIT lifecycle event. Exception is logged but not bubbled.", ex);
                 }
@@ -101,7 +109,9 @@ public class LifecycleAwareJpaTransactionManager extends JpaTransactionManager {
             super.doRollback(status);
             if (isEnabled()) {
                 try {
-                    publisher.publishEvent(new TransactionLifecycleEvent(this, TransactionLifecycle.ROLLBACK, null, status));
+                    publisher.publishEvent(new TransactionLifecycleEvent(
+                            this, TransactionLifecycle.ROLLBACK, null, status
+                    ));
                 } catch (Throwable e) {
                     LOG.error("Problem while publishing ROLLBACK lifecycle event. Exception is logged but not bubbled.", e);
                 }
@@ -109,7 +119,9 @@ public class LifecycleAwareJpaTransactionManager extends JpaTransactionManager {
         } catch (RuntimeException e) {
             if (isEnabled()) {
                 try {
-                    publisher.publishEvent(new TransactionLifecycleEvent(this, TransactionLifecycle.ROLLBACK, e, status));
+                    publisher.publishEvent(new TransactionLifecycleEvent(
+                            this, TransactionLifecycle.ROLLBACK, e, status
+                    ));
                 } catch (Throwable ex) {
                     LOG.error("Problem while publishing ROLLBACK lifecycle event. Exception is logged but not bubbled.", ex);
                 }
@@ -129,4 +141,5 @@ public class LifecycleAwareJpaTransactionManager extends JpaTransactionManager {
     public boolean isEnabled() {
         return (logEvents != null && logEvents) || (logEvents == null && defaultLogEvents);
     }
+
 }

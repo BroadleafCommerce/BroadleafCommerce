@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,26 +22,26 @@ import java.io.Serializable;
 @Deprecated
 public interface CodeType extends Serializable {
 
-    public void setId(Long id);
+    Long getId();
 
-    public Long getId();
+    void setId(Long id);
 
-    public void setCodeType(String type);
+    String getCodeType();
 
-    public String getCodeType();
+    void setCodeType(String type);
 
-    public void setKey(String key);
+    String getKey();
 
-    public String getKey();
+    void setKey(String key);
 
-    public void setDescription(String description);
+    String getDescription();
 
-    public String getDescription();
+    void setDescription(String description);
 
-    public void setModifiable(Boolean modifiable);
+    Boolean getModifiable();
 
-    public Boolean getModifiable();
+    void setModifiable(Boolean modifiable);
 
-    public Boolean isModifiable();
+    Boolean isModifiable();
 
 }

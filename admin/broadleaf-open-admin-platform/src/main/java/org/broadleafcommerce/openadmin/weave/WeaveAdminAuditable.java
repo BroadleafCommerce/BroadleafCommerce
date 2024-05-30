@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,7 +31,7 @@ import jakarta.persistence.EntityListeners;
 /**
  * @author by ckittrell
  */
-@EntityListeners(value = { AdminAuditableListener.class })
+@EntityListeners(value = {AdminAuditableListener.class})
 public final class WeaveAdminAuditable implements AdminAudit {
 
     @Embedded
@@ -44,13 +44,13 @@ public final class WeaveAdminAuditable implements AdminAudit {
     }
 
     @Override
-    public Date getDateCreated() {
-        return getEmbeddableAdminAuditable(false).getDateCreated();
+    public void setCreatedBy(Long createdBy) {
+        getEmbeddableAdminAuditable(true).setCreatedBy(createdBy);
     }
 
     @Override
-    public Date getDateUpdated() {
-        return getEmbeddableAdminAuditable(false).getDateUpdated();
+    public Date getDateCreated() {
+        return getEmbeddableAdminAuditable(false).getDateCreated();
     }
 
     @Override
@@ -59,13 +59,13 @@ public final class WeaveAdminAuditable implements AdminAudit {
     }
 
     @Override
-    public void setDateUpdated(Date dateUpdated) {
-        getEmbeddableAdminAuditable(true).setDateUpdated(dateUpdated);
+    public Date getDateUpdated() {
+        return getEmbeddableAdminAuditable(false).getDateUpdated();
     }
 
     @Override
-    public void setCreatedBy(Long createdBy) {
-        getEmbeddableAdminAuditable(true).setCreatedBy(createdBy);
+    public void setDateUpdated(Date dateUpdated) {
+        getEmbeddableAdminAuditable(true).setDateUpdated(dateUpdated);
     }
 
     @Override
@@ -88,4 +88,5 @@ public final class WeaveAdminAuditable implements AdminAudit {
         }
         return temp;
     }
+
 }

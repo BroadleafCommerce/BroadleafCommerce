@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,25 +29,25 @@ import java.util.List;
 
 public interface CustomerService {
 
-    public Customer saveCustomer(Customer customer);
+    Customer saveCustomer(Customer customer);
 
-    public Customer saveCustomer(Customer customer, boolean register);
+    Customer saveCustomer(Customer customer, boolean register);
 
-    public Customer registerCustomer(Customer customer, String password, String passwordConfirm);
+    Customer registerCustomer(Customer customer, String password, String passwordConfirm);
 
-    public Customer readCustomerByUsername(String customerName);
+    Customer readCustomerByUsername(String customerName);
 
-    public Customer readCustomerByUsername(String username, Boolean cacheable);
+    Customer readCustomerByUsername(String username, Boolean cacheable);
 
-    public Customer readCustomerByEmail(String emailAddress);
+    Customer readCustomerByEmail(String emailAddress);
 
-    public Customer changePassword(PasswordChange passwordChange);
+    Customer changePassword(PasswordChange passwordChange);
 
-    public Customer readCustomerById(Long userId);
+    Customer readCustomerById(Long userId);
 
-    public Customer readCustomerByExternalId(String userExternalId);
+    Customer readCustomerByExternalId(String userExternalId);
 
-    public Customer createCustomer();
+    Customer createCustomer();
 
     /**
      * Returns a non-persisted {@link Customer} with a null id. Typically used with registering a new
@@ -75,7 +75,7 @@ public interface CustomerService {
      *
      * @param customerId the id of the customer to lookup
      */
-    public Customer createCustomerFromId(Long customerId);
+    Customer createCustomerFromId(Long customerId);
 
     /**
      * Returns a non-persisted {@link Customer}.
@@ -83,28 +83,28 @@ public interface CustomerService {
      * @deprecated use {@link #createCustomer()} or {@link #createCustomerWithNullId()}} instead.
      */
     @Deprecated
-    public Customer createNewCustomer();
+    Customer createNewCustomer();
 
     /**
      * Subclassed implementations can assign unique roles for various customer types
      *
      * @param customer {@link Customer} to create roles for
      */
-    public void createRegisteredCustomerRoles(Customer customer);
+    void createRegisteredCustomerRoles(Customer customer);
 
-    public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners);
+    void addPostRegisterListener(PostRegistrationObserver postRegisterListeners);
 
-    public void removePostRegisterListener(PostRegistrationObserver postRegisterListeners);
+    void removePostRegisterListener(PostRegistrationObserver postRegisterListeners);
 
-    public Customer resetPassword(PasswordReset passwordReset);
+    Customer resetPassword(PasswordReset passwordReset);
 
-    public List<PasswordUpdatedHandler> getPasswordResetHandlers();
+    List<PasswordUpdatedHandler> getPasswordResetHandlers();
 
-    public void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers);
+    void setPasswordResetHandlers(List<PasswordUpdatedHandler> passwordResetHandlers);
 
-    public List<PasswordUpdatedHandler> getPasswordChangedHandlers();
+    List<PasswordUpdatedHandler> getPasswordChangedHandlers();
 
-    public void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers);
+    void setPasswordChangedHandlers(List<PasswordUpdatedHandler> passwordChangedHandlers);
 
     /**
      * Looks up the corresponding {@link Customer} and emails the address on file with
@@ -118,33 +118,28 @@ public interface CustomerService {
     /**
      * Generates an access token and then emails the user.
      *
-     * @param userName - the user to send a reset password email to.
+     * @param userName          - the user to send a reset password email to.
      * @param forgotPasswordUrl - Base url to include in the email.
      * @return Response can contain errors including (invalidEmail, invalidUsername, inactiveUser)
-     *
      */
     GenericResponse sendForgotPasswordNotification(String userName, String forgotPasswordUrl);
-
 
     /**
      * Generates an access token and then emails the user.
      *
-     * @param userName - the user to send a reset password email to.
+     * @param userName          - the user to send a reset password email to.
      * @param forgotPasswordUrl - Base url to include in the email.
      * @return Response can contain errors including (invalidEmail, invalidUsername, inactiveUser)
-     *
      */
     GenericResponse sendForcedPasswordChangeNotification(String userName, String forgotPasswordUrl);
-
 
     /**
      * Updates the password for the passed in customer only if the passed
      * in token is valid for that customer.
      *
      * @param username Username of the customer
-     * @param token Valid reset token
+     * @param token    Valid reset token
      * @param password new password
-     *
      * @return Response can contain errors including (invalidUsername, inactiveUser, invalidToken, invalidPassword, tokenExpired)
      */
     GenericResponse resetPasswordUsingToken(String username, String token, String password, String confirmPassword);
@@ -152,19 +147,18 @@ public interface CustomerService {
     /**
      * Verifies that a customer has a valid token.
      *
-     * @param token password reset token
+     * @param token    password reset token
      * @param customer {@link Customer} who owns the token
      * @return Response can contain errors including (invalidToken, tokenUsed, and tokenExpired)
      */
-    public GenericResponse checkPasswordResetToken(String token, Customer customer);
+    GenericResponse checkPasswordResetToken(String token, Customer customer);
 
     /**
      * Allow customers to call from subclassed service.
      *
      * @return the next customerId to be used
      */
-    public Long findNextCustomerId();
-
+    Long findNextCustomerId();
 
     /**
      * Encodes the clear text parameter, using the salt provided by PasswordEncoder. Does not change the customer properties.
@@ -178,7 +172,7 @@ public interface CustomerService {
      * @param rawPassword the unencoded password
      * @return the encoded password
      */
-    public String encodePassword(String rawPassword);
+    String encodePassword(String rawPassword);
 
     /**
      * Determines if a password is valid by comparing it to the encoded string, salting is handled internally to the {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder}.
@@ -186,11 +180,11 @@ public interface CustomerService {
      * This method must always be called to verify if a password is valid after the original encoded password is generated
      * due to {@link org.springframework.security.crypto.password.PasswordEncoder PasswordEncoder} randomly generating salts internally and appending them to the resulting hash.
      *
-     * @param rawPassword the unencoded password
+     * @param rawPassword     the unencoded password
      * @param encodedPassword the encoded password to compare against
      * @return true if the unencoded password matches the encoded password, false otherwise
      */
-    public boolean isPasswordValid(String rawPassword, String encodedPassword);
+    boolean isPasswordValid(String rawPassword, String encodedPassword);
 
     /**
      * Determines if the given customer passes the MVEL customer rule
@@ -199,9 +193,10 @@ public interface CustomerService {
      * @param customerRuleHolder an MVEL rule targeting Customers
      * @return true if the customer passes the rule, false otherwise
      */
-    public boolean customerPassesCustomerRule(Customer customer, CustomerRuleHolder customerRuleHolder);
+    boolean customerPassesCustomerRule(Customer customer, CustomerRuleHolder customerRuleHolder);
 
     List<Customer> readBatchCustomers(int start, int pageSize);
 
     Long readNumberOfCustomers();
+
 }

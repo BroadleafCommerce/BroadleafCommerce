@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,10 +50,10 @@ import jakarta.persistence.criteria.Root;
 @Repository("blOrderItemDao")
 public class OrderItemDaoImpl implements OrderItemDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override
@@ -90,10 +90,12 @@ public class OrderItemDaoImpl implements OrderItemDao {
         item.setOrderItemType(orderItemType);
         return item;
     }
-    
+
     @Override
     public PersonalMessage createPersonalMessage() {
-        PersonalMessage personalMessage = (PersonalMessage) entityConfiguration.createEntityInstance(PersonalMessage.class.getName());
+        PersonalMessage personalMessage = (PersonalMessage) entityConfiguration.createEntityInstance(
+                PersonalMessage.class.getName()
+        );
         return personalMessage;
     }
 
@@ -151,7 +153,8 @@ public class OrderItemDaoImpl implements OrderItemDao {
         CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
         criteria.select(builder.count(criteria.from(OrderItemImpl.class)));
         TypedQuery<Long> query = em.createQuery(criteria);
-        return query.getSingleResult();    }
+        return query.getSingleResult();
+    }
 
     @Override
     public List<OrderItem> readBatchOrderItems(int start, int count, List<OrderStatus> statuses) {
@@ -166,7 +169,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
         if (CollectionUtils.isNotEmpty(statuses)) {
             // We only want results that match the orders with the correct status
-            ArrayList<String> statusStrings = new ArrayList<String>();
+            ArrayList<String> statusStrings = new ArrayList<>();
             for (OrderStatus status : statuses) {
                 statusStrings.add(status.getType());
             }
@@ -181,4 +184,5 @@ public class OrderItemDaoImpl implements OrderItemDao {
 
         return query.getResultList();
     }
+
 }

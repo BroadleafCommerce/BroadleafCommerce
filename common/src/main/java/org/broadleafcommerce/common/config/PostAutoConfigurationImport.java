@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * Loads the given set of classes after Spring's {@link EnableAutoConfiguration}. This must be added
  * to an {@code @Configuration} class that is within a normal component-scan, but the given class to
  * be imported <b>must not</b> be component-scanned.
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  * @see PostAutoConfigurationDefferedImportSelector
  * @see PostAutoConfiguration
@@ -47,4 +47,5 @@ public @interface PostAutoConfigurationImport {
      * should be annotated with {@literal @}PostAutoConfiguration
      */
     Class<?>[] value();
+
 }

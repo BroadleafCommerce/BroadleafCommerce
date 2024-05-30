@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.core.payment.service;
 
 import org.apache.commons.lang3.StringUtils;
@@ -55,13 +54,11 @@ import lombok.Data;
 @Service("blOrderToPaymentRequestDTOService")
 public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentRequestDTOService {
 
-    private static final Log LOG = LogFactory.getLog(OrderToPaymentRequestDTOServiceImpl.class);
-
     public static final String ZERO_TOTAL = "0";
-    
+    private static final Log LOG = LogFactory.getLog(OrderToPaymentRequestDTOServiceImpl.class);
     @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fgService;
-    
+
     @Resource(name = "blPostLoaderDao")
     protected PostLoaderDao postLoaderDao;
 
@@ -74,12 +71,12 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
             final Long id = order.getId();
             final BroadleafCurrency currency = order.getCurrency();
             PaymentRequestDTO requestDTO = new PaymentRequestDTO().orderId(id.toString());
-            
+
             if (LOG.isTraceEnabled()) {
-                LOG.trace(String.format("Translating Order (ID:%s) into a PaymentRequestDTO for the configured " + 
-                                        "gateway.", id));
+                LOG.trace(String.format("Translating Order (ID:%s) into a PaymentRequestDTO for the configured " +
+                        "gateway.", id));
             }
-            
+
             if (currency != null) {
                 requestDTO.orderCurrencyCode(currency.getCurrencyCode());
             }
@@ -102,13 +99,16 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
     }
 
     @Override
-    public PaymentRequestDTO translatePaymentTransaction(Money transactionAmount, PaymentTransaction paymentTransaction, 
-                                                         boolean autoCalculateFinalPaymentTotals) {
+    public PaymentRequestDTO translatePaymentTransaction(
+            Money transactionAmount,
+            PaymentTransaction paymentTransaction,
+            boolean autoCalculateFinalPaymentTotals
+    ) {
         paymentTransaction = refreshTransaction(paymentTransaction);
-        
+
         if (LOG.isTraceEnabled()) {
-            LOG.trace(String.format("Translating Payment Transaction (ID:%s) into a PaymentRequestDTO for the configured " + 
-                                    "gateway.", paymentTransaction.getId()));
+            LOG.trace(String.format("Translating Payment Transaction (ID:%s) into a PaymentRequestDTO for the " +
+                    "configured gateway.", paymentTransaction.getId()));
         }
 
         //Will set the full amount to be charged on the transaction total/subtotal and not worry about shipping/tax breakdown
@@ -141,7 +141,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
         return requestDTO;
     }
-    
+
     /*
      * This avoids LazyInitializationExceptions in case of a rollback during checkout
      */
@@ -185,7 +185,8 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
     /**
      * Uses the first shippable fulfillment group to populate the {@link PaymentRequestDTO#shipTo()} object
-     * @param order the {@link Order} to get data from
+     *
+     * @param order      the {@link Order} to get data from
      * @param requestDTO the {@link PaymentRequestDTO} that should be populated
      * @see {@link FulfillmentGroupService#getFirstShippableFulfillmentGroup(Order)}
      */
@@ -232,26 +233,26 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
         NameResponse name = getName(address);
 
         dto
-           .addressFirstName(name.firstName)
-           .addressLastName(name.lastName)
-           .addressCompanyName(address.getCompanyName())
-           .addressLine1(address.getAddressLine1())
-           .addressLine2(address.getAddressLine2())
-           .addressCityLocality(address.getCity())
-           .addressStateRegion(stateAbbr)
-           .addressPostalCode(address.getPostalCode())
-           .addressCountryCode(countryAbbr)
-           .addressPhone(phone)
-           .addressCounty(address.getCounty())
-           .addressEmail(address.getEmailAddress());
+                .addressFirstName(name.firstName)
+                .addressLastName(name.lastName)
+                .addressCompanyName(address.getCompanyName())
+                .addressLine1(address.getAddressLine1())
+                .addressLine2(address.getAddressLine2())
+                .addressCityLocality(address.getCity())
+                .addressStateRegion(stateAbbr)
+                .addressPostalCode(address.getPostalCode())
+                .addressCountryCode(countryAbbr)
+                .addressPhone(phone)
+                .addressCounty(address.getCounty())
+                .addressEmail(address.getEmailAddress());
     }
 
     protected NameResponse getName(Address address) {
         NameResponse response = new NameResponse();
-        
+
         if (BLCSystemProperty.resolveBooleanSystemProperty("validator.address.fullNameOnly")) {
             String fullName = address.getFullName();
-            
+
             if (StringUtils.isNotBlank(fullName)) {
                 char nameSeparatorChar = ' ';
                 int spaceCharacterIndex = fullName.indexOf(nameSeparatorChar);
@@ -268,10 +269,9 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
             response.firstName = address.getFirstName();
             response.lastName = address.getLastName();
         }
-        
+
         return response;
     }
-
 
     /**
      * IMPORTANT:
@@ -303,7 +303,7 @@ public class OrderToPaymentRequestDTOServiceImpl implements OrderToPaymentReques
 
         requestDTO.orderSubtotal(subtotal);
     }
-    
+
     @Data
     public class NameResponse {
         protected String firstName;

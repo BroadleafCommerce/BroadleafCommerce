@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,41 +19,37 @@ package org.broadleafcommerce.core.offer.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * This indicates how an Offer should be fulfilled to the customer, defaulting to order time discount.
- * Currently, this enumeration can be ORDER_DISCOUNT or FUTURE_CREDIT. "Future credit" means that the associated 
- * adjustment will be discounted at a later time to the customer via a credit. It is up to the implementor to 
- * decide how to achieve this. The adjustment entities have a new "isFutureCredit" field used to determine if an 
- * adjustment originated from an offer marked as FUTURE_CREDIT. Order, OrderItem and FulfillmentGroup have new 
- * accessor methods for retrieving the future credit values when they are needed to be fulfilled. 
- *
- * Out-of-box, this field is disabled from admin and must be manually enabled to view, since it is not a typical 
+ * Currently, this enumeration can be ORDER_DISCOUNT or FUTURE_CREDIT. "Future credit" means that the associated
+ * adjustment will be discounted at a later time to the customer via a credit. It is up to the implementor to
+ * decide how to achieve this. The adjustment entities have a new "isFutureCredit" field used to determine if an
+ * adjustment originated from an offer marked as FUTURE_CREDIT. Order, OrderItem and FulfillmentGroup have new
+ * accessor methods for retrieving the future credit values when they are needed to be fulfilled.
+ * <p>
+ * Out-of-box, this field is disabled from admin and must be manually enabled to view, since it is not a typical
  * requirement to most implementations. To enable, add the following to AdminConfig.java:
  *
- * @Merge("blAppConfigurationMap")
- * public Map<String, String> adminOfferAdjustmentType() {
- *     Map<String, String> appConfigMap = new HashMap<>();
- *     appConfigMap.put("admin.showIfProperty.offerAdjustmentType", "true");
- *     return appConfigMap;
- * }
- * 
  * @author Chad Harchar (charchar)
+ * @Merge("blAppConfigurationMap") public Map<String, String> adminOfferAdjustmentType() {
+ * Map<String, String> appConfigMap = new HashMap<>();
+ * appConfigMap.put("admin.showIfProperty.offerAdjustmentType", "true");
+ * return appConfigMap;
+ * }
  */
 public class OfferAdjustmentType implements Serializable, BroadleafEnumerationType {
-    private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferAdjustmentType> TYPES = new LinkedHashMap<String, OfferAdjustmentType>();
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private static final Map<String, OfferAdjustmentType> TYPES = new LinkedHashMap<>();
 
     public static final OfferAdjustmentType ORDER_DISCOUNT = new OfferAdjustmentType("ORDER_DISCOUNT", "Order Discount");
     public static final OfferAdjustmentType FUTURE_CREDIT = new OfferAdjustmentType("FUTURE_CREDIT", "Future Credit");
-
-    public static OfferAdjustmentType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -67,15 +63,19 @@ public class OfferAdjustmentType implements Serializable, BroadleafEnumerationTy
         setType(type);
     }
 
+    public static OfferAdjustmentType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getFriendlyType() {
@@ -106,4 +106,5 @@ public class OfferAdjustmentType implements Serializable, BroadleafEnumerationTy
             return false;
         return true;
     }
+
 }

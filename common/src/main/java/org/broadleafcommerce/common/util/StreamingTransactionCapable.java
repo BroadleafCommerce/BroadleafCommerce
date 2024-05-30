@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,6 +32,7 @@ public interface StreamingTransactionCapable {
 
     /**
      * The result set size per page of data when streaming. See {@link #runStreamingTransactionalOperation(StreamCapableTransactionalOperation, Class)}.
+     *
      * @return
      */
     int getPageSize();
@@ -51,15 +52,17 @@ public interface StreamingTransactionCapable {
      * @param <G>
      * @throws G
      */
-    <G extends Throwable> void runStreamingTransactionalOperation(StreamCapableTransactionalOperation
-                                                                          streamOperation, Class<G> exceptionType) throws G;
+    <G extends Throwable> void runStreamingTransactionalOperation(
+            StreamCapableTransactionalOperation streamOperation, Class<G> exceptionType
+    ) throws G;
 
-    <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
-                Class<G> exceptionType, PlatformTransactionManager transactionManager) throws G;
+    <G extends Throwable> void runTransactionalOperation(
+            StreamCapableTransactionalOperation operation, Class<G> exceptionType, PlatformTransactionManager transactionManager
+    ) throws G;
 
-    <G extends Throwable> void runStreamingTransactionalOperation(StreamCapableTransactionalOperation streamOperation,
-                                                                  Class<G> exceptionType, int transactionBehavior,
-                                                                  int isolationLevel) throws G;
+    <G extends Throwable> void runStreamingTransactionalOperation(
+            StreamCapableTransactionalOperation streamOperation, Class<G> exceptionType, int transactionBehavior, int isolationLevel
+    ) throws G;
 
     /**
      * Run an operation inside of a single transaction. This is not a streaming use case and represents a basic operation
@@ -71,11 +74,11 @@ public interface StreamingTransactionCapable {
      * @throws G
      */
     <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                                                    Class<G> exceptionType) throws G;
+                                                         Class<G> exceptionType) throws G;
 
     <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                                                    Class<G> exceptionType, int transactionBehavior,
-                                                                    int isolationLevel) throws G;
+                                                         Class<G> exceptionType, int transactionBehavior,
+                                                         int isolationLevel) throws G;
 
     /**
      * Run an operation inside of a single transaction. This is not a streaming use case and represents a basic operation
@@ -97,9 +100,9 @@ public interface StreamingTransactionCapable {
                                                                  int transactionBehavior, int isolationLevel) throws G;
 
     <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                                                Class<G> exceptionType, boolean useTransaction,
-                                                                int transactionBehavior, int isolationLevel,
-                                                                boolean readOnly, PlatformTransactionManager transactionManager) throws G;
+                                                                 Class<G> exceptionType, boolean useTransaction,
+                                                                 int transactionBehavior, int isolationLevel,
+                                                                 boolean readOnly, PlatformTransactionManager transactionManager) throws G;
 
     PlatformTransactionManager getTransactionManager();
 

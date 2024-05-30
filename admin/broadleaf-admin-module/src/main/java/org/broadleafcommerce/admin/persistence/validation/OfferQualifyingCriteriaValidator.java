@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,19 +37,20 @@ import jakarta.annotation.Resource;
 public class OfferQualifyingCriteriaValidator extends ValidationConfigurationBasedPropertyValidator {
 
     public static final String BOGO_TEMPLATE = "-14105";
+
     @Resource(name = "blRuleFieldExtractionUtility")
     protected RuleFieldExtractionUtility ruleFieldExtractionUtility;
 
-
     @Override
-    public PropertyValidationResult validate(Entity entity,
+    public PropertyValidationResult validate(
+            Entity entity,
             Serializable instance,
             Map<String, FieldMetadata> entityFieldMetadata,
             Map<String, String> validationConfiguration,
             BasicFieldMetadata propertyMetadata,
             String propertyName,
-            String value) {
-
+            String value
+    ) {
         Property offerTemplateProperty = entity.findProperty("embeddableAdvancedOffer.offerTemplate");
         if (offerTemplateProperty != null &&
                 offerTemplateProperty.getValue().equals(BOGO_TEMPLATE)) {
@@ -66,4 +67,5 @@ public class OfferQualifyingCriteriaValidator extends ValidationConfigurationBas
 
         return new PropertyValidationResult(true);
     }
+
 }

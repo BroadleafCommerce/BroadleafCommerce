@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -79,8 +79,12 @@ public class OfferCodeCustomPersistenceHandler extends ClassCustomPersistenceHan
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
             OfferCode offerCodeInstance = (OfferCode) Class.forName(entity.getType()[0]).newInstance();
-            Map<String, FieldMetadata> offerCodeProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), persistencePerspective);
-            offerCodeInstance = (OfferCode) helper.createPopulatedInstance(offerCodeInstance, entity, offerCodeProperties, false);
+            Map<String, FieldMetadata> offerCodeProperties = helper.getSimpleMergedProperties(
+                    OfferCode.class.getName(), persistencePerspective
+            );
+            offerCodeInstance = (OfferCode) helper.createPopulatedInstance(
+                    offerCodeInstance, entity, offerCodeProperties, false
+            );
 
             Entity errorEntity = validateOfferCode(entity, offerCodeInstance);
             if (errorEntity != null) {
@@ -101,10 +105,16 @@ public class OfferCodeCustomPersistenceHandler extends ClassCustomPersistenceHan
         Entity entity = persistencePackage.getEntity();
         try {
             PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-            Map<String, FieldMetadata> offerCodeProperties = helper.getSimpleMergedProperties(OfferCode.class.getName(), persistencePerspective);
+            Map<String, FieldMetadata> offerCodeProperties = helper.getSimpleMergedProperties(
+                    OfferCode.class.getName(), persistencePerspective
+            );
             Object primaryKey = helper.getPrimaryKey(entity, offerCodeProperties);
-            OfferCode offerCodeInstance = (OfferCode) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
-            offerCodeInstance = (OfferCode) helper.createPopulatedInstance(offerCodeInstance, entity, offerCodeProperties, false);
+            OfferCode offerCodeInstance = (OfferCode) dynamicEntityDao.retrieve(
+                    Class.forName(entity.getType()[0]), primaryKey
+            );
+            offerCodeInstance = (OfferCode) helper.createPopulatedInstance(
+                    offerCodeInstance, entity, offerCodeProperties, false
+            );
 
             Entity errorEntity = validateOfferCode(entity, offerCodeInstance);
             if (errorEntity != null) {

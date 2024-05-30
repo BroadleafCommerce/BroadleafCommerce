@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,15 +42,15 @@ import jakarta.servlet.ServletContainerInitializer;
  * <pre>
  * {@literal @}SpringBootApplication
  * public class MyApplication extends SpringBootServletInitializer {
- * 
+ *
  *     {@literal @}Configuration
  *     {@literal @}EnableBroadleafAdminServletAutoConfiguration
  *     public static class BroadleafConfiguration { }
- *     
+ *
  *     public static void main(String[] args) {
  *         SpringApplication.run(ApiApplication.class, args);
  *     }
- *  
+ *
  *     {@literal @}Override
  *     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
  *         return application.sources(ApiApplication.class);
@@ -58,17 +58,17 @@ import jakarta.servlet.ServletContainerInitializer;
  * }
  *
  * </pre>
- * 
+ *
  * <p>
  * Since this annotation is a meta-annotation for {@literal @}Import, this <b>can</b> be placed on a {@literal @}Configuration class
  * that contains an {@literal @}Import annotation, <b>but</b> this {@literal @}Import's beans will take precedence over
  * any additional {@literal @}Import applied.
- * 
+ *
  * <p>
  * This annotation assumes that you have activated the root configuration via {@link EnableBroadleafAdminRootAutoConfiguration} in a parent
  * context. Rather than utilizing this annotation in a parent-child configuration consider using {@link EnableBroadleafAdminAutoConfiguration} to
  * ensure that only a single {@link ApplicationContext} is present.
- * 
+ *
  * <p>
  * This import utilizes the {@link FrameworkXmlBeanDefinitionReader} so that framework XML bean definitions will not
  * overwrite beans defined in a project.
@@ -84,9 +84,9 @@ import jakarta.servlet.ServletContainerInitializer;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({
-    EnableBroadleafServletAutoConfiguration.BroadleafServletAutoConfiguration.class,
-    BroadleafAdminServletAutoConfiguration.class,
-    BroadleafAdminServletAutoConfigurationOverrides.class
+        EnableBroadleafServletAutoConfiguration.BroadleafServletAutoConfiguration.class,
+        BroadleafAdminServletAutoConfiguration.class,
+        BroadleafAdminServletAutoConfigurationOverrides.class
 })
 public @interface EnableBroadleafAdminServletAutoConfiguration {
 
@@ -102,8 +102,11 @@ public @interface EnableBroadleafAdminServletAutoConfiguration {
             "classpath*:/blc-config/admin/bl-*-applicationContext-servlet.xml",
             "classpath*:/blc-config/admin/late/bl-*-applicationContext-servlet.xml",
     }, reader = FrameworkXmlBeanDefinitionReader.class)
-    class BroadleafAdminServletAutoConfiguration {}
-    
+    class BroadleafAdminServletAutoConfiguration {
+    }
+
     @ImportResource("classpath:/override-contexts/admin-servlet-autoconfiguration-overrides.xml")
-    class BroadleafAdminServletAutoConfigurationOverrides {}
+    class BroadleafAdminServletAutoConfigurationOverrides {
+    }
+
 }

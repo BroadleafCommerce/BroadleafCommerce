@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,6 +23,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemContainer;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -31,19 +32,21 @@ import java.util.Map;
 
 public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGroup {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    public List<PromotableFulfillmentGroupAdjustment> candidateFulfillmentGroupAdjustments = new ArrayList<>();
     protected FulfillmentGroup fulfillmentGroup;
     protected PromotableOrder promotableOrder;
     protected PromotableItemFactory itemFactory;
     protected List<PromotableOrderItem> discountableOrderItems;
     protected boolean useSaleAdjustments = false;
     protected Money adjustedPrice;
-    
-    public List<PromotableFulfillmentGroupAdjustment> candidateFulfillmentGroupAdjustments = new ArrayList<PromotableFulfillmentGroupAdjustment>();
-    
-    public PromotableFulfillmentGroupImpl(FulfillmentGroup fulfillmentGroup,
+
+    public PromotableFulfillmentGroupImpl(
+            FulfillmentGroup fulfillmentGroup,
             PromotableOrder promotableOrder,
-            PromotableItemFactory itemFactory) {
+            PromotableItemFactory itemFactory
+    ) {
         this.fulfillmentGroup = fulfillmentGroup;
         this.promotableOrder = promotableOrder;
         this.itemFactory = itemFactory;
@@ -64,9 +67,9 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
         if (discountableOrderItems != null) {
             return discountableOrderItems;
         }
-    
-        discountableOrderItems = new ArrayList<PromotableOrderItem>();
-        List<Long> discountableOrderItemIds = new ArrayList<Long>();
+
+        discountableOrderItems = new ArrayList<>();
+        List<Long> discountableOrderItemIds = new ArrayList<>();
         for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
             OrderItem orderItem = fgItem.getOrderItem();
             if (orderItem.isDiscountingAllowed()) {
@@ -84,7 +87,7 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
                 }
             }
         }
-            
+
         for (PromotableOrderItem item : promotableOrder.getDiscountableOrderItems()) {
             if (discountableOrderItemIds.contains(item.getOrderItemId())) {
                 discountableOrderItems.add(item);
@@ -121,7 +124,8 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
     /**
      * This method will check to see if the salePriceAdjustments or retailPriceAdjustments are better
      * and remove those that should not apply.
-     * @return 
+     *
+     * @return
      */
     public void chooseSaleOrRetailAdjustments() {
         this.useSaleAdjustments = Boolean.FALSE;
@@ -142,7 +146,6 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
         removeZeroDollarAdjustments(useSaleAdjustments);
 
         finalizeAdjustments(useSaleAdjustments);
-
     }
 
     protected void finalizeAdjustments(boolean useSaleAdjustments) {
@@ -165,8 +168,9 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
     }
 
     /**
-     * If removeUnusedAdjustments is s 
-     * @param useSaleAdjustments
+     * If removeUnusedAdjustments is s
+     *
+     * @param useSalePrice
      */
     protected void removeZeroDollarAdjustments(boolean useSalePrice) {
         Iterator<PromotableFulfillmentGroupAdjustment> adjustments = candidateFulfillmentGroupAdjustments.iterator();
@@ -248,4 +252,5 @@ public class PromotableFulfillmentGroupImpl implements PromotableFulfillmentGrou
     public void removeAllCandidateAdjustments() {
         candidateFulfillmentGroupAdjustments.clear();
     }
+
 }

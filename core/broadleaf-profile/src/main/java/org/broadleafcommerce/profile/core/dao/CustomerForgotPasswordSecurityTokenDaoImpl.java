@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,9 +31,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 
 /**
- * 
  * @author bpolster
- *
  */
 @Repository("blCustomerForgotPasswordSecurityTokenDao")
 public class CustomerForgotPasswordSecurityTokenDaoImpl implements CustomerForgotPasswordSecurityTokenDao {
@@ -41,17 +39,26 @@ public class CustomerForgotPasswordSecurityTokenDaoImpl implements CustomerForgo
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override
     public CustomerForgotPasswordSecurityToken readToken(String token) {
-        return (CustomerForgotPasswordSecurityToken) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken"), token);        
+        return (CustomerForgotPasswordSecurityToken) em.find(
+                entityConfiguration.lookupEntityClass(
+                        "org.broadleafcommerce.profile.core.domain.CustomerForgotPasswordSecurityToken"
+                ),
+                token
+        );
     }
 
     @Override
     public List<CustomerForgotPasswordSecurityToken> readUnusedTokensByCustomerId(Long customerId) {
-        TypedQuery<CustomerForgotPasswordSecurityToken> query = new TypedQueryBuilder<>(CustomerForgotPasswordSecurityTokenImpl.class, "token", CustomerForgotPasswordSecurityToken.class)
+        TypedQuery<CustomerForgotPasswordSecurityToken> query = new TypedQueryBuilder<>(
+                CustomerForgotPasswordSecurityTokenImpl.class,
+                "token",
+                CustomerForgotPasswordSecurityToken.class
+        )
                 .addRestriction("token.customerId", "=", customerId)
                 .addRestriction("token.tokenUsedFlag", "=", false)
                 .toQuery(em);
@@ -62,4 +69,5 @@ public class CustomerForgotPasswordSecurityTokenDaoImpl implements CustomerForgo
     public CustomerForgotPasswordSecurityToken saveToken(CustomerForgotPasswordSecurityToken token) {
         return em.merge(token);
     }
+
 }

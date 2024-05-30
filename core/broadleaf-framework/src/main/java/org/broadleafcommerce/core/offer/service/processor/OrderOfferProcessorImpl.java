@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -66,7 +66,7 @@ import jakarta.annotation.Resource;
 public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements OrderOfferProcessor {
 
     private static final Log LOG = LogFactory.getLog(OrderOfferProcessorImpl.class);
-    
+
     @Resource(name = "blPromotableItemFactory")
     protected PromotableItemFactory promotableItemFactory;
 
@@ -79,15 +79,19 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     @Resource(name = "blOfferServiceUtilities")
     protected OfferServiceUtilities offerServiceUtilities;
 
-    @Resource(name = "blGenericEntityService")                                                                                                                                                                   
+    @Resource(name = "blGenericEntityService")
     protected GenericEntityService entityService;
-    
+
     public OrderOfferProcessorImpl(PromotableOfferUtility promotableOfferUtility) {
         super(promotableOfferUtility);
     }
 
     @Override
-    public void filterOrderLevelOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
+    public void filterOrderLevelOffer(
+            PromotableOrder promotableOrder,
+            List<PromotableCandidateOrderOffer> qualifiedOrderOffers,
+            Offer offer
+    ) {
         if (offer.getDiscountType().getType().equals(OfferDiscountType.FIX_PRICE.getType())) {
             LOG.warn("Offers of type ORDER may not have a discount type of FIX_PRICE. Ignoring order offer (name=" + offer.getName() + ")");
             return;
@@ -115,9 +119,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
         //Item Qualification - new for 1.5!
         if (orderLevelQualification) {
-            CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer, promotableOrder.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice()));
+            CandidatePromotionItems candidates = couldOfferApplyToOrderItems(
+                    offer, promotableOrder.getDiscountableOrderItems(offer.getApplyDiscountToSalePrice())
+            );
             if (candidates.isMatchedQualifier()) {
-                PromotableCandidateOrderOffer candidateOffer = createCandidateOrderOffer(promotableOrder, qualifiedOrderOffers, offer);
+                PromotableCandidateOrderOffer candidateOffer = createCandidateOrderOffer(
+                        promotableOrder, qualifiedOrderOffers, offer
+                );
                 candidateOffer.getCandidateQualifiersMap().putAll(candidates.getCandidateQualifiersMap());
             }
         }
@@ -150,7 +158,11 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      * @param fulfillmentGroup
      * @return true if offer can be applied, otherwise false
      */
-    protected boolean couldOfferApplyToOrder(Offer offer, PromotableOrder promotableOrder, PromotableFulfillmentGroup fulfillmentGroup) {
+    protected boolean couldOfferApplyToOrder(
+            Offer offer,
+            PromotableOrder promotableOrder,
+            PromotableFulfillmentGroup fulfillmentGroup
+    ) {
         return couldOfferApplyToOrder(offer, promotableOrder, null, fulfillmentGroup);
     }
 
@@ -164,7 +176,12 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      * @param promotableFulfillmentGroup
      * @return true if offer can be applied, otherwise false
      */
-    protected boolean couldOfferApplyToOrder(Offer offer, PromotableOrder promotableOrder, PromotableOrderItem promotableOrderItem, PromotableFulfillmentGroup promotableFulfillmentGroup) {
+    protected boolean couldOfferApplyToOrder(
+            Offer offer,
+            PromotableOrder promotableOrder,
+            PromotableOrderItem promotableOrderItem,
+            PromotableFulfillmentGroup promotableFulfillmentGroup
+    ) {
         boolean appliesToItem = false;
         String rule = null;
         OfferOfferRuleXref orderRule = offer.getOfferMatchRulesXref().get(OfferRuleType.ORDER.getType());
@@ -174,7 +191,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
         if (rule != null) {
 
-            HashMap<String, Object> vars = new HashMap<String, Object>();
+            HashMap<String, Object> vars = new HashMap<>();
             promotableOrder.updateRuleVariables(vars);
             vars.put("offer", offer);
             if (promotableFulfillmentGroup != null) {
@@ -194,23 +211,30 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         return appliesToItem;
     }
 
-    protected PromotableCandidateOrderOffer createCandidateOrderOffer(PromotableOrder promotableOrder, List<PromotableCandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
-        PromotableCandidateOrderOffer promotableCandidateOrderOffer = promotableItemFactory.createPromotableCandidateOrderOffer(promotableOrder, offer);
+    protected PromotableCandidateOrderOffer createCandidateOrderOffer(
+            PromotableOrder promotableOrder,
+            List<PromotableCandidateOrderOffer> qualifiedOrderOffers,
+            Offer offer
+    ) {
+        PromotableCandidateOrderOffer promotableCandidateOrderOffer = promotableItemFactory
+                .createPromotableCandidateOrderOffer(promotableOrder, offer);
         qualifiedOrderOffers.add(promotableCandidateOrderOffer);
 
         return promotableCandidateOrderOffer;
     }
 
     @Override
-    public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<PromotableCandidateOrderOffer> candidateOffers) {
-        List<PromotableCandidateOrderOffer> remainingCandidateOffers = new ArrayList<PromotableCandidateOrderOffer>();
+    public List<PromotableCandidateOrderOffer> removeTrailingNotCombinableOrderOffers(
+            List<PromotableCandidateOrderOffer> candidateOffers
+    ) {
+        List<PromotableCandidateOrderOffer> remainingCandidateOffers = new ArrayList<>();
         int offerCount = 0;
         for (PromotableCandidateOrderOffer candidateOffer : candidateOffers) {
             if (offerCount == 0) {
                 remainingCandidateOffers.add(candidateOffer);
             } else {
-                if (candidateOffer.getOffer().isCombinableWithOtherOffers() &&
-                        !candidateOffer.getOffer().isTotalitarianOffer()) {
+                if (candidateOffer.getOffer().isCombinableWithOtherOffers()
+                        && !candidateOffer.getOffer().isTotalitarianOffer()) {
                     remainingCandidateOffers.add(candidateOffer);
                 }
             }
@@ -225,9 +249,10 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         Iterator<PromotableCandidateOrderOffer> orderOfferIterator = orderOffers.iterator();
         while (orderOfferIterator.hasNext()) {
             PromotableCandidateOrderOffer orderOffer = orderOfferIterator.next();
-            
+
             if (promotableOrder.canApplyOrderOffer(orderOffer)) {
-                if (orderMeetsQualifyingSubtotalRequirements(promotableOrder, orderOffer) && orderMeetsSubtotalRequirements(promotableOrder, orderOffer)) {
+                if (orderMeetsQualifyingSubtotalRequirements(promotableOrder, orderOffer)
+                        && orderMeetsSubtotalRequirements(promotableOrder, orderOffer)) {
                     applyOrderOffer(promotableOrder, orderOffer);
 
                     if (orderOffer.isTotalitarian() || promotableOrder.isTotalitarianItemOfferApplied()) {
@@ -242,7 +267,8 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
                     if (!orderOffer.isCombinable()) {
                         if (LOG.isTraceEnabled()) {
-                            LOG.trace("Non-Combinable Order Offer Applied with id=[" + orderOffer.getOffer().getId() + "].  No other order offers can be applied");
+                            LOG.trace("Non-Combinable Order Offer Applied with id=[" + orderOffer.getOffer().getId()
+                                    + "].  No other order offers can be applied");
                         }
                         break;
                     }
@@ -252,8 +278,13 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         promotableOrder.getOrder().setSubTotal(promotableOrder.calculateSubtotalWithAdjustments());
     }
 
-    protected boolean orderMeetsQualifyingSubtotalRequirements(PromotableOrder order, PromotableCandidateOrderOffer orderOffer) {
-        return offerServiceUtilities.orderMeetsQualifyingSubtotalRequirements(order, orderOffer.getOffer(), orderOffer.getCandidateQualifiersMap());
+    protected boolean orderMeetsQualifyingSubtotalRequirements(
+            PromotableOrder order,
+            PromotableCandidateOrderOffer orderOffer
+    ) {
+        return offerServiceUtilities.orderMeetsQualifyingSubtotalRequirements(
+                order, orderOffer.getOffer(), orderOffer.getCandidateQualifiersMap()
+        );
     }
 
     protected boolean orderMeetsSubtotalRequirements(PromotableOrder order, PromotableCandidateOrderOffer orderOffer) {
@@ -262,6 +293,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     /**
      * Called when the system must determine whether to apply order or item adjustments.
+     *
      * @param promotableOrder
      */
     protected void compareAndAdjustOrderAndItemOffers(PromotableOrder promotableOrder) {
@@ -282,7 +314,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
      * @param orderOffer a CandidateOrderOffer to apply to an Order
      */
     protected void applyOrderOffer(PromotableOrder promotableOrder, PromotableCandidateOrderOffer orderOffer) {
-        PromotableOrderAdjustment promotableOrderAdjustment = promotableItemFactory.createPromotableOrderAdjustment(orderOffer, promotableOrder);
+        PromotableOrderAdjustment promotableOrderAdjustment = promotableItemFactory.createPromotableOrderAdjustment(
+                orderOffer, promotableOrder
+        );
         promotableOrder.addCandidateOrderAdjustment(promotableOrderAdjustment);
     }
 
@@ -295,9 +329,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     public void setPromotableItemFactory(PromotableItemFactory promotableItemFactory) {
         this.promotableItemFactory = promotableItemFactory;
     }
-    
+
     protected Map<Long, PromotableOrderAdjustment> buildPromotableOrderAdjustmentsMap(PromotableOrder promotableOrder) {
-        Map<Long, PromotableOrderAdjustment> adjustmentsMap = new HashMap<Long, PromotableOrderAdjustment>();
+        Map<Long, PromotableOrderAdjustment> adjustmentsMap = new HashMap<>();
         for (PromotableOrderAdjustment adjustment : promotableOrder.getCandidateOrderAdjustments()) {
             adjustmentsMap.put(adjustment.getOffer().getId(), adjustment);
         }
@@ -339,7 +373,10 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         }
     }
 
-    protected void updateAdjustmentIfChangesDetected(OrderAdjustment adjustment, PromotableOrderAdjustment promotableAdjustment) {
+    protected void updateAdjustmentIfChangesDetected(
+            OrderAdjustment adjustment,
+            PromotableOrderAdjustment promotableAdjustment
+    ) {
         Long offerId = adjustment.getOffer().getId();
         if (!adjustment.getValue().equals(promotableAdjustment.getAdjustmentValue())) {
             if (LOG.isDebugEnabled()) {
@@ -359,7 +396,9 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     protected void synchronizeOrderItems(PromotableOrder promotableOrder) {
         Order order = promotableOrder.getOrder();
-        Map<OrderItem, PromotableOrderItem> promotableItemMap = offerServiceUtilities.buildPromotableItemMap(promotableOrder);
+        Map<OrderItem, PromotableOrderItem> promotableItemMap = offerServiceUtilities.buildPromotableItemMap(
+                promotableOrder
+        );
 
         List<OrderItem> orderItemList = offerServiceUtilities.buildOrderItemList(order);
 
@@ -370,13 +409,12 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             }
             synchronizeItemPriceDetails(orderItem, promotableItem);
             synchronizeItemQualifiers(orderItem, promotableItem);
-
         }
     }
 
     protected void synchronizeItemPriceDetails(OrderItem orderItem, PromotableOrderItem promotableOrderItem) {
         Map<String, PromotableOrderItemPriceDetail> promotableDetailsMap = buildPromotableDetailsMap(promotableOrderItem);
-        Map<Long, OrderItemPriceDetail> unmatchedDetailsMap = new HashMap<Long, OrderItemPriceDetail>();
+        Map<Long, OrderItemPriceDetail> unmatchedDetailsMap = new HashMap<>();
 
         for (OrderItemPriceDetail orderItemPriceDetail : orderItem.getOrderItemPriceDetails()) {
             String detailKey = buildItemPriceDetailKey(orderItemPriceDetail);
@@ -416,7 +454,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
 
     protected void synchronizeItemQualifiers(OrderItem orderItem, PromotableOrderItem promotableOrderItem) {
         Map<Long, PromotionQualifier> qualifiersMap = buildPromotableQualifiersMap(promotableOrderItem);
-        Map<Long, OrderItemQualifier> unmatchedQualifiersMap = new HashMap<Long, OrderItemQualifier>();
+        Map<Long, OrderItemQualifier> unmatchedQualifiersMap = new HashMap<>();
 
         for (OrderItemQualifier orderItemQualifier : orderItem.getOrderItemQualifiers()) {
             PromotionQualifier promotableQualifier = qualifiersMap.remove(orderItemQualifier.getOffer().getId());
@@ -454,15 +492,17 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
         offerServiceUtilities.removeUnmatchedQualifiers(unmatchedQualifiersMap, qIterator);
     }
 
-    protected void processMatchingDetails(OrderItemPriceDetail itemDetail,
-            PromotableOrderItemPriceDetail promotableItemDetail) {
-        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap =
-                offerServiceUtilities.buildItemDetailAdjustmentMap(itemDetail);
+    protected void processMatchingDetails(
+            OrderItemPriceDetail itemDetail,
+            PromotableOrderItemPriceDetail promotableItemDetail
+    ) {
+        Map<Long, OrderItemPriceDetailAdjustment> itemAdjustmentMap = offerServiceUtilities
+                .buildItemDetailAdjustmentMap(itemDetail);
 
         if (itemDetail.getQuantity() != promotableItemDetail.getQuantity()) {
             itemDetail.setQuantity(promotableItemDetail.getQuantity());
         }
-        
+
         for (PromotableOrderItemPriceDetailAdjustment adjustment : promotableItemDetail.getCandidateItemAdjustments()) {
             OrderItemPriceDetailAdjustment itemAdjustment = itemAdjustmentMap.get(adjustment.getOfferId());
             if (!itemAdjustment.getValue().equals(adjustment.getAdjustmentValue())) {
@@ -473,7 +513,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     }
 
     protected String buildItemPriceDetailKey(OrderItemPriceDetail itemDetail) {
-        List<Long> offerIds = new ArrayList<Long>();
+        List<Long> offerIds = new ArrayList<>();
         for (OrderItemPriceDetailAdjustment adjustment : itemDetail.getOrderItemPriceDetailAdjustments()) {
             Long offerId = adjustment.getOffer().getId();
             offerIds.add(offerId);
@@ -483,7 +523,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     }
 
     protected Map<String, PromotableOrderItemPriceDetail> buildPromotableDetailsMap(PromotableOrderItem item) {
-        Map<String, PromotableOrderItemPriceDetail> detailsMap = new HashMap<String, PromotableOrderItemPriceDetail>();
+        Map<String, PromotableOrderItemPriceDetail> detailsMap = new HashMap<>();
         for (PromotableOrderItemPriceDetail detail : item.getPromotableOrderItemPriceDetails()) {
             detailsMap.put(detail.buildDetailKey(), detail);
         }
@@ -491,7 +531,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     }
 
     protected Map<Long, PromotionQualifier> buildPromotableQualifiersMap(PromotableOrderItem item) {
-        Map<Long, PromotionQualifier> qualifiersMap = new HashMap<Long, PromotionQualifier>();
+        Map<Long, PromotionQualifier> qualifiersMap = new HashMap<>();
         for (PromotableOrderItemPriceDetail detail : item.getPromotableOrderItemPriceDetails()) {
             for (PromotionQualifier qualifier : detail.getPromotionQualifiers()) {
                 PromotionQualifier existingQualifier = qualifiersMap.get(qualifier.getPromotion().getId());
@@ -508,7 +548,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     protected void synchronizeFulfillmentGroups(PromotableOrder promotableOrder) {
         Order order = promotableOrder.getOrder();
         Map<Long, PromotableFulfillmentGroup> fgMap = buildPromotableFulfillmentGroupMap(promotableOrder);
-        
+
         boolean syncNeededOnTotal = false;
 
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
@@ -519,7 +559,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
                 syncNeededOnTotal = true;
             }
         }
-        
+
         if (syncNeededOnTotal) {
             Money syncFulfillmentPrice = Money.ZERO;
 
@@ -543,7 +583,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     }
 
     protected Map<Long, PromotableFulfillmentGroup> buildPromotableFulfillmentGroupMap(PromotableOrder order) {
-        Map<Long, PromotableFulfillmentGroup> fgMap = new HashMap<Long, PromotableFulfillmentGroup>();
+        Map<Long, PromotableFulfillmentGroup> fgMap = new HashMap<>();
         for (PromotableFulfillmentGroup fg : order.getFulfillmentGroups()) {
             fgMap.put(fg.getFulfillmentGroup().getId(), fg);
         }
@@ -551,7 +591,7 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     }
 
     protected Map<Long, PromotableFulfillmentGroupAdjustment> buildPromFulfillmentAdjMap(PromotableFulfillmentGroup fg) {
-        Map<Long, PromotableFulfillmentGroupAdjustment> fgMap = new HashMap<Long, PromotableFulfillmentGroupAdjustment>();
+        Map<Long, PromotableFulfillmentGroupAdjustment> fgMap = new HashMap<>();
         for (PromotableFulfillmentGroupAdjustment adjustment : fg.getCandidateFulfillmentGroupAdjustments()) {
             fgMap.put(adjustment.getPromotableCandidateFulfillmentGroupOffer().getOffer().getId(), adjustment);
         }
@@ -586,7 +626,6 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
             fa.setValue(newAdj.getAdjustmentValue());
             fg.getFulfillmentGroupAdjustments().add(fa);
         }
-
     }
 
     @Override
@@ -616,4 +655,5 @@ public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements Or
     public void setOfferServiceUtilities(OfferServiceUtilities offerServiceUtilities) {
         this.offerServiceUtilities = offerServiceUtilities;
     }
+
 }

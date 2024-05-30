@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -54,9 +54,13 @@ public class AdminUserManagementController extends AdminBasicEntityController {
 
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public String viewEntityForm(HttpServletRequest request, HttpServletResponse response, Model model,
-                                 @PathVariable Map<String, String> pathVars,
-                                 @PathVariable(value="id") String id) throws Exception {
+    public String viewEntityForm(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id
+    ) throws Exception {
         // Get the normal entity form for this item
         String returnPath = super.viewEntityForm(request, response, model, pathVars, id);
         EntityForm ef = (EntityForm) model.asMap().get("entityForm");
@@ -68,12 +72,16 @@ public class AdminUserManagementController extends AdminBasicEntityController {
 
     @Override
     @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public String saveEntity(HttpServletRequest request, HttpServletResponse response, Model model,
-                             @PathVariable  Map<String, String> pathVars,
-                             @PathVariable(value="id") String id,
-                             @ModelAttribute(value="entityForm") EntityForm entityForm, BindingResult result,
-                             RedirectAttributes ra) throws Exception {
-
+    public String saveEntity(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @PathVariable Map<String, String> pathVars,
+            @PathVariable(value = "id") String id,
+            @ModelAttribute(value = "entityForm") EntityForm entityForm,
+            BindingResult result,
+            RedirectAttributes ra
+    ) throws Exception {
         // Get the normal entity form for this item
         String returnPath = super.saveEntity(request, response, model, pathVars, id, entityForm, result, ra);
         // Remove List Grid for Additional Fields

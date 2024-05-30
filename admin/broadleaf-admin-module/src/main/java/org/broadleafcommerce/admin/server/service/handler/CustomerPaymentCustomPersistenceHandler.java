@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,8 +18,6 @@
 package org.broadleafcommerce.admin.server.service.handler;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -53,13 +51,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 /**
- * 
  * @author Chris Kittrell (ckittrell)
  */
 @Component("blCustomerPaymentCustomPersistenceHandler")
 public class CustomerPaymentCustomPersistenceHandler extends ClassCustomPersistenceHandlerAdapter {
-
-    private static final Log LOG = LogFactory.getLog(CustomerPaymentCustomPersistenceHandler.class);
 
     protected static final String SAVED_PAYMENT_INFO = "savedPaymentInfo";
     protected static final String NULL_LAST_FOUR = "****null";
@@ -85,12 +80,17 @@ public class CustomerPaymentCustomPersistenceHandler extends ClassCustomPersiste
     }
 
     @Override
-    public DynamicResultSet inspect(PersistencePackage persistencePackage, DynamicEntityDao dynamicEntityDao,
-            InspectHelper helper) throws ServiceException {
-        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<MergedPropertyType, Map<String, FieldMetadata>>();
+    public DynamicResultSet inspect(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            InspectHelper helper
+    ) throws ServiceException {
+        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
 
         PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
-        Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(CustomerPayment.class.getName(), persistencePerspective);
+        Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(
+                CustomerPayment.class.getName(), persistencePerspective
+        );
 
         // Hide "Payment Gateway Type" column & create "Saved Payment Info" ListGrid column
         FieldMetadata paymentGatewayType = properties.get("paymentGatewayType");
@@ -118,8 +118,12 @@ public class CustomerPaymentCustomPersistenceHandler extends ClassCustomPersiste
     }
 
     @Override
-    public DynamicResultSet fetch(PersistencePackage persistencePackage, CriteriaTransferObject cto,
-            DynamicEntityDao dynamicEntityDao, RecordHelper helper) throws ServiceException {
+    public DynamicResultSet fetch(
+            PersistencePackage persistencePackage,
+            CriteriaTransferObject cto,
+            DynamicEntityDao dynamicEntityDao,
+            RecordHelper helper
+    ) throws ServiceException {
         OperationType fetchType = persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType();
         PersistenceModule persistenceModule = helper.getCompatibleModule(fetchType);
         DynamicResultSet drs = persistenceModule.fetch(persistencePackage, cto);
@@ -127,7 +131,9 @@ public class CustomerPaymentCustomPersistenceHandler extends ClassCustomPersiste
         for (Entity entity : drs.getRecords()) {
             Property customerPaymentId = entity.findProperty("id");
             if (customerPaymentId != null) {
-                CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentById(Long.parseLong(customerPaymentId.getValue()));
+                CustomerPayment customerPayment = customerPaymentService.readCustomerPaymentById(
+                        Long.parseLong(customerPaymentId.getValue())
+                );
                 if (customerPayment != null) {
                     String savedPaymentDisplayValue = buildSavedPaymentDisplayValue(customerPayment);
 

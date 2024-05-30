@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,15 +31,15 @@ import jakarta.annotation.Resource;
  * Author: jerryocanas
  * Date: 9/6/12
  */
-
 @Service("blCurrencyService")
 public class BroadleafCurrencyServiceImpl implements BroadleafCurrencyService {
 
-    @Resource(name="blCurrencyDao")
+    @Resource(name = "blCurrencyDao")
     protected BroadleafCurrencyDao currencyDao;
 
     /**
      * Returns the default Broadleaf currency
+     *
      * @return The default currency
      */
     @Override
@@ -57,7 +57,8 @@ public class BroadleafCurrencyServiceImpl implements BroadleafCurrencyService {
 
     /**
      * Returns a list of all the Broadleaf Currencies
-     *@return List of currencies
+     *
+     * @return List of currencies
      */
     @Override
     public List<BroadleafCurrency> getAllCurrencies() {
@@ -69,9 +70,10 @@ public class BroadleafCurrencyServiceImpl implements BroadleafCurrencyService {
     public BroadleafCurrency save(BroadleafCurrency currency) {
         return currencyDao.save(currency);
     }
-    
+
     @Override
     public BroadleafCurrency create() {
         return currencyDao.create();
-    }    
+    }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,6 +20,7 @@ package org.broadleafcommerce.common.page.dto;
 import org.apache.commons.beanutils.BeanUtils;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -29,10 +30,12 @@ import java.util.Map;
  * Page fields must be pre-processed (for example to fix image paths).
  * This DTO allows us to process the PageFields once and then cache
  * the results.
- *
+ * <p>
  * Created by bpolster.
  */
 public class PageDTO implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     protected Long id;
@@ -41,16 +44,16 @@ public class PageDTO implements Serializable {
     protected String templatePath;
     protected String url;
     protected Integer priority;
-    protected Map<String, Object> pageFields = new HashMap<String, Object>();
+    protected Map<String, Object> pageFields = new HashMap<>();
     protected String ruleExpression;
     protected List<ItemCriteriaDTO> itemCriteriaDTOList;
-    protected Map<String, String> pageAttributes = new HashMap<String, String>();
-    protected Map<String, Object> foreignPageFields = new HashMap<String, Object>();
+    protected Map<String, String> pageAttributes = new HashMap<>();
+    protected Map<String, Object> foreignPageFields = new HashMap<>();
 
     /**
      * Attempts to obtain the given property value from the dynamic property map first, and then an actual bean property
      * via a getter
-     * 
+     *
      * @param propertyName
      * @return
      */
@@ -115,7 +118,7 @@ public class PageDTO implements Serializable {
     public void setPageFields(Map<String, Object> pageFields) {
         this.pageFields = pageFields;
     }
-    
+
     public String getRuleExpression() {
         return ruleExpression;
     }
@@ -139,19 +142,19 @@ public class PageDTO implements Serializable {
     public void setPriority(Integer priority) {
         this.priority = priority;
     }
-    
+
     public Map<String, String> getPageAttributes() {
         return pageAttributes;
     }
-    
+
     public void setPageAttributes(Map<String, String> pageAttributes) {
         this.pageAttributes = pageAttributes;
-    }   
-    
+    }
+
     public Map<String, Object> getForeignPageFields() {
         return foreignPageFields;
     }
-    
+
     public void setForeignPageFields(Map<String, Object> foreignPageFields) {
         this.foreignPageFields = foreignPageFields;
     }
@@ -163,12 +166,12 @@ public class PageDTO implements Serializable {
         templatePath = original.templatePath;
         url = original.url;
         priority = original.priority;
-        
+
         // Extension Handlers Might Modify This
-        pageFields = new HashMap<String, Object>(original.pageFields);
+        pageFields = new HashMap<>(original.pageFields);
         ruleExpression = original.ruleExpression;
         itemCriteriaDTOList = original.itemCriteriaDTOList;
         pageAttributes = original.pageAttributes;
     }
-    
+
 }

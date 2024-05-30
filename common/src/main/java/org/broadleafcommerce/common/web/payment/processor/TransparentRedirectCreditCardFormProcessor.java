@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.web.payment.processor;
 
 import org.apache.commons.collections.MapUtils;
@@ -61,11 +60,10 @@ import jakarta.annotation.Resource;
  * <p>NOTE: please see {@link org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression}
  * to modify the input "name" fields for a particular gateway</p>
  *
+ * @author Elbert Bautista (elbertbautista)
  * @see {@link org.broadleafcommerce.common.web.payment.expression.PaymentGatewayFieldVariableExpression}
  * @see {@link TRCreditCardExtensionHandler}
  * @see {@link AbstractTRCreditCardExtensionHandler}
- *
- * @author Elbert Bautista (elbertbautista)
  */
 @Component("blTransparentRedirectCreditCardFormProcessor")
 @ConditionalOnTemplating
@@ -81,20 +79,26 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadlea
     public void setExtensionManager(TRCreditCardExtensionManager extensionManager) {
         this.extensionManager = extensionManager;
     }
-    
+
     @Override
     public String getName() {
         return "transparent_credit_card_form";
     }
-    
+
     @Override
     public int getPrecedence() {
         return 1;
     }
-    
+
     @Override
-    public BroadleafTemplateModelModifierDTO getInjectedModelAndTagAttributes(String rootTagName, Map<String, String> rootTagAttributes, BroadleafTemplateContext context) {
-        PaymentRequestDTO requestDTO = (PaymentRequestDTO) context.parseExpression(rootTagAttributes.get("paymentRequestDTO"));
+    public BroadleafTemplateModelModifierDTO getInjectedModelAndTagAttributes(
+            String rootTagName,
+            Map<String, String> rootTagAttributes,
+            BroadleafTemplateContext context
+    ) {
+        PaymentRequestDTO requestDTO = (PaymentRequestDTO) context.parseExpression(
+                rootTagAttributes.get("paymentRequestDTO")
+        );
 
         Map<String, Map<String, String>> formParameters = new HashMap<>();
         Map<String, String> configurationSettings = new HashMap<>();
@@ -113,8 +117,11 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadlea
         keysToKeep.remove("paymentRequestDTO");
 
         try {
-            extensionManager.getProxy().createTransparentRedirectForm(formParameters,
-                requestDTO, configurationSettings);
+            extensionManager.getProxy().createTransparentRedirectForm(
+                    formParameters,
+                    requestDTO,
+                    configurationSettings
+            );
         } catch (PaymentException e) {
             throw new RuntimeException("Unable to Create the Transparent Redirect Form", e);
         }
@@ -153,4 +160,5 @@ public class TransparentRedirectCreditCardFormProcessor extends AbstractBroadlea
     public boolean reprocessModel() {
         return true;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,53 +32,54 @@ import jakarta.annotation.Nonnull;
  *
  * <p>Entities that implement this {@link Referenced} interface should not be instantiated directly but rather be instaniated
  * via {@link SecureOrderPaymentService#create(org.broadleafcommerce.core.payment.service.type.PaymentType)}</p>
- * 
+ *
  * <p>In the common case, this is rarely used as most implementors will NOT want to deal with the liability and extra PCI
  * requirements associated with storing sensitive payment data. Consider integrating with a payment provider that takes
  * care of PCI-sensitive data instead.</p>
  *
+ * @author Phillip Verheyden (phillipuniverse)
  * @see {@link CreditCardPayment}
  * @see {@link GiftCardPayment}
  * @see {@link BankAccountPayment}
- * @author Phillip Verheyden (phillipuniverse)
  */
 public interface Referenced extends Serializable {
 
-    public Long getId();
-    
-    public void setId(Long id);
-    
+    Long getId();
+
+    void setId(Long id);
+
     /**
      * <p>The indirect link between non-secure data and the secure data represented here. Since implementing entities
      * should be in a separate persistence unit (blSecurePU), this is the only avenue to show a relationship between the two.</p>
-     * 
+     *
      * <p>From the {@link Order} side of the domain, this is linked by {@link OrderPayment#getReferenceNumber()} on the
      * {@link OrderPayment} entity.</p>
-     * 
+     *
      * @see {@link OrderPayment#getReferenceNumber()}
      */
-    public String getReferenceNumber();
+    String getReferenceNumber();
 
     /**
      * Set the link between this secure entity and the {@link OrderPayment}. This should not be null as this is required
+     *
      * @param referenceNumber
      */
-    public void setReferenceNumber(@Nonnull String referenceNumber);
+    void setReferenceNumber(@Nonnull String referenceNumber);
 
     /**
      * @return the {@link EncryptionModule} used to encrypt and decrypt this secure information back and forth
      */
-    public EncryptionModule getEncryptionModule();
+    EncryptionModule getEncryptionModule();
 
     /**
      * Sets the encryption module used by to encrypt and decrypt the data saved in the blSecurePU persistence unit. This
      * normally corresponds to the blEncryptionModule Spring bean which should be automatically set after invoking
      * {@link SecureOrderPaymentService#findSecurePaymentInfo(String, org.broadleafcommerce.core.payment.service.type.PaymentType)}
      * and {@link SecureOrderPaymentService#create(org.broadleafcommerce.core.payment.service.type.PaymentType)}.
-     * 
+     *
      * @see {@link SecureOrderPaymentService#findSecurePaymentInfo(String, org.broadleafcommerce.core.payment.service.type.PaymentType)}
      * @see {@link SecureOrderPaymentService#create(org.broadleafcommerce.core.payment.service.type.PaymentType)}
      */
-    public void setEncryptionModule(EncryptionModule encryptionModule);
-    
+    void setEncryptionModule(EncryptionModule encryptionModule);
+
 }

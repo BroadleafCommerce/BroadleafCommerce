@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,6 +31,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
@@ -53,7 +54,8 @@ import jakarta.persistence.Transient;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
 public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentGroupOffer {
 
-    public static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "CandidateFGOfferId")
@@ -61,8 +63,7 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
             name = "CandidateFGOfferId",
             type = IdOverrideTableGenerator.class,
             parameters = {
-                    @Parameter(name = "segment_value",
-                            value = "CandidateFulfillmentGroupOfferImpl"),
+                    @Parameter(name = "segment_value", value = "CandidateFulfillmentGroupOfferImpl"),
                     @Parameter(name = "entity_name",
                             value = "org.broadleafcommerce.core.offer.domain.CandidateFulfillmentGroupOfferImpl")
             }
@@ -121,8 +122,7 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
     public Money getDiscountedPrice() {
         return discountedPrice == null
                 ? null
-                : BroadleafCurrencyUtils.getMoney(discountedPrice,
-                        getFulfillmentGroup().getOrder().getCurrency());
+                : BroadleafCurrencyUtils.getMoney(discountedPrice, getFulfillmentGroup().getOrder().getCurrency());
     }
 
     @Override

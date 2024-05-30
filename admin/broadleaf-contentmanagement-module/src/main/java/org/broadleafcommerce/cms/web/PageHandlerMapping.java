@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,42 +37,38 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This handler mapping works with the Page entity to determine if a page has been configured for
- * the passed in URL.   
- * 
- * If the URL represents a valid PageUrl, then this mapping returns 
- * 
+ * the passed in URL.
+ * <p>
+ * If the URL represents a valid PageUrl, then this mapping returns
+ * <p>
  * Allows configuration of the controller name to use if a Page was found.
  *
  * @author bpolster
- * @since 2.0
  * @see org.broadleafcommerce.cms.page.domain.Page
  * @see BroadleafPageController
+ * @since 2.0
  */
 public class PageHandlerMapping extends BLCAbstractHandlerMapping {
-    
-    private final String controllerName="blPageController";
-    public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
 
+    public static final String BLC_RULE_MAP_PARAM = "blRuleMap";
     // The following attribute is set in BroadleafProcessURLFilter
     public static final String REQUEST_DTO = "blRequestDTO";
-    
-    @Resource(name = "blPageService")
-    private PageService pageService;
-    
     public static final String PAGE_ATTRIBUTE_NAME = "BLC_PAGE";
-
+    private final String controllerName = "blPageController";
     @Value("${request.uri.encoding}")
     public String charEncoding;
+    @Resource(name = "blPageService")
+    private PageService pageService;
 
     @Override
     protected Object getHandlerInternal(HttpServletRequest request) throws Exception {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context != null && context.getRequestURIWithoutContext() != null) {
             String requestUri = URLDecoder.decode(context.getRequestURIWithoutContext(), charEncoding);
-            
+
             Boolean internalValidateFindPreviouslySet = false;
             PageDTO page;
-            
+
             try {
                 if (!BroadleafRequestContext.getBroadleafRequestContext().getInternalValidateFind()) {
                     BroadleafRequestContext.getBroadleafRequestContext().setInternalValidateFind(true);
@@ -86,30 +82,29 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
                 }
             }
 
-            if (page != null && ! (page instanceof NullPageDTO)) {
+            if (page != null && !(page instanceof NullPageDTO)) {
                 context.getRequest().setAttribute(PAGE_ATTRIBUTE_NAME, page);
                 return controllerName;
             }
         }
         return null;
     }
-    
-     /**
+
+    /**
      * MVEL is used to process the content targeting rules.
-     *
      *
      * @param request
      * @return
      */
-    private Map<String,Object> buildMvelParameters(HttpServletRequest request) {
+    private Map<String, Object> buildMvelParameters(HttpServletRequest request) {
         TimeDTO timeDto = new TimeDTO(SystemTime.asCalendar());
         RequestDTO requestDto = (RequestDTO) request.getAttribute(REQUEST_DTO);
 
-        Map<String, Object> mvelParameters = new HashMap<String, Object>();
+        Map<String, Object> mvelParameters = new HashMap<>();
         mvelParameters.put("time", timeDto);
         mvelParameters.put("request", requestDto);
 
-        Map<String,Object> blcRuleMap = (Map<String,Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
+        Map<String, Object> blcRuleMap = (Map<String, Object>) request.getAttribute(BLC_RULE_MAP_PARAM);
         if (blcRuleMap != null) {
             for (String mapKey : blcRuleMap.keySet()) {
                 mvelParameters.put(mapKey, blcRuleMap.get(mapKey));
@@ -118,4 +113,5 @@ public class PageHandlerMapping extends BLCAbstractHandlerMapping {
 
         return mvelParameters;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,33 +36,31 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its  children
- * 
+ * <p>
  * Operations that are shared between all controllers belong here.   To use composition rather than
  * extension, implementors can utilize BroadleafControllerUtility.
- * 
- * @see BroadleafControllerUtility
- * 
+ *
  * @author apazzolini
  * @author bpolster
+ * @see BroadleafControllerUtility
  */
 public abstract class BroadleafAbstractController {
-    
-    
+
     /**
      * A helper method that returns whether or not the given request was invoked via an AJAX call
-     * 
+     *
      * @param request
      * @return - whether or not it was an AJAX request
      */
     protected boolean isAjaxRequest(HttpServletRequest request) {
-        return BroadleafControllerUtility.isAjaxRequest(request);       
+        return BroadleafControllerUtility.isAjaxRequest(request);
     }
-    
+
     /**
      * Returns the current servlet context path. This will return a "/" if the application is
-     * deployed as root. If it's not deployed as root, it will return the context path BOTH a 
+     * deployed as root. If it's not deployed as root, it will return the context path BOTH a
      * leading slash but without a trailing slash.
-     * 
+     *
      * @param request
      * @return the context path
      */
@@ -77,12 +75,11 @@ public abstract class BroadleafAbstractController {
             if (ctxPath.charAt(ctxPath.length() - 1) != '/') {
                 ctxPath = ctxPath + '/';
             }
-            
+
             return ctxPath;
         }
-        
     }
-    
+
     protected <T> void addDeepLink(ModelAndView model, DeepLinkService<T> service, T item) {
         if (service == null) {
             return;
@@ -98,21 +95,21 @@ public abstract class BroadleafAbstractController {
             }
         }
     }
-    
+
     /**
      * Typically, controller methods are set to return a String that points to the necessary template path.
-     * 
+     * <p>
      * However, there may be occasions where the error state for a controller action should instead return
      * JSON instead of a fully rendered template. This convenience method will achieve that by setting the
      * appropriate headers and serializing the given map.
-     * 
+     *
      * @param response
      * @param responseMap
      * @throws JsonGenerationException
      * @throws JsonMappingException
      * @throws IOException
      */
-    protected String jsonResponse(HttpServletResponse response, Map<?, ?> responseMap) 
+    protected String jsonResponse(HttpServletResponse response, Map<?, ?> responseMap)
             throws JsonGenerationException, JsonMappingException, IOException {
         response.setHeader("Content-Type", "application/json");
         new ObjectMapper().writeValue(response.getWriter(), responseMap);

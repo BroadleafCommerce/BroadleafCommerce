@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -45,11 +45,17 @@ public class AddSearchMappingRequest {
     private final RecordHelper recordHelper;
     private final RestrictionFactory restrictionFactory;
 
-    public AddSearchMappingRequest(PersistencePerspective persistencePerspective, CriteriaTransferObject
-            requestedCto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties,
-                                   String propertyName, FieldManager fieldManager,
-                                   DataFormatProvider dataFormatProvider, RecordHelper recordHelper,
-                                   RestrictionFactory restrictionFactory) {
+    public AddSearchMappingRequest(
+            PersistencePerspective persistencePerspective,
+            CriteriaTransferObject requestedCto,
+            String ceilingEntityFullyQualifiedClassname,
+            Map<String, FieldMetadata> mergedProperties,
+            String propertyName,
+            FieldManager fieldManager,
+            DataFormatProvider dataFormatProvider,
+            RecordHelper recordHelper,
+            RestrictionFactory restrictionFactory
+    ) {
         this.persistencePerspective = persistencePerspective;
         this.requestedCto = requestedCto;
         this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
@@ -62,11 +68,18 @@ public class AddSearchMappingRequest {
         this.restrictionFactory = restrictionFactory;
     }
 
-    public AddSearchMappingRequest(PersistencePerspective persistencePerspective, CriteriaTransferObject
-            requestedCto, String ceilingEntityFullyQualifiedClassname, Map<String, FieldMetadata> mergedProperties,
-                                   String propertyName, String realPropertyName, FieldManager fieldManager,
-                                   DataFormatProvider dataFormatProvider, RecordHelper recordHelper,
-                                   RestrictionFactory restrictionFactory) {
+    public AddSearchMappingRequest(
+            PersistencePerspective persistencePerspective,
+            CriteriaTransferObject requestedCto,
+            String ceilingEntityFullyQualifiedClassname,
+            Map<String, FieldMetadata> mergedProperties,
+            String propertyName,
+            String realPropertyName,
+            FieldManager fieldManager,
+            DataFormatProvider dataFormatProvider,
+            RecordHelper recordHelper,
+            RestrictionFactory restrictionFactory
+    ) {
         this.persistencePerspective = persistencePerspective;
         this.requestedCto = requestedCto;
         this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
@@ -106,11 +119,11 @@ public class AddSearchMappingRequest {
     public FieldManager getFieldManager() {
         return fieldManager;
     }
-    
+
     public DataFormatProvider getDataFormatProvider() {
         return dataFormatProvider;
     }
-    
+
     public RecordHelper getRecordHelper() {
         return recordHelper;
     }
@@ -118,4 +131,5 @@ public class AddSearchMappingRequest {
     public RestrictionFactory getRestrictionFactory() {
         return restrictionFactory;
     }
+
 }

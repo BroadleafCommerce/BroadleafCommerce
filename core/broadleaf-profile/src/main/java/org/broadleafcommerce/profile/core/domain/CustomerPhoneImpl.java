@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,6 +28,8 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+
+import java.io.Serial;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -51,37 +53,34 @@ import jakarta.persistence.UniqueConstraint;
                 columnNames = {"CUSTOMER_ID", "PHONE_NAME"}),
         indexes = {@Index(name = "CUSTPHONE_PHONE_INDEX", columnList = "PHONE_ID")}
 )
-@AdminPresentationMergeOverrides(
-        {
-                @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
-                        @AdminPresentationMergeEntry(
-                                propertyType = PropertyType.AdminPresentation.GROUP,
-                                overrideValue = CustomerPhoneAdminPresentation.GroupName.PhoneInfo),
-                        @AdminPresentationMergeEntry(
-                                propertyType = PropertyType.AdminPresentation.ORDER,
-                                intOverrideValue = 2000),
-                        @AdminPresentationMergeEntry(
-                                propertyType = PropertyType.AdminPresentation.PROMINENT,
-                                booleanOverrideValue = true)}),
-                @AdminPresentationMergeOverride(name = "phone.isDefault", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
-                        overrideValue = CustomerPhoneAdminPresentation.GroupName.Defaults)),
-                @AdminPresentationMergeOverride(name = "phone.countryCode", mergeEntries =
+@AdminPresentationMergeOverrides({
+        @AdminPresentationMergeOverride(name = "phone.phoneNumber", mergeEntries = {
                 @AdminPresentationMergeEntry(
-                        propertyType = PropertyType.AdminPresentation.VISIBILITY,
-                        overrideValue = "HIDDEN_ALL")),
-                @AdminPresentationMergeOverride(name = "phone.extension", mergeEntries =
+                        propertyType = PropertyType.AdminPresentation.GROUP,
+                        overrideValue = CustomerPhoneAdminPresentation.GroupName.PhoneInfo),
                 @AdminPresentationMergeEntry(
-                        propertyType = PropertyType.AdminPresentation.VISIBILITY,
-                        overrideValue = "HIDDEN_ALL")),
-                @AdminPresentationMergeOverride(name = "phone.isActive", mergeEntries =
+                        propertyType = PropertyType.AdminPresentation.ORDER, intOverrideValue = 2000),
                 @AdminPresentationMergeEntry(
-                        propertyType = PropertyType.AdminPresentation.VISIBILITY,
-                        overrideValue = "HIDDEN_ALL"))
-        }
-)
+                        propertyType = PropertyType.AdminPresentation.PROMINENT, booleanOverrideValue = true)}),
+        @AdminPresentationMergeOverride(name = "phone.isDefault", mergeEntries =
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.GROUP,
+                overrideValue = CustomerPhoneAdminPresentation.GroupName.Defaults)),
+        @AdminPresentationMergeOverride(name = "phone.countryCode", mergeEntries =
+        @AdminPresentationMergeEntry(
+                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                overrideValue = "HIDDEN_ALL")),
+        @AdminPresentationMergeOverride(name = "phone.extension", mergeEntries =
+        @AdminPresentationMergeEntry(
+                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                overrideValue = "HIDDEN_ALL")),
+        @AdminPresentationMergeOverride(name = "phone.isActive", mergeEntries =
+        @AdminPresentationMergeEntry(
+                propertyType = PropertyType.AdminPresentation.VISIBILITY,
+                overrideValue = "HIDDEN_ALL"))
+})
 public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -198,7 +197,8 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
 
     @Override
     public <G extends CustomerPhone> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -210,4 +210,5 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
         cloned.setPhone(phone);
         return createResponse;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -44,11 +44,11 @@ public class AddressDTO<T> {
     protected String county;
 
     public AddressDTO() {
-        this.additionalFields = new HashMap<String, Object>();
+        this.additionalFields = new HashMap<>();
     }
 
     public AddressDTO(T parent) {
-        this.additionalFields = new HashMap<String, Object>();
+        this.additionalFields = new HashMap<>();
         this.parent = parent;
     }
 
@@ -183,18 +183,11 @@ public class AddressDTO<T> {
     }
 
     public boolean addressPopulated() {
-        return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) ||
-                getAddressFirstName() != null ||
-                getAddressLastName() != null ||
-                getAddressCompanyName() != null ||
-                getAddressLine1() != null ||
-                getAddressLine2() != null ||
-                getAddressCityLocality() != null ||
-                getAddressStateRegion() != null ||
-                getAddressPostalCode() != null ||
-                getAddressCountryCode() != null ||
-                getAddressPhone() != null ||
-                getAddressEmail() != null);
+        return ((getAdditionalFields() != null && !getAdditionalFields().isEmpty()) || getAddressFirstName() != null
+                || getAddressLastName() != null || getAddressCompanyName() != null || getAddressLine1() != null
+                || getAddressLine2() != null || getAddressCityLocality() != null || getAddressStateRegion() != null
+                || getAddressPostalCode() != null || getAddressCountryCode() != null || getAddressPhone() != null
+                || getAddressEmail() != null);
     }
-    
+
 }

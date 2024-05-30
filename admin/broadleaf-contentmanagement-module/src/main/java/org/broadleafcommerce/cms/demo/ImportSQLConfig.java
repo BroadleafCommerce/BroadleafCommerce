@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -38,20 +38,33 @@ public class ImportSQLConfig {
 
     @Bean
     public AutoImportSql blLocaleData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_locale.sql", BASIC_DATA_SPECIAL);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/load_locale.sql",
+                BASIC_DATA_SPECIAL
+        );
     }
 
     @Bean
     @Conditional(DemoCondition.class)
     public AutoImportSql blCMSBasicData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_content_structure.sql," +
-                "config/bc/sql/demo/load_content_data.sql,config/bc/sql/demo/load_content_structure_i18n.sql," +
-                "config/bc/sql/demo/load_content_data_i18n.sql", BASIC_DATA_SPECIAL);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/load_content_structure.sql," +
+                        "config/bc/sql/demo/load_content_data.sql,config/bc/sql/demo/load_content_structure_i18n.sql," +
+                        "config/bc/sql/demo/load_content_data_i18n.sql",
+                BASIC_DATA_SPECIAL
+        );
     }
 
     @Bean
     @Conditional({MTCondition.class, DemoCondition.class})
     public AutoImportSql blCMSLateData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/fix_static_asset_data.sql", AutoImportStage.PRIMARY_LATE);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/fix_static_asset_data.sql",
+                AutoImportStage.PRIMARY_LATE
+        );
     }
+
 }

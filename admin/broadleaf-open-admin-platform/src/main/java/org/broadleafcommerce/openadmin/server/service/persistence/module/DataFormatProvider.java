@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,24 +21,23 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 /**
- * 
  * @author Jeff Fischer
  * @see {@link BasicPersistenceModule}
  */
 public interface DataFormatProvider {
 
-    public SimpleDateFormat getSimpleDateFormatter();
+    SimpleDateFormat getSimpleDateFormatter();
 
-    public DecimalFormat getDecimalFormatter();
-    
+    DecimalFormat getDecimalFormatter();
+
     /**
      * Formats a aw value from an entity into its string representation used by the system. For instance, this might use
      * the {@link #getDecimalFormatter()} to ensure that BigDecimals only show 2 decimal places or dates are formatted
      * a certain way.
-     * 
+     *
      * @param value
      * @return
      */
-    public String formatValue(Object value);
+    String formatValue(Object value);
 
 }

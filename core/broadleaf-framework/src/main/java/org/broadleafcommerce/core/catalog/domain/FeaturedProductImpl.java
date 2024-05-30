@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,6 +30,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.CascadeType;
@@ -52,17 +53,14 @@ import jakarta.persistence.Table;
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCategoryRelationships")
 @DirectCopyTransform({
-        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX,
-                skipOverlaps = true),
+        @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG)
 })
 public class FeaturedProductImpl implements FeaturedProduct {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The id.
-     */
     @Id
     @GeneratedValue(generator = "FeaturedProductId")
     @GenericGenerator(
@@ -82,8 +80,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     protected BigDecimal sequence;
 
     @Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName = "FeaturedProductImpl_Featured_Product_Promotion_Message",
-            largeEntry = true)
+    @AdminPresentation(friendlyName = "FeaturedProductImpl_Featured_Product_Promotion_Message", largeEntry = true)
     protected String promotionMessage;
 
     @ManyToOne(targetEntity = CategoryImpl.class, cascade = CascadeType.REFRESH)
@@ -105,13 +102,13 @@ public class FeaturedProductImpl implements FeaturedProduct {
     }
 
     @Override
-    public void setSequence(BigDecimal sequence) {
-        this.sequence = sequence;
+    public BigDecimal getSequence() {
+        return this.sequence;
     }
 
     @Override
-    public BigDecimal getSequence() {
-        return this.sequence;
+    public void setSequence(BigDecimal sequence) {
+        this.sequence = sequence;
     }
 
     @Override
@@ -185,7 +182,8 @@ public class FeaturedProductImpl implements FeaturedProduct {
 
     @Override
     public <G extends FeaturedProduct> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -201,4 +199,5 @@ public class FeaturedProductImpl implements FeaturedProduct {
         cloned.setSequence(sequence);
         return createResponse;
     }
+
 }

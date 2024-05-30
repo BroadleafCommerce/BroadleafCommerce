@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,13 +22,12 @@ package org.broadleafcommerce.common.copy;
  */
 public class CreateResponse<G> {
 
+    private G clone;
+    private boolean alreadyPopulated = false;
     public CreateResponse(G clone, boolean alreadyPopulated) {
         this.clone = clone;
         this.alreadyPopulated = alreadyPopulated;
     }
-
-    private G clone;
-    private boolean alreadyPopulated = false;
 
     public G getClone() {
         return clone;
@@ -37,4 +36,5 @@ public class CreateResponse<G> {
     public boolean isAlreadyPopulated() {
         return alreadyPopulated;
     }
+
 }

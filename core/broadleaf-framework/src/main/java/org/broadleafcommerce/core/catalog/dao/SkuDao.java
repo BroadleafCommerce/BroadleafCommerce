@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -39,6 +39,7 @@ public interface SkuDao {
 
     /**
      * Queries for a {@code Sku} instance by its Universal Product Code (UPC).
+     *
      * @param upc
      * @return
      */
@@ -59,7 +60,7 @@ public interface SkuDao {
      * @return the saved state of the passed in sku
      */
     Sku save(Sku sku);
-    
+
     SkuFee saveSkuFee(SkuFee fee);
 
     /**
@@ -81,7 +82,7 @@ public interface SkuDao {
      * Retrieve all {@code Sku} instances from the datastore
      *
      * @param offset the starting offset of the query
-     * @param limit the maximum number of Skus to gather
+     * @param limit  the maximum number of Skus to gather
      * @return the list of all skus in the given range
      */
     List<Sku> readAllSkus(int offset, int limit);
@@ -100,7 +101,7 @@ public interface SkuDao {
      *
      * @param sku the sku to remove
      */
-    void delete(Sku sku);    
+    void delete(Sku sku);
 
     /**
      * Create a new {@code Sku} instance. The system will use the configuration in
@@ -108,15 +109,18 @@ public interface SkuDao {
      * to determine which polymorphic version of {@code Sku} to instantiate. To make Broadleaf instantiate your
      * extension of {@code Sku} by default, include an entity configuration bean in your application context xml similar to:
      * <p>
+     *
+     * </pre>
      * {@code
-     *     <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
-     *          <property name="entityContexts">
-     *              <list>
-     *                  <value>classpath:myCompany-applicationContext-entity.xml</value>
-     *              </list>
-     *          </property>
-     *      </bean>
+     * <bean id="blEntityConfiguration" class="org.broadleafcommerce.common.persistence.EntityConfiguration">
+     * <property name="entityContexts">
+     * <list>
+     * <value>classpath:myCompany-applicationContext-entity.xml</value>
+     * </list>
+     * </property>
+     * </bean>
      * }
+     * </pre>
      * </p>
      * Declare the same key for your desired entity in your entity xml that is used in the Broadleaf entity xml, but change the value to the fully
      * qualified classname of your entity extension.
@@ -124,21 +128,21 @@ public interface SkuDao {
      * @return a {@code Sku} instance based on the Broadleaf entity configuration.
      */
     Sku create();
-    
+
     /**
      * Returns the number of Skus that are currently active.
-     * 
+     *
      * @return the number of currently active Skus
      */
     Long readCountAllActiveSkus();
 
     /**
      * Reads all Skus from the database that are currently active. This method utilizes database paging.
-     * 
+     * <p>
      * It will fetch results in pages. For example, if page = 3 and pageSize = 25, this method would
      * return rows 75-99 from the database.
-     * 
-     * @param page - the number of the page to get (0 indexed)
+     *
+     * @param page     - the number of the page to get (0 indexed)
      * @param pageSize - the number of results per page
      * @return a list of active Skus for the given page
      */
@@ -152,7 +156,7 @@ public interface SkuDao {
      * of the table and trim the offset.
      *
      * @param pageSize the number of results per page
-     * @param lastId the last id from the previous page - can be null if this is the first page request
+     * @param lastId   the last id from the previous page - can be null if this is the first page request
      * @return a list of active skus for the given page
      */
     List<Sku> readAllActiveSkus(Integer pageSize, Long lastId);
@@ -177,10 +181,10 @@ public interface SkuDao {
 
     /**
      * Look up a sku that matches the given URI
-     * 
+     *
      * @param uri - the relative URL to look up the sku by
      * @return List of skus that match the passed in URI.
-     * 
      */
     List<Sku> findSkuByURI(String uri);
+
 }

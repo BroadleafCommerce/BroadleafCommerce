@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,10 +30,10 @@ import java.util.regex.Pattern;
  * for particular Spring versions and replaces them with XSDs without a version reference. This allows the final XSD
  * reference to refer to the latest version of Spring, and reduces the need for modules to be updated with every Spring
  * update.
- * 
+ *
  * <p>
  * This will also prevents multiple XSD references that cause parse exceptions when the final XML file is presented to Spring
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 public class SchemaLocationNodeValueMerge extends SpaceDelimitedNodeValueMerge {
@@ -42,8 +42,8 @@ public class SchemaLocationNodeValueMerge extends SpaceDelimitedNodeValueMerge {
     protected Set<String> getMergedNodeValues(Node node1, Node node2) {
         String node1Values = getSanitizedValue(node1.getNodeValue());
         String node2Values = getSanitizedValue(node2.getNodeValue());
-        
-        Set<String> finalItems = new LinkedHashSet<String>();
+
+        Set<String> finalItems = new LinkedHashSet<>();
         for (String node1Value : node1Values.split(getRegEx())) {
             finalItems.add(node1Value.trim());
         }
@@ -55,15 +55,15 @@ public class SchemaLocationNodeValueMerge extends SpaceDelimitedNodeValueMerge {
         }
         return finalItems;
     }
-    
+
     /**
      * <p>
      * Sanitizes the given attribute value by stripping out the version number for the Spring XSDs.
-     * 
+     *
      * <p>
      * For example, given http://www.springframework.org/schema/beans/<b>spring-beans-4.1.xsd</b> this will return
      * http://www.springframework.org/schema/beans/<b>spring-beans.xsd</b>
-     * 
+     *
      * @param attributeValue the value of an xsi:schemaLocation attribute
      * @return the given string with all of the Spring XSD version numbers stripped out.
      */
@@ -77,5 +77,5 @@ public class SchemaLocationNodeValueMerge extends SpaceDelimitedNodeValueMerge {
         }
         return attributeValue;
     }
-    
+
 }

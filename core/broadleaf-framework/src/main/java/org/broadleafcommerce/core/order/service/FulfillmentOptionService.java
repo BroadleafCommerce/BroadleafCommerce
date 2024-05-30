@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,17 +23,16 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import java.util.List;
 
 /**
- * 
  * @author Phillip Verheyden
  */
 public interface FulfillmentOptionService {
 
-    public FulfillmentOption readFulfillmentOptionById(Long fulfillmentOptionId);
+    FulfillmentOption readFulfillmentOptionById(Long fulfillmentOptionId);
 
-    public FulfillmentOption save(FulfillmentOption option);
+    FulfillmentOption save(FulfillmentOption option);
 
-    public List<FulfillmentOption> readAllFulfillmentOptions();
+    List<FulfillmentOption> readAllFulfillmentOptions();
 
-    public List<FulfillmentOption> readAllFulfillmentOptionsByFulfillmentType(FulfillmentType type);
+    List<FulfillmentOption> readAllFulfillmentOptionsByFulfillmentType(FulfillmentType type);
 
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -29,9 +29,8 @@ import java.util.HashMap;
 /**
  * Default implementation of the {@link DynamicSkuPricingService} which simply ignores the considerations hashmap in all
  * method implementations
- * 
+ *
  * @author jfischer
- * 
  */
 @Service("blDynamicSkuPricingService")
 public class DefaultDynamicSkuPricingServiceImpl implements DynamicSkuPricingService {
@@ -40,7 +39,7 @@ public class DefaultDynamicSkuPricingServiceImpl implements DynamicSkuPricingSer
     @SuppressWarnings("rawtypes")
     public DynamicSkuPrices getSkuPrices(SkuPriceWrapper skuWrapper, HashMap skuPricingConsiderations) {
         Sku sku = skuWrapper.getTargetSku();
-        
+
         DynamicSkuPrices prices = new DynamicSkuPrices();
         prices.setRetailPrice(sku.getRetailPrice());
         prices.setSalePrice(sku.getSalePrice());
@@ -50,8 +49,7 @@ public class DefaultDynamicSkuPricingServiceImpl implements DynamicSkuPricingSer
 
     @Override
     @SuppressWarnings("rawtypes")
-    public DynamicSkuPrices getSkuBundleItemPrice(SkuBundleItem skuBundleItem,
-            HashMap skuPricingConsiderations) {
+    public DynamicSkuPrices getSkuBundleItemPrice(SkuBundleItem skuBundleItem, HashMap skuPricingConsiderations) {
         DynamicSkuPrices prices = new DynamicSkuPrices();
         prices.setSalePrice(skuBundleItem.getSalePrice());
         return prices;
@@ -59,8 +57,11 @@ public class DefaultDynamicSkuPricingServiceImpl implements DynamicSkuPricingSer
 
     @Override
     @SuppressWarnings("rawtypes")
-    public DynamicSkuPrices getPriceAdjustment(ProductOptionValueImpl productOptionValueImpl, Money priceAdjustment,
-            HashMap skuPricingConsiderationContext) {
+    public DynamicSkuPrices getPriceAdjustment(
+            ProductOptionValueImpl productOptionValueImpl,
+            Money priceAdjustment,
+            HashMap skuPricingConsiderationContext
+    ) {
         DynamicSkuPrices prices = new DynamicSkuPrices();
 
         prices.setPriceAdjustment(priceAdjustment);

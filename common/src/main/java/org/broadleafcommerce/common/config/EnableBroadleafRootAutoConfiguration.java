@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,8 +46,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Import({
-    BroadleafRootAutoConfiguration.class,
-    BroadleafRootAutoConfigurationOverrides.class
+        BroadleafRootAutoConfiguration.class,
+        BroadleafRootAutoConfigurationOverrides.class
 })
 public @interface EnableBroadleafRootAutoConfiguration {
 
@@ -62,8 +62,11 @@ public @interface EnableBroadleafRootAutoConfiguration {
             "classpath*:/blc-config/bl-*-applicationContext.xml",
             "classpath*:/blc-config/late/bl-*-applicationContext.xml"
     }, reader = FrameworkXmlBeanDefinitionReader.class)
-    class BroadleafRootAutoConfiguration {}
-    
+    class BroadleafRootAutoConfiguration {
+    }
+
     @ImportResource("classpath:/override-contexts/autoconfiguration-overrides.xml")
-    class BroadleafRootAutoConfigurationOverrides { }
+    class BroadleafRootAutoConfigurationOverrides {
+    }
+
 }

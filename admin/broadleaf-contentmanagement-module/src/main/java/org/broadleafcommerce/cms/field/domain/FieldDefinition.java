@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,88 +28,88 @@ import java.io.Serializable;
  */
 public interface FieldDefinition extends Serializable, MultiTenantCloneable<FieldDefinition> {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public SupportedFieldType getFieldType();
+    SupportedFieldType getFieldType();
 
-    String getFieldTypeVal();
-
-    public void setFieldType(SupportedFieldType fieldType);
+    void setFieldType(SupportedFieldType fieldType);
 
     void setFieldType(String fieldType);
 
-    public String getSecurityLevel();
+    String getFieldTypeVal();
 
-    public void setSecurityLevel(String securityLevel);
+    String getSecurityLevel();
 
-    public Boolean getHiddenFlag();
+    void setSecurityLevel(String securityLevel);
 
-    public void setHiddenFlag(Boolean hiddenFlag);
+    Boolean getHiddenFlag();
 
-    public String getValidationRegEx();
+    void setHiddenFlag(Boolean hiddenFlag);
 
-    public void setValidationRegEx(String validationRegEx);
+    String getValidationRegEx();
 
-    public Integer getMaxLength();
+    void setValidationRegEx(String validationRegEx);
 
-    public void setMaxLength(Integer maxLength);
+    Integer getMaxLength();
 
-    public String getColumnWidth();
+    void setMaxLength(Integer maxLength);
 
-    public void setColumnWidth(String columnWidth);
+    String getColumnWidth();
 
-    public Boolean getTextAreaFlag();
+    void setColumnWidth(String columnWidth);
 
-    public void setTextAreaFlag(Boolean textAreaFlag);
-    
-    public Boolean getRequiredFlag();
+    Boolean getTextAreaFlag();
 
-    public void setRequiredFlag(Boolean requiredFlag);
+    void setTextAreaFlag(Boolean textAreaFlag);
 
-    public DataDrivenEnumeration getDataDrivenEnumeration();
-    
-    public void setDataDrivenEnumeration(DataDrivenEnumeration dataDrivenEnumeration);
+    Boolean getRequiredFlag();
 
-    public Boolean getAllowMultiples();
+    void setRequiredFlag(Boolean requiredFlag);
 
-    public void setAllowMultiples(Boolean allowMultiples);
+    DataDrivenEnumeration getDataDrivenEnumeration();
 
-    public String getFriendlyName();
+    void setDataDrivenEnumeration(DataDrivenEnumeration dataDrivenEnumeration);
 
-    public void setFriendlyName(String friendlyName);
+    Boolean getAllowMultiples();
 
-    public String getValidationErrorMesageKey();
+    void setAllowMultiples(Boolean allowMultiples);
 
-    public void setValidationErrorMesageKey(String validationErrorMesageKey);
+    String getFriendlyName();
 
-    public FieldGroup getFieldGroup();
+    void setFriendlyName(String friendlyName);
 
-    public void setFieldGroup(FieldGroup fieldGroup);
+    String getValidationErrorMesageKey();
 
-    public int getFieldOrder();
+    void setValidationErrorMesageKey(String validationErrorMesageKey);
 
-    public void setFieldOrder(int fieldOrder);
+    FieldGroup getFieldGroup();
 
-    public String getTooltip();
+    void setFieldGroup(FieldGroup fieldGroup);
 
-    public void setTooltip(String tooltip);
+    int getFieldOrder();
 
-    public String getHelpText();
+    void setFieldOrder(int fieldOrder);
 
-    public void setHelpText(String helpText);
+    String getTooltip();
 
-    public String getHint();
+    void setTooltip(String tooltip);
 
-    public void setHint(String hint);
+    String getHelpText();
 
-    public String getAdditionalForeignKeyClass();
+    void setHelpText(String helpText);
 
-    public void setAdditionalForeignKeyClass(String className);
+    String getHint();
+
+    void setHint(String hint);
+
+    String getAdditionalForeignKeyClass();
+
+    void setAdditionalForeignKeyClass(String className);
 
 }

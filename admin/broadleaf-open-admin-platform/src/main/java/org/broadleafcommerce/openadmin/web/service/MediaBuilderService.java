@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,7 +31,7 @@ public interface MediaBuilderService {
      * @param json the {@link String} to be converted to {@link Media}
      * @param type the {@link Class} that the {@link Media} should be
      */
-    public Media convertJsonToMedia(String json, Class<?> type);
+    Media convertJsonToMedia(String json, Class<?> type);
 
     /**
      * Instantiates any {@link org.broadleafcommerce.common.media.domain.Media} assignable field on the passed in
@@ -40,5 +40,5 @@ public interface MediaBuilderService {
      *
      * @param media
      */
-    public void instantiateMediaFields(Media media);
+    void instantiateMediaFields(Media media);
 }

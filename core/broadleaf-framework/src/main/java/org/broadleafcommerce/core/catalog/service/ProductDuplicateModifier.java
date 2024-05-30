@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -74,8 +74,13 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
     }
 
     @Override
-    public void modifyInitialDuplicateState(final Product original, final Product copy, final MultiTenantCopyContext context) throws CloneNotSupportedException {
-        if(context.getCopyHints().get(PROPAGATION)!=null && "TRUE".equalsIgnoreCase(context.getCopyHints().get(PROPAGATION))){
+    public void modifyInitialDuplicateState(
+            final Product original,
+            final Product copy,
+            final MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
+        if (context.getCopyHints().get(PROPAGATION) != null
+                && "TRUE".equalsIgnoreCase(context.getCopyHints().get(PROPAGATION))) {
             for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
                 final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
                 clone.setProduct(copy);
@@ -83,7 +88,10 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
                 Long categoryId = clone.getCategory().getId();
                 extensionManager.getClonesByCatalogs("BLC_CATEGORY", categoryId, context, resultHolder);
                 Long aLong = resultHolder.getResult().get(categoryId).get(context.getToCatalog().getId());
-                Category category = (Category) genericEntityService.readGenericEntity(genericEntityService.getCeilingImplClass(CategoryImpl.class.getName()), aLong);
+                Category category = (Category) genericEntityService.readGenericEntity(
+                        genericEntityService.getCeilingImplClass(CategoryImpl.class.getName()),
+                        aLong
+                );
                 clone.setCategory(category);
                 copy.getAllParentCategoryXrefs().add(clone);
             }
@@ -94,7 +102,10 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
                 Long optionId = clone.getProductOption().getId();
                 extensionManager.getClonesByCatalogs("BLC_PRODUCT_OPTION", optionId, context, resultHolder);
                 Long aLong = resultHolder.getResult().get(optionId).get(context.getToCatalog().getId());
-                ProductOption productOption = (ProductOption) genericEntityService.readGenericEntity(genericEntityService.getCeilingImplClass(ProductOptionImpl.class.getName()), aLong);
+                ProductOption productOption = (ProductOption) genericEntityService.readGenericEntity(
+                        genericEntityService.getCeilingImplClass(ProductOptionImpl.class.getName()),
+                        aLong
+                );
                 clone.setProductOption(productOption);
                 clone.setProduct(copy);
                 productOptionXrefs.add(clone);
@@ -107,7 +118,8 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
                 copy.setProductOptionXrefs(new ArrayList<>());
             } else {
                 for (CategoryProductXref allParentCategoryXref : original.getAllParentCategoryXrefs()) {
-                    final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context).getClone();
+                    final CategoryProductXref clone = allParentCategoryXref.createOrRetrieveCopyInstance(context)
+                            .getClone();
                     clone.setProduct(copy);
                     copy.getAllParentCategoryXrefs().add(clone);
                 }
@@ -125,13 +137,12 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
         copy.setActiveEndDate(currentDate);
 
         setNameAndUrl(copy, context);
-
     }
 
     protected void setNameAndUrl(Product copy, MultiTenantCopyContext context) {
         String suffix = getCopySuffix();
         String name = copy.getName();
-        if(!context.getCopyHints().containsKey("PROPAGATION")) {
+        if (!context.getCopyHints().containsKey("PROPAGATION")) {
             int index = 0;
             if (name.contains(suffix)) {
                 index = name.indexOf(COPY_NUMBER_SEPARATOR);
@@ -151,10 +162,14 @@ public class ProductDuplicateModifier extends AbstractEntityDuplicationHelper<Pr
             }
         }
         copy.setName(name);
-        String url = "/" + copy.getName().replace("-", "").replace(" ", "-").replace("#","_").toLowerCase();
-        ExtensionResultStatusType extensionResultStatusType = productUrlDuplicatorExtensionManager.getProxy().modifyUrl(url, copy, new ExtensionResultHolder<>());
-        if(extensionResultStatusType == ExtensionResultStatusType.NOT_HANDLED) {
+        String url = "/" + copy.getName().replace("-", "").replace(" ", "-")
+                .replace("#", "_").toLowerCase();
+        ExtensionResultStatusType extensionResultStatusType = productUrlDuplicatorExtensionManager.getProxy().modifyUrl(
+                url, copy, new ExtensionResultHolder<>()
+        );
+        if (extensionResultStatusType == ExtensionResultStatusType.NOT_HANDLED) {
             copy.setUrl(url);
         }
     }
+
 }

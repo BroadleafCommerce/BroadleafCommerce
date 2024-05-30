@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -24,20 +24,20 @@ import java.util.List;
 
 public interface OfferCodeDao {
 
-    public OfferCode readOfferCodeById(Long offerCode);
+    OfferCode readOfferCodeById(Long offerCode);
 
-    public List<OfferCode> readOfferCodesByIds(Collection<Long> offerCodeIds);
+    List<OfferCode> readOfferCodesByIds(Collection<Long> offerCodeIds);
 
-    public OfferCode readOfferCodeByCode(String code);
+    OfferCode readOfferCodeByCode(String code);
 
-    public OfferCode save(OfferCode offerCode);
+    OfferCode save(OfferCode offerCode);
 
-    public void delete(OfferCode offerCodeId);
+    void delete(OfferCode offerCodeId);
 
-    public OfferCode create();
+    OfferCode create();
 
-    public Boolean offerCodeIsUsed(OfferCode code);
+    Boolean offerCodeIsUsed(OfferCode code);
 
-    public List<OfferCode> readAllOfferCodesByCode(String code);
+    List<OfferCode> readAllOfferCodesByCode(String code);
 
 }

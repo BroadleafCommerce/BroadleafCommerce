@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,9 +31,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 
 /**
  * Adds a new 'passwordConfirm' field to the metadata as well as ensures that the field type for the password field is
@@ -51,12 +49,18 @@ public class PasswordFieldMetadataProvider extends AbstractFieldMetadataProvider
     }
 
     @Override
-    public MetadataProviderResponse addMetadataFromFieldType(AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest, Map<String, FieldMetadata> metadata) {
-        if (addMetadataFromFieldTypeRequest.getPresentationAttribute() instanceof BasicFieldMetadata &&
-                SupportedFieldType.PASSWORD.equals(((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute()).getExplicitFieldType())) {
+    public MetadataProviderResponse addMetadataFromFieldType(
+            AddMetadataFromFieldTypeRequest addMetadataFromFieldTypeRequest,
+            Map<String, FieldMetadata> metadata
+    ) {
+        if (addMetadataFromFieldTypeRequest.getPresentationAttribute() instanceof BasicFieldMetadata
+                && SupportedFieldType.PASSWORD.equals(((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute())
+                .getExplicitFieldType())) {
             //build the metadata for the password field
-            addMetadataFromFieldTypeRequest.getDynamicEntityDao().getDefaultFieldMetadataProvider().addMetadataFromFieldType(addMetadataFromFieldTypeRequest, metadata);
-            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute()).setFieldType(SupportedFieldType.PASSWORD);
+            addMetadataFromFieldTypeRequest.getDynamicEntityDao().getDefaultFieldMetadataProvider()
+                    .addMetadataFromFieldType(addMetadataFromFieldTypeRequest, metadata);
+            ((BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute())
+                    .setFieldType(SupportedFieldType.PASSWORD);
 
             BasicFieldMetadata originalMd = (BasicFieldMetadata) addMetadataFromFieldTypeRequest.getPresentationAttribute();
 
@@ -65,7 +69,7 @@ public class PasswordFieldMetadataProvider extends AbstractFieldMetadataProvider
             confirmMd.setFieldName("passwordConfirm");
             confirmMd.setFriendlyName("AdminUserImpl_Admin_Password_Confirm");
             confirmMd.setExplicitFieldType(SupportedFieldType.PASSWORD_CONFIRM);
-            confirmMd.setValidationConfigurations(new HashMap<String, List<Map<String,String>>>());
+            confirmMd.setValidationConfigurations(new HashMap<>());
             confirmMd.setOrder(originalMd.getOrder() + 1);
             metadata.put("passwordConfirm", confirmMd);
             return MetadataProviderResponse.HANDLED;

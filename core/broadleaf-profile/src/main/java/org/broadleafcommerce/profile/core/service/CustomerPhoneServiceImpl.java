@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -30,20 +30,23 @@ import jakarta.annotation.Resource;
 @Service("blCustomerPhoneService")
 public class CustomerPhoneServiceImpl implements CustomerPhoneService {
 
-    @Resource(name="blCustomerPhoneDao")
+    @Resource(name = "blCustomerPhoneDao")
     protected CustomerPhoneDao customerPhoneDao;
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public CustomerPhone saveCustomerPhone(CustomerPhone customerPhone) {
-        List<CustomerPhone> activeCustomerPhones = readActiveCustomerPhonesByCustomerId(customerPhone.getCustomer().getId());
+        List<CustomerPhone> activeCustomerPhones = readActiveCustomerPhonesByCustomerId(
+                customerPhone.getCustomer().getId()
+        );
         if (activeCustomerPhones != null && activeCustomerPhones.isEmpty()) {
             customerPhone.getPhone().setDefault(true);
         } else {
             // if parameter customerPhone is set as default, unset all other default phones
             if (customerPhone.getPhone().isDefault()) {
                 for (CustomerPhone activeCustomerPhone : activeCustomerPhones) {
-                    if (!activeCustomerPhone.getId().equals(customerPhone.getId()) && activeCustomerPhone.getPhone().isDefault()) {
+                    if (!activeCustomerPhone.getId().equals(customerPhone.getId())
+                            && activeCustomerPhone.getPhone().isDefault()) {
                         activeCustomerPhone.getPhone().setDefault(false);
                         customerPhoneDao.save(activeCustomerPhone);
                     }
@@ -71,7 +74,7 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
-    public void deleteCustomerPhoneById(Long customerPhoneId){
+    public void deleteCustomerPhoneById(Long customerPhoneId) {
         customerPhoneDao.deleteCustomerPhoneById(customerPhoneId);
     }
 

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -31,16 +31,16 @@ import java.util.Map;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * Handles admin operations for the {@link Order} entity. 
- * 
+ * Handles admin operations for the {@link Order} entity.
+ *
  * @author Andre Azzolini (apazzolini)
  */
 @Controller("blAdminOrderController")
 @RequestMapping("/" + AdminOrderController.SECTION_KEY)
 public class AdminOrderController extends AdminBasicEntityController {
-    
+
     public static final String SECTION_KEY = "order";
-    
+
     @Override
     protected String getSectionKey(Map<String, String> pathVars) {
         //allow external links to work for ToOne items
@@ -49,13 +49,21 @@ public class AdminOrderController extends AdminBasicEntityController {
         }
         return SECTION_KEY;
     }
-    
+
     @Override
-    protected String showViewUpdateCollection(HttpServletRequest request, Model model, Map<String, String> pathVars,
-            String id, String collectionField, String collectionItemId, String modalHeaderType) throws ServiceException {
-        String returnPath = super.showViewUpdateCollection(request, model, pathVars, id, collectionField, collectionItemId,
-                modalHeaderType);
-        
+    protected String showViewUpdateCollection(
+            HttpServletRequest request,
+            Model model,
+            Map<String, String> pathVars,
+            String id,
+            String collectionField,
+            String collectionItemId,
+            String modalHeaderType
+    ) throws ServiceException {
+        String returnPath = super.showViewUpdateCollection(
+                request, model, pathVars, id, collectionField, collectionItemId, modalHeaderType
+        );
+
         if ("orderItems".equals(collectionField)) {
             EntityForm ef = (EntityForm) model.asMap().get("entityForm");
 
@@ -69,7 +77,7 @@ public class AdminOrderController extends AdminBasicEntityController {
                 ef.removeListGrid("orderItemPriceDetails");
             }
         }
-        
+
         return returnPath;
     }
 

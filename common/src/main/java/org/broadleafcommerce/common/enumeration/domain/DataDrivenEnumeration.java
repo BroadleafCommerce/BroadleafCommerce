@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -23,41 +23,43 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface DataDrivenEnumeration extends Serializable, MultiTenantCloneable<DataDrivenEnumeration> {
-    
-    public Long getId();
 
-    public void setId(Long id);
+    Long getId();
 
-    public String getKey();
+    void setId(Long id);
 
-    public void setKey(String key);
+    String getKey();
 
-    public Boolean getModifiable();
+    void setKey(String key);
 
-    public void setModifiable(Boolean modifiable);
+    Boolean getModifiable();
+
+    void setModifiable(Boolean modifiable);
 
     /**
      * Gets list of values associated with this enumeration with the hidden flag set to false or null.
      */
-    public List<DataDrivenEnumerationValue> getEnumValues();
+    List<DataDrivenEnumerationValue> getEnumValues();
 
     /**
-     * Sets list of values associated with this enumeration. 
+     * Sets list of values associated with this enumeration.
      */
-    public void setEnumValues(List<DataDrivenEnumerationValue> enumValues);
+    void setEnumValues(List<DataDrivenEnumerationValue> enumValues);
 
     /**
      * Incorrectly named, kept purely for API consistency
+     *
      * @deprecated use {@link #getEnumValues()} instead
      */
     @Deprecated
-    public List<DataDrivenEnumerationValue> getOrderItems();
+    List<DataDrivenEnumerationValue> getOrderItems();
 
     /**
      * Incorrectly named, kept purely for API consistency
-     * @deprecated use {@link #setEnumValues()} instead
+     *
+     * @deprecated use {@link #getEnumValues()} instead
      */
     @Deprecated
-    public void setOrderItems(List<DataDrivenEnumerationValue> orderItems);
+    void setOrderItems(List<DataDrivenEnumerationValue> orderItems);
 
 }

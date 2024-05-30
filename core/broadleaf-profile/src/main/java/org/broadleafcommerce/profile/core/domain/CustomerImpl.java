@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.profile.core.domain;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -49,6 +48,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,9 +97,9 @@ import jakarta.persistence.Transient;
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.ARCHIVE_ONLY)
 })
-public class CustomerImpl
-        implements Customer, AdminMainEntity, Previewable, CustomerAdminPresentation {
+public class CustomerImpl implements Customer, AdminMainEntity, Previewable, CustomerAdminPresentation {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -430,16 +430,6 @@ public class CustomerImpl
     }
 
     @Override
-    public boolean isCookied() {
-        return cookied;
-    }
-
-    @Override
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
-
-    @Override
     public void setAnonymous(boolean anonymous) {
         this.anonymous = anonymous;
         if (anonymous) {
@@ -449,12 +439,22 @@ public class CustomerImpl
     }
 
     @Override
+    public boolean isCookied() {
+        return cookied;
+    }
+
+    @Override
     public void setCookied(boolean cookied) {
         this.cookied = cookied;
         if (cookied) {
             anonymous = false;
             loggedIn = false;
         }
+    }
+
+    @Override
+    public boolean isLoggedIn() {
+        return loggedIn;
     }
 
     @Override
@@ -595,7 +595,8 @@ public class CustomerImpl
 
     @Override
     public <G extends Customer> CreateResponse<G> createOrRetrieveCopyInstance(
-            MultiTenantCopyContext context) throws CloneNotSupportedException {
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;

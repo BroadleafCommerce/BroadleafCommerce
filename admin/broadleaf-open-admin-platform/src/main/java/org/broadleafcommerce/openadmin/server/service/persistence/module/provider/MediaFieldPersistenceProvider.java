@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -64,11 +64,11 @@ import jakarta.persistence.OneToMany;
 @Component("blMediaFieldPersistenceProvider")
 @Scope("prototype")
 public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapter {
-    
-    @Resource(name="blEntityConfiguration")
+
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Resource(name="blSandBoxHelper")
+    @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
 
     @Resource(name = "blMediaFieldPersistenceProviderExtensionManager")
@@ -92,7 +92,10 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         }
         String prop = populateValueRequest.getProperty().getName();
         if (prop.contains(FieldManager.MAPFIELDSEPARATOR)) {
-            Field field = populateValueRequest.getFieldManager().getField(instance.getClass(), prop.substring(0, prop.indexOf(FieldManager.MAPFIELDSEPARATOR)));
+            Field field = populateValueRequest.getFieldManager().getField(
+                    instance.getClass(),
+                    prop.substring(0, prop.indexOf(FieldManager.MAPFIELDSEPARATOR))
+            );
             if (field.getAnnotation(OneToMany.class) == null) {
                 throw new UnsupportedOperationException("MediaFieldPersistenceProvider is currently only compatible with map fields when modelled using @OneToMany");
             }
@@ -102,10 +105,12 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         try {
             setNonDisplayableValues(populateValueRequest);
             Class<?> valueType = getStartingValueType(populateValueRequest);
-        
+
             if (Media.class.isAssignableFrom(valueType)) {
-                Media newMedia = mediaBuilderService.convertJsonToMedia(populateValueRequest
-                        .getProperty().getUnHtmlEncodedValue(), valueType);
+                Media newMedia = mediaBuilderService.convertJsonToMedia(
+                        populateValueRequest.getProperty().getUnHtmlEncodedValue(),
+                        valueType
+                );
                 boolean persist = false;
                 boolean noPrimary = false;
                 boolean update = false;
@@ -116,9 +121,11 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                     {
                         if (extensionManager != null) {
                             ExtensionResultHolder<Tuple<Media, Boolean>> result = new ExtensionResultHolder<>();
-                            ExtensionResultStatusType statusType = extensionManager.getProxy().retrieveMedia(instance, populateValueRequest, result);
+                            ExtensionResultStatusType statusType = extensionManager.getProxy().retrieveMedia(
+                                    instance, populateValueRequest, result
+                            );
                             if (ExtensionResultStatusType.NOT_HANDLED != statusType) {
-                                Tuple<Media,Boolean> tuple = result.getResult();
+                                Tuple<Media, Boolean> tuple = result.getResult();
                                 media = tuple.getFirst();
                                 cleared = tuple.getSecond();
                                 break checkExtension;
@@ -134,8 +141,11 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
                         update = false;
                         if (!cleared && media != null) {
                             // remove entry in sku to media map
-                            populateValueRequest.getFieldManager().setFieldValue(instance,
-                                    populateValueRequest.getProperty().getName(), null);
+                            populateValueRequest.getFieldManager().setFieldValue(
+                                    instance,
+                                    populateValueRequest.getProperty().getName(),
+                                    null
+                            );
                             populateValueRequest.getPersistenceManager().getDynamicEntityDao().remove(media);
                         }
                     } else if (media == null) {
@@ -144,12 +154,16 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
 
                         Object parent = extractParent(populateValueRequest, instance);
 
-                        populateValueRequest.getFieldManager().setFieldValue(media, populateValueRequest.getMetadata().
-                                getToOneParentProperty(), parent);
-                        populateValueRequest.getFieldManager().setFieldValue(media, populateValueRequest.getMetadata().
-                                getMapKeyValueProperty(), prop.substring(prop.indexOf(
-                                FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
-                                prop.length()));
+                        populateValueRequest.getFieldManager().setFieldValue(
+                                media, populateValueRequest.getMetadata().getToOneParentProperty(), parent
+                        );
+                        populateValueRequest.getFieldManager().setFieldValue(
+                                media,
+                                populateValueRequest.getMetadata().getMapKeyValueProperty(),
+                                prop.substring(prop.indexOf(
+                                                FieldManager.MAPFIELDSEPARATOR) + FieldManager.MAPFIELDSEPARATOR.length(),
+                                        prop.length())
+                        );
                         persist = true;
                     }
                 } catch (FieldNotAvailableException e) {
@@ -192,7 +206,9 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             Object requestedValue = extractValueRequest.getRequestedValue();
             if (!StringUtils.isEmpty(extractValueRequest.getMetadata().getToOneTargetProperty())) {
                 try {
-                    requestedValue = extractValueRequest.getFieldManager().getFieldValue(requestedValue, extractValueRequest.getMetadata().getToOneTargetProperty());
+                    requestedValue = extractValueRequest.getFieldManager().getFieldValue(
+                            requestedValue, extractValueRequest.getMetadata().getToOneTargetProperty()
+                    );
                 } catch (IllegalAccessException | FieldNotAvailableException e) {
                     throw ExceptionHelper.refineException(e);
                 }
@@ -226,21 +242,25 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
     }
 
     @Override
-    public MetadataProviderResponse filterProperties(AddFilterPropertiesRequest addFilterPropertiesRequest, Map<String, FieldMetadata> properties) {
+    public MetadataProviderResponse filterProperties(
+            AddFilterPropertiesRequest addFilterPropertiesRequest,
+            Map<String, FieldMetadata> properties
+    ) {
         // BP:  Basically copied this from RuleFieldPersistenceProvider
-        List<Property> propertyList = new ArrayList<Property>();
+        List<Property> propertyList = new ArrayList<>();
         propertyList.addAll(Arrays.asList(addFilterPropertiesRequest.getEntity().getProperties()));
         Iterator<Property> itr = propertyList.iterator();
-        List<Property> additionalProperties = new ArrayList<Property>();
-        while(itr.hasNext()) {
+        List<Property> additionalProperties = new ArrayList<>();
+        while (itr.hasNext()) {
             Property prop = itr.next();
             if (prop.getName().endsWith("Json")) {
                 for (Map.Entry<String, FieldMetadata> entry : properties.entrySet()) {
                     if (prop.getName().startsWith(entry.getKey())) {
                         BasicFieldMetadata originalFM = (BasicFieldMetadata) entry.getValue();
                         if (originalFM.getFieldType() == SupportedFieldType.MEDIA) {
-                            Property originalProp = addFilterPropertiesRequest.getEntity().findProperty(originalFM
-                                    .getName());
+                            Property originalProp = addFilterPropertiesRequest.getEntity().findProperty(
+                                    originalFM.getName()
+                            );
                             if (originalProp == null) {
                                 originalProp = new Property();
                                 originalProp.setName(originalFM.getName());
@@ -266,8 +286,12 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         return FieldPersistenceProvider.MEDIA;
     }
 
-    protected void updateMedia(PopulateValueRequest populateValueRequest, Media newMedia, boolean persist,
-                               Media media) throws IllegalAccessException, FieldNotAvailableException {
+    protected void updateMedia(
+            PopulateValueRequest populateValueRequest,
+            Media newMedia,
+            boolean persist,
+            Media media
+    ) throws IllegalAccessException, FieldNotAvailableException {
         if (!persist) {
             //pre-merge (can result in a clone for enterprise)
             media = populateValueRequest.getPersistenceManager().getDynamicEntityDao().merge(media);
@@ -306,7 +330,7 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             dirty = !checkEquality(newMedia.getUrl(), media.getUrl());
         }
         if (!dirty && extensionManager != null) {
-            ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<Boolean>();
+            ExtensionResultHolder<Boolean> resultHolder = new ExtensionResultHolder<>();
             extensionManager.getProxy().checkDirtyState(media, newMedia, resultHolder);
             dirty = resultHolder.getResult() != null && resultHolder.getResult();
         }
@@ -327,7 +351,8 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
             }
         }
         if (startingValueType == null) {
-            throw new IllegalAccessException("Unable to determine the valueType for the rule field (" + populateValueRequest.getProperty().getName() + ")");
+            throw new IllegalAccessException("Unable to determine the valueType for the rule field ("
+                    + populateValueRequest.getProperty().getName() + ")");
         } else if (Media.class.equals(startingValueType)) {
             startingValueType = MediaImpl.class;
         }
@@ -374,4 +399,5 @@ public class MediaFieldPersistenceProvider extends FieldPersistenceProviderAdapt
         }
         return parent;
     }
+
 }

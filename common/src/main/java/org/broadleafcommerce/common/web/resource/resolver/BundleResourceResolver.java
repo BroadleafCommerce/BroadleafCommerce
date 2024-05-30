@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,10 +33,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A {@code ResourceResolver} that is used to serve previously bundled files.
- * 
+ *
  * <p>
  * It works with {@link ResourceBundlingService} which is able to create and read bundle files.
- *  
+ *
  * @author Brian Polster
  * @since Broadleaf 4.0
  */
@@ -44,16 +44,17 @@ import jakarta.servlet.http.HttpServletRequest;
 public class BundleResourceResolver extends AbstractResourceResolver implements Ordered {
 
     protected static final Log LOG = LogFactory.getLog(BundleResourceResolver.class);
-
-    private int order = BroadleafResourceResolverOrder.BLC_BUNDLE_RESOURCE_RESOLVER;
-
     @jakarta.annotation.Resource(name = "blResourceBundlingService")
     protected ResourceBundlingService bundlingService;
+    private int order = BroadleafResourceResolverOrder.BLC_BUNDLE_RESOURCE_RESOLVER;
 
     @Override
-    protected Resource resolveResourceInternal(HttpServletRequest request, String requestPath,
-            List<? extends Resource> locations, ResourceResolverChain chain) {
-
+    protected Resource resolveResourceInternal(
+            HttpServletRequest request,
+            String requestPath,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         if (requestPath != null) {
             if (isBundleFile(requestPath)) {
                 Resource bundle = bundlingService.resolveBundleResource(requestPath);
@@ -90,8 +91,11 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
     }
 
     @Override
-    protected String resolveUrlPathInternal(String resourceUrlPath, List<? extends Resource> locations,
-            ResourceResolverChain chain) {
+    protected String resolveUrlPathInternal(
+            String resourceUrlPath,
+            List<? extends Resource> locations,
+            ResourceResolverChain chain
+    ) {
         if (resourceUrlPath != null) {
             if (isBundleFile(resourceUrlPath)) {
                 return resourceUrlPath;
@@ -99,7 +103,6 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
         }
 
         return chain.resolveUrlPath(resourceUrlPath, locations);
-
     }
 
     protected boolean isBundleFile(String requestPath) {
@@ -118,4 +121,5 @@ public class BundleResourceResolver extends AbstractResourceResolver implements 
     public void setOrder(int order) {
         this.order = order;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -40,6 +40,10 @@ public class ChangePasswordValidator implements Validator {
     @Value("${enable.current.password.check:true}")
     protected Boolean enableCurrentPasswordCheck = true;
 
+    public static String getValidPasswordRegex() {
+        return BLCSystemProperty.resolveSystemProperty("password.valid.regex", DEFAULT_VALID_PASSWORD_REGEX);
+    }
+
     public void validate(PasswordChange passwordChange, Errors errors) {
 
         String currentPassword = passwordChange.getCurrentPassword();
@@ -54,7 +58,8 @@ public class ChangePasswordValidator implements Validator {
 
         if (!errors.hasErrors()) {
             //validate current password
-            if (enableCurrentPasswordCheck && !customerService.isPasswordValid(currentPassword, CustomerState.getCustomer().getPassword())) {
+            if (enableCurrentPasswordCheck
+                    && !customerService.isPasswordValid(currentPassword, CustomerState.getCustomer().getPassword())) {
                 errors.rejectValue("currentPassword", "currentPassword.invalid");
             }
             //password and confirm password fields must be equal
@@ -69,16 +74,13 @@ public class ChangePasswordValidator implements Validator {
 
     }
 
-    public static String getValidPasswordRegex() {
-        return BLCSystemProperty.resolveSystemProperty("password.valid.regex", DEFAULT_VALID_PASSWORD_REGEX);
-    }
-
     @Override
     public boolean supports(Class<?> clazz) {
         return false;
     }
 
     @Override
-    public void validate(Object target, Errors errors) {}
+    public void validate(Object target, Errors errors) {
+    }
 
 }

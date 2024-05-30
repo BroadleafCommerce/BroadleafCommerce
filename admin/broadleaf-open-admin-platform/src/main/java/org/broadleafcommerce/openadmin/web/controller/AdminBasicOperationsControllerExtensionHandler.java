@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,10 +28,9 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 
-
 /**
  * Extension handler for methods present in {@link AdminBasicOperationsController}.
- * 
+ *
  * @author ckittrell
  */
 public interface AdminBasicOperationsControllerExtensionHandler extends ExtensionHandler {
@@ -39,7 +38,6 @@ public interface AdminBasicOperationsControllerExtensionHandler extends Extensio
     /**
      * Invoked every time {@link AdminBasicOperationsController#showSelectCollectionItem()} is invoked to allow the
      * ListGrid style to be built in a different style. For example, Tree ListGrids should be used for Categories.
-     * 
      *
      * @param ppr
      * @param cmd
@@ -49,6 +47,9 @@ public interface AdminBasicOperationsControllerExtensionHandler extends Extensio
      * @param requestParams
      * @return ExtensionResultStatusType
      */
-    public ExtensionResultStatusType buildLookupListGrid(PersistencePackageRequest ppr, ClassMetadata cmd, String owningClass,
-            List<SectionCrumb> sectionCrumbs, Model model, MultiValueMap<String, String> requestParams);
+    ExtensionResultStatusType buildLookupListGrid(
+            PersistencePackageRequest ppr, ClassMetadata cmd, String owningClass, List<SectionCrumb> sectionCrumbs,
+            Model model, MultiValueMap<String, String> requestParams
+    );
+
 }

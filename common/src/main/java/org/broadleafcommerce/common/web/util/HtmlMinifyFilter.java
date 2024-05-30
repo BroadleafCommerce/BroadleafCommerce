@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -63,7 +63,11 @@ public class HtmlMinifyFilter extends OncePerRequestFilter implements Ordered {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
         String uri = httpServletRequest.getRequestURI();
         if ((!uri.contains(".") || uri.endsWith(".html")) && !isWidget(uri)) {
             CharResponseWrapper responseWrapper = new CharResponseWrapper(httpServletResponse);
@@ -94,20 +98,20 @@ public class HtmlMinifyFilter extends OncePerRequestFilter implements Ordered {
 
         private final CharArrayWriter output;
 
-        @Override
-        public String toString() {
-            return output.toString();
-        }
-
         public CharResponseWrapper(HttpServletResponse response) {
             super(response);
             output = new CharArrayWriter();
         }
 
         @Override
+        public String toString() {
+            return output.toString();
+        }
+
+        @Override
         public PrintWriter getWriter() {
             return new PrintWriter(output);
         }
-
     }
+
 }

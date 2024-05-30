@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -52,7 +52,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Responsible for setting the necessary attributes on the BroadleafRequestContext
- * 
+ *
  * @author Jon Fleschler (jfleschler)
  */
 @Component("blAdminTypedEntityRequestFilter")
@@ -77,7 +77,11 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
     GenericEntityService genericEntityService;
 
     @Override
-    public void doFilterInternalUnlessIgnored(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
+    public void doFilterInternalUnlessIgnored(
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final FilterChain filterChain
+    ) throws IOException, ServletException {
         if (isRequestForTypedEntity(request, response)) {
             return;
         }
@@ -85,7 +89,10 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
     }
 
     @SuppressWarnings("unchecked")
-    public boolean isRequestForTypedEntity(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+    public boolean isRequestForTypedEntity(
+            final HttpServletRequest request,
+            final HttpServletResponse response
+    ) throws ServletException, IOException {
         String servletPath = request.getServletPath();
         if (!servletPath.contains(":")) {
             return false;
@@ -102,12 +109,13 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
         // Check if the item requested matches the item section
         TypedEntity typedEntity = getTypedEntityFromServletPathId(servletPath, typedEntitySection.getCeilingEntity());
-        if(typedEntity != null && !typeMatchesAdminSection(typedEntity, sectionKey)) {
-            String redirectUrl = getTypeAdminSectionMismatchUrl(typedEntity, typedEntitySection.getCeilingEntity(), request.getRequestURI(), sectionKey);
+        if (typedEntity != null && !typeMatchesAdminSection(typedEntity, sectionKey)) {
+            String redirectUrl = getTypeAdminSectionMismatchUrl(
+                    typedEntity, typedEntitySection.getCeilingEntity(), request.getRequestURI(), sectionKey
+            );
             response.sendRedirect(redirectUrl);
             return true;
         }
-
 
         // Check if admin user has access to this section.
         if (!adminUserHasAccess(typedEntitySection)) {
@@ -178,7 +186,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         int idBegIndex = servletPath.indexOf("/", 1);
         if (idBegIndex > 0) {
             String id = servletPath.substring(idBegIndex + 1, servletPath.length());
-            if(StringUtils.isNumeric(id)) {
+            if (StringUtils.isNumeric(id)) {
                 Object objectEntity = genericEntityService.readGenericEntity(ceilingEntity, Long.valueOf(id));
                 if (TypedEntity.class.isAssignableFrom(objectEntity.getClass())) {
                     return (TypedEntity) objectEntity;
@@ -188,7 +196,12 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
         return null;
     }
 
-    protected String getTypeAdminSectionMismatchUrl(TypedEntity typedEntity, String ceilingEntity, String uri, String sectionKey) {
+    protected String getTypeAdminSectionMismatchUrl(
+            TypedEntity typedEntity,
+            String ceilingEntity,
+            String uri,
+            String sectionKey
+    ) {
         int lastDotIndex = StringUtils.lastIndexOf(ceilingEntity, ".");
         String ceilingEntityType = StringUtils.substring(ceilingEntity, lastDotIndex + 1).toLowerCase();
         String entityType = typedEntity.getType().getType().toLowerCase();
@@ -200,7 +213,7 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
     protected boolean typeMatchesAdminSection(TypedEntity typedEntity, String sectionKey) {
         String urlType = StringUtils.substring(sectionKey, sectionKey.indexOf(":") + 1);
-        if(!StringUtils.equalsIgnoreCase(typedEntity.getType().getType(), urlType)) {
+        if (!StringUtils.equalsIgnoreCase(typedEntity.getType().getType(), urlType)) {
             return false;
         }
         return true;
@@ -266,4 +279,5 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
     public int getOrder() {
         return FilterOrdered.POST_SECURITY_LOW + 1000;
     }
+
 }

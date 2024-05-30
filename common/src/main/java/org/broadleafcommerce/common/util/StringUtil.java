@@ -10,12 +10,11 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +51,7 @@ public class StringUtil {
             throw new RuntimeException(e);
         }
     }
-    
+
     /**
      * Checks if a string is included in the beginning of another string, but only in dot-separated segment leaps.
      * Examples:
@@ -61,11 +60,11 @@ public class StringUtil {
      *   <li>"sku.date" into "sku.date.extra" should return true</li>
      *   <li>"sku" into "sku" should return true</li>
      * </ul>
-     * 
+     * <p>
      * This function avoids "collision" between similarly named, multi-leveled property fields.
-     * 
-     * @param bigger     the bigger (haystack) String          
-     * @param included   the string to be sought (needle)
+     *
+     * @param bigger   the bigger (haystack) String
+     * @param included the string to be sought (needle)
      * @return
      */
     public static boolean segmentInclusion(String bigger, String included) {
@@ -99,6 +98,7 @@ public class StringUtil {
 
     /**
      * Protect against HTTP Response Splitting
+     *
      * @return
      */
     public static String cleanseUrlString(String input) {
@@ -125,6 +125,7 @@ public class StringUtil {
     /**
      * given a string with the format "fields[someFieldName].value" (very common in error validation), returns
      * only "someFieldName
+     *
      * @param expression
      * @return
      */
@@ -162,18 +163,18 @@ public class StringUtil {
 
     /**
      * Parses out non-numeric characters
+     *
      * @param value
      * @return
      */
     public static String removeNonNumerics(String value) {
         return value.replaceAll("[^\\d.]+", "").trim();
-
     }
 
     /**
      * Utility method for sanitizing a String to neutralize any possible malicious content. This is used primarily to protect log
      * messages by encoding for any possible forgery or injection attempts.
-     * 
+     * <p>
      * Given an Object of type Integer or Long, converts the Object instance to a Long.  This will throw a ClassCastException
      * if the past parameter is not either an Integer or a Long.
      *
@@ -187,4 +188,5 @@ public class StringUtil {
         String sanitized = string.replace('\n', '_').replace('\r', '_');
         return ESAPIEncoder.getInstance().encodeForHTML(sanitized);
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,25 +25,24 @@ import java.util.Map;
 
 public interface StoreService {
 
-    public Store readStoreById(Long id);
+    Store readStoreById(Long id);
 
-    public Store readStoreByStoreName(String storeName);
+    Store readStoreByStoreName(String storeName);
 
     /**
-     * @deprecated use {@link #readStoreByStoreName(String)} instead.
-     *
      * @param storeCode
      * @return
+     * @deprecated use {@link #readStoreByStoreName(String)} instead.
      */
     @Deprecated
-    public Store readStoreByStoreCode(String storeCode);
+    Store readStoreByStoreCode(String storeCode);
 
-    public Store saveStore(Store store);
+    Store saveStore(Store store);
 
-    public Map<Store,Double> findStoresByAddress(Address searchAddress, double distance);
+    Map<Store, Double> findStoresByAddress(Address searchAddress, double distance);
 
-    public List<Store> readAllStores();
+    List<Store> readAllStores();
 
-    public List<Store> readAllStoresByState(String state);
+    List<Store> readAllStoresByState(String state);
 
 }

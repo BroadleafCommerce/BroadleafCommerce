@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,6 +19,7 @@ package org.broadleafcommerce.cms.structure.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,23 +33,14 @@ import java.util.Map;
  */
 public class StructuredContentRuleType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    private static final Map<String, StructuredContentRuleType> TYPES = new LinkedHashMap<String, StructuredContentRuleType>();
+    private static final Map<String, StructuredContentRuleType> TYPES = new LinkedHashMap<>();
 
     public static final StructuredContentRuleType REQUEST = new StructuredContentRuleType("REQUEST", "Request");
     public static final StructuredContentRuleType TIME = new StructuredContentRuleType("TIME", "Time");
     public static final StructuredContentRuleType PRODUCT = new StructuredContentRuleType("PRODUCT", "Product");
     public static final StructuredContentRuleType CUSTOMER = new StructuredContentRuleType("CUSTOMER", "Customer");
-
-    /**
-     * Allows translation from the passed in String to a <code>StructuredContentRuleType</code>
-     * @param type
-     * @return The matching rule type
-     */
-    public static StructuredContentRuleType getInstance(final String type) {
-        return TYPES.get(type);
-    }
 
     private String type;
     private String friendlyType;
@@ -59,6 +51,7 @@ public class StructuredContentRuleType implements Serializable, BroadleafEnumera
 
     /**
      * Initialize the type and friendlyType
+     *
      * @param <code>type</code>
      * @param <code>friendlyType</code>
      */
@@ -68,7 +61,27 @@ public class StructuredContentRuleType implements Serializable, BroadleafEnumera
     }
 
     /**
+     * Allows translation from the passed in String to a <code>StructuredContentRuleType</code>
+     *
+     * @param type
+     * @return The matching rule type
+     */
+    public static StructuredContentRuleType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
+    /**
+     * Gets the type
+     *
+     * @return
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
      * Sets the type
+     *
      * @param type
      */
     public void setType(final String type) {
@@ -79,15 +92,8 @@ public class StructuredContentRuleType implements Serializable, BroadleafEnumera
     }
 
     /**
-     * Gets the type
-     * @return
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
      * Gets the name of the type
+     *
      * @return
      */
     public String getFriendlyType() {

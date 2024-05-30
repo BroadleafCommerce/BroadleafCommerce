@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -73,9 +73,9 @@ public class SolrJSONFacet {
         if (MapUtils.isNotEmpty(map)) {
             sb.append("{\n");
             for (Map.Entry<String, Object> entry : map.entrySet()) {
-                sb.append(getString(entry.getKey(), entry.getValue(), tabs+1));
+                sb.append(getString(entry.getKey(), entry.getValue(), tabs + 1));
             }
-            sb.append(StringUtils.repeat(" ", (tabs-1)*2)).append("}");
+            sb.append(StringUtils.repeat(" ", (tabs - 1) * 2)).append("}");
         }
         return sb.toString();
     }
@@ -86,15 +86,19 @@ public class SolrJSONFacet {
         if (List.class.isAssignableFrom(object.getClass())) {
             sb.append(StringUtils.repeat(" ", tabs * 2)).append(key).append(" : ").append("[\n");
             for (SolrJSONFacet subFacet : (List<SolrJSONFacet>) object) {
-                sb.append(StringUtils.repeat(" ", (tabs+1) * 2)).append(subFacet.toString(tabs + 2)).append(",\n");
+                sb.append(StringUtils.repeat(" ", (tabs + 1) * 2))
+                        .append(subFacet.toString(tabs + 2)).append(",\n");
             }
             sb.append(StringUtils.repeat(" ", tabs * 2)).append("]").append(",\n");
         } else if (SolrJSONFacet.class.isAssignableFrom(object.getClass())) {
-            sb.append(StringUtils.repeat(" ", tabs * 2)).append(key).append(" : ").append(((SolrJSONFacet) object).toString(tabs + 1)).append(",\n");
+            sb.append(StringUtils.repeat(" ", tabs * 2)).append(key).append(" : ")
+                    .append(((SolrJSONFacet) object).toString(tabs + 1)).append(",\n");
         } else {
-            sb.append(StringUtils.repeat(" ", tabs * 2)).append(key).append(" : ").append(object.toString()).append(",\n");
+            sb.append(StringUtils.repeat(" ", tabs * 2)).append(key).append(" : ")
+                    .append(object.toString()).append(",\n");
         }
 
         return sb.toString();
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -42,55 +42,85 @@ public class ImportSQLConfig {
 
     @Bean
     public AutoImportSql blFrameworkSecurityData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/load_admin_permissions.sql,config/bc/sql/load_admin_roles.sql,config/bc/sql/load_admin_menu.sql", AutoImportStage.PRIMARY_FRAMEWORK_SECURITY);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/load_admin_permissions.sql,config/bc/sql/load_admin_roles.sql,config/bc/sql/load_admin_menu.sql",
+                AutoImportStage.PRIMARY_FRAMEWORK_SECURITY
+        );
     }
 
     @Bean
     @ConditionalOnBroadleafModule(BroadleafModuleRegistration.BroadleafModuleEnum.ENTERPRISE)
     public AutoImportSql blApproverOnlySecurityData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU, "config/bc/sql/load_admin_approver_only_role.sql", AutoImportStage.PRIMARY_POST_MODULE_SECURITY);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/load_admin_approver_only_role.sql",
+                AutoImportStage.PRIMARY_POST_MODULE_SECURITY
+        );
     }
 
     @Bean
     @Conditional(DemoCondition.class)
     public AutoImportSql blFrameworkPreBasicData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/load_catalog_data.sql,config/bc/sql/demo/load_catalog_i18n_data_ES.sql," +
-                "config/bc/sql/demo/load_catalog_i18n_data_FR.sql", AutoImportStage.PRIMARY_PRE_BASIC_DATA);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/load_catalog_data.sql,config/bc/sql/demo/load_catalog_i18n_data_ES.sql," +
+                        "config/bc/sql/demo/load_catalog_i18n_data_FR.sql",
+                AutoImportStage.PRIMARY_PRE_BASIC_DATA
+        );
     }
 
     @Bean
     @Conditional({MTCondition.class, DemoCondition.class})
     public AutoImportSql blFrameworkLateData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/fix_catalog_data.sql", AutoImportStage.PRIMARY_LATE);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/fix_catalog_data.sql",
+                AutoImportStage.PRIMARY_LATE
+        );
     }
-    
+
     @Bean
     @Conditional({AssetFoldersExistCondition.class, DemoCondition.class})
     public AutoImportSql blAssetFolderData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/populate_asset_folders.sql", AutoImportStage.PRIMARY_POST_BASIC_DATA);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/populate_asset_folders.sql",
+                AutoImportStage.PRIMARY_POST_BASIC_DATA
+        );
     }
 
     @Bean
     @Conditional({AssetFoldersExistCondition.class, GiftCardAndCustomerCreditExistCondition.class, DemoCondition.class})
     public AutoImportSql blAssetFolderGiftCardData() {
-        return new AutoImportSql(AutoImportPersistenceUnit.BL_PU,"config/bc/sql/demo/populate_asset_folders_gift_cards.sql", AutoImportStage.PRIMARY_POST_BASIC_DATA);
+        return new AutoImportSql(
+                AutoImportPersistenceUnit.BL_PU,
+                "config/bc/sql/demo/populate_asset_folders_gift_cards.sql",
+                AutoImportStage.PRIMARY_POST_BASIC_DATA
+        );
     }
-    
+
     public static class AssetFoldersExistCondition implements Condition {
 
         @Override
         public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-            return ClassUtils.isPresent("com.broadleafcommerce.enterprise.foldering.admin.domain.AssetFolder", context.getClassLoader());
+            return ClassUtils.isPresent(
+                    "com.broadleafcommerce.enterprise.foldering.admin.domain.AssetFolder",
+                    context.getClassLoader()
+            );
         }
-        
+
     }
 
     public static class GiftCardAndCustomerCreditExistCondition implements Condition {
 
         @Override
         public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-            return ClassUtils.isPresent("com.broadleafcommerce.accountcredit.profile.core.domain.GiftCardAccount", context.getClassLoader());
+            return ClassUtils.isPresent(
+                    "com.broadleafcommerce.accountcredit.profile.core.domain.GiftCardAccount",
+                    context.getClassLoader()
+            );
         }
-
     }
+
 }

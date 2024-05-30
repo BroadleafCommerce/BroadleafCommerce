@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -32,6 +32,8 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
+import java.io.Serial;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -51,9 +53,9 @@ import jakarta.persistence.Table;
  * Because sandboxes can be managed in the admin, it is required that they have a site discriminator
  * to be managed in the multitenant admin. This intermingling of references ends up causing this
  * exception at runtime during, for example, a product save:
- *
+ * <p>
  * HibernateException: Found two representations of same collection
- *
+ * <p>
  * To workaround, we use this management entity that exposes the properties seamlessly of SandBox to
  * the admin, but holds the site discriminator on its own table (rather than BLC_SANDBOX), which
  * fixes the issue.
@@ -72,7 +74,7 @@ import jakarta.persistence.Table;
 })
 public class SandBoxManagementImpl implements AdminMainEntity, SandBoxManagement {
 
-    private static final Log LOG = LogFactory.getLog(SandBoxManagementImpl.class);
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -109,4 +111,5 @@ public class SandBoxManagementImpl implements AdminMainEntity, SandBoxManagement
     public void setSandBox(SandBox sandBox) {
         this.sandBox = sandBox;
     }
+
 }

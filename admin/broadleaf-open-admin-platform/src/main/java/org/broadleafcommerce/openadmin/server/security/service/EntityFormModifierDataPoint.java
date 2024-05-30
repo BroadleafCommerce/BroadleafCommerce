@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -20,8 +20,8 @@ package org.broadleafcommerce.openadmin.server.security.service;
 /**
  * Simple key/value pair configuration for a {@link EntityFormModifier}.
  *
- * @see EntityFormModifierData
  * @author Jeff Fischer
+ * @see EntityFormModifierData
  */
 public class EntityFormModifierDataPoint {
 
@@ -43,4 +43,5 @@ public class EntityFormModifierDataPoint {
     public void setValue(Object value) {
         this.value = value;
     }
+
 }

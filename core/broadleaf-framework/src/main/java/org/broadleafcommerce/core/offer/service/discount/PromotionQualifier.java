@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,18 +21,21 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * Records the usage of this item as qualifier or target of
  * the promotion.   The discount amount will be 0 if this
  * item was only used as a qualifier.
- * 
+ *
  * @author jfischer
  */
-public class PromotionQualifier implements Serializable{ 
+public class PromotionQualifier implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
-    
+
     private Offer promotion;
     private OfferItemCriteria itemCriteria;
     private int quantity;
@@ -42,32 +45,39 @@ public class PromotionQualifier implements Serializable{
     public Offer getPromotion() {
         return promotion;
     }
+
     public void setPromotion(Offer promotion) {
         this.promotion = promotion;
     }
+
     public OfferItemCriteria getItemCriteria() {
         return itemCriteria;
     }
+
     public void setItemCriteria(OfferItemCriteria itemCriteria) {
         this.itemCriteria = itemCriteria;
     }
+
     public int getQuantity() {
         return quantity;
     }
+
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
     public int getFinalizedQuantity() {
         return finalizedQuantity;
     }
+
     public void setFinalizedQuantity(int finalizedQuantity) {
         this.finalizedQuantity = finalizedQuantity;
     }
-    
+
     public void incrementQuantity(int quantity) {
         this.quantity = this.quantity + quantity;
     }
-    
+
     public PromotionQualifier copy() {
         PromotionQualifier pq = new PromotionQualifier();
         pq.setItemCriteria(itemCriteria);
@@ -76,7 +86,7 @@ public class PromotionQualifier implements Serializable{
         pq.setFinalizedQuantity(finalizedQuantity);
         return pq;
     }
-    
+
     public void resetQty(int qty) {
         quantity = qty;
         finalizedQuantity = qty;
@@ -103,11 +113,12 @@ public class PromotionQualifier implements Serializable{
         return quantity == finalizedQuantity;
     }
 
-    public void setPrice(Money price) {
-        this.price = price;
-    }
-    
     public Money getPrice() {
         return price;
     }
+
+    public void setPrice(Money price) {
+        this.price = price;
+    }
+
 }

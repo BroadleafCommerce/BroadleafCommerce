@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -36,6 +36,7 @@ import jakarta.persistence.MapKey;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -82,6 +83,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.io.Serial;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -101,13 +103,11 @@ import java.util.Map;
         @Index(name = "ORDERITEM_TYPE_INDEX", columnList = "ORDER_ITEM_TYPE")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-@AdminPresentationMergeOverrides(
-        {
-                @AdminPresentationMergeOverride(name = "", mergeEntries =
-                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                        booleanOverrideValue = true))
-        }
-)
+@AdminPresentationMergeOverrides({
+        @AdminPresentationMergeOverride(name = "", mergeEntries =
+        @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                booleanOverrideValue = true))
+})
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "OrderItemImpl_baseOrderItem")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
@@ -115,17 +115,18 @@ import java.util.Map;
 public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, CurrencyCodeIdentifiable {
 
     private static final Log LOG = LogFactory.getLog(OrderItemImpl.class);
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "OrderItemId")
     @GenericGenerator(
-        name="OrderItemId",
-        type= IdOverrideTableGenerator.class,
-        parameters = {
-            @Parameter(name="segment_value", value="OrderItemImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.OrderItemImpl")
-        }
+            name = "OrderItemId",
+            type = IdOverrideTableGenerator.class,
+            parameters = {
+                    @Parameter(name = "segment_value", value = "OrderItemImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.OrderItemImpl")
+            }
     )
     @Column(name = "ORDER_ITEM_ID")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
@@ -136,7 +137,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @ManyToOne(targetEntity = CategoryImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CATEGORY_ID")
-    @AdminPresentation(friendlyName = "OrderItemImpl_Category", order=Presentation.FieldOrder.CATEGORY,
+    @AdminPresentation(friendlyName = "OrderItemImpl_Category", order = Presentation.FieldOrder.CATEGORY,
             group = Presentation.Group.Name.Catalog, groupOrder = Presentation.Group.Order.Catalog)
     @AdminPresentationToOneLookup()
     protected Category category;
@@ -159,65 +160,66 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
             prominent = true, gridOrder = 2000)
     protected int quantity;
 
-    @Column(name = "RETAIL_PRICE", precision=19, scale=5)
+    @Column(name = "RETAIL_PRICE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Retail_Price", order = Presentation.FieldOrder.RETAILPRICE,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             fieldType = SupportedFieldType.MONEY, prominent = true, gridOrder = 4000)
     protected BigDecimal retailPrice;
 
-    @Column(name = "SALE_PRICE", precision=19, scale=5)
+    @Column(name = "SALE_PRICE", precision = 19, scale = 5)
     @AdminPresentation(friendlyName = "OrderItemImpl_Item_Sale_Price", order = Presentation.FieldOrder.SALEPRICE,
             group = Presentation.Group.Name.Pricing, groupOrder = Presentation.Group.Order.Pricing,
             fieldType = SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order=Presentation.FieldOrder.NAME,
-            group = Presentation.Group.Name.Description, prominent=true, gridOrder = 1000,
+    @AdminPresentation(friendlyName = "OrderItemImpl_Item_Name", order = Presentation.FieldOrder.NAME,
+            group = Presentation.Group.Name.Description, prominent = true, gridOrder = 1000,
             groupOrder = Presentation.Group.Order.Description)
     protected String name;
 
-    @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
+    @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     protected PersonalMessage personalMessage;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = GiftWrapOrderItemImpl.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = GiftWrapOrderItemImpl.class,
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @AdminPresentation(excluded = true)
     protected GiftWrapOrderItem giftWrapOrderItem;
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL },
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = {CascadeType.ALL},
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderItemImpl_Adjustments", order = Presentation.FieldOrder.ADJUSTMENTS,
-                    tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
-    protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
-
-    @OneToMany(mappedBy = "orderItem", targetEntity = ProratedOrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL },
-            orphanRemoval = true)
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderItemImpl_ProratedAdjustments", order = Presentation.FieldOrder.ADJUSTMENTS,
+    @AdminPresentationCollection(friendlyName = "OrderItemImpl_Adjustments", order = Presentation.FieldOrder.ADJUSTMENTS,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
-    protected List<ProratedOrderItemAdjustment> proratedOrderItemAdjustments = new ArrayList<ProratedOrderItemAdjustment>();
+    protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemQualifierImpl.class, cascade = { CascadeType.ALL },
+    @OneToMany(mappedBy = "orderItem", targetEntity = ProratedOrderItemAdjustmentImpl.class, cascade = {CascadeType.ALL},
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    protected List<OrderItemQualifier> orderItemQualifiers = new ArrayList<OrderItemQualifier>();
+    @AdminPresentationCollection(friendlyName = "OrderItemImpl_ProratedAdjustments", order = Presentation.FieldOrder.ADJUSTMENTS,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
+    protected List<ProratedOrderItemAdjustment> proratedOrderItemAdjustments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = { CascadeType.ALL },
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemQualifierImpl.class, cascade = {CascadeType.ALL},
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
+    protected List<OrderItemQualifier> orderItemQualifiers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemPriceDetailImpl.class, cascade = { CascadeType.ALL },
+    @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = {CascadeType.ALL},
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @AdminPresentationCollection(friendlyName="OrderItemImpl_Price_Details", order = Presentation.FieldOrder.PRICEDETAILS,
-                    tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
-    protected List<OrderItemPriceDetail> orderItemPriceDetails = new ArrayList<OrderItemPriceDetail>();
+    protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemPriceDetailImpl.class, cascade = {CascadeType.ALL},
+            orphanRemoval = true)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
+    @AdminPresentationCollection(friendlyName = "OrderItemImpl_Price_Details", order = Presentation.FieldOrder.PRICEDETAILS,
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
+    protected List<OrderItemPriceDetail> orderItemPriceDetails = new ArrayList<>();
 
     @Column(name = "ORDER_ITEM_TYPE")
     protected String orderItemType;
@@ -232,16 +234,18 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected Boolean salePriceOverride;
 
     @Column(name = "DISCOUNTS_ALLOWED")
-    @AdminPresentation(friendlyName = "OrderItemImpl_Discounts_Allowed", order=Presentation.FieldOrder.DISCOUNTALLOWED,
+    @AdminPresentation(friendlyName = "OrderItemImpl_Discounts_Allowed", order = Presentation.FieldOrder.DISCOUNTALLOWED,
             tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced)
     protected Boolean discountsAllowed;
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class, cascade = { CascadeType.ALL }, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAttributeImpl.class,
+            cascade = {CascadeType.ALL}, orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    @MapKey(name="name")
+    @MapKey(name = "name")
     @AdminPresentationMap(friendlyName = "OrderItemImpl_Attributes",
-        tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
-        deleteEntityUponRemove = true, forceFreeFormKeys = true, keyPropertyFriendlyName = "OrderItemAttributeImpl_Attribute_Name"
+            tab = Presentation.Tab.Name.Advanced, tabOrder = Presentation.Tab.Order.Advanced,
+            deleteEntityUponRemove = true, forceFreeFormKeys = true,
+            keyPropertyFriendlyName = "OrderItemAttributeImpl_Attribute_Name"
     )
     protected Map<String, OrderItemAttribute> orderItemAttributeMap = new HashMap<String, OrderItemAttribute>();
 
@@ -254,7 +258,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @OneToMany(mappedBy = "parentOrderItem", targetEntity = OrderItemImpl.class, cascade = CascadeType.REFRESH)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
-    protected List<OrderItem> childOrderItems = new ArrayList<OrderItem>();
+    protected List<OrderItem> childOrderItems = new ArrayList<>();
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "PARENT_ORDER_ITEM_ID")
@@ -264,7 +268,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     protected Boolean hasValidationError;
 
     @ElementCollection
-    @CollectionTable(name="BLC_ORDER_ITEM_CART_MESSAGE", joinColumns=@JoinColumn(name="ORDER_ITEM_ID"))
+    @CollectionTable(name = "BLC_ORDER_ITEM_CART_MESSAGE", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     @Column(name = "CART_MESSAGE")
@@ -338,12 +342,12 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     public Auditable getAuditable() {
         return auditable;
     }
-    
+
     @Override
     public void setAuditable(Auditable auditable) {
         this.auditable = auditable;
     }
-    
+
     @Override
     public int getQuantity() {
         return quantity;
@@ -603,7 +607,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
      * A list of arbitrary attributes added to this item.
      */
     @Override
-    public Map<String,OrderItemAttribute> getOrderItemAttributes() {
+    public Map<String, OrderItemAttribute> getOrderItemAttributes() {
         return orderItemAttributeMap;
     }
 
@@ -613,7 +617,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
      * @param orderItemAttributes
      */
     @Override
-    public void setOrderItemAttributes(Map<String,OrderItemAttribute> orderItemAttributes) {
+    public void setOrderItemAttributes(Map<String, OrderItemAttribute> orderItemAttributes) {
         this.orderItemAttributeMap = orderItemAttributes;
     }
 
@@ -625,13 +629,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @Override
     public void setTaxable(Boolean taxable) {
         this.itemTaxable = taxable;
-    }
-
-
-
-    @Override
-    public void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails) {
-        this.orderItemPriceDetails = orderItemPriceDetails;
     }
 
     @Override
@@ -748,11 +745,6 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
-    public void setRetailPriceOverride(boolean override) {
-        this.retailPriceOverride = Boolean.valueOf(override);
-    }
-
-    @Override
     public boolean isRetailPriceOverride() {
         if (retailPriceOverride == null) {
             return false;
@@ -762,8 +754,8 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
-    public void setSalePriceOverride(boolean override) {
-        this.salePriceOverride = Boolean.valueOf(override);
+    public void setRetailPriceOverride(boolean override) {
+        this.retailPriceOverride = Boolean.valueOf(override);
     }
 
     @Override
@@ -776,8 +768,18 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
+    public void setSalePriceOverride(boolean override) {
+        this.salePriceOverride = Boolean.valueOf(override);
+    }
+
+    @Override
     public List<OrderItemPriceDetail> getOrderItemPriceDetails() {
         return orderItemPriceDetails;
+    }
+
+    @Override
+    public void setOrderItemPriceDetails(List<OrderItemPriceDetail> orderItemPriceDetails) {
+        this.orderItemPriceDetails = orderItemPriceDetails;
     }
 
     @Override
@@ -866,8 +868,8 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     public void checkCloneable(OrderItem orderItem) throws CloneNotSupportedException, SecurityException, NoSuchMethodException {
         Method cloneMethod = orderItem.getClass().getMethod("clone");
-        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce") &&
-                !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
+        if (cloneMethod.getDeclaringClass().getName().startsWith("org.broadleafcommerce")
+                && !orderItem.getClass().getName().startsWith("org.broadleafcommerce")) {
             //subclass is not implementing the clone method
             throw new CloneNotSupportedException("Custom extensions and implementations should implement clone in " +
                     "order to guarantee split and merge operations are performed accurately");
@@ -1038,7 +1040,9 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     }
 
     @Override
-    public <G extends OrderItem> CreateResponse<G> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
+    public <G extends OrderItem> CreateResponse<G> createOrRetrieveCopyInstance(
+            MultiTenantCopyContext context
+    ) throws CloneNotSupportedException {
         CreateResponse<G> createResponse = context.createOrRetrieveCopyInstance(this);
         if (createResponse.isAlreadyPopulated()) {
             return createResponse;
@@ -1051,37 +1055,45 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         cloned.setTaxable(isTaxable());
         cloned.setQuantity(quantity);
         cloned.setPersonalMessage(personalMessage);
-        ((OrderItemImpl)cloned).retailPrice = retailPrice;
-        ((OrderItemImpl)cloned).salePrice = salePrice;
-        ((OrderItemImpl)cloned).discountsAllowed = discountsAllowed;
-        ((OrderItemImpl)cloned).salePriceOverride = salePriceOverride;
-        ((OrderItemImpl)cloned).retailPriceOverride = retailPriceOverride;
+        ((OrderItemImpl) cloned).retailPrice = retailPrice;
+        ((OrderItemImpl) cloned).salePrice = salePrice;
+        ((OrderItemImpl) cloned).discountsAllowed = discountsAllowed;
+        ((OrderItemImpl) cloned).salePriceOverride = salePriceOverride;
+        ((OrderItemImpl) cloned).retailPriceOverride = retailPriceOverride;
         // dont clone
-        cloned.setParentOrderItem(parentOrderItem == null ? null : parentOrderItem.createOrRetrieveCopyInstance(context).getClone());
-        for(OrderItem entry : childOrderItems){
+        cloned.setParentOrderItem(parentOrderItem == null
+                ? null
+                : parentOrderItem.createOrRetrieveCopyInstance(context).getClone());
+        for (OrderItem entry : childOrderItems) {
             OrderItem clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setParentOrderItem(cloned);
             cloned.getChildOrderItems().add(clonedEntry);
         }
-        for(CandidateItemOffer entry : candidateItemOffers){
+        for (CandidateItemOffer entry : candidateItemOffers) {
             CandidateItemOffer clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setOrderItem(cloned);
             cloned.getCandidateItemOffers().add(clonedEntry);
         }
-        for(Map.Entry<String,OrderItemAttribute> entry : orderItemAttributeMap.entrySet()){
+        for (Map.Entry<String, OrderItemAttribute> entry : orderItemAttributeMap.entrySet()) {
             OrderItemAttribute clonedEntry = entry.getValue().createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setOrderItem(cloned);
-            cloned.getOrderItemAttributes().put(entry.getKey(),clonedEntry);
+            cloned.getOrderItemAttributes().put(entry.getKey(), clonedEntry);
         }
         // dont clone
         cloned.setGiftWrapOrderItem(giftWrapOrderItem);
-        for(OrderItemPriceDetail entry : orderItemPriceDetails){
+        for (OrderItemPriceDetail entry : orderItemPriceDetails) {
             OrderItemPriceDetail clonedEntry = entry.createOrRetrieveCopyInstance(context).getClone();
             clonedEntry.setOrderItem(cloned);
             cloned.getOrderItemPriceDetails().add(clonedEntry);
         }
         cloned.finalizePrice();
         return createResponse;
+    }
+
+    @Override
+    public boolean isSkuActive() {
+        //abstract method, by default return true
+        return true;
     }
 
     public static class Presentation {
@@ -1123,9 +1135,4 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
         }
     }
 
-    @Override
-    public boolean isSkuActive() {
-        //abstract method, by default return true
-        return true;
-    }
 }

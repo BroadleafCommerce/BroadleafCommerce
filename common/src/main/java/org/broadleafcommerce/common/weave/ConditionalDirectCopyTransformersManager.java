@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,25 +25,25 @@ package org.broadleafcommerce.common.weave;
  * </p>
  * Setup inside a Broadleaf Commerce module is generally performed in a manner similar to this example:
  * {@code
-      <bean id="blCommonConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
-         <property name="templateTokens">
-             <util:constant static-field="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes.MULTITENANT_SITE"/>
-         </property>
-         <property name="conditionalProperty" value="enable.site.map.mt.disc"/>
-     </bean>
-
-     <bean id="blCommonConditionalDirectCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
-         <property name="sourceMap">
-             <map>
-                 <entry key="org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl" value-ref="blCommonConditionalDirectCopyTransformerMember"/>
-             </map>
-         </property>
-     </bean>
-
-     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-         <property name="collectionRef" value="blCommonConditionalDirectCopyTransformers"/>
-         <property name="targetRef" value="blConditionalDirectCopyTransformers"/>
-     </bean>
+ * <bean id="blCommonConditionalDirectCopyTransformerMember" class="org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDto">
+ * <property name="templateTokens">
+ * <util:constant static-field="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes.MULTITENANT_SITE"/>
+ * </property>
+ * <property name="conditionalProperty" value="enable.site.map.mt.disc"/>
+ * </bean>
+ *
+ * <bean id="blCommonConditionalDirectCopyTransformers" class="org.springframework.beans.factory.config.MapFactoryBean">
+ * <property name="sourceMap">
+ * <map>
+ * <entry key="org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl" value-ref="blCommonConditionalDirectCopyTransformerMember"/>
+ * </map>
+ * </property>
+ * </bean>
+ *
+ * <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+ * <property name="collectionRef" value="blCommonConditionalDirectCopyTransformers"/>
+ * <property name="targetRef" value="blConditionalDirectCopyTransformers"/>
+ * </bean>
  * }
  * The goal is to add configuration for one or more entities and then add that configuration to the "blConditionalDirectCopyTransformers" map in
  * Spring. The activity of this configuration will remain dormant until the "conditionalProperty" is defined and set to true in the implementation's

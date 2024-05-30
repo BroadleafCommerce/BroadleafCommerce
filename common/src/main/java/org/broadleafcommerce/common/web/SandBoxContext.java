@@ -10,30 +10,28 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.common.web;
 
-
 import org.broadleafcommerce.common.classloader.release.ThreadLocalManager;
 
 public class SandBoxContext {
-    
+
     private static final ThreadLocal<SandBoxContext> SANDBOXCONTEXT = ThreadLocalManager.createThreadLocal(SandBoxContext.class);
-    
+    protected Long sandBoxId;
+    protected Boolean previewMode = false;
+
     public static SandBoxContext getSandBoxContext() {
         return SANDBOXCONTEXT.get();
     }
-    
+
     public static void setSandBoxContext(SandBoxContext sandBoxContext) {
         SANDBOXCONTEXT.set(sandBoxContext);
     }
-
-    protected Long sandBoxId;
-    protected Boolean previewMode = false;
 
     /**
      * @return the sandBoxName
@@ -41,7 +39,7 @@ public class SandBoxContext {
     public Long getSandBoxId() {
         return sandBoxId;
     }
-    
+
     /**
      * @param sandBoxId the sandBoxName to set
      */
@@ -64,4 +62,5 @@ public class SandBoxContext {
 
         return myContext;
     }
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -26,29 +26,30 @@ import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.Resource;
-
 import java.io.Serializable;
 import java.util.Map;
+
+import jakarta.annotation.Resource;
 
 @Component("blAdminRegexValidator")
 public class AdminRegexValidator extends ValidationConfigurationBasedPropertyValidator {
 
-    protected static final Log LOG = LogFactory.getLog(AdminRegexValidator.class);
     public static final String REGEX_CONFIG_PROPERTY = "regex";
     public static final String REGEX_PROPERTY_NAME_CONFIG_PROPERTY = "regexPropertyName";
-
+    protected static final Log LOG = LogFactory.getLog(AdminRegexValidator.class);
     @Resource(name = "blSystemPropertiesService")
     protected SystemPropertiesService propertiesService;
 
     @Override
-    public boolean validateInternal(Entity entity,
-                                    Serializable instance,
-                                    Map<String, FieldMetadata> entityFieldMetadata,
-                                    Map<String, String> validationConfiguration,
-                                    BasicFieldMetadata propertyMetadata,
-                                    String propertyName,
-                                    String value) {
+    public boolean validateInternal(
+            Entity entity,
+            Serializable instance,
+            Map<String, FieldMetadata> entityFieldMetadata,
+            Map<String, String> validationConfiguration,
+            BasicFieldMetadata propertyMetadata,
+            String propertyName,
+            String value
+    ) {
         //if value is empty allow, if someone doesn't want to allow empty values there is RequiredPropertyValidator as an option
         if (StringUtils.isEmpty(value)) {
             return true;
@@ -75,4 +76,5 @@ public class AdminRegexValidator extends ValidationConfigurationBasedPropertyVal
             return false;
         }
     }
+
 }

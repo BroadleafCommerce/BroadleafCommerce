@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -50,16 +50,16 @@ import jakarta.annotation.Resource;
 @Service("blCatalogService")
 public class CatalogServiceImpl implements CatalogService {
 
-    @Resource(name="blCategoryDao")
+    @Resource(name = "blCategoryDao")
     protected CategoryDao categoryDao;
 
-    @Resource(name="blProductDao")
+    @Resource(name = "blProductDao")
     protected ProductDao productDao;
 
-    @Resource(name="blSkuDao")
+    @Resource(name = "blSkuDao")
     protected SkuDao skuDao;
-    
-    @Resource(name="blProductOptionDao")
+
+    @Resource(name = "blProductOptionDao")
     protected ProductOptionDao productOptionDao;
 
     @Resource(name = "blCatalogServiceExtensionManager")
@@ -69,7 +69,7 @@ public class CatalogServiceImpl implements CatalogService {
     public Product findProductById(Long productId) {
         return productDao.readProductById(productId);
     }
-    
+
     @Override
     public Product findProductByExternalId(String externalId) {
         return productDao.readProductByExternalId(externalId);
@@ -104,28 +104,41 @@ public class CatalogServiceImpl implements CatalogService {
     public List<Product> findActiveProductsByCategory(Category category, int limit, int offset) {
         return productDao.readActiveProductsByCategory(category.getId(), limit, offset);
     }
-    
+
     @Override
     @Deprecated(forRemoval = true)
-    public List<Product> findFilteredActiveProductsByCategory(Category category, Date currentDate, SearchCriteria searchCriteria) {
+    public List<Product> findFilteredActiveProductsByCategory(
+            Category category,
+            Date currentDate,
+            SearchCriteria searchCriteria
+    ) {
         return productDao.readFilteredActiveProductsByCategory(category.getId(), currentDate, searchCriteria);
     }
-    
+
     @Override
     @Deprecated(forRemoval = true)
-    public List<Product> findFilteredActiveProductsByQuery(String query, Date currentDate, SearchCriteria searchCriteria) {
+    public List<Product> findFilteredActiveProductsByQuery(
+            String query,
+            Date currentDate,
+            SearchCriteria searchCriteria
+    ) {
         return productDao.readFilteredActiveProductsByQuery(query, currentDate, searchCriteria);
     }
 
     @Override
     @Deprecated(forRemoval = true)
-    public List<Product> findActiveProductsByCategory(Category category, Date currentDate, int limit, int offset) {
+    public List<Product> findActiveProductsByCategory(
+            Category category,
+            Date currentDate,
+            int limit,
+            int offset
+    ) {
         return productDao.readActiveProductsByCategory(category.getId(), currentDate, limit, offset);
     }
 
     @Override
     public List<ProductBundle> findAutomaticProductBundles() {
-        List<ProductBundle> bundles =  productDao.readAutomaticProductBundles();
+        List<ProductBundle> bundles = productDao.readAutomaticProductBundles();
         Collections.sort(bundles, new ProductBundleComparator());
         return bundles;
     }
@@ -167,13 +180,13 @@ public class CatalogServiceImpl implements CatalogService {
     public Category saveCategory(Category category) {
         return categoryDao.save(category);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
-    public void removeCategory(Category category){
+    public void removeCategory(Category category) {
         categoryDao.delete(category);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public void removeSku(Sku sku) {
@@ -261,13 +274,13 @@ public class CatalogServiceImpl implements CatalogService {
     public Sku saveSku(Sku sku) {
         return skuDao.save(sku);
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public SkuFee saveSkuFee(SkuFee fee) {
         return skuDao.saveSkuFee(fee);
     }
-    
+
     @Override
     public List<Sku> findSkusByIds(List<Long> ids) {
         return skuDao.readSkusByIds(ids);
@@ -304,17 +317,17 @@ public class CatalogServiceImpl implements CatalogService {
         }
         return null;
     }
-    
+
     @Override
     public Category createCategory() {
         return categoryDao.create();
     }
-    
+
     @Override
     public Sku createSku() {
         return skuDao.create();
     }
-    
+
     @Override
     public Product createProduct(ProductType productType) {
         return productDao.create(productType);
@@ -324,13 +337,13 @@ public class CatalogServiceImpl implements CatalogService {
     public List<ProductOption> readAllProductOptions() {
         return productOptionDao.readAllProductOptions();
     }
-    
+
     @Override
     @Transactional("blTransactionManager")
     public ProductOption saveProductOption(ProductOption option) {
         return productOptionDao.saveProductOption(option);
     }
-    
+
     @Override
     public ProductOption findProductOptionById(Long productOptionId) {
         return productOptionDao.readProductOptionById(productOptionId);
@@ -358,7 +371,9 @@ public class CatalogServiceImpl implements CatalogService {
     public Category findCategoryByURI(String uri) {
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(createCatalogContextDTO(), uri, holder);
+            ExtensionResultStatusType result = extensionManager.getProxy().findCategoryByURI(
+                    createCatalogContextDTO(), uri, holder
+            );
             if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 return (Category) holder.getResult();
             }
@@ -375,7 +390,9 @@ public class CatalogServiceImpl implements CatalogService {
     public Product findProductByURI(String uri) {
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().findProductByURI(createCatalogContextDTO(), uri, holder);
+            ExtensionResultStatusType result = extensionManager.getProxy().findProductByURI(
+                    createCatalogContextDTO(), uri, holder
+            );
             if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 return (Product) holder.getResult();
             }
@@ -393,13 +410,13 @@ public class CatalogServiceImpl implements CatalogService {
             return products.get(0);
         } else {
             // First check for a direct hit on the url
-            for(Product product : products) {
+            for (Product product : products) {
                 if (uri.equals(product.getUrl())) {
                     return product;
                 }
             }
 
-            for(Product product : products) {
+            for (Product product : products) {
                 // Next check for a direct hit on the generated URL.
                 if (uri.equals(product.getGeneratedUrl())) {
                     return product;
@@ -410,12 +427,14 @@ public class CatalogServiceImpl implements CatalogService {
             return products.get(0);
         }
     }
-    
+
     @Override
     public Sku findSkuByURI(String uri) {
         if (extensionManager != null) {
             ExtensionResultHolder holder = new ExtensionResultHolder();
-            ExtensionResultStatusType result = extensionManager.getProxy().findSkuByURI(createCatalogContextDTO(), uri, holder);
+            ExtensionResultStatusType result = extensionManager.getProxy().findSkuByURI(
+                    createCatalogContextDTO(), uri, holder
+            );
             if (ExtensionResultStatusType.HANDLED.equals(result)) {
                 return (Sku) holder.getResult();
             }
@@ -427,12 +446,12 @@ public class CatalogServiceImpl implements CatalogService {
             return skus.get(0);
         } else {
             // First check for a direct hit on the url
-            for(Sku sku : skus) {
+            for (Sku sku : skus) {
                 if (uri.equals(sku.getProduct().getUrl() + sku.getUrlKey())) {
                     return sku;
                 }
             }
-            
+
             // Otherwise, return the first product
             return skus.get(0);
         }

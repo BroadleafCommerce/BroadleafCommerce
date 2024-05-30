@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -33,7 +33,7 @@ import jakarta.annotation.Resource;
 
 /**
  * Variable expression that looks up a list of {@link DataDrivenEnumerationValue}s based on its enum key
- * 
+ *
  * @author Phillip Verheyden (phillipuniverse)
  */
 @Component("blDataDrivenEnumVariableExpression")
@@ -42,24 +42,26 @@ public class DataDrivenEnumVariableExpression implements BroadleafVariableExpres
 
     @Resource(name = "blDataDrivenEnumerationService")
     protected DataDrivenEnumerationService enumService;
-    
+
     @Override
     public String getName() {
         return "enumeration";
     }
-    
+
     /**
      * Looks up a list of {@link DataDrivenEnumerationValue} by the {@link DataDrivenEnumeration#getKey()} specified by <b>key</b>
+     *
      * @param key lookup for the {@link DataDrivenEnumeration}
      * @return the list of {@link DataDrivenEnumerationValue} for the given <b>key</b>
      */
     public List<DataDrivenEnumerationValue> getEnumValues(String key) {
         return getEnumValues(key, null);
     }
-    
+
     /**
      * Looks up a list of {@link DataDrivenEnumerationValue} by the {@link DataDrivenEnumeration#getKey()} specified by <b>key</b>
-     * @param key lookup for the {@link DataDrivenEnumeration}
+     *
+     * @param key  lookup for the {@link DataDrivenEnumeration}
      * @param sort optional, either 'ASCENDING' or 'DESCENDING' depending on how you want the result list sorted
      * @return the list of {@link DataDrivenEnumerationValue} for the given <b>key</b>
      */
@@ -67,13 +69,13 @@ public class DataDrivenEnumVariableExpression implements BroadleafVariableExpres
         if (StringUtils.isEmpty(key)) {
             throw new IllegalArgumentException("No 'key' parameter was passed to find enumeration values");
         }
-        
+
         DataDrivenEnumeration ddEnum = enumService.findEnumByKey(key);
         if (ddEnum == null) {
             throw new IllegalArgumentException("Could not find a data driven enumeration keyed by " + key);
         }
         List<DataDrivenEnumerationValue> enumValues = new ArrayList<>(ddEnum.getEnumValues());
-        
+
         if (StringUtils.isNotEmpty(sort)) {
             Collections.sort(enumValues, new Comparator<DataDrivenEnumerationValue>() {
 

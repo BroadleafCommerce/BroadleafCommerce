@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -45,12 +45,14 @@ public class BroadleafContactUsController extends BroadleafAbstractController {
     protected NotificationDispatcher notificationDispatcher;
 
     public String sendConfirmationEmail(String name, String emailAddress, String comments) {
-        HashMap<String, Object> context = new HashMap<String, Object>();
+        HashMap<String, Object> context = new HashMap<>();
         context.put("name", name);
         context.put("comments", comments);
         context.put("emailAddress", emailAddress);
         try {
-            notificationDispatcher.dispatchNotification(new EmailNotification(targetEmailAddress, NotificationEventType.CONTACT_US, context));
+            notificationDispatcher.dispatchNotification(
+                    new EmailNotification(targetEmailAddress, NotificationEventType.CONTACT_US, context)
+            );
         } catch (ServiceException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Unable to send contact us email", e);
@@ -59,7 +61,6 @@ public class BroadleafContactUsController extends BroadleafAbstractController {
         }
 
         return getSuccessView();
-
     }
 
     public String index() {
@@ -77,4 +78,5 @@ public class BroadleafContactUsController extends BroadleafAbstractController {
     protected String getSuccessView() {
         return "contactus/success";
     }
+
 }

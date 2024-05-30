@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -21,8 +21,8 @@ import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityServ
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import java.io.Serial;
 import java.util.Collection;
-
 
 /**
  * Extended DTO class to support salts based on the primary key of the admin user. This allows username changes for
@@ -33,6 +33,8 @@ import java.util.Collection;
  * @see {@link AdminUserDetailsServiceImpl}
  */
 public class AdminUserDetails extends User {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -40,23 +42,35 @@ public class AdminUserDetails extends User {
      */
     protected Long id;
 
-    public AdminUserDetails(final Long id,
+    public AdminUserDetails(
+            final Long id,
             final String username,
             final String password,
-            final Collection<? extends GrantedAuthority> authorities) {
-        this(id, username, password, true, true, true, true, authorities);
+            final Collection<? extends GrantedAuthority> authorities
+    ) {
+        this(
+                id,
+                username,
+                password,
+                true,
+                true,
+                true,
+                true,
+                authorities
+        );
     }
 
-    public AdminUserDetails(final Long id,
+    public AdminUserDetails(
+            final Long id,
             final String username,
             final String password,
             final boolean enabled,
             final boolean accountNonExpired,
             final boolean credentialsNonExpired,
             final boolean accountNonLocked,
-            final Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, enabled, accountNonExpired, credentialsNonExpired,
-                accountNonLocked, authorities);
+            final Collection<? extends GrantedAuthority> authorities
+    ) {
+        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         setId(id);
     }
 
@@ -87,4 +101,5 @@ public class AdminUserDetails extends User {
 
         return sb.toString();
     }
+
 }

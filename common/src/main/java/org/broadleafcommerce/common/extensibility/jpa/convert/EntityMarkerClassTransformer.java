@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -46,32 +46,38 @@ import javassist.bytecode.annotation.Annotation;
  * This class transformer will check to see if there is class that should have been loaded by the {@link MergePersistenceUnitManager}
  * (meaning, it has an @Entity, @MappedSuperclass or @Embeddable annotation on it and will be inside of a persistence.xml).
  * If it it should have, it will add the fully qualified classname of that class to the transformedClassNames list.
- * 
+ *
  * <p>
  * This is a validation check to ensure that the class transformers are actually working properly
- * 
+ *
  * @author Andre Azzolini (apazzolini)
  */
 public class EntityMarkerClassTransformer extends AbstractClassTransformer implements BroadleafClassTransformer {
+
     protected static final Log LOG = LogFactory.getLog(EntityMarkerClassTransformer.class);
-    
-    protected HashSet<String> transformedEntityClassNames = new HashSet<String>();
-    
-    protected HashSet<String> transformedNonEntityClassNames = new HashSet<String>();
-    
+
+    protected HashSet<String> transformedEntityClassNames = new HashSet<>();
+
+    protected HashSet<String> transformedNonEntityClassNames = new HashSet<>();
+
     @Resource(name = "blDirectCopyIgnorePatterns")
-    protected List<DirectCopyIgnorePattern> ignorePatterns = new ArrayList<DirectCopyIgnorePattern>();
+    protected List<DirectCopyIgnorePattern> ignorePatterns = new ArrayList<>();
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws TransformerException {
+    public byte[] transform(
+            ClassLoader loader,
+            String className,
+            Class<?> classBeingRedefined,
+            ProtectionDomain protectionDomain,
+            byte[] classfileBuffer
+    ) throws TransformerException {
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
             return null;
         }
 
         String convertedClassName = className.replace('/', '.');
-        
+
         if (isIgnored(convertedClassName)) {
             return null;
         }
@@ -83,7 +89,9 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
             while (itr.hasNext()) {
                 Object object = itr.next();
                 if (AnnotationsAttribute.class.isAssignableFrom(object.getClass())) {
-                    boolean containsTypeLevelAnnotation = containsTypeLevelPersistenceAnnotation(((AnnotationsAttribute) object).getAnnotations());
+                    boolean containsTypeLevelAnnotation = containsTypeLevelPersistenceAnnotation(
+                            ((AnnotationsAttribute) object).getAnnotations()
+                    );
                     if (containsTypeLevelAnnotation) {
                         LOG.debug("Marking " + convertedClassName + " as transformed");
                         transformedEntityClassNames.add(convertedClassName);
@@ -94,18 +102,18 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
                 }
             }
         } catch (Exception e) {
-            LOG.error("An error has occurred ",e);
+            LOG.error("An error has occurred ", e);
             throw new TransformerException("Unable to mark " + convertedClassName + " as transformed.");
         }
-        
+
         // We don't need to transform anything, so we'll return null
         return null;
     }
-    
+
     /**
      * Determines if a given annotation set contains annotations that correspond to ones that someone would expect to appear
      * in a persistence.xml
-     * 
+     *
      * @param annotations
      * @return
      */
@@ -119,7 +127,7 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
         }
         return false;
     }
-    
+
     protected boolean isIgnored(String convertedClassName) {
         boolean isValidPattern = true;
         List<DirectCopyIgnorePattern> matchedPatterns = new ArrayList<DirectCopyIgnorePattern>();
@@ -139,7 +147,7 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
                 break;
             }
         }
-        
+
         return !isValidPattern;
     }
 
@@ -147,7 +155,7 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
     public void compileJPAProperties(Properties props, Object key) throws Exception {
         // When performing the check that this class transformer does, JPA properties do not need modificiation
     }
-    
+
     /**
      * @return a list of fully qualified classnames of class that have an @Entity, @MappedSuperclass or @Embeddable
      * annotation and were picked
@@ -157,7 +165,7 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
     public HashSet<String> getTransformedEntityClassNames() {
         return transformedEntityClassNames;
     }
-    
+
     /**
      * @return a list of fully qualified classnames of classes that <b>do not</b> have an @Entity, @MappedSuperclass or @Embeddable
      * annotation but were picked up by this class transformer. This usually results in a benign misconfiguration as there are

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -22,29 +22,30 @@ import java.util.Date;
 
 public interface SearchRedirect extends Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public String getSearchTerm();
+    String getSearchTerm();
 
-    public void setSearchTerm(String searchTerm);
+    void setSearchTerm(String searchTerm);
 
-    public String getUrl();
+    String getUrl();
 
-    public void setUrl(String url);
+    void setUrl(String url);
 
-    public Integer getSearchPriority() ;
-    
-    public void setSearchPriority(Integer searchPriority);
+    Integer getSearchPriority();
 
-    public Date getActiveStartDate() ;
+    void setSearchPriority(Integer searchPriority);
 
-    public void setActiveStartDate(Date activeStartDate);
+    Date getActiveStartDate();
 
-    public Date getActiveEndDate() ;
+    void setActiveStartDate(Date activeStartDate);
 
-    public void setActiveEndDate(Date activeEndDate);
+    Date getActiveEndDate();
 
-    public boolean isActive();
+    void setActiveEndDate(Date activeEndDate);
+
+    boolean isActive();
+
 }

@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,26 +19,22 @@ package org.broadleafcommerce.core.catalog.service.type;
 
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author Phillip Verheyden
- *
  */
 public class ProductBundlePricingModelType implements Serializable, BroadleafEnumerationType {
 
+    @Serial
     private static final long serialVersionUID = 1L;
+    private static final Map<String, ProductBundlePricingModelType> TYPES = new LinkedHashMap<>();
 
-    private static final Map<String, ProductBundlePricingModelType> TYPES = new LinkedHashMap<String, ProductBundlePricingModelType>();
-
-    public static final ProductBundlePricingModelType ITEM_SUM  = new ProductBundlePricingModelType("ITEM_SUM","Item Sum");
-    public static final ProductBundlePricingModelType BUNDLE  = new ProductBundlePricingModelType("BUNDLE","Bundle");
-
-    public static ProductBundlePricingModelType getInstance(final String type) {
-        return TYPES.get(type);
-    }
+    public static final ProductBundlePricingModelType ITEM_SUM = new ProductBundlePricingModelType("ITEM_SUM", "Item Sum");
+    public static final ProductBundlePricingModelType BUNDLE = new ProductBundlePricingModelType("BUNDLE", "Bundle");
 
     private String type;
     private String friendlyType;
@@ -52,19 +48,23 @@ public class ProductBundlePricingModelType implements Serializable, BroadleafEnu
         setType(type);
     }
 
+    public static ProductBundlePricingModelType getInstance(final String type) {
+        return TYPES.get(type);
+    }
+
     public String getType() {
         return type;
     }
 
-    public String getFriendlyType() {
-        return friendlyType;
-    }
-
-    private void setType(final String type) {
+    protected void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
         }
+    }
+
+    public String getFriendlyType() {
+        return friendlyType;
     }
 
     @Override
@@ -91,4 +91,5 @@ public class ProductBundlePricingModelType implements Serializable, BroadleafEnu
             return false;
         return true;
     }
+
 }

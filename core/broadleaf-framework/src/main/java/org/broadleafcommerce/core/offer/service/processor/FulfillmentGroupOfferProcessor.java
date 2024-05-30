@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -25,16 +25,14 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import java.util.List;
 
 /**
- * 
  * @author jfischer
- *
  */
 public interface FulfillmentGroupOfferProcessor extends OrderOfferProcessor {
 
-    public void filterFulfillmentGroupLevelOffer(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, Offer offer);
+    void filterFulfillmentGroupLevelOffer(PromotableOrder order, List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, Offer offer);
 
-    public void calculateFulfillmentGroupTotal(PromotableOrder order);
-    
+    void calculateFulfillmentGroupTotal(PromotableOrder order);
+
     /**
      * Private method that takes a list of sorted CandidateOrderOffers and determines if each offer can be
      * applied based on the restrictions (stackable and/or combinable) on that offer.  OrderAdjustments
@@ -43,11 +41,11 @@ public interface FulfillmentGroupOfferProcessor extends OrderOfferProcessor {
      * equals false cannot be applied to the Order if the Order already contains an OrderAdjustment.
      *
      * @param qualifiedFGOffers a sorted list of CandidateOrderOffer
-     * @param order the Order to apply the CandidateOrderOffers
+     * @param order             the Order to apply the CandidateOrderOffers
      * @return true if order offer applied; otherwise false
      */
-    public boolean applyAllFulfillmentGroupOffers(List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, PromotableOrder order);
-    
-    public List<FulfillmentGroupOfferPotential> removeTrailingNotCombinableFulfillmentGroupOffers(List<FulfillmentGroupOfferPotential> candidateOffers);
-    
+    boolean applyAllFulfillmentGroupOffers(List<PromotableCandidateFulfillmentGroupOffer> qualifiedFGOffers, PromotableOrder order);
+
+    List<FulfillmentGroupOfferPotential> removeTrailingNotCombinableFulfillmentGroupOffers(List<FulfillmentGroupOfferPotential> candidateOffers);
+
 }

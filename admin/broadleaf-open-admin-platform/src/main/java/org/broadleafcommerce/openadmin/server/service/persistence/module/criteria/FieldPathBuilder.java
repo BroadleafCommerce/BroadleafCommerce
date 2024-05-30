@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -49,11 +49,12 @@ public class FieldPathBuilder {
 
     public FieldPath getFieldPath(From root, String fullPropertyName) {
         String[] pieces = fullPropertyName.split("\\.");
-        List<String> associationPath = new ArrayList<String>();
-        List<String> basicProperties = new ArrayList<String>();
+        List<String> associationPath = new ArrayList<>();
+        List<String> basicProperties = new ArrayList<>();
         int j = 0;
         for (String piece : pieces) {
-            checkPiece: {
+            checkPiece:
+            {
                 if (j == 0) {
                     Path path = root.get(piece);
                     if (path.getModel() instanceof PluralAttribute) {
@@ -66,8 +67,8 @@ public class FieldPathBuilder {
             j++;
         }
         FieldPath fieldPath = new FieldPath()
-            .withAssociationPath(associationPath)
-            .withTargetPropertyPieces(basicProperties);
+                .withAssociationPath(associationPath)
+                .withTargetPropertyPieces(basicProperties);
 
         return fieldPath;
     }
@@ -98,37 +99,42 @@ public class FieldPathBuilder {
                 // of the path we're currently on. Let's see if there's any polymoprhic version of our class to
                 // use instead.
                 JpaMetamodel mm = ((SqmCriteriaNodeBuilder) builder).getDomainModel();
-        	    boolean found = false;
+                boolean found = false;
 
-        	    Class<?>[] polyClasses = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(
-        	            path.getJavaType(), true, true);
+                Class<?>[] polyClasses = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(
+                        path.getJavaType(), true, true
+                );
 
-        	    for (Class<?> clazz : polyClasses) {
-            		ManagedType mt = mm.managedType(clazz);
-            		try {
-            		    Attribute attr = mt.getAttribute(piece);
-            		    if (attr != null) {
-                		    Root additionalRoot = criteria.from(clazz);
-                		    restrictions.add(builder.equal(path, additionalRoot));
-                		    path = additionalRoot.get(piece);
-                		    found = true;
-                		    break;
-            		    }
-            		} catch (IllegalArgumentException e2) {
-            		    // Do nothing - we'll try the next class and see if it has the attribute
-            		}
-        	    }
+                for (Class<?> clazz : polyClasses) {
+                    ManagedType mt = mm.managedType(clazz);
+                    try {
+                        Attribute attr = mt.getAttribute(piece);
+                        if (attr != null) {
+                            Root additionalRoot = criteria.from(clazz);
+                            restrictions.add(builder.equal(path, additionalRoot));
+                            path = additionalRoot.get(piece);
+                            found = true;
+                            break;
+                        }
+                    } catch (IllegalArgumentException e2) {
+                        // Do nothing - we'll try the next class and see if it has the attribute
+                    }
+                }
 
-        	    if (!found) {
-        	        throw new IllegalArgumentException("Could not resolve requested attribute against path, including" +
-        	        		" known polymorphic versions of the root", e);
-        	    }
+                if (!found) {
+                    throw new IllegalArgumentException("Could not resolve requested attribute against path, including" +
+                            " known polymorphic versions of the root", e);
+                }
             }
 
-            if (path.getParentPath() != null && path.getParentPath().getJavaType().isAnnotationPresent(Embeddable.class) && path.getModel() instanceof PluralAttribute) {
+            if (path.getParentPath() != null && path.getParentPath().getJavaType().isAnnotationPresent(Embeddable.class)
+                    && path.getModel() instanceof PluralAttribute) {
                 //We need a workaround for this problem until it is resolved in Hibernate (loosely related to and likely resolved by https://hibernate.atlassian.net/browse/HHH-8802)
                 //We'll throw a specialized exception (and handle in an alternate flow for calls from BasicPersistenceModule)
-                throw new CriteriaConversionException(String.format("Unable to create a JPA criteria Path through an @Embeddable object to a collection that resides therein (%s)", fieldPath.getTargetProperty()), fieldPath);
+                throw new CriteriaConversionException(
+                        String.format("Unable to create a JPA criteria Path through an @Embeddable object to a collection that resides therein (%s)",
+                                fieldPath.getTargetProperty()), fieldPath
+                );
 //                //TODO this code should work, but there still appear to be bugs in Hibernate's JPA criteria handling for lists
 //                //inside Embeddables
 //                Class<?> myClass = ((PluralAttributePath) path).getAttribute().getClass().getInterfaces()[0];
