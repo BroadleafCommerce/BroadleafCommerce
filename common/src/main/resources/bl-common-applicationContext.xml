@@ -73,6 +73,7 @@
                             <value>net\.bytebuddy.*</value>
                             <value>org\.owasp.*</value>
                             <value>org\.htmlunit.*</value>
+                            <value>io\.netty.*</value>
                         </array>
                     </property>
                 </bean>
