@@ -69,6 +69,9 @@ public class GoogleClosureJavascriptMinificationServiceImpl implements Javascrip
     @Value("${minify.closure.compiler.warningLevel:QUIET}")
     protected String warningLevel;
 
+    @Value("${minify.closure.compiler.strictMode:false}")
+    protected Boolean strictMode;
+
     protected CompilerOptions.LanguageMode languageIn;
     protected CompilerOptions.LanguageMode languageOut;
 
@@ -137,6 +140,8 @@ public class GoogleClosureJavascriptMinificationServiceImpl implements Javascrip
         WarningLevel.valueOf(this.warningLevel).setOptionsForWarningLevel(options);
         options.setClosurePass(true);
         options.skipAllCompilerPasses();
+        options.setEmitUseStrict(strictMode);
+        options.setStrictModeInput(strictMode);
         return options;
     }
 
