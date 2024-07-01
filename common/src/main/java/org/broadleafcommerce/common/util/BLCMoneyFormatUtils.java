@@ -47,4 +47,20 @@ public class BLCMoneyFormatUtils {
             return "$ " + price.getAmount().toString();
         }
     }
+
+    public static String formatPrice(Money price, String location) {
+        if (price == null) {
+            return "Not Available";
+        }
+
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        if (brc.getJavaLocale() != null) {
+            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency(), location)
+                    .format(price.getAmount());
+        } else {
+            // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
+            return "$ " + price.getAmount().toString();
+        }
+    }
+
 }
