@@ -867,7 +867,7 @@ public class OrderServiceImpl implements OrderService {
         OrderItemRequestDTO orderItemRequestDTO = new OrderItemRequestDTO();
         orderItemRequestDTO.setOrderItemId(orderItemId);
         CartOperationRequest cartOpRequest = new CartOperationRequest(
-                findOrderById(orderId), orderItemRequestDTO, priceOrder
+                findOrderByIdOrByOrderItemId(orderId, orderItemId), orderItemRequestDTO, priceOrder
         );
         Session session = em.unwrap(Session.class);
         FlushMode current = session.getHibernateFlushMode();
@@ -887,6 +887,15 @@ public class OrderServiceImpl implements OrderService {
         }
         context.getSeedData().getOrder().getOrderMessages().addAll(((ActivityMessages) context).getActivityMessages());
         return context.getSeedData().getOrder();
+    }
+
+    protected Order findOrderByIdOrByOrderItemId(final Long orderId, final Long orderItemId) {
+        final OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
+        final String namedType = OrderStatus.NAMED.getType();
+        if (orderItem != null && orderItem.getOrder() != null && namedType.equals(orderItem.getOrder().getStatus().getType())) {
+            return orderItem.getOrder();
+        }
+        return findOrderById(orderId);
     }
 
     @Override
