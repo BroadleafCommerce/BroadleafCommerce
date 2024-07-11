@@ -25,6 +25,7 @@ import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -49,8 +50,8 @@ public class PriceTextDisplayProcessor extends AbstractBroadleafTagTextModifierP
         return 1500;
     }
 
-    @Value("${currency.location:DEFAULT}")
-    protected String currencyLocation;
+    @Value("#{${currency.locale.change}}")
+    protected Map<String, String> localeToChange = new HashMap<>();
 
     @Override
     public String getTagText(String tagName, Map<String, String> tagAttributes, String attributeName, String attributeValue, BroadleafTemplateContext context) {
@@ -63,7 +64,7 @@ public class PriceTextDisplayProcessor extends AbstractBroadleafTagTextModifierP
             price = new Money(((Number)result).doubleValue());
         }
 
-        return BLCMoneyFormatUtils.formatPrice(price, currencyLocation);
+        return BLCMoneyFormatUtils.formatPrice(price, localeToChange);
     }
 
 }
