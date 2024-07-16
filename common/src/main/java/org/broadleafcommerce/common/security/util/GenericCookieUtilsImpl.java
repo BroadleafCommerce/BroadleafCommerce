@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
-import org.owasp.encoder.esapi.ESAPIEncoder;
+import org.owasp.esapi.ESAPI;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
@@ -104,7 +104,7 @@ public class GenericCookieUtilsImpl implements CookieUtils {
 
         String string = sb.toString();
         if (string.length() < 4096) {
-            String canonicalize = ESAPIEncoder.getInstance().canonicalize(string);
+            String canonicalize = ESAPI.encoder().canonicalize(string);
             if (cookieValuePattern.matcher(canonicalize).matches()) {
                 response.addHeader("Set-Cookie", canonicalize);
             } else {
