@@ -30,7 +30,7 @@ import org.broadleafcommerce.core.order.service.exception.ProductOptionValidatio
 import org.broadleafcommerce.core.order.service.exception.RequiredAttributeNotProvidedException;
 import org.broadleafcommerce.core.order.service.type.MessageType;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
-import org.owasp.encoder.esapi.ESAPIEncoder;
+import org.owasp.esapi.ESAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -74,9 +74,9 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
         } else {
             String validationString = productOption.getValidationString();
             validationString = xssExploitProtectionEnabled
-                    ? ESAPIEncoder.getInstance().decodeForHTML(validationString)
+                    ? ESAPI.encoder().decodeForHTML(validationString)
                     : validationString;
-            value = siteXssWrapperEnabled ? ESAPIEncoder.getInstance().decodeForHTML(value) : value;
+            value = siteXssWrapperEnabled ? ESAPI.encoder().decodeForHTML(value) : value;
 
             if (requiresValidation(productOption, value) && !validateRegex(validationString, value)) {
                 String errorMessage = productOption.getErrorMessage();

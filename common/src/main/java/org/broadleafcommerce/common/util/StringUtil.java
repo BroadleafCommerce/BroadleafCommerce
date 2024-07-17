@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jettison.json.JSONObject;
-import org.owasp.encoder.esapi.ESAPIEncoder;
+import org.owasp.esapi.ESAPI;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -186,7 +186,7 @@ public class StringUtil {
             return "NULL";
         }
         String sanitized = string.replace('\n', '_').replace('\r', '_');
-        return ESAPIEncoder.getInstance().encodeForHTML(sanitized);
+        return ESAPI.encoder().encodeForHTML(sanitized);
     }
 
 }
