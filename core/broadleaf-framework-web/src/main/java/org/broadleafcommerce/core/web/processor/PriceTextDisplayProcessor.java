@@ -50,7 +50,7 @@ public class PriceTextDisplayProcessor extends AbstractBroadleafTagTextModifierP
         return 1500;
     }
 
-    @Value("#{${currency.locale.change}}")
+    @Value("#{${currency.locale.change:{}}}")
     protected Map<String, String> localeToChange = new HashMap<>();
 
     @Override
