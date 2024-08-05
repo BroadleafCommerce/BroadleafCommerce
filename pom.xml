@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <name>BroadleafCommerce</name>
+    <description>BroadleafCommerce Top Level Project</description>
     <groupId>org.broadleafcommerce</groupId>
     <artifactId>broadleaf</artifactId>
+    <version>5.0.9.3-OAP-JAVA11-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>BroadleafCommerce</name>
-    <version>5.0.9.3-OAP-J11</version>
-    <description>BroadleafCommerce Top Level Project</description>
-    <url>http://www.broadleafcommerce.org</url>
+    <url>https://www.broadleafcommerce.com/</url>
+
     <licenses>
         <license>
             <name>Broadleaf Fair Use 1.0</name>
@@ -15,22 +17,18 @@
             <distribution>repo</distribution>
             <comments>Fair Use Community License</comments>
         </license>
-        <license>
-            <name>Broadleaf End User License Agreement 1.1</name>
-            <url>http://license.broadleafcommerce.org/commercial_license-1.1.txt</url>
-            <distribution>repo</distribution>
-            <comments>Commercial License Applicable When Bounds of Fair Use License Are Exceeded</comments>
-        </license>
     </licenses>
     <developers>
         <developer>
-            <id>architect</id>
-            <email>architect@broadleafcommerce.org</email>
+            <id>blcteam</id>
+            <name>Broadleaf Commerce Team</name>
+            <email>info@broadleafcommerce.com</email>
             <organization>Broadleaf Commerce</organization>
-            <organizationUrl>http://www.broadleafcommerce.org</organizationUrl>
+            <organizationUrl>https://www.broadleafcommerce.com</organizationUrl>
             <timezone>-6</timezone>
         </developer>
     </developers>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.10.8</ehcache3.version>
