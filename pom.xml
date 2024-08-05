@@ -64,7 +64,6 @@
                     <configuration>
                         <source>11</source>
                         <target>11</target>
-                        <release>11</release>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -386,6 +385,10 @@
                                 </goals>
                                 <configuration>
                                     <keyname>info@broadleafcommerce.org</keyname>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
                                 </configuration>
                             </execution>
                         </executions>
