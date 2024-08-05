@@ -19,7 +19,7 @@ package org.broadleafcommerce.core.store.dao;
 
 import org.broadleafcommerce.core.store.domain.Store;
 import org.broadleafcommerce.core.store.domain.StoreImpl;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

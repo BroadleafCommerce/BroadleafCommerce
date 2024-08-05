@@ -55,7 +55,7 @@ public class BLCRequestUtils {
      */
     public static Object getSessionAttributeIfOk(WebRequest request, String attribute) {
         if (isOKtoUseSession(request)) {
-            return request.getAttribute(attribute, WebRequest.SCOPE_GLOBAL_SESSION);
+            return request.getAttribute(attribute, WebRequest.SCOPE_SESSION);
         }
         return null;
     }
@@ -67,7 +67,7 @@ public class BLCRequestUtils {
      */
     public static boolean setSessionAttributeIfOk(WebRequest request, String attribute, Object value) {
         if (isOKtoUseSession(request)) {
-            request.setAttribute(attribute, value, WebRequest.SCOPE_GLOBAL_SESSION);
+            request.setAttribute(attribute, value, WebRequest.SCOPE_SESSION);
             return true;
         }
         return false;

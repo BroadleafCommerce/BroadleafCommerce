@@ -21,14 +21,15 @@ import org.broadleafcommerce.common.security.util.CookieUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Locale;
+
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Locale;
 
 /**
  * This class adds additional features to the token based remember me services provided by
@@ -47,9 +48,6 @@ public class EnhancedTokenBasedRememberMeServices extends TokenBasedRememberMeSe
 
     @Resource(name="blCookieUtils")
     protected CookieUtils cookieUtils;
-
-    @Deprecated
-    public EnhancedTokenBasedRememberMeServices() {}
     
     public EnhancedTokenBasedRememberMeServices(String key, UserDetailsService userDetailsService) {
         super(key, userDetailsService);

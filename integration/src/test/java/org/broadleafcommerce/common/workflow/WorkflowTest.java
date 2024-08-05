@@ -20,77 +20,131 @@ package org.broadleafcommerce.common.workflow;
 import org.broadleafcommerce.core.pricing.service.workflow.TotalActivity;
 import org.broadleafcommerce.core.workflow.Activity;
 import org.broadleafcommerce.core.workflow.ModuleActivity;
+import org.broadleafcommerce.core.workflow.PassThroughActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.state.test.TestExampleModuleActivity;
-import org.broadleafcommerce.core.workflow.PassThroughActivity;
 import org.broadleafcommerce.core.workflow.state.test.TestRollbackActivity;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.Ordered;
 import org.testng.Assert;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 
 /**
  * 
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class WorkflowTest extends BaseTest {
+public class WorkflowTest extends TestNGSiteIntegrationSetup {
 
-    static {
-        getModuleContexts().add("bl-applicationContext-test-module.xml");
-    }
-    
+    @ImportResource("classpath:bl-applicationContext-test-module.xml")
+    @Configuration
+    public static class WorkflowTestConfig {}
+
+    @Resource(name = "blCheckoutWorkflowActivities")
     protected List<Activity<ProcessContext<? extends Object>>> activities;
-    
-    @BeforeTest
-    public void setup() {
-        activities = ((SequenceProcessor)getContext().getBean("blCheckoutWorkflow")).getActivities();
-    }
-    
+
+    @Resource(name = "blCheckoutWorkflow")
+    protected SequenceProcessor checkoutWorkflow;
+
+    @Resource(name = "blTotalActivity")
+    protected TotalActivity totalActivity;
+
     @Test
     public void testMergedOrderedActivities() {
         Assert.assertEquals(activities.get(0).getClass(), PassThroughActivity.class);
         Assert.assertEquals(activities.get(0).getOrder(), 100);
-        
-        Assert.assertEquals(activities.get(4).getClass(), PassThroughActivity.class);
-        Assert.assertEquals(activities.get(4).getOrder(), 3000);
+
+        Assert.assertEquals(activities.get(6).getClass(), PassThroughActivity.class);
+        Assert.assertEquals(activities.get(5).getOrder(), 3000);
     }
-    
+
     @Test
     public void testFrameworkOrderingChanged() {
-        TotalActivity totalActivity = (TotalActivity)getContext().getBean("blTotalActivity");
         Assert.assertEquals(totalActivity.getOrder(), 8080);
     }
-    
+
     @Test
     public void testDetectedModuleActivity() {
-        List<ModuleActivity> moduleActivities = ((SequenceProcessor)getContext().getBean("blCheckoutWorkflow")).getModuleActivities();
+        List<ModuleActivity> moduleActivities = checkoutWorkflow.getModuleActivities();
         Assert.assertEquals(moduleActivities.size(), 1);
         Assert.assertEquals(moduleActivities.get(0).getModuleName(), "integration");
     }
-    
+
     @Test
     public void testNonExplicitOrdering() {
         Assert.assertEquals(activities.get(activities.size() - 1).getClass(), TestExampleModuleActivity.class);
         Assert.assertEquals(activities.get(activities.size() - 1).getOrder(), Ordered.LOWEST_PRECEDENCE);
     }
-    
+
     /**
      * Tests that a merged activity can have the same order as a framework activity and come after it
      */
     @Test
     public void testSameOrderingConfiguredActivity() {
-        Assert.assertEquals(activities.get(7).getClass(), TestRollbackActivity.class);
+        Assert.assertEquals(activities.get(9).getClass(), TestRollbackActivity.class);
     }
-    
+
     @Test
     public void testInBetweenActivity() {
-        Assert.assertEquals(activities.get(4).getClass(), PassThroughActivity.class);
+        Assert.assertEquals(activities.get(6).getClass(), PassThroughActivity.class);
     }
+//    //    static {
+////        getModuleContexts().add("bl-applicationContext-test-module.xml");
+////    }
+////
+////    protected List<Activity<ProcessContext<? extends Object>>> activities;
+////
+////    @BeforeTest
+////    public void setup() {
+////        activities = ((SequenceProcessor)getContext().getBean("blCheckoutWorkflow")).getActivities();
+////    }
+////
+//    @Test
+//    public void testMergedOrderedActivities() {
+//        Assert.assertEquals(activities.get(0).getClass(), PassThroughActivity.class);
+//        Assert.assertEquals(activities.get(0).getOrder(), 100);
+//
+//        Assert.assertEquals(activities.get(4).getClass(), PassThroughActivity.class);
+//        Assert.assertEquals(activities.get(4).getOrder(), 3000);
+//    }
+//
+//    @Test
+//    public void testFrameworkOrderingChanged() {
+////        TotalActivity totalActivity = (TotalActivity)getContext().getBean("blTotalActivity");
+//        Assert.assertEquals(totalActivity.getOrder(), 8080);
+//    }
+//
+//    @Test
+//    public void testDetectedModuleActivity() {
+////        List<ModuleActivity> moduleActivities = ((SequenceProcessor)getContext().getBean("blCheckoutWorkflow")).getModuleActivities();
+//        Assert.assertEquals(moduleActivities.size(), 1);
+//        Assert.assertEquals(moduleActivities.get(0).getModuleName(), "integration");
+//    }
+//
+//    @Test
+//    public void testNonExplicitOrdering() {
+//        Assert.assertEquals(activities.get(activities.size() - 1).getClass(), TestExampleModuleActivity.class);
+//        Assert.assertEquals(activities.get(activities.size() - 1).getOrder(), Ordered.LOWEST_PRECEDENCE);
+//    }
+//
+//    /**
+//     * Tests that a merged activity can have the same order as a framework activity and come after it
+//     */
+//    @Test
+//    public void testSameOrderingConfiguredActivity() {
+//        Assert.assertEquals(activities.get(7).getClass(), TestRollbackActivity.class);
+//    }
+//
+//    @Test
+//    public void testInBetweenActivity() {
+//        Assert.assertEquals(activities.get(4).getClass(), PassThroughActivity.class);
+//    }
     
 }

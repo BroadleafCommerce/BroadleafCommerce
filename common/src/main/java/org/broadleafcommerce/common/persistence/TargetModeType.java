@@ -15,7 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.openadmin.server.service.persistence;
+package org.broadleafcommerce.common.persistence;
 
 import java.io.Serializable;
 import java.util.HashMap;

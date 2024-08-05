@@ -17,15 +17,8 @@
  */
 package org.broadleafcommerce.common.cache.engine;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.cache.spi.CacheKey;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -33,6 +26,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
 
 /**
  * 
@@ -99,10 +99,7 @@ public class EhcacheHydratedCacheManagerImpl extends AbstractHydratedCacheManage
 
     protected void removeCache(String cacheRegion, Serializable key) {
         String cacheName = cacheRegion;
-        if (key instanceof CacheKey) {
-            cacheName = ((CacheKey) key).getEntityOrRoleName();
-            key = ((CacheKey) key).getKey();
-        }
+
         String nameKey = cacheRegion + '_' + cacheName + '_' + key;
         if (cacheMembersByEntity.containsKey(nameKey)) {
             String[] members = new String[cacheMembersByEntity.get(nameKey).size()];

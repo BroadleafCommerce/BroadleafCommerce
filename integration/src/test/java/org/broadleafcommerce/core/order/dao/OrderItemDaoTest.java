@@ -23,14 +23,14 @@ import org.broadleafcommerce.core.order.OrderItemDataProvider;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItem;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
 
-public class OrderItemDaoTest extends BaseTest {
+public class OrderItemDaoTest extends TestNGSiteIntegrationSetup {
 
     private Long orderItemId;
     private Long giftWrapItemId;

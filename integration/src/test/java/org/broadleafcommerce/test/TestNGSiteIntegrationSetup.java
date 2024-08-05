@@ -17,13 +17,14 @@
  */
 package org.broadleafcommerce.test;
 
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Base Integration Test Setup java file for Site based integration tests. This base class has all the
@@ -36,7 +37,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * @author Jeff Fischer
  *
  */
-@TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
+@Transactional(transactionManager = "blTransactionManager")
+@Rollback
 @ContextHierarchy({
     @ContextConfiguration(name = "siteRoot",
             locations ={"classpath:/bl-open-admin-contentClient-applicationContext.xml",

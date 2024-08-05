@@ -25,7 +25,7 @@ import org.broadleafcommerce.profile.web.controller.CustomerPhoneController;
 import org.broadleafcommerce.profile.web.core.controller.dataprovider.CustomerPhoneControllerTestDataProvider;
 import org.broadleafcommerce.profile.web.core.model.PhoneNameForm;
 import org.broadleafcommerce.profile.web.core.security.CustomerStateRequestProcessor;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,11 +33,12 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerPhoneControllerTest extends BaseTest {
+import javax.annotation.Resource;
+
+public class CustomerPhoneControllerTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private CustomerPhoneController customerPhoneController;

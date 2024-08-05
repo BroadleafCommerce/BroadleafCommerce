@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.broadleafcommerce.common.presentation.client.PersistencePerspectiveItemType;
 
 import java.io.Serializable;

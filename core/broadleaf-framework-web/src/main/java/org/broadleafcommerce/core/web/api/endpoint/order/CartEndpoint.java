@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.web.api.endpoint.order;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;

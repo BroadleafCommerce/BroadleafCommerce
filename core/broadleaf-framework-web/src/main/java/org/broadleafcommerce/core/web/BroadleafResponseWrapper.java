@@ -25,6 +25,7 @@ import org.owasp.esapi.errors.AccessControlException;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
@@ -48,6 +49,21 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
     
     public int getStatus() {
         return status;
+    }
+
+    @Override
+    public String getHeader(String s) {
+        return response.getHeader(s);
+    }
+
+    @Override
+    public Collection<String> getHeaders(String s) {
+        return response.getHeaders(s);
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return response.getHeaderNames();
     }
 
     /**
@@ -269,6 +285,11 @@ public class BroadleafResponseWrapper implements HttpServletResponse {
      */
     public void setContentLength(int arg0) {
         response.setContentLength(arg0);
+    }
+
+    @Override
+    public void setContentLengthLong(long l) {
+        response.setContentLengthLong(l);
     }
 
     /**

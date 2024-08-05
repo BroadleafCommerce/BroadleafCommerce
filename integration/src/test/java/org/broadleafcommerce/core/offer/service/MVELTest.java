@@ -34,7 +34,7 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +50,7 @@ import java.util.HashMap;
 
 import javax.annotation.Resource;
 
-public class MVELTest extends BaseTest {
+public class MVELTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private CatalogService catalogService;

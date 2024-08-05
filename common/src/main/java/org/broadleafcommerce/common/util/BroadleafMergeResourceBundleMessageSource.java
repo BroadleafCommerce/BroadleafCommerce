@@ -18,13 +18,15 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ResourceLoader;
+
 import java.text.MessageFormat;
 import java.util.Locale;
+
 import javax.annotation.Resource;
 
 

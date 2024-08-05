@@ -20,16 +20,17 @@ package org.broadleafcommerce.profile.web.core.service;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.service.PhoneService;
 import org.broadleafcommerce.profile.dataprovider.PhoneDataProvider;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhoneTest extends BaseTest {
+import javax.annotation.Resource;
+
+public class PhoneTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private PhoneService phoneService;

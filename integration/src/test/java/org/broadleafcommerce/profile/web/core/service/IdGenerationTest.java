@@ -20,7 +20,7 @@ package org.broadleafcommerce.profile.web.core.service;
 import org.broadleafcommerce.profile.core.domain.IdGeneration;
 import org.broadleafcommerce.profile.core.domain.IdGenerationImpl;
 import org.broadleafcommerce.profile.core.service.IdGenerationService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
@@ -29,11 +29,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-public class IdGenerationTest extends BaseTest {
+public class IdGenerationTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private IdGenerationService idGenerationService;
+
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
 
     List<Long> userIds = new ArrayList<Long>();
 

@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.sandbox.domain.SandBoxManagementImpl;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxType;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionDefinition;
@@ -68,7 +68,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
         CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
         CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
-        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.select(sandbox.get("sandBox"));
         criteria.where(
                 builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
                         builder.notEqual(sandbox.get("sandBox").get("archiveStatus").get("archived").as(Character.class), 'Y'))
@@ -84,7 +84,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
         CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
         CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
-        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.select(sandbox.get("sandBox"));
         criteria.where(
                 builder.and(builder.equal(sandbox.get("sandBox").get("sandboxType"), sandboxType.getType()),
                         builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
@@ -122,7 +122,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
         CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
         CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
-        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.select(sandbox.get("sandBox"));
         criteria.where(
                 builder.and(sandbox.get("sandBox").get("parentSandBox").in(parentSandBoxId),
                         builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
@@ -141,7 +141,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
         CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
         CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
-        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.select(sandbox.get("sandBox"));
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), SandBoxType.USER.getType()));
         restrictions.add(builder.equal(sandbox.get("sandBox").get("author"), authorId));
@@ -169,7 +169,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
         CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
         CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
-        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.select(sandbox.get("sandBox"));
         criteria.where(
                 builder.and(builder.equal(sandbox.get("sandBox").get("id"), sandBoxId),
                         builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
@@ -198,7 +198,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
         CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
         CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
-        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.select(sandbox.get("sandBox"));
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(builder.equal(sandbox.get("sandBox").get("sandboxType"), sandBoxType.getType()));
         restrictions.add(builder.equal(sandbox.get("sandBox").get("name"), sandboxName));
@@ -250,7 +250,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
         CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
         CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
-        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.select(sandbox.get("sandBox"));
         criteria.where(
                 builder.and(builder.in(sandbox.get("sandBox").get("id")).value(sandBoxIds),
                 builder.or(builder.isNull(sandbox.get("sandBox").get("archiveStatus").get("archived").as(String.class)),
@@ -279,7 +279,7 @@ public class SandBoxDaoImpl implements SandBoxDao {
         CriteriaBuilder builder = sandBoxEntityManager.getCriteriaBuilder();
         CriteriaQuery<SandBox> criteria = builder.createQuery(SandBox.class);
         Root<SandBoxManagementImpl> sandbox = criteria.from(SandBoxManagementImpl.class);
-        criteria.select(sandbox.get("sandBox").as(SandBox.class));
+        criteria.select(sandbox.get("sandBox"));
         List<Predicate> restrictions = new ArrayList<Predicate>();
         restrictions.add(builder.equal(sandbox.get("sandBox").get("author"), authorId));
         if (sandBoxType != null) {

@@ -18,10 +18,7 @@
 
 package org.broadleafcommerce.core.web.processor;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.service.SystemPropertiesService;
@@ -41,6 +38,9 @@ import org.thymeleaf.standard.processor.attr.StandardFragmentAttrProcessor;
 import java.util.Set;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 
 /**
  * <p>

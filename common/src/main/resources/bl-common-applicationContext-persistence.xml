@@ -18,10 +18,15 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://www.springframework.org/schema/util
+                        http://www.springframework.org/schema/util/spring-util.xsd">
 
     <tx:annotation-driven/>
 
@@ -33,12 +38,44 @@
         <property name="persistenceUnitName" value="blPU"/>
     </bean>
 
-    <bean id="blEJB3ConfigurationDao" class="org.broadleafcommerce.common.util.dao.EJB3ConfigurationDaoImpl">
-        <property name="persistenceUnitInfo">
-            <bean factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
+    <bean id="blTargetModeMaps" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="blDefaultTargetModeMap"/>
+            </list>
         </property>
     </bean>
-    
+
+    <!-- EntityManager,TransactionManager sets -->
+    <bean id="blDefaultTargetModeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="sandbox">
+                    <map>
+                        <entry key="entityManager" value-ref="prodEntityManager"/>
+                        <entry key="transactionManager" value-ref="blTransactionManager"/>
+                    </map>
+                </entry>
+                <entry key="stage">
+                    <map>
+                        <entry key="entityManager" value-ref="prodEntityManager"/>
+                        <entry key="transactionManager" value-ref="blTransactionManager"/>
+                    </map>
+                </entry>
+                <entry key="production">
+                    <map>
+                        <entry key="entityManager" value-ref="prodEntityManager"/>
+                        <entry key="transactionManager" value-ref="blTransactionManager"/>
+                    </map>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
     <bean id="blCacheManager" class="org.broadleafcommerce.common.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
         <property name="shared" value="true"/>
     </bean>

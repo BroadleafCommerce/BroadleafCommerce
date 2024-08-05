@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.web.rulebuilder;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;

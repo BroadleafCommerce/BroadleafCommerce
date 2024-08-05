@@ -1,8 +1,8 @@
-/*
+/*-
  * #%L
- * BroadleafCommerce Open Admin Platform
+ * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2016 Broadleaf Commerce
+ * Copyright (C) 2009 - 2024 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -15,17 +15,16 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.util.dao;
-
-import org.hibernate.ejb.Ejb3Configuration;
+package org.broadleafcommerce.common.persistence;
 
 /**
- * 
- * @author jfischer
+ * Hints available to be leveraged by Broadleaf components for different query result behavior. Some or all of these hints
+ * may only be effective with enterprise components in place. Intended for use with {@link QueryHelper}.
  *
+ * @author Jeff Fischer
  */
-public interface EJB3ConfigurationDao {
+public class QueryHelperHints {
 
-    public abstract Ejb3Configuration getConfiguration();
+    public static final String FORCE_ENTITY_CACHE_EVICT_ON_LOAD = "force.entity.cache.evict.on.load";
 
 }

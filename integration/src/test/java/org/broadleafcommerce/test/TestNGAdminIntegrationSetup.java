@@ -10,20 +10,21 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
 package org.broadleafcommerce.test;
 
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Base Integration Test Setup java file for Admin based integration tests. This base class has all the
@@ -34,9 +35,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * actual integration tests. IntegrationSetup files should not have any code in their body's.
  *
  * @author Jeff Fischer
- *
  */
-@TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
+@Transactional(transactionManager = "blTransactionManager")
+@Rollback
 @ContextHierarchy({
 @ContextConfiguration(name = "adminRoot",
     locations = {"classpath:/bl-open-admin-contentClient-applicationContext.xml",

@@ -83,7 +83,7 @@ public class BroadleafCachingResourceTransformer extends CachingResourceTransfor
     public int getOrder() {
         return order;
     }
-
+    
     public void setOrder(int order) {
         this.order = order;
     }

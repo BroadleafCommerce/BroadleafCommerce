@@ -20,8 +20,8 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -304,9 +304,9 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
             }
         });
         Session session = getPersistenceManager().getDynamicEntityDao().getStandardEntityManager().unwrap(Session.class);
-        FlushMode originalFlushMode = session.getFlushMode();
+        FlushMode originalFlushMode = session.getHibernateFlushMode();
         try {
-            session.setFlushMode(FlushMode.MANUAL);
+            session.setHibernateFlushMode(FlushMode.MANUAL);
             RuntimeException entityPersistenceException = null;
             for (Property property : sortedProperties) {
                 BasicFieldMetadata metadata = (BasicFieldMetadata) mergedProperties.get(property.getName());
@@ -427,7 +427,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
         } catch (InstantiationException e) {
             throw new PersistenceException(e);
         } finally {
-            session.setFlushMode(originalFlushMode);
+            session.setHibernateFlushMode(originalFlushMode);
         }
         return instance;
     }

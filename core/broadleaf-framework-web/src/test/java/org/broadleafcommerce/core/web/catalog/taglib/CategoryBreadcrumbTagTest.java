@@ -20,11 +20,12 @@ package org.broadleafcommerce.core.web.catalog.taglib;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.easymock.classextension.EasyMock;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
 
 public class CategoryBreadcrumbTagTest extends BaseTagLibTest {
     

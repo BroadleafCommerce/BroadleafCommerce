@@ -28,7 +28,6 @@ import java.util.Collection;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  * @see {@link UserDetailsServiceImpl}
- * @see {@link CustomerServiceImpl#getSalt(org.broadleafcommerce.profile.core.domain.Customer)}
  */
 public class CustomerUserDetails extends User {
 

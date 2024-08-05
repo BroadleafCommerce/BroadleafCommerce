@@ -15,9 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-/**
- * 
- */
 package org.broadleafcommerce.common.workflow;
 
 import org.broadleafcommerce.core.workflow.Activity;
@@ -29,7 +26,7 @@ import org.broadleafcommerce.core.workflow.SequenceProcessor;
 import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.broadleafcommerce.core.workflow.state.RollbackFailureException;
 import org.broadleafcommerce.core.workflow.state.RollbackHandler;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -45,7 +42,7 @@ import javax.annotation.Resource;
  * 
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class RollbackTest extends BaseTest {
+public class RollbackTest extends TestNGSiteIntegrationSetup {
     
     @Resource(name = "testRollbackWorkflow")
     protected SequenceProcessor testRollbackWorkflow;
@@ -59,14 +56,16 @@ public class RollbackTest extends BaseTest {
         } catch (WorkflowException e) {
             exceptionThrown = true;
         }
-        
-        List<String> expected = Arrays.asList("Activity1",
-            "Activity2",
-            "ActivityA",
-            "RollbackActivityA",
-            "NestedActivityException",
-            "RollbackActivity2",
-            "RollbackActivity1");
+
+        List<String> expected = Arrays.asList(
+                "Activity1",
+                "Activity2",
+                "ActivityA",
+                "RollbackActivityA",
+                "NestedActivityException",
+                "RollbackActivity2",
+                "RollbackActivity1"
+        );
         Assert.assertTrue(exceptionThrown);
         Assert.assertEquals(results, expected, "Rollback occurred out of order");
     }

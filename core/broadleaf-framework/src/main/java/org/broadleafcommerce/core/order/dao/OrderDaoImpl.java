@@ -35,7 +35,7 @@ import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.dao.CustomerDao;
 import org.broadleafcommerce.profile.core.domain.Customer;
-import org.hibernate.ejb.QueryHints;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,6 +81,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    @Transactional("blTransactionManager")
     public Order readOrderById(final Long orderId, boolean refresh) {
         Order order = readOrderById(orderId);
         if (refresh) {

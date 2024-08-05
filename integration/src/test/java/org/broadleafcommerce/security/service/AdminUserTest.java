@@ -20,13 +20,14 @@ package org.broadleafcommerce.security.service;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.security.service.dataprovider.AdminUserDataProvider;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGAdminIntegrationSetup;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
 
-public class AdminUserTest extends BaseTest {
+public class AdminUserTest extends TestNGAdminIntegrationSetup {
     @Resource
     AdminSecurityService adminSecurityService;
 

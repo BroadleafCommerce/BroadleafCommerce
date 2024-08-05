@@ -63,7 +63,7 @@ import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.broadleafcommerce.profile.core.service.CountryService;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.core.service.StateService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
@@ -77,7 +77,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
-public class PricingTest extends BaseTest {
+public class PricingTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private CustomerService customerService;

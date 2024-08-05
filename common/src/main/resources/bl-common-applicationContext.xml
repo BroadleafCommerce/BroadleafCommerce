@@ -22,15 +22,17 @@
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
-           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <context:component-scan base-package="org.broadleafcommerce.common"/>
-    
-    <!-- Override Spring's default ApplicationEventMultiCaster with one that is a little smarter about asynchronous -->
-    <bean id="applicationEventMulticaster" class="org.broadleafcommerce.common.event.BroadleafApplicationEventMulticaster"/>
+    <context:component-scan base-package="org.broadleafcommerce.common">
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.controller.*"/>
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.site.*"/>
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.api.*"/>
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.common.web.config.*"/>
+    </context:component-scan>
 
     <bean id="blExploitProtectionService" class="org.broadleafcommerce.common.security.service.ExploitProtectionServiceImpl">
         <property name="xsrfProtectionEnabled" value="${exploitProtection.xsrfEnabled}" />
@@ -126,18 +128,6 @@
         <constructor-arg name="moduleName" value="Conditional Field Annotation Transformation" />
     </bean>
 
-    <!-- NOTE: Remove this transformer when Thymeleaf 2.1.5 is released. See the Javadocs for org.broadleafcommerce.common.web.patch.EvaluationUtilPatch -->
-    <bean id="blEvaluationUtilPatchClassTransformer" class="org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyClassTransformer">
-        <constructor-arg name="moduleName" value="EvaluationUtil Patch Transformation" />
-        <property name="xformTemplates">
-            <map>
-                <entry key="org.thymeleaf.util.EvaluationUtil"
-                       value="org.broadleafcommerce.common.web.patch.EvaluationUtilPatch"/>
-            </map>
-        </property>
-    </bean>
-    <!-- END NOTE -->
-
     <!-- to be overriden by 3rd party modules -->
     <bean id="blMergedClassTransformers" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
@@ -145,7 +135,7 @@
                 <ref bean="blAnnotationDirectCopyClassTransformer"/>
                 <ref bean="blEntityMarkerClassTransformer"/>
                 <ref bean="blConditionalFieldAnnotationClassTransformer"/>
-                <ref bean="blEvaluationUtilPatchClassTransformer"/>
+                <ref bean="blMaterializedClobTypeClassTransformer"/>
             </list>
         </property>
     </bean>
@@ -174,22 +164,6 @@
     <!-- This mail sender will log the html content generated for the email to the console  -->
     <!-- To enable logging set log level in Log4j to INFO  -->
     <bean id="blLoggingMailSender" class="org.broadleafcommerce.common.email.service.LoggingMailSender" />
-
-    <bean id="blVelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
-      <property name="velocityProperties">
-         <value>
-            resource.loader=class
-            class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-            <!-- class.resource.loader.path=classpath:/config/velocity/templates/ -->
-            <!-- Note that jar specification for the .path configuration property conforms to the same rules for the java.net.JarUrlConnection class-->
-            <!-- jar.resource.loader.class =org.apache.velocity.runtime.resource.loader.JarResourceLoader
-            jar.resource.loader.path = jar:file:/broadleaf-profile.jar/emailTemplates
-            file.resource.loader.class=org.apache.velocity.runtime.resource.loader.FileResourceLoader
-            file.resource.loader.cache = false
-            file.resource.loader.path=${file.root}/WEB-INF/config/velocity/templates-->
-         </value>
-      </property>
-   </bean>
     
     <bean id="blEmailInfo" class="org.broadleafcommerce.common.email.service.info.EmailInfo" />
     <bean id="blNullEmailInfo" class="org.broadleafcommerce.common.email.service.info.NullEmailInfo" />
@@ -404,18 +378,6 @@
     </bean>
 
     <bean id="blStatisticsServiceLogAdapter" class="org.broadleafcommerce.common.cache.NoOpStatisticsServiceLogAdapter"/>
-
-    <bean id="blStatisticsService" class="org.broadleafcommerce.common.cache.StatisticsServiceImpl">
-        <property name="appName">
-            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
-                <property name="jndiName">
-                    <value>java:comp/env/appName</value>
-                </property>
-                <property name="defaultObject" value="broadleaf"/>
-            </bean>
-        </property>
-        <property name="adapter" ref="blStatisticsServiceLogAdapter"/>
-    </bean>
 
     <bean id="blEntityExtensionManagers" class="org.springframework.beans.factory.config.MapFactoryBean">
         <property name="sourceMap">

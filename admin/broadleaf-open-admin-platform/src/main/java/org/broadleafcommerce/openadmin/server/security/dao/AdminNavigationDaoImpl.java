@@ -22,6 +22,7 @@ import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminModule;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminSection;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.UrlPathHelper;
@@ -68,7 +69,8 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     @Override
     public List<AdminModule> readAllAdminModules() {
         Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_MODULES");
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
         List<AdminModule> modules = query.getResultList();
         return modules;
     }
@@ -84,7 +86,8 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     @Override
     public List<AdminSection> readAllAdminSections() {
         Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_SECTIONS");
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
         List<AdminSection> sections = query.getResultList();
         return sections;
     }
@@ -131,7 +134,7 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
         TypedQuery<AdminSection> q = em.createQuery(
             "select s from " + AdminSection.class.getName() + " s where s.ceilingEntity = :className", AdminSection.class);
         q.setParameter("className", className);
-        q.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        q.setHint(QueryHints.HINT_CACHEABLE, true);
         List<AdminSection> result = q.getResultList();
         if (CollectionUtils.isEmpty(result)) {
             return null;
@@ -143,7 +146,8 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     public AdminSection readAdminSectionByURI(String uri) {
         Query query = em.createNamedQuery("BC_READ_ADMIN_SECTION_BY_URI");
         query.setParameter("uri", uri);
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
         AdminSection adminSection = null;
         try {
              adminSection = (AdminSection) query.getSingleResult();
@@ -156,7 +160,8 @@ public class AdminNavigationDaoImpl implements AdminNavigationDao {
     @Override
     public AdminSection readAdminSectionBySectionKey(String sectionKey) {
         Query query = em.createNamedQuery("BC_READ_ADMIN_SECTION_BY_SECTION_KEY");
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHE_REGION, "blAdminSecurityQuery");
         query.setParameter("sectionKey", sectionKey);
         AdminSection adminSection = null;
         try {
