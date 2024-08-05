@@ -56,7 +56,7 @@ public class BetweenDatePredicateProvider implements PredicateProvider<Comparabl
             // down to the millisecond, so we can't just do equals we have to filter dates between the date provided and
             // 1000 milliseconds later than the date provided to get all records for that particular second
             Date secondFromNow = new Date(((Date)directValues.get(0)).getTime() + 1000);
-            return builder.between(path, directValues.get(0), secondFromNow);
+            return builder.between(path, directValues.get(0), (Comparable) secondFromNow);
         }
     }
 }

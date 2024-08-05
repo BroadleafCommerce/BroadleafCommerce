@@ -23,8 +23,6 @@ import org.broadleafcommerce.common.site.domain.Catalog;
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.hibernate.ejb.HibernateEntityManager;
-import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -58,8 +56,6 @@ public class IdentityExecutionUtils {
         Site previousProfile = brc.getCurrentProfile();
         
         boolean isNew = initRequestContext(site, profile, catalog);
-
-        activateSession();
         
         TransactionContainer container = null;
         if (transactionManager != null) {
@@ -116,8 +112,6 @@ public class IdentityExecutionUtils {
         boolean isNew = initRequestContext(null, null, null);
         boolean isIgnoringSite = BroadleafRequestContext.getBroadleafRequestContext().getIgnoreSite();
         BroadleafRequestContext.getBroadleafRequestContext().setIgnoreSite(true);
-
-        activateSession();
         
         TransactionContainer container = null;
         if (transactionManager != null) {
@@ -163,15 +157,6 @@ public class IdentityExecutionUtils {
         }
 
         return isNew;
-    }
-
-    private static void activateSession() {
-        Map<Object, Object> resourceMap = TransactionSynchronizationManager.getResourceMap();
-        for (Map.Entry<Object, Object> entry : resourceMap.entrySet()) {
-            if (entry.getKey() instanceof EntityManagerFactory && entry.getValue() instanceof EntityManagerHolder) {
-                ((HibernateEntityManager) ((EntityManagerHolder) entry.getValue()).getEntityManager()).getSession();
-            }
-        }
     }
 
     private static void finalizeTransaction(PlatformTransactionManager transactionManager, TransactionContainer

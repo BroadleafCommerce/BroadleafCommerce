@@ -18,15 +18,14 @@
 
 package org.broadleafcommerce.openadmin.web.rulebuilder.service;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.common.presentation.RuleIdentifier;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
-import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldWrapper;
@@ -230,7 +229,7 @@ public abstract class AbstractRuleBuilderFieldService implements RuleBuilderFiel
             //initialize the factory bean
             applicationContext.getBean("blPersistenceManagerFactory");
 
-            PersistenceManager persistenceManager = PersistenceManagerFactory.getPersistenceManager(TargetModeType.SANDBOX);
+            PersistenceManager persistenceManager = PersistenceManagerFactory.getDefaultPersistenceManager();
             dynamicEntityDao = persistenceManager.getDynamicEntityDao();
             setFields(new ArrayList<FieldData>());
 

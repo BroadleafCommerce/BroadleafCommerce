@@ -18,9 +18,15 @@
 package org.broadleafcommerce.common.util;
 
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.hibernate.ejb.HibernateEntityManagerFactory;
+import org.hibernate.SessionFactory;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.metamodel.EntityType;
 
 /**
  * Utility class that can be substituted for StreamingTransactionCapableUtil to allow targeted testing of
@@ -53,17 +59,20 @@ public class StreamTransactionCapableUtilFailureSimulator extends StreamingTrans
     }
 
     @Override
-    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel) {
+    protected TransactionStatus startTransaction(int propagationBehavior, int isolationLevel, boolean readOnly, PlatformTransactionManager transactionManager) {
         BroadleafRequestContext context = BroadleafRequestContext.getBroadleafRequestContext();
         if (context.getAdditionalProperties().containsKey(FAILURE_MODE_KEY)) {
             String failureModePU = (String) context.getAdditionalProperties().get(FAILURE_MODE_PU);
             String checkClassName = failureModePU.equals("blPU")?blPUCheckClassName:blEventPUCheckClassName;
-            if (((HibernateEntityManagerFactory) ((JpaTransactionManager) transactionManager).getEntityManagerFactory())
-                                    .getSessionFactory().getAllClassMetadata().containsKey(checkClassName)){
+            List<String> entities = new ArrayList<>();
+            for (EntityType<?> item : ((JpaTransactionManager) transactionManager).getEntityManagerFactory().unwrap(SessionFactory.class).getMetamodel().getEntities())  {
+                entities.add(item.getJavaType().getName());
+            }
+            if (entities.contains(checkClassName)){
                 throw (RuntimeException) context.getAdditionalProperties().get(FAILURE_MODE_EXCEPTION);
             }
         }
-        return super.startTransaction(propagationBehavior, isolationLevel);
+        return super.startTransaction(propagationBehavior, isolationLevel, readOnly, transactionManager);
     }
 
     protected void checkPU(String persistenceUnit) {

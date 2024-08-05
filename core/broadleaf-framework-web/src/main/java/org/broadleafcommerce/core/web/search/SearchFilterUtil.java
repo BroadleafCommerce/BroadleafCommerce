@@ -18,7 +18,7 @@
 package org.broadleafcommerce.core.web.search;
 
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
 

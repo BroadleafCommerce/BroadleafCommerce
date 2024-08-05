@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.type.AbstractSingleColumnStandardBasicType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
@@ -49,7 +48,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 
 @Repository("blGenericEntityDao")
 public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContextAware {
@@ -83,7 +81,7 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
     @Override
     public <T> T readGenericEntity(Class<T> clazz, Object id) {
         clazz = (Class<T>) DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
-        Map<String, Object> md = daoHelper.getIdMetadata(clazz, (HibernateEntityManager) em);
+        Map<String, Object> md = daoHelper.getIdMetadata(clazz, em);
         AbstractSingleColumnStandardBasicType type = (AbstractSingleColumnStandardBasicType) md.get("type");
         
         if (type instanceof LongType) {
@@ -157,10 +155,10 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz, em.unwrap(Session.class).getSessionFactory(), true, true);
+        Class<?>[] entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz, true, true);
         if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
             clazz = DynamicDaoHelperImpl.getNonProxyImplementationClassIfNecessary(clazz);
-            entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz, em.unwrap(Session.class).getSessionFactory(), true, true);
+            entitiesFromCeiling = daoHelper.getAllPolymorphicEntitiesFromCeiling(clazz, true, true);
         }
         if (entitiesFromCeiling == null || entitiesFromCeiling.length < 1) {
             throw new IllegalArgumentException(String.format("Unable to find ceiling implementation for the requested class name (%s)", className));
@@ -200,12 +198,12 @@ public class GenericEntityDaoImpl implements GenericEntityDao, ApplicationContex
 
     @Override
     public void clearAutoFlushMode() {
-        em.unwrap(Session.class).setFlushMode(FlushMode.MANUAL);
+        em.unwrap(Session.class).setHibernateFlushMode(FlushMode.MANUAL);
     }
 
     @Override
     public void enableAutoFlushMode() {
-        em.unwrap(Session.class).setFlushMode(FlushMode.AUTO);
+        em.unwrap(Session.class).setHibernateFlushMode(FlushMode.AUTO);
     }
 
     @Override

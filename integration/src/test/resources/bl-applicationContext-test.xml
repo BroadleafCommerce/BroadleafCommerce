@@ -23,11 +23,11 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                        http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
                         http://www.springframework.org/schema/context
-                        http://www.springframework.org/schema/context/spring-context-4.1.xsd
+                        http://www.springframework.org/schema/context/spring-context.xsd
                         http://www.springframework.org/schema/tx
-                        http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+                        http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <context:component-scan base-package="org.broadleafcommerce.common.web"/>
     <context:component-scan base-package="org.broadleafcommerce.core.web"/>
@@ -76,28 +76,31 @@
         <property name="collectionRef" value="testTaxProviders"/>
         <property name="targetRef" value="blTaxProviders"/>
     </bean>
-    
+
     <!-- Configuration used in WorkflowTests -->
     <bean p:order="8080" id="blTotalActivity"
           class="org.broadleafcommerce.core.pricing.service.workflow.TotalActivity"/>
-          
-    <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
-        <property name="processContextFactory">
-            <bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>
-        </property>
-        <property name="activities">
+
+    <bean id="blCheckoutWorkflowActivities-it" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
             <list>
                 <!-- The order properties defined here matter; these are used in WorkflowTest and could also be added to
                      by bean definitions in bl-applicationContext-test-module.xml -->
-                <!-- 
+                <!--
                     The final configuration of this workflow should be:
-                    0 100 - PassThroughActivity
-                    1 1000 - framework activity
-                    2 2000 - framework activity
-                    3 3000 - framework activity
-                    4 3000 - PassThroughActivity
-                    5 4000 - framework activity
-                    6 5000 - TestRollbackActivity
+                    0  100 - PassThroughActivity
+                    1  500 - framework activity
+                    2  750 - framework activity
+                    3  1000 - framework activity
+                    4  2000 - framework activity
+                    5  3000 - framework activity
+                    6  3500 - PassThroughActivity
+                    7  4000 - framework activity
+                    8  5000 - framework activity
+                    9  5000 - TestRollbackActivity
+                    10  6000 - framework activity
+                    11 7000 - framework activity
+                    12 8000 - TestExampleModuleActivity
                 -->
                 <bean p:order="100" class="org.broadleafcommerce.core.workflow.PassThroughActivity"/>
                 <bean p:order="5000" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackActivity">
@@ -108,9 +111,21 @@
                 <bean p:order="3000" class="org.broadleafcommerce.core.workflow.PassThroughActivity"/>
             </list>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blCheckoutWorkflowActivities-it"/>
+        <property name="targetRef" value="blCheckoutWorkflowActivities"/>
+    </bean>
+
+    <bean id="blCheckoutWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
+        <property name="processContextFactory">
+            <bean class="org.broadleafcommerce.core.checkout.service.workflow.CheckoutProcessContextFactory"/>
+        </property>
+        <property name="activities" ref="blCheckoutWorkflowActivities"/>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
-    
+
     <bean id="testRollbackWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.common.workflow.RollbackTest.DummyProcessContextFactory"/>
@@ -155,7 +170,7 @@
         <property name="defaultErrorHandler" ref="blSilentErrorHandler"/>
     </bean>
     
-    <bean id="blMergedCacheConfigLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean id="blMergedCacheConfigLocations-it" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath:bl-override-ehcache.xml</value>
@@ -163,14 +178,23 @@
         </property>
     </bean>
 
-    <bean id="blMergedPersistenceXmlLocations" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedCacheConfigLocations-it"/>
+        <property name="targetRef" value="blMergedCacheConfigLocations"/>
+    </bean>
+
+    <bean id="blMergedPersistenceXmlLocations-it" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
                 <value>classpath*:/META-INF/persistence-test.xml</value>
             </list>
         </property>
     </bean>
-    
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blMergedPersistenceXmlLocations-it"/>
+        <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
+    </bean>
+
     <bean id="blEntityManagerFactoryAssetStorageInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
         <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
         <property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
@@ -264,9 +288,9 @@
         </property>
     </bean>
 
-    <bean id="blStaticMapNamedOperationComponent" class="org.broadleafcommerce.cms.file.service.operation.StaticMapNamedOperationComponent">
-        <property name="namedOperations">
-            <map>                                          
+    <bean id="blStaticMapNamedOperations-it" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
                 <entry key="smallAdminThumbnail">
                     <map>
                         <entry key="resize-width-amount" value="30"/>
@@ -287,6 +311,11 @@
                 </entry>
             </map>
         </property>
+    </bean>
+
+    <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
+        <property name="collectionRef" value="blStaticMapNamedOperations-it" />
+        <property name="targetRef" value="blStaticMapNamedOperations" />
     </bean>
 
 </beans>

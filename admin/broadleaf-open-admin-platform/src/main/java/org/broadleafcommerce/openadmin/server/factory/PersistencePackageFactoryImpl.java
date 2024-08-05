@@ -169,7 +169,9 @@ public class PersistencePackageFactoryImpl implements PersistencePackageFactory 
         try {
             AdminSection section = adminNavigationService.findAdminSectionByURI("/" + sectionKey);
             String className = (section == null) ? sectionKey : section.getCeilingEntity();
-            Class<?>[] entities = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(Class.forName(className), em.unwrap(Session.class).getSessionFactory(), true, true);
+            Class<?>[] entities = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(
+                    Class.forName(className), true, true
+            );
             return entities[entities.length - 1].getName();
         } catch (ClassNotFoundException e) {
             throw ExceptionHelper.refineException(RuntimeException.class, RuntimeException.class, e);

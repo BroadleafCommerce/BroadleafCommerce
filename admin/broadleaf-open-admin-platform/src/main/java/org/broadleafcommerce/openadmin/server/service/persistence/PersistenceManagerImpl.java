@@ -18,7 +18,6 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.logging.Log;
@@ -27,7 +26,9 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.presentation.client.OperationType;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.ValidationUtil;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
@@ -51,7 +52,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.Persist
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.broadleafcommerce.openadmin.server.service.type.ChangeType;
 import org.broadleafcommerce.openadmin.web.form.entity.DynamicEntityFormInfo;
-import org.hibernate.mapping.PersistentClass;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -79,6 +79,9 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
 
     @Resource(name="blDynamicEntityDao")
     protected DynamicEntityDao dynamicEntityDao;
+
+    @Resource(name="blPersistenceService")
+    protected PersistenceService persistenceService;
 
     @Resource(name="blCustomPersistenceHandlers")
     protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
@@ -705,6 +708,16 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     }
 
     @Override
+    public void configureDynamicEntityDao(Class entityClass, TargetModeType targetModeType) {
+        EntityManager entityManager = getEntityManager(entityClass, targetModeType);
+        dynamicEntityDao.setStandardEntityManager(entityManager);
+    }
+
+    protected EntityManager getEntityManager(Class entityClass, TargetModeType targetModeType) {
+        return persistenceService.identifyEntityManager(entityClass, targetModeType);
+    }
+
+    @Override
     public DynamicEntityDao getDynamicEntityDao() {
         return dynamicEntityDao;
     }
@@ -776,6 +789,16 @@ public class PersistenceManagerImpl implements InspectHelper, PersistenceManager
     @Override
     public void setCustomPersistenceHandlers(List<CustomPersistenceHandler> customPersistenceHandlers) {
         this.customPersistenceHandlers = customPersistenceHandlers;
+    }
+
+    @Override
+    public void configureDefaultDynamicEntityDao(TargetModeType targetModeType) {
+        EntityManager entityManager = getDefaultEntityManager(targetModeType);
+        dynamicEntityDao.setStandardEntityManager(entityManager);
+    }
+
+    protected EntityManager getDefaultEntityManager(TargetModeType targetModeType) {
+        return persistenceService.identifyDefaultEntityManager(targetModeType);
     }
 
     public SecurityVerifier getAdminRemoteSecurityService() {

@@ -24,6 +24,10 @@ import org.springframework.transaction.PlatformTransactionManager;
  */
 public interface StreamingTransactionCapable {
 
+    /**
+     * The result set size per page of data when streaming. See {@link #runStreamingTransactionalOperation(StreamCapableTransactionalOperation, Class)}.
+     * @return
+     */
     int getPageSize();
 
     void setPageSize(int pageSize);
@@ -32,29 +36,76 @@ public interface StreamingTransactionCapable {
 
     void setRetryMax(int retryMax);
 
-    <G extends Throwable> void runStreamingTransactionalOperation(final StreamCapableTransactionalOperation
+    /**
+     * Run a streaming operation inside a transaction. Uses the {@link StreamCapableTransactionalOperation} API to determine
+     * the page of data to work on within the transaction scope.
+     *
+     * @param streamOperation
+     * @param exceptionType
+     * @param <G>
+     * @throws G
+     */
+    <G extends Throwable> void runStreamingTransactionalOperation(StreamCapableTransactionalOperation
                                                                           streamOperation, Class<G> exceptionType) throws G;
 
-    <G extends Throwable> void runStreamingTransactionalOperation(final StreamCapableTransactionalOperation
-                                                                          streamOperation, Class<G> exceptionType, int transactionBehavior, int isolationLevel) throws G;
+    <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
+                                                         Class<G> exceptionType, PlatformTransactionManager transactionManager) throws G;
 
+    <G extends Throwable> void runStreamingTransactionalOperation(StreamCapableTransactionalOperation streamOperation,
+                                                                  Class<G> exceptionType, int transactionBehavior,
+                                                                  int isolationLevel) throws G;
+
+    /**
+     * Run an operation inside of a single transaction. This is not a streaming use case and represents a basic operation
+     * to perform in a transaction. See {@link StreamCapableTransactionalOperation#execute()}.
+     *
+     * @param operation
+     * @param exceptionType
+     * @param <G>
+     * @throws G
+     */
     <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
                                                          Class<G> exceptionType) throws G;
 
     <G extends Throwable> void runTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                                         Class<G> exceptionType, int transactionBehavior, int
-            isolationLevel) throws G;
+                                                         Class<G> exceptionType, int transactionBehavior,
+                                                         int isolationLevel) throws G;
 
+    /**
+     * Run an operation inside of a single transaction. This is not a streaming use case and represents a basic operation
+     * to perform in a transaction. See {@link StreamCapableTransactionalOperation#execute()}. The useTransaction parameter
+     * allows the inclusion of some logic to determine whether or not the creation of the transaction is required for the operation. This is
+     * useful in situations where there may already be an active transaction that you want to use, if available.
+     *
+     * @param operation
+     * @param exceptionType
+     * @param useTransaction
+     * @param <G>
+     * @throws G
+     */
     <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
-                                                                 Class<G> exceptionType, boolean useTransaction)
-            throws G;
+                                                                 Class<G> exceptionType, boolean useTransaction) throws G;
 
     <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
                                                                  Class<G> exceptionType, boolean useTransaction,
                                                                  int transactionBehavior, int isolationLevel) throws G;
 
+    <G extends Throwable> void runOptionalTransactionalOperation(StreamCapableTransactionalOperation operation,
+                                                                 Class<G> exceptionType, boolean useTransaction,
+                                                                 int transactionBehavior, int isolationLevel,
+                                                                 boolean readOnly, PlatformTransactionManager transactionManager) throws G;
+
     PlatformTransactionManager getTransactionManager();
 
     void setTransactionManager(PlatformTransactionManager transactionManager);
+
+    /**
+     * Executes the Runnable operation in the scope of an Entity-Manager-In-View pattern, if there is not already an
+     * EntityManager on the thread. This is useful for operations that may be susceptible to lazy init exceptions if there
+     * is not an EntityManager available on the thread.
+     *
+     * @param runnable
+     */
+    void runOptionalEntityManagerInViewOperation(Runnable runnable);
 
 }

@@ -175,7 +175,7 @@ public class MergeManager {
      * 
      * to ignore. 
      * 
-     * @param componentName
+     * @param componentIdStr
      * @param props
      * @return
      */

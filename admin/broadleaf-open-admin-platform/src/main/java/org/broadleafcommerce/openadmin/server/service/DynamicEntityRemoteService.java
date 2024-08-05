@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,10 +18,11 @@
 package org.broadleafcommerce.openadmin.server.service;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.security.service.CleanStringException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
@@ -37,7 +38,6 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
-import org.broadleafcommerce.openadmin.server.service.persistence.TargetModeType;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Constructor;
@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Resource;
+
 /**
  * @author jfischer
  */
@@ -54,13 +55,13 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
     private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
     protected static final Map<BatchPersistencePackage, BatchDynamicResultSet> METADATA_CACHE = Collections.synchronizedMap(new LRUMap<BatchPersistencePackage, BatchDynamicResultSet>(1000));
 
-    @Resource(name="blExploitProtectionService")
+    @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
 
-    @Resource(name="blPersistenceThreadManager")
+    @Resource(name = "blPersistenceThreadManager")
     protected PersistenceThreadManager persistenceThreadManager;
 
-    @Resource(name="blStreamingTransactionCapableUtil")
+    @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
 
     protected ServiceException recreateSpecificServiceException(ServiceException e, String message, Throwable cause) {
@@ -82,7 +83,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse inspect(final PersistencePackage persistencePackage) throws ServiceException {
-        return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable <PersistenceResponse, ServiceException>() {
+        return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 String ceilingEntityFullyQualifiedClassname = persistencePackage.getCeilingEntityFullyQualifiedClassname();
@@ -102,7 +103,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse fetch(final PersistencePackage persistencePackage, final CriteriaTransferObject cto) throws ServiceException {
-        return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
+        return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 try {
@@ -124,13 +125,13 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
                 currentProperty = property;
                 property.setRawValue(property.getValue());
                 property.setValue(exploitProtectionService.cleanStringWithResults(property.getValue()));
-                property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(property.getValue()));
+                property.setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml4(property.getValue()));
             }
         } catch (CleanStringException e) {
             StringBuilder sb = new StringBuilder();
-            for (int j=0;j<e.getCleanResults().getNumberOfErrors();j++){
+            for (int j = 0; j < e.getCleanResults().getNumberOfErrors(); j++) {
                 sb.append("\n");
-                sb.append(j+1);
+                sb.append(j + 1);
                 sb.append(") ");
                 sb.append((String) e.getCleanResults().getErrorMessages().get(j));
                 sb.append("\n");
@@ -214,7 +215,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse nonTransactionalAdd(final PersistencePackage persistencePackage) throws ServiceException {
-        return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
+        return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 cleanEntity(persistencePackage.getEntity());
@@ -240,7 +241,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse nonTransactionalUpdate(final PersistencePackage persistencePackage) throws ServiceException {
-        return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
+        return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 cleanEntity(persistencePackage.getEntity());
@@ -267,7 +268,7 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse nonTransactionalRemove(final PersistencePackage persistencePackage) throws ServiceException {
-        return persistenceThreadManager.operation(TargetModeType.SANDBOX, new Persistable<PersistenceResponse, ServiceException>() {
+        return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
                 try {

@@ -18,7 +18,7 @@
 
 package org.broadleafcommerce.common.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.owasp.esapi.ESAPI;
 

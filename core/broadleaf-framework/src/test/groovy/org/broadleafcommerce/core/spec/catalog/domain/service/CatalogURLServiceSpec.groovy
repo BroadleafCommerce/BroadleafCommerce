@@ -15,12 +15,11 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.spec.catalog.domain.service;
+package org.broadleafcommerce.core.spec.catalog.domain.service
 
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl
 import org.broadleafcommerce.core.catalog.domain.ProductImpl
 import org.broadleafcommerce.core.catalog.service.CatalogURLServiceImpl
-
 import spock.lang.Specification
 
 class CatalogURLServiceSpec extends Specification {

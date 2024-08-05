@@ -18,6 +18,7 @@
 package org.broadleafcommerce.openadmin.server.service.persistence;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
@@ -50,6 +51,13 @@ public interface PersistenceManager {
     public abstract PersistenceResponse update(PersistencePackage persistencePackage) throws ServiceException;
 
     public abstract PersistenceResponse remove(PersistencePackage persistencePackage) throws ServiceException;
+
+    void configureDynamicEntityDao(Class entityClass, TargetModeType targetMode);
+    /**
+     * This method produces a {@link DynamicEntityDao} with a blPU-based standardEntityManager
+     *  using the passed in {@link TargetModeType}
+     */
+    void configureDefaultDynamicEntityDao(TargetModeType targetModeType);
 
     public abstract DynamicEntityDao getDynamicEntityDao();
 

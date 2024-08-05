@@ -46,6 +46,16 @@ public class DefaultPostLoaderDao implements PostLoaderDao, ApplicationContextAw
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
+    /**
+     * see org.broadleafcommerce.test.TestNGSiteIntegrationSetup#reSetApplicationContext()
+     *
+     * @param applicationContext
+     */
+    public static void resetApplicationContext(ApplicationContext applicationContext) {
+        DefaultPostLoaderDao.applicationContext = applicationContext;
+        postLoaderDao = null;
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         DefaultPostLoaderDao.applicationContext = applicationContext;

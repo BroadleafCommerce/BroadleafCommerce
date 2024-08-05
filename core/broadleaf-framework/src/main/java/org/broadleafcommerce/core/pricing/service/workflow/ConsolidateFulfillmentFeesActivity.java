@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.pricing.service.workflow;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.rule.MvelHelper;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.core.catalog.domain.SkuFee;

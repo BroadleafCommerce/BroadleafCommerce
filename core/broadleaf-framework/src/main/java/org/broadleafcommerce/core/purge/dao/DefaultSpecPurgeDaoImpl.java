@@ -17,6 +17,14 @@
  */
 package org.broadleafcommerce.core.purge.dao;
 
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.purge.PurgeSpecification;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.springframework.stereotype.Service;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,14 +34,6 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.purge.PurgeSpecification;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.springframework.stereotype.Service;
 
 /**
  * The DefaultPurgeDao that assumes identifiers are of type Long.  This PurgeDao utilized bulk deletes.
@@ -141,7 +141,7 @@ public class DefaultSpecPurgeDaoImpl implements SpecBasedPurgeDao {
     
     
     protected Connection getConnection() {
-        SessionImplementor session = em.unwrap(SessionImplementor.class);
+        SharedSessionContractImplementor session = em.unwrap(SharedSessionContractImplementor.class);
         return session.connection();
     }
 

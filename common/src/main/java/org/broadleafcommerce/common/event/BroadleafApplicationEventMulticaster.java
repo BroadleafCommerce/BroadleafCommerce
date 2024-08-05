@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.core.ResolvableType;
 
 import java.util.concurrent.Executor;
 
@@ -40,8 +41,7 @@ import java.util.concurrent.Executor;
  * @author Kelly Tisdell
  *
  */
-public class BroadleafApplicationEventMulticaster extends
-        SimpleApplicationEventMulticaster implements ApplicationContextAware {
+public class BroadleafApplicationEventMulticaster extends SimpleApplicationEventMulticaster implements ApplicationContextAware {
 	
     @Autowired(required = false)
     @Qualifier("blApplicationEventMulticastTaskExecutor")
@@ -62,7 +62,7 @@ public class BroadleafApplicationEventMulticaster extends
 	@Override
 	public void multicastEvent(final ApplicationEvent event) {
         Executor executor = getTaskExecutor();
-        for (final ApplicationListener<?> listener : getApplicationListeners(event)) {
+        for (final ApplicationListener<?> listener : getApplicationListeners(event, ResolvableType.forInstance(event))) {
 			boolean isAsynchronous = false;
 			if (executor != null) {
                 if ((BroadleafApplicationListener.class.isAssignableFrom(listener.getClass())
@@ -84,8 +84,7 @@ public class BroadleafApplicationEventMulticaster extends
 	}
 
 	@Override
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.ctx = applicationContext;
 	}
 	

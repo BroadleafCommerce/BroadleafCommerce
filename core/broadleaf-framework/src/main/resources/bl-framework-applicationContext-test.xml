@@ -20,34 +20,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
     <bean id="attributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
-    
-    <bean id="hibernateExporter" class="org.springframework.jmx.export.MBeanExporter">
-        <property name="autodetect" value="false" />
-        <property name="assembler">
-            <bean id="jmxAssembler"
-                class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">
-                <property name="attributeSource">
-                    <bean
-                        class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
-                </property>
-            </bean>
-        </property>
-        <property name="beans">
-            <map>
-                <entry key="org.broadleafcommerce:name=hibernate.statistics">
-                    <bean class="org.hibernate.jmx.StatisticsService">
-                        <property name="statisticsEnabled" value="false" />
-                        <property name="sessionFactory">
-                            <util:property-path
-                                path="entityManagerFactory.sessionFactory" />
-                        </property>
-                    </bean>
-                </entry>
-            </map>
-        </property>
-    </bean>
+
 </beans>

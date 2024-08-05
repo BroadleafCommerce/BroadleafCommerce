@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.profile.web.core.security;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.encryption.EncryptionModule;

@@ -31,7 +31,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
@@ -42,7 +42,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 @SuppressWarnings("deprecation")
-public class CatalogTest extends BaseTest {
+public class CatalogTest extends TestNGSiteIntegrationSetup {
 
     @Resource
     private CatalogService catalogService;

@@ -17,13 +17,13 @@
  */
 package org.broadleafcommerce.common.config;
 
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.annotation.Resource;
 
-public class RuntimeEnvironmentPropertiesManagerTest extends BaseTest {
+public class RuntimeEnvironmentPropertiesManagerTest extends TestNGSiteIntegrationSetup {
 
     @Resource(name = "blConfigurationManager")
     RuntimeEnvironmentPropertiesManager configurationManager;
@@ -34,7 +34,6 @@ public class RuntimeEnvironmentPropertiesManagerTest extends BaseTest {
         if(s.indexOf("$")>=0) {
             Assert.fail("RuntimeEnvironmentPropertiesManager bean not defined");
         }
-        
     }
     @Test(dependsOnMethods={"testPropertyOnly"})
     public void testPrefix() throws Exception {

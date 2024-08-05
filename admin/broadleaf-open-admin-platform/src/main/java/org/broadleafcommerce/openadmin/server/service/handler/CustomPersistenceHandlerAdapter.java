@@ -31,7 +31,6 @@ import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
-import org.hibernate.ejb.HibernateEntityManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -141,8 +140,7 @@ public class CustomPersistenceHandlerAdapter implements CustomPersistenceHandler
 
     protected String[] getPolymorphicClasses(Class<?> clazz, EntityManager em, boolean useCache) {
         DynamicDaoHelperImpl helper = new DynamicDaoHelperImpl();
-        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz,
-                helper.getSessionFactory((HibernateEntityManager) em), true, useCache);
+        Class<?>[] classes = helper.getAllPolymorphicEntitiesFromCeiling(clazz, true, useCache);
         String[] result = new String[classes.length];
         for (int i = 0; i < classes.length; i++) {
             result[i] = classes[i].getName();

@@ -22,19 +22,22 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.StringUtil;
+import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 /**
  * Created by bpolster.
  */
 @Repository("blLocaleDao")
 public class LocaleDaoImpl implements LocaleDao {
+
     private static final Log LOG = LogFactory.getLog(LocaleDaoImpl.class);
 
     @PersistenceContext(unitName = "blPU")
@@ -50,7 +53,7 @@ public class LocaleDaoImpl implements LocaleDao {
     public Locale findLocaleByCode(String localeCode) {
         Query query = em.createNamedQuery("BC_READ_LOCALE_BY_CODE");
         query.setParameter("localeCode", localeCode);
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         List<Locale> localeList = (List<Locale>) query.getResultList();
         if (localeList.size() >= 1) {
             if (localeList.size() > 1) {
@@ -69,7 +72,7 @@ public class LocaleDaoImpl implements LocaleDao {
     @Override
     public Locale findDefaultLocale() {
         Query query = em.createNamedQuery("BC_READ_DEFAULT_LOCALE");
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         List<Locale> localeList = (List<Locale>) query.getResultList();
         if (localeList.size() >= 1) {
             if (localeList.size() > 1) {
@@ -86,7 +89,7 @@ public class LocaleDaoImpl implements LocaleDao {
      */
     public List<Locale> findAllLocales() {
         Query query = em.createNamedQuery("BC_READ_ALL_LOCALES");
-        query.setHint(org.hibernate.ejb.QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
         return (List<Locale>) query.getResultList();
     }
     

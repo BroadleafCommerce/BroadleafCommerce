@@ -64,6 +64,7 @@ public class ProductOptionDaoImpl implements ProductOptionDao {
         return query.getResultList();
     }
     
+    @Override
     public ProductOption saveProductOption(ProductOption option) {
         return em.merge(option);
     }

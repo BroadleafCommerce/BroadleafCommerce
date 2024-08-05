@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -37,7 +37,6 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -48,18 +47,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@DiscriminatorColumn(name = "TYPE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BUND_ITEM_FEE_PRICE")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 @AdminPresentationMergeOverrides(
-    {
-        @AdminPresentationMergeOverride(name = "", mergeEntries =
-            @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
-                                            booleanOverrideValue = true))
-    }
+        {
+                @AdminPresentationMergeOverride(name = "", mergeEntries =
+                @AdminPresentationMergeEntry(propertyType = PropertyType.AdminPresentation.READONLY,
+                        booleanOverrideValue = true))
+        }
 )
-public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
+public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice {
 
     public static final Log LOG = LogFactory.getLog(BundleOrderItemFeePriceImpl.class);
     private static final long serialVersionUID = 1L;
@@ -67,12 +65,12 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
     @Id
     @GeneratedValue(generator = "BundleOrderItemFeePriceId")
     @GenericGenerator(
-        name="BundleOrderItemFeePriceId",
-        strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
-        parameters = {
-            @Parameter(name="segment_value", value="BundleOrderItemFeePriceImpl"),
-            @Parameter(name="entity_name", value="org.broadleafcommerce.core.order.domain.BundleOrderItemFeePriceImpl")
-        }
+            name = "BundleOrderItemFeePriceId",
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
+            parameters = {
+                    @Parameter(name = "segment_value", value = "BundleOrderItemFeePriceImpl"),
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.BundleOrderItemFeePriceImpl")
+            }
     )
     @Column(name = "BUND_ITEM_FEE_PRICE_ID")
     protected Long id;
@@ -81,20 +79,20 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
     @JoinColumn(name = "BUND_ORDER_ITEM_ID")
     protected BundleOrderItem bundleOrderItem;
 
-    @Column(name = "AMOUNT", precision=19, scale=5)
-    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Amount", order=2, prominent=true)
+    @Column(name = "AMOUNT", precision = 19, scale = 5)
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Amount", order = 2, prominent = true)
     protected BigDecimal amount;
 
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Name", order=1, prominent=true)
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Name", order = 1, prominent = true)
     private String name;
 
     @Column(name = "REPORTING_CODE")
-    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Reporting_Code", order=3, prominent=true)
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Reporting_Code", order = 3, prominent = true)
     private String reportingCode;
 
     @Column(name = "IS_TAXABLE")
-    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Taxable", order=4)
+    @AdminPresentation(friendlyName = "BundleOrderItemFeePriceImpl_Taxable", order = 4)
     private Boolean isTaxable = Boolean.FALSE;
 
     @Override
@@ -203,7 +201,7 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
         result = prime * result + ((reportingCode == null) ? 0 : reportingCode.hashCode());
         return result;
     }
-    
+
     @Override
     public CreateResponse<BundleOrderItemFeePrice> createOrRetrieveCopyInstance(MultiTenantCopyContext context) throws CloneNotSupportedException {
         CreateResponse<BundleOrderItemFeePrice> createResponse = context.createOrRetrieveCopyInstance(this);
@@ -211,12 +209,12 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice  {
             return createResponse;
         }
         BundleOrderItemFeePrice cloned = createResponse.getClone();
-        cloned.setBundleOrderItem((BundleOrderItem)bundleOrderItem.createOrRetrieveCopyInstance(context).getClone());
+        cloned.setBundleOrderItem((BundleOrderItem) bundleOrderItem.createOrRetrieveCopyInstance(context).getClone());
         cloned.setAmount(amount == null ? null : new Money(amount));
         cloned.setName(name);
         cloned.setReportingCode(reportingCode);
         cloned.setTaxable(isTaxable == null ? null : isTaxable);
-        return  createResponse;
+        return createResponse;
     }
 
     @Override

@@ -70,9 +70,6 @@ public class PageServiceImpl implements PageService {
 
     @Resource(name="blLocaleService")
     protected LocaleService localeService;
-    
-    @Resource(name="blStaticAssetService")
-    protected StaticAssetService staticAssetService;
 
     @Resource(name="blStatisticsService")
     protected StatisticsService statisticsService;

@@ -18,7 +18,7 @@
 package org.broadleafcommerce.profile.extensibility;
 
 import org.broadleafcommerce.common.extensibility.context.MergeClassPathXMLApplicationContext;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.testng.annotations.Test;
 
 /**
@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * @author jfischer
  *
  */
-public class ExtensibilityTest extends BaseTest {
+public class ExtensibilityTest extends TestNGSiteIntegrationSetup {
 
     @Test
     public void test() {

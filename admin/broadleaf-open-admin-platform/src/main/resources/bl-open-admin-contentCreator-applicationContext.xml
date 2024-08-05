@@ -22,9 +22,9 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mo="http://schema.broadleafcommerce.org/mo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+           http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-4.1.xsd
+           http://www.springframework.org/schema/context/spring-context.xsd
            http://schema.broadleafcommerce.org/mo
            http://schema.broadleafcommerce.org/mo/mo-3.0.xsd">
 
@@ -91,7 +91,7 @@
 
     <bean id="prodEntityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
-        <property name="entityManagerInterface" value="org.hibernate.ejb.HibernateEntityManager"/>
+        <property name="entityManagerInterface" value="org.hibernate.jpa.HibernateEntityManager"/>
     </bean>
 
     <mo:override id="blMetadataOverrides"/>
@@ -191,6 +191,13 @@
         <property name="handlers" ref="blFormBuilderExtensionHandlers" />
     </bean>
 
+    <bean id="blFormBuilderExtensionHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
+        <property name="sourceList">
+            <list>
+            </list>
+        </property>
+    </bean>
+
     <bean id="blAdditionalSectionAuthorizations" class="org.springframework.beans.factory.config.ListFactoryBean" scope="prototype">
         <property name="sourceList">
             <list>
@@ -232,17 +239,6 @@
             <list>
             </list>
         </property>
-    </bean>
-
-    <bean id="blFormBuilderExtensionHandlers" class="org.springframework.beans.factory.config.ListFactoryBean" >
-        <property name="sourceList">
-            <list>
-            </list>
-        </property>
-    </bean>
-
-    <bean id="blSpringCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager" ref="blCacheManager"/>
     </bean>
 
     <bean id="blOpenAdminCssLocations" class="org.springframework.beans.factory.config.ListFactoryBean" >
@@ -308,7 +304,6 @@
         <!--  property name="themesBaseDirectory" value="/WEB-INF/" / -->
         <property name="cacheSeconds" value="${staticResourceBrowserCacheSeconds}" />    
         <property name="resourceResolvers" ref="blAdminResourceResolvers" />
-        
     </bean>
     
    <bean id="adminJsResourceHttpRequestHandlerBase" abstract="true" parent="adminResourceHttpRequestHandlerBase">
@@ -320,5 +315,13 @@
         <property name="locations" ref="blCssLocations"/>
         <property name="resourceTransformers" ref="blCssResourceTransformers" />             
    </bean>
+
+    <bean id="blMergedCacheConfigLocations-open-admin" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <value>classpath:bl-open-admin-ehcache.xml</value>
+            </list>
+        </property>
+    </bean>
 
 </beans>

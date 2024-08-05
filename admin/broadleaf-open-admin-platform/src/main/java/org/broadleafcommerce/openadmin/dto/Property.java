@@ -17,10 +17,11 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.commons.lang.StringEscapeUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -94,7 +95,7 @@ public class Property implements Serializable {
     public void setValue(String value) {
         this.value = value;
         if (unHtmlEncodedValue == null && value != null) {
-            setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml(value));
+            setUnHtmlEncodedValue(StringEscapeUtils.unescapeHtml4(value));
         }
         
         if (rawValue == null && value != null) {
@@ -128,7 +129,7 @@ public class Property implements Serializable {
 
     public String getUnHtmlEncodedValue() {
         if (unHtmlEncodedValue == null) {
-            return StringEscapeUtils.unescapeHtml(getValue());
+            return StringEscapeUtils.unescapeHtml4(getValue());
         }
         return unHtmlEncodedValue;
     }

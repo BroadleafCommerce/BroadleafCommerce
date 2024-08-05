@@ -21,16 +21,17 @@ import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.SkuDaoDataProvider;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
-public class SkuDaoTest extends BaseTest {
+import javax.annotation.Resource;
+
+public class SkuDaoTest extends TestNGSiteIntegrationSetup {
 
     private Long skuId;
 

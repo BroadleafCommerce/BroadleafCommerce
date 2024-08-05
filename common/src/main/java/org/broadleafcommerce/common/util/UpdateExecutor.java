@@ -17,10 +17,15 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.broadleafcommerce.common.util.dao.HibernateMappingProvider;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.cache.spi.CacheImplementor;
+import org.hibernate.cache.spi.TimestampsCache;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.mapping.PersistentClass;
 import org.hibernate.type.Type;
 
 import java.util.ArrayList;
@@ -130,6 +135,27 @@ public class UpdateExecutor {
             response += query.executeUpdate();
         }
         return response;
+    }
+
+    /**
+     *
+     * @param em
+     * @param entityType
+     * @param ids
+     */
+    public static void executeTargetedCacheInvalidation(EntityManager em, Class<?> entityType, List<Long> ids) {
+        SharedSessionContractImplementor session = em.unwrap(SharedSessionContractImplementor.class);
+        CacheImplementor hibernateCache = session.getFactory().getCache();
+        for (Long id : ids) {
+            hibernateCache.evict(entityType, id);
+        }
+        //update the timestamp cache for the table so that queries will be refreshed
+        PersistentClass metadata = HibernateMappingProvider.getMapping(entityType.getName());
+        String tableName = metadata.getTable().getName();
+        TimestampsCache timestampsCache = hibernateCache.getTimestampsCache();
+        if (timestampsCache != null) {
+            timestampsCache.invalidate(new String[]{tableName}, session);
+        }
     }
 
     /**

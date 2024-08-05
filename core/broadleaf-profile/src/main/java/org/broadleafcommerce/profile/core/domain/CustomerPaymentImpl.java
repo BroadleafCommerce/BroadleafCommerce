@@ -133,7 +133,7 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     @ElementCollection()
     @MapKeyType(@Type(type = "java.lang.String"))
     @Lob
-    @Type(type = "org.hibernate.type.StringClobType")
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns = @JoinColumn(name = "CUSTOMER_PAYMENT_ID"))
     @MapKeyColumn(name = "FIELD_NAME", nullable = false)
     @Column(name = "FIELD_VALUE", length = Integer.MAX_VALUE - 1)
