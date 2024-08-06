@@ -1362,8 +1362,7 @@ public class BasicPersistenceModule implements PersistenceModule, RecordHelper, 
                                                 Predicate localeValue =
                                                         builder.isTrue(transRoot.get("localeCode").in(localeValues));
                                                 Path y = split.length > 1 ? root.get(split[0]).get("id") : root.get("id");
-                                                Predicate entityId = builder.equal(transRoot.get("entityId"),
-                                                        y);
+                                                Predicate entityId = builder.equal(transRoot.get("entityId"), String.valueOf(y));
                                                 if (localeValues.size() > 0) {
                                                     subquery.where(builder.and(type, entityId, transValue, name, localeValue));
                                                 } else {
