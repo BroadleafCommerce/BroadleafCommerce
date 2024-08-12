@@ -82,10 +82,6 @@ public class Money implements Serializable, Cloneable, Comparable<Money>, Extern
         this(amount, Currency.getInstance(getCurrencyCode(blCurrency)), scale);
     }
 
-    public Money(BigDecimal amount, BroadleafCurrency blCurrency, int scale, RoundingMode roundingMode) {
-        this(amount.setScale(scale, roundingMode), blCurrency);
-    }
-
     public Money() {
         this(BankersRounding.zeroAmount(), defaultCurrency());
     }

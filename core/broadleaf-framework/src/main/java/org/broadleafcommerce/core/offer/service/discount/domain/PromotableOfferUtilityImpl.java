@@ -179,7 +179,7 @@ public class PromotableOfferUtilityImpl implements PromotableOfferUtility {
                 // override scale from rounding settings if set
                 scale = rounding.getRoundingScale();
             }
-            adjustmentValue = new Money(offerValue, currency, scale, rounding.getRoundingMode());
+            adjustmentValue = new Money(offerValue, currency, scale);
             if (rounding.getRoundingScale() != null) {
                 adjustmentValue = Money.trimUnnecessaryScaleToCurrency(adjustmentValue);
             }
