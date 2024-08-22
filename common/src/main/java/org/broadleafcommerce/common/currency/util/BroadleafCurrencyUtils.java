@@ -19,12 +19,14 @@ package org.broadleafcommerce.common.currency.util;
 
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.money.Money;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -135,8 +137,15 @@ public class BroadleafCurrencyUtils {
      * @return either a new NumberFormat instance, or one taken from the cache
      */
     public static NumberFormat getNumberFormatFromCache(Locale locale, Currency currency) {
+        return getNumberFormatFromCache(locale, currency, new HashMap<>());
+    }
+
+    public static NumberFormat getNumberFormatFromCache(Locale locale, Currency currency, Map<String, String> localeToChange) {
         String key = locale.toString() + currency.getCurrencyCode();
         if (!FORMAT_CACHE.containsKey(key)) {
+            if (localeToChange.containsKey(locale.toString())) {
+                locale = StringUtils.parseLocaleString(localeToChange.get(locale.toString()));
+            }
             NumberFormat format = NumberFormat.getCurrencyInstance(locale);
             format.setCurrency(currency);
             FORMAT_CACHE.put(key, format);

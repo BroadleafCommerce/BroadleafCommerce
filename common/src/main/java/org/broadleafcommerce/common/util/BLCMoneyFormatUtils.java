@@ -21,6 +21,9 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Convenience class to format prices for front-end display.
  *
@@ -41,7 +44,21 @@ public class BLCMoneyFormatUtils {
 
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getJavaLocale() != null) {
-            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency())
+            return BroadleafCurrencyUtils.getNumberFormatFromCache(brc.getJavaLocale(), price.getCurrency()).format(price.getAmount());
+        } else {
+            // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
+            return "$ " + price.getAmount().toString();
+        }
+    }
+
+    public static String formatPrice(Money price, Map<String,String> localeToChange) {
+        if (price == null) {
+            return "Not Available";
+        }
+
+        Locale javaLocale = BroadleafRequestContext.getBroadleafRequestContext().getJavaLocale();
+        if (javaLocale != null) {
+            return BroadleafCurrencyUtils.getNumberFormatFromCache(javaLocale, price.getCurrency(),localeToChange)
                     .format(price.getAmount());
         } else {
             // Setup your BLC_CURRENCY and BLC_LOCALE to display a diff default.
