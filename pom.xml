@@ -43,11 +43,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.10.8</ehcache3.version>
-        <spring.version>6.0.19</spring.version>
+        <spring.version>6.0.23</spring.version>
         <spring.security.version>6.1.9</spring.security.version>
-        <spring.boot.version>3.1.11</spring.boot.version>
+        <spring.boot.version>3.1.12</spring.boot.version>
         <jackson.version>2.17.2</jackson.version>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.34</lombok.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <geb.version>7.0</geb.version>
         <spock.core.version>2.4-M4-groovy-4.0</spock.core.version>
@@ -725,7 +725,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
-                <version>1.10.0</version>
+                <version>1.11.0</version>
             </dependency>
 
             <!-- Logging -->
