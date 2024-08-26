@@ -20,7 +20,6 @@ package org.broadleafcommerce.common.i18n.service;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
-import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.broadleafcommerce.common.util.BLCMapUtils;
 import org.broadleafcommerce.common.util.TypedClosure;
 
@@ -28,9 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.cache.Cache;
-import javax.cache.CacheManager;
-
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 /**
@@ -45,14 +43,14 @@ public class TranslationBatchReadCache {
 
     public static final String CACHE_NAME = "blBatchTranslationCache";
 
-    protected static Cache<Long, Map<String, Translation>> getCache() {
-        CacheManager cacheManager = ApplicationContextHolder.getApplicationContext().getBean("blCacheManager", CacheManager.class);
-        return cacheManager.getCache(CACHE_NAME);
+    protected static Cache getCache() {
+        return CacheManager.getInstance().getCache(CACHE_NAME);
     }
 
     protected static Map<String, Translation> getThreadlocalCache() {
         long threadId = Thread.currentThread().getId();
-        return getCache().get(threadId);
+        Element cacheElement = getCache().get(threadId);
+        return cacheElement == null ? null : (Map<String, Translation>) cacheElement.getObjectValue();
     }
 
     public static void clearCache() {
@@ -81,14 +79,14 @@ public class TranslationBatchReadCache {
 
         threadlocalCache.putAll(additionalTranslations);
 
-        getCache().put(threadId, threadlocalCache);
+        getCache().put(new Element(threadId, threadlocalCache));
     }
 
     public static Translation getFromCache(TranslatedEntity entityType, String id, String propertyName, String localeCode) {
         Map<String, Translation> threadlocalCache = getThreadlocalCache();
         Translation translation = threadlocalCache.get(buildCacheKey(entityType, id, propertyName, localeCode));
 
-        if (translation == null && org.apache.commons.lang.StringUtils.contains(localeCode, '_')) {
+        if (translation == null && StringUtils.contains(localeCode, '_')) {
             String languageWithoutCountryCode = localeCode.substring(localeCode.indexOf('_') + 1);
             translation = threadlocalCache.get(buildCacheKey(entityType, id, propertyName, languageWithoutCountryCode));
         }
@@ -106,4 +104,5 @@ public class TranslationBatchReadCache {
     protected static String buildCacheKey(TranslatedEntity entityType, String id, String propertyName, String localeCode) {
         return StringUtils.join(new String[]{entityType.getType(), id, propertyName, localeCode}, "-");
     }
+
 }
