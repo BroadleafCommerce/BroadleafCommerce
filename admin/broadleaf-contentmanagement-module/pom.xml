@@ -4,7 +4,7 @@
     <parent>
         <artifactId>admin</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>5.0.9.3-OAP-JAVA17-M1</version>
+        <version>5.0.9.3-OAP-JAVA17-SNAPSHOT</version>
     </parent>
     <artifactId>broadleaf-contentmanagement-module</artifactId>
     <packaging>jar</packaging>
