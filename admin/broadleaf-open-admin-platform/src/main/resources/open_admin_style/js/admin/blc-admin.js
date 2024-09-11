@@ -805,6 +805,10 @@ var BLCAdmin = (function($) {
 
                             $item.closest('.selectize-input').find('input').blur();
                             BLCAdmin.runSelectizeUpdateHandlers($(selectizeWrapper));
+                            select_collection.blur();
+                            setTimeout(function() {
+                                select_collection.close();
+                            }, 10);
                         });
                     },
                     onItemRemove: function (value, $item) {
