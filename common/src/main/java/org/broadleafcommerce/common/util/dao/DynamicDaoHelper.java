@@ -111,6 +111,22 @@ public interface DynamicDaoHelper {
      * The value of the Hibernate registered identifier property for the entity instance.
      *
      * @param entity
+     * @return
+     */
+    Serializable getIdentifier(Object entity);
+
+    /**
+     * The Field that represents the Hibernate registered identifier property for the entity class.
+     *
+     * @param clazz
+     * @return
+     */
+    Field getIdField(Class<?> clazz);
+
+    /**
+     * The value of the Hibernate registered identifier property for the entity instance.
+     *
+     * @param entity
      * @param session
      * @return
      */
