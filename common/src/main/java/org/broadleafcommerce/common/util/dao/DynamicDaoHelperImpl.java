@@ -274,6 +274,31 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
     }
 
     @Override
+    public Serializable getIdentifier(Object entity) {
+        Class<?> entityClass = getNonProxyImplementationClassIfNecessary(entity.getClass());
+        if (entityClass.getAnnotation(Entity.class) != null) {
+            Field idField = getIdField(entityClass);
+            try {
+                return (Serializable) idField.get(entity);
+            } catch (IllegalAccessException e) {
+                throw ExceptionHelper.refineException(e);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Field getIdField(Class<?> clazz) {
+        clazz = getNonProxyImplementationClassIfNecessary(clazz);
+        Field idField = ReflectionUtils.findField(
+                clazz,
+                HibernateMappingProvider.getMapping(clazz.getName()).getIdentifierProperty().getName()
+        );
+        idField.setAccessible(true);
+        return idField;
+    }
+
+    @Override
     public Serializable getIdentifier(Object entity, Session session) {
         Class<?> entityClass = getNonProxyImplementationClassIfNecessary(entity.getClass());
         if (entityClass.getAnnotation(Entity.class) != null) {
