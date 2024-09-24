@@ -6,7 +6,7 @@
     <description>BroadleafCommerce Top Level Project</description>
     <groupId>org.broadleafcommerce</groupId>
     <artifactId>broadleaf</artifactId>
-    <version>5.0.9.3-OAP-JAVA17-M3</version>
+    <version>5.0.9.3-OAP-JAVA17-SNAPSHOT</version>
     <packaging>pom</packaging>
     <url>https://www.broadleafcommerce.com/</url>
 
@@ -52,7 +52,7 @@
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
-        <tag>broadleaf-5.0.9.3-OAP-JAVA17-M3</tag>
+        <tag>HEAD</tag>
     </scm>
     <build>
         <pluginManagement>
