@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.security.service.CleanStringException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
+import org.broadleafcommerce.common.service.PersistenceService;
 import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdapter;
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.openadmin.dto.BatchDynamicResultSet;
@@ -39,6 +40,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 
 import java.lang.reflect.Constructor;
 import java.util.Collections;
@@ -57,6 +60,9 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Resource(name = "blExploitProtectionService")
     protected ExploitProtectionService exploitProtectionService;
+
+    @Resource(name = "blPersistenceService")
+    protected PersistenceService persistenceService;
 
     @Resource(name = "blPersistenceThreadManager")
     protected PersistenceThreadManager persistenceThreadManager;
@@ -83,6 +89,26 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse inspect(final PersistencePackage persistencePackage) throws ServiceException {
+        final PersistenceResponse[] response = new PersistenceResponse[1];
+        try {
+            PlatformTransactionManager transactionManager = identifyTransactionManager(persistencePackage);
+            transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+                                                            @Override
+                                                            public void execute() throws Throwable {
+                                                                response[0] = nonTransactionalInspect(persistencePackage);
+                                                            }
+                                                        }, RuntimeException.class, true, TransactionDefinition.PROPAGATION_REQUIRED,
+                    TransactionDefinition.ISOLATION_DEFAULT, true, transactionManager);
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof ServiceException) {
+                throw (ServiceException) e.getCause();
+            }
+            throw e;
+        }
+        return response[0];
+    }
+
+    public PersistenceResponse nonTransactionalInspect(final PersistencePackage persistencePackage) throws ServiceException {
         return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
@@ -103,6 +129,26 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
 
     @Override
     public PersistenceResponse fetch(final PersistencePackage persistencePackage, final CriteriaTransferObject cto) throws ServiceException {
+        final PersistenceResponse[] response = new PersistenceResponse[1];
+        try {
+            PlatformTransactionManager transactionManager = identifyTransactionManager(persistencePackage);
+            transUtil.runOptionalTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
+                                                            @Override
+                                                            public void execute() throws Throwable {
+                                                                response[0] = nonTransactionalFetch(persistencePackage, cto);
+                                                            }
+                                                        }, RuntimeException.class, true, TransactionDefinition.PROPAGATION_REQUIRED,
+                    TransactionDefinition.ISOLATION_DEFAULT, true, transactionManager);
+        } catch (RuntimeException e) {
+            if (e.getCause() instanceof ServiceException) {
+                throw (ServiceException) e.getCause();
+            }
+            throw e;
+        }
+        return response[0];
+    }
+
+    public PersistenceResponse nonTransactionalFetch(final PersistencePackage persistencePackage, final CriteriaTransferObject cto) throws ServiceException {
         return persistenceThreadManager.operation(TargetModeType.SANDBOX, persistencePackage, new Persistable<PersistenceResponse, ServiceException>() {
             @Override
             public PersistenceResponse execute() throws ServiceException {
@@ -288,4 +334,10 @@ public class DynamicEntityRemoteService implements DynamicEntityService {
             }
         });
     }
+
+    protected PlatformTransactionManager identifyTransactionManager(PersistencePackage persistencePackage) throws ServiceException {
+        String className = persistencePackage.getCeilingEntityFullyQualifiedClassname();
+        return persistenceService.identifyTransactionManager(className, TargetModeType.SANDBOX);
+    }
+
 }

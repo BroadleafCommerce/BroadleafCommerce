@@ -76,17 +76,15 @@ public class URLHandlerFilter extends OncePerRequestFilter {
         URLHandler handler = urlHandlerService.findURLHandlerByURI(requestURIWithoutContext);
         
         if (handler != null) {
+            String url = UrlUtil.fixRedirectUrl(contextPath, handler.getNewURL());
+            url = fixQueryString(request, url);
             if (URLRedirectType.FORWARD == handler.getUrlRedirectType()) {              
                 request.getRequestDispatcher(handler.getNewURL()).forward(request, response);               
             } else if (URLRedirectType.REDIRECT_PERM == handler.getUrlRedirectType()) {
-                String url = UrlUtil.fixRedirectUrl(contextPath, handler.getNewURL());
-                url = fixQueryString(request, url);
                 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
                 response.setHeader( "Location", url);
                 response.setHeader( "Connection", "close" );
             } else if (URLRedirectType.REDIRECT_TEMP == handler.getUrlRedirectType()) {
-                String url = UrlUtil.fixRedirectUrl(contextPath, handler.getNewURL());
-                url = fixQueryString(request, url);
                 response.sendRedirect(url);             
             }           
         } else {
