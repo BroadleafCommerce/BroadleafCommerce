@@ -149,8 +149,12 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
     }
 
     protected void validateIfProductIsProdRecord(Product product) {
-        if (product != null && sandBoxHelper.getOriginalId(product) != null) {
-            throw new IllegalArgumentException("Only production record could be added to the cart");
+        if (product != null) {
+            Long originalId = sandBoxHelper.getOriginalId(product);
+            if (originalId != null
+                    && !originalId.equals(sandBoxHelper.getProductionOriginalId(product.getClass(), product.getId()).getOriginalId())) {
+                throw new IllegalArgumentException("Only production record could be added to the cart");
+            }
         }
     }
 
