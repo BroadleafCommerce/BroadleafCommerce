@@ -59,7 +59,7 @@
         <hsqldb.database.starter.version>3.0.1-GA</hsqldb.database.starter.version>
         <hsqldb.version>2.7.2</hsqldb.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
-        <hibernate.version>6.2.13.Final</hibernate.version>
+        <hibernate.version>6.2.31.Final</hibernate.version>
         <jakarta.version>6.0.0</jakarta.version>
         <jakarta-xml.version>4.0.0</jakarta-xml.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>

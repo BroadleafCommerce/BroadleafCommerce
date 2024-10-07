@@ -650,7 +650,7 @@ public class OrderTest extends OrderBaseTest {
     @Transactional
     public void addPaymentToOrder(OrderPayment paymentInfo) {
         Order order = orderService.findOrderById(orderId);
-        orderService.addPaymentToOrder(order, paymentInfo, null);
+        paymentInfo = orderService.addPaymentToOrder(order, paymentInfo, null);
 
         order = orderService.findOrderById(orderId);
         OrderPayment payment = order.getPayments()
