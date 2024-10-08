@@ -60,7 +60,7 @@ import jakarta.persistence.Table;
         @Index(name = "ADDRESS_PHONE_PRI_IDX", columnList = "PHONE_PRIMARY_ID"),
         @Index(name = "ADDRESS_PHONE_SEC_IDX", columnList = "PHONE_SECONDARY_ID"),
         @Index(name = "ADDRESS_PHONE_FAX_IDX", columnList = "PHONE_FAX_ID"),
-        @Index(name = "ADDRESS_COUNTRY_INDEX", columnList = "COUNTY")
+        @Index(name = "ADDRESS_COUNTY_INDEX", columnList = "COUNTY")
 })
 @AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "phonePrimary", mergeEntries =
