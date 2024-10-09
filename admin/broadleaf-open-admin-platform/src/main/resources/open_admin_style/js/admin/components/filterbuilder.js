@@ -1394,6 +1394,23 @@ $(document).ready(function() {
             //el.parent().parent().find('div.rule-value-container').css("display", "inline-block");
         });
 
+        var target = $modal.find('.modal-body');
+        var observer = new MutationObserver(function(mutations) {
+            mutations.filter(m => m.type === 'childList'&& m.target.className === 'rule-container').forEach(m => {
+                $(m.target).find('select').each(function(i, el) {
+                    var $el = $(el);
+                    if ($el.hasClass('form-control')) {
+                        $el.removeClass('form-control').blSelectize();
+                    }
+                });
+            })
+        });
+        $(target).each(function(i, el) {
+            observer.observe(el, {
+                childList: true, subtree: true
+            });
+        });
+
         $modal.find('.rule-container').each(function(i, el) {
             var el = $(el);
 
@@ -1488,28 +1505,6 @@ $(document).ready(function() {
                 }
             }
         });
-    });
-
-    /**
-     * As selects are created, add necessary class to convert them to our custom appearance
-     */
-    $(document).on('DOMNodeInserted', '.query-builder-filters-container .rule-filter-container select, ' +
-                                      '.query-builder-filters-container .rule-operator-container select, ' +
-                                      '.query-builder-filters-container .rule-value-container select', function(e) {
-        var el = $(e.target);
-        if (el.is('select')) {
-            if (el.hasClass('form-control')) {
-                var hiddenId = $('.modal-body').find('#hidden-id').data('hiddenid');
-                var filterBuilder = BLCAdmin.filterBuilders.getFilterBuilderByHiddenId(hiddenId);
-                $(filterBuilder.builders[0]).queryBuilder('updateDisabledFilters');
-                el.find('option[disabled]').remove();
-                el.removeClass('form-control').blSelectize();
-            }
-
-            el.parent().parent().find('div.rule-filter-container > div > div.selectize-input').width("222px");
-            //el.parent().parent().find('div.rule-operator-container > div > div.selectize-input').width("100px");
-            //el.parent().parent().find('div.rule-value-container > div > div.selectize-input').width("223px");
-        }
     });
 
     /**
