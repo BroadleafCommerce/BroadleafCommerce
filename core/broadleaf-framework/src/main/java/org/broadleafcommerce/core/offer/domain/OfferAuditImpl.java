@@ -57,8 +57,7 @@ public class OfferAuditImpl implements OfferAudit {
             type = IdOverrideTableGenerator.class,
             parameters = {
                     @Parameter(name = "segment_value", value = "OfferAuditImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.offer.domain.OfferAuditImpl")
+                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.OfferAuditImpl")
             }
     )
     @Column(name = "OFFER_AUDIT_ID")
