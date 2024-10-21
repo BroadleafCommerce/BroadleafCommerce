@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.broadleafcommerce.common.config.service.MessageService;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -31,7 +32,9 @@ import org.springframework.stereotype.Service;
  * this class provides should be invoked statically.
  *
  * @author Andre Azzolini (apazzolini)
+ * @deprecated this class should not be used to statically retrieve localized messages. {@link MessageService} should be used instead
  */
+@Deprecated
 @Service("blBLCMessageUtils")
 public class BLCMessageUtils implements ApplicationContextAware {
 
