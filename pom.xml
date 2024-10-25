@@ -44,7 +44,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.9.0</ehcache3.version>
         <spring.version>5.3.39</spring.version>
-        <spring.security.version>5.8.13</spring.security.version>
+        <spring.security.version>5.8.15</spring.security.version>
         <spring.boot.version>2.7.18</spring.boot.version>
         <jackson-bom.version>2.17.2</jackson-bom.version>
         <lombok.version>1.18.30</lombok.version>
@@ -888,7 +888,7 @@
             <dependency>
                 <groupId>org.apache.solr</groupId>
                 <artifactId>solr-solrj</artifactId>
-                <version>8.11.3</version>
+                <version>8.11.4</version>
                 <exclusions>
                     <!-- This brings in a very old version of Woodstox -->
                     <exclusion>
@@ -1463,7 +1463,7 @@
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
-                <version>3.25.3</version>
+                <version>3.25.5</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
