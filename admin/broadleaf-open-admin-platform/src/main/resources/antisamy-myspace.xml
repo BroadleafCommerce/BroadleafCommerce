@@ -63,7 +63,7 @@ http://www.w3.org/TR/html401/struct/global.html
 
         <regexp name="anything" value=".*"/>
         <regexp name="numberOrPercent" value="(\d)+(%{0,1})"/>
-        <regexp name="paragraph" value="([\p{L}\p{N},'\.\s\-_\(\)]|&amp;[0-9]{2};)*"/>
+        <regexp name="paragraph" value="[\p{L}\p{N},'.\s\-_\(\)&amp;;]*" />
         <regexp name="htmlId" value="[a-zA-Z0-9\:\-_\.]+"/>
         <regexp name="htmlTitle"
                 value="[\p{L}\p{N}\s\-_',:\[\]!\./\\\(\)&amp;]*"/> <!-- force non-empty with a '+' at the end instead of '*' -->
