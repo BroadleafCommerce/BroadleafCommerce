@@ -498,12 +498,24 @@ QueryBuilder.prototype.bindEvents = function() {
         if ($(this).val()) {
             Model($rule).filter = that.getFilterById($(this).val());
         }
+        $rule.find('select').each(function(i, el) {
+            var $el = $(el);
+            if ($el.hasClass('form-control')) {
+                $el.removeClass('form-control').blSelectize();
+            }
+        });
     });
 
     // rule operator change
     this.$el.on('change.queryBuilder', Selectors.rule_operator, function() {
         var $rule = $(this).closest(Selectors.rule_container);
         Model($rule).operator = that.getOperatorByType($(this).val());
+        $rule.find('select').each(function(i, el) {
+            var $el = $(el);
+            if ($el.hasClass('form-control')) {
+                $el.removeClass('form-control').blSelectize();
+            }
+        });
     });
 
     // add rule button

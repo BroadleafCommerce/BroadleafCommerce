@@ -407,6 +407,30 @@
                 container.find('.group-conditions').css('line-height', '40px');
             }
 
+            $(container).find('select').each(function(i, el) {
+                var $el = $(el);
+                if ($el.hasClass('form-control')) {
+                    $el.removeClass('form-control').blSelectize();
+                }
+            });
+
+            var target = container.find('.rules-group-body');
+            var observer = new MutationObserver(function(mutations) {
+                mutations.filter(m => m.type === 'childList'&& m.target.className === 'rule-container').forEach(m => {
+                    $(m.target).find('select').each(function(i, el) {
+                        var $el = $(el);
+                        if ($el.hasClass('form-control')) {
+                            $el.removeClass('form-control').blSelectize();
+                        }
+                    });
+                })
+            });
+            $(target).each(function(i, el) {
+                observer.observe(el, {
+                    childList: true, subtree: true
+                });
+            });
+
             /****** For Developers: Test JSON Link *******
              var testJsonLink = $("<a>", {"href": "#", "text": "Test"});
              testJsonLink.click(function(e) {
@@ -1203,21 +1227,6 @@ $(document).ready(function() {
             $('input[name="' + this.name + '"].checked').removeClass('checked');
             $(this).addClass('checked');
             $('.toggle-container').addClass('force-update').removeClass('force-update');
-        }
-    });
-
-    /**
-     * As selects are created, add necessary class to convert them to our custom appearance
-     */
-    $(document).on('DOMNodeInserted', '.query-builder-rules-container .rule-filter-container select, ' +
-        '                              .query-builder-rules-container .rule-operator-container select,' +
-        '                              .query-builder-rules-container .rule-value-container select', function(e) {
-
-        var el = $(e.target);
-        if (el.is('select')) {
-            if (el.hasClass('form-control')) {
-                el.removeClass('form-control').blSelectize({delimiter: BLCAdmin.productNameDelimiter});
-            }
         }
     });
 });
