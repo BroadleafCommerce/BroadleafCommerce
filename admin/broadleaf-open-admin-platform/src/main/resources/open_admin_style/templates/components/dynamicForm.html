@@ -47,7 +47,7 @@
                     </th:block>
                 </th:block>
 
-                <th:block th:unless="${#strings.containsIgnoreCase(group.title, 'master')}">
+                <th:block th:unless="${#strings.containsIgnoreCase(group.title, 'master') or #strings.containsIgnoreCase(group.title, 'Carousel Constant Fields')}">
                     <th:block th:if="${dynamicFormActionsTemplate}">
                         <div th:replace="${dynamicFormActionsTemplate}" ></div>
                     </th:block>
