@@ -951,6 +951,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
     public void refresh(Order order) {
         orderDao.refresh(order);
     }
