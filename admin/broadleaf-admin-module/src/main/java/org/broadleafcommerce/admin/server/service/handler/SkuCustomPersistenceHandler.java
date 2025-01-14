@@ -449,7 +449,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 ProductOptionValueImpl.class.getName(), mappings);
         Long count = (Long) countQuery.getSingleResult();
         BasicFieldMetadata metadata = null;
-        if (count > 0) {
+        if (count > 0 && option.getUseInSkuGeneration()) {
             metadata = new BasicFieldMetadata();
             metadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
             metadata.setSecondaryType(SupportedFieldType.INTEGER);
