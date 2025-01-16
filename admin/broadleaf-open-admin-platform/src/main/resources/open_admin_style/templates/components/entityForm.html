@@ -11,6 +11,19 @@
 <th:block th:object="${entityForm}" th:with="renderTabs=${#lists.size(entityForm.tabs) > 1 or (showSingleTab != null and showSingleTab)}">
     <div class="section-tabs" th:classappend="${renderTabs == false} ? empty-section-tabs">
 
+        <div class="errors" blc_admin:errors="*{*}">
+            <th:block th:if="${tabErrors}">
+                <div class="tabError" th:each="tab : ${tabErrors.entrySet()}" th:inline="text">
+                    <span th:if="${#lists.size(field.value) &gt; 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">
+                        <th:block th:utext="#{${field.key}}"></th:block>: <span th:each="message : ${field.value}">[[#{__${message}__}]]</span>
+                    </span>
+                    <span th:if="${#lists.size(field.value) == 1}" class="fieldError error" th:each="field : ${tab.value.entrySet()}">
+                        <th:block th:utext="#{${field.key}}"></th:block>: <th:block th:utext="#{${field.value.get(0)}}"></th:block>
+                    </span>
+                </div>
+            </th:block>
+        </div>
+
         <div class="entity-errors"></div>
         <ul class="nav nav-tabs">
             <li th:each="tab, tabStat : ${entityForm.tabs}"
