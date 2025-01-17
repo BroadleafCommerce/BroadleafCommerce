@@ -43,6 +43,7 @@ import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionImpl;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
 import org.broadleafcommerce.core.catalog.domain.ProductOptionValueImpl;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuProductOptionValueXref;
@@ -86,6 +87,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.EntityManager;
@@ -720,8 +724,15 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         try {
             List<Property> productOptionProperties = getProductOptionProperties(entity);
 
+            //Verify that options are not empty
+            Entity errorEntity = validateNotEmptyProductOptions(productOptionProperties);
+            if (errorEntity != null) {
+                entity.setGlobalValidationErrors(errorEntity.getGlobalValidationErrors());
+                return entity;
+            }
+
             //Verify that none of the selected options is null
-            Entity errorEntity = validateNotNullProductOptions(productOptionProperties);
+            errorEntity = validateNotNullProductOptions(productOptionProperties);
             if (errorEntity != null) {
                 entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
@@ -734,10 +745,21 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             filterOutProductMetadata(adminProperties);
             adminInstance = (Sku) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
+            //Verify that the product options are valid for SKU creation
+            errorEntity = this.validateAvailableProductOption(
+                    adminInstance.getProduct(),
+                    productOptionProperties
+            );
+            if (errorEntity != null) {
+                entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
+                return entity;
+            }
             //Verify that there isn't already a Sku for this particular product option value combo
-            errorEntity = validateUniqueProductOptionValueCombination(adminInstance.getProduct(),
+            errorEntity = validateUniqueProductOptionValueCombination(
+                    adminInstance.getProduct(),
                     productOptionProperties,
-                    null);
+                    null
+            );
             if (errorEntity != null) {
                 entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
@@ -785,9 +807,11 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             adminInstance = (Sku) helper.createPopulatedInstance(adminInstance, entity, adminProperties, false);
 
             //Verify that there isn't already a Sku for this particular product option value combo
-            errorEntity = validateUniqueProductOptionValueCombination(adminInstance.getProduct(),
+            errorEntity = validateUniqueProductOptionValueCombination(
+                    adminInstance.getProduct(),
                     productOptionProperties,
-                    adminInstance);
+                    adminInstance
+            );
             if (errorEntity != null) {
                 entity.setPropertyValidationErrors(errorEntity.getPropertyValidationErrors());
                 return entity;
@@ -862,6 +886,46 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         }
     }
 
+    /**
+     * Verify that all selected options are among the available product options.
+     *
+     * @param product product
+     * @param productOptionProperties product Option properties
+     * @return <b>null</b> if successfully validation, the error entity otherwise
+     */
+    protected Entity validateAvailableProductOption(Product product, List<Property> productOptionProperties) {
+        Map<String, Set<String>> possibleProductOptionNames = product.getProductOptionXrefs().stream()
+                .map(ProductOptionXref::getProductOption)
+                .filter(ProductOption::getUseInSkuGeneration)
+                .collect(Collectors.toMap(
+                        ProductOption::getAttributeName,
+                        productOption -> productOption.getAllowedValues().stream()
+                                .map(ProductOptionValue::getAttributeValue)
+                                .collect(Collectors.toSet()))
+                );
+        List<Property> notValidProps = new ArrayList<>();
+        productOptionProperties.forEach(
+                productOptionProperty -> {
+                    Optional<String> productOption = possibleProductOptionNames.entrySet().stream()
+                            .filter(entry -> entry.getValue().contains(productOptionProperty.getDisplayValue()))
+                            .map(Map.Entry::getKey)
+                            .findAny();
+                    if (productOption.isEmpty()) {
+                        notValidProps.add(productOptionProperty);
+                    }
+                }
+        );
+
+        if (!notValidProps.isEmpty()) {
+            Entity errorEntity = new Entity();
+            for (Property productOptionProperty : notValidProps) {
+                errorEntity.addValidationError(productOptionProperty.getName(), "notAvailableProductOption");
+            }
+            return errorEntity;
+        }
+        return null;
+    }
+
     protected List<Property> getProductOptionProperties(Entity entity) {
         List<Property> productOptionProperties = new ArrayList<>();
         for (Property property : entity.getProperties()) {
@@ -885,7 +949,11 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      *                                attempting validation
      * @return <b>null</b> if successfully validation, the error entity otherwise
      */
-    protected Entity validateUniqueProductOptionValueCombination(Product product, List<Property> productOptionProperties, Sku currentSku) {
+    protected Entity validateUniqueProductOptionValueCombination(
+            Product product,
+            List<Property> productOptionProperties,
+            Sku currentSku
+    ) {
         //do not attempt POV validation if no PO properties were passed in
         if (CollectionUtils.isNotEmpty(productOptionProperties)) {
             List<Long> productOptionValueIds = new ArrayList<>();
@@ -912,9 +980,9 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                         testList.add(optionValue.getId());
                     }
 
-                    if (CollectionUtils.isNotEmpty(testList) &&
-                            productOptionValueIds.containsAll(testList) &&
-                            productOptionValueIds.size() == testList.size()) {
+                    if (CollectionUtils.isNotEmpty(testList)
+                            && productOptionValueIds.containsAll(testList)
+                            && productOptionValueIds.size() == testList.size()) {
                         validated = false;
                         break;
                     }
@@ -936,7 +1004,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
      * Verify that none of the selected options is null.
      * If one of the option's value is null, means that the option in the combo box wasn't correctly selected.
      *
-     * @param productOptionProperties
+     * @param productOptionProperties product Option properties
      * @return <b>null</b> if successfully validation, the error entity otherwise
      */
     protected Entity validateNotNullProductOptions(List<Property> productOptionProperties) {
@@ -953,6 +1021,21 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             for (Property productOptionProperty : nullValueProps) {
                 errorEntity.addValidationError(productOptionProperty.getName(), "skuNullProductOption");
             }
+            return errorEntity;
+        }
+        return null;
+    }
+
+    /**
+     * Verify that product options are not empty.
+     *
+     * @param productOptionProperties product Option properties
+     * @return <b>null</b> if successfully validation, the error entity otherwise
+     */
+    protected Entity validateNotEmptyProductOptions(List<Property> productOptionProperties) {
+        if (productOptionProperties.isEmpty()) {
+            Entity errorEntity = new Entity();
+            errorEntity.addGlobalValidationError("emptyProductOptions");
             return errorEntity;
         }
         return null;
