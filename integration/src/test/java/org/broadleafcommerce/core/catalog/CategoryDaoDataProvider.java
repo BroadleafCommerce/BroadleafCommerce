@@ -28,7 +28,6 @@ public class CategoryDaoDataProvider {
         Category category = new CategoryImpl();
         category.setName("Yuban");
         category.setDescription("Yuban");
-        category.setId(1001L);
         return new Object[][] { { category } };
     }
 }
