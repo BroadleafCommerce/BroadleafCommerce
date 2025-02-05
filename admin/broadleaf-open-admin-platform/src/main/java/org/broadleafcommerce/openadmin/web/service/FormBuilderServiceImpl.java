@@ -989,7 +989,7 @@ public class FormBuilderServiceImpl implements FormBuilderService {
                         if (headerField.getFieldType().equals("DATE")) {
                             this.setDateToRecordField(recordField, property, formatter);
                         } else {
-                            recordField.setValue(property.getValue());
+                            recordField.setValue(exploitProtectionService.htmlDecode(property.getValue()));
                         }
                         recordField.setTooltip(property.getOriginalDisplayValue());
                         recordField.setDisplayValue(property.getDisplayValue());
