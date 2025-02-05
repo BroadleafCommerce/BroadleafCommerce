@@ -325,6 +325,9 @@
 
             var alertTarget = $container.find('.titlebar:first-child .titlebar-title');
             if (!alertTarget.length) {
+                alertTarget = $container.find('.fieldgroup-listgrid-wrapper-header');
+            }
+            if (!alertTarget.length) {
                 alertTarget = $container.find('label span');
             }
             alertTarget.append($alert);
