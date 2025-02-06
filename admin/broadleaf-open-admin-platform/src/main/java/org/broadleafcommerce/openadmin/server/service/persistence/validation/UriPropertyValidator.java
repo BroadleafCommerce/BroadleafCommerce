@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 public class UriPropertyValidator extends ValidationConfigurationBasedPropertyValidator {
 
     protected static final Log LOG = LogFactory.getLog(UriPropertyValidator.class);
-    protected static final Pattern URI_PATTERN = Pattern.compile("[\\w-_/]*");
+    protected static final Pattern URI_PATTERN = Pattern.compile("[\\w-_/.]*");
 
     protected String ERROR_KEY_BEGIN_WITH_SLASH = "uriPropertyValidatorMustBeginWithSlashError";
     protected String ERROR_KEY_CANNOT_END_WITH_SLASH = "uriPropertyValidatorCannotEndWithSlashError";
