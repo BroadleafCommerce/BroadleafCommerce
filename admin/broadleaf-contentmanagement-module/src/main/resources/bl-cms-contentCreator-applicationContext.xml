@@ -46,7 +46,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blCustomPersistenceHandlers-cms"/>
+        <property name="sourceRef" value="blCustomPersistenceHandlers-cms"/>
         <property name="targetRef" value="blCustomPersistenceHandlers"/>
     </bean>
     
@@ -59,7 +59,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blCMSPersistenceProviders" />
+        <property name="sourceRef" value="blCMSPersistenceProviders" />
         <property name="targetRef" value="blPersistenceProviders" />
     </bean>
 
@@ -111,7 +111,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMessageSourceBaseNames-cms" />
+        <property name="sourceRef" value="blMessageSourceBaseNames-cms" />
         <property name="targetRef" value="blMessageSourceBaseNames" />
     </bean>
 

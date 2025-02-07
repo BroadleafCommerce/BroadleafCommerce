@@ -56,7 +56,7 @@ import java.util.Set;
  * <pre>
  * {@code
  * <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
- *  <property name="collectionRef" value="blPriceListRuleBuilderFieldServices"/>
+ *  <property name="sourceRef" value="blPriceListRuleBuilderFieldServices"/>
  *  <property name="targetRef" value="blRuleBuilderFieldServices"/>
  * </bean>
  *

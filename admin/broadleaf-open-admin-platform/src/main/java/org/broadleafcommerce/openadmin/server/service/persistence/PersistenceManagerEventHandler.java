@@ -33,7 +33,7 @@ import org.springframework.core.Ordered;
  * <p/>
  * {@code
  * <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
- * <property name="collectionRef" value="blSandBoxPersistenceManagerEventHandlers"/>
+ * <property name="sourceRef" value="blSandBoxPersistenceManagerEventHandlers"/>
  * <property name="targetRef" value="blPersistenceManagerEventHandlers"/>
  * </bean>
  * <bean id="blSandBoxPersistenceManagerEventHandlers" class="org.springframework.beans.factory.config.ListFactoryBean">

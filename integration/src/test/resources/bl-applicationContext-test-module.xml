@@ -35,7 +35,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blCheckoutWorkflowActivities-it-module"/>
+        <property name="sourceRef" value="blCheckoutWorkflowActivities-it-module"/>
         <property name="targetRef" value="blCheckoutWorkflowActivities"/>
     </bean>
     

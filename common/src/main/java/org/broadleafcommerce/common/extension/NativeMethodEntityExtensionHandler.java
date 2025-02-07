@@ -39,7 +39,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
  *   </bean>
  *
  *   <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
- *       <property name="collectionRef" value="myEntityExtensionManagers"/>
+ *       <property name="sourceRef" value="myEntityExtensionManagers"/>
  *       <property name="targetRef" value="blEntityExtensionManagers"/>
  *   </bean>
  * }

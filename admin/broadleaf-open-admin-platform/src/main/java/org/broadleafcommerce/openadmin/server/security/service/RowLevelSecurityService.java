@@ -36,7 +36,7 @@ import java.util.List;
  * </property>
  * </bean>
  * <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
- * <property name="collectionRef" value="blCustomRowSecurityProviders" />
+ * <property name="sourceRef" value="blCustomRowSecurityProviders" />
  * <property name="targetRef" value="blRowLevelSecurityProviders" />
  * </bean>
  * }

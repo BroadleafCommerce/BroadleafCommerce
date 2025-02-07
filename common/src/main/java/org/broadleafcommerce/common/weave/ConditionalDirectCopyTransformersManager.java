@@ -41,7 +41,7 @@ package org.broadleafcommerce.common.weave;
  * </bean>
  *
  * <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
- * <property name="collectionRef" value="blCommonConditionalDirectCopyTransformers"/>
+ * <property name="sourceRef" value="blCommonConditionalDirectCopyTransformers"/>
  * <property name="targetRef" value="blConditionalDirectCopyTransformers"/>
  * </bean>
  * }

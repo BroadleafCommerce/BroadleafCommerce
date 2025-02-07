@@ -25,6 +25,8 @@
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+    <import resource="bl-common-applicationContext-persistence.xml"/>
+
     <bean id="blMergedEntityContexts-framework" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>
@@ -34,7 +36,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedEntityContexts-framework"/>
+        <property name="sourceRef" value="blMergedEntityContexts-framework"/>
         <property name="targetRef" value="blMergedEntityContexts"/>
     </bean>
 
@@ -47,13 +49,13 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedPersistenceXmlLocations-framework"/>
+        <property name="sourceRef" value="blMergedPersistenceXmlLocations-framework"/>
         <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
     </bean>
     
     <bean id="blEntityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
         <property name="jpaVendorAdapter" ref="blJpaVendorAdapter"/>
-        <property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
+        <property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
         <property name="persistenceUnitName" value="blSecurePU"/>
     </bean>
 
