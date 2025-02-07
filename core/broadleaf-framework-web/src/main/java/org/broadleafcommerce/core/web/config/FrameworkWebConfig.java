@@ -26,7 +26,6 @@ import org.broadleafcommerce.core.web.cookie.CookieRuleRequestProcessor;
 import org.broadleafcommerce.core.web.seo.BasicSeoPropertyGeneratorImpl;
 import org.broadleafcommerce.core.web.seo.SeoPropertyGenerator;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ListFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -75,11 +74,10 @@ public class FrameworkWebConfig {
     }
 
     @Bean
-    @Autowired
     @ConditionalOnProperty("cookie.content.targeting.enabled")
     @ConditionalOnNotAdmin
     public CookieRuleRequestProcessor blCookieRuleRequestProcessor(
-            @Qualifier("blCookieRuleConfigs") List configs,
+            @Qualifier("blCookieRuleConfigs") List<RuleDTOConfig> configs,
             CookieUtils cookieUtils
     ) {
         CookieRuleRequestProcessor processor = new CookieRuleRequestProcessor(configs, cookieUtils);
@@ -87,7 +85,6 @@ public class FrameworkWebConfig {
     }
 
     @Bean
-    @Autowired
     @ConditionalOnProperty("cookie.content.targeting.enabled")
     @ConditionalOnNotAdmin
     public CookieRuleFilter blCookieRuleFilter(

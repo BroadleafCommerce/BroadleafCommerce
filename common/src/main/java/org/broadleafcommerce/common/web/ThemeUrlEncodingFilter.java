@@ -19,16 +19,15 @@ package org.broadleafcommerce.common.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.utils.URIBuilder;
 import org.broadleafcommerce.common.admin.condition.ConditionalOnNotAdmin;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -92,13 +91,10 @@ public class ThemeUrlEncodingFilter extends GenericFilterBean {
                 if (url.contains(".js") || url.contains(".css")) {
                     //WebRequest request = brc.getWebRequest();
                     Theme theme = brc.getTheme();
-                    try {
-                        url = new URIBuilder(url).addParameter("themeConfigId",
-                                theme.getId().toString()).build().toString();
-                    } catch (URISyntaxException e) {
-                        LOG.error(String.format("URI syntax error building %s with parameter %s and themeId %s",
-                                url, "themeConfigId", theme.getId().toString()));
-                    }
+                    url = UriComponentsBuilder.fromUriString(url)
+                            .queryParam("themeConfigId", theme.getId().toString())
+                            .build()
+                            .toUriString();
                 }
             }
             return wrappedResponse.encodeURL(url);

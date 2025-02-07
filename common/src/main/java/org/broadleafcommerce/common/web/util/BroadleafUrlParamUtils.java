@@ -17,9 +17,7 @@
  */
 package org.broadleafcommerce.common.web.util;
 
-import org.apache.http.client.utils.URIBuilder;
-
-import java.net.URISyntaxException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Chris Kittrell (ckittrell)
@@ -27,14 +25,11 @@ import java.net.URISyntaxException;
 public class BroadleafUrlParamUtils {
 
     public static String addPaginationParam(String url, String paginationParamName, Integer pageNumber) {
-        try {
-            if (pageNumber > 1) {
-                return new URIBuilder(url).addParameter(paginationParamName, String.valueOf(pageNumber))
-                        .build()
-                        .toString();
-            }
-        } catch (URISyntaxException e) {
-            // If we run into trouble, do nothing - we'll just return the url that we were given.
+        if (pageNumber > 1) {
+            return UriComponentsBuilder.fromUriString(url)
+                    .queryParam(paginationParamName, String.valueOf(pageNumber))
+                    .build()
+                    .toUriString();
         }
         return url;
     }

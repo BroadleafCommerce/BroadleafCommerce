@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>BroadleafCommerce</name>
@@ -41,30 +42,31 @@
         </repository>
     </repositories>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ehcache3.version>3.10.8</ehcache3.version>
-        <spring.version>6.0.23</spring.version>
-        <spring.security.version>6.1.9</spring.security.version>
-        <spring.boot.version>3.1.12</spring.boot.version>
-        <jackson.version>2.17.2</jackson.version>
-        <lombok.version>1.18.34</lombok.version>
-        <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
-        <geb.version>7.0</geb.version>
-        <spock.core.version>2.4-M4-groovy-4.0</spock.core.version>
-        <spock.spring.version>2.4-M4-groovy-4.0</spock.spring.version>
         <project.uri>${project.baseUri}</project.uri>
-        <groovy.version>4.0.20</groovy.version>
-        <gpg.plugin.version>3.1.0</gpg.plugin.version>
-        <broadleaf-presentation.version>2.0.1-GA</broadleaf-presentation.version>
-        <hsqldb.database.starter.version>3.0.1-GA</hsqldb.database.starter.version>
-        <hsqldb.version>2.7.2</hsqldb.version>
-        <closure.compiler.version>v20180506</closure.compiler.version>
-        <hibernate.version>6.2.31.Final</hibernate.version>
-        <jakarta.version>6.0.0</jakarta.version>
-        <jakarta-xml.version>4.0.0</jakarta-xml.version>
-        <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
-        <slf4j.version>2.0.9</slf4j.version>
-        <logback.version>1.4.14</logback.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <broadleaf-presentation.version>2.1.0-SNAPSHOT</broadleaf-presentation.version>
+        <hsqldb.database.starter.version>3.1.0-SNAPSHOT</hsqldb.database.starter.version>
+        <ehcache3.version>3.10.8</ehcache3.version>
+        <spring.version>6.2.2</spring.version>
+        <spring.security.version>6.4.2</spring.security.version>
+        <spring.boot.version>3.4.2</spring.boot.version>
+        <jackson.version>2.18.2</jackson.version>
+        <lombok.version>1.18.36</lombok.version>
+        <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
+        <geb.version>7.0</geb.version>
+        <spock.core.version>2.4-M5-groovy-4.0</spock.core.version>
+        <spock.spring.version>2.4-M5-groovy-4.0</spock.spring.version>
+        <groovy.version>4.0.24</groovy.version>
+        <gpg.plugin.version>3.2.7</gpg.plugin.version>
+        <closure.compiler.version>v20240317</closure.compiler.version>
+        <hsqldb.version>2.7.4</hsqldb.version>
+        <hibernate.version>6.6.5.Final</hibernate.version>
+        <jakarta.version>6.1.0</jakarta.version>
+        <jakarta-xml.version>4.0.2</jakarta-xml.version>
+        <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
+        <slf4j.version>2.0.16</slf4j.version>
+        <logback.version>1.5.16</logback.version>
+        <junit.version>5.11.3</junit.version>
         <!-- because of spring when does instrumentation it uses reflection to jdk classes, for tests we need this -->
         <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</surefire.argLine>
         <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</failsafe.argLine>
@@ -81,7 +83,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.13.0</version>
                     <configuration>
                         <source>17</source>
                         <target>17</target>
@@ -90,17 +92,17 @@
                 <plugin>
                     <groupId>org.zeroturnaround</groupId>
                     <artifactId>jrebel-maven-plugin</artifactId>
-                    <version>1.1.11</version>
+                    <version>1.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.2.5</version>
+                    <version>3.5.2</version>
                     <configuration>
                         <includes>
                             <include>**/Test*.java,**/*Test.java,**/*TestCase.java</include>
@@ -120,12 +122,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.4.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.1.3</version>
                     <configuration>
                         <deployAtEnd>true</deployAtEnd>
                     </configuration>
@@ -133,7 +135,7 @@
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>4.1.1</version>
                     <configuration>
                         <targetBytecode>17</targetBytecode>
                     </configuration>
@@ -162,21 +164,13 @@
                             <pluginExecutions>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId>
-                                            org.codehaus.gmavenplus
-                                        </groupId>
-                                        <artifactId>
-                                            gmavenplus-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [1.2,)
-                                        </versionRange>
+                                        <groupId>org.codehaus.gmavenplus</groupId>
+                                        <artifactId>gmavenplus-plugin</artifactId>
+                                        <versionRange>[1.2,)</versionRange>
                                         <goals>
                                             <goal>addTestSources</goal>
                                             <goal>testCompile</goal>
-                                            <goal>
-                                                testGenerateStubs
-                                            </goal>
+                                            <goal>testGenerateStubs</goal>
                                             <goal>removeTestStubs</goal>
                                             <goal>compile</goal>
                                             <goal>removeStubs</goal>
@@ -185,45 +179,33 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
                                         <groupId>org.jacoco</groupId>
-                                        <artifactId>
-                                            jacoco-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [0.7.2.201409121644,)
-                                        </versionRange>
+                                        <artifactId>jacoco-maven-plugin</artifactId>
+                                        <versionRange>[0.7.2.201409121644,)</versionRange>
                                         <goals>
                                             <goal>prepare-agent</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId>
-                                            org.codehaus.mojo
-                                        </groupId>
-                                        <artifactId>
-                                            license-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [1.5,)
-                                        </versionRange>
+                                        <groupId>org.codehaus.mojo</groupId>
+                                        <artifactId>license-maven-plugin</artifactId>
+                                        <versionRange>[1.5,)</versionRange>
                                         <goals>
-                                            <goal>
-                                                update-file-header
-                                            </goal>
+                                            <goal>update-file-header</goal>
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -245,7 +227,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>1.20</version>
+                <version>2.5.0</version>
                 <configuration>
                     <verbose>false</verbose>
                     <addSvnKeyWords>false</addSvnKeyWords>
@@ -255,6 +237,7 @@
                     <licenseName>blc_dual</licenseName>
                     <licenseResolver>${project.uri}/licenses</licenseResolver>
                     <canUpdateCopyright>true</canUpdateCopyright>
+                    <trimHeaderLine>true</trimHeaderLine>
                     <excludes>
                         <exclude>**/*.sql</exclude>
                         <exclude>**/*.html</exclude>
@@ -292,7 +275,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>0.8.12</version>
                 <executions>
                     <!-- Unit test coverage prep; generates jacoco.exec -->
                     <execution>
@@ -346,8 +329,8 @@
                         <id>default-cli</id>
                         <configuration>
                             <rules>
-                                <dependencyConvergence />
-                                <banDuplicatePomDependencyVersions />
+                                <dependencyConvergence/>
+                                <banDuplicatePomDependencyVersions/>
                             </rules>
                         </configuration>
                         <goals>
@@ -390,7 +373,7 @@
                     <plugin>
                         <groupId>org.owasp</groupId>
                         <artifactId>dependency-check-maven</artifactId>
-                        <version>11.1.0</version>
+                        <version>12.0.2</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -449,7 +432,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.6.0</version>
+                        <version>3.11.2</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -579,6 +562,12 @@
                 <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-envers</artifactId>
                 <version>${hibernate.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
@@ -586,16 +575,8 @@
                 <version>${hibernate.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>javax.persistence</groupId>
-                        <artifactId>javax.persistence-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.el</groupId>
-                        <artifactId>javax.el-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.osgi</groupId>
-                        <artifactId>org.osgi.core</artifactId>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>jakarta.activation</groupId>
@@ -623,7 +604,7 @@
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.8.0</version>
+                <version>1.9.0</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
@@ -648,12 +629,12 @@
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>1.2</version>
+                <version>1.3.4</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.9.4</version>
+                <version>1.10.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -664,7 +645,7 @@
             <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
-                <version>1.5.0</version>
+                <version>1.9.0</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
@@ -688,13 +669,13 @@
             <dependency>
                 <groupId>com.twelvemonkeys.imageio</groupId>
                 <artifactId>imageio-jpeg</artifactId>
-                <version>3.9.3</version>
+                <version>3.12.0</version>
             </dependency>
             <!-- PNG image processing -->
             <dependency>
                 <groupId>com.github.depsypher</groupId>
                 <artifactId>pngtastic</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.ant</groupId>
@@ -705,34 +686,40 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.15.1</version>
+                <version>2.18.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-dbcp2</artifactId>
-                <version>2.9.0</version>
+                <version>2.13.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.transaction</groupId>
+                        <artifactId>jakarta.transaction-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.16.1</version>
+                <version>1.17.2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.16.0</version>
+                <version>3.17.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
-                <version>1.11.0</version>
+                <version>1.13.0</version>
             </dependency>
 
             <!-- Logging -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
-                <version>2.20.0</version>
+                <version>2.24.3</version>
                 <scope>import</scope>
                 <type>pom</type>
                 <optional>true</optional>
@@ -762,12 +749,12 @@
             <dependency>
                 <groupId>jakarta.mail</groupId>
                 <artifactId>jakarta.mail-api</artifactId>
-                <version>2.1.2</version>
+                <version>2.1.3</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>jakarta.mail</artifactId>
-                <version>2.0.2</version>
+                <version>2.0.3</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.annotation</groupId>
@@ -795,7 +782,7 @@
             <dependency>
                 <groupId>org.apache.xmlbeans</groupId>
                 <artifactId>xmlbeans</artifactId>
-                <version>5.1.1</version>
+                <version>5.3.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.apache.logging.log4j</groupId>
@@ -824,15 +811,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+
             <!-- Add in Jackson's XML converter -->
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-smile</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
@@ -845,13 +828,6 @@
                         <artifactId>jakarta.xml.bind-api</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <!-- JMS Libraries -->
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_1.1_spec</artifactId>
-                <version>1.1.1</version>
-                <scope>compile</scope>
             </dependency>
 
             <!-- Servlet API -->
@@ -866,33 +842,38 @@
             <dependency>
                 <groupId>com.icegreen</groupId>
                 <artifactId>greenmail</artifactId>
-                <version>2.1.0-alpha-1</version>
+                <version>2.1.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.2</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.vintage</groupId>
                 <artifactId>junit-vintage-engine</artifactId>
-                <version>5.10.2</version>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>5.2.0</version>
+                <version>5.5.0</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.easymock</groupId>
-                <artifactId>easymockclassextension</artifactId>
-                <version>3.2</version>
-                <type>jar</type>
-                <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>net.bytebuddy</groupId>
+                        <artifactId>byte-buddy</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.groovy</groupId>
@@ -906,12 +887,8 @@
                         <artifactId>jackson-core</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-databind</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-core</artifactId>
+                        <groupId>org.apache.groovy</groupId>
+                        <artifactId>groovy-ant</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
@@ -988,8 +965,12 @@
             <dependency>
                 <groupId>org.apache.solr</groupId>
                 <artifactId>solr-solrj</artifactId>
-                <version>9.5.0</version>
+                <version>9.8.0</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-http</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
@@ -1011,35 +992,31 @@
             <dependency>
                 <groupId>org.xerial.snappy</groupId>
                 <artifactId>snappy-java</artifactId>
-                <version>1.1.9.1</version>
+                <version>1.1.10.7</version>
             </dependency>
+
             <!-- Byte Code Manipulation Libraries -->
             <dependency>
                 <groupId>cglib</groupId>
                 <artifactId>cglib-nodep</artifactId>
-                <version>2.1_3</version>
-            </dependency>
-            <dependency>
-                <groupId>asm</groupId>
-                <artifactId>asm</artifactId>
-                <version>3.3</version>
+                <version>3.3.0</version>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm-commons</artifactId>
-                <version>3.3</version>
+                <version>3.3.1</version>
             </dependency>
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.29.2-GA</version>
+                <version>3.30.2-GA</version>
             </dependency>
 
             <!--Scheduling Libraries -->
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
-                <version>2.3.2</version>
+                <version>2.5.0</version>
                 <type>jar</type>
                 <exclusions>
                     <exclusion>
@@ -1053,7 +1030,7 @@
             <dependency>
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
-                <version>2.4.15.Final</version>
+                <version>2.5.2.Final</version>
             </dependency>
 
             <!--Regular Expression Libraries -->
@@ -1084,6 +1061,10 @@
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.cache</groupId>
+                        <artifactId>cache-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1140,6 +1121,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-oxm</artifactId>
                 <version>${spring.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -1157,20 +1144,34 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-autoconfigure</artifactId>
                 <version>${spring.boot.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
+
+            <!-- Spring Security -->
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-oauth2-client</artifactId>
                 <version>${spring.security.version}</version>
                 <exclusions>
                     <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>net.minidev</groupId>
                         <artifactId>json-smart</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
-
-            <!-- Spring Security -->
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-acl</artifactId>
@@ -1179,6 +1180,10 @@
                     <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -1209,6 +1214,14 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
                         <artifactId>spring-expression</artifactId>
                     </exclusion>
                     <exclusion>
@@ -1223,6 +1236,10 @@
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-aop</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>io.micrometer</groupId>
+                        <artifactId>micrometer-observation</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -1233,6 +1250,18 @@
                     <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework  </groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -1263,6 +1292,18 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
                         <artifactId>spring-expression</artifactId>
                     </exclusion>
                     <exclusion>
@@ -1286,7 +1327,7 @@
                 <exclusions>
                     <exclusion>
                         <groupId>org.springframework</groupId>
-                        <artifactId>spring-tx</artifactId>
+                        <artifactId>spring-core</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.springframework</groupId>
@@ -1298,7 +1339,7 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.springframework</groupId>
-                        <artifactId>spring-core</artifactId>
+                        <artifactId>spring-tx</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.springframework.security</groupId>
@@ -1321,17 +1362,30 @@
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-aop</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
             <!--Persistence Libraries -->
             <dependency>
-                <groupId>commons-pool</groupId>
-                <artifactId>commons-pool</artifactId>
-                <version>1.6</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>2.12.0</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
+
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
@@ -1342,19 +1396,19 @@
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
-                <version>4.0.2</version>
+                <version>4.0.5</version>
             </dependency>
 
             <!--Other -->
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
-                <version>1.9.19</version>
+                <version>1.9.22.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-core</artifactId>
-                <version>2.9.2</version>
+                <version>3.0.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -1367,21 +1421,17 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>jsr305</artifactId>
-                <version>3.0.2</version>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-annotations</artifactId>
+                <version>4.9.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.7.6</version>
+                <version>1.7.7</version>
                 <scope>compile</scope>
                 <exclusions>
-                    <exclusion>
-                        <artifactId>commons-httpclient</artifactId>
-                        <groupId>commons-httpclient</groupId>
-                    </exclusion>
                     <exclusion>
                         <groupId>commons-io</groupId>
                         <artifactId>commons-io</artifactId>
@@ -1403,7 +1453,7 @@
             <dependency>
                 <groupId>org.owasp.esapi</groupId>
                 <artifactId>esapi</artifactId>
-                <version>2.5.4.0</version>
+                <version>2.6.0.0</version>
                 <classifier>jakarta</classifier>
                 <exclusions>
                     <exclusion>
@@ -1441,24 +1491,14 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5.14</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-codec</groupId>
-                        <artifactId>commons-codec</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-io</groupId>
-                        <artifactId>commons-io</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.4.1</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.validation</groupId>
                 <artifactId>jakarta.validation-api</artifactId>
-                <version>3.0.2</version>
+                <version>3.1.0</version>
             </dependency>
             <dependency>
                 <groupId>de.jkeylockmanager</groupId>
@@ -1469,17 +1509,33 @@
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
                 <version>1.5.4</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>stax</groupId>
+                        <artifactId>stax-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.yahoo.platform.yui</groupId>
                 <artifactId>yuicompressor</artifactId>
                 <version>2.4.8</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>js</artifactId>
+                        <groupId>rhino</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.google.javascript</groupId>
                 <artifactId>closure-compiler-unshaded</artifactId>
                 <version>${closure.compiler.version}</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>com.google.protobuf</groupId>
                         <artifactId>protobuf-java</artifactId>
@@ -1492,23 +1548,31 @@
                         <groupId>com.google.code.gson</groupId>
                         <artifactId>gson</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>failureaccess</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.errorprone</groupId>
+                        <artifactId>error_prone_annotations</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <!-- Added for security to override versions from closure-compiler -->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.0.0-jre</version>
+                <version>33.4.0-jre</version>
             </dependency>
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
-                <version>3.25.5</version>
+                <version>4.29.3</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.10.1</version>
+                <version>2.11.0</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.htmlcompressor</groupId>

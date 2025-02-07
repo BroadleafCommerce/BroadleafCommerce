@@ -20,16 +20,15 @@ package org.broadleafcommerce.common.file.service;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.utils.URIBuilder;
 import org.broadleafcommerce.common.site.domain.Theme;
 import org.broadleafcommerce.common.util.UrlUtil;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafThemeResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
-import java.net.URISyntaxException;
 
 @Service("blStaticAssetPathService")
 public class StaticAssetPathServiceImpl implements StaticAssetPathService {
@@ -259,12 +258,10 @@ public class StaticAssetPathServiceImpl implements StaticAssetPathService {
         Object themeChanged = brc.getAdditionalProperties().get(BroadleafThemeResolver.BRC_THEME_CHANGE_STATUS);
         if (themeChanged != null && Boolean.TRUE.equals(themeChanged)) {
             Theme theme = brc.getTheme();
-            try {
-                assetURL = new URIBuilder(assetURL).addParameter("themeConfigId", theme.getId().toString()).build().toString();
-            } catch (URISyntaxException e) {
-                LOG.error(String.format("URI syntax error building %s with parameter %s and themeId %s", assetURL,
-                        "themeConfigId", theme.getId().toString()));
-            }
+            assetURL = UriComponentsBuilder.fromUriString(assetURL)
+                    .queryParam("themeConfigId", theme.getId().toString())
+                    .build()
+                    .toUriString();
         }
         return assetURL;
     }
