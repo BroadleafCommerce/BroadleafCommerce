@@ -37,7 +37,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedEntityContexts-open-admin"/>
+        <property name="sourceRef" value="blMergedEntityContexts-open-admin"/>
         <property name="targetRef" value="blMergedEntityContexts"/>
     </bean>
 
@@ -50,7 +50,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedPersistenceXmlLocations-open-admin"/>
+        <property name="sourceRef" value="blMergedPersistenceXmlLocations-open-admin"/>
         <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
     </bean>
     
@@ -62,7 +62,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blDirectCopyTransformTokenMap-open-admin"/>
+        <property name="sourceRef" value="blDirectCopyTransformTokenMap-open-admin"/>
         <property name="targetRef" value="blDirectCopyTransformTokenMap"/>
     </bean>
 
@@ -74,7 +74,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedCacheConfigLocations-open-admin"/>
+        <property name="sourceRef" value="blMergedCacheConfigLocations-open-admin"/>
         <property name="targetRef" value="blMergedCacheConfigLocations"/>
     </bean>
 

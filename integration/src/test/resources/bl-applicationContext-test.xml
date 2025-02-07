@@ -32,8 +32,6 @@
     <context:component-scan base-package="org.broadleafcommerce.common.web"/>
     <context:component-scan base-package="org.broadleafcommerce.core.web"/>
     <context:component-scan base-package="org.broadleafcommerce.cms.file"/>
-    
-    <bean id="blDefaultErrorHandler" class="org.broadleafcommerce.core.workflow.SilentErrorHandler"/>
 
     <bean id="blTestRollbackHandler" class="org.broadleafcommerce.core.workflow.state.test.TestRollbackHandler"/>
     
@@ -45,7 +43,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blTestPaymentConfigurationServices"/>
+        <property name="sourceRef" value="blTestPaymentConfigurationServices"/>
         <property name="targetRef" value="blPaymentGatewayConfigurationServices"/>
     </bean>
     
@@ -62,7 +60,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="testTaxProviders"/>
+        <property name="sourceRef" value="testTaxProviders"/>
         <property name="targetRef" value="blTaxProviders"/>
     </bean>
     
@@ -103,7 +101,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blCheckoutWorkflowActivities-it"/>
+        <property name="sourceRef" value="blCheckoutWorkflowActivities-it"/>
         <property name="targetRef" value="blCheckoutWorkflowActivities"/>
     </bean>
 
@@ -168,7 +166,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedCacheConfigLocations-it"/>
+        <property name="sourceRef" value="blMergedCacheConfigLocations-it"/>
         <property name="targetRef" value="blMergedCacheConfigLocations"/>
     </bean>
 
@@ -181,7 +179,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedPersistenceXmlLocations-it"/>
+        <property name="sourceRef" value="blMergedPersistenceXmlLocations-it"/>
         <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
     </bean>
     
@@ -300,7 +298,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blStaticMapNamedOperations-it" />
+        <property name="sourceRef" value="blStaticMapNamedOperations-it" />
         <property name="targetRef" value="blStaticMapNamedOperations" />
     </bean>
 

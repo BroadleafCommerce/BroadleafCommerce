@@ -41,7 +41,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blFieldMetadataProviders-core-admin"/>
+        <property name="sourceRef" value="blFieldMetadataProviders-core-admin"/>
         <property name="targetRef" value="blFieldMetadataProviders"/>
     </bean>
 
@@ -73,7 +73,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blCustomPersistenceHandlers-core-admin"/>
+        <property name="sourceRef" value="blCustomPersistenceHandlers-core-admin"/>
         <property name="targetRef" value="blCustomPersistenceHandlers"/>
     </bean>
 
@@ -195,7 +195,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMessageSourceBaseNames-core-admin" />
+        <property name="sourceRef" value="blMessageSourceBaseNames-core-admin" />
         <property name="targetRef" value="blMessageSourceBaseNames" />
     </bean>
 
@@ -216,7 +216,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blAdminExtendedRuleBuilderFieldServices" />
+        <property name="sourceRef" value="blAdminExtendedRuleBuilderFieldServices" />
         <property name="targetRef" value="blRuleBuilderFieldServices" />
     </bean>
     
@@ -232,7 +232,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blAdminExtendedRuleBuilderOptionsExtensionListeners" />
+        <property name="sourceRef" value="blAdminExtendedRuleBuilderOptionsExtensionListeners" />
         <property name="targetRef" value="blRuleBuilderEnumOptionsExtensionListeners" />
     </bean>
     
@@ -250,7 +250,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blAdminExtendedPersistenceProviders" />
+        <property name="sourceRef" value="blAdminExtendedPersistenceProviders" />
         <property name="targetRef" value="blPersistenceProviders" />
     </bean>
     
@@ -262,7 +262,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blAdminJsLocations" />
+        <property name="sourceRef" value="blAdminJsLocations" />
         <property name="targetRef" value="blJsLocations" />
     </bean>
     
@@ -281,7 +281,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blAdminJsFileList" />
+        <property name="sourceRef" value="blAdminJsFileList" />
         <property name="targetRef" value="blJsFileList" />
     </bean>
     

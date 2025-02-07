@@ -30,21 +30,21 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class DataDTOToMVELTranslatorTest extends TestCase {
+public class DataDTOToMVELTranslatorTest {
 
-    private OrderItemFieldServiceImpl orderItemFieldService;
-    private CustomerFieldServiceImpl customerFieldService;
-    private OrderFieldServiceImpl orderFieldService;
-    private FulfillmentGroupFieldServiceImpl fulfillmentGroupFieldService;
+    private static OrderItemFieldServiceImpl orderItemFieldService;
+    private static CustomerFieldServiceImpl customerFieldService;
+    private static OrderFieldServiceImpl orderFieldService;
+    private static FulfillmentGroupFieldServiceImpl fulfillmentGroupFieldService;
 
-    @Override
-    protected void setUp() {
+    @BeforeAll
+    protected static void setUp() {
         orderItemFieldService = new OrderItemFieldServiceImpl();
         orderItemFieldService.init();
         customerFieldService = new CustomerFieldServiceImpl();
@@ -74,6 +74,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      *      "value":"merchandise"}]
      *  }]
      */
+    @Test
     public void testCreateMVEL() throws MVELTranslationException {
         DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
         ExpressionDTO expressionDTO = new ExpressionDTO();
@@ -103,6 +104,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      *      "value":"username"}]
      *  }]
      */
+    @Test
     public void testCustomerQualificationMVEL() throws MVELTranslationException {
         DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
         DataDTO dataDTO = new DataDTO();
@@ -146,6 +148,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      *      "value":"100"}]
      *  }]
      */
+    @Test
     public void testOrderQualificationMVEL() throws MVELTranslationException {
         DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
         DataDTO dataDTO = new DataDTO();
@@ -192,6 +195,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      *      "value":"test manufacturer"}]
      *  }]
      */
+    @Test
     public void testItemQualificationMVEL() throws MVELTranslationException {
         DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
 
@@ -220,7 +224,6 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         String d2Translated = translator.createMVEL("discreteOrderItem", d2, orderItemFieldService);
         String d2Mvel = "!(?discreteOrderItem.?product.?manufacturer==\"test manufacturer\")";
         assert (d2Mvel.equals(d2Translated));
-
     }
 
     /**
@@ -247,6 +250,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
      *      "value":"[99,199]"}]
      *  }]
      */
+    @Test
     public void testFulfillmentQualificationMVEL() throws MVELTranslationException {
         DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
         DataDTO dataDTO = new DataDTO();
@@ -270,6 +274,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
         assert (mvel.equals(translated));
     }
 
+    @Test
     public void testItemQualificationCollectionMVEL() throws MVELTranslationException {
         DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
 
@@ -288,6 +293,7 @@ public class DataDTOToMVELTranslatorTest extends TestCase {
 
     }
 
+    @Test
     public void testWithinDaysMVEL() throws MVELTranslationException {
         DataDTOToMVELTranslator translator = new DataDTOToMVELTranslator();
 

@@ -15,7 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.cms.url.service;
 
 import org.broadleafcommerce.cms.url.dao.URLHandlerDao;
@@ -23,31 +22,42 @@ import org.broadleafcommerce.cms.url.domain.URLHandler;
 import org.broadleafcommerce.cms.url.domain.URLHandlerImpl;
 import org.broadleafcommerce.cms.url.type.URLRedirectType;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 /**
  * Test URL handling resolution.
- * 
+ *
  * @author bpolster
  */
-public class URLHandlerServiceTest extends TestCase {
-    
-    URLHandlerServiceImpl handlerService = new URLHandlerServiceImpl();
+public class URLHandlerServiceTest {
+
+    protected static URLHandlerServiceImpl handlerService = new URLHandlerServiceImpl();
+
+    @BeforeEach
+    public void setUp() {
+        handlerService = new URLHandlerServiceImpl();
+
+        URLHandlerDao handlerDao = EasyMock.createMock(URLHandlerDao.class);
+        handlerService.urlHandlerDao = handlerDao;
+        EasyMock.expect(handlerDao.findAllURLHandlers()).andReturn(buildAllUrlHandlerList());
+        EasyMock.expect(handlerDao.findAllRegexURLHandlers()).andReturn(buildRegExUrlHandlerList());
+        EasyMock.replay(handlerDao);
+    }
 
     public List<URLHandler> buildAllUrlHandlerList() {
-        List<URLHandler> handlerList = new ArrayList<URLHandler>();
+        List<URLHandler> handlerList = new ArrayList<>();
         handlerList.add(createHandler("/simple_url", "/NewSimpleUrl", false));
         handlerList.addAll(buildRegExUrlHandlerList());
         return handlerList;
     }
 
     public List<URLHandler> buildRegExUrlHandlerList() {
-        List<URLHandler> handlerList = new ArrayList<URLHandler>();
+        List<URLHandler> handlerList = new ArrayList<>();
 
         handlerList.add(createHandler("^/simple_regex$", "/NewSimpleRegex", true));
         handlerList.add(createHandler("/blogs/(.*)/(.*)$", "/newblogs/$2/$1", true));
@@ -64,54 +74,44 @@ public class URLHandlerServiceTest extends TestCase {
         return handler;
     }
 
-    public void setUp() throws Exception {
-        handlerService = new URLHandlerServiceImpl();
-
-        URLHandlerDao handlerDao = EasyMock.createMock(URLHandlerDao.class);
-        handlerService.urlHandlerDao = handlerDao;
-        EasyMock.expect(handlerDao.findAllURLHandlers()).andReturn(buildAllUrlHandlerList());
-        EasyMock.expect(handlerDao.findAllRegexURLHandlers()).andReturn(buildRegExUrlHandlerList());
-        EasyMock.replay(handlerDao);
-    }
-
     //checkForMatches is the RegEx test.  A non-regex URLHandler should not be found
     @Test
     public void testNotFoundSimpleUrlWithCheckForMatches() {
         URLHandler h = handlerService.checkForMatches("/simple_url");
-        assertTrue(h == null);
+        Assertions.assertNull(h);
     }
 
     @Test
     public void testFoundRegExUrl() {
         URLHandler h = handlerService.checkForMatches("/simple_regex");
-        assertTrue(h.getNewURL().equals("/NewSimpleRegex"));
+        Assertions.assertEquals("/NewSimpleRegex", h.getNewURL());
     }
 
     @Test
     public void testForSubPackageBadMatchSimpleUrl() {
         URLHandler h = handlerService.checkForMatches("/simple_url/test");
-        assertTrue(h == null);
+        Assertions.assertNull(h);
     }
 
     @Test
     public void testFoundBadMatchComplexUrl() {
         URLHandler h = handlerService.checkForMatches("/simple_regex/test");
-        assertTrue(h == null);
+        Assertions.assertNull(h);
     }
 
     @Test
     public void testRegEx() {
         URLHandler h = handlerService.checkForMatches("/blogs/first/second");
-        assertTrue(h != null);
-        assertTrue(h.getNewURL().equals("/newblogs/second/first"));
+        Assertions.assertNotNull(h);
+        Assertions.assertEquals("/newblogs/second/first", h.getNewURL());
     }
 
     @Test
     public void testRegExStartsWithSpecialRegExChar() {
         URLHandler h = handlerService.checkForMatches("/merchandise/shirts-tops/mens");
         String expectedNewURL = "/merchandise/shirts/mens";
-        assertTrue(h != null);
-        assertTrue(expectedNewURL.equals(h.getNewURL()));
+        Assertions.assertNotNull(h);
+        Assertions.assertEquals(expectedNewURL, h.getNewURL());
     }
 
 }

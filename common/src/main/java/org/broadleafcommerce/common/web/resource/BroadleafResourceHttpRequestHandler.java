@@ -84,7 +84,7 @@ public class BroadleafResourceHttpRequestHandler extends ResourceHttpRequestHand
     ) throws IOException {
         super.setHeaders(response, resource, mediaType);
         //Add public to cache control for universal CDN recognition
-        if (isUseCacheControlHeader() && cacheSeconds > 0) {
+        if (getCacheControl() != null && cacheSeconds > 0) {
             String header = response.getHeader(HEADER_CACHE_CONTROL);
             if (!header.contains("public")) {
                 header += ",public";

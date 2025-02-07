@@ -110,7 +110,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blFrameworkSiteMapGenerators" />
+        <property name="sourceRef" value="blFrameworkSiteMapGenerators" />
         <property name="targetRef" value="blSiteMapGenerators" />
     </bean>
 
@@ -122,7 +122,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blFrameworkEntityExtensionManagers"/>
+        <property name="sourceRef" value="blFrameworkEntityExtensionManagers"/>
         <property name="targetRef" value="blEntityExtensionManagers"/>
     </bean>
 
@@ -136,7 +136,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blPassthroughPaymentConfigurationServiceList"/>
+        <property name="sourceRef" value="blPassthroughPaymentConfigurationServiceList"/>
         <property name="targetRef" value="blPaymentGatewayConfigurationServices"/>
     </bean>
 
@@ -196,7 +196,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blOptionalFrameworkTokenMap"/>
+        <property name="sourceRef" value="blOptionalFrameworkTokenMap"/>
         <property name="targetRef" value="blDirectCopyTransformTokenMap"/>
     </bean>
 
@@ -222,7 +222,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blFrameworkConditionalDirectCopyTransformers"/>
+        <property name="sourceRef" value="blFrameworkConditionalDirectCopyTransformers"/>
         <property name="targetRef" value="blConditionalDirectCopyTransformers"/>
     </bean>
 
@@ -258,7 +258,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedCacheConfigLocations-framework"/>
+        <property name="sourceRef" value="blMergedCacheConfigLocations-framework"/>
         <property name="targetRef" value="blMergedCacheConfigLocations"/>
     </bean>
 

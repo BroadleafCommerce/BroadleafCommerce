@@ -116,30 +116,27 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         Customer customer = createCustomer();
 
         OfferAudit offerAudit = offerAuditDao.create();
-        
-        offerAudit.setId(1L);
+
         offerAudit.setCustomerId(customer.getId());
         offerAudit.setOfferId(offer.getId());
         offerAudit.setOrderId(null);
         offerAudit.setRedeemedDate(currentDate.getTime());
 
-        offerAuditService.save(offerAudit);
+        offerAudit = offerAuditService.save(offerAudit);
 
         OfferAudit offerAudit2 = offerAuditDao.create();
 
-        offerAudit2.setId(2L);
         offerAudit2.setCustomerId(customer.getId());
         offerAudit2.setOfferId(offer.getId());
         offerAudit2.setOrderId(null);
         offerAudit2.setRedeemedDate(currentDate.getTime());
 
-        offerAuditService.save(offerAudit2);
-
+        offerAudit2 = offerAuditService.save(offerAudit2);
 
         Order order = orderService.createNewCartForCustomer(customer);
         FixedPriceFulfillmentOption option = new FixedPriceFulfillmentOptionImpl();
         option.setPrice(new Money(0));
-        orderService.save(order, false);
+        order = orderService.save(order, false);
 
         order.addOrderItem(orderUtil.createDiscreteOrderItem(sku, 100D, null, true, 1, order));
         order.addOfferCode(offerCode);
@@ -162,11 +159,9 @@ public class OfferAuditTest extends CommonSetupBaseTest {
         
         currentDate.add(Calendar.DAY_OF_YEAR, -2);
         offerAudit.setRedeemedDate(currentDate.getTime());
-        offerAuditService.delete(offerAudit);
         offerAuditService.save(offerAudit);
 
         offerAudit2.setRedeemedDate(currentDate.getTime());
-        offerAuditService.delete(offerAudit2);
         offerAuditService.save(offerAudit2);
 
         maxUsesExceeded = false;

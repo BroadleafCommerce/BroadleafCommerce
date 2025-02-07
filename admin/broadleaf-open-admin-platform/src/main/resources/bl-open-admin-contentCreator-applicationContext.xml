@@ -211,7 +211,7 @@
     </bean>
     
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blOpenAdminCssLocations" />
+        <property name="sourceRef" value="blOpenAdminCssLocations" />
         <property name="targetRef" value="blCssLocations" />
     </bean>
 
@@ -223,7 +223,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blOpenAdminJsLocations" />
+        <property name="sourceRef" value="blOpenAdminJsLocations" />
         <property name="targetRef" value="blJsLocations" />
     </bean>
 
@@ -261,7 +261,7 @@
         </property>  
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blAdminAdditionalBundleFiles" />
+        <property name="sourceRef" value="blAdminAdditionalBundleFiles" />
         <property name="targetRef" value="blAdditionalBundleFiles" />
     </bean>
 
@@ -296,7 +296,7 @@
         </property>
     </bean>
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMessageSourceBaseNames-openadmin" />
+        <property name="sourceRef" value="blMessageSourceBaseNames-openadmin" />
         <property name="targetRef" value="blMessageSourceBaseNames" />
     </bean>
 

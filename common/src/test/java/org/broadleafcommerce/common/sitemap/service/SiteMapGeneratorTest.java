@@ -15,7 +15,6 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-
 package org.broadleafcommerce.common.sitemap.service;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -31,9 +30,10 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -47,14 +47,14 @@ import java.util.regex.Pattern;
 
 /**
  * Base class for site map generator tests
- * 
+ *
  * @author Joshua Skorton (jskorton)
  */
 public class SiteMapGeneratorTest {
 
-    protected SiteMapServiceImpl siteMapService = new SiteMapServiceImpl();
-    protected BroadleafFileServiceImpl fileService = new BroadleafFileServiceImpl();
-    protected BaseUrlResolver baseUrlResolver = new BaseUrlResolver() {
+    public SiteMapServiceImpl siteMapService = new SiteMapServiceImpl();
+    public BroadleafFileServiceImpl fileService = new BroadleafFileServiceImpl();
+    public BaseUrlResolver baseUrlResolver = new BaseUrlResolver() {
 
         @Override
         public String getSiteBaseUrl() {
@@ -67,17 +67,16 @@ public class SiteMapGeneratorTest {
         }
     };
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    public void before() {
         FileServiceProvider defaultFileServiceProvider = new FileSystemFileServiceProvider();
         fileService.setDefaultFileServiceProvider(defaultFileServiceProvider);
         siteMapService.broadleafFileService = fileService;
         siteMapService.baseUrlResolver = baseUrlResolver;
-
     }
 
-    @After
-    public void deleteTempFiles() {
+    @AfterEach
+    public void close() {
         fileService.removeResource("/sitemap_index.xml");
         fileService.removeResource("/sitemap1.xml");
         fileService.removeResource("/sitemap2.xml");
@@ -85,21 +84,25 @@ public class SiteMapGeneratorTest {
         fileService.removeResource("/sitemap.xml");
     }
 
-    protected void testGenerator(SiteMapGeneratorConfiguration smgc, SiteMapGenerator smg) throws SiteMapException,
-            IOException {
+    @TestFactory
+    protected void testGenerator(SiteMapGeneratorConfiguration smgc, SiteMapGenerator smg) throws SiteMapException, IOException {
         testGenerator(smgc, smg, 2);
     }
 
-    protected void testGenerator(SiteMapGeneratorConfiguration smgc, SiteMapGenerator smg, int maxEntriesPerFile)
-            throws SiteMapException, IOException {
+    @TestFactory
+    protected void testGenerator(SiteMapGeneratorConfiguration smgc, SiteMapGenerator smg, int maxEntriesPerFile) throws SiteMapException, IOException {
         List<SiteMapGeneratorConfiguration> smgcList = new ArrayList<>();
         smgcList.add(smgc);
         testGenerator(smgcList, smg, maxEntriesPerFile);
     }
 
-    protected void testGenerator(List<SiteMapGeneratorConfiguration> smgcList, SiteMapGenerator smg, int maxEntriesPerFile)
-            throws SiteMapException, IOException {
-
+    @TestFactory
+    protected void testGenerator(
+            List<SiteMapGeneratorConfiguration> smgcList,
+            SiteMapGenerator smg,
+            int maxEntriesPerFile
+    ) throws SiteMapException, IOException {
+        before();
         if (CollectionUtils.isNotEmpty(smgcList)) {
 
             SiteMapConfiguration smc = new SiteMapConfigurationImpl();
@@ -126,15 +129,14 @@ public class SiteMapGeneratorTest {
             siteMapService.setSiteMapGenerators(smgList);
             SiteMapGenerationResponse smgr = siteMapService.generateSiteMap();
 
-            Assert.assertFalse(smgr.isHasError());
+            Assertions.assertFalse(smgr.isHasError());
         }
-
     }
 
     protected void compareFiles(File file1, String pathToFile2) throws IOException {
         String actualOutput = convertFileToString(file1);
         String expectedOutput = convertFileToString(new File(pathToFile2));
-        Assert.assertTrue(actualOutput.equals(expectedOutput));
+        Assertions.assertEquals(actualOutput, expectedOutput);
     }
 
     protected String convertFileToString(File file) throws IOException {
@@ -146,12 +148,11 @@ public class SiteMapGeneratorTest {
             if (line.contains("</lastmod>")) {
                 continue;
             }
-            if(line.contains("xmlns:image")){
+            if (line.contains("xmlns:image")) {
                 String fixedline = fixXmlOrder(line);
                 fixedline = fixedline.replaceAll("\\s+", "");
                 sb.append(fixedline);
-            }
-            else{
+            } else {
                 line = line.replaceAll("\\s+", "");
                 sb.append(line);
             }

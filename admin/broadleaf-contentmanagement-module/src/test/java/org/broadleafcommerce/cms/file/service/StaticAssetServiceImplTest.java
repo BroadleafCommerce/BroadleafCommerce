@@ -18,13 +18,14 @@
 package org.broadleafcommerce.cms.file.service;
 
 import org.broadleafcommerce.common.file.service.StaticAssetPathServiceImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Created by bpolster.
@@ -38,23 +39,22 @@ public class StaticAssetServiceImplTest {
         staticAssetPathService.setStaticAssetEnvironmentUrlPrefix("http://images.mysite.com/myapp/cmsstatic");
 
         String url = staticAssetPathService.convertAssetPath("/cmsstatic/product.jpg", "myapp", false);
-        assertTrue(url.equals("http://images.mysite.com/myapp/cmsstatic/product.jpg"));
+        Assertions.assertEquals("http://images.mysite.com/myapp/cmsstatic/product.jpg", url);
 
         staticAssetPathService.setStaticAssetEnvironmentUrlPrefix("http://images.mysite.com");
         url = staticAssetPathService.convertAssetPath("/cmsstatic/product.jpg", "myapp", false);
-        assertTrue(url.equals("http://images.mysite.com/product.jpg"));
+        Assertions.assertEquals("http://images.mysite.com/product.jpg", url);
 
         url = staticAssetPathService.convertAssetPath("/cmsstatic/product.jpg", "myapp", true);
-        assertTrue(url.equals("https://images.mysite.com/product.jpg"));
+        Assertions.assertEquals("https://images.mysite.com/product.jpg", url);
 
 
         staticAssetPathService.setStaticAssetEnvironmentUrlPrefix(null);
         url = staticAssetPathService.convertAssetPath("/cmsstatic/product.jpg", "myapp", true);
-        assertTrue(url.equals("/myapp/cmsstatic/product.jpg"));
+        Assertions.assertEquals("/myapp/cmsstatic/product.jpg", url);
 
         url = staticAssetPathService.convertAssetPath("cmsstatic/product.jpg", "myapp", true);
-        assertTrue(url.equals("/myapp/cmsstatic/product.jpg"));
-
+        Assertions.assertEquals("/myapp/cmsstatic/product.jpg", url);
     }
 
     @Test
@@ -64,12 +64,15 @@ public class StaticAssetServiceImplTest {
         assetService.validateFileExtension(file);
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testThrowDisabledFileExtensions() throws IOException {
         StaticAssetServiceImpl assetService = new StaticAssetServiceImpl();
         assetService.setDisabledFileExtensions("txt");
         MockMultipartFile file = new MockMultipartFile("text.txt", this.getClass().getResourceAsStream("/testfile/text-file.txt"));
-        assetService.validateFileExtension(file);
+        assertThrows(
+                IOException.class,
+                () -> assetService.validateFileExtension(file)
+        );
     }
 
     @Test
@@ -92,14 +95,18 @@ public class StaticAssetServiceImplTest {
         assetService.validateFileExtension(file);
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testWhitelistFileExtensions() throws IOException {
         StaticAssetServiceImpl assetService = new StaticAssetServiceImpl();
         assetService.setAllowedFileExtensions("txt");
         MockMultipartFile file = new MockMultipartFile("text.txt", this.getClass().getResourceAsStream("/testfile/text-file.txt"));
         assetService.validateFileExtension(file);
         file = new MockMultipartFile("img.png", this.getClass().getResourceAsStream("/testfile/img.png"));
-        assetService.validateFileExtension(file);
+        MockMultipartFile finalFile = file;
+        assertThrows(
+                IOException.class,
+                () -> assetService.validateFileExtension(finalFile)
+        );
     }
 
 }

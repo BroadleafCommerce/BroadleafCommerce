@@ -40,7 +40,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedEntityContexts-framework"/>
+        <property name="sourceRef" value="blMergedEntityContexts-framework"/>
         <property name="targetRef" value="blMergedEntityContexts"/>
     </bean>
 </beans>

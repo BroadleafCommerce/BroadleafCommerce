@@ -33,7 +33,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="mergedList-local"/>
+        <property name="sourceRef" value="mergedList-local"/>
         <property name="targetRef" value="mergedList"/>
     </bean>
 

@@ -30,7 +30,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedPersistenceXmlLocations-profile"/>
+        <property name="sourceRef" value="blMergedPersistenceXmlLocations-profile"/>
         <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
     </bean>
     
@@ -43,7 +43,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedEntityContexts-profile"/>
+        <property name="sourceRef" value="blMergedEntityContexts-profile"/>
         <property name="targetRef" value="blMergedEntityContexts"/>
     </bean>
     

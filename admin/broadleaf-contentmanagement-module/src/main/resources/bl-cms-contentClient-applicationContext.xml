@@ -37,7 +37,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedPersistenceXmlLocations-cms"/>
+        <property name="sourceRef" value="blMergedPersistenceXmlLocations-cms"/>
         <property name="targetRef" value="blMergedPersistenceXmlLocations"/>
     </bean>
 
@@ -60,7 +60,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedCacheConfigLocations-cms"/>
+        <property name="sourceRef" value="blMergedCacheConfigLocations-cms"/>
         <property name="targetRef" value="blMergedCacheConfigLocations"/>
     </bean>
 
@@ -73,7 +73,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blMergedEntityContexts-cms"/>
+        <property name="sourceRef" value="blMergedEntityContexts-cms"/>
         <property name="targetRef" value="blMergedEntityContexts"/>
     </bean>
 
@@ -86,7 +86,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blContentRuleProcessors-cms" />
+        <property name="sourceRef" value="blContentRuleProcessors-cms" />
         <property name="targetRef" value="blContentRuleProcessors" />
     </bean>
 
@@ -99,7 +99,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blPageRuleProcessors-cms" />
+        <property name="sourceRef" value="blPageRuleProcessors-cms" />
         <property name="targetRef" value="blPageRuleProcessors" />
     </bean>
 
@@ -151,7 +151,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="blCMSSiteMapGenerators" />
+        <property name="sourceRef" value="blCMSSiteMapGenerators" />
         <property name="targetRef" value="blSiteMapGenerators" />
     </bean>
 

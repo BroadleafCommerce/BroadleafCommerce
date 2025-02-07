@@ -33,7 +33,7 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOfferU
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrder;
 import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderItem;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -114,7 +114,6 @@
         <property name="persistenceUnitPostProcessors" ref="blPersistenceUnitPostProcessors"/>
     </bean>
 
-
     <bean id="blPersistenceUnitPostProcessors" class="org.springframework.beans.factory.config.ListFactoryBean">
         <property name="sourceList">
             <list>

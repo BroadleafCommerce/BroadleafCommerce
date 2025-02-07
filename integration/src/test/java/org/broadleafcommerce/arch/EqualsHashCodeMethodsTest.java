@@ -19,7 +19,6 @@ package org.broadleafcommerce.arch;
 
 import org.testng.annotations.Test;
 
-import com.tngtech.archunit.base.Optional;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.domain.JavaMethod;
@@ -29,10 +28,10 @@ import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 
 import java.io.Serializable;
-
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import java.util.Optional;
 
 /**
  * @author Chad Harchar (charchar)
@@ -41,16 +40,14 @@ public class EqualsHashCodeMethodsTest {
 
     private static final String BASE_PACKAGE = "org.broadleafcommerce";
 
-    private JavaClasses importedClasses = new ClassFileImporter()
+    private final JavaClasses importedClasses = new ClassFileImporter()
             .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
             .importPackages(BASE_PACKAGE);
 
     @Test
     public void equalsAndHashCodeMustExistTogether() {
-
-        ArchRule rule =
-                classes().that().implement(Serializable.class)
-                        .should(equalsAndHashCodeMatch());
+        ArchRule rule = ArchRuleDefinition.classes().that().implement(Serializable.class)
+                .should(equalsAndHashCodeMatch());
 
         rule.check(importedClasses);
     }
@@ -62,13 +59,14 @@ public class EqualsHashCodeMethodsTest {
                 String msg = "class " + item.getName();
                 Optional<JavaMethod> equalsMethod = item.tryGetMethod("equals", Object.class);
                 Optional<JavaMethod> hashcodeMethod = item.tryGetMethod("hashCode");
-                
+
                 if (equalsMethod.isPresent() == hashcodeMethod.isPresent()) {
                     events.add(SimpleConditionEvent.satisfied(item, msg + " match satisfy contract"));
                 } else {
                     events.add(SimpleConditionEvent.violated(item, msg + " if one of 'equals()' or 'hashCode()' exists, the other must too"));
-                }   
+                }
             }
         };
     }
+
 }

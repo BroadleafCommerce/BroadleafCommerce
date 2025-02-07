@@ -43,7 +43,7 @@
     </bean>
 
     <bean class="org.broadleafcommerce.common.extensibility.context.merge.EarlyStageMergeBeanPostProcessor">
-        <property name="collectionRef" value="mergedList-framework"/>
+        <property name="sourceRef" value="mergedList-framework"/>
         <property name="targetRef" value="mergedList"/>
     </bean>
     

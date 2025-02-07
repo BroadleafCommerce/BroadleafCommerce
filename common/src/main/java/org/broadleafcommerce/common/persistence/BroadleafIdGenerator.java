@@ -15,23 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.common.web.util;
+package org.broadleafcommerce.common.persistence;
 
-import org.springframework.web.util.UriComponentsBuilder;
+import org.hibernate.annotations.IdGeneratorType;
 
-/**
- * @author Chris Kittrell (ckittrell)
- */
-public class BroadleafUrlParamUtils {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    public static String addPaginationParam(String url, String paginationParamName, Integer pageNumber) {
-        if (pageNumber > 1) {
-            return UriComponentsBuilder.fromUriString(url)
-                    .queryParam(paginationParamName, String.valueOf(pageNumber))
-                    .build()
-                    .toUriString();
-        }
-        return url;
-    }
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 
+@IdGeneratorType(IdOverrideTableGenerator.class)
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ FIELD, METHOD})
+public @interface BroadleafIdGenerator {
+    String segment_value();
+    String entity_name();
 }

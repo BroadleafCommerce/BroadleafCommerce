@@ -63,7 +63,7 @@ import javassist.bytecode.annotation.StringMemberValue;
  * </property>
  * </bean>
  * <bean class="org.broadleafcommerce.common.extensibility.context.merge.LateStageMergeBeanPostProcessor">
- * <property name="collectionRef" value="customClassTransformers" />
+ * <property name="sourceRef" value="customClassTransformers" />
  * <property name="targetRef" value="blMergedClassTransformers" />
  * <property name="placement" value="SPECIFIC"/>
  * <property name="position" value="0"/>
