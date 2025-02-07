@@ -160,9 +160,9 @@
     </bean>
 
     <bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host"><value>localhost</value></property>
-        <property name="port"><value>25</value></property>
-        <property name="protocol"><value>smtp</value></property>
+        <property name="host" value="localhost"/>
+        <property name="port" value="25"/>
+        <property name="protocol" value="smtp"/>
         <property name="javaMailProperties">
             <props>
                 <prop key="mail.smtp.starttls.enable">true</prop>

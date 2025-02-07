@@ -33,24 +33,24 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.MVELTranslationException;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.FieldData;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.util.TimeZone;
-
-import junit.framework.TestCase;
 
 /**
  * @author Elbert Bautista (elbertbautista)
  */
-public class MVELToDataWrapperTranslatorTest extends TestCase {
+public class MVELToDataWrapperTranslatorTest {
 
-    private OrderItemFieldServiceImpl orderItemFieldService;
-    private CustomerFieldServiceImpl customerFieldService;
-    private OrderFieldServiceImpl orderFieldService;
-    private FulfillmentGroupFieldServiceImpl fulfillmentGroupFieldService;
+    private static OrderItemFieldServiceImpl orderItemFieldService;
+    private static CustomerFieldServiceImpl customerFieldService;
+    private static OrderFieldServiceImpl orderFieldService;
+    private static FulfillmentGroupFieldServiceImpl fulfillmentGroupFieldService;
 
 
-    @Override
-    protected void setUp() {
+    @BeforeAll
+    protected static void setUp() {
         orderItemFieldService = new OrderItemFieldServiceImpl();
         orderItemFieldService.init();
         customerFieldService = new CustomerFieldServiceImpl();
@@ -64,8 +64,10 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     /**
      * Tests the creation of a DataWrapper given an mvel/quantity property
+     *
      * @throws MVELTranslationException
      */
+    @Test
     public void testCreateRuleData() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -98,6 +100,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(exp.getValue().equals("merchandise"));
     }
 
+    @Test
     public void testCustomerQualificationDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -124,6 +127,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    @Test
     public void testOrderQualificationDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -149,6 +153,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    @Test
     public void testItemQualificationDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -210,6 +215,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    @Test
     public void testNestedExpressionExceptionForItemQualificationDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -254,6 +260,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    @Test
     public void testFulfillmentGroupQualificationDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -287,6 +294,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(e2.getValue().equals("[99,199]"));
     }
 
+    @Test
     public void testNestedExpressionForFulfillmentGroupQualificationDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -319,6 +327,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(e2.getValue().equals("[99,199]"));
     }
 
+    @Test
     public void testItemQualificationCollectionDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -387,6 +396,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    @Test
     public void testNestedExpressionExceptionForItemQualificationCollectionDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -431,6 +441,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    @Test
     public void testBetweenDatesDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -474,6 +485,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    @Test
     public void testInBetweenRuleOrderLessThenAndGreaterThenAndCurrency() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -517,6 +529,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    @Test
     public void testWithinDaysDataWrapper() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -557,6 +570,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
 
     }
 
+    @Test
     public void testInBetweenRuleCurrentlyWorks() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -589,6 +603,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(exp.getValue().equals("[45,75]"));
     }
 
+    @Test
     public void testInBetweenRuleOrderGreaterThenAndLessThenAndCurrency() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -621,6 +636,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert(exp.getValue().equals("[45,75]"));
     }
 
+    @Test
     public void testInBetweenRuleOrderItemPrice() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 
@@ -653,6 +669,7 @@ public class MVELToDataWrapperTranslatorTest extends TestCase {
         assert (exp.getValue().equals("[2,4]"));
     }
 
+    @Test
     public void testInBetweenInclusiveRuleOrderItemPrice() throws MVELTranslationException {
         MVELToDataWrapperTranslator translator = new MVELToDataWrapperTranslator();
 

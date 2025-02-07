@@ -18,36 +18,37 @@
 package org.broadleafcommerce.profile.util.dao;
 
 import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Query;
-import junit.framework.TestCase;
 
 /**
- * 
  * @author jfischer
- *
  */
-public class BatchRetrieveDaoTest extends TestCase {
-    
+public class BatchRetrieveDaoTest {
+
     private static final int BATCHSIZE = 5;
     private BatchRetrieveDao dao;
     private Query queryMock;
-    
-    @Override
-    protected void setUp() throws Exception {
+
+    @BeforeEach
+    protected void init() {
         dao = new BatchRetrieveDao();
         queryMock = EasyMock.createMock(Query.class);
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
         response.add("test");
         EasyMock.expect(queryMock.getResultList()).andReturn(response).times(2);
         EasyMock.expect(queryMock.setParameter(EasyMock.eq("test"), EasyMock.isA(List.class))).andReturn(queryMock).times(2);
     }
 
-    public void testFilter() throws Exception {
+    @Test
+    public void testFilter() {
         EasyMock.replay(queryMock);
         dao.setInClauseBatchSize(BATCHSIZE);
         List<Integer> keys = new ArrayList<Integer>();
@@ -55,7 +56,7 @@ public class BatchRetrieveDaoTest extends TestCase {
             keys.add(j);
         }
         List<Object> response = dao.batchExecuteReadQuery(queryMock, keys, "test");
-        assertTrue(response.size() == 2);
+        Assertions.assertEquals(2, response.size());
         EasyMock.verify(queryMock);
     }
 

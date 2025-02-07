@@ -18,78 +18,82 @@
 package org.broadleafcommerce.common.file.service;
 
 import org.broadleafcommerce.common.file.domain.FileWorkArea;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-
-public class BroadleafFileServiceImplTest extends TestCase {
+public class BroadleafFileServiceImplTest {
 
     private final BroadleafFileServiceImpl bfs = new BroadleafFileServiceImpl();
     private final FileSystemFileServiceProvider fsp = new FileSystemFileServiceProvider();
     private FileWorkArea baseSystemDirectory;
 
-    @Override
+    @BeforeEach
     public void setUp() throws Exception {
         fsp.maxGeneratedDirectoryDepth = 2;
         bfs.defaultFileServiceProvider = fsp;
         bfs.maxGeneratedDirectoryDepth = 2;
         baseSystemDirectory = bfs.initializeWorkArea();
 
-        // Use the FileServiceProvider to create a temporary directory and use it as the 
-        // location to store files.   
+        // Use the FileServiceProvider to create a temporary directory and use it as the
+        // location to store files.
         fsp.fileSystemBaseDirectory = baseSystemDirectory.getFilePathLocation();
     }
 
-    @Override
+    @AfterEach
     public void tearDown() throws Exception {
-        // Close the work area used as the main directory for files. 
+        // Close the work area used as the main directory for files.
         bfs.closeWorkArea(baseSystemDirectory);
     }
 
+    @Test
     public void testCreateWorkArea() throws Exception {
         FileWorkArea workArea1 = bfs.initializeWorkArea();
         File f1 = new File(workArea1.getFilePathLocation());
 
         // The service should return a directory that is ready write to.
-        assertTrue(f1.exists());
+        Assertions.assertTrue(f1.exists());
 
         // The service should return a unique work area.
         FileWorkArea workArea2 = bfs.initializeWorkArea();
-        assertFalse(workArea2.getFilePathLocation().equals(workArea1.getFilePathLocation()));
+        Assertions.assertNotEquals(workArea2.getFilePathLocation(), workArea1.getFilePathLocation());
 
         // Remove the work areas
         bfs.closeWorkArea(workArea1);
-        assertFalse(f1.exists());
+        Assertions.assertFalse(f1.exists());
 
         bfs.closeWorkArea(workArea2);
-
     }
 
-    public void testCreateAddFile() throws Exception {        
+    @Test
+    public void testCreateAddFile() throws Exception {
         FileWorkArea workArea1 = bfs.initializeWorkArea();
         File f1 = new File(workArea1.getFilePathLocation() + "test.txt");
         FileWriter fw = new FileWriter(f1);
         fw.append("Test File");
         fw.close();
-        
+
         bfs.addOrUpdateResource(workArea1, f1, false);
-        
+
         bfs.closeWorkArea(workArea1);
 
         File resource = bfs.getResource("test.txt");
 
-        assertTrue(resource.exists());
+        Assertions.assertTrue(resource.exists());
 
         bfs.removeResource("test.txt");
 
         resource = bfs.getResource("test.txt");
-        assertFalse(resource.exists());
+        Assertions.assertFalse(resource.exists());
     }
 
+    @Test
     public void testCreateAddFiles() throws Exception {
         FileWorkArea workArea1 = bfs.initializeWorkArea();
         File f1 = new File(workArea1.getFilePathLocation() + "test2.txt");
@@ -110,18 +114,19 @@ public class BroadleafFileServiceImplTest extends TestCase {
         bfs.closeWorkArea(workArea1);
 
         File resource = bfs.getResource("test2.txt");
-        assertTrue(resource.exists());
+        Assertions.assertTrue(resource.exists());
 
         resource = bfs.getResource("test3.txt");
-        assertTrue(resource.exists());
+        Assertions.assertTrue(resource.exists());
 
         bfs.removeResource("test2.txt");
         bfs.removeResource("test3.txt");
 
         resource = bfs.getResource("test3.txt");
-        assertFalse(resource.exists());
+        Assertions.assertFalse(resource.exists());
     }
 
+    @Test
     public void testCreateFilesCopyWorkarea() throws Exception {
         FileWorkArea workArea1 = bfs.initializeWorkArea();
         File f1 = new File(workArea1.getFilePathLocation() + "test4.txt");
@@ -138,15 +143,16 @@ public class BroadleafFileServiceImplTest extends TestCase {
         bfs.closeWorkArea(workArea1);
 
         File resource = bfs.getResource("test4.txt");
-        assertTrue(resource.exists());
+        Assertions.assertTrue(resource.exists());
 
         resource = bfs.getResource("test5.txt");
-        assertTrue(resource.exists());
+        Assertions.assertTrue(resource.exists());
 
         bfs.removeResource("test4.txt");
         bfs.removeResource("test5.txt");
 
         resource = bfs.getResource("test5.txt");
-        assertFalse(resource.exists());
+        Assertions.assertFalse(resource.exists());
     }
+
 }

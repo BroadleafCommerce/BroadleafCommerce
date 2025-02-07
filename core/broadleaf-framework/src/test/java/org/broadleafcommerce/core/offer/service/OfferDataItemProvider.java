@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -81,8 +81,8 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
+import org.easymock.EasyMock;
 import org.easymock.IAnswer;
-import org.easymock.classextension.EasyMock;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -96,7 +96,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
@@ -105,7 +105,7 @@ public class OfferDataItemProvider {
     public static Long orderItemId = 1L;
     public static Long orderId = 1L;
     public static Long offerId = 1L;
-    
+
     public static Long getOfferId() {
         return offerId++;
     }
@@ -113,13 +113,13 @@ public class OfferDataItemProvider {
     public static Long getOrderItemId() {
         return orderItemId++;
     }
-    
+
     public static Long getOrderId() {
         return orderId++;
     }
-    
+
     protected static Map<Long, Order> orders = new HashMap<Long, Order>();
-    
+
     public static IAnswer<FulfillmentGroup> getAddItemToFulfillmentGroupAnswer() {
         return new IAnswer<FulfillmentGroup>() {
             @Override
@@ -130,7 +130,7 @@ public class OfferDataItemProvider {
                 fgItem.setOrderItem(fgItemRequest.getOrderItem());
                 fgItem.setQuantity(fgItemRequest.getQuantity());
                 fg.getFulfillmentGroupItems().add(fgItem);
-                
+
                 return fg;
             }
         };
@@ -144,7 +144,7 @@ public class OfferDataItemProvider {
             }
         };
     }
-    
+
     public static IAnswer<OrderItemPriceDetailAdjustment> getCreateOrderItemPriceDetailAdjustmentAnswer() {
         return new IAnswer<OrderItemPriceDetailAdjustment>() {
 
@@ -175,8 +175,8 @@ public class OfferDataItemProvider {
         };
     }
 
-    
-    
+
+
     public static IAnswer<FulfillmentGroupAdjustment> getCreateFulfillmentGroupAdjustmentAnswer() {
         return new IAnswer<FulfillmentGroupAdjustment>() {
 
@@ -200,7 +200,7 @@ public class OfferDataItemProvider {
             }
         };
     }
-    
+
     public static IAnswer<OrderItem> getSaveOrderItemAnswer() {
         return new IAnswer<OrderItem>() {
             @Override
@@ -213,7 +213,7 @@ public class OfferDataItemProvider {
             }
         };
     }
-    
+
     public static IAnswer<Order> getSaveOrderAnswer() {
         return new IAnswer<Order>() {
             @Override
@@ -235,7 +235,7 @@ public class OfferDataItemProvider {
         };
     }
 
-    
+
     public static IAnswer<FulfillmentGroupItem> getSaveFulfillmentGroupItemAnswer() {
         return new IAnswer<FulfillmentGroupItem>() {
             @Override
@@ -244,7 +244,7 @@ public class OfferDataItemProvider {
             }
         };
     }
-    
+
 
     public static IAnswer<Order> getRemoveItemFromOrderAnswer() {
         return new IAnswer<Order>() {
@@ -252,7 +252,7 @@ public class OfferDataItemProvider {
             public Order answer() throws Throwable {
                 Long orderId = (Long) EasyMock.getCurrentArguments()[0];
                 Order order = orders.get(orderId);
-                
+
                 Iterator<OrderItem> orderItemItr = order.getOrderItems().listIterator();
                 while (orderItemItr.hasNext()) {
                     OrderItem item = orderItemItr.next();
@@ -260,7 +260,7 @@ public class OfferDataItemProvider {
                         orderItemItr.remove();
                     }
                 }
-                
+
                 for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
                     Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
                     while (itr.hasNext()) {
@@ -273,7 +273,7 @@ public class OfferDataItemProvider {
             }
         };
     }
-    
+
     public PromotableOrder createBasicPromotableOrder(PromotableOfferUtility promotableOfferUtility) {
         Order order = createBasicOrder();
         PromotableOrder promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(promotableOfferUtility), false);
@@ -283,13 +283,13 @@ public class OfferDataItemProvider {
     public Order createBasicOrder() {
         Order order = new OrderImpl();
         order.setId(getOrderId());
-        
+
         Category category1 = new CategoryImpl();
         category1.setName("test1");
         category1.setId(1L);
-        
+
         Product product1 = new ProductImpl();
-        
+
         Sku sku1 = new SkuImpl();
         sku1.setName("test1");
         sku1.setId(1L);
@@ -302,13 +302,13 @@ public class OfferDataItemProvider {
         xref1.setCategory(category1);
 
         category1.getAllProductXrefs().add(xref1);
-        
+
         Category category2 = new CategoryImpl();
         category2.setName("test2");
         category2.setId(2L);
-        
+
         Product product2 = new ProductImpl();
-        
+
         Sku sku2 = new SkuImpl();
         sku2.setName("test2");
         sku2.setId(2L);
@@ -319,9 +319,9 @@ public class OfferDataItemProvider {
         CategoryProductXref xref2 = new CategoryProductXrefImpl();
         xref2.setProduct(product2);
         xref2.setCategory(category2);
-        
+
         category2.getAllProductXrefs().add(xref2);
-        
+
         DiscreteOrderItem orderItem1 = new DiscreteOrderItemImpl();
         orderItem1.setCategory(category1);
         orderItem1.setName("test1");
@@ -332,14 +332,14 @@ public class OfferDataItemProvider {
         orderItem1.setSku(sku1);
         orderItem1.setId(getOrderItemId());
         orderItem1.setOrder(order);
-        
+
         OrderItemPriceDetail priceDetail1 = new OrderItemPriceDetailImpl();
         priceDetail1.setOrderItem(orderItem1);
         priceDetail1.setQuantity(2);
         orderItem1.getOrderItemPriceDetails().add(priceDetail1);
-        
+
         order.getOrderItems().add(orderItem1);
-        
+
         DiscreteOrderItem orderItem2 = new DiscreteOrderItemImpl();
         orderItem2.setCategory(category2);
         orderItem2.setName("test2");
@@ -350,31 +350,31 @@ public class OfferDataItemProvider {
         orderItem2.setSku(sku2);
         orderItem2.setId(getOrderItemId());
         orderItem2.setOrder(order);
-        
+
         OrderItemPriceDetail priceDetail2 = new OrderItemPriceDetailImpl();
         priceDetail2.setOrderItem(orderItem2);
         priceDetail2.setQuantity(3);
         orderItem2.getOrderItemPriceDetails().add(priceDetail2);
-        
+
         order.getOrderItems().add(orderItem2);
-        
+
         Customer customer = new CustomerImpl();
         customer.setEmailAddress("test@test.com");
         customer.setFirstName("John");
         customer.setLastName("Tester");
         customer.setReceiveEmail(true);
         customer.setRegistered(true);
-        
+
         order.setCustomer(customer);
-        
+
         order.setEmailAddress("test@test.com");
-        
+
         FulfillmentGroup fg1 = new FulfillmentGroupImpl();
         fg1.setId(1L);
         Address address1 = new AddressImpl();
         address1.setAddressLine1("123 Test Road");
         address1.setCity("Dallas");
-        
+
         Country country = new CountryImpl();
         country.setAbbreviation("US");
         country.setName("United States");
@@ -392,7 +392,7 @@ public class OfferDataItemProvider {
         Phone primary = new PhoneImpl();
         primary.setPhoneNumber("972-976-1234");
         address1.setPhonePrimary(primary);
-        
+
 
         address1.setIsoCountrySubdivision("US-TX");
         fg1.setAddress(address1);
@@ -402,22 +402,22 @@ public class OfferDataItemProvider {
         fg1.setShippingPrice(new Money(10D));
         fg1.setType(FulfillmentType.PHYSICAL_SHIP);
         fg1.setOrder(order);
-        
+
         FulfillmentGroupItem fgItem1 = new FulfillmentGroupItemImpl();
         fgItem1.setFulfillmentGroup(fg1);
         fgItem1.setOrderItem(orderItem1);
         fgItem1.setQuantity(2);
         //fgItem1.setRetailPrice(new Money(19.99D));
         fg1.getFulfillmentGroupItems().add(fgItem1);
-        
+
         order.getFulfillmentGroups().add(fg1);
-        
+
         FulfillmentGroup fg2 = new FulfillmentGroupImpl();
         fg2.setId(2L);
         Address address2 = new AddressImpl();
         address2.setAddressLine1("124 Test Road");
         address2.setCity("Dallas");
-        
+
         Country country2 = new CountryImpl();
         country2.setAbbreviation("US");
         country2.setName("United States");
@@ -425,7 +425,7 @@ public class OfferDataItemProvider {
         ISOCountry isoCountry2 = new ISOCountryImpl();
         isoCountry2.setAlpha2("US");
         isoCountry2.setName("UNITED STATES");
-        
+
         address2.setIsoCountryAlpha2(isoCountry2);
         address2.setDefault(true);
         address2.setFirstName("John");
@@ -435,7 +435,7 @@ public class OfferDataItemProvider {
         Phone primary2 = new PhoneImpl();
         primary2.setPhoneNumber("972-976-1234");
         address2.setPhonePrimary(primary2);
-        
+
         address2.setIsoCountrySubdivision("US-TX");
         fg2.setAddress(address2);
         fg2.setOrder(order);
@@ -444,24 +444,24 @@ public class OfferDataItemProvider {
         fg2.setShippingPrice(new Money(20D));
         fg2.setType(FulfillmentType.PHYSICAL_SHIP);
         fg2.setOrder(order);
-        
+
         FulfillmentGroupItem fgItem2 = new FulfillmentGroupItemImpl();
         fgItem2.setFulfillmentGroup(fg2);
         fgItem2.setOrderItem(orderItem2);
         fgItem2.setQuantity(3);
         //fgItem2.setRetailPrice(new Money(29.99D));
         fg2.getFulfillmentGroupItems().add(fgItem2);
-        
+
         order.getFulfillmentGroups().add(fg2);
-        
+
         order.setSubTotal(new Money((2 * 19.99D) + (3 * 29.99D)));
-        
+
         orders.put(order.getId(), order);
         return order;
     }
-    
+
     /**
-     * Create order with a bundle with two items.  Bundle has a quantity of 2.   
+     * Create order with a bundle with two items.  Bundle has a quantity of 2.
      * Bundle item 1 has quantity of 2, bundle item 2 has quantity of 3
      * @return
      */
@@ -668,9 +668,9 @@ public class OfferDataItemProvider {
     }
 
     public Offer createOffer(
-        String appliesToCustomerRules, 
-        String appliesToFulfillmentGroupRules, 
-        String appliesToRules, 
+        String appliesToCustomerRules,
+        String appliesToFulfillmentGroupRules,
+        String appliesToRules,
         boolean applyToSalePrice,
         boolean combinableWithOtherOffers,
             boolean automaticallyAdded,
@@ -720,47 +720,47 @@ public class OfferDataItemProvider {
         offer.setId(getOfferId());
         return offer;
     }
-    
+
     public Date yesterday() {
         long now = System.currentTimeMillis();
         long then = now - (1000 * 60 * 60 * 24);
         return new Date(then);
     }
-    
+
     public Date tomorrow() {
         long now = System.currentTimeMillis();
         long then = now + (1000 * 60 * 60 * 24);
         return new Date(then);
     }
-    
+
     public List<Offer> createCustomerBasedOffer(String customerRule, Date startDate, Date endDate, OfferDiscountType discountType) {
         Offer offer = createOffer(customerRule, null, null, true, true, true, discountType, endDate, 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, startDate, null, false, OfferType.ORDER, BigDecimal.valueOf(10));
         List<Offer> offers = new ArrayList<Offer>();
         offers.add(offer);
-        
+
         return offers;
     }
-    
+
     public List<Offer> createOrderBasedOffer(String orderRule, OfferDiscountType discountType) {
         Offer offer = createOffer(null, null, orderRule, true, true, true, discountType, tomorrow(), 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.ORDER, BigDecimal.valueOf(10));
         List<Offer> offers = new ArrayList<Offer>();
         offers.add(offer);
-        
+
         return offers;
     }
-    
+
     public List<Offer> createFGBasedOffer(String orderRule, String fgRule, OfferDiscountType discountType) {
         Offer offer = createOffer(null, fgRule, orderRule, true, true, true, discountType, tomorrow(), 0, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.FULFILLMENT_GROUP, BigDecimal.valueOf(10));
         List<Offer> offers = new ArrayList<Offer>();
         offers.add(offer);
-        
+
         return offers;
     }
-    
+
     public List<Offer> createItemBasedOffer(String orderRule, String targetRule, OfferDiscountType discountType) {
         List<Offer> offers = createOrderBasedOffer(orderRule, discountType);
         offers.get(0).setType(OfferType.ORDER_ITEM);
-        
+
         if (targetRule != null) {
             Offer offer = offers.get(0);
 
@@ -768,20 +768,20 @@ public class OfferDataItemProvider {
             //targetCriteria.setQualifyingOffer(offers.get(0));
             targetCriteria.setQuantity(1);
             targetCriteria.setMatchRule(targetRule);
-            
+
             OfferTargetCriteriaXref targetXref = new OfferTargetCriteriaXrefImpl();
             targetXref.setOffer(offer);
             targetXref.setOfferItemCriteria(targetCriteria);
 
             offer.setTargetItemCriteriaXref(Collections.singleton(targetXref));
         }
-        
+
         return offers;
     }
-    
+
     public List<Offer> createOrderBasedOfferWithItemCriteria(String orderRule, OfferDiscountType discountType, String orderItemMatchRule) {
         List<Offer> offers = createOrderBasedOffer(orderRule, discountType);
-        
+
         Offer firstOffer = offers.get(0);
 
         OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
@@ -793,16 +793,16 @@ public class OfferDataItemProvider {
         xref.setOffer(firstOffer);
         xref.setOfferItemCriteria(qualCriteria);
         criterias.add(xref);
-        
+
         firstOffer.setQualifyingItemCriteriaXref(criterias);
-        
+
         return offers;
     }
-    
+
     public List<Offer> createFGBasedOfferWithItemCriteria(String orderRule, String fgRule, OfferDiscountType discountType, String orderItemMatchRule) {
         List<Offer> offers = createFGBasedOffer(orderRule, fgRule, discountType);
         Offer firstOffer = offers.get(0);
-        
+
         OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
         qualCriteria.setQuantity(1);
         qualCriteria.setMatchRule(orderItemMatchRule);
@@ -811,15 +811,15 @@ public class OfferDataItemProvider {
         xref.setOffer(firstOffer);
         xref.setOfferItemCriteria(qualCriteria);
         criterias.add(xref);
-        
+
         firstOffer.setQualifyingItemCriteriaXref(criterias);
-        
+
         return offers;
     }
-    
+
     public List<Offer> createItemBasedOfferWithItemCriteria(String orderRule, OfferDiscountType discountType, String qualRule, String targetRule) {
         List<Offer> offers = createItemBasedOffer(orderRule, targetRule, discountType);
-        
+
         if (qualRule != null) {
             Offer firstOffer = offers.get(0);
 
@@ -832,10 +832,10 @@ public class OfferDataItemProvider {
             xref.setOffer(firstOffer);
             xref.setOfferItemCriteria(qualCriteria);
             criterias.add(xref);
-            
+
             firstOffer.setQualifyingItemCriteriaXref(criterias);
         }
-        
+
         return offers;
     }
 }

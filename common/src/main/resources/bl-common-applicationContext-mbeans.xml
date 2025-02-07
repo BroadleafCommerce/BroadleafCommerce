@@ -28,23 +28,21 @@
     <!-- NOTE -->
     
     <bean id="blJmxNamingBean" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName">
-            <value>java:comp/env/appName</value>
-        </property>
+        <property name="jndiName" value="java:comp/env/appName"/>
         <property name="defaultObject" value="broadleaf"/>
     </bean>
     
-    <bean id="blAttributeSource" class="org.broadleafcommerce.common.jmx.AnnotationJmxAttributeSource">
-        <constructor-arg ref="blJmxNamingBean"/>
-    </bean>
+<!--    <bean id="blAttributeSource" class="org.broadleafcommerce.common.jmx.AnnotationJmxAttributeSource">-->
+<!--        <constructor-arg ref="blJmxNamingBean"/>-->
+<!--    </bean>-->
     
-    <bean id="blAssembler" class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">
-        <property name="attributeSource" ref="blAttributeSource"/>
-    </bean>
+<!--    <bean id="blAssembler" class="org.broadleafcommerce.common.jmx.MetadataMBeanInfoAssembler">-->
+<!--        <property name="attributeSource" ref="blAttributeSource"/>-->
+<!--    </bean>-->
     
-    <bean id="blNamingStrategy" class="org.broadleafcommerce.common.jmx.MetadataNamingStrategy">
-        <property name="attributeSource" ref="blAttributeSource"/>
-    </bean>
+<!--    <bean id="blNamingStrategy" class="org.broadleafcommerce.common.jmx.MetadataNamingStrategy">-->
+<!--        <property name="attributeSource" ref="blAttributeSource"/>-->
+<!--    </bean>-->
     <bean id="blAutoDDLStatusTestBean" class="org.broadleafcommerce.common.extensibility.jpa.AutoDDLCreateStatusTestBeanImpl"/>
     
     <bean id="blAutoDDLStatusExporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">

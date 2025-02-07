@@ -28,7 +28,7 @@ import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
 import org.easymock.EasyMock;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,11 +37,11 @@ import java.util.List;
 
 /**
  * Page site map generator tests
- * 
+ *
  * @author Joshua Skorton (jskorton)
  */
 public class PageSiteMapGeneratorTest extends SiteMapGeneratorTest {
-    
+
     @Test
     public void testPageSiteMapGenerator() throws SiteMapException, IOException {
 
@@ -52,7 +52,7 @@ public class PageSiteMapGeneratorTest extends SiteMapGeneratorTest {
         Page p3 = new PageImpl();
         p3.setFullUrl("/new-to-hot-sauce");
 
-        List<Page> pages = new ArrayList<Page>();
+        List<Page> pages = new ArrayList<>();
         pages.add(p1);
         pages.add(p2);
         pages.add(p3);
@@ -80,7 +80,6 @@ public class PageSiteMapGeneratorTest extends SiteMapGeneratorTest {
         compareFiles(file1, "src/test/resources/org/broadleafcommerce/sitemap/page/sitemap_index.xml");
         compareFiles(file2, "src/test/resources/org/broadleafcommerce/sitemap/page/sitemap1.xml");
         compareFiles(file3, "src/test/resources/org/broadleafcommerce/sitemap/page/sitemap2.xml");
-    
     }
 
 }
