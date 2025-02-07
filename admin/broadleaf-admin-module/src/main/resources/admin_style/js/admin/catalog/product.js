@@ -61,13 +61,17 @@ $(document).ready(function() {
             type : "GET"
         }, function(data) {
             var alertType = data.error ? 'error-alert' : data.skusGenerated > 0 ? 'save-alert' : 'error-alert';
-            
-            BLCAdmin.listGrid.showAlert($container, data.message, {
-                alertType: alertType,
-                clearOtherAlerts: true,
-                autoClose: 5000
-            });
-            
+
+            if (alertType === 'error-alert') {
+                BLCAdmin.showMessageAsModal('Failed to generate Skus', data.message);
+            } else {
+                BLCAdmin.listGrid.showAlert($container, data.message, {
+                    alertType: alertType,
+                    clearOtherAlerts: true,
+                    autoClose: 5000
+                });
+            }
+
             if (data.skusGenerated > 0) {
                 BLCAdmin.product.refreshSkusGrid($container, data.listGridUrl);
             }

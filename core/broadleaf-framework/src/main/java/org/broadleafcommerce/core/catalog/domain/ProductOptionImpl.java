@@ -155,7 +155,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     @Lob
     @JdbcType(LongVarcharJdbcType.class)
     @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
-    @AdminPresentation(friendlyName = "Checkbox_Description",
+    @AdminPresentation(friendlyName = "productOption_description",
             group = GroupName.General,
             largeEntry = true,
             fieldType = SupportedFieldType.HTML_BASIC,
