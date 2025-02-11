@@ -130,4 +130,9 @@ public class IdOverrideTableGenerator extends TableGenerator implements Annotati
         this.context = context;
     }
 
+    @Override
+    public boolean allowAssignedIdentifiers() {
+        return true;
+    }
+
 }
