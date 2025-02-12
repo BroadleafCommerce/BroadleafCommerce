@@ -74,6 +74,7 @@
                             <value>org\.owasp.*</value>
                             <value>org\.htmlunit.*</value>
                             <value>io\.netty.*</value>
+                            <value>org\.mockito.*</value>
                         </array>
                     </property>
                 </bean>
