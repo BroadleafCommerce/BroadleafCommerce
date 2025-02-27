@@ -1,6 +1,6 @@
 /*-
  * #%L
- * BroadleafCommerce Integration
+ * BroadleafCommerce Common Libraries
  * %%
  * Copyright (C) 2009 - 2025 Broadleaf Commerce
  * %%
@@ -15,19 +15,21 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
-package org.broadleafcommerce.core.catalog;
+package org.broadleafcommerce.common.persistence;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
-import org.testng.annotations.DataProvider;
+import org.hibernate.annotations.IdGeneratorType;
 
-public class CategoryDaoDataProvider {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    @DataProvider(name = "basicCategory")
-    public static Object[][] provideBasicCategory() {
-        Category category = new CategoryImpl();
-        category.setName("Yuban");
-        category.setDescription("Yuban");
-        return new Object[][] { { category } };
-    }
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+
+@IdGeneratorType(IdOverrideTableGenerator.class)
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ FIELD, METHOD})
+public @interface BroadleafIdGenerator {
+    String segment_value();
+    String entity_name();
 }

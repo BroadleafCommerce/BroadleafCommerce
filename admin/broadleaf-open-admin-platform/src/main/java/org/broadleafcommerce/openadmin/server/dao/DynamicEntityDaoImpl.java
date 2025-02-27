@@ -1100,12 +1100,10 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
         propertyTypes.add(idType);
 
         PersistentClass persistentClass = getPersistentClass(targetClass.getName());
-        Iterator testIter = persistentClass.getPropertyIterator();
         List<Property> propertyList = new ArrayList<>();
 
         //check the properties for problems
-        while (testIter.hasNext()) {
-            Property property = (Property) testIter.next();
+        for (Property property : persistentClass.getProperties()) {
             if (property.getName().contains(".")) {
                 throw new IllegalArgumentException("Properties from entities that utilize a period character ('.') in their name are incompatible with this system. The property name in question is: (" + property.getName() + ") from the class: (" + targetClass.getName() + ")");
             }

@@ -17,25 +17,27 @@
  */
 package org.broadleafcommerce.common.persistence;
 
+import jakarta.persistence.Id;
 import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.generator.AnnotationBasedGenerator;
+import org.hibernate.generator.GeneratorCreationContext;
 import org.hibernate.id.enhanced.TableGenerator;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import jakarta.persistence.Id;
-
 /**
  * @author Jeff Fischer
  */
-public class IdOverrideTableGenerator extends TableGenerator {
+public class IdOverrideTableGenerator extends TableGenerator implements AnnotationBasedGenerator<BroadleafIdGenerator> {
 
     public static final String ENTITY_NAME_PARAM = "entity_name";
 
@@ -47,6 +49,10 @@ public class IdOverrideTableGenerator extends TableGenerator {
     private static final Map<String, Field> FIELD_CACHE = Collections.synchronizedMap(new HashMap<>());
 
     private String entityName;
+
+    private BroadleafIdGenerator config;
+    private Member annotatedMember;
+    private GeneratorCreationContext context;
 
     protected Field getIdField(Class<?> clazz) {
         Field response = null;
@@ -97,6 +103,10 @@ public class IdOverrideTableGenerator extends TableGenerator {
 
     @Override
     public void configure(Type type, Properties params, ServiceRegistry registry) throws MappingException {
+        if (config != null) {
+            params.putIfAbsent(SEGMENT_VALUE_PARAM, config.segment_value());
+            params.putIfAbsent(ENTITY_NAME_PARAM, config.entity_name());
+        }
         params.putIfAbsent("table_name", "SEQUENCE_GENERATOR");
         params.putIfAbsent("segment_column_name", DEFAULT_SEGMENT_COLUMN_NAME);
         params.putIfAbsent("value_column_name", DEFAULT_VALUE_COLUMN_NAME);
@@ -111,6 +121,13 @@ public class IdOverrideTableGenerator extends TableGenerator {
 
     public void setEntityName(String entityName) {
         this.entityName = entityName;
+    }
+
+    @Override
+    public void initialize(BroadleafIdGenerator annotation, Member member, GeneratorCreationContext context) {
+        this.config = annotation;
+        this.annotatedMember = member;
+        this.context = context;
     }
 
 }
