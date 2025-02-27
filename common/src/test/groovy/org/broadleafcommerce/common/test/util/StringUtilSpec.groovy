@@ -27,7 +27,7 @@ import spock.lang.Specification
  */
 class StringUtilSpec extends Specification {
 
-    def "Exact roperty segments"() {
+    def "Exact property segments"() {
         when: 
             def result = StringUtil.segmentInclusion("fulfillmentLocation.address.phoneFax", "fulfillmentLocation.address.phone")
         then:
