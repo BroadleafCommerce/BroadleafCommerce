@@ -36,6 +36,7 @@ import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.annotation.Resource;
 
@@ -64,6 +67,11 @@ public class InventoryServiceImpl implements ContextualInventoryService {
 
     @Autowired
     protected ApplicationContext applicationContext;
+
+    protected Lock guaranteedInventoryLock = new ReentrantLock();
+
+    @Value("${inventory.guaranteed.check.enabled:false}")
+    public boolean guaranteedInventoryCheckEnabled;
 
     @Override
     public boolean checkBasicAvailablility(Sku sku) {
@@ -201,36 +209,45 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     }
 
     protected void decrementSku(Map<Sku, Integer> skuQuantities, Map<String, Object> context) throws InventoryUnavailableException {
-        for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
-            Sku sku = entry.getKey();
-            Sku skuForInventory = sku;
-            if (sku.getProduct().getEnableDefaultSkuInInventory()) {
-                skuForInventory = sku.getProduct().getDefaultSku();
-            }
-            Integer quantity = entry.getValue();
-            if (quantity == null || quantity < 1) {
-                throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
-            }
-
-            if (checkBasicAvailablility(skuForInventory)) {
-                if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
-                    Integer inventoryAvailable = retrieveQuantityAvailable(skuForInventory, context);
-                    if (inventoryAvailable == null) {
-                        return;
-                    }
-                    if (inventoryAvailable < quantity) {
-                        throw new InventoryUnavailableException("There was not enough inventory to fulfill this request.",
-                                skuForInventory.getId(), quantity, inventoryAvailable);
-                    }
-                    int newInventory = inventoryAvailable - quantity;
-                    skuForInventory.setQuantityAvailable(newInventory);
-                    catalogService.saveSku(skuForInventory);
-                    invalidateSkuInventory(skuForInventory);
-                } else {
-                    LOG.info("Not decrementing inventory as the Sku has been marked as always available");
+        try {
+            for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
+                Sku sku = entry.getKey();
+                Sku skuForInventory = sku;
+                if (sku.getProduct().getEnableDefaultSkuInInventory()) {
+                    skuForInventory = sku.getProduct().getDefaultSku();
                 }
-            } else {
-                throw new InventoryUnavailableException("The Sku has been marked as unavailable", sku.getId(), quantity, 0);
+                Integer quantity = entry.getValue();
+                if (quantity == null || quantity < 1) {
+                    throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
+                }
+                if (guaranteedInventoryCheckEnabled) {
+                    guaranteedInventoryLock.lock();
+                    invalidateSkuInventory(skuForInventory);
+                }
+                if (checkBasicAvailablility(skuForInventory)) {
+                    if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
+                        Integer inventoryAvailable = retrieveQuantityAvailable(skuForInventory, context);
+                        if (inventoryAvailable == null) {
+                            return;
+                        }
+                        if (inventoryAvailable < quantity) {
+                            throw new InventoryUnavailableException("There was not enough inventory to fulfill this request.",
+                                    skuForInventory.getId(), quantity, inventoryAvailable);
+                        }
+                        int newInventory = inventoryAvailable - quantity;
+                        skuForInventory.setQuantityAvailable(newInventory);
+                        catalogService.saveSku(skuForInventory);
+                        invalidateSkuInventory(skuForInventory);
+                    } else {
+                        LOG.info("Not decrementing inventory as the Sku has been marked as always available");
+                    }
+                } else {
+                    throw new InventoryUnavailableException("The Sku has been marked as unavailable", sku.getId(), quantity, 0);
+                }
+            }
+        } finally {
+            if (guaranteedInventoryCheckEnabled) {
+                guaranteedInventoryLock.unlock();
             }
         }
     }
