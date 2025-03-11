@@ -297,7 +297,10 @@ $(document).ready(function() {
 
         $(this).closest('.listgrid-container').find('.mCSB_container').css('top', '0px');
         $(this).closest('.listgrid-container').find('.listgrid-body-wrapper').mCustomScrollbar('update');
-        oldParams = {};
+        var oldParams = BLCAdmin.history.getUrlParameters();
+        if (oldParams == null) {
+            oldParams = {};
+        }
         oldParams['isLookup'] = $(this).closest('.modal').length > 0;
         var url = BLC.buildUrlWithParams($(this).closest('.filter-fields').data('action'), oldParams);
 
@@ -384,7 +387,7 @@ $(document).ready(function() {
 
         $firstInput.val(search);
 
-        var oldParams = BLCAdmin.history.getUrlParameters();
+        var oldParams = BLCAdmin.history.getUrlParameters(), key;
         if (oldParams == null) {
             oldParams = {};
         }
