@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.inventory.service;
 
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +35,9 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.util.dao.LockDao;
+import org.broadleafcommerce.core.util.lock.DistributedLock;
+import org.broadleafcommerce.core.util.lock.ReentrantDistributedDatabaseLock;
 import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,8 +53,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import jakarta.annotation.Resource;
 
@@ -68,10 +70,21 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     @Autowired
     protected ApplicationContext applicationContext;
 
-    protected Lock guaranteedInventoryLock = new ReentrantLock();
+    protected DistributedLock guaranteedInventoryLock;
 
     @Value("${inventory.guaranteed.check.enabled:false}")
     public boolean guaranteedInventoryCheckEnabled;
+
+    @Resource(name = "blLockDao")
+    private LockDao lockDao;
+
+    @Value("${inventory.guaranteed.check.enabled:false}")
+    @PostConstruct
+    public void initLock(){
+        if (guaranteedInventoryCheckEnabled) {
+            guaranteedInventoryLock = new ReentrantDistributedDatabaseLock("GuaranteedInventoryCheck", applicationContext.getEnvironment(), lockDao);
+        }
+    }
 
     @Override
     public boolean checkBasicAvailablility(Sku sku) {
@@ -220,9 +233,8 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                 if (quantity == null || quantity < 1) {
                     throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
                 }
-                if (guaranteedInventoryCheckEnabled) {
+                if (guaranteedInventoryCheckEnabled && guaranteedInventoryLock != null) {
                     guaranteedInventoryLock.lock();
-                    invalidateSkuInventory(skuForInventory);
                 }
                 if (checkBasicAvailablility(skuForInventory)) {
                     if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
@@ -246,7 +258,7 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                 }
             }
         } finally {
-            if (guaranteedInventoryCheckEnabled) {
+            if (guaranteedInventoryCheckEnabled && guaranteedInventoryLock != null) {
                 guaranteedInventoryLock.unlock();
             }
         }
