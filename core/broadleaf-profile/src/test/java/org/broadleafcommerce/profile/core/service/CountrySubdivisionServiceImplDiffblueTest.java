@@ -79,10 +79,10 @@ public class CountrySubdivisionServiceImplDiffblueTest {
     when(countrySubdivisionDao.findSubdivisions(Mockito.<String>any())).thenReturn(new ArrayList<>());
 
     // Act
-    List<CountrySubdivision> actualFindSubdivisionsResult = countrySubdivisionServiceImpl.findSubdivisions("GB");
+    List<CountrySubdivision> actualFindSubdivisionsResult = countrySubdivisionServiceImpl.findSubdivisions("US");
 
     // Assert
-    verify(countrySubdivisionDao).findSubdivisions(eq("GB"));
+    verify(countrySubdivisionDao).findSubdivisions(eq("US"));
     assertTrue(actualFindSubdivisionsResult.isEmpty());
   }
 
@@ -101,10 +101,10 @@ public class CountrySubdivisionServiceImplDiffblueTest {
 
     // Act
     List<CountrySubdivision> actualFindSubdivisionsByCountryAndCategoryResult = countrySubdivisionServiceImpl
-        .findSubdivisionsByCountryAndCategory("GB", "Category");
+        .findSubdivisionsByCountryAndCategory("US", "CA");
 
     // Assert
-    verify(countrySubdivisionDao).findSubdivisionsByCountryAndCategory(eq("GB"), eq("Category"));
+    verify(countrySubdivisionDao).findSubdivisionsByCountryAndCategory(eq("US"), eq("CA"));
     assertTrue(actualFindSubdivisionsByCountryAndCategoryResult.isEmpty());
   }
 
@@ -123,10 +123,10 @@ public class CountrySubdivisionServiceImplDiffblueTest {
 
     // Act
     CountrySubdivision actualFindSubdivisionByAbbreviationResult = countrySubdivisionServiceImpl
-        .findSubdivisionByAbbreviation("Abbreviation");
+        .findSubdivisionByAbbreviation("CA");
 
     // Assert
-    verify(countrySubdivisionDao).findSubdivisionByAbbreviation(eq("Abbreviation"));
+    verify(countrySubdivisionDao).findSubdivisionByAbbreviation(eq("CA"));
     assertSame(countrySubdivisionImpl, actualFindSubdivisionByAbbreviationResult);
   }
 
@@ -147,10 +147,10 @@ public class CountrySubdivisionServiceImplDiffblueTest {
 
     // Act
     CountrySubdivision actualFindSubdivisionByCountryAndAltAbbreviationResult = countrySubdivisionServiceImpl
-        .findSubdivisionByCountryAndAltAbbreviation("GB", "Alt Abbreviation");
+        .findSubdivisionByCountryAndAltAbbreviation("US", "ALT");
 
     // Assert
-    verify(countrySubdivisionDao).findSubdivisionByCountryAndAltAbbreviation(eq("GB"), eq("Alt Abbreviation"));
+    verify(countrySubdivisionDao).findSubdivisionByCountryAndAltAbbreviation(eq("US"), eq("ALT"));
     assertSame(countrySubdivisionImpl, actualFindSubdivisionByCountryAndAltAbbreviationResult);
   }
 
@@ -171,10 +171,10 @@ public class CountrySubdivisionServiceImplDiffblueTest {
 
     // Act
     CountrySubdivision actualFindSubdivisionByCountryAndNameResult = countrySubdivisionServiceImpl
-        .findSubdivisionByCountryAndName("GB", "Name");
+        .findSubdivisionByCountryAndName("US", "California");
 
     // Assert
-    verify(countrySubdivisionDao).findSubdivisionByCountryAndName(eq("GB"), eq("Name"));
+    verify(countrySubdivisionDao).findSubdivisionByCountryAndName(eq("US"), eq("California"));
     assertSame(countrySubdivisionImpl, actualFindSubdivisionByCountryAndNameResult);
   }
 

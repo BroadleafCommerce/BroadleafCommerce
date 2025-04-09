@@ -85,25 +85,25 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
     customerImpl2.setPasswordChangeRequired(true);
 
     // Act and Assert
@@ -128,26 +128,6 @@ public class CustomerImplDiffblueTest {
   }
 
   /**
-   * Test {@link CustomerImpl#setPasswordChangeRequired(boolean)}.
-   * <p>
-   * Method under test: {@link CustomerImpl#setPasswordChangeRequired(boolean)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"void CustomerImpl.setPasswordChangeRequired(boolean)"})
-  public void testSetPasswordChangeRequired() {
-    // Arrange
-    CustomerImpl customerImpl2 = new CustomerImpl();
-
-    // Act
-    customerImpl2.setPasswordChangeRequired(true);
-
-    // Assert
-    assertTrue(customerImpl2.isPasswordChangeRequired());
-    assertTrue(customerImpl2.passwordChangeRequired);
-  }
-
-  /**
    * Test {@link CustomerImpl#isReceiveEmail()}.
    * <ul>
    *   <li>Given {@link Auditable} (default constructor) CreatedBy is one.</li>
@@ -169,25 +149,25 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
     customerImpl2.setReceiveEmail(true);
 
     // Act and Assert
@@ -212,26 +192,6 @@ public class CustomerImplDiffblueTest {
   }
 
   /**
-   * Test {@link CustomerImpl#setReceiveEmail(boolean)}.
-   * <p>
-   * Method under test: {@link CustomerImpl#setReceiveEmail(boolean)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"void CustomerImpl.setReceiveEmail(boolean)"})
-  public void testSetReceiveEmail() {
-    // Arrange
-    CustomerImpl customerImpl2 = new CustomerImpl();
-
-    // Act
-    customerImpl2.setReceiveEmail(true);
-
-    // Assert
-    assertTrue(customerImpl2.isReceiveEmail());
-    assertTrue(customerImpl2.receiveEmail);
-  }
-
-  /**
    * Test {@link CustomerImpl#isRegistered()}.
    * <ul>
    *   <li>Given {@link Auditable} (default constructor) CreatedBy is one.</li>
@@ -253,25 +213,25 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
     customerImpl2.setRegistered(true);
 
     // Act and Assert
@@ -293,26 +253,6 @@ public class CustomerImplDiffblueTest {
   public void testIsRegistered_givenCustomerImpl_thenReturnFalse() {
     // Arrange, Act and Assert
     assertFalse((new CustomerImpl()).isRegistered());
-  }
-
-  /**
-   * Test {@link CustomerImpl#setRegistered(boolean)}.
-   * <p>
-   * Method under test: {@link CustomerImpl#setRegistered(boolean)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"void CustomerImpl.setRegistered(boolean)"})
-  public void testSetRegistered() {
-    // Arrange
-    CustomerImpl customerImpl2 = new CustomerImpl();
-
-    // Act
-    customerImpl2.setRegistered(true);
-
-    // Assert
-    assertTrue(customerImpl2.isRegistered());
-    assertTrue(customerImpl2.registered);
   }
 
   /**
@@ -394,7 +334,7 @@ public class CustomerImplDiffblueTest {
 
     // Act
     customerImpl.setAuditable(auditable);
-    customerImpl.setChallengeAnswer("Challenge Answer");
+    customerImpl.setChallengeAnswer("challengeAnswer");
     ChallengeQuestionImpl challengeQuestion = new ChallengeQuestionImpl();
     customerImpl.setChallengeQuestion(challengeQuestion);
     ArrayList<CustomerAddress> customerAddresses = new ArrayList<>();
@@ -407,15 +347,15 @@ public class CustomerImplDiffblueTest {
     customerImpl.setCustomerPayments(customerPayments);
     ArrayList<CustomerPhone> customerPhones = new ArrayList<>();
     customerImpl.setCustomerPhones(customerPhones);
-    customerImpl.setEmailAddress("42 Main St");
-    customerImpl.setExternalId("42");
-    customerImpl.setFirstName("Jane");
+    customerImpl.setEmailAddress("defaultEmail@example.com");
+    customerImpl.setExternalId("externalId123");
+    customerImpl.setFirstName("John");
     customerImpl.setId(1L);
     customerImpl.setLastName("Doe");
-    customerImpl.setPassword("iloveyou");
-    customerImpl.setUnencodedChallengeAnswer("secret");
-    customerImpl.setUnencodedPassword("secret");
-    customerImpl.setUsername("janedoe");
+    customerImpl.setPassword("defaultPassword");
+    customerImpl.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl.setUnencodedPassword("defaultPassword");
+    customerImpl.setUsername("defaultUsername");
     Auditable actualAuditable = customerImpl.getAuditable();
     String actualChallengeAnswer = customerImpl.getChallengeAnswer();
     ChallengeQuestion actualChallengeQuestion = customerImpl.getChallengeQuestion();
@@ -440,15 +380,15 @@ public class CustomerImplDiffblueTest {
     boolean actualIsLoggedInResult = customerImpl.isLoggedIn();
 
     // Assert
-    assertEquals("42 Main St", actualEmailAddress);
-    assertEquals("42", actualExternalId);
-    assertEquals("Challenge Answer", actualChallengeAnswer);
     assertEquals("Doe", actualLastName);
-    assertEquals("Jane", actualFirstName);
-    assertEquals("iloveyou", actualPassword);
-    assertEquals("janedoe", actualUsername);
-    assertEquals("secret", actualUnencodedChallengeAnswer);
-    assertEquals("secret", actualUnencodedPassword);
+    assertEquals("John", actualFirstName);
+    assertEquals("challengeAnswer", actualChallengeAnswer);
+    assertEquals("challengeAnswer", actualUnencodedChallengeAnswer);
+    assertEquals("defaultEmail@example.com", actualEmailAddress);
+    assertEquals("defaultPassword", actualPassword);
+    assertEquals("defaultPassword", actualUnencodedPassword);
+    assertEquals("defaultUsername", actualUsername);
+    assertEquals("externalId123", actualExternalId);
     assertNull(actualTaxExemptionCode);
     assertEquals(1L, actualId.longValue());
     assertFalse(actualIsAnonymousResult);
@@ -490,26 +430,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
 
     // Act
     customerImpl2.setAnonymous(false);
@@ -565,26 +505,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
 
     // Act
     customerImpl2.setCookied(false);
@@ -639,26 +579,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
 
     // Act
     customerImpl2.setLoggedIn(false);
@@ -713,25 +653,25 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
     customerImpl2.setDeactivated(true);
 
     // Act and Assert
@@ -756,26 +696,6 @@ public class CustomerImplDiffblueTest {
   }
 
   /**
-   * Test {@link CustomerImpl#setDeactivated(boolean)}.
-   * <p>
-   * Method under test: {@link CustomerImpl#setDeactivated(boolean)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"void CustomerImpl.setDeactivated(boolean)"})
-  public void testSetDeactivated() {
-    // Arrange
-    CustomerImpl customerImpl2 = new CustomerImpl();
-
-    // Act
-    customerImpl2.setDeactivated(true);
-
-    // Assert
-    assertTrue(customerImpl2.isDeactivated());
-    assertTrue(customerImpl2.deactivated);
-  }
-
-  /**
    * Test {@link CustomerImpl#getMainEntityName()}.
    * <ul>
    *   <li>Given {@link CustomerImpl} (default constructor) FirstName is empty string.</li>
@@ -797,23 +717,23 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
     customerImpl2.setId(1L);
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
     customerImpl2.setFirstName("");
     customerImpl2.setLastName("");
     customerImpl2.setUsername("");
@@ -844,23 +764,23 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
     customerImpl2.setId(1L);
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
     customerImpl2.setFirstName("foo");
     customerImpl2.setLastName("");
     customerImpl2.setUsername("");
@@ -891,23 +811,23 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
     customerImpl2.setId(1L);
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
     customerImpl2.setFirstName("foo");
     customerImpl2.setLastName("foo");
     customerImpl2.setUsername("");
@@ -938,23 +858,23 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
     customerImpl2.setId(1L);
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
     customerImpl2.setFirstName("");
     customerImpl2.setLastName("");
     customerImpl2.setUsername("foo");
@@ -1002,26 +922,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
     customerImpl2.setPreview(true);
 
     // Act and Assert
@@ -1091,26 +1011,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl = new CustomerImpl();
     customerImpl.setAuditable(auditable);
-    customerImpl.setChallengeAnswer("Challenge Answer");
+    customerImpl.setChallengeAnswer("challengeAnswer");
     customerImpl.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl.setCustomerAddresses(new ArrayList<>());
     customerImpl.setCustomerAttributes(new HashMap<>());
     customerImpl.setCustomerLocale(new LocaleImpl());
     customerImpl.setCustomerPayments(new ArrayList<>());
     customerImpl.setCustomerPhones(new ArrayList<>());
-    customerImpl.setDeactivated(true);
-    customerImpl.setEmailAddress("42 Main St");
-    customerImpl.setExternalId("42");
-    customerImpl.setFirstName("Jane");
+    customerImpl.setDeactivated(false);
+    customerImpl.setEmailAddress("defaultEmail@example.com");
+    customerImpl.setExternalId("externalId123");
+    customerImpl.setFirstName("John");
     customerImpl.setId(1L);
     customerImpl.setLastName("Doe");
-    customerImpl.setPassword("iloveyou");
-    customerImpl.setPasswordChangeRequired(true);
-    customerImpl.setReceiveEmail(true);
-    customerImpl.setRegistered(true);
-    customerImpl.setUnencodedChallengeAnswer("secret");
-    customerImpl.setUnencodedPassword("secret");
-    customerImpl.setUsername("janedoe");
+    customerImpl.setPassword("defaultPassword");
+    customerImpl.setPasswordChangeRequired(false);
+    customerImpl.setReceiveEmail(false);
+    customerImpl.setRegistered(false);
+    customerImpl.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl.setUnencodedPassword("defaultPassword");
+    customerImpl.setUsername("defaultUsername");
 
     Auditable auditable2 = new Auditable();
     auditable2.setCreatedBy(1L);
@@ -1120,26 +1040,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable2);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
 
     // Act and Assert
     assertEquals(customerImpl, customerImpl2);
@@ -1173,26 +1093,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl = new CustomerImpl();
     customerImpl.setAuditable(auditable);
-    customerImpl.setChallengeAnswer("Challenge Answer");
+    customerImpl.setChallengeAnswer("challengeAnswer");
     customerImpl.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl.setCustomerAddresses(new ArrayList<>());
     customerImpl.setCustomerAttributes(new HashMap<>());
     customerImpl.setCustomerLocale(new LocaleImpl());
     customerImpl.setCustomerPayments(new ArrayList<>());
     customerImpl.setCustomerPhones(new ArrayList<>());
-    customerImpl.setDeactivated(true);
-    customerImpl.setEmailAddress("42 Main St");
-    customerImpl.setExternalId("42");
-    customerImpl.setFirstName("Jane");
+    customerImpl.setDeactivated(false);
+    customerImpl.setEmailAddress("defaultEmail@example.com");
+    customerImpl.setExternalId("externalId123");
+    customerImpl.setFirstName("John");
     customerImpl.setId(null);
     customerImpl.setLastName("Doe");
-    customerImpl.setPassword("iloveyou");
-    customerImpl.setPasswordChangeRequired(true);
-    customerImpl.setReceiveEmail(true);
-    customerImpl.setRegistered(true);
-    customerImpl.setUnencodedChallengeAnswer("secret");
-    customerImpl.setUnencodedPassword("secret");
-    customerImpl.setUsername("janedoe");
+    customerImpl.setPassword("defaultPassword");
+    customerImpl.setPasswordChangeRequired(false);
+    customerImpl.setReceiveEmail(false);
+    customerImpl.setRegistered(false);
+    customerImpl.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl.setUnencodedPassword("defaultPassword");
+    customerImpl.setUsername("defaultUsername");
 
     Auditable auditable2 = new Auditable();
     auditable2.setCreatedBy(1L);
@@ -1202,26 +1122,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable2);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
 
     // Act and Assert
     assertEquals(customerImpl, customerImpl2);
@@ -1255,26 +1175,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl = new CustomerImpl();
     customerImpl.setAuditable(auditable);
-    customerImpl.setChallengeAnswer("Challenge Answer");
+    customerImpl.setChallengeAnswer("challengeAnswer");
     customerImpl.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl.setCustomerAddresses(new ArrayList<>());
     customerImpl.setCustomerAttributes(new HashMap<>());
     customerImpl.setCustomerLocale(new LocaleImpl());
     customerImpl.setCustomerPayments(new ArrayList<>());
     customerImpl.setCustomerPhones(new ArrayList<>());
-    customerImpl.setDeactivated(true);
-    customerImpl.setEmailAddress("42 Main St");
-    customerImpl.setExternalId("42");
-    customerImpl.setFirstName("Jane");
+    customerImpl.setDeactivated(false);
+    customerImpl.setEmailAddress("defaultEmail@example.com");
+    customerImpl.setExternalId("externalId123");
+    customerImpl.setFirstName("John");
     customerImpl.setId(1L);
     customerImpl.setLastName("Doe");
-    customerImpl.setPassword("iloveyou");
-    customerImpl.setPasswordChangeRequired(true);
-    customerImpl.setReceiveEmail(true);
-    customerImpl.setRegistered(true);
-    customerImpl.setUnencodedChallengeAnswer("secret");
-    customerImpl.setUnencodedPassword("secret");
-    customerImpl.setUsername("janedoe");
+    customerImpl.setPassword("defaultPassword");
+    customerImpl.setPasswordChangeRequired(false);
+    customerImpl.setReceiveEmail(false);
+    customerImpl.setRegistered(false);
+    customerImpl.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl.setUnencodedPassword("defaultPassword");
+    customerImpl.setUsername("defaultUsername");
 
     Auditable auditable2 = new Auditable();
     auditable2.setCreatedBy(1L);
@@ -1284,26 +1204,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable2);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(null);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
 
     // Act and Assert
     assertEquals(customerImpl, customerImpl2);
@@ -1337,26 +1257,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl = new CustomerImpl();
     customerImpl.setAuditable(auditable);
-    customerImpl.setChallengeAnswer("Challenge Answer");
+    customerImpl.setChallengeAnswer("challengeAnswer");
     customerImpl.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl.setCustomerAddresses(new ArrayList<>());
     customerImpl.setCustomerAttributes(new HashMap<>());
     customerImpl.setCustomerLocale(new LocaleImpl());
     customerImpl.setCustomerPayments(new ArrayList<>());
     customerImpl.setCustomerPhones(new ArrayList<>());
-    customerImpl.setDeactivated(true);
-    customerImpl.setEmailAddress("42 Main St");
-    customerImpl.setExternalId("42");
-    customerImpl.setFirstName("Jane");
+    customerImpl.setDeactivated(false);
+    customerImpl.setEmailAddress("defaultEmail@example.com");
+    customerImpl.setExternalId("externalId123");
+    customerImpl.setFirstName("John");
     customerImpl.setId(1L);
     customerImpl.setLastName("Doe");
-    customerImpl.setPassword("iloveyou");
-    customerImpl.setPasswordChangeRequired(true);
-    customerImpl.setReceiveEmail(true);
-    customerImpl.setRegistered(true);
-    customerImpl.setUnencodedChallengeAnswer("secret");
-    customerImpl.setUnencodedPassword("secret");
-    customerImpl.setUsername("janedoe");
+    customerImpl.setPassword("defaultPassword");
+    customerImpl.setPasswordChangeRequired(false);
+    customerImpl.setReceiveEmail(false);
+    customerImpl.setRegistered(false);
+    customerImpl.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl.setUnencodedPassword("defaultPassword");
+    customerImpl.setUsername("defaultUsername");
 
     // Act and Assert
     assertEquals(customerImpl, customerImpl);
@@ -1386,26 +1306,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl = new CustomerImpl();
     customerImpl.setAuditable(auditable);
-    customerImpl.setChallengeAnswer("Challenge Answer");
+    customerImpl.setChallengeAnswer("challengeAnswer");
     customerImpl.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl.setCustomerAddresses(new ArrayList<>());
     customerImpl.setCustomerAttributes(new HashMap<>());
     customerImpl.setCustomerLocale(new LocaleImpl());
     customerImpl.setCustomerPayments(new ArrayList<>());
     customerImpl.setCustomerPhones(new ArrayList<>());
-    customerImpl.setDeactivated(true);
-    customerImpl.setEmailAddress("42 Main St");
-    customerImpl.setExternalId("42");
-    customerImpl.setFirstName("Jane");
+    customerImpl.setDeactivated(false);
+    customerImpl.setEmailAddress("defaultEmail@example.com");
+    customerImpl.setExternalId("externalId123");
+    customerImpl.setFirstName("John");
     customerImpl.setId(2L);
     customerImpl.setLastName("Doe");
-    customerImpl.setPassword("iloveyou");
-    customerImpl.setPasswordChangeRequired(true);
-    customerImpl.setReceiveEmail(true);
-    customerImpl.setRegistered(true);
-    customerImpl.setUnencodedChallengeAnswer("secret");
-    customerImpl.setUnencodedPassword("secret");
-    customerImpl.setUsername("janedoe");
+    customerImpl.setPassword("defaultPassword");
+    customerImpl.setPasswordChangeRequired(false);
+    customerImpl.setReceiveEmail(false);
+    customerImpl.setRegistered(false);
+    customerImpl.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl.setUnencodedPassword("defaultPassword");
+    customerImpl.setUsername("defaultUsername");
 
     Auditable auditable2 = new Auditable();
     auditable2.setCreatedBy(1L);
@@ -1415,26 +1335,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable2);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
 
     // Act and Assert
     assertNotEquals(customerImpl, customerImpl2);
@@ -1462,26 +1382,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl = new CustomerImpl();
     customerImpl.setAuditable(auditable);
-    customerImpl.setChallengeAnswer("Challenge Answer");
+    customerImpl.setChallengeAnswer("challengeAnswer");
     customerImpl.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl.setCustomerAddresses(new ArrayList<>());
     customerImpl.setCustomerAttributes(new HashMap<>());
     customerImpl.setCustomerLocale(new LocaleImpl());
     customerImpl.setCustomerPayments(new ArrayList<>());
     customerImpl.setCustomerPhones(new ArrayList<>());
-    customerImpl.setDeactivated(true);
-    customerImpl.setEmailAddress("42 Main St");
-    customerImpl.setExternalId("42");
-    customerImpl.setFirstName("Jane");
+    customerImpl.setDeactivated(false);
+    customerImpl.setEmailAddress("defaultEmail@example.com");
+    customerImpl.setExternalId("externalId123");
+    customerImpl.setFirstName("John");
     customerImpl.setId(1L);
     customerImpl.setLastName("Doe");
-    customerImpl.setPassword("iloveyou");
-    customerImpl.setPasswordChangeRequired(true);
-    customerImpl.setReceiveEmail(true);
-    customerImpl.setRegistered(true);
-    customerImpl.setUnencodedChallengeAnswer("secret");
-    customerImpl.setUnencodedPassword("secret");
-    customerImpl.setUsername("janedoe");
+    customerImpl.setPassword("defaultPassword");
+    customerImpl.setPasswordChangeRequired(false);
+    customerImpl.setReceiveEmail(false);
+    customerImpl.setRegistered(false);
+    customerImpl.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl.setUnencodedPassword("defaultPassword");
+    customerImpl.setUsername("defaultUsername");
 
     // Act and Assert
     assertNotEquals(customerImpl, null);
@@ -1509,26 +1429,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl = new CustomerImpl();
     customerImpl.setAuditable(auditable);
-    customerImpl.setChallengeAnswer("Challenge Answer");
+    customerImpl.setChallengeAnswer("challengeAnswer");
     customerImpl.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl.setCustomerAddresses(new ArrayList<>());
     customerImpl.setCustomerAttributes(new HashMap<>());
     customerImpl.setCustomerLocale(new LocaleImpl());
     customerImpl.setCustomerPayments(new ArrayList<>());
     customerImpl.setCustomerPhones(new ArrayList<>());
-    customerImpl.setDeactivated(true);
-    customerImpl.setEmailAddress("42 Main St");
-    customerImpl.setExternalId("42");
-    customerImpl.setFirstName("Jane");
+    customerImpl.setDeactivated(false);
+    customerImpl.setEmailAddress("defaultEmail@example.com");
+    customerImpl.setExternalId("externalId123");
+    customerImpl.setFirstName("John");
     customerImpl.setId(1L);
     customerImpl.setLastName("Doe");
-    customerImpl.setPassword("iloveyou");
-    customerImpl.setPasswordChangeRequired(true);
-    customerImpl.setReceiveEmail(true);
-    customerImpl.setRegistered(true);
-    customerImpl.setUnencodedChallengeAnswer("secret");
-    customerImpl.setUnencodedPassword("secret");
-    customerImpl.setUsername("janedoe");
+    customerImpl.setPassword("defaultPassword");
+    customerImpl.setPasswordChangeRequired(false);
+    customerImpl.setReceiveEmail(false);
+    customerImpl.setRegistered(false);
+    customerImpl.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl.setUnencodedPassword("defaultPassword");
+    customerImpl.setUsername("defaultUsername");
 
     // Act and Assert
     assertNotEquals(customerImpl, "Different type to CustomerImpl");
@@ -1601,7 +1521,7 @@ public class CustomerImplDiffblueTest {
   /**
    * Test {@link CustomerImpl#setTaxExemptionCode(String)}.
    * <ul>
-   *   <li>Then {@link CustomerImpl} (default constructor) TaxExemptionCode is {@code Exemption}.</li>
+   *   <li>Then {@link CustomerImpl} (default constructor) TaxExemptionCode is {@code TAX123}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerImpl#setTaxExemptionCode(String)}
@@ -1609,15 +1529,15 @@ public class CustomerImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"void CustomerImpl.setTaxExemptionCode(String)"})
-  public void testSetTaxExemptionCode_thenCustomerImplTaxExemptionCodeIsExemption() {
+  public void testSetTaxExemptionCode_thenCustomerImplTaxExemptionCodeIsTax123() {
     // Arrange
     CustomerImpl customerImpl2 = new CustomerImpl();
 
     // Act
-    customerImpl2.setTaxExemptionCode("Exemption");
+    customerImpl2.setTaxExemptionCode("TAX123");
 
     // Assert
-    assertEquals("Exemption", customerImpl2.getTaxExemptionCode());
+    assertEquals("TAX123", customerImpl2.getTaxExemptionCode());
     assertTrue(customerImpl2.isTaxExempt);
   }
 
@@ -1642,26 +1562,26 @@ public class CustomerImplDiffblueTest {
 
     CustomerImpl customerImpl2 = new CustomerImpl();
     customerImpl2.setAuditable(auditable);
-    customerImpl2.setChallengeAnswer("Challenge Answer");
+    customerImpl2.setChallengeAnswer("challengeAnswer");
     customerImpl2.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl2.setCustomerAddresses(new ArrayList<>());
     customerImpl2.setCustomerAttributes(new HashMap<>());
     customerImpl2.setCustomerLocale(new LocaleImpl());
     customerImpl2.setCustomerPayments(new ArrayList<>());
     customerImpl2.setCustomerPhones(new ArrayList<>());
-    customerImpl2.setDeactivated(true);
-    customerImpl2.setEmailAddress("42 Main St");
-    customerImpl2.setExternalId("42");
-    customerImpl2.setFirstName("Jane");
+    customerImpl2.setDeactivated(false);
+    customerImpl2.setEmailAddress("defaultEmail@example.com");
+    customerImpl2.setExternalId("externalId123");
+    customerImpl2.setFirstName("John");
     customerImpl2.setId(1L);
     customerImpl2.setLastName("Doe");
-    customerImpl2.setPassword("iloveyou");
-    customerImpl2.setPasswordChangeRequired(true);
-    customerImpl2.setReceiveEmail(true);
-    customerImpl2.setRegistered(true);
-    customerImpl2.setUnencodedChallengeAnswer("secret");
-    customerImpl2.setUnencodedPassword("secret");
-    customerImpl2.setUsername("janedoe");
+    customerImpl2.setPassword("defaultPassword");
+    customerImpl2.setPasswordChangeRequired(false);
+    customerImpl2.setReceiveEmail(false);
+    customerImpl2.setRegistered(false);
+    customerImpl2.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl2.setUnencodedPassword("defaultPassword");
+    customerImpl2.setUsername("defaultUsername");
 
     // Act
     customerImpl2.setTaxExemptionCode(null);

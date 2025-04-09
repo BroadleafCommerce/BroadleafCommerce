@@ -89,7 +89,7 @@ public class EmailNotificationPasswordUpdatedHandlerDiffblueTest {
 
     // Act
     emailNotificationPasswordUpdatedHandler.setPasswordResetEmailDefaultLocale(Locale.getDefault());
-    emailNotificationPasswordUpdatedHandler.setPasswordResetEmailFromAddress("42 Main St");
+    emailNotificationPasswordUpdatedHandler.setPasswordResetEmailFromAddress("example@example.com");
     HashMap<Locale, String> passwordResetEmailSubject = new HashMap<>();
     emailNotificationPasswordUpdatedHandler.setPasswordResetEmailSubject(passwordResetEmailSubject);
     HashMap<Locale, String> passwordResetEmailTemplate = new HashMap<>();
@@ -104,7 +104,7 @@ public class EmailNotificationPasswordUpdatedHandlerDiffblueTest {
         .getPasswordResetEmailTemplate();
 
     // Assert
-    assertEquals("42 Main St", actualPasswordResetEmailFromAddress);
+    assertEquals("example@example.com", actualPasswordResetEmailFromAddress);
     assertTrue(actualPasswordResetEmailSubject.isEmpty());
     assertTrue(actualPasswordResetEmailTemplate.isEmpty());
     assertSame(passwordResetEmailSubject, actualPasswordResetEmailSubject);

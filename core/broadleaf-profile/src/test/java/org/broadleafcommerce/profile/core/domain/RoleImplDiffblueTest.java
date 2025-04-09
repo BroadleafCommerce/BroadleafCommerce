@@ -45,11 +45,11 @@ public class RoleImplDiffblueTest {
     // Arrange
     RoleImpl roleImpl = new RoleImpl();
     roleImpl.setId(1L);
-    roleImpl.setRoleName("Role Name");
+    roleImpl.setRoleName("ADMIN");
 
     RoleImpl roleImpl2 = new RoleImpl();
     roleImpl2.setId(1L);
-    roleImpl2.setRoleName("Role Name");
+    roleImpl2.setRoleName("ADMIN");
 
     // Act and Assert
     assertEquals(roleImpl, roleImpl2);
@@ -77,11 +77,11 @@ public class RoleImplDiffblueTest {
     // Arrange
     RoleImpl roleImpl = new RoleImpl();
     roleImpl.setId(null);
-    roleImpl.setRoleName("Role Name");
+    roleImpl.setRoleName("ADMIN");
 
     RoleImpl roleImpl2 = new RoleImpl();
     roleImpl2.setId(1L);
-    roleImpl2.setRoleName("Role Name");
+    roleImpl2.setRoleName("ADMIN");
 
     // Act and Assert
     assertEquals(roleImpl, roleImpl2);
@@ -109,11 +109,11 @@ public class RoleImplDiffblueTest {
     // Arrange
     RoleImpl roleImpl = new RoleImpl();
     roleImpl.setId(1L);
-    roleImpl.setRoleName("Role Name");
+    roleImpl.setRoleName("ADMIN");
 
     RoleImpl roleImpl2 = new RoleImpl();
     roleImpl2.setId(null);
-    roleImpl2.setRoleName("Role Name");
+    roleImpl2.setRoleName("ADMIN");
 
     // Act and Assert
     assertEquals(roleImpl, roleImpl2);
@@ -173,7 +173,7 @@ public class RoleImplDiffblueTest {
     // Arrange
     RoleImpl roleImpl = new RoleImpl();
     roleImpl.setId(1L);
-    roleImpl.setRoleName("Role Name");
+    roleImpl.setRoleName("ADMIN");
 
     // Act and Assert
     assertEquals(roleImpl, roleImpl);
@@ -197,11 +197,11 @@ public class RoleImplDiffblueTest {
     // Arrange
     RoleImpl roleImpl = new RoleImpl();
     roleImpl.setId(2L);
-    roleImpl.setRoleName("Role Name");
+    roleImpl.setRoleName("ADMIN");
 
     RoleImpl roleImpl2 = new RoleImpl();
     roleImpl2.setId(1L);
-    roleImpl2.setRoleName("Role Name");
+    roleImpl2.setRoleName("ADMIN");
 
     // Act and Assert
     assertNotEquals(roleImpl, roleImpl2);
@@ -223,11 +223,11 @@ public class RoleImplDiffblueTest {
     // Arrange
     RoleImpl roleImpl = new RoleImpl();
     roleImpl.setId(null);
-    roleImpl.setRoleName(null);
+    roleImpl.setRoleName("Admin");
 
     RoleImpl roleImpl2 = new RoleImpl();
     roleImpl2.setId(1L);
-    roleImpl2.setRoleName("Role Name");
+    roleImpl2.setRoleName("ADMIN");
 
     // Act and Assert
     assertNotEquals(roleImpl, roleImpl2);
@@ -249,11 +249,11 @@ public class RoleImplDiffblueTest {
     // Arrange
     RoleImpl roleImpl = new RoleImpl();
     roleImpl.setId(null);
-    roleImpl.setRoleName("42");
+    roleImpl.setRoleName(null);
 
     RoleImpl roleImpl2 = new RoleImpl();
     roleImpl2.setId(1L);
-    roleImpl2.setRoleName("Role Name");
+    roleImpl2.setRoleName("ADMIN");
 
     // Act and Assert
     assertNotEquals(roleImpl, roleImpl2);
@@ -275,7 +275,7 @@ public class RoleImplDiffblueTest {
     // Arrange
     RoleImpl roleImpl = new RoleImpl();
     roleImpl.setId(1L);
-    roleImpl.setRoleName("Role Name");
+    roleImpl.setRoleName("ADMIN");
 
     // Act and Assert
     assertNotEquals(roleImpl, null);
@@ -297,7 +297,7 @@ public class RoleImplDiffblueTest {
     // Arrange
     RoleImpl roleImpl = new RoleImpl();
     roleImpl.setId(1L);
-    roleImpl.setRoleName("Role Name");
+    roleImpl.setRoleName("ADMIN");
 
     // Act and Assert
     assertNotEquals(roleImpl, "Different type to RoleImpl");
@@ -323,11 +323,11 @@ public class RoleImplDiffblueTest {
     // Arrange and Act
     RoleImpl actualRoleImpl = new RoleImpl();
     actualRoleImpl.setId(1L);
-    actualRoleImpl.setRoleName("Role Name");
+    actualRoleImpl.setRoleName("ADMIN");
     Long actualId = actualRoleImpl.getId();
 
     // Assert
-    assertEquals("Role Name", actualRoleImpl.getRoleName());
+    assertEquals("ADMIN", actualRoleImpl.getRoleName());
     assertEquals(1L, actualId.longValue());
   }
 }

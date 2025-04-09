@@ -90,20 +90,20 @@ public class CountrySubdivisionImplDiffblueTest {
   public void testGettersAndSetters() {
     // Arrange and Act
     CountrySubdivisionImpl actualCountrySubdivisionImpl = new CountrySubdivisionImpl();
-    actualCountrySubdivisionImpl.setAbbreviation("Abbreviation");
-    actualCountrySubdivisionImpl.setAlternateAbbreviation("Alternate Abbreviation");
+    actualCountrySubdivisionImpl.setAbbreviation("US-TX");
+    actualCountrySubdivisionImpl.setAlternateAbbreviation("TX");
     CountrySubdivisionCategoryImpl category = new CountrySubdivisionCategoryImpl();
     actualCountrySubdivisionImpl.setCategory(category);
     CountryImpl country = new CountryImpl();
     actualCountrySubdivisionImpl.setCountry(country);
-    actualCountrySubdivisionImpl.setName("Name");
+    actualCountrySubdivisionImpl.setName("Texas");
     String actualAbbreviation = actualCountrySubdivisionImpl.getAbbreviation();
     String actualAlternateAbbreviation = actualCountrySubdivisionImpl.getAlternateAbbreviation();
     CountrySubdivisionCategory actualCategory = actualCountrySubdivisionImpl.getCategory();
 
     // Assert
-    assertEquals("Abbreviation", actualAbbreviation);
-    assertEquals("Alternate Abbreviation", actualAlternateAbbreviation);
+    assertEquals("TX", actualAlternateAbbreviation);
+    assertEquals("US-TX", actualAbbreviation);
     assertSame(country, actualCountrySubdivisionImpl.getCountry());
     assertSame(category, actualCategory);
   }

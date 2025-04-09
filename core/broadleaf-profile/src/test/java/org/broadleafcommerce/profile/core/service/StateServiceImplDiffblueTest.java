@@ -79,10 +79,10 @@ public class StateServiceImplDiffblueTest {
     when(stateDao.findStates(Mockito.<String>any())).thenReturn(new ArrayList<>());
 
     // Act
-    List<State> actualFindStatesResult = stateServiceImpl.findStates("GB");
+    List<State> actualFindStatesResult = stateServiceImpl.findStates("US");
 
     // Assert
-    verify(stateDao).findStates(eq("GB"));
+    verify(stateDao).findStates(eq("US"));
     assertTrue(actualFindStatesResult.isEmpty());
   }
 
@@ -100,10 +100,10 @@ public class StateServiceImplDiffblueTest {
     when(stateDao.findStateByAbbreviation(Mockito.<String>any())).thenReturn(stateImpl);
 
     // Act
-    State actualFindStateByAbbreviationResult = stateServiceImpl.findStateByAbbreviation("Abbreviation");
+    State actualFindStateByAbbreviationResult = stateServiceImpl.findStateByAbbreviation("CA");
 
     // Assert
-    verify(stateDao).findStateByAbbreviation(eq("Abbreviation"));
+    verify(stateDao).findStateByAbbreviation(eq("CA"));
     assertSame(stateImpl, actualFindStateByAbbreviationResult);
   }
 

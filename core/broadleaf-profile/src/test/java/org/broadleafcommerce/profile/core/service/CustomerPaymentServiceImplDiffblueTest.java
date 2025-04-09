@@ -136,10 +136,10 @@ public class CustomerPaymentServiceImplDiffblueTest {
 
     // Act
     CustomerPayment actualReadCustomerPaymentByTokenResult = customerPaymentServiceImpl
-        .readCustomerPaymentByToken("ABC123");
+        .readCustomerPaymentByToken("sampleToken");
 
     // Assert
-    verify(customerPaymentDao).readCustomerPaymentByToken(eq("ABC123"));
+    verify(customerPaymentDao).readCustomerPaymentByToken(eq("sampleToken"));
     assertSame(customerPaymentImpl, actualReadCustomerPaymentByTokenResult);
   }
 
@@ -175,10 +175,10 @@ public class CustomerPaymentServiceImplDiffblueTest {
     doNothing().when(customerPaymentDao).deleteCustomerPaymentByToken(Mockito.<String>any());
 
     // Act
-    customerPaymentServiceImpl.deleteCustomerPaymentByToken("ABC123");
+    customerPaymentServiceImpl.deleteCustomerPaymentByToken("sampleToken");
 
     // Assert
-    verify(customerPaymentDao).deleteCustomerPaymentByToken(eq("ABC123"));
+    verify(customerPaymentDao).deleteCustomerPaymentByToken(eq("sampleToken"));
   }
 
   /**

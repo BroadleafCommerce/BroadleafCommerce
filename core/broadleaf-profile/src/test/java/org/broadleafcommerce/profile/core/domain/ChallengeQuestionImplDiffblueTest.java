@@ -68,11 +68,11 @@ public class ChallengeQuestionImplDiffblueTest {
     // Arrange
     ChallengeQuestionImpl challengeQuestionImpl = new ChallengeQuestionImpl();
     challengeQuestionImpl.setId(1L);
-    challengeQuestionImpl.setQuestion("Question");
+    challengeQuestionImpl.setQuestion("What is your favorite color?");
 
     ChallengeQuestionImpl challengeQuestionImpl2 = new ChallengeQuestionImpl();
     challengeQuestionImpl2.setId(1L);
-    challengeQuestionImpl2.setQuestion("Question");
+    challengeQuestionImpl2.setQuestion("What is your favorite color?");
 
     // Act and Assert
     assertEquals(challengeQuestionImpl, challengeQuestionImpl2);
@@ -100,11 +100,11 @@ public class ChallengeQuestionImplDiffblueTest {
     // Arrange
     ChallengeQuestionImpl challengeQuestionImpl = new ChallengeQuestionImpl();
     challengeQuestionImpl.setId(null);
-    challengeQuestionImpl.setQuestion("Question");
+    challengeQuestionImpl.setQuestion("What is your favorite color?");
 
     ChallengeQuestionImpl challengeQuestionImpl2 = new ChallengeQuestionImpl();
     challengeQuestionImpl2.setId(1L);
-    challengeQuestionImpl2.setQuestion("Question");
+    challengeQuestionImpl2.setQuestion("What is your favorite color?");
 
     // Act and Assert
     assertEquals(challengeQuestionImpl, challengeQuestionImpl2);
@@ -132,11 +132,11 @@ public class ChallengeQuestionImplDiffblueTest {
     // Arrange
     ChallengeQuestionImpl challengeQuestionImpl = new ChallengeQuestionImpl();
     challengeQuestionImpl.setId(1L);
-    challengeQuestionImpl.setQuestion("Question");
+    challengeQuestionImpl.setQuestion("What is your favorite color?");
 
     ChallengeQuestionImpl challengeQuestionImpl2 = new ChallengeQuestionImpl();
     challengeQuestionImpl2.setId(null);
-    challengeQuestionImpl2.setQuestion("Question");
+    challengeQuestionImpl2.setQuestion("What is your favorite color?");
 
     // Act and Assert
     assertEquals(challengeQuestionImpl, challengeQuestionImpl2);
@@ -196,7 +196,7 @@ public class ChallengeQuestionImplDiffblueTest {
     // Arrange
     ChallengeQuestionImpl challengeQuestionImpl = new ChallengeQuestionImpl();
     challengeQuestionImpl.setId(1L);
-    challengeQuestionImpl.setQuestion("Question");
+    challengeQuestionImpl.setQuestion("What is your favorite color?");
 
     // Act and Assert
     assertEquals(challengeQuestionImpl, challengeQuestionImpl);
@@ -220,11 +220,11 @@ public class ChallengeQuestionImplDiffblueTest {
     // Arrange
     ChallengeQuestionImpl challengeQuestionImpl = new ChallengeQuestionImpl();
     challengeQuestionImpl.setId(2L);
-    challengeQuestionImpl.setQuestion("Question");
+    challengeQuestionImpl.setQuestion("What is your favorite color?");
 
     ChallengeQuestionImpl challengeQuestionImpl2 = new ChallengeQuestionImpl();
     challengeQuestionImpl2.setId(1L);
-    challengeQuestionImpl2.setQuestion("Question");
+    challengeQuestionImpl2.setQuestion("What is your favorite color?");
 
     // Act and Assert
     assertNotEquals(challengeQuestionImpl, challengeQuestionImpl2);
@@ -246,11 +246,11 @@ public class ChallengeQuestionImplDiffblueTest {
     // Arrange
     ChallengeQuestionImpl challengeQuestionImpl = new ChallengeQuestionImpl();
     challengeQuestionImpl.setId(null);
-    challengeQuestionImpl.setQuestion(null);
+    challengeQuestionImpl.setQuestion("Question");
 
     ChallengeQuestionImpl challengeQuestionImpl2 = new ChallengeQuestionImpl();
     challengeQuestionImpl2.setId(1L);
-    challengeQuestionImpl2.setQuestion("Question");
+    challengeQuestionImpl2.setQuestion("What is your favorite color?");
 
     // Act and Assert
     assertNotEquals(challengeQuestionImpl, challengeQuestionImpl2);
@@ -272,11 +272,11 @@ public class ChallengeQuestionImplDiffblueTest {
     // Arrange
     ChallengeQuestionImpl challengeQuestionImpl = new ChallengeQuestionImpl();
     challengeQuestionImpl.setId(null);
-    challengeQuestionImpl.setQuestion("42");
+    challengeQuestionImpl.setQuestion(null);
 
     ChallengeQuestionImpl challengeQuestionImpl2 = new ChallengeQuestionImpl();
     challengeQuestionImpl2.setId(1L);
-    challengeQuestionImpl2.setQuestion("Question");
+    challengeQuestionImpl2.setQuestion("What is your favorite color?");
 
     // Act and Assert
     assertNotEquals(challengeQuestionImpl, challengeQuestionImpl2);
@@ -298,7 +298,7 @@ public class ChallengeQuestionImplDiffblueTest {
     // Arrange
     ChallengeQuestionImpl challengeQuestionImpl = new ChallengeQuestionImpl();
     challengeQuestionImpl.setId(1L);
-    challengeQuestionImpl.setQuestion("Question");
+    challengeQuestionImpl.setQuestion("What is your favorite color?");
 
     // Act and Assert
     assertNotEquals(challengeQuestionImpl, null);
@@ -320,7 +320,7 @@ public class ChallengeQuestionImplDiffblueTest {
     // Arrange
     ChallengeQuestionImpl challengeQuestionImpl = new ChallengeQuestionImpl();
     challengeQuestionImpl.setId(1L);
-    challengeQuestionImpl.setQuestion("Question");
+    challengeQuestionImpl.setQuestion("What is your favorite color?");
 
     // Act and Assert
     assertNotEquals(challengeQuestionImpl, "Different type to ChallengeQuestionImpl");
@@ -347,11 +347,11 @@ public class ChallengeQuestionImplDiffblueTest {
     // Arrange and Act
     ChallengeQuestionImpl actualChallengeQuestionImpl = new ChallengeQuestionImpl();
     actualChallengeQuestionImpl.setId(1L);
-    actualChallengeQuestionImpl.setQuestion("Question");
+    actualChallengeQuestionImpl.setQuestion("What is your favorite color?");
     Long actualId = actualChallengeQuestionImpl.getId();
 
     // Assert
-    assertEquals("Question", actualChallengeQuestionImpl.toString());
+    assertEquals("What is your favorite color?", actualChallengeQuestionImpl.toString());
     assertEquals(1L, actualId.longValue());
   }
 }

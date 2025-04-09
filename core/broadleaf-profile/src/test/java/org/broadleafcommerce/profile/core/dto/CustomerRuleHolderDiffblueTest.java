@@ -41,10 +41,10 @@ public class CustomerRuleHolderDiffblueTest {
   public void testGettersAndSetters() {
     // Arrange and Act
     CustomerRuleHolder actualCustomerRuleHolder = new CustomerRuleHolder();
-    actualCustomerRuleHolder.setCustomerRule("Customer Rule");
+    actualCustomerRuleHolder.setCustomerRule("defaultRule");
 
     // Assert
-    assertEquals("Customer Rule", actualCustomerRuleHolder.getCustomerRule());
+    assertEquals("defaultRule", actualCustomerRuleHolder.getCustomerRule());
   }
 
   /**
@@ -67,9 +67,9 @@ public class CustomerRuleHolderDiffblueTest {
   public void testGettersAndSetters_whenCustomerRule() {
     // Arrange and Act
     CustomerRuleHolder actualCustomerRuleHolder = new CustomerRuleHolder("Customer Rule");
-    actualCustomerRuleHolder.setCustomerRule("Customer Rule");
+    actualCustomerRuleHolder.setCustomerRule("defaultRule");
 
     // Assert
-    assertEquals("Customer Rule", actualCustomerRuleHolder.getCustomerRule());
+    assertEquals("defaultRule", actualCustomerRuleHolder.getCustomerRule());
   }
 }

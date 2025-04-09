@@ -97,14 +97,14 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(1L);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("defaultValue");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -133,14 +133,14 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(null);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("defaultValue");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -169,14 +169,14 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(1L);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("defaultValue");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(null);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -205,14 +205,14 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(null);
     customerAttributeImpl.setId(null);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("defaultValue");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(null);
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -242,13 +242,13 @@ public class CustomerAttributeImplDiffblueTest {
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(null);
     customerAttributeImpl.setName(null);
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setValue("defaultValue");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
     customerAttributeImpl2.setName(null);
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -277,13 +277,13 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(null);
-    customerAttributeImpl.setName("Name");
+    customerAttributeImpl.setName("defaultName");
     customerAttributeImpl.setValue(null);
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
+    customerAttributeImpl2.setName("defaultName");
     customerAttributeImpl2.setValue(null);
 
     // Act and Assert
@@ -313,8 +313,8 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(1L);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("defaultValue");
 
     // Act and Assert
     assertEquals(customerAttributeImpl, customerAttributeImpl);
@@ -339,14 +339,14 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(2L);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("defaultValue");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertNotEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -369,14 +369,14 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(null);
     customerAttributeImpl.setId(null);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("defaultValue");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertNotEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -399,14 +399,14 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(mock(CustomerImpl.class));
     customerAttributeImpl.setId(null);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("defaultValue");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertNotEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -429,14 +429,14 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(null);
-    customerAttributeImpl.setName("42");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultValue");
+    customerAttributeImpl.setValue("defaultValue");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertNotEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -460,13 +460,13 @@ public class CustomerAttributeImplDiffblueTest {
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(null);
     customerAttributeImpl.setName(null);
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setValue("defaultValue");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertNotEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -489,14 +489,14 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(null);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("Name");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("42");
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertNotEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -519,14 +519,14 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(null);
-    customerAttributeImpl.setName("Name");
+    customerAttributeImpl.setName("defaultName");
     customerAttributeImpl.setValue(null);
 
     CustomerAttributeImpl customerAttributeImpl2 = new CustomerAttributeImpl();
     customerAttributeImpl2.setCustomer(new CustomerImpl());
     customerAttributeImpl2.setId(1L);
-    customerAttributeImpl2.setName("Name");
-    customerAttributeImpl2.setValue("42");
+    customerAttributeImpl2.setName("defaultName");
+    customerAttributeImpl2.setValue("defaultValue");
 
     // Act and Assert
     assertNotEquals(customerAttributeImpl, customerAttributeImpl2);
@@ -549,8 +549,8 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(1L);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("defaultValue");
 
     // Act and Assert
     assertNotEquals(customerAttributeImpl, null);
@@ -573,8 +573,8 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerAttributeImpl customerAttributeImpl = new CustomerAttributeImpl();
     customerAttributeImpl.setCustomer(new CustomerImpl());
     customerAttributeImpl.setId(1L);
-    customerAttributeImpl.setName("Name");
-    customerAttributeImpl.setValue("42");
+    customerAttributeImpl.setName("defaultName");
+    customerAttributeImpl.setValue("defaultValue");
 
     // Act and Assert
     assertNotEquals(customerAttributeImpl, "Different type to CustomerAttributeImpl");
@@ -671,13 +671,13 @@ public class CustomerAttributeImplDiffblueTest {
     CustomerImpl customer = new CustomerImpl();
     actualCustomerAttributeImpl.setCustomer(customer);
     actualCustomerAttributeImpl.setId(1L);
-    actualCustomerAttributeImpl.setName("Name");
-    actualCustomerAttributeImpl.setValue("42");
+    actualCustomerAttributeImpl.setName("defaultName");
+    actualCustomerAttributeImpl.setValue("defaultValue");
     Customer actualCustomer = actualCustomerAttributeImpl.getCustomer();
     Long actualId = actualCustomerAttributeImpl.getId();
 
     // Assert
-    assertEquals("42", actualCustomerAttributeImpl.toString());
+    assertEquals("defaultValue", actualCustomerAttributeImpl.toString());
     assertEquals(1L, actualId.longValue());
     assertSame(customer, actualCustomer);
   }

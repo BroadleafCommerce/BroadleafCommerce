@@ -49,14 +49,14 @@ public class CustomerUserDetailsDiffblueTest {
     authorities.add(new SimpleGrantedAuthority("Role"));
 
     // Act
-    CustomerUserDetails actualCustomerUserDetails = new CustomerUserDetails(1L, "janedoe", "iloveyou", authorities);
+    CustomerUserDetails actualCustomerUserDetails = new CustomerUserDetails(1L, "testUser", "password123", authorities);
 
     // Assert
     Collection<GrantedAuthority> authorities2 = actualCustomerUserDetails.getAuthorities();
     assertEquals(1, authorities2.size());
     assertTrue(authorities2 instanceof Set);
-    assertEquals("iloveyou", actualCustomerUserDetails.getPassword());
-    assertEquals("janedoe", actualCustomerUserDetails.getUsername());
+    assertEquals("password123", actualCustomerUserDetails.getPassword());
+    assertEquals("testUser", actualCustomerUserDetails.getUsername());
     assertEquals(1L, actualCustomerUserDetails.getId().longValue());
     assertTrue(actualCustomerUserDetails.isAccountNonExpired());
     assertTrue(actualCustomerUserDetails.isAccountNonLocked());
@@ -83,15 +83,15 @@ public class CustomerUserDetailsDiffblueTest {
     authorities.add(new SimpleGrantedAuthority("Role"));
 
     // Act
-    CustomerUserDetails actualCustomerUserDetails = new CustomerUserDetails(1L, "janedoe", "iloveyou", true, true, true,
-        true, authorities);
+    CustomerUserDetails actualCustomerUserDetails = new CustomerUserDetails(1L, "testUser", "password123", true, true,
+        true, true, authorities);
 
     // Assert
     Collection<GrantedAuthority> authorities2 = actualCustomerUserDetails.getAuthorities();
     assertEquals(1, authorities2.size());
     assertTrue(authorities2 instanceof Set);
-    assertEquals("iloveyou", actualCustomerUserDetails.getPassword());
-    assertEquals("janedoe", actualCustomerUserDetails.getUsername());
+    assertEquals("password123", actualCustomerUserDetails.getPassword());
+    assertEquals("testUser", actualCustomerUserDetails.getUsername());
     assertEquals(1L, actualCustomerUserDetails.getId().longValue());
     assertTrue(actualCustomerUserDetails.isAccountNonExpired());
     assertTrue(actualCustomerUserDetails.isAccountNonLocked());
@@ -113,14 +113,14 @@ public class CustomerUserDetailsDiffblueTest {
   @MethodsUnderTest({"void CustomerUserDetails.<init>(Long, String, String, Collection)"})
   public void testNewCustomerUserDetails_whenArrayList_thenReturnAuthoritiesEmpty() {
     // Arrange and Act
-    CustomerUserDetails actualCustomerUserDetails = new CustomerUserDetails(1L, "janedoe", "iloveyou",
+    CustomerUserDetails actualCustomerUserDetails = new CustomerUserDetails(1L, "testUser", "password123",
         new ArrayList<>());
 
     // Assert
     Collection<GrantedAuthority> authorities = actualCustomerUserDetails.getAuthorities();
     assertTrue(authorities instanceof Set);
-    assertEquals("iloveyou", actualCustomerUserDetails.getPassword());
-    assertEquals("janedoe", actualCustomerUserDetails.getUsername());
+    assertEquals("password123", actualCustomerUserDetails.getPassword());
+    assertEquals("testUser", actualCustomerUserDetails.getUsername());
     assertEquals(1L, actualCustomerUserDetails.getId().longValue());
     assertTrue(authorities.isEmpty());
     assertTrue(actualCustomerUserDetails.isAccountNonExpired());
@@ -144,14 +144,14 @@ public class CustomerUserDetailsDiffblueTest {
       "void CustomerUserDetails.<init>(Long, String, String, boolean, boolean, boolean, boolean, Collection)"})
   public void testNewCustomerUserDetails_whenArrayList_thenReturnAuthoritiesEmpty2() {
     // Arrange and Act
-    CustomerUserDetails actualCustomerUserDetails = new CustomerUserDetails(1L, "janedoe", "iloveyou", true, true, true,
-        true, new ArrayList<>());
+    CustomerUserDetails actualCustomerUserDetails = new CustomerUserDetails(1L, "testUser", "password123", true, true,
+        true, true, new ArrayList<>());
 
     // Assert
     Collection<GrantedAuthority> authorities = actualCustomerUserDetails.getAuthorities();
     assertTrue(authorities instanceof Set);
-    assertEquals("iloveyou", actualCustomerUserDetails.getPassword());
-    assertEquals("janedoe", actualCustomerUserDetails.getUsername());
+    assertEquals("password123", actualCustomerUserDetails.getPassword());
+    assertEquals("testUser", actualCustomerUserDetails.getUsername());
     assertEquals(1L, actualCustomerUserDetails.getId().longValue());
     assertTrue(authorities.isEmpty());
     assertTrue(actualCustomerUserDetails.isAccountNonExpired());
@@ -170,7 +170,7 @@ public class CustomerUserDetailsDiffblueTest {
   @MethodsUnderTest({"CustomerUserDetails CustomerUserDetails.withId(Long)"})
   public void testWithId() {
     // Arrange
-    CustomerUserDetails customerUserDetails = new CustomerUserDetails(1L, "janedoe", "iloveyou", new ArrayList<>());
+    CustomerUserDetails customerUserDetails = new CustomerUserDetails(1L, "testUser", "password123", new ArrayList<>());
 
     // Act and Assert
     assertSame(customerUserDetails, customerUserDetails.withId(1L));
@@ -190,7 +190,7 @@ public class CustomerUserDetailsDiffblueTest {
   @MethodsUnderTest({"Long CustomerUserDetails.getId()", "void CustomerUserDetails.setId(Long)"})
   public void testGettersAndSetters() {
     // Arrange
-    CustomerUserDetails customerUserDetails = new CustomerUserDetails(1L, "janedoe", "iloveyou", new ArrayList<>());
+    CustomerUserDetails customerUserDetails = new CustomerUserDetails(1L, "testUser", "password123", new ArrayList<>());
 
     // Act
     customerUserDetails.setId(1L);

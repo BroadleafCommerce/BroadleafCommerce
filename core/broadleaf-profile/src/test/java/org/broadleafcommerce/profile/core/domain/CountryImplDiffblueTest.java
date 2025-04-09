@@ -67,12 +67,12 @@ public class CountryImplDiffblueTest {
   public void testEqualsAndHashCode_whenOtherIsEqual_thenReturnEqual() {
     // Arrange
     CountryImpl countryImpl = new CountryImpl();
-    countryImpl.setAbbreviation("Abbreviation");
-    countryImpl.setName("Name");
+    countryImpl.setAbbreviation("US");
+    countryImpl.setName("United States");
 
     CountryImpl countryImpl2 = new CountryImpl();
-    countryImpl2.setAbbreviation("Abbreviation");
-    countryImpl2.setName("Name");
+    countryImpl2.setAbbreviation("US");
+    countryImpl2.setName("United States");
 
     // Act and Assert
     assertEquals(countryImpl, countryImpl2);
@@ -100,11 +100,11 @@ public class CountryImplDiffblueTest {
     // Arrange
     CountryImpl countryImpl = new CountryImpl();
     countryImpl.setAbbreviation(null);
-    countryImpl.setName("Name");
+    countryImpl.setName("United States");
 
     CountryImpl countryImpl2 = new CountryImpl();
     countryImpl2.setAbbreviation(null);
-    countryImpl2.setName("Name");
+    countryImpl2.setName("United States");
 
     // Act and Assert
     assertEquals(countryImpl, countryImpl2);
@@ -131,11 +131,11 @@ public class CountryImplDiffblueTest {
   public void testEqualsAndHashCode_whenOtherIsEqual_thenReturnEqual3() {
     // Arrange
     CountryImpl countryImpl = new CountryImpl();
-    countryImpl.setAbbreviation("Abbreviation");
+    countryImpl.setAbbreviation("US");
     countryImpl.setName(null);
 
     CountryImpl countryImpl2 = new CountryImpl();
-    countryImpl2.setAbbreviation("Abbreviation");
+    countryImpl2.setAbbreviation("US");
     countryImpl2.setName(null);
 
     // Act and Assert
@@ -163,8 +163,8 @@ public class CountryImplDiffblueTest {
   public void testEqualsAndHashCode_whenOtherIsSame_thenReturnEqual() {
     // Arrange
     CountryImpl countryImpl = new CountryImpl();
-    countryImpl.setAbbreviation("Abbreviation");
-    countryImpl.setName("Name");
+    countryImpl.setAbbreviation("US");
+    countryImpl.setName("United States");
 
     // Act and Assert
     assertEquals(countryImpl, countryImpl);
@@ -187,12 +187,12 @@ public class CountryImplDiffblueTest {
   public void testEquals_whenOtherIsDifferent_thenReturnNotEqual() {
     // Arrange
     CountryImpl countryImpl = new CountryImpl();
-    countryImpl.setAbbreviation("Name");
-    countryImpl.setName("Name");
+    countryImpl.setAbbreviation("GB");
+    countryImpl.setName("United States");
 
     CountryImpl countryImpl2 = new CountryImpl();
-    countryImpl2.setAbbreviation("Abbreviation");
-    countryImpl2.setName("Name");
+    countryImpl2.setAbbreviation("US");
+    countryImpl2.setName("United States");
 
     // Act and Assert
     assertNotEquals(countryImpl, countryImpl2);
@@ -214,11 +214,11 @@ public class CountryImplDiffblueTest {
     // Arrange
     CountryImpl countryImpl = new CountryImpl();
     countryImpl.setAbbreviation(null);
-    countryImpl.setName("Name");
+    countryImpl.setName("United States");
 
     CountryImpl countryImpl2 = new CountryImpl();
-    countryImpl2.setAbbreviation("Abbreviation");
-    countryImpl2.setName("Name");
+    countryImpl2.setAbbreviation("US");
+    countryImpl2.setName("United States");
 
     // Act and Assert
     assertNotEquals(countryImpl, countryImpl2);
@@ -239,12 +239,12 @@ public class CountryImplDiffblueTest {
   public void testEquals_whenOtherIsDifferent_thenReturnNotEqual3() {
     // Arrange
     CountryImpl countryImpl = new CountryImpl();
-    countryImpl.setAbbreviation("Abbreviation");
-    countryImpl.setName("Abbreviation");
+    countryImpl.setAbbreviation("US");
+    countryImpl.setName("United Kingdom");
 
     CountryImpl countryImpl2 = new CountryImpl();
-    countryImpl2.setAbbreviation("Abbreviation");
-    countryImpl2.setName("Name");
+    countryImpl2.setAbbreviation("US");
+    countryImpl2.setName("United States");
 
     // Act and Assert
     assertNotEquals(countryImpl, countryImpl2);
@@ -265,12 +265,12 @@ public class CountryImplDiffblueTest {
   public void testEquals_whenOtherIsDifferent_thenReturnNotEqual4() {
     // Arrange
     CountryImpl countryImpl = new CountryImpl();
-    countryImpl.setAbbreviation("Abbreviation");
+    countryImpl.setAbbreviation("US");
     countryImpl.setName(null);
 
     CountryImpl countryImpl2 = new CountryImpl();
-    countryImpl2.setAbbreviation("Abbreviation");
-    countryImpl2.setName("Name");
+    countryImpl2.setAbbreviation("US");
+    countryImpl2.setName("United States");
 
     // Act and Assert
     assertNotEquals(countryImpl, countryImpl2);
@@ -291,8 +291,8 @@ public class CountryImplDiffblueTest {
   public void testEquals_whenOtherIsNull_thenReturnNotEqual() {
     // Arrange
     CountryImpl countryImpl = new CountryImpl();
-    countryImpl.setAbbreviation("Abbreviation");
-    countryImpl.setName("Name");
+    countryImpl.setAbbreviation("US");
+    countryImpl.setName("United States");
 
     // Act and Assert
     assertNotEquals(countryImpl, null);
@@ -313,8 +313,8 @@ public class CountryImplDiffblueTest {
   public void testEquals_whenOtherIsWrongType_thenReturnNotEqual() {
     // Arrange
     CountryImpl countryImpl = new CountryImpl();
-    countryImpl.setAbbreviation("Abbreviation");
-    countryImpl.setName("Name");
+    countryImpl.setAbbreviation("US");
+    countryImpl.setName("United States");
 
     // Act and Assert
     assertNotEquals(countryImpl, "Different type to CountryImpl");
@@ -351,10 +351,10 @@ public class CountryImplDiffblueTest {
   public void testGettersAndSetters() {
     // Arrange and Act
     CountryImpl actualCountryImpl = new CountryImpl();
-    actualCountryImpl.setAbbreviation("Abbreviation");
-    actualCountryImpl.setName("Name");
+    actualCountryImpl.setAbbreviation("US");
+    actualCountryImpl.setName("United States");
 
     // Assert
-    assertEquals("Abbreviation", actualCountryImpl.getAbbreviation());
+    assertEquals("US", actualCountryImpl.getAbbreviation());
   }
 }

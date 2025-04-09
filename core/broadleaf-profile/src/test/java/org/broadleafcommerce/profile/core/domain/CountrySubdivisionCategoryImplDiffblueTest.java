@@ -79,7 +79,7 @@ public class CountrySubdivisionCategoryImplDiffblueTest {
     // Arrange and Act
     CountrySubdivisionCategoryImpl actualCountrySubdivisionCategoryImpl = new CountrySubdivisionCategoryImpl();
     actualCountrySubdivisionCategoryImpl.setId(1L);
-    actualCountrySubdivisionCategoryImpl.setName("Name");
+    actualCountrySubdivisionCategoryImpl.setName("Texas");
 
     // Assert
     assertEquals(1L, actualCountrySubdivisionCategoryImpl.getId().longValue());

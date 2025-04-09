@@ -53,12 +53,12 @@ public class PhoneDaoImplDiffblueTest {
   public void testCreate() {
     // Arrange
     PhoneImpl phoneImpl = new PhoneImpl();
-    phoneImpl.setActive(true);
-    phoneImpl.setCountryCode("GB");
+    phoneImpl.setActive(false);
+    phoneImpl.setCountryCode("1");
     phoneImpl.setDefault(true);
-    phoneImpl.setExtension("Extension");
+    phoneImpl.setExtension("123");
     phoneImpl.setId(1L);
-    phoneImpl.setPhoneNumber("6625550144");
+    phoneImpl.setPhoneNumber("1234567890");
     when(entityConfiguration.createEntityInstance(Mockito.<String>any())).thenReturn(phoneImpl);
 
     // Act

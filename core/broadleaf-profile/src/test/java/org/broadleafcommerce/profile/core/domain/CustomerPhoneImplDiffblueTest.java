@@ -71,13 +71,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(1L);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -107,13 +107,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(null);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -143,13 +143,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(1L);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(null);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -179,13 +179,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(null);
     customerPhoneImpl.setId(null);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(null);
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -215,13 +215,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(null);
     customerPhoneImpl.setPhone(null);
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(null);
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -287,7 +287,7 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(1L);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertEquals(customerPhoneImpl, customerPhoneImpl);
@@ -313,13 +313,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(2L);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertNotEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -343,13 +343,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(null);
     customerPhoneImpl.setId(null);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertNotEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -373,13 +373,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(mock(CustomerImpl.class));
     customerPhoneImpl.setId(null);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertNotEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -403,13 +403,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(null);
     customerPhoneImpl.setPhone(null);
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertNotEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -433,13 +433,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(null);
     customerPhoneImpl.setPhone(mock(PhoneImpl.class));
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertNotEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -463,13 +463,13 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(null);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("8605550118");
+    customerPhoneImpl.setPhoneName("Home");
 
     CustomerPhoneImpl customerPhoneImpl2 = new CustomerPhoneImpl();
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertNotEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -499,7 +499,7 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl2.setCustomer(new CustomerImpl());
     customerPhoneImpl2.setId(1L);
     customerPhoneImpl2.setPhone(new PhoneImpl());
-    customerPhoneImpl2.setPhoneName("6625550144");
+    customerPhoneImpl2.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertNotEquals(customerPhoneImpl, customerPhoneImpl2);
@@ -523,7 +523,7 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(1L);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertNotEquals(customerPhoneImpl, null);
@@ -547,7 +547,7 @@ public class CustomerPhoneImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(1L);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
 
     // Act and Assert
     assertNotEquals(customerPhoneImpl, "Different type to CustomerPhoneImpl");
@@ -645,13 +645,13 @@ public class CustomerPhoneImplDiffblueTest {
     actualCustomerPhoneImpl.setId(1L);
     PhoneImpl phone = new PhoneImpl();
     actualCustomerPhoneImpl.setPhone(phone);
-    actualCustomerPhoneImpl.setPhoneName("6625550144");
+    actualCustomerPhoneImpl.setPhoneName("Sample Phone Name");
     Customer actualCustomer = actualCustomerPhoneImpl.getCustomer();
     Long actualId = actualCustomerPhoneImpl.getId();
     Phone actualPhone = actualCustomerPhoneImpl.getPhone();
 
     // Assert
-    assertEquals("6625550144", actualCustomerPhoneImpl.getPhoneName());
+    assertEquals("Sample Phone Name", actualCustomerPhoneImpl.getPhoneName());
     assertEquals(1L, actualId.longValue());
     assertSame(customer, actualCustomer);
     assertSame(phone, actualPhone);

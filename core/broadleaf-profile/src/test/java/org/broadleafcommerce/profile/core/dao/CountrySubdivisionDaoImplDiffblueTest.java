@@ -78,11 +78,11 @@ public class CountrySubdivisionDaoImplDiffblueTest {
   public void testCreate_thenReturnCountrySubdivisionImpl() {
     // Arrange
     CountrySubdivisionImpl countrySubdivisionImpl = new CountrySubdivisionImpl();
-    countrySubdivisionImpl.setAbbreviation("Abbreviation");
-    countrySubdivisionImpl.setAlternateAbbreviation("Alternate Abbreviation");
+    countrySubdivisionImpl.setAbbreviation("US-TX");
+    countrySubdivisionImpl.setAlternateAbbreviation("TX");
     countrySubdivisionImpl.setCategory(new CountrySubdivisionCategoryImpl());
     countrySubdivisionImpl.setCountry(new CountryImpl());
-    countrySubdivisionImpl.setName("Name");
+    countrySubdivisionImpl.setName("Texas");
     when(entityConfiguration.createEntityInstance(Mockito.<String>any())).thenReturn(countrySubdivisionImpl);
 
     // Act

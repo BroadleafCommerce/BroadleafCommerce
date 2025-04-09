@@ -245,7 +245,7 @@ public class CustomerPaymentImplDiffblueTest {
     actualCustomerPaymentImpl.setCustomer(customer);
     actualCustomerPaymentImpl.setId(1L);
     actualCustomerPaymentImpl.setIsDefault(true);
-    actualCustomerPaymentImpl.setPaymentToken("ABC123");
+    actualCustomerPaymentImpl.setPaymentToken("sampleToken");
     Map<String, String> actualAdditionalFields = actualCustomerPaymentImpl.getAdditionalFields();
     Address actualBillingAddress = actualCustomerPaymentImpl.getBillingAddress();
     Customer actualCustomer = actualCustomerPaymentImpl.getCustomer();
@@ -254,7 +254,7 @@ public class CustomerPaymentImplDiffblueTest {
     boolean actualIsDefaultResult = actualCustomerPaymentImpl.isDefault();
 
     // Assert
-    assertEquals("ABC123", actualPaymentToken);
+    assertEquals("sampleToken", actualPaymentToken);
     assertEquals(1L, actualId.longValue());
     assertTrue(actualAdditionalFields.isEmpty());
     assertTrue(actualIsDefaultResult);

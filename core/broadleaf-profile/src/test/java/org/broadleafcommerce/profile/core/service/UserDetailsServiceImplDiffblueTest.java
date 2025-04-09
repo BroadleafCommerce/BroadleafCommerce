@@ -76,8 +76,8 @@ public class UserDetailsServiceImplDiffblueTest {
         .thenThrow(new UsernameNotFoundException("ROLE_USER"));
 
     // Act and Assert
-    assertThrows(UsernameNotFoundException.class, () -> userDetailsServiceImpl.loadUserByUsername("janedoe"));
-    verify(customerService).readCustomerByUsername(eq("janedoe"), eq(false));
+    assertThrows(UsernameNotFoundException.class, () -> userDetailsServiceImpl.loadUserByUsername("testUser"));
+    verify(customerService).readCustomerByUsername(eq("testUser"), eq(false));
     verify(roleService).findCustomerRolesByCustomerId(isNull());
   }
 
@@ -96,10 +96,10 @@ public class UserDetailsServiceImplDiffblueTest {
       throws DataAccessException, UsernameNotFoundException {
     // Arrange
     CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.isDeactivated()).thenReturn(true);
-    when(customerImpl.isPasswordChangeRequired()).thenReturn(true);
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.isPasswordChangeRequired()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getPassword()).thenReturn("iloveyou");
+    when(customerImpl.getPassword()).thenReturn("defaultPassword");
     when(customerService.readCustomerByUsername(Mockito.<String>any(), Mockito.<Boolean>any()))
         .thenReturn(customerImpl);
     CustomerRoleImpl customerRoleImpl = mock(CustomerRoleImpl.class);
@@ -110,7 +110,7 @@ public class UserDetailsServiceImplDiffblueTest {
     when(roleService.findCustomerRolesByCustomerId(Mockito.<Long>any())).thenReturn(customerRoleList);
 
     // Act
-    UserDetails actualLoadUserByUsernameResult = userDetailsServiceImpl.loadUserByUsername("janedoe");
+    UserDetails actualLoadUserByUsernameResult = userDetailsServiceImpl.loadUserByUsername("testUser");
 
     // Assert
     verify(customerImpl, atLeast(1)).getId();
@@ -118,19 +118,19 @@ public class UserDetailsServiceImplDiffblueTest {
     verify(customerImpl).isDeactivated();
     verify(customerImpl).isPasswordChangeRequired();
     verify(customerRoleImpl, atLeast(1)).getRoleName();
-    verify(customerService).readCustomerByUsername(eq("janedoe"), eq(false));
+    verify(customerService).readCustomerByUsername(eq("testUser"), eq(false));
     verify(roleService).findCustomerRolesByCustomerId(eq(1L));
     Collection<? extends GrantedAuthority> authorities = actualLoadUserByUsernameResult.getAuthorities();
     assertEquals(1, authorities.size());
     assertTrue(authorities instanceof Set);
     assertTrue(actualLoadUserByUsernameResult instanceof CustomerUserDetails);
-    assertEquals("iloveyou", actualLoadUserByUsernameResult.getPassword());
-    assertEquals("janedoe", actualLoadUserByUsernameResult.getUsername());
+    assertEquals("defaultPassword", actualLoadUserByUsernameResult.getPassword());
+    assertEquals("testUser", actualLoadUserByUsernameResult.getUsername());
     assertEquals(1L, ((CustomerUserDetails) actualLoadUserByUsernameResult).getId().longValue());
-    assertFalse(actualLoadUserByUsernameResult.isCredentialsNonExpired());
-    assertFalse(actualLoadUserByUsernameResult.isEnabled());
     assertTrue(actualLoadUserByUsernameResult.isAccountNonExpired());
     assertTrue(actualLoadUserByUsernameResult.isAccountNonLocked());
+    assertTrue(actualLoadUserByUsernameResult.isCredentialsNonExpired());
+    assertTrue(actualLoadUserByUsernameResult.isEnabled());
   }
 
   /**
@@ -150,8 +150,8 @@ public class UserDetailsServiceImplDiffblueTest {
     when(customerService.readCustomerByUsername(Mockito.<String>any(), Mockito.<Boolean>any())).thenReturn(null);
 
     // Act and Assert
-    assertThrows(UsernameNotFoundException.class, () -> userDetailsServiceImpl.loadUserByUsername("janedoe"));
-    verify(customerService).readCustomerByUsername(eq("janedoe"), eq(false));
+    assertThrows(UsernameNotFoundException.class, () -> userDetailsServiceImpl.loadUserByUsername("testUser"));
+    verify(customerService).readCustomerByUsername(eq("testUser"), eq(false));
   }
 
   /**
@@ -169,35 +169,35 @@ public class UserDetailsServiceImplDiffblueTest {
       throws DataAccessException, UsernameNotFoundException {
     // Arrange
     CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.isDeactivated()).thenReturn(true);
-    when(customerImpl.isPasswordChangeRequired()).thenReturn(true);
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.isPasswordChangeRequired()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getPassword()).thenReturn("iloveyou");
+    when(customerImpl.getPassword()).thenReturn("defaultPassword");
     when(customerService.readCustomerByUsername(Mockito.<String>any(), Mockito.<Boolean>any()))
         .thenReturn(customerImpl);
     when(roleService.findCustomerRolesByCustomerId(Mockito.<Long>any())).thenReturn(new ArrayList<>());
 
     // Act
-    UserDetails actualLoadUserByUsernameResult = userDetailsServiceImpl.loadUserByUsername("janedoe");
+    UserDetails actualLoadUserByUsernameResult = userDetailsServiceImpl.loadUserByUsername("testUser");
 
     // Assert
     verify(customerImpl, atLeast(1)).getId();
     verify(customerImpl).getPassword();
     verify(customerImpl).isDeactivated();
     verify(customerImpl).isPasswordChangeRequired();
-    verify(customerService).readCustomerByUsername(eq("janedoe"), eq(false));
+    verify(customerService).readCustomerByUsername(eq("testUser"), eq(false));
     verify(roleService).findCustomerRolesByCustomerId(eq(1L));
     Collection<? extends GrantedAuthority> authorities = actualLoadUserByUsernameResult.getAuthorities();
     assertEquals(1, authorities.size());
     assertTrue(authorities instanceof Set);
     assertTrue(actualLoadUserByUsernameResult instanceof CustomerUserDetails);
-    assertEquals("iloveyou", actualLoadUserByUsernameResult.getPassword());
-    assertEquals("janedoe", actualLoadUserByUsernameResult.getUsername());
+    assertEquals("defaultPassword", actualLoadUserByUsernameResult.getPassword());
+    assertEquals("testUser", actualLoadUserByUsernameResult.getUsername());
     assertEquals(1L, ((CustomerUserDetails) actualLoadUserByUsernameResult).getId().longValue());
-    assertFalse(actualLoadUserByUsernameResult.isCredentialsNonExpired());
-    assertFalse(actualLoadUserByUsernameResult.isEnabled());
     assertTrue(actualLoadUserByUsernameResult.isAccountNonExpired());
     assertTrue(actualLoadUserByUsernameResult.isAccountNonLocked());
+    assertTrue(actualLoadUserByUsernameResult.isCredentialsNonExpired());
+    assertTrue(actualLoadUserByUsernameResult.isEnabled());
   }
 
   /**
@@ -215,21 +215,21 @@ public class UserDetailsServiceImplDiffblueTest {
       throws DataAccessException, UsernameNotFoundException {
     // Arrange
     CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.isDeactivated()).thenReturn(true);
-    when(customerImpl.isPasswordChangeRequired()).thenReturn(true);
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.isPasswordChangeRequired()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getPassword()).thenReturn("iloveyou");
+    when(customerImpl.getPassword()).thenReturn("defaultPassword");
     when(customerService.readCustomerByUsername(Mockito.<String>any(), Mockito.<Boolean>any()))
         .thenReturn(customerImpl);
     CustomerRoleImpl customerRoleImpl = mock(CustomerRoleImpl.class);
-    when(customerRoleImpl.getRoleName()).thenReturn("Role Name");
+    when(customerRoleImpl.getRoleName()).thenReturn("ADMIN");
 
     ArrayList<CustomerRole> customerRoleList = new ArrayList<>();
     customerRoleList.add(customerRoleImpl);
     when(roleService.findCustomerRolesByCustomerId(Mockito.<Long>any())).thenReturn(customerRoleList);
 
     // Act
-    UserDetails actualLoadUserByUsernameResult = userDetailsServiceImpl.loadUserByUsername("janedoe");
+    UserDetails actualLoadUserByUsernameResult = userDetailsServiceImpl.loadUserByUsername("testUser");
 
     // Assert
     verify(customerImpl, atLeast(1)).getId();
@@ -237,19 +237,110 @@ public class UserDetailsServiceImplDiffblueTest {
     verify(customerImpl).isDeactivated();
     verify(customerImpl).isPasswordChangeRequired();
     verify(customerRoleImpl, atLeast(1)).getRoleName();
-    verify(customerService).readCustomerByUsername(eq("janedoe"), eq(false));
+    verify(customerService).readCustomerByUsername(eq("testUser"), eq(false));
     verify(roleService).findCustomerRolesByCustomerId(eq(1L));
     Collection<? extends GrantedAuthority> authorities = actualLoadUserByUsernameResult.getAuthorities();
     assertEquals(2, authorities.size());
     assertTrue(authorities instanceof Set);
     assertTrue(actualLoadUserByUsernameResult instanceof CustomerUserDetails);
-    assertEquals("iloveyou", actualLoadUserByUsernameResult.getPassword());
-    assertEquals("janedoe", actualLoadUserByUsernameResult.getUsername());
+    assertEquals("defaultPassword", actualLoadUserByUsernameResult.getPassword());
+    assertEquals("testUser", actualLoadUserByUsernameResult.getUsername());
+    assertEquals(1L, ((CustomerUserDetails) actualLoadUserByUsernameResult).getId().longValue());
+    assertTrue(actualLoadUserByUsernameResult.isAccountNonExpired());
+    assertTrue(actualLoadUserByUsernameResult.isAccountNonLocked());
+    assertTrue(actualLoadUserByUsernameResult.isCredentialsNonExpired());
+    assertTrue(actualLoadUserByUsernameResult.isEnabled());
+  }
+
+  /**
+   * Test {@link UserDetailsServiceImpl#loadUserByUsername(String)}.
+   * <ul>
+   *   <li>Then return not CredentialsNonExpired.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link UserDetailsServiceImpl#loadUserByUsername(String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"UserDetails UserDetailsServiceImpl.loadUserByUsername(String)"})
+  public void testLoadUserByUsername_thenReturnNotCredentialsNonExpired()
+      throws DataAccessException, UsernameNotFoundException {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.isPasswordChangeRequired()).thenReturn(true);
+    when(customerImpl.getId()).thenReturn(1L);
+    when(customerImpl.getPassword()).thenReturn("defaultPassword");
+    when(customerService.readCustomerByUsername(Mockito.<String>any(), Mockito.<Boolean>any()))
+        .thenReturn(customerImpl);
+    when(roleService.findCustomerRolesByCustomerId(Mockito.<Long>any())).thenReturn(new ArrayList<>());
+
+    // Act
+    UserDetails actualLoadUserByUsernameResult = userDetailsServiceImpl.loadUserByUsername("testUser");
+
+    // Assert
+    verify(customerImpl, atLeast(1)).getId();
+    verify(customerImpl).getPassword();
+    verify(customerImpl).isDeactivated();
+    verify(customerImpl).isPasswordChangeRequired();
+    verify(customerService).readCustomerByUsername(eq("testUser"), eq(false));
+    verify(roleService).findCustomerRolesByCustomerId(eq(1L));
+    Collection<? extends GrantedAuthority> authorities = actualLoadUserByUsernameResult.getAuthorities();
+    assertEquals(1, authorities.size());
+    assertTrue(authorities instanceof Set);
+    assertTrue(actualLoadUserByUsernameResult instanceof CustomerUserDetails);
+    assertEquals("defaultPassword", actualLoadUserByUsernameResult.getPassword());
+    assertEquals("testUser", actualLoadUserByUsernameResult.getUsername());
     assertEquals(1L, ((CustomerUserDetails) actualLoadUserByUsernameResult).getId().longValue());
     assertFalse(actualLoadUserByUsernameResult.isCredentialsNonExpired());
+    assertTrue(actualLoadUserByUsernameResult.isAccountNonExpired());
+    assertTrue(actualLoadUserByUsernameResult.isAccountNonLocked());
+    assertTrue(actualLoadUserByUsernameResult.isEnabled());
+  }
+
+  /**
+   * Test {@link UserDetailsServiceImpl#loadUserByUsername(String)}.
+   * <ul>
+   *   <li>Then return not Enabled.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link UserDetailsServiceImpl#loadUserByUsername(String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"UserDetails UserDetailsServiceImpl.loadUserByUsername(String)"})
+  public void testLoadUserByUsername_thenReturnNotEnabled() throws DataAccessException, UsernameNotFoundException {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.isDeactivated()).thenReturn(true);
+    when(customerImpl.isPasswordChangeRequired()).thenReturn(false);
+    when(customerImpl.getId()).thenReturn(1L);
+    when(customerImpl.getPassword()).thenReturn("defaultPassword");
+    when(customerService.readCustomerByUsername(Mockito.<String>any(), Mockito.<Boolean>any()))
+        .thenReturn(customerImpl);
+    when(roleService.findCustomerRolesByCustomerId(Mockito.<Long>any())).thenReturn(new ArrayList<>());
+
+    // Act
+    UserDetails actualLoadUserByUsernameResult = userDetailsServiceImpl.loadUserByUsername("testUser");
+
+    // Assert
+    verify(customerImpl, atLeast(1)).getId();
+    verify(customerImpl).getPassword();
+    verify(customerImpl).isDeactivated();
+    verify(customerImpl).isPasswordChangeRequired();
+    verify(customerService).readCustomerByUsername(eq("testUser"), eq(false));
+    verify(roleService).findCustomerRolesByCustomerId(eq(1L));
+    Collection<? extends GrantedAuthority> authorities = actualLoadUserByUsernameResult.getAuthorities();
+    assertEquals(1, authorities.size());
+    assertTrue(authorities instanceof Set);
+    assertTrue(actualLoadUserByUsernameResult instanceof CustomerUserDetails);
+    assertEquals("defaultPassword", actualLoadUserByUsernameResult.getPassword());
+    assertEquals("testUser", actualLoadUserByUsernameResult.getUsername());
+    assertEquals(1L, ((CustomerUserDetails) actualLoadUserByUsernameResult).getId().longValue());
     assertFalse(actualLoadUserByUsernameResult.isEnabled());
     assertTrue(actualLoadUserByUsernameResult.isAccountNonExpired());
     assertTrue(actualLoadUserByUsernameResult.isAccountNonLocked());
+    assertTrue(actualLoadUserByUsernameResult.isCredentialsNonExpired());
   }
 
   /**
@@ -298,7 +389,7 @@ public class UserDetailsServiceImplDiffblueTest {
   public void testCreateGrantedAuthorities_thenReturnSizeIsTwo() {
     // Arrange
     CustomerRoleImpl customerRoleImpl = mock(CustomerRoleImpl.class);
-    when(customerRoleImpl.getRoleName()).thenReturn("Role Name");
+    when(customerRoleImpl.getRoleName()).thenReturn("ADMIN");
 
     ArrayList<CustomerRole> customerRoles = new ArrayList<>();
     customerRoles.add(customerRoleImpl);
@@ -314,10 +405,10 @@ public class UserDetailsServiceImplDiffblueTest {
     assertTrue(getResult instanceof SimpleGrantedAuthority);
     GrantedAuthority getResult2 = actualCreateGrantedAuthoritiesResult.get(1);
     assertTrue(getResult2 instanceof SimpleGrantedAuthority);
+    assertEquals("ADMIN", getResult.toString());
+    assertEquals("ADMIN", getResult.getAuthority());
     assertEquals("ROLE_USER", getResult2.toString());
     assertEquals("ROLE_USER", getResult2.getAuthority());
-    assertEquals("Role Name", getResult.toString());
-    assertEquals("Role Name", getResult.getAuthority());
   }
 
   /**

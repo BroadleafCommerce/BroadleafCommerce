@@ -53,7 +53,7 @@ public class CustomerForgotPasswordSecurityTokenImplDiffblueTest {
     customerForgotPasswordSecurityTokenImpl
         .setCreateDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl.setCustomerId(1L);
-    customerForgotPasswordSecurityTokenImpl.setToken("ABC123");
+    customerForgotPasswordSecurityTokenImpl.setToken("sampleToken");
     customerForgotPasswordSecurityTokenImpl
         .setTokenUsedDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl.setTokenUsedFlag(true);
@@ -62,7 +62,7 @@ public class CustomerForgotPasswordSecurityTokenImplDiffblueTest {
     customerForgotPasswordSecurityTokenImpl2
         .setCreateDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl2.setCustomerId(1L);
-    customerForgotPasswordSecurityTokenImpl2.setToken("ABC123");
+    customerForgotPasswordSecurityTokenImpl2.setToken("sampleToken");
     customerForgotPasswordSecurityTokenImpl2
         .setTokenUsedDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl2.setTokenUsedFlag(true);
@@ -139,7 +139,7 @@ public class CustomerForgotPasswordSecurityTokenImplDiffblueTest {
     customerForgotPasswordSecurityTokenImpl
         .setCreateDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl.setCustomerId(1L);
-    customerForgotPasswordSecurityTokenImpl.setToken("ABC123");
+    customerForgotPasswordSecurityTokenImpl.setToken("sampleToken");
     customerForgotPasswordSecurityTokenImpl
         .setTokenUsedDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl.setTokenUsedFlag(true);
@@ -169,7 +169,7 @@ public class CustomerForgotPasswordSecurityTokenImplDiffblueTest {
     customerForgotPasswordSecurityTokenImpl
         .setCreateDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl.setCustomerId(1L);
-    customerForgotPasswordSecurityTokenImpl.setToken("Token");
+    customerForgotPasswordSecurityTokenImpl.setToken("sampleToken123");
     customerForgotPasswordSecurityTokenImpl
         .setTokenUsedDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl.setTokenUsedFlag(true);
@@ -178,7 +178,7 @@ public class CustomerForgotPasswordSecurityTokenImplDiffblueTest {
     customerForgotPasswordSecurityTokenImpl2
         .setCreateDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl2.setCustomerId(1L);
-    customerForgotPasswordSecurityTokenImpl2.setToken("ABC123");
+    customerForgotPasswordSecurityTokenImpl2.setToken("sampleToken");
     customerForgotPasswordSecurityTokenImpl2
         .setTokenUsedDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl2.setTokenUsedFlag(true);
@@ -215,7 +215,7 @@ public class CustomerForgotPasswordSecurityTokenImplDiffblueTest {
     customerForgotPasswordSecurityTokenImpl2
         .setCreateDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl2.setCustomerId(1L);
-    customerForgotPasswordSecurityTokenImpl2.setToken("ABC123");
+    customerForgotPasswordSecurityTokenImpl2.setToken("sampleToken");
     customerForgotPasswordSecurityTokenImpl2
         .setTokenUsedDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl2.setTokenUsedFlag(true);
@@ -243,7 +243,7 @@ public class CustomerForgotPasswordSecurityTokenImplDiffblueTest {
     customerForgotPasswordSecurityTokenImpl
         .setCreateDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl.setCustomerId(1L);
-    customerForgotPasswordSecurityTokenImpl.setToken("ABC123");
+    customerForgotPasswordSecurityTokenImpl.setToken("sampleToken");
     customerForgotPasswordSecurityTokenImpl
         .setTokenUsedDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl.setTokenUsedFlag(true);
@@ -271,7 +271,7 @@ public class CustomerForgotPasswordSecurityTokenImplDiffblueTest {
     customerForgotPasswordSecurityTokenImpl
         .setCreateDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl.setCustomerId(1L);
-    customerForgotPasswordSecurityTokenImpl.setToken("ABC123");
+    customerForgotPasswordSecurityTokenImpl.setToken("sampleToken");
     customerForgotPasswordSecurityTokenImpl
         .setTokenUsedDate(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
     customerForgotPasswordSecurityTokenImpl.setTokenUsedFlag(true);
@@ -318,7 +318,7 @@ public class CustomerForgotPasswordSecurityTokenImplDiffblueTest {
     Date createDate = Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
     actualCustomerForgotPasswordSecurityTokenImpl.setCreateDate(createDate);
     actualCustomerForgotPasswordSecurityTokenImpl.setCustomerId(1L);
-    actualCustomerForgotPasswordSecurityTokenImpl.setToken("ABC123");
+    actualCustomerForgotPasswordSecurityTokenImpl.setToken("sampleToken");
     Date tokenUsedDate = Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant());
     actualCustomerForgotPasswordSecurityTokenImpl.setTokenUsedDate(tokenUsedDate);
     actualCustomerForgotPasswordSecurityTokenImpl.setTokenUsedFlag(true);
@@ -329,7 +329,7 @@ public class CustomerForgotPasswordSecurityTokenImplDiffblueTest {
     boolean actualIsTokenUsedFlagResult = actualCustomerForgotPasswordSecurityTokenImpl.isTokenUsedFlag();
 
     // Assert
-    assertEquals("ABC123", actualToken);
+    assertEquals("sampleToken", actualToken);
     assertEquals(1L, actualCustomerId.longValue());
     assertTrue(actualIsTokenUsedFlagResult);
     assertSame(createDate, actualCreateDate);

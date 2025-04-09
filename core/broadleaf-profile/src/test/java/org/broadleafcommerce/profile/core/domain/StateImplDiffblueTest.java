@@ -46,14 +46,14 @@ public class StateImplDiffblueTest {
   public void testEqualsAndHashCode_whenOtherIsEqual_thenReturnEqual() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(new CountryImpl());
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
 
     StateImpl stateImpl2 = new StateImpl();
-    stateImpl2.setAbbreviation("Abbreviation");
+    stateImpl2.setAbbreviation("CA");
     stateImpl2.setCountry(new CountryImpl());
-    stateImpl2.setName("Name");
+    stateImpl2.setName("California");
 
     // Act and Assert
     assertEquals(stateImpl, stateImpl2);
@@ -82,12 +82,12 @@ public class StateImplDiffblueTest {
     StateImpl stateImpl = new StateImpl();
     stateImpl.setAbbreviation(null);
     stateImpl.setCountry(new CountryImpl());
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
 
     StateImpl stateImpl2 = new StateImpl();
     stateImpl2.setAbbreviation(null);
     stateImpl2.setCountry(new CountryImpl());
-    stateImpl2.setName("Name");
+    stateImpl2.setName("California");
 
     // Act and Assert
     assertEquals(stateImpl, stateImpl2);
@@ -114,14 +114,14 @@ public class StateImplDiffblueTest {
   public void testEqualsAndHashCode_whenOtherIsEqual_thenReturnEqual3() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(null);
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
 
     StateImpl stateImpl2 = new StateImpl();
-    stateImpl2.setAbbreviation("Abbreviation");
+    stateImpl2.setAbbreviation("CA");
     stateImpl2.setCountry(null);
-    stateImpl2.setName("Name");
+    stateImpl2.setName("California");
 
     // Act and Assert
     assertEquals(stateImpl, stateImpl2);
@@ -148,12 +148,12 @@ public class StateImplDiffblueTest {
   public void testEqualsAndHashCode_whenOtherIsEqual_thenReturnEqual4() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(new CountryImpl());
     stateImpl.setName(null);
 
     StateImpl stateImpl2 = new StateImpl();
-    stateImpl2.setAbbreviation("Abbreviation");
+    stateImpl2.setAbbreviation("CA");
     stateImpl2.setCountry(new CountryImpl());
     stateImpl2.setName(null);
 
@@ -182,9 +182,9 @@ public class StateImplDiffblueTest {
   public void testEqualsAndHashCode_whenOtherIsSame_thenReturnEqual() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(new CountryImpl());
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
 
     // Act and Assert
     assertEquals(stateImpl, stateImpl);
@@ -207,14 +207,14 @@ public class StateImplDiffblueTest {
   public void testEquals_whenOtherIsDifferent_thenReturnNotEqual() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Name");
+    stateImpl.setAbbreviation("California");
     stateImpl.setCountry(new CountryImpl());
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
 
     StateImpl stateImpl2 = new StateImpl();
-    stateImpl2.setAbbreviation("Abbreviation");
+    stateImpl2.setAbbreviation("CA");
     stateImpl2.setCountry(new CountryImpl());
-    stateImpl2.setName("Name");
+    stateImpl2.setName("California");
 
     // Act and Assert
     assertNotEquals(stateImpl, stateImpl2);
@@ -237,12 +237,12 @@ public class StateImplDiffblueTest {
     StateImpl stateImpl = new StateImpl();
     stateImpl.setAbbreviation(null);
     stateImpl.setCountry(new CountryImpl());
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
 
     StateImpl stateImpl2 = new StateImpl();
-    stateImpl2.setAbbreviation("Abbreviation");
+    stateImpl2.setAbbreviation("CA");
     stateImpl2.setCountry(new CountryImpl());
-    stateImpl2.setName("Name");
+    stateImpl2.setName("California");
 
     // Act and Assert
     assertNotEquals(stateImpl, stateImpl2);
@@ -263,14 +263,14 @@ public class StateImplDiffblueTest {
   public void testEquals_whenOtherIsDifferent_thenReturnNotEqual3() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(null);
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
 
     StateImpl stateImpl2 = new StateImpl();
-    stateImpl2.setAbbreviation("Abbreviation");
+    stateImpl2.setAbbreviation("CA");
     stateImpl2.setCountry(new CountryImpl());
-    stateImpl2.setName("Name");
+    stateImpl2.setName("California");
 
     // Act and Assert
     assertNotEquals(stateImpl, stateImpl2);
@@ -291,14 +291,14 @@ public class StateImplDiffblueTest {
   public void testEquals_whenOtherIsDifferent_thenReturnNotEqual4() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(mock(CountryImpl.class));
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
 
     StateImpl stateImpl2 = new StateImpl();
-    stateImpl2.setAbbreviation("Abbreviation");
+    stateImpl2.setAbbreviation("CA");
     stateImpl2.setCountry(new CountryImpl());
-    stateImpl2.setName("Name");
+    stateImpl2.setName("California");
 
     // Act and Assert
     assertNotEquals(stateImpl, stateImpl2);
@@ -319,14 +319,14 @@ public class StateImplDiffblueTest {
   public void testEquals_whenOtherIsDifferent_thenReturnNotEqual5() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(new CountryImpl());
-    stateImpl.setName("Abbreviation");
+    stateImpl.setName("CA");
 
     StateImpl stateImpl2 = new StateImpl();
-    stateImpl2.setAbbreviation("Abbreviation");
+    stateImpl2.setAbbreviation("CA");
     stateImpl2.setCountry(new CountryImpl());
-    stateImpl2.setName("Name");
+    stateImpl2.setName("California");
 
     // Act and Assert
     assertNotEquals(stateImpl, stateImpl2);
@@ -347,14 +347,14 @@ public class StateImplDiffblueTest {
   public void testEquals_whenOtherIsDifferent_thenReturnNotEqual6() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(new CountryImpl());
     stateImpl.setName(null);
 
     StateImpl stateImpl2 = new StateImpl();
-    stateImpl2.setAbbreviation("Abbreviation");
+    stateImpl2.setAbbreviation("CA");
     stateImpl2.setCountry(new CountryImpl());
-    stateImpl2.setName("Name");
+    stateImpl2.setName("California");
 
     // Act and Assert
     assertNotEquals(stateImpl, stateImpl2);
@@ -375,9 +375,9 @@ public class StateImplDiffblueTest {
   public void testEquals_whenOtherIsNull_thenReturnNotEqual() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(new CountryImpl());
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
 
     // Act and Assert
     assertNotEquals(stateImpl, null);
@@ -398,9 +398,9 @@ public class StateImplDiffblueTest {
   public void testEquals_whenOtherIsWrongType_thenReturnNotEqual() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(new CountryImpl());
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
 
     // Act and Assert
     assertNotEquals(stateImpl, "Different type to StateImpl");
@@ -428,16 +428,16 @@ public class StateImplDiffblueTest {
   public void testGettersAndSetters() {
     // Arrange and Act
     StateImpl actualStateImpl = new StateImpl();
-    actualStateImpl.setAbbreviation("Abbreviation");
+    actualStateImpl.setAbbreviation("CA");
     CountryImpl country = new CountryImpl();
     actualStateImpl.setCountry(country);
-    actualStateImpl.setName("Name");
+    actualStateImpl.setName("California");
     String actualAbbreviation = actualStateImpl.getAbbreviation();
     Country actualCountry = actualStateImpl.getCountry();
 
     // Assert
-    assertEquals("Abbreviation", actualAbbreviation);
-    assertEquals("Name", actualStateImpl.getName());
+    assertEquals("CA", actualAbbreviation);
+    assertEquals("California", actualStateImpl.getName());
     assertSame(country, actualCountry);
   }
 }

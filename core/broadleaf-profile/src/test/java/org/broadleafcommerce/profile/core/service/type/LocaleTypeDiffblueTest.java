@@ -42,7 +42,7 @@ public class LocaleTypeDiffblueTest {
   @MethodsUnderTest({"LocaleType LocaleType.getInstance(String)"})
   public void testGetInstance() throws MissingResourceException {
     // Arrange and Act
-    LocaleType actualInstance = LocaleType.getInstance("en");
+    LocaleType actualInstance = LocaleType.getInstance("en_US");
 
     // Assert
     Locale locale = actualInstance.getLocale();
@@ -50,14 +50,14 @@ public class LocaleTypeDiffblueTest {
     assertEquals("", locale.getDisplayVariant());
     assertEquals("", locale.getScript());
     assertEquals("", locale.getVariant());
-    assertEquals("English (United Kingdom)", locale.getDisplayName());
+    assertEquals("English (United States)", locale.getDisplayName());
     assertEquals("English", locale.getDisplayLanguage());
-    assertEquals("GB", locale.getCountry());
-    assertEquals("GBR", locale.getISO3Country());
-    assertEquals("United Kingdom", locale.getDisplayCountry());
+    assertEquals("US English", actualInstance.getFriendlyType());
+    assertEquals("US", locale.getCountry());
+    assertEquals("USA", locale.getISO3Country());
+    assertEquals("United States", locale.getDisplayCountry());
     assertEquals("en", locale.getLanguage());
-    assertEquals("en", actualInstance.getFriendlyType());
-    assertEquals("en", actualInstance.getType());
+    assertEquals("en_US", actualInstance.getType());
     assertEquals("eng", locale.getISO3Language());
     assertFalse(locale.hasExtensions());
     Set<Character> extensionKeys = locale.getExtensionKeys();
@@ -96,8 +96,8 @@ public class LocaleTypeDiffblueTest {
   /**
    * Test {@link LocaleType#LocaleType(String, String, Locale)}.
    * <ul>
-   *   <li>When Default.</li>
-   *   <li>Then return Type is {@code en}.</li>
+   *   <li>When {@code en_US}.</li>
+   *   <li>Then return Type is {@code en_US}.</li>
    * </ul>
    * <p>
    * Method under test: {@link LocaleType#LocaleType(String, String, Locale)}
@@ -105,16 +105,16 @@ public class LocaleTypeDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"void LocaleType.<init>(String, String, Locale)"})
-  public void testNewLocaleType_whenDefault_thenReturnTypeIsEn() {
+  public void testNewLocaleType_whenEnUs_thenReturnTypeIsEnUs() {
     // Arrange
     Locale locale = Locale.getDefault();
 
     // Act
-    LocaleType actualLocaleType = new LocaleType("en", "en", locale);
+    LocaleType actualLocaleType = new LocaleType("en_US", "en_US", locale);
 
     // Assert
-    assertEquals("en", actualLocaleType.getFriendlyType());
-    assertEquals("en", actualLocaleType.getType());
+    assertEquals("en_US", actualLocaleType.getFriendlyType());
+    assertEquals("en_US", actualLocaleType.getType());
     Locale expectedLocale = locale.UK;
     assertSame(expectedLocale, actualLocaleType.getLocale());
   }
@@ -136,11 +136,11 @@ public class LocaleTypeDiffblueTest {
     Locale locale = Locale.getDefault();
 
     // Act
-    LocaleType actualLocaleType = new LocaleType("FR", "en", locale);
+    LocaleType actualLocaleType = new LocaleType("FR", "en_US", locale);
 
     // Assert
     assertEquals("FR", actualLocaleType.getType());
-    assertEquals("en", actualLocaleType.getFriendlyType());
+    assertEquals("en_US", actualLocaleType.getFriendlyType());
     Locale expectedLocale = locale.UK;
     assertSame(expectedLocale, actualLocaleType.getLocale());
   }

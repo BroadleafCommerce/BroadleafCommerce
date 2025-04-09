@@ -27,6 +27,23 @@ import org.junit.experimental.categories.Category;
 
 public class LastPaymentStatusDiffblueTest {
   /**
+   * Test {@link LastPaymentStatus#getInstance(String)}.
+   * <p>
+   * Method under test: {@link LastPaymentStatus#getInstance(String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"LastPaymentStatus LastPaymentStatus.getInstance(String)"})
+  public void testGetInstance() {
+    // Arrange and Act
+    LastPaymentStatus actualInstance = LastPaymentStatus.getInstance("1");
+
+    // Assert
+    assertEquals("1", actualInstance.getType());
+    assertEquals("OK", actualInstance.getFriendlyType());
+  }
+
+  /**
    * Test getters and setters.
    * <p>
    * Methods under test:

@@ -76,7 +76,7 @@ public class CustomerAddressImplDiffblueTest {
 
     // Act
     customerAddressImpl.setAddress(address);
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     CustomerImpl customer = new CustomerImpl();
     customerAddressImpl.setCustomer(customer);
     customerAddressImpl.setId(1L);
@@ -85,7 +85,7 @@ public class CustomerAddressImplDiffblueTest {
     Customer actualCustomer = customerAddressImpl.getCustomer();
 
     // Assert
-    assertEquals("42 Main St", actualAddressName);
+    assertEquals("Sample Address Name", actualAddressName);
     assertEquals(1L, customerAddressImpl.getId().longValue());
     assertSame(address, actualAddress);
     assertSame(customer, actualCustomer);
@@ -165,11 +165,11 @@ public class CustomerAddressImplDiffblueTest {
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
 
     // Act
-    customerAddressImpl2.setArchived('A');
+    customerAddressImpl2.setArchived('Y');
 
     // Assert
-    assertEquals('A', customerAddressImpl2.archiveStatus.getArchived().charValue());
-    assertEquals('A', customerAddressImpl2.getArchived().charValue());
+    assertEquals('Y', customerAddressImpl2.archiveStatus.getArchived().charValue());
+    assertEquals('Y', customerAddressImpl2.getArchived().charValue());
   }
 
   /**
@@ -230,13 +230,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(1L);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(1L);
 
@@ -266,13 +266,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(null);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(1L);
 
@@ -302,13 +302,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(1L);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(null);
 
@@ -338,13 +338,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(null);
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(null);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(null);
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(1L);
 
@@ -410,13 +410,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(null);
     customerAddressImpl.setId(null);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(null);
     customerAddressImpl2.setId(1L);
 
@@ -446,7 +446,7 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(1L);
 
@@ -472,13 +472,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(2L);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(1L);
 
@@ -502,13 +502,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(null);
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(null);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(1L);
 
@@ -532,13 +532,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(mock(AddressImpl.class));
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(null);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(1L);
 
@@ -562,13 +562,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("17 High St");
+    customerAddressImpl.setAddressName("Home");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(null);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(1L);
 
@@ -598,7 +598,7 @@ public class CustomerAddressImplDiffblueTest {
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(1L);
 
@@ -622,13 +622,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(null);
     customerAddressImpl.setId(null);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(1L);
 
@@ -652,13 +652,13 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(mock(CustomerImpl.class));
     customerAddressImpl.setId(null);
 
     CustomerAddressImpl customerAddressImpl2 = new CustomerAddressImpl();
     customerAddressImpl2.setAddress(new AddressImpl());
-    customerAddressImpl2.setAddressName("42 Main St");
+    customerAddressImpl2.setAddressName("Sample Address Name");
     customerAddressImpl2.setCustomer(new CustomerImpl());
     customerAddressImpl2.setId(1L);
 
@@ -682,7 +682,7 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(1L);
 
@@ -706,7 +706,7 @@ public class CustomerAddressImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(1L);
 

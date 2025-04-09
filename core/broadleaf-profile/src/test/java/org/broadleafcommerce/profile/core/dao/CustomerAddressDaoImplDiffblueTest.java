@@ -56,7 +56,7 @@ public class CustomerAddressDaoImplDiffblueTest {
     // Arrange
     CustomerAddressImpl customerAddressImpl = new CustomerAddressImpl();
     customerAddressImpl.setAddress(new AddressImpl());
-    customerAddressImpl.setAddressName("42 Main St");
+    customerAddressImpl.setAddressName("Sample Address Name");
     customerAddressImpl.setCustomer(new CustomerImpl());
     customerAddressImpl.setId(1L);
     when(entityConfiguration.createEntityInstance(Mockito.<String>any())).thenReturn(customerAddressImpl);

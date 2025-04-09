@@ -103,23 +103,28 @@ public class CustomerServiceImplDiffblueTest {
 
   /**
    * Test {@link CustomerServiceImpl#saveCustomer(Customer, boolean)} with {@code customer}, {@code register}.
+   * <ul>
+   *   <li>Given {@code false}.</li>
+   *   <li>Then calls {@link CustomerImpl#setRegistered(boolean)}.</li>
+   * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#saveCustomer(Customer, boolean)}
    */
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"Customer CustomerServiceImpl.saveCustomer(Customer, boolean)"})
-  public void testSaveCustomerWithCustomerRegister() {
+  public void testSaveCustomerWithCustomerRegister_givenFalse_thenCallsSetRegistered() {
     // Arrange
     CustomerImpl customerImpl = new CustomerImpl();
     when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
     when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
     CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.getChallengeAnswer()).thenReturn("secret");
+    when(customer.getChallengeAnswer()).thenReturn("challengeAnswer");
     doNothing().when(customer).setPassword(Mockito.<String>any());
-    when(customer.isRegistered()).thenReturn(true);
-    when(customer.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customer.getUnencodedPassword()).thenReturn("secret");
+    when(customer.isRegistered()).thenReturn(false);
+    when(customer.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.getUnencodedPassword()).thenReturn("defaultPassword");
+    doNothing().when(customer).setRegistered(anyBoolean());
 
     // Act
     Customer actualSaveCustomerResult = customerServiceImpl.saveCustomer(customer, true);
@@ -131,6 +136,7 @@ public class CustomerServiceImplDiffblueTest {
     verify(customer, atLeast(1)).getUnencodedPassword();
     verify(customer).isRegistered();
     verify(customer).setPassword(eq("secret"));
+    verify(customer).setRegistered(eq(true));
     verify(passwordEncoder).encode(isA(CharSequence.class));
     assertSame(customerImpl, actualSaveCustomerResult);
   }
@@ -138,8 +144,8 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#saveCustomer(Customer, boolean)} with {@code customer}, {@code register}.
    * <ul>
-   *   <li>Given {@code Challenge Answer}.</li>
-   *   <li>Then calls {@link CustomerImpl#isRegistered()}.</li>
+   *   <li>Given {@code foo}.</li>
+   *   <li>Then calls {@link CustomerImpl#setChallengeAnswer(String)}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#saveCustomer(Customer, boolean)}
@@ -147,18 +153,19 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"Customer CustomerServiceImpl.saveCustomer(Customer, boolean)"})
-  public void testSaveCustomerWithCustomerRegister_givenChallengeAnswer_thenCallsIsRegistered() {
+  public void testSaveCustomerWithCustomerRegister_givenFoo_thenCallsSetChallengeAnswer() {
     // Arrange
     CustomerImpl customerImpl = new CustomerImpl();
     when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
     when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
     CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.getChallengeAnswer()).thenReturn("Challenge Answer");
+    when(customer.getChallengeAnswer()).thenReturn("foo");
     doNothing().when(customer).setChallengeAnswer(Mockito.<String>any());
     doNothing().when(customer).setPassword(Mockito.<String>any());
-    when(customer.isRegistered()).thenReturn(true);
-    when(customer.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customer.getUnencodedPassword()).thenReturn("secret");
+    when(customer.isRegistered()).thenReturn(false);
+    when(customer.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.getUnencodedPassword()).thenReturn("defaultPassword");
+    doNothing().when(customer).setRegistered(anyBoolean());
 
     // Act
     Customer actualSaveCustomerResult = customerServiceImpl.saveCustomer(customer, true);
@@ -171,7 +178,8 @@ public class CustomerServiceImplDiffblueTest {
     verify(customer).isRegistered();
     verify(customer).setChallengeAnswer(eq("secret"));
     verify(customer).setPassword(eq("secret"));
-    verify(passwordEncoder, atLeast(1)).encode(isA(CharSequence.class));
+    verify(customer).setRegistered(eq(true));
+    verify(passwordEncoder, atLeast(1)).encode(Mockito.<CharSequence>any());
     assertSame(customerImpl, actualSaveCustomerResult);
   }
 
@@ -203,8 +211,7 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#saveCustomer(Customer, boolean)} with {@code customer}, {@code register}.
    * <ul>
-   *   <li>When {@code false}.</li>
-   *   <li>Then calls {@link CustomerImpl#setChallengeAnswer(String)}.</li>
+   *   <li>Given {@code true}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#saveCustomer(Customer, boolean)}
@@ -212,17 +219,54 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"Customer CustomerServiceImpl.saveCustomer(Customer, boolean)"})
-  public void testSaveCustomerWithCustomerRegister_whenFalse_thenCallsSetChallengeAnswer() {
+  public void testSaveCustomerWithCustomerRegister_givenTrue() {
     // Arrange
     CustomerImpl customerImpl = new CustomerImpl();
     when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
     when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
     CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.getChallengeAnswer()).thenReturn("Challenge Answer");
-    doNothing().when(customer).setChallengeAnswer(Mockito.<String>any());
+    when(customer.getChallengeAnswer()).thenReturn("challengeAnswer");
     doNothing().when(customer).setPassword(Mockito.<String>any());
-    when(customer.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customer.getUnencodedPassword()).thenReturn("secret");
+    when(customer.isRegistered()).thenReturn(true);
+    when(customer.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.getUnencodedPassword()).thenReturn("defaultPassword");
+
+    // Act
+    Customer actualSaveCustomerResult = customerServiceImpl.saveCustomer(customer, true);
+
+    // Assert
+    verify(customerDao).save(isA(Customer.class));
+    verify(customer).getChallengeAnswer();
+    verify(customer, atLeast(1)).getUnencodedChallengeAnswer();
+    verify(customer, atLeast(1)).getUnencodedPassword();
+    verify(customer).isRegistered();
+    verify(customer).setPassword(eq("secret"));
+    verify(passwordEncoder).encode(isA(CharSequence.class));
+    assertSame(customerImpl, actualSaveCustomerResult);
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#saveCustomer(Customer, boolean)} with {@code customer}, {@code register}.
+   * <ul>
+   *   <li>When {@code false}.</li>
+   *   <li>Then calls {@link CustomerImpl#getChallengeAnswer()}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#saveCustomer(Customer, boolean)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"Customer CustomerServiceImpl.saveCustomer(Customer, boolean)"})
+  public void testSaveCustomerWithCustomerRegister_whenFalse_thenCallsGetChallengeAnswer() {
+    // Arrange
+    CustomerImpl customerImpl = new CustomerImpl();
+    when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
+    when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
+    CustomerImpl customer = mock(CustomerImpl.class);
+    when(customer.getChallengeAnswer()).thenReturn("challengeAnswer");
+    doNothing().when(customer).setPassword(Mockito.<String>any());
+    when(customer.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.getUnencodedPassword()).thenReturn("defaultPassword");
 
     // Act
     Customer actualSaveCustomerResult = customerServiceImpl.saveCustomer(customer, false);
@@ -232,17 +276,15 @@ public class CustomerServiceImplDiffblueTest {
     verify(customer).getChallengeAnswer();
     verify(customer, atLeast(1)).getUnencodedChallengeAnswer();
     verify(customer, atLeast(1)).getUnencodedPassword();
-    verify(customer).setChallengeAnswer(eq("secret"));
     verify(customer).setPassword(eq("secret"));
-    verify(passwordEncoder, atLeast(1)).encode(isA(CharSequence.class));
+    verify(passwordEncoder).encode(isA(CharSequence.class));
     assertSame(customerImpl, actualSaveCustomerResult);
   }
 
   /**
    * Test {@link CustomerServiceImpl#saveCustomer(Customer)} with {@code customer}.
    * <ul>
-   *   <li>Given {@code Challenge Answer}.</li>
-   *   <li>Then calls {@link CustomerImpl#setChallengeAnswer(String)}.</li>
+   *   <li>Given {@code false}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#saveCustomer(Customer)}
@@ -250,18 +292,17 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"Customer CustomerServiceImpl.saveCustomer(Customer)"})
-  public void testSaveCustomerWithCustomer_givenChallengeAnswer_thenCallsSetChallengeAnswer() {
+  public void testSaveCustomerWithCustomer_givenFalse() {
     // Arrange
     CustomerImpl customerImpl = new CustomerImpl();
     when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
     when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
     CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.getChallengeAnswer()).thenReturn("Challenge Answer");
-    doNothing().when(customer).setChallengeAnswer(Mockito.<String>any());
+    when(customer.getChallengeAnswer()).thenReturn("challengeAnswer");
     doNothing().when(customer).setPassword(Mockito.<String>any());
-    when(customer.isRegistered()).thenReturn(true);
-    when(customer.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customer.getUnencodedPassword()).thenReturn("secret");
+    when(customer.isRegistered()).thenReturn(false);
+    when(customer.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.getUnencodedPassword()).thenReturn("defaultPassword");
 
     // Act
     Customer actualSaveCustomerResult = customerServiceImpl.saveCustomer(customer);
@@ -271,10 +312,49 @@ public class CustomerServiceImplDiffblueTest {
     verify(customer).getChallengeAnswer();
     verify(customer, atLeast(1)).getUnencodedChallengeAnswer();
     verify(customer, atLeast(1)).getUnencodedPassword();
-    verify(customer, atLeast(1)).isRegistered();
+    verify(customer).isRegistered();
+    verify(customer).setPassword(eq("secret"));
+    verify(passwordEncoder).encode(isA(CharSequence.class));
+    assertSame(customerImpl, actualSaveCustomerResult);
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#saveCustomer(Customer)} with {@code customer}.
+   * <ul>
+   *   <li>Given {@code foo}.</li>
+   *   <li>Then calls {@link CustomerImpl#setChallengeAnswer(String)}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#saveCustomer(Customer)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"Customer CustomerServiceImpl.saveCustomer(Customer)"})
+  public void testSaveCustomerWithCustomer_givenFoo_thenCallsSetChallengeAnswer() {
+    // Arrange
+    CustomerImpl customerImpl = new CustomerImpl();
+    when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
+    when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
+    CustomerImpl customer = mock(CustomerImpl.class);
+    when(customer.getChallengeAnswer()).thenReturn("foo");
+    doNothing().when(customer).setChallengeAnswer(Mockito.<String>any());
+    doNothing().when(customer).setPassword(Mockito.<String>any());
+    when(customer.isRegistered()).thenReturn(false);
+    when(customer.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.getUnencodedPassword()).thenReturn("defaultPassword");
+
+    // Act
+    Customer actualSaveCustomerResult = customerServiceImpl.saveCustomer(customer);
+
+    // Assert
+    verify(customerDao).save(isA(Customer.class));
+    verify(customer).getChallengeAnswer();
+    verify(customer, atLeast(1)).getUnencodedChallengeAnswer();
+    verify(customer, atLeast(1)).getUnencodedPassword();
+    verify(customer).isRegistered();
     verify(customer).setChallengeAnswer(eq("secret"));
     verify(customer).setPassword(eq("secret"));
-    verify(passwordEncoder, atLeast(1)).encode(isA(CharSequence.class));
+    verify(passwordEncoder, atLeast(1)).encode(Mockito.<CharSequence>any());
     assertSame(customerImpl, actualSaveCustomerResult);
   }
 
@@ -306,7 +386,8 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#saveCustomer(Customer)} with {@code customer}.
    * <ul>
-   *   <li>When {@link CustomerImpl} {@link CustomerImpl#getChallengeAnswer()} return {@code secret}.</li>
+   *   <li>Given {@code true}.</li>
+   *   <li>When {@link CustomerImpl} {@link CustomerImpl#isRegistered()} return {@code true}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#saveCustomer(Customer)}
@@ -314,17 +395,17 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"Customer CustomerServiceImpl.saveCustomer(Customer)"})
-  public void testSaveCustomerWithCustomer_whenCustomerImplGetChallengeAnswerReturnSecret() {
+  public void testSaveCustomerWithCustomer_givenTrue_whenCustomerImplIsRegisteredReturnTrue() {
     // Arrange
     CustomerImpl customerImpl = new CustomerImpl();
     when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
     when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
     CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.getChallengeAnswer()).thenReturn("secret");
+    when(customer.getChallengeAnswer()).thenReturn("challengeAnswer");
     doNothing().when(customer).setPassword(Mockito.<String>any());
     when(customer.isRegistered()).thenReturn(true);
-    when(customer.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customer.getUnencodedPassword()).thenReturn("secret");
+    when(customer.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.getUnencodedPassword()).thenReturn("defaultPassword");
 
     // Act
     Customer actualSaveCustomerResult = customerServiceImpl.saveCustomer(customer);
@@ -343,8 +424,8 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#registerCustomer(Customer, String, String)}.
    * <ul>
-   *   <li>Given {@code Challenge Answer}.</li>
-   *   <li>Then calls {@link CustomerImpl#setChallengeAnswer(String)}.</li>
+   *   <li>Given {@code defaultPassword}.</li>
+   *   <li>Then calls {@link CustomerImpl#setPassword(String)}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#registerCustomer(Customer, String, String)}
@@ -352,7 +433,7 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"Customer CustomerServiceImpl.registerCustomer(Customer, String, String)"})
-  public void testRegisterCustomer_givenChallengeAnswer_thenCallsSetChallengeAnswer() {
+  public void testRegisterCustomer_givenDefaultPassword_thenCallsSetPassword() {
     // Arrange
     CustomerImpl customerImpl = new CustomerImpl();
     when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
@@ -362,14 +443,13 @@ public class CustomerServiceImplDiffblueTest {
     when(roleDao.readRoleByName(Mockito.<String>any())).thenReturn(new RoleImpl());
     doNothing().when(roleDao).addRoleToCustomer(Mockito.<CustomerRole>any());
     CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.getChallengeAnswer()).thenReturn("Challenge Answer");
-    doNothing().when(customer).setChallengeAnswer(Mockito.<String>any());
+    when(customer.getChallengeAnswer()).thenReturn("challengeAnswer");
     doNothing().when(customer).setPassword(Mockito.<String>any());
-    when(customer.isRegistered()).thenReturn(true);
+    when(customer.isRegistered()).thenReturn(false);
     when(customer.getId()).thenReturn(1L);
-    when(customer.getEmailAddress()).thenReturn("42 Main St");
-    when(customer.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customer.getUnencodedPassword()).thenReturn("secret");
+    when(customer.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customer.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.getUnencodedPassword()).thenReturn("defaultPassword");
     doNothing().when(customer).setRegistered(anyBoolean());
     doNothing().when(customer).setUnencodedPassword(Mockito.<String>any());
 
@@ -378,7 +458,7 @@ public class CustomerServiceImplDiffblueTest {
         "Password Confirm");
 
     // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
     verify(customerDao).save(isA(Customer.class));
     verify(roleDao).addRoleToCustomer(isA(CustomerRole.class));
     verify(roleDao).readRoleByName(eq("ROLE_USER"));
@@ -387,20 +467,18 @@ public class CustomerServiceImplDiffblueTest {
     verify(customer).getId();
     verify(customer, atLeast(1)).getUnencodedChallengeAnswer();
     verify(customer, atLeast(1)).getUnencodedPassword();
-    verify(customer, atLeast(1)).isRegistered();
-    verify(customer).setChallengeAnswer(eq("secret"));
+    verify(customer).isRegistered();
     verify(customer).setPassword(eq("secret"));
     verify(customer).setRegistered(eq(true));
     verify(customer).setUnencodedPassword(eq("iloveyou"));
-    verify(passwordEncoder, atLeast(1)).encode(isA(CharSequence.class));
+    verify(passwordEncoder).encode(isA(CharSequence.class));
     assertSame(customerImpl, actualRegisterCustomerResult);
   }
 
   /**
    * Test {@link CustomerServiceImpl#registerCustomer(Customer, String, String)}.
    * <ul>
-   *   <li>Given {@code false}.</li>
-   *   <li>When {@link CustomerImpl} {@link CustomerImpl#isRegistered()} return {@code false}.</li>
+   *   <li>Given {@link PasswordEncoder}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#registerCustomer(Customer, String, String)}
@@ -408,7 +486,57 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"Customer CustomerServiceImpl.registerCustomer(Customer, String, String)"})
-  public void testRegisterCustomer_givenFalse_whenCustomerImplIsRegisteredReturnFalse() {
+  public void testRegisterCustomer_givenPasswordEncoder() {
+    // Arrange
+    CustomerImpl customerImpl = new CustomerImpl();
+    when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
+    when(emailService.sendTemplateEmail(Mockito.<String>any(), Mockito.<EmailInfo>any(),
+        Mockito.<Map<String, Object>>any())).thenReturn(true);
+    when(roleDao.readRoleByName(Mockito.<String>any())).thenReturn(new RoleImpl());
+    doNothing().when(roleDao).addRoleToCustomer(Mockito.<CustomerRole>any());
+    CustomerImpl customer = mock(CustomerImpl.class);
+    when(customer.getChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.isRegistered()).thenReturn(false);
+    when(customer.getId()).thenReturn(1L);
+    when(customer.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customer.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.getUnencodedPassword()).thenReturn(null);
+    doNothing().when(customer).setRegistered(anyBoolean());
+    doNothing().when(customer).setUnencodedPassword(Mockito.<String>any());
+
+    // Act
+    Customer actualRegisterCustomerResult = customerServiceImpl.registerCustomer(customer, "iloveyou",
+        "Password Confirm");
+
+    // Assert
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
+    verify(customerDao).save(isA(Customer.class));
+    verify(roleDao).addRoleToCustomer(isA(CustomerRole.class));
+    verify(roleDao).readRoleByName(eq("ROLE_USER"));
+    verify(customer).getChallengeAnswer();
+    verify(customer).getEmailAddress();
+    verify(customer).getId();
+    verify(customer, atLeast(1)).getUnencodedChallengeAnswer();
+    verify(customer).getUnencodedPassword();
+    verify(customer).isRegistered();
+    verify(customer).setRegistered(eq(true));
+    verify(customer).setUnencodedPassword(eq("iloveyou"));
+    assertSame(customerImpl, actualRegisterCustomerResult);
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#registerCustomer(Customer, String, String)}.
+   * <ul>
+   *   <li>Given {@code ROLE_USER}.</li>
+   *   <li>Then calls {@link CustomerImpl#setChallengeAnswer(String)}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#registerCustomer(Customer, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"Customer CustomerServiceImpl.registerCustomer(Customer, String, String)"})
+  public void testRegisterCustomer_givenRoleUser_thenCallsSetChallengeAnswer() {
     // Arrange
     CustomerImpl customerImpl = new CustomerImpl();
     when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
@@ -418,14 +546,14 @@ public class CustomerServiceImplDiffblueTest {
     when(roleDao.readRoleByName(Mockito.<String>any())).thenReturn(new RoleImpl());
     doNothing().when(roleDao).addRoleToCustomer(Mockito.<CustomerRole>any());
     CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.getChallengeAnswer()).thenReturn("Challenge Answer");
+    when(customer.getChallengeAnswer()).thenReturn("ROLE_USER");
     doNothing().when(customer).setChallengeAnswer(Mockito.<String>any());
     doNothing().when(customer).setPassword(Mockito.<String>any());
     when(customer.isRegistered()).thenReturn(false);
     when(customer.getId()).thenReturn(1L);
-    when(customer.getEmailAddress()).thenReturn("42 Main St");
-    when(customer.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customer.getUnencodedPassword()).thenReturn("secret");
+    when(customer.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customer.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customer.getUnencodedPassword()).thenReturn("defaultPassword");
     doNothing().when(customer).setRegistered(anyBoolean());
     doNothing().when(customer).setUnencodedPassword(Mockito.<String>any());
 
@@ -434,7 +562,7 @@ public class CustomerServiceImplDiffblueTest {
         "Password Confirm");
 
     // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
     verify(customerDao).save(isA(Customer.class));
     verify(roleDao).addRoleToCustomer(isA(CustomerRole.class));
     verify(roleDao).readRoleByName(eq("ROLE_USER"));
@@ -448,114 +576,7 @@ public class CustomerServiceImplDiffblueTest {
     verify(customer).setPassword(eq("secret"));
     verify(customer).setRegistered(eq(true));
     verify(customer).setUnencodedPassword(eq("iloveyou"));
-    verify(passwordEncoder, atLeast(1)).encode(isA(CharSequence.class));
-    assertSame(customerImpl, actualRegisterCustomerResult);
-  }
-
-  /**
-   * Test {@link CustomerServiceImpl#registerCustomer(Customer, String, String)}.
-   * <ul>
-   *   <li>Given {@code null}.</li>
-   *   <li>When {@link CustomerImpl} {@link CustomerImpl#getUnencodedPassword()} return {@code null}.</li>
-   * </ul>
-   * <p>
-   * Method under test: {@link CustomerServiceImpl#registerCustomer(Customer, String, String)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"Customer CustomerServiceImpl.registerCustomer(Customer, String, String)"})
-  public void testRegisterCustomer_givenNull_whenCustomerImplGetUnencodedPasswordReturnNull() {
-    // Arrange
-    CustomerImpl customerImpl = new CustomerImpl();
-    when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
-    when(emailService.sendTemplateEmail(Mockito.<String>any(), Mockito.<EmailInfo>any(),
-        Mockito.<Map<String, Object>>any())).thenReturn(true);
-    when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
-    when(roleDao.readRoleByName(Mockito.<String>any())).thenReturn(new RoleImpl());
-    doNothing().when(roleDao).addRoleToCustomer(Mockito.<CustomerRole>any());
-    CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.getChallengeAnswer()).thenReturn("Challenge Answer");
-    doNothing().when(customer).setChallengeAnswer(Mockito.<String>any());
-    when(customer.isRegistered()).thenReturn(true);
-    when(customer.getId()).thenReturn(1L);
-    when(customer.getEmailAddress()).thenReturn("42 Main St");
-    when(customer.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customer.getUnencodedPassword()).thenReturn(null);
-    doNothing().when(customer).setRegistered(anyBoolean());
-    doNothing().when(customer).setUnencodedPassword(Mockito.<String>any());
-
-    // Act
-    Customer actualRegisterCustomerResult = customerServiceImpl.registerCustomer(customer, "iloveyou",
-        "Password Confirm");
-
-    // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
-    verify(customerDao).save(isA(Customer.class));
-    verify(roleDao).addRoleToCustomer(isA(CustomerRole.class));
-    verify(roleDao).readRoleByName(eq("ROLE_USER"));
-    verify(customer).getChallengeAnswer();
-    verify(customer).getEmailAddress();
-    verify(customer).getId();
-    verify(customer, atLeast(1)).getUnencodedChallengeAnswer();
-    verify(customer).getUnencodedPassword();
-    verify(customer, atLeast(1)).isRegistered();
-    verify(customer).setChallengeAnswer(eq("secret"));
-    verify(customer).setRegistered(eq(true));
-    verify(customer).setUnencodedPassword(eq("iloveyou"));
-    verify(passwordEncoder).encode(isA(CharSequence.class));
-    assertSame(customerImpl, actualRegisterCustomerResult);
-  }
-
-  /**
-   * Test {@link CustomerServiceImpl#registerCustomer(Customer, String, String)}.
-   * <ul>
-   *   <li>When {@link CustomerImpl} {@link CustomerImpl#getChallengeAnswer()} return {@code secret}.</li>
-   * </ul>
-   * <p>
-   * Method under test: {@link CustomerServiceImpl#registerCustomer(Customer, String, String)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"Customer CustomerServiceImpl.registerCustomer(Customer, String, String)"})
-  public void testRegisterCustomer_whenCustomerImplGetChallengeAnswerReturnSecret() {
-    // Arrange
-    CustomerImpl customerImpl = new CustomerImpl();
-    when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl);
-    when(emailService.sendTemplateEmail(Mockito.<String>any(), Mockito.<EmailInfo>any(),
-        Mockito.<Map<String, Object>>any())).thenReturn(true);
-    when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
-    when(roleDao.readRoleByName(Mockito.<String>any())).thenReturn(new RoleImpl());
-    doNothing().when(roleDao).addRoleToCustomer(Mockito.<CustomerRole>any());
-    CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.getChallengeAnswer()).thenReturn("secret");
-    doNothing().when(customer).setPassword(Mockito.<String>any());
-    when(customer.isRegistered()).thenReturn(true);
-    when(customer.getId()).thenReturn(1L);
-    when(customer.getEmailAddress()).thenReturn("42 Main St");
-    when(customer.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customer.getUnencodedPassword()).thenReturn("secret");
-    doNothing().when(customer).setRegistered(anyBoolean());
-    doNothing().when(customer).setUnencodedPassword(Mockito.<String>any());
-
-    // Act
-    Customer actualRegisterCustomerResult = customerServiceImpl.registerCustomer(customer, "iloveyou",
-        "Password Confirm");
-
-    // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
-    verify(customerDao).save(isA(Customer.class));
-    verify(roleDao).addRoleToCustomer(isA(CustomerRole.class));
-    verify(roleDao).readRoleByName(eq("ROLE_USER"));
-    verify(customer).getChallengeAnswer();
-    verify(customer).getEmailAddress();
-    verify(customer).getId();
-    verify(customer, atLeast(1)).getUnencodedChallengeAnswer();
-    verify(customer, atLeast(1)).getUnencodedPassword();
-    verify(customer, atLeast(1)).isRegistered();
-    verify(customer).setPassword(eq("secret"));
-    verify(customer).setRegistered(eq(true));
-    verify(customer).setUnencodedPassword(eq("iloveyou"));
-    verify(passwordEncoder).encode(isA(CharSequence.class));
+    verify(passwordEncoder, atLeast(1)).encode(Mockito.<CharSequence>any());
     assertSame(customerImpl, actualRegisterCustomerResult);
   }
 
@@ -667,7 +688,7 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#changePassword(PasswordChange)}.
    * <ul>
-   *   <li>Given {@link CustomerImpl} {@link CustomerImpl#getChallengeAnswer()} return {@code secret}.</li>
+   *   <li>Given {@link CustomerImpl} {@link CustomerImpl#isRegistered()} return {@code true}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#changePassword(PasswordChange)}
@@ -675,14 +696,14 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"Customer CustomerServiceImpl.changePassword(PasswordChange)"})
-  public void testChangePassword_givenCustomerImplGetChallengeAnswerReturnSecret() {
+  public void testChangePassword_givenCustomerImplIsRegisteredReturnTrue() {
     // Arrange
     CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.getChallengeAnswer()).thenReturn("secret");
+    when(customerImpl.getChallengeAnswer()).thenReturn("challengeAnswer");
     doNothing().when(customerImpl).setPassword(Mockito.<String>any());
     when(customerImpl.isRegistered()).thenReturn(true);
-    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customerImpl.getUnencodedPassword()).thenReturn("secret");
+    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customerImpl.getUnencodedPassword()).thenReturn("defaultPassword");
     doNothing().when(customerImpl).setPasswordChangeRequired(anyBoolean());
     doNothing().when(customerImpl).setUnencodedPassword(Mockito.<String>any());
     CustomerImpl customerImpl2 = new CustomerImpl();
@@ -710,7 +731,7 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#changePassword(PasswordChange)}.
    * <ul>
-   *   <li>Then calls {@link CustomerImpl#setChallengeAnswer(String)}.</li>
+   *   <li>Then calls {@link CustomerImpl#getChallengeAnswer()}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#changePassword(PasswordChange)}
@@ -718,15 +739,14 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"Customer CustomerServiceImpl.changePassword(PasswordChange)"})
-  public void testChangePassword_thenCallsSetChallengeAnswer() {
+  public void testChangePassword_thenCallsGetChallengeAnswer() {
     // Arrange
     CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.getChallengeAnswer()).thenReturn("Challenge Answer");
-    doNothing().when(customerImpl).setChallengeAnswer(Mockito.<String>any());
+    when(customerImpl.getChallengeAnswer()).thenReturn("challengeAnswer");
     doNothing().when(customerImpl).setPassword(Mockito.<String>any());
-    when(customerImpl.isRegistered()).thenReturn(true);
-    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customerImpl.getUnencodedPassword()).thenReturn("secret");
+    when(customerImpl.isRegistered()).thenReturn(false);
+    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customerImpl.getUnencodedPassword()).thenReturn("defaultPassword");
     doNothing().when(customerImpl).setPasswordChangeRequired(anyBoolean());
     doNothing().when(customerImpl).setUnencodedPassword(Mockito.<String>any());
     CustomerImpl customerImpl2 = new CustomerImpl();
@@ -743,12 +763,56 @@ public class CustomerServiceImplDiffblueTest {
     verify(customerImpl).getChallengeAnswer();
     verify(customerImpl, atLeast(1)).getUnencodedChallengeAnswer();
     verify(customerImpl, atLeast(1)).getUnencodedPassword();
-    verify(customerImpl, atLeast(1)).isRegistered();
+    verify(customerImpl).isRegistered();
+    verify(customerImpl).setPassword(eq("secret"));
+    verify(customerImpl).setPasswordChangeRequired(eq(false));
+    verify(customerImpl).setUnencodedPassword(isNull());
+    verify(passwordEncoder).encode(isA(CharSequence.class));
+    assertSame(customerImpl2, actualChangePasswordResult);
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#changePassword(PasswordChange)}.
+   * <ul>
+   *   <li>Then calls {@link CustomerImpl#setChallengeAnswer(String)}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#changePassword(PasswordChange)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"Customer CustomerServiceImpl.changePassword(PasswordChange)"})
+  public void testChangePassword_thenCallsSetChallengeAnswer() {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.getChallengeAnswer()).thenReturn("foo");
+    doNothing().when(customerImpl).setChallengeAnswer(Mockito.<String>any());
+    doNothing().when(customerImpl).setPassword(Mockito.<String>any());
+    when(customerImpl.isRegistered()).thenReturn(false);
+    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customerImpl.getUnencodedPassword()).thenReturn("defaultPassword");
+    doNothing().when(customerImpl).setPasswordChangeRequired(anyBoolean());
+    doNothing().when(customerImpl).setUnencodedPassword(Mockito.<String>any());
+    CustomerImpl customerImpl2 = new CustomerImpl();
+    when(customerDao.save(Mockito.<Customer>any())).thenReturn(customerImpl2);
+    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
+    when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
+
+    // Act
+    Customer actualChangePasswordResult = customerServiceImpl.changePassword(new PasswordChange("janedoe"));
+
+    // Assert
+    verify(customerDao).readCustomerByUsername(eq("janedoe"));
+    verify(customerDao).save(isA(Customer.class));
+    verify(customerImpl).getChallengeAnswer();
+    verify(customerImpl, atLeast(1)).getUnencodedChallengeAnswer();
+    verify(customerImpl, atLeast(1)).getUnencodedPassword();
+    verify(customerImpl).isRegistered();
     verify(customerImpl).setChallengeAnswer(eq("secret"));
     verify(customerImpl).setPassword(eq("secret"));
     verify(customerImpl).setPasswordChangeRequired(eq(false));
     verify(customerImpl).setUnencodedPassword(isNull());
-    verify(passwordEncoder, atLeast(1)).encode(isA(CharSequence.class));
+    verify(passwordEncoder, atLeast(1)).encode(Mockito.<CharSequence>any());
     assertSame(customerImpl2, actualChangePasswordResult);
   }
 
@@ -795,12 +859,11 @@ public class CustomerServiceImplDiffblueTest {
   public void testResetPassword_givenZero_thenCallsGetPasswordChangeRequired() {
     // Arrange
     CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.getChallengeAnswer()).thenReturn("Challenge Answer");
-    doNothing().when(customerImpl).setChallengeAnswer(Mockito.<String>any());
+    when(customerImpl.getChallengeAnswer()).thenReturn("challengeAnswer");
     doNothing().when(customerImpl).setPassword(Mockito.<String>any());
-    when(customerImpl.isRegistered()).thenReturn(true);
-    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("secret");
-    when(customerImpl.getUnencodedPassword()).thenReturn("secret");
+    when(customerImpl.isRegistered()).thenReturn(false);
+    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customerImpl.getUnencodedPassword()).thenReturn("defaultPassword");
     doNothing().when(customerImpl).setPasswordChangeRequired(anyBoolean());
     doNothing().when(customerImpl).setUnencodedPassword(Mockito.<String>any());
     CustomerImpl customerImpl2 = new CustomerImpl();
@@ -824,12 +887,11 @@ public class CustomerServiceImplDiffblueTest {
     verify(customerImpl).getChallengeAnswer();
     verify(customerImpl, atLeast(1)).getUnencodedChallengeAnswer();
     verify(customerImpl, atLeast(1)).getUnencodedPassword();
-    verify(customerImpl, atLeast(1)).isRegistered();
-    verify(customerImpl).setChallengeAnswer(eq("secret"));
+    verify(customerImpl).isRegistered();
     verify(customerImpl).setPassword(eq("secret"));
     verify(customerImpl).setPasswordChangeRequired(eq(true));
     verify(customerImpl).setUnencodedPassword(eq(""));
-    verify(passwordEncoder, atLeast(1)).encode(isA(CharSequence.class));
+    verify(passwordEncoder).encode(isA(CharSequence.class));
     assertSame(customerImpl2, actualResetPasswordResult);
   }
 
@@ -1357,6 +1419,29 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#customerPassesCustomerRule(Customer, CustomerRuleHolder)}.
    * <ul>
+   *   <li>Given {@link CustomerServiceImpl} (default constructor).</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#customerPassesCustomerRule(Customer, CustomerRuleHolder)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"boolean CustomerServiceImpl.customerPassesCustomerRule(Customer, CustomerRuleHolder)"})
+  public void testCustomerPassesCustomerRule_givenCustomerServiceImpl() {
+    // Arrange
+    CustomerServiceImpl customerServiceImpl = new CustomerServiceImpl();
+    CustomerImpl customer = new CustomerImpl();
+
+    CustomerRuleHolder customerRuleHolder = new CustomerRuleHolder("Customer Rule");
+    customerRuleHolder.setCustomerRule("defaultRule");
+
+    // Act and Assert
+    assertFalse(customerServiceImpl.customerPassesCustomerRule(customer, customerRuleHolder));
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#customerPassesCustomerRule(Customer, CustomerRuleHolder)}.
+   * <ul>
    *   <li>When {@link CustomerRuleHolder#CustomerRuleHolder(String)} with customerRule is {@code 42}.</li>
    * </ul>
    * <p>
@@ -1505,11 +1590,11 @@ public class CustomerServiceImplDiffblueTest {
   @MethodsUnderTest({"GenericResponse CustomerServiceImpl.sendForgotUsernameNotification(String)"})
   public void testSendForgotUsernameNotification_thenReturnErrorCodesListFirstIsInactiveUser() {
     // Arrange
-    CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.isDeactivated()).thenReturn(true);
+    Customer customer = mock(Customer.class);
+    when(customer.isDeactivated()).thenReturn(true);
 
     ArrayList<Customer> customerList = new ArrayList<>();
-    customerList.add(customerImpl);
+    customerList.add(customer);
     when(customerDao.readCustomersByEmail(Mockito.<String>any())).thenReturn(customerList);
 
     // Act
@@ -1518,7 +1603,7 @@ public class CustomerServiceImplDiffblueTest {
 
     // Assert
     verify(customerDao).readCustomersByEmail(eq("42 Main St"));
-    verify(customerImpl).isDeactivated();
+    verify(customer).isDeactivated();
     List<String> errorCodesList = actualSendForgotUsernameNotificationResult.getErrorCodesList();
     assertEquals(1, errorCodesList.size());
     assertEquals("inactiveUser", errorCodesList.get(0));
@@ -1671,7 +1756,7 @@ public class CustomerServiceImplDiffblueTest {
     // Arrange
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(true);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
 
     // Act
@@ -1704,7 +1789,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
         .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
@@ -1717,7 +1802,7 @@ public class CustomerServiceImplDiffblueTest {
         .sendForgotPasswordNotification("janedoe", "https://example.org/example");
 
     // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
     verify(customerDao).readCustomerByUsername(eq("janedoe"));
     verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
     verify(customerImpl, atLeast(1)).getEmailAddress();
@@ -1745,7 +1830,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
         .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
@@ -1758,7 +1843,7 @@ public class CustomerServiceImplDiffblueTest {
         .sendForgotPasswordNotification("janedoe", "");
 
     // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
     verify(customerDao).readCustomerByUsername(eq("janedoe"));
     verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
     verify(customerImpl, atLeast(1)).getEmailAddress();
@@ -1786,7 +1871,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
         .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
@@ -1799,7 +1884,7 @@ public class CustomerServiceImplDiffblueTest {
         .sendForgotPasswordNotification("janedoe", null);
 
     // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
     verify(customerDao).readCustomerByUsername(eq("janedoe"));
     verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
     verify(customerImpl, atLeast(1)).getEmailAddress();
@@ -1827,7 +1912,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
         .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
@@ -1840,7 +1925,7 @@ public class CustomerServiceImplDiffblueTest {
         .sendForgotPasswordNotification("janedoe", "?");
 
     // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
     verify(customerDao).readCustomerByUsername(eq("janedoe"));
     verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
     verify(customerImpl, atLeast(1)).getEmailAddress();
@@ -1910,7 +1995,7 @@ public class CustomerServiceImplDiffblueTest {
     // Arrange
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(true);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
 
     // Act
@@ -1970,7 +2055,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
         .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
@@ -1983,7 +2068,7 @@ public class CustomerServiceImplDiffblueTest {
         .sendForcedPasswordChangeNotification("janedoe", "https://example.org/example");
 
     // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
     verify(customerDao).readCustomerByUsername(eq("janedoe"));
     verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
     verify(customerImpl, atLeast(1)).getEmailAddress();
@@ -2011,7 +2096,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
         .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
@@ -2024,7 +2109,7 @@ public class CustomerServiceImplDiffblueTest {
         .sendForcedPasswordChangeNotification("janedoe", "");
 
     // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
     verify(customerDao).readCustomerByUsername(eq("janedoe"));
     verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
     verify(customerImpl, atLeast(1)).getEmailAddress();
@@ -2052,7 +2137,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
         .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
@@ -2065,7 +2150,7 @@ public class CustomerServiceImplDiffblueTest {
         .sendForcedPasswordChangeNotification("janedoe", null);
 
     // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
     verify(customerDao).readCustomerByUsername(eq("janedoe"));
     verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
     verify(customerImpl, atLeast(1)).getEmailAddress();
@@ -2093,7 +2178,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
         .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
@@ -2106,7 +2191,7 @@ public class CustomerServiceImplDiffblueTest {
         .sendForcedPasswordChangeNotification("janedoe", "?");
 
     // Assert
-    verify(emailService).sendTemplateEmail(eq("42 Main St"), (EmailInfo) isNull(), isA(Map.class));
+    verify(emailService).sendTemplateEmail(eq("defaultEmail@example.com"), (EmailInfo) isNull(), isA(Map.class));
     verify(customerDao).readCustomerByUsername(eq("janedoe"));
     verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
     verify(customerImpl, atLeast(1)).getEmailAddress();
@@ -2567,6 +2652,97 @@ public class CustomerServiceImplDiffblueTest {
 
   /**
    * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
+  public void testResetPasswordUsingToken2() {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    doNothing().when(customerImpl).setPassword(Mockito.<String>any());
+    when(customerImpl.isRegistered()).thenReturn(false);
+    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn(null);
+    when(customerImpl.getUnencodedPassword()).thenReturn("defaultPassword");
+    doNothing().when(customerImpl).setPasswordChangeRequired(anyBoolean());
+    doNothing().when(customerImpl).setUnencodedPassword(Mockito.<String>any());
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.getId()).thenReturn(1L);
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customerDao.save(Mockito.<Customer>any())).thenReturn(new CustomerImpl());
+    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
+    CustomerForgotPasswordSecurityTokenImpl customerForgotPasswordSecurityTokenImpl = mock(
+        CustomerForgotPasswordSecurityTokenImpl.class);
+    doNothing().when(customerForgotPasswordSecurityTokenImpl).setTokenUsedFlag(anyBoolean());
+    when(customerForgotPasswordSecurityTokenImpl.getCustomerId()).thenReturn(1L);
+    when(customerForgotPasswordSecurityTokenImpl.isTokenUsedFlag()).thenReturn(false);
+    when(customerForgotPasswordSecurityTokenImpl.getToken()).thenReturn("ABC123");
+    when(customerForgotPasswordSecurityTokenImpl.getCreateDate()).thenReturn(new Date());
+
+    ArrayList<CustomerForgotPasswordSecurityToken> customerForgotPasswordSecurityTokenList = new ArrayList<>();
+    customerForgotPasswordSecurityTokenList.add(customerForgotPasswordSecurityTokenImpl);
+    when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
+        .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
+    when(customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(Mockito.<Long>any()))
+        .thenReturn(customerForgotPasswordSecurityTokenList);
+    when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
+    when(passwordEncoder.matches(Mockito.<CharSequence>any(), Mockito.<String>any())).thenReturn(true);
+
+    // Act
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
+        "ABC123", "iloveyou", "iloveyou");
+
+    // Assert
+    verify(customerDao).readCustomerByUsername(eq("janedoe"));
+    verify(customerDao).save(isA(Customer.class));
+    verify(customerForgotPasswordSecurityTokenDao, atLeast(1)).readUnusedTokensByCustomerId(eq(1L));
+    verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
+    verify(customerForgotPasswordSecurityTokenImpl).getCreateDate();
+    verify(customerForgotPasswordSecurityTokenImpl).getCustomerId();
+    verify(customerForgotPasswordSecurityTokenImpl).getToken();
+    verify(customerForgotPasswordSecurityTokenImpl).isTokenUsedFlag();
+    verify(customerForgotPasswordSecurityTokenImpl).setTokenUsedFlag(eq(true));
+    verify(customerImpl).getEmailAddress();
+    verify(customerImpl, atLeast(1)).getId();
+    verify(customerImpl).getUnencodedChallengeAnswer();
+    verify(customerImpl, atLeast(1)).getUnencodedPassword();
+    verify(customerImpl).isDeactivated();
+    verify(customerImpl).isRegistered();
+    verify(customerImpl).setPassword(eq("secret"));
+    verify(customerImpl).setPasswordChangeRequired(eq(false));
+    verify(customerImpl).setUnencodedPassword(eq("iloveyou"));
+    verify(passwordEncoder).encode(isA(CharSequence.class));
+    verify(passwordEncoder).matches(isA(CharSequence.class), eq("ABC123"));
+    assertFalse(actualResetPasswordUsingTokenResult.getHasErrors());
+    assertTrue(actualResetPasswordUsingTokenResult.getErrorCodesList().isEmpty());
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
+   * <ul>
+   *   <li>Given {@link CustomerDao}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
+  public void testResetPasswordUsingToken_givenCustomerDao() {
+    // Arrange and Act
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken(null, "ABC123",
+        "iloveyou", "iloveyou");
+
+    // Assert
+    List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
+    assertEquals(1, errorCodesList.size());
+    assertEquals("invalidCustomer", errorCodesList.get(0));
+    assertTrue(actualResetPasswordUsingTokenResult.getHasErrors());
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
    * <ul>
    *   <li>Given {@link CustomerDao} {@link CustomerDao#readCustomerByUsername(String)} return {@code null}.</li>
    * </ul>
@@ -2586,30 +2762,6 @@ public class CustomerServiceImplDiffblueTest {
 
     // Assert
     verify(customerDao).readCustomerByUsername(eq("janedoe"));
-    List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
-    assertEquals(1, errorCodesList.size());
-    assertEquals("invalidCustomer", errorCodesList.get(0));
-    assertTrue(actualResetPasswordUsingTokenResult.getHasErrors());
-  }
-
-  /**
-   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
-   * <ul>
-   *   <li>Given {@link CustomerDao}.</li>
-   *   <li>When {@code null}.</li>
-   * </ul>
-   * <p>
-   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
-  public void testResetPasswordUsingToken_givenCustomerDao_whenNull() {
-    // Arrange and Act
-    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken(null, "ABC123",
-        "iloveyou", "iloveyou");
-
-    // Assert
     List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
     assertEquals(1, errorCodesList.size());
     assertEquals("invalidCustomer", errorCodesList.get(0));
@@ -2649,6 +2801,200 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
    * <ul>
+   *   <li>Given {@link CustomerImpl} {@link CustomerImpl#getId()} return four.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
+  public void testResetPasswordUsingToken_givenCustomerImplGetIdReturnFour() {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.getId()).thenReturn(4L);
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
+    CustomerForgotPasswordSecurityTokenImpl customerForgotPasswordSecurityTokenImpl = mock(
+        CustomerForgotPasswordSecurityTokenImpl.class);
+    when(customerForgotPasswordSecurityTokenImpl.getCustomerId()).thenReturn(1L);
+    when(customerForgotPasswordSecurityTokenImpl.isTokenUsedFlag()).thenReturn(false);
+    when(customerForgotPasswordSecurityTokenImpl.getToken()).thenReturn("ABC123");
+    when(customerForgotPasswordSecurityTokenImpl.getCreateDate()).thenReturn(new Date());
+
+    ArrayList<CustomerForgotPasswordSecurityToken> customerForgotPasswordSecurityTokenList = new ArrayList<>();
+    customerForgotPasswordSecurityTokenList.add(customerForgotPasswordSecurityTokenImpl);
+    when(customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(Mockito.<Long>any()))
+        .thenReturn(customerForgotPasswordSecurityTokenList);
+    when(passwordEncoder.matches(Mockito.<CharSequence>any(), Mockito.<String>any())).thenReturn(true);
+
+    // Act
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
+        "ABC123", "iloveyou", "iloveyou");
+
+    // Assert
+    verify(customerDao).readCustomerByUsername(eq("janedoe"));
+    verify(customerForgotPasswordSecurityTokenDao).readUnusedTokensByCustomerId(eq(4L));
+    verify(customerForgotPasswordSecurityTokenImpl).getCreateDate();
+    verify(customerForgotPasswordSecurityTokenImpl).getCustomerId();
+    verify(customerForgotPasswordSecurityTokenImpl).getToken();
+    verify(customerForgotPasswordSecurityTokenImpl).isTokenUsedFlag();
+    verify(customerImpl).getEmailAddress();
+    verify(customerImpl, atLeast(1)).getId();
+    verify(customerImpl).isDeactivated();
+    verify(passwordEncoder).matches(isA(CharSequence.class), eq("ABC123"));
+    List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
+    assertEquals(1, errorCodesList.size());
+    assertEquals("invalidToken", errorCodesList.get(0));
+    assertTrue(actualResetPasswordUsingTokenResult.getHasErrors());
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
+   * <ul>
+   *   <li>Given {@link CustomerImpl} {@link CustomerImpl#getUnencodedPassword()} return {@code null}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
+  public void testResetPasswordUsingToken_givenCustomerImplGetUnencodedPasswordReturnNull() {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.getChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customerImpl.isRegistered()).thenReturn(false);
+    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customerImpl.getUnencodedPassword()).thenReturn(null);
+    doNothing().when(customerImpl).setPasswordChangeRequired(anyBoolean());
+    doNothing().when(customerImpl).setUnencodedPassword(Mockito.<String>any());
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.getId()).thenReturn(1L);
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customerDao.save(Mockito.<Customer>any())).thenReturn(new CustomerImpl());
+    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
+    CustomerForgotPasswordSecurityTokenImpl customerForgotPasswordSecurityTokenImpl = mock(
+        CustomerForgotPasswordSecurityTokenImpl.class);
+    doNothing().when(customerForgotPasswordSecurityTokenImpl).setTokenUsedFlag(anyBoolean());
+    when(customerForgotPasswordSecurityTokenImpl.getCustomerId()).thenReturn(1L);
+    when(customerForgotPasswordSecurityTokenImpl.isTokenUsedFlag()).thenReturn(false);
+    when(customerForgotPasswordSecurityTokenImpl.getToken()).thenReturn("ABC123");
+    when(customerForgotPasswordSecurityTokenImpl.getCreateDate()).thenReturn(new Date());
+
+    ArrayList<CustomerForgotPasswordSecurityToken> customerForgotPasswordSecurityTokenList = new ArrayList<>();
+    customerForgotPasswordSecurityTokenList.add(customerForgotPasswordSecurityTokenImpl);
+    when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
+        .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
+    when(customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(Mockito.<Long>any()))
+        .thenReturn(customerForgotPasswordSecurityTokenList);
+    when(passwordEncoder.matches(Mockito.<CharSequence>any(), Mockito.<String>any())).thenReturn(true);
+
+    // Act
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
+        "ABC123", "iloveyou", "iloveyou");
+
+    // Assert
+    verify(customerDao).readCustomerByUsername(eq("janedoe"));
+    verify(customerDao).save(isA(Customer.class));
+    verify(customerForgotPasswordSecurityTokenDao, atLeast(1)).readUnusedTokensByCustomerId(eq(1L));
+    verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
+    verify(customerForgotPasswordSecurityTokenImpl).getCreateDate();
+    verify(customerForgotPasswordSecurityTokenImpl).getCustomerId();
+    verify(customerForgotPasswordSecurityTokenImpl).getToken();
+    verify(customerForgotPasswordSecurityTokenImpl).isTokenUsedFlag();
+    verify(customerForgotPasswordSecurityTokenImpl).setTokenUsedFlag(eq(true));
+    verify(customerImpl).getChallengeAnswer();
+    verify(customerImpl).getEmailAddress();
+    verify(customerImpl, atLeast(1)).getId();
+    verify(customerImpl, atLeast(1)).getUnencodedChallengeAnswer();
+    verify(customerImpl).getUnencodedPassword();
+    verify(customerImpl).isDeactivated();
+    verify(customerImpl).isRegistered();
+    verify(customerImpl).setPasswordChangeRequired(eq(false));
+    verify(customerImpl).setUnencodedPassword(eq("iloveyou"));
+    verify(passwordEncoder).matches(isA(CharSequence.class), eq("ABC123"));
+    assertFalse(actualResetPasswordUsingTokenResult.getHasErrors());
+    assertTrue(actualResetPasswordUsingTokenResult.getErrorCodesList().isEmpty());
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
+   * <ul>
+   *   <li>Given {@link CustomerImpl} {@link CustomerImpl#isRegistered()} return {@code true}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
+  public void testResetPasswordUsingToken_givenCustomerImplIsRegisteredReturnTrue() {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.getChallengeAnswer()).thenReturn("challengeAnswer");
+    doNothing().when(customerImpl).setPassword(Mockito.<String>any());
+    when(customerImpl.isRegistered()).thenReturn(true);
+    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customerImpl.getUnencodedPassword()).thenReturn("defaultPassword");
+    doNothing().when(customerImpl).setPasswordChangeRequired(anyBoolean());
+    doNothing().when(customerImpl).setUnencodedPassword(Mockito.<String>any());
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.getId()).thenReturn(1L);
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customerDao.save(Mockito.<Customer>any())).thenReturn(new CustomerImpl());
+    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
+    CustomerForgotPasswordSecurityTokenImpl customerForgotPasswordSecurityTokenImpl = mock(
+        CustomerForgotPasswordSecurityTokenImpl.class);
+    doNothing().when(customerForgotPasswordSecurityTokenImpl).setTokenUsedFlag(anyBoolean());
+    when(customerForgotPasswordSecurityTokenImpl.getCustomerId()).thenReturn(1L);
+    when(customerForgotPasswordSecurityTokenImpl.isTokenUsedFlag()).thenReturn(false);
+    when(customerForgotPasswordSecurityTokenImpl.getToken()).thenReturn("ABC123");
+    when(customerForgotPasswordSecurityTokenImpl.getCreateDate()).thenReturn(new Date());
+
+    ArrayList<CustomerForgotPasswordSecurityToken> customerForgotPasswordSecurityTokenList = new ArrayList<>();
+    customerForgotPasswordSecurityTokenList.add(customerForgotPasswordSecurityTokenImpl);
+    when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
+        .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
+    when(customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(Mockito.<Long>any()))
+        .thenReturn(customerForgotPasswordSecurityTokenList);
+    when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
+    when(passwordEncoder.matches(Mockito.<CharSequence>any(), Mockito.<String>any())).thenReturn(true);
+
+    // Act
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
+        "ABC123", "iloveyou", "iloveyou");
+
+    // Assert
+    verify(customerDao).readCustomerByUsername(eq("janedoe"));
+    verify(customerDao).save(isA(Customer.class));
+    verify(customerForgotPasswordSecurityTokenDao, atLeast(1)).readUnusedTokensByCustomerId(eq(1L));
+    verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
+    verify(customerForgotPasswordSecurityTokenImpl).getCreateDate();
+    verify(customerForgotPasswordSecurityTokenImpl).getCustomerId();
+    verify(customerForgotPasswordSecurityTokenImpl).getToken();
+    verify(customerForgotPasswordSecurityTokenImpl).isTokenUsedFlag();
+    verify(customerForgotPasswordSecurityTokenImpl).setTokenUsedFlag(eq(true));
+    verify(customerImpl).getChallengeAnswer();
+    verify(customerImpl).getEmailAddress();
+    verify(customerImpl, atLeast(1)).getId();
+    verify(customerImpl, atLeast(1)).getUnencodedChallengeAnswer();
+    verify(customerImpl, atLeast(1)).getUnencodedPassword();
+    verify(customerImpl).isDeactivated();
+    verify(customerImpl, atLeast(1)).isRegistered();
+    verify(customerImpl).setPassword(eq("secret"));
+    verify(customerImpl).setPasswordChangeRequired(eq(false));
+    verify(customerImpl).setUnencodedPassword(eq("iloveyou"));
+    verify(passwordEncoder).encode(isA(CharSequence.class));
+    verify(passwordEncoder).matches(isA(CharSequence.class), eq("ABC123"));
+    assertFalse(actualResetPasswordUsingTokenResult.getHasErrors());
+    assertTrue(actualResetPasswordUsingTokenResult.getErrorCodesList().isEmpty());
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
+   * <ul>
    *   <li>Given {@link PasswordEncoder} {@link PasswordEncoder#matches(CharSequence, String)} return {@code false}.</li>
    * </ul>
    * <p>
@@ -2662,7 +3008,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     CustomerForgotPasswordSecurityTokenImpl customerForgotPasswordSecurityTokenImpl = mock(
         CustomerForgotPasswordSecurityTokenImpl.class);
@@ -2695,6 +3041,154 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
    * <ul>
+   *   <li>Then calls {@link CustomerImpl#getChallengeAnswer()}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
+  public void testResetPasswordUsingToken_thenCallsGetChallengeAnswer() {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.getChallengeAnswer()).thenReturn("challengeAnswer");
+    doNothing().when(customerImpl).setPassword(Mockito.<String>any());
+    when(customerImpl.isRegistered()).thenReturn(false);
+    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customerImpl.getUnencodedPassword()).thenReturn("defaultPassword");
+    doNothing().when(customerImpl).setPasswordChangeRequired(anyBoolean());
+    doNothing().when(customerImpl).setUnencodedPassword(Mockito.<String>any());
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.getId()).thenReturn(1L);
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customerDao.save(Mockito.<Customer>any())).thenReturn(new CustomerImpl());
+    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
+    CustomerForgotPasswordSecurityTokenImpl customerForgotPasswordSecurityTokenImpl = mock(
+        CustomerForgotPasswordSecurityTokenImpl.class);
+    doNothing().when(customerForgotPasswordSecurityTokenImpl).setTokenUsedFlag(anyBoolean());
+    when(customerForgotPasswordSecurityTokenImpl.getCustomerId()).thenReturn(1L);
+    when(customerForgotPasswordSecurityTokenImpl.isTokenUsedFlag()).thenReturn(false);
+    when(customerForgotPasswordSecurityTokenImpl.getToken()).thenReturn("ABC123");
+    when(customerForgotPasswordSecurityTokenImpl.getCreateDate()).thenReturn(new Date());
+
+    ArrayList<CustomerForgotPasswordSecurityToken> customerForgotPasswordSecurityTokenList = new ArrayList<>();
+    customerForgotPasswordSecurityTokenList.add(customerForgotPasswordSecurityTokenImpl);
+    when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
+        .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
+    when(customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(Mockito.<Long>any()))
+        .thenReturn(customerForgotPasswordSecurityTokenList);
+    when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
+    when(passwordEncoder.matches(Mockito.<CharSequence>any(), Mockito.<String>any())).thenReturn(true);
+
+    // Act
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
+        "ABC123", "iloveyou", "iloveyou");
+
+    // Assert
+    verify(customerDao).readCustomerByUsername(eq("janedoe"));
+    verify(customerDao).save(isA(Customer.class));
+    verify(customerForgotPasswordSecurityTokenDao, atLeast(1)).readUnusedTokensByCustomerId(eq(1L));
+    verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
+    verify(customerForgotPasswordSecurityTokenImpl).getCreateDate();
+    verify(customerForgotPasswordSecurityTokenImpl).getCustomerId();
+    verify(customerForgotPasswordSecurityTokenImpl).getToken();
+    verify(customerForgotPasswordSecurityTokenImpl).isTokenUsedFlag();
+    verify(customerForgotPasswordSecurityTokenImpl).setTokenUsedFlag(eq(true));
+    verify(customerImpl).getChallengeAnswer();
+    verify(customerImpl).getEmailAddress();
+    verify(customerImpl, atLeast(1)).getId();
+    verify(customerImpl, atLeast(1)).getUnencodedChallengeAnswer();
+    verify(customerImpl, atLeast(1)).getUnencodedPassword();
+    verify(customerImpl).isDeactivated();
+    verify(customerImpl).isRegistered();
+    verify(customerImpl).setPassword(eq("secret"));
+    verify(customerImpl).setPasswordChangeRequired(eq(false));
+    verify(customerImpl).setUnencodedPassword(eq("iloveyou"));
+    verify(passwordEncoder).encode(isA(CharSequence.class));
+    verify(passwordEncoder).matches(isA(CharSequence.class), eq("ABC123"));
+    assertFalse(actualResetPasswordUsingTokenResult.getHasErrors());
+    assertTrue(actualResetPasswordUsingTokenResult.getErrorCodesList().isEmpty());
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
+   * <ul>
+   *   <li>Then calls {@link CustomerImpl#setChallengeAnswer(String)}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
+  public void testResetPasswordUsingToken_thenCallsSetChallengeAnswer() {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.getChallengeAnswer()).thenReturn("iloveyou");
+    doNothing().when(customerImpl).setChallengeAnswer(Mockito.<String>any());
+    doNothing().when(customerImpl).setPassword(Mockito.<String>any());
+    when(customerImpl.isRegistered()).thenReturn(false);
+    when(customerImpl.getUnencodedChallengeAnswer()).thenReturn("challengeAnswer");
+    when(customerImpl.getUnencodedPassword()).thenReturn("defaultPassword");
+    doNothing().when(customerImpl).setPasswordChangeRequired(anyBoolean());
+    doNothing().when(customerImpl).setUnencodedPassword(Mockito.<String>any());
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.getId()).thenReturn(1L);
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customerDao.save(Mockito.<Customer>any())).thenReturn(new CustomerImpl());
+    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
+    CustomerForgotPasswordSecurityTokenImpl customerForgotPasswordSecurityTokenImpl = mock(
+        CustomerForgotPasswordSecurityTokenImpl.class);
+    doNothing().when(customerForgotPasswordSecurityTokenImpl).setTokenUsedFlag(anyBoolean());
+    when(customerForgotPasswordSecurityTokenImpl.getCustomerId()).thenReturn(1L);
+    when(customerForgotPasswordSecurityTokenImpl.isTokenUsedFlag()).thenReturn(false);
+    when(customerForgotPasswordSecurityTokenImpl.getToken()).thenReturn("ABC123");
+    when(customerForgotPasswordSecurityTokenImpl.getCreateDate()).thenReturn(new Date());
+
+    ArrayList<CustomerForgotPasswordSecurityToken> customerForgotPasswordSecurityTokenList = new ArrayList<>();
+    customerForgotPasswordSecurityTokenList.add(customerForgotPasswordSecurityTokenImpl);
+    when(customerForgotPasswordSecurityTokenDao.saveToken(Mockito.<CustomerForgotPasswordSecurityToken>any()))
+        .thenReturn(new CustomerForgotPasswordSecurityTokenImpl());
+    when(customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(Mockito.<Long>any()))
+        .thenReturn(customerForgotPasswordSecurityTokenList);
+    when(passwordEncoder.encode(Mockito.<CharSequence>any())).thenReturn("secret");
+    when(passwordEncoder.matches(Mockito.<CharSequence>any(), Mockito.<String>any())).thenReturn(true);
+
+    // Act
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
+        "ABC123", "iloveyou", "iloveyou");
+
+    // Assert
+    verify(customerDao).readCustomerByUsername(eq("janedoe"));
+    verify(customerDao).save(isA(Customer.class));
+    verify(customerForgotPasswordSecurityTokenDao, atLeast(1)).readUnusedTokensByCustomerId(eq(1L));
+    verify(customerForgotPasswordSecurityTokenDao).saveToken(isA(CustomerForgotPasswordSecurityToken.class));
+    verify(customerForgotPasswordSecurityTokenImpl).getCreateDate();
+    verify(customerForgotPasswordSecurityTokenImpl).getCustomerId();
+    verify(customerForgotPasswordSecurityTokenImpl).getToken();
+    verify(customerForgotPasswordSecurityTokenImpl).isTokenUsedFlag();
+    verify(customerForgotPasswordSecurityTokenImpl).setTokenUsedFlag(eq(true));
+    verify(customerImpl).getChallengeAnswer();
+    verify(customerImpl).getEmailAddress();
+    verify(customerImpl, atLeast(1)).getId();
+    verify(customerImpl, atLeast(1)).getUnencodedChallengeAnswer();
+    verify(customerImpl, atLeast(1)).getUnencodedPassword();
+    verify(customerImpl).isDeactivated();
+    verify(customerImpl).isRegistered();
+    verify(customerImpl).setChallengeAnswer(eq("secret"));
+    verify(customerImpl).setPassword(eq("secret"));
+    verify(customerImpl).setPasswordChangeRequired(eq(false));
+    verify(customerImpl).setUnencodedPassword(eq("iloveyou"));
+    verify(passwordEncoder, atLeast(1)).encode(Mockito.<CharSequence>any());
+    verify(passwordEncoder).matches(isA(CharSequence.class), eq("ABC123"));
+    assertFalse(actualResetPasswordUsingTokenResult.getHasErrors());
+    assertTrue(actualResetPasswordUsingTokenResult.getErrorCodesList().isEmpty());
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
+   * <ul>
    *   <li>Then return ErrorCodesList first is {@code inactiveUser}.</li>
    * </ul>
    * <p>
@@ -2707,7 +3201,7 @@ public class CustomerServiceImplDiffblueTest {
     // Arrange
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(true);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
 
     // Act
@@ -2727,6 +3221,70 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
    * <ul>
+   *   <li>Then return ErrorCodesList first is {@code invalidPassword}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
+  public void testResetPasswordUsingToken_thenReturnErrorCodesListFirstIsInvalidPassword() {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
+
+    // Act
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
+        "ABC123", null, "iloveyou");
+
+    // Assert
+    verify(customerDao).readCustomerByUsername(eq("janedoe"));
+    verify(customerImpl).getEmailAddress();
+    verify(customerImpl).isDeactivated();
+    List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
+    assertEquals(1, errorCodesList.size());
+    assertEquals("invalidPassword", errorCodesList.get(0));
+    assertTrue(actualResetPasswordUsingTokenResult.getHasErrors());
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
+   * <ul>
+   *   <li>Then return ErrorCodesList first is {@code invalidPassword}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
+  public void testResetPasswordUsingToken_thenReturnErrorCodesListFirstIsInvalidPassword2() {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
+
+    // Act
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
+        "ABC123", "iloveyou", null);
+
+    // Assert
+    verify(customerDao).readCustomerByUsername(eq("janedoe"));
+    verify(customerImpl).getEmailAddress();
+    verify(customerImpl).isDeactivated();
+    List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
+    assertEquals(1, errorCodesList.size());
+    assertEquals("invalidPassword", errorCodesList.get(0));
+    assertTrue(actualResetPasswordUsingTokenResult.getHasErrors());
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
+   * <ul>
    *   <li>Then return ErrorCodesList first is {@code invalidToken}.</li>
    * </ul>
    * <p>
@@ -2740,7 +3298,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     when(customerForgotPasswordSecurityTokenDao.readUnusedTokensByCustomerId(Mockito.<Long>any()))
         .thenReturn(new ArrayList<>());
@@ -2764,6 +3322,38 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
    * <ul>
+   *   <li>Then return ErrorCodesList first is {@code passwordMismatch}.</li>
+   * </ul>
+   * <p>
+   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
+   */
+  @Test
+  @Category(MaintainedByDiffblue.class)
+  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
+  public void testResetPasswordUsingToken_thenReturnErrorCodesListFirstIsPasswordMismatch() {
+    // Arrange
+    CustomerImpl customerImpl = mock(CustomerImpl.class);
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
+    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
+
+    // Act
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
+        "ABC123", "tokenUsed", "iloveyou");
+
+    // Assert
+    verify(customerDao).readCustomerByUsername(eq("janedoe"));
+    verify(customerImpl).getEmailAddress();
+    verify(customerImpl).isDeactivated();
+    List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
+    assertEquals(1, errorCodesList.size());
+    assertEquals("passwordMismatch", errorCodesList.get(0));
+    assertTrue(actualResetPasswordUsingTokenResult.getHasErrors());
+  }
+
+  /**
+   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
+   * <ul>
    *   <li>Then return ErrorCodesList first is {@code tokenUsed}.</li>
    * </ul>
    * <p>
@@ -2777,7 +3367,7 @@ public class CustomerServiceImplDiffblueTest {
     CustomerImpl customerImpl = mock(CustomerImpl.class);
     when(customerImpl.isDeactivated()).thenReturn(false);
     when(customerImpl.getId()).thenReturn(1L);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
     CustomerForgotPasswordSecurityTokenImpl customerForgotPasswordSecurityTokenImpl = mock(
         CustomerForgotPasswordSecurityTokenImpl.class);
@@ -2812,7 +3402,8 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
    * <ul>
-   *   <li>Then return ErrorCodesList second is {@code invalidPassword}.</li>
+   *   <li>When {@code null}.</li>
+   *   <li>Then return ErrorCodesList first is {@code invalidToken}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
@@ -2820,81 +3411,15 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
-  public void testResetPasswordUsingToken_thenReturnErrorCodesListSecondIsInvalidPassword() {
+  public void testResetPasswordUsingToken_whenNull_thenReturnErrorCodesListFirstIsInvalidToken() {
     // Arrange
     CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.isDeactivated()).thenReturn(true);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
+    when(customerImpl.isDeactivated()).thenReturn(false);
+    when(customerImpl.getEmailAddress()).thenReturn("defaultEmail@example.com");
     when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
 
     // Act
-    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
-        "ABC123", "", "iloveyou");
-
-    // Assert
-    verify(customerDao).readCustomerByUsername(eq("janedoe"));
-    verify(customerImpl).getEmailAddress();
-    verify(customerImpl).isDeactivated();
-    List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
-    assertEquals(2, errorCodesList.size());
-    assertEquals("inactiveUser", errorCodesList.get(0));
-    assertEquals("invalidPassword", errorCodesList.get(1));
-    assertTrue(actualResetPasswordUsingTokenResult.getHasErrors());
-  }
-
-  /**
-   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
-   * <ul>
-   *   <li>Then return ErrorCodesList second is {@code invalidPassword}.</li>
-   * </ul>
-   * <p>
-   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
-  public void testResetPasswordUsingToken_thenReturnErrorCodesListSecondIsInvalidPassword2() {
-    // Arrange
-    CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.isDeactivated()).thenReturn(true);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
-    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
-
-    // Act
-    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
-        "ABC123", "iloveyou", "");
-
-    // Assert
-    verify(customerDao).readCustomerByUsername(eq("janedoe"));
-    verify(customerImpl).getEmailAddress();
-    verify(customerImpl).isDeactivated();
-    List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
-    assertEquals(2, errorCodesList.size());
-    assertEquals("inactiveUser", errorCodesList.get(0));
-    assertEquals("invalidPassword", errorCodesList.get(1));
-    assertTrue(actualResetPasswordUsingTokenResult.getHasErrors());
-  }
-
-  /**
-   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
-   * <ul>
-   *   <li>Then return ErrorCodesList second is {@code invalidToken}.</li>
-   * </ul>
-   * <p>
-   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
-  public void testResetPasswordUsingToken_thenReturnErrorCodesListSecondIsInvalidToken() {
-    // Arrange
-    CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.isDeactivated()).thenReturn(true);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
-    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
-
-    // Act
-    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe", "",
+    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe", null,
         "iloveyou", "iloveyou");
 
     // Assert
@@ -2902,42 +3427,8 @@ public class CustomerServiceImplDiffblueTest {
     verify(customerImpl).getEmailAddress();
     verify(customerImpl).isDeactivated();
     List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
-    assertEquals(2, errorCodesList.size());
-    assertEquals("inactiveUser", errorCodesList.get(0));
-    assertEquals("invalidToken", errorCodesList.get(1));
-    assertTrue(actualResetPasswordUsingTokenResult.getHasErrors());
-  }
-
-  /**
-   * Test {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}.
-   * <ul>
-   *   <li>Then return ErrorCodesList second is {@code passwordMismatch}.</li>
-   * </ul>
-   * <p>
-   * Method under test: {@link CustomerServiceImpl#resetPasswordUsingToken(String, String, String, String)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"GenericResponse CustomerServiceImpl.resetPasswordUsingToken(String, String, String, String)"})
-  public void testResetPasswordUsingToken_thenReturnErrorCodesListSecondIsPasswordMismatch() {
-    // Arrange
-    CustomerImpl customerImpl = mock(CustomerImpl.class);
-    when(customerImpl.isDeactivated()).thenReturn(true);
-    when(customerImpl.getEmailAddress()).thenReturn("42 Main St");
-    when(customerDao.readCustomerByUsername(Mockito.<String>any())).thenReturn(customerImpl);
-
-    // Act
-    GenericResponse actualResetPasswordUsingTokenResult = customerServiceImpl.resetPasswordUsingToken("janedoe",
-        "ABC123", "Password", "iloveyou");
-
-    // Assert
-    verify(customerDao).readCustomerByUsername(eq("janedoe"));
-    verify(customerImpl).getEmailAddress();
-    verify(customerImpl).isDeactivated();
-    List<String> errorCodesList = actualResetPasswordUsingTokenResult.getErrorCodesList();
-    assertEquals(2, errorCodesList.size());
-    assertEquals("inactiveUser", errorCodesList.get(0));
-    assertEquals("passwordMismatch", errorCodesList.get(1));
+    assertEquals(1, errorCodesList.size());
+    assertEquals("invalidToken", errorCodesList.get(0));
     assertTrue(actualResetPasswordUsingTokenResult.getHasErrors());
   }
 
@@ -2995,36 +3486,7 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#checkCustomer(Customer, GenericResponse)}.
    * <ul>
-   *   <li>Given empty string.</li>
-   *   <li>Then calls {@link CustomerImpl#getEmailAddress()}.</li>
-   * </ul>
-   * <p>
-   * Method under test: {@link CustomerServiceImpl#checkCustomer(Customer, GenericResponse)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"void CustomerServiceImpl.checkCustomer(Customer, GenericResponse)"})
-  public void testCheckCustomer_givenEmptyString_thenCallsGetEmailAddress() {
-    // Arrange
-    CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.getEmailAddress()).thenReturn("");
-    GenericResponse response = new GenericResponse();
-
-    // Act
-    customerServiceImpl.checkCustomer(customer, response);
-
-    // Assert
-    verify(customer).getEmailAddress();
-    List<String> errorCodesList = response.getErrorCodesList();
-    assertEquals(1, errorCodesList.size());
-    assertEquals("emailNotFound", errorCodesList.get(0));
-    assertTrue(response.getHasErrors());
-  }
-
-  /**
-   * Test {@link CustomerServiceImpl#checkCustomer(Customer, GenericResponse)}.
-   * <ul>
-   *   <li>Given {@code false}.</li>
+   *   <li>Given {@code Customer}.</li>
    *   <li>Then not {@link GenericResponse} (default constructor) HasErrors.</li>
    * </ul>
    * <p>
@@ -3033,19 +3495,42 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"void CustomerServiceImpl.checkCustomer(Customer, GenericResponse)"})
-  public void testCheckCustomer_givenFalse_thenNotGenericResponseHasErrors() {
+  public void testCheckCustomer_givenCustomer_thenNotGenericResponseHasErrors() {
     // Arrange
-    CustomerImpl customer = mock(CustomerImpl.class);
-    when(customer.isDeactivated()).thenReturn(false);
-    when(customer.getEmailAddress()).thenReturn("42 Main St");
+    Auditable auditable = new Auditable();
+    auditable.setCreatedBy(1L);
+    auditable.setDateCreated(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
+    auditable.setDateUpdated(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
+    auditable.setUpdatedBy(1L);
+
+    CustomerImpl customer = new CustomerImpl();
+    customer.setAuditable(auditable);
+    customer.setChallengeAnswer("challengeAnswer");
+    customer.setChallengeQuestion(new ChallengeQuestionImpl());
+    customer.setCustomerAddresses(new ArrayList<>());
+    customer.setCustomerAttributes(new HashMap<>());
+    customer.setCustomerLocale(new LocaleImpl());
+    customer.setCustomerPayments(new ArrayList<>());
+    customer.setCustomerPhones(new ArrayList<>());
+    customer.setDeactivated(false);
+    customer.setExternalId("externalId123");
+    customer.setFirstName("John");
+    customer.setId(1L);
+    customer.setLastName("Doe");
+    customer.setPassword("defaultPassword");
+    customer.setPasswordChangeRequired(false);
+    customer.setReceiveEmail(false);
+    customer.setRegistered(false);
+    customer.setUnencodedChallengeAnswer("challengeAnswer");
+    customer.setUnencodedPassword("defaultPassword");
+    customer.setUsername("defaultUsername");
+    customer.setEmailAddress("Customer");
     GenericResponse response = new GenericResponse();
 
     // Act
     customerServiceImpl.checkCustomer(customer, response);
 
     // Assert that nothing has changed
-    verify(customer).getEmailAddress();
-    verify(customer).isDeactivated();
     assertFalse(response.getHasErrors());
     assertTrue(response.getErrorCodesList().isEmpty());
   }
@@ -3072,25 +3557,25 @@ public class CustomerServiceImplDiffblueTest {
 
     CustomerImpl customer = new CustomerImpl();
     customer.setAuditable(auditable);
-    customer.setChallengeAnswer("Challenge Answer");
+    customer.setChallengeAnswer("challengeAnswer");
     customer.setChallengeQuestion(new ChallengeQuestionImpl());
     customer.setCustomerAddresses(new ArrayList<>());
     customer.setCustomerAttributes(new HashMap<>());
     customer.setCustomerLocale(new LocaleImpl());
     customer.setCustomerPayments(new ArrayList<>());
     customer.setCustomerPhones(new ArrayList<>());
-    customer.setDeactivated(true);
-    customer.setExternalId("42");
-    customer.setFirstName("Jane");
+    customer.setDeactivated(false);
+    customer.setExternalId("externalId123");
+    customer.setFirstName("John");
     customer.setId(1L);
     customer.setLastName("Doe");
-    customer.setPassword("iloveyou");
-    customer.setPasswordChangeRequired(true);
-    customer.setReceiveEmail(true);
-    customer.setRegistered(true);
-    customer.setUnencodedChallengeAnswer("secret");
-    customer.setUnencodedPassword("secret");
-    customer.setUsername("janedoe");
+    customer.setPassword("defaultPassword");
+    customer.setPasswordChangeRequired(false);
+    customer.setReceiveEmail(false);
+    customer.setRegistered(false);
+    customer.setUnencodedChallengeAnswer("challengeAnswer");
+    customer.setUnencodedPassword("defaultPassword");
+    customer.setUsername("defaultUsername");
     customer.setEmailAddress(" ");
     GenericResponse response = new GenericResponse();
 
@@ -3107,7 +3592,7 @@ public class CustomerServiceImplDiffblueTest {
   /**
    * Test {@link CustomerServiceImpl#checkCustomer(Customer, GenericResponse)}.
    * <ul>
-   *   <li>Then {@link GenericResponse} (default constructor) ErrorCodesList first is {@code inactiveUser}.</li>
+   *   <li>Then {@link GenericResponse} (default constructor) ErrorCodesList first is {@code emailNotFound}.</li>
    * </ul>
    * <p>
    * Method under test: {@link CustomerServiceImpl#checkCustomer(Customer, GenericResponse)}
@@ -3115,36 +3600,9 @@ public class CustomerServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"void CustomerServiceImpl.checkCustomer(Customer, GenericResponse)"})
-  public void testCheckCustomer_thenGenericResponseErrorCodesListFirstIsInactiveUser() {
+  public void testCheckCustomer_thenGenericResponseErrorCodesListFirstIsEmailNotFound() {
     // Arrange
-    Auditable auditable = new Auditable();
-    auditable.setCreatedBy(1L);
-    auditable.setDateCreated(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
-    auditable.setDateUpdated(Date.from(LocalDate.of(1970, 1, 1).atStartOfDay().atZone(ZoneOffset.UTC).toInstant()));
-    auditable.setUpdatedBy(1L);
-
     CustomerImpl customer = new CustomerImpl();
-    customer.setAuditable(auditable);
-    customer.setChallengeAnswer("Challenge Answer");
-    customer.setChallengeQuestion(new ChallengeQuestionImpl());
-    customer.setCustomerAddresses(new ArrayList<>());
-    customer.setCustomerAttributes(new HashMap<>());
-    customer.setCustomerLocale(new LocaleImpl());
-    customer.setCustomerPayments(new ArrayList<>());
-    customer.setCustomerPhones(new ArrayList<>());
-    customer.setDeactivated(true);
-    customer.setExternalId("42");
-    customer.setFirstName("Jane");
-    customer.setId(1L);
-    customer.setLastName("Doe");
-    customer.setPassword("iloveyou");
-    customer.setPasswordChangeRequired(true);
-    customer.setReceiveEmail(true);
-    customer.setRegistered(true);
-    customer.setUnencodedChallengeAnswer("secret");
-    customer.setUnencodedPassword("secret");
-    customer.setUsername("janedoe");
-    customer.setEmailAddress("Customer");
     GenericResponse response = new GenericResponse();
 
     // Act
@@ -3153,7 +3611,7 @@ public class CustomerServiceImplDiffblueTest {
     // Assert
     List<String> errorCodesList = response.getErrorCodesList();
     assertEquals(1, errorCodesList.size());
-    assertEquals("inactiveUser", errorCodesList.get(0));
+    assertEquals("emailNotFound", errorCodesList.get(0));
     assertTrue(response.getHasErrors());
   }
 
@@ -3179,32 +3637,6 @@ public class CustomerServiceImplDiffblueTest {
     List<String> errorCodesList = response.getErrorCodesList();
     assertEquals(1, errorCodesList.size());
     assertEquals("invalidCustomer", errorCodesList.get(0));
-    assertTrue(response.getHasErrors());
-  }
-
-  /**
-   * Test {@link CustomerServiceImpl#checkCustomer(Customer, GenericResponse)}.
-   * <ul>
-   *   <li>When {@link CustomerImpl} (default constructor).</li>
-   * </ul>
-   * <p>
-   * Method under test: {@link CustomerServiceImpl#checkCustomer(Customer, GenericResponse)}
-   */
-  @Test
-  @Category(MaintainedByDiffblue.class)
-  @MethodsUnderTest({"void CustomerServiceImpl.checkCustomer(Customer, GenericResponse)"})
-  public void testCheckCustomer_whenCustomerImpl() {
-    // Arrange
-    CustomerImpl customer = new CustomerImpl();
-    GenericResponse response = new GenericResponse();
-
-    // Act
-    customerServiceImpl.checkCustomer(customer, response);
-
-    // Assert
-    List<String> errorCodesList = response.getErrorCodesList();
-    assertEquals(1, errorCodesList.size());
-    assertEquals("emailNotFound", errorCodesList.get(0));
     assertTrue(response.getHasErrors());
   }
 

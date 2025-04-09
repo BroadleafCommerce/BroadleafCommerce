@@ -54,9 +54,9 @@ public class StateDaoImplDiffblueTest {
   public void testCreate() {
     // Arrange
     StateImpl stateImpl = new StateImpl();
-    stateImpl.setAbbreviation("Abbreviation");
+    stateImpl.setAbbreviation("CA");
     stateImpl.setCountry(new CountryImpl());
-    stateImpl.setName("Name");
+    stateImpl.setName("California");
     when(entityConfiguration.createEntityInstance(Mockito.<String>any())).thenReturn(stateImpl);
 
     // Act

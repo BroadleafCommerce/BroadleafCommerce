@@ -58,7 +58,7 @@ public class CustomerPhoneDaoImplDiffblueTest {
     customerPhoneImpl.setCustomer(new CustomerImpl());
     customerPhoneImpl.setId(1L);
     customerPhoneImpl.setPhone(new PhoneImpl());
-    customerPhoneImpl.setPhoneName("6625550144");
+    customerPhoneImpl.setPhoneName("Sample Phone Name");
     when(entityConfiguration.createEntityInstance(Mockito.<String>any())).thenReturn(customerPhoneImpl);
 
     // Act

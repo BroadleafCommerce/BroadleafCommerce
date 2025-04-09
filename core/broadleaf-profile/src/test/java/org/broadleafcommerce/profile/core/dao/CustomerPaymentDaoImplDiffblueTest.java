@@ -69,7 +69,7 @@ public class CustomerPaymentDaoImplDiffblueTest {
     customerPaymentImpl.setId(1L);
     customerPaymentImpl.setIsDefault(true);
     customerPaymentImpl.setPaymentGatewayType(new PaymentGatewayType("Type", "Friendly Type"));
-    customerPaymentImpl.setPaymentToken("ABC123");
+    customerPaymentImpl.setPaymentToken("sampleToken");
     customerPaymentImpl.setPaymentType(new PaymentType("Type", "Friendly Type"));
     when(entityConfiguration.createEntityInstance(Mockito.<String>any())).thenReturn(customerPaymentImpl);
 

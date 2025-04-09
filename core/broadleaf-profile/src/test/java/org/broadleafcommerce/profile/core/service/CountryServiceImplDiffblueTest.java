@@ -80,10 +80,10 @@ public class CountryServiceImplDiffblueTest {
     when(countryDao.findCountryByAbbreviation(Mockito.<String>any())).thenReturn(countryImpl);
 
     // Act
-    Country actualFindCountryByAbbreviationResult = countryServiceImpl.findCountryByAbbreviation("Abbreviation");
+    Country actualFindCountryByAbbreviationResult = countryServiceImpl.findCountryByAbbreviation("US");
 
     // Assert
-    verify(countryDao).findCountryByAbbreviation(eq("Abbreviation"));
+    verify(countryDao).findCountryByAbbreviation(eq("US"));
     assertSame(countryImpl, actualFindCountryByAbbreviationResult);
   }
 

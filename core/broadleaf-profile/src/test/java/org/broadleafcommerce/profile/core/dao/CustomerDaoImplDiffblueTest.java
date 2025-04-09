@@ -104,26 +104,26 @@ public class CustomerDaoImplDiffblueTest {
 
     CustomerImpl customerImpl = new CustomerImpl();
     customerImpl.setAuditable(auditable);
-    customerImpl.setChallengeAnswer("Challenge Answer");
+    customerImpl.setChallengeAnswer("challengeAnswer");
     customerImpl.setChallengeQuestion(new ChallengeQuestionImpl());
     customerImpl.setCustomerAddresses(new ArrayList<>());
     customerImpl.setCustomerAttributes(new HashMap<>());
     customerImpl.setCustomerLocale(new LocaleImpl());
     customerImpl.setCustomerPayments(new ArrayList<>());
     customerImpl.setCustomerPhones(new ArrayList<>());
-    customerImpl.setDeactivated(true);
-    customerImpl.setEmailAddress("42 Main St");
-    customerImpl.setExternalId("42");
-    customerImpl.setFirstName("Jane");
+    customerImpl.setDeactivated(false);
+    customerImpl.setEmailAddress("defaultEmail@example.com");
+    customerImpl.setExternalId("externalId123");
+    customerImpl.setFirstName("John");
     customerImpl.setId(1L);
     customerImpl.setLastName("Doe");
-    customerImpl.setPassword("iloveyou");
-    customerImpl.setPasswordChangeRequired(true);
-    customerImpl.setReceiveEmail(true);
-    customerImpl.setRegistered(true);
-    customerImpl.setUnencodedChallengeAnswer("secret");
-    customerImpl.setUnencodedPassword("secret");
-    customerImpl.setUsername("janedoe");
+    customerImpl.setPassword("defaultPassword");
+    customerImpl.setPasswordChangeRequired(false);
+    customerImpl.setReceiveEmail(false);
+    customerImpl.setRegistered(false);
+    customerImpl.setUnencodedChallengeAnswer("challengeAnswer");
+    customerImpl.setUnencodedPassword("defaultPassword");
+    customerImpl.setUsername("defaultUsername");
     when(entityConfiguration.createEntityInstance(Mockito.<String>any())).thenReturn(customerImpl);
 
     // Act

@@ -181,14 +181,14 @@ public class AddressServiceImplDiffblueTest {
         .thenReturn(moduleConfigurationList);
     AddressVerificationProvider addressVerificationProvider = mock(AddressVerificationProvider.class);
     when(addressVerificationProvider.validateAddress(Mockito.<Address>any(), Mockito.<ModuleConfiguration>any()))
-        .thenThrow(new AddressVerificationException("Arg0"));
+        .thenThrow(new AddressVerificationException("Invalid address"));
     when(addressVerificationProvider.canRespond(Mockito.<ModuleConfiguration>any())).thenReturn(true);
 
     ArrayList<AddressVerificationProvider> addressVerificationProviderList = new ArrayList<>();
     addressVerificationProviderList.add(addressVerificationProvider);
     when(list.iterator()).thenReturn(addressVerificationProviderList.iterator());
     when(list.isEmpty()).thenReturn(false);
-    AddressImpl address = mock(AddressImpl.class);
+    Address address = mock(Address.class);
     when(address.getStandardized()).thenReturn(null);
 
     // Act and Assert
@@ -218,7 +218,7 @@ public class AddressServiceImplDiffblueTest {
     // Arrange
     AddressServiceImpl addressServiceImpl = new AddressServiceImpl();
     addressServiceImpl.setMustValidateAddresses(true);
-    AddressImpl address = mock(AddressImpl.class);
+    Address address = mock(Address.class);
     when(address.getStandardized()).thenReturn(null);
 
     // Act and Assert
@@ -275,7 +275,7 @@ public class AddressServiceImplDiffblueTest {
     ArrayList<AddressVerificationProvider> addressVerificationProviderList = new ArrayList<>();
     when(list.iterator()).thenReturn(addressVerificationProviderList.iterator());
     when(list.isEmpty()).thenReturn(false);
-    AddressImpl address = mock(AddressImpl.class);
+    Address address = mock(Address.class);
     when(address.getStandardized()).thenReturn(null);
 
     // Act
@@ -294,7 +294,7 @@ public class AddressServiceImplDiffblueTest {
    * Test {@link AddressServiceImpl#verifyAddress(Address)}.
    * <ul>
    *   <li>Given {@link List}.</li>
-   *   <li>When {@link AddressImpl} {@link AddressImpl#getStandardized()} return {@code true}.</li>
+   *   <li>When {@link Address} {@link Address#getStandardized()} return {@code true}.</li>
    * </ul>
    * <p>
    * Method under test: {@link AddressServiceImpl#verifyAddress(Address)}
@@ -302,10 +302,9 @@ public class AddressServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"List AddressServiceImpl.verifyAddress(Address)"})
-  public void testVerifyAddress_givenList_whenAddressImplGetStandardizedReturnTrue()
-      throws AddressVerificationException {
+  public void testVerifyAddress_givenList_whenAddressGetStandardizedReturnTrue() throws AddressVerificationException {
     // Arrange
-    AddressImpl address = mock(AddressImpl.class);
+    Address address = mock(Address.class);
     when(address.getStandardized()).thenReturn(true);
 
     // Act
@@ -350,7 +349,7 @@ public class AddressServiceImplDiffblueTest {
    * Test {@link AddressServiceImpl#verifyAddress(Address)}.
    * <ul>
    *   <li>Given {@link ModuleConfigurationService}.</li>
-   *   <li>Then return first is {@link AddressImpl}.</li>
+   *   <li>Then return first is {@link Address}.</li>
    * </ul>
    * <p>
    * Method under test: {@link AddressServiceImpl#verifyAddress(Address)}
@@ -358,11 +357,11 @@ public class AddressServiceImplDiffblueTest {
   @Test
   @Category(MaintainedByDiffblue.class)
   @MethodsUnderTest({"List AddressServiceImpl.verifyAddress(Address)"})
-  public void testVerifyAddress_givenModuleConfigurationService_thenReturnFirstIsAddressImpl()
+  public void testVerifyAddress_givenModuleConfigurationService_thenReturnFirstIsAddress()
       throws AddressVerificationException {
     // Arrange
     when(list.isEmpty()).thenReturn(true);
-    AddressImpl address = mock(AddressImpl.class);
+    Address address = mock(Address.class);
     when(address.getStandardized()).thenReturn(null);
 
     // Act
@@ -399,7 +398,7 @@ public class AddressServiceImplDiffblueTest {
     ArrayList<AddressVerificationProvider> addressVerificationProviderList = new ArrayList<>();
     when(list.iterator()).thenReturn(addressVerificationProviderList.iterator());
     when(list.isEmpty()).thenReturn(false);
-    AddressImpl address = mock(AddressImpl.class);
+    Address address = mock(Address.class);
     when(address.getStandardized()).thenReturn(null);
 
     // Act
@@ -444,7 +443,7 @@ public class AddressServiceImplDiffblueTest {
     addressVerificationProviderList.add(addressVerificationProvider);
     when(list.iterator()).thenReturn(addressVerificationProviderList.iterator());
     when(list.isEmpty()).thenReturn(false);
-    AddressImpl address = mock(AddressImpl.class);
+    Address address = mock(Address.class);
     when(address.getStandardized()).thenReturn(null);
 
     // Act
@@ -637,34 +636,34 @@ public class AddressServiceImplDiffblueTest {
 
     AddressImpl address = new AddressImpl();
     address.setActive(true);
-    address.setAddressLine1("42 Main St");
-    address.setAddressLine2("42 Main St");
-    address.setAddressLine3("42 Main St");
-    address.setBusiness(true);
-    address.setCity("Oxford");
-    address.setCompanyName("Company Name");
+    address.setAddressLine1("123 Main St");
+    address.setAddressLine2("Apt 4B");
+    address.setAddressLine3("Suite 100");
+    address.setBusiness(false);
+    address.setCity("New York");
+    address.setCompanyName("Example Company");
     address.setCountry(new CountryImpl());
-    address.setCounty("3");
+    address.setCounty("Manhattan");
     address.setDefault(true);
-    address.setEmailAddress("42 Main St");
-    address.setFax("Fax");
-    address.setFirstName("Jane");
-    address.setFullName("Dr Jane Doe");
+    address.setEmailAddress("john.doe@example.com");
+    address.setFax("1122334455");
+    address.setFirstName("John");
+    address.setFullName("John Doe");
     address.setId(1L);
     address.setLastName("Doe");
-    address.setMailing(true);
+    address.setMailing(false);
     address.setPhoneFax(new PhoneImpl());
     address.setPhonePrimary(new PhoneImpl());
     address.setPhoneSecondary(new PhoneImpl());
-    address.setPostalCode("Postal Code");
-    address.setPrimaryPhone("6625550144");
-    address.setSecondaryPhone("6625550144");
-    address.setStandardized(true);
+    address.setPostalCode("10001");
+    address.setPrimaryPhone("1234567890");
+    address.setSecondaryPhone("0987654321");
+    address.setStandardized(false);
     address.setState(new StateImpl());
     address.setStreet(true);
-    address.setTokenizedAddress("42 Main St");
-    address.setVerificationLevel("Verification Level");
-    address.setZipFour("21654");
+    address.setTokenizedAddress("token123");
+    address.setVerificationLevel("Level 1");
+    address.setZipFour("1234");
     address.setIsoCountrySubdivision(" ");
     address.setIsoCountryAlpha2(new ISOCountryImpl());
     address.setStateProvinceRegion("not blank");
@@ -692,34 +691,34 @@ public class AddressServiceImplDiffblueTest {
     // Arrange
     AddressImpl address = new AddressImpl();
     address.setActive(true);
-    address.setAddressLine1("42 Main St");
-    address.setAddressLine2("42 Main St");
-    address.setAddressLine3("42 Main St");
-    address.setBusiness(true);
-    address.setCity("Oxford");
-    address.setCompanyName("Company Name");
+    address.setAddressLine1("123 Main St");
+    address.setAddressLine2("Apt 4B");
+    address.setAddressLine3("Suite 100");
+    address.setBusiness(false);
+    address.setCity("New York");
+    address.setCompanyName("Example Company");
     address.setCountry(new CountryImpl());
-    address.setCounty("3");
+    address.setCounty("Manhattan");
     address.setDefault(true);
-    address.setEmailAddress("42 Main St");
-    address.setFax("Fax");
-    address.setFirstName("Jane");
-    address.setFullName("Dr Jane Doe");
+    address.setEmailAddress("john.doe@example.com");
+    address.setFax("1122334455");
+    address.setFirstName("John");
+    address.setFullName("John Doe");
     address.setId(1L);
     address.setLastName("Doe");
-    address.setMailing(true);
+    address.setMailing(false);
     address.setPhoneFax(new PhoneImpl());
     address.setPhonePrimary(new PhoneImpl());
     address.setPhoneSecondary(new PhoneImpl());
-    address.setPostalCode("Postal Code");
-    address.setPrimaryPhone("6625550144");
-    address.setSecondaryPhone("6625550144");
-    address.setStandardized(true);
+    address.setPostalCode("10001");
+    address.setPrimaryPhone("1234567890");
+    address.setSecondaryPhone("0987654321");
+    address.setStandardized(false);
     address.setState(new StateImpl());
     address.setStreet(true);
-    address.setTokenizedAddress("42 Main St");
-    address.setVerificationLevel("Verification Level");
-    address.setZipFour("21654");
+    address.setTokenizedAddress("token123");
+    address.setVerificationLevel("Level 1");
+    address.setZipFour("1234");
     address.setIsoCountrySubdivision("42 Main St");
     address.setIsoCountryAlpha2(null);
     address.setStateProvinceRegion("not blank");
@@ -746,34 +745,34 @@ public class AddressServiceImplDiffblueTest {
     // Arrange
     AddressImpl address = new AddressImpl();
     address.setActive(true);
-    address.setAddressLine1("42 Main St");
-    address.setAddressLine2("42 Main St");
-    address.setAddressLine3("42 Main St");
-    address.setBusiness(true);
-    address.setCity("Oxford");
-    address.setCompanyName("Company Name");
+    address.setAddressLine1("123 Main St");
+    address.setAddressLine2("Apt 4B");
+    address.setAddressLine3("Suite 100");
+    address.setBusiness(false);
+    address.setCity("New York");
+    address.setCompanyName("Example Company");
     address.setCountry(new CountryImpl());
-    address.setCounty("3");
+    address.setCounty("Manhattan");
     address.setDefault(true);
-    address.setEmailAddress("42 Main St");
-    address.setFax("Fax");
-    address.setFirstName("Jane");
-    address.setFullName("Dr Jane Doe");
+    address.setEmailAddress("john.doe@example.com");
+    address.setFax("1122334455");
+    address.setFirstName("John");
+    address.setFullName("John Doe");
     address.setId(1L);
     address.setLastName("Doe");
-    address.setMailing(true);
+    address.setMailing(false);
     address.setPhoneFax(new PhoneImpl());
     address.setPhonePrimary(new PhoneImpl());
     address.setPhoneSecondary(new PhoneImpl());
-    address.setPostalCode("Postal Code");
-    address.setPrimaryPhone("6625550144");
-    address.setSecondaryPhone("6625550144");
-    address.setStandardized(true);
+    address.setPostalCode("10001");
+    address.setPrimaryPhone("1234567890");
+    address.setSecondaryPhone("0987654321");
+    address.setStandardized(false);
     address.setState(new StateImpl());
     address.setStreet(true);
-    address.setTokenizedAddress("42 Main St");
-    address.setVerificationLevel("Verification Level");
-    address.setZipFour("21654");
+    address.setTokenizedAddress("token123");
+    address.setVerificationLevel("Level 1");
+    address.setZipFour("1234");
     address.setIsoCountrySubdivision(" ");
     address.setIsoCountryAlpha2(null);
     address.setStateProvinceRegion("not blank");
@@ -805,34 +804,34 @@ public class AddressServiceImplDiffblueTest {
 
     AddressImpl address = new AddressImpl();
     address.setActive(true);
-    address.setAddressLine1("42 Main St");
-    address.setAddressLine2("42 Main St");
-    address.setAddressLine3("42 Main St");
-    address.setBusiness(true);
-    address.setCity("Oxford");
-    address.setCompanyName("Company Name");
+    address.setAddressLine1("123 Main St");
+    address.setAddressLine2("Apt 4B");
+    address.setAddressLine3("Suite 100");
+    address.setBusiness(false);
+    address.setCity("New York");
+    address.setCompanyName("Example Company");
     address.setCountry(new CountryImpl());
-    address.setCounty("3");
+    address.setCounty("Manhattan");
     address.setDefault(true);
-    address.setEmailAddress("42 Main St");
-    address.setFax("Fax");
-    address.setFirstName("Jane");
-    address.setFullName("Dr Jane Doe");
+    address.setEmailAddress("john.doe@example.com");
+    address.setFax("1122334455");
+    address.setFirstName("John");
+    address.setFullName("John Doe");
     address.setId(1L);
     address.setLastName("Doe");
-    address.setMailing(true);
+    address.setMailing(false);
     address.setPhoneFax(new PhoneImpl());
     address.setPhonePrimary(new PhoneImpl());
     address.setPhoneSecondary(new PhoneImpl());
-    address.setPostalCode("Postal Code");
-    address.setPrimaryPhone("6625550144");
-    address.setSecondaryPhone("6625550144");
-    address.setStandardized(true);
+    address.setPostalCode("10001");
+    address.setPrimaryPhone("1234567890");
+    address.setSecondaryPhone("0987654321");
+    address.setStandardized(false);
     address.setState(new StateImpl());
     address.setStreet(true);
-    address.setTokenizedAddress("42 Main St");
-    address.setVerificationLevel("Verification Level");
-    address.setZipFour("21654");
+    address.setTokenizedAddress("token123");
+    address.setVerificationLevel("Level 1");
+    address.setZipFour("1234");
     address.setIsoCountrySubdivision(" ");
     address.setIsoCountryAlpha2(new ISOCountryImpl());
     address.setStateProvinceRegion("not blank");
@@ -883,34 +882,34 @@ public class AddressServiceImplDiffblueTest {
     // Arrange
     AddressImpl address = new AddressImpl();
     address.setActive(true);
-    address.setAddressLine1("42 Main St");
-    address.setAddressLine2("42 Main St");
-    address.setAddressLine3("42 Main St");
-    address.setBusiness(true);
-    address.setCity("Oxford");
-    address.setCompanyName("Company Name");
+    address.setAddressLine1("123 Main St");
+    address.setAddressLine2("Apt 4B");
+    address.setAddressLine3("Suite 100");
+    address.setBusiness(false);
+    address.setCity("New York");
+    address.setCompanyName("Example Company");
     address.setCountry(new CountryImpl());
-    address.setCounty("3");
+    address.setCounty("Manhattan");
     address.setDefault(true);
-    address.setEmailAddress("42 Main St");
-    address.setFax("Fax");
-    address.setFirstName("Jane");
-    address.setFullName("Dr Jane Doe");
+    address.setEmailAddress("john.doe@example.com");
+    address.setFax("1122334455");
+    address.setFirstName("John");
+    address.setFullName("John Doe");
     address.setId(1L);
     address.setLastName("Doe");
-    address.setMailing(true);
+    address.setMailing(false);
     address.setPhoneFax(new PhoneImpl());
     address.setPhonePrimary(new PhoneImpl());
     address.setPhoneSecondary(new PhoneImpl());
-    address.setPostalCode("Postal Code");
-    address.setPrimaryPhone("6625550144");
-    address.setSecondaryPhone("6625550144");
-    address.setStandardized(true);
+    address.setPostalCode("10001");
+    address.setPrimaryPhone("1234567890");
+    address.setSecondaryPhone("0987654321");
+    address.setStandardized(false);
     address.setState(new StateImpl());
     address.setStreet(true);
-    address.setTokenizedAddress("42 Main St");
-    address.setVerificationLevel("Verification Level");
-    address.setZipFour("21654");
+    address.setTokenizedAddress("token123");
+    address.setVerificationLevel("Level 1");
+    address.setZipFour("1234");
     address.setIsoCountrySubdivision(" ");
     address.setIsoCountryAlpha2(new ISOCountryImpl());
     address.setStateProvinceRegion(null);

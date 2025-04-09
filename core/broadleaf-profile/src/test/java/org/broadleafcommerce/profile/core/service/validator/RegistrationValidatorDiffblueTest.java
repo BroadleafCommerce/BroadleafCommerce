@@ -59,7 +59,7 @@ public class RegistrationValidatorDiffblueTest {
     doNothing().when(errors).pushNestedPath(Mockito.<String>any());
 
     // Act
-    registrationValidator.validate(customer, "iloveyou", "Password Confirm", errors);
+    registrationValidator.validate(customer, "iloveyou", "password123", errors);
 
     // Assert
     verify(errors, atLeast(1)).getFieldValue(Mockito.<String>any());
