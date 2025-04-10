@@ -143,7 +143,7 @@ public class OrderDaoImpl implements OrderDao {
         criteria.select(order);
 
         // We only want results that match the order IDs
-        criteria.where(order.get("id").as(Long.class).in(orderIds));
+        criteria.where(order.get("id").in(orderIds));
 
         TypedQuery<Order> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
