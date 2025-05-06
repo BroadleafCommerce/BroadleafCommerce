@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.config.service.ModuleConfigurationService;
 import org.broadleafcommerce.common.config.service.type.ModuleConfigurationType;
+import org.broadleafcommerce.common.i18n.domain.ISOCountryImpl;
 import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.AddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
@@ -29,10 +30,11 @@ import org.broadleafcommerce.profile.core.service.exception.AddressVerificationE
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.annotation.Resource;
 
 @Service("blAddressService")
 public class AddressServiceImpl implements AddressService {
@@ -53,6 +55,9 @@ public class AddressServiceImpl implements AddressService {
 
     @Resource(name = "blCountrySubdivisionService")
     protected CountrySubdivisionService countrySubdivisionService;
+
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
 
     @Override
     @Transactional(TransactionUtils.DEFAULT_TRANSACTION_MANAGER)
@@ -145,7 +150,11 @@ public class AddressServiceImpl implements AddressService {
             dest.setPostalCode(orig.getPostalCode());
             dest.setZipFour(orig.getZipFour());
             dest.setCountry(orig.getCountry());
-            dest.setIsoCountryAlpha2(orig.getIsoCountryAlpha2());
+            if (orig.getIsoCountryAlpha2() != null) {
+                String countryCode = orig.getIsoCountryAlpha2().getAlpha2();
+                ISOCountryImpl country = em.getReference(ISOCountryImpl.class, countryCode);
+                dest.setIsoCountryAlpha2(country);
+            }
             dest.setCompanyName(orig.getCompanyName());
             dest.setPrimaryPhone(orig.getPrimaryPhone());
             dest.setSecondaryPhone(orig.getSecondaryPhone());
