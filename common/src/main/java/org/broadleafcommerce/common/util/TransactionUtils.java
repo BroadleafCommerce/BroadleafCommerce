@@ -53,8 +53,15 @@ public class TransactionUtils {
 
     public static TransactionStatus createTransaction(String name, int propagationBehavior, int isolationLevel, PlatformTransactionManager transactionManager, boolean isReadOnly) {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-        def.setName(name);
-        def.setReadOnly(isReadOnly);
+        if (name != null) {
+            def.setName(name);
+        }
+        // Only apply readOnly to new transactions
+        if (isNewTransaction(propagationBehavior)) {
+            def.setReadOnly(isReadOnly);
+        } else {
+            def.setReadOnly(false);
+        }
         def.setPropagationBehavior(propagationBehavior);
         def.setIsolationLevel(isolationLevel);
         return transactionManager.getTransaction(def);
@@ -66,7 +73,12 @@ public class TransactionUtils {
 
     public static TransactionStatus createTransaction(int propagationBehavior, int isolationLevel, PlatformTransactionManager transactionManager, boolean isReadOnly) {
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-        def.setReadOnly(isReadOnly);
+        // Only apply readOnly to new transactions
+        if (isNewTransaction(propagationBehavior)) {
+            def.setReadOnly(isReadOnly);
+        } else {
+            def.setReadOnly(false);
+        }
         def.setPropagationBehavior(propagationBehavior);
         def.setIsolationLevel(isolationLevel);
         return transactionManager.getTransaction(def);
@@ -90,6 +102,18 @@ public class TransactionUtils {
         } else {
             transactionManager.commit(status);
         }
+    }
+
+    /**
+     * Determines if the given propagation behavior will start a new transaction.
+     *
+     * @param propagation the propagation behavior constant
+     * @return true if it starts a new transaction, false otherwise
+     */
+    private static boolean isNewTransaction(int propagation) {
+        return propagation == TransactionDefinition.PROPAGATION_REQUIRED ||
+                propagation == TransactionDefinition.PROPAGATION_REQUIRES_NEW ||
+                propagation == TransactionDefinition.PROPAGATION_NESTED;
     }
 
 }
