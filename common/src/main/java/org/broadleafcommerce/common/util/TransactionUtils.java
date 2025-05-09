@@ -59,8 +59,6 @@ public class TransactionUtils {
         // Only apply readOnly to new transactions
         if (isNewTransaction(propagationBehavior)) {
             def.setReadOnly(isReadOnly);
-        } else {
-            def.setReadOnly(false);
         }
         def.setPropagationBehavior(propagationBehavior);
         def.setIsolationLevel(isolationLevel);
@@ -76,8 +74,6 @@ public class TransactionUtils {
         // Only apply readOnly to new transactions
         if (isNewTransaction(propagationBehavior)) {
             def.setReadOnly(isReadOnly);
-        } else {
-            def.setReadOnly(false);
         }
         def.setPropagationBehavior(propagationBehavior);
         def.setIsolationLevel(isolationLevel);
