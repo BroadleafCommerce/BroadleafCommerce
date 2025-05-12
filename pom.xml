@@ -56,7 +56,7 @@
         <groovy.version>4.0.20</groovy.version>
         <gpg.plugin.version>3.1.0</gpg.plugin.version>
         <broadleaf-presentation.version>2.0.1-GA</broadleaf-presentation.version>
-        <hsqldb.database.starter.version>3.0.1-GA</hsqldb.database.starter.version>
+        <hsqldb.database.starter.version>3.0.2-SNAPSHOT</hsqldb.database.starter.version>
         <hsqldb.version>2.7.2</hsqldb.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
         <hibernate.version>6.2.34.Final</hibernate.version>
@@ -1006,7 +1006,17 @@
                         <groupId>com.fasterxml.jackson.core</groupId>
                         <artifactId>jackson-annotations</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty.http2</groupId>
+                        <artifactId>http2-common</artifactId>
+                    </exclusion>
                 </exclusions>
+            </dependency>
+            <!-- Override http2-client version coming from solr-->
+            <dependency>
+                <groupId>org.eclipse.jetty.http2</groupId>
+                <artifactId>http2-common</artifactId>
+                <version>11.0.25</version>
             </dependency>
             <dependency>
                 <groupId>org.xerial.snappy</groupId>
