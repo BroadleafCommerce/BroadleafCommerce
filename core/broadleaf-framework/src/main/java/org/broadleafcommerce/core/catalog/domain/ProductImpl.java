@@ -348,9 +348,9 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     protected List<ProductOptionXref> productOptions = new ArrayList<>();
 
     @Column(name = "ENABLE_DEFAULT_SKU_IN_INVENTORY")
-    @AdminPresentation(friendlyName = "ProductImpl_useDefaultSkuInInventory",
+    @AdminPresentation(friendlyName = "ProductImpl_enableDefaultSkuInInventory",
             group = GroupName.Miscellaneous, order = 7000,
-            tooltip = "ProductImpl_useDefaultSkuInInventory_Tooltip",
+            tooltip = "ProductImpl_enableDefaultSkuInInventory_Tooltip",
             defaultValue = "false")
     protected Boolean enableDefaultSkuInventory = false;
 

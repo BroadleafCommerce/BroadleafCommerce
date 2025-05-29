@@ -733,8 +733,6 @@ public class DataDTOToMVELTranslator {
                             stringVersionState = String.format("%" + openQuoteIndex + "s", "\"")
                                     + substring.replace("\"", "\\\"")
                                     + String.format("%-" + paddingRightLength + "s", "\"");
-                        } else {
-                            stringVersionState = stringVersionState.replace("\"", "\\\"");
                         }
                         if (ignoreCase) {
                             response.append("MvelHelper.toUpperCase(");

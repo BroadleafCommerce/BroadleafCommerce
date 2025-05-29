@@ -1010,11 +1010,30 @@
                 return;
             }
 
+            var shouldRefreshFilters = false;
             for (var i = 0; i < rules.length; i++) {
-                $container.append(asFilterItemHtml(filterBuilder, rules[i]));
+                if (isEmptyCollectionValue(rules[i])) {
+                    rules.splice(i, 1);
+                    shouldRefreshFilters = true;
+                } else {
+                    $container.append(asFilterItemHtml(filterBuilder, rules[i]));
+                }
             }
+            if (shouldRefreshFilters) window.location.reload();
 
             $wrapper.show();
+
+            function isEmptyCollectionValue(rule) {
+                switch(rule.operator) {
+                    case "COLLECTION_IN":
+                    case "COLLECTION_NOT_IN":
+                        ruleVal = rule.value;
+                        if (rule.value === '[]') {
+                            return true;
+                        }
+                }
+                return false;
+            }
 
             function asFilterItemHtml(filterBuilder, rule) {
                 var field = filterBuilder.getFieldById(rule.id);

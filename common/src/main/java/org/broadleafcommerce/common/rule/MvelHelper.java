@@ -242,7 +242,22 @@ public class MvelHelper {
                     attributeMap + "().?get($1).?value"
             );
         }
+
+        modifiedExpression = unescapeUnicode(modifiedExpression);
+
         return modifiedExpression;
+    }
+
+    /**
+     * Decodes unicode escapes like \u0022 into actual characters.
+     */
+    protected static String unescapeUnicode(String input) {
+        if (input == null) return null;
+
+        // Replace common unicode sequences
+        return input.replace("\\u0022", "\"")
+                .replace("\\u0027", "'")     // single quote
+                .replace("\\u005C", "\\");   // backslash
     }
 
     /**

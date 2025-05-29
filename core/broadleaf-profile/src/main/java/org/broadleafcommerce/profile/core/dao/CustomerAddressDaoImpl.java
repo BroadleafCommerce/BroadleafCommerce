@@ -144,6 +144,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         CustomerAddress customerAddress = readCustomerAddressById(customerAddressId);
         if (customerAddress != null) {
             em.remove(customerAddress);
+            em.flush();
         }
     }
 

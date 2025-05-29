@@ -453,7 +453,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                 ProductOptionValueImpl.class.getName(), mappings);
         Long count = (Long) countQuery.getSingleResult();
         BasicFieldMetadata metadata = null;
-        if (count > 0) {
+        if (count > 0 && option.getUseInSkuGeneration()) {
             metadata = new BasicFieldMetadata();
             metadata.setFieldType(SupportedFieldType.ADDITIONAL_FOREIGN_KEY);
             metadata.setSecondaryType(SupportedFieldType.INTEGER);
@@ -539,7 +539,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                                             builder.equal(productRoot.get("embeddableSandBoxDiscriminator").get("tier"), 999999),
                                             builder.isNull(productRoot.get("embeddableSandBoxDiscriminator").get("sandBox")),
                                             builder.equal(productRoot.get("embeddableSandBoxDiscriminator").get("originalItemId"), root.get("product").get("id")),
-                                            builder.equal(productRoot.get("useDefaultSkuInInventory"), Boolean.TRUE)
+                                            builder.equal(productRoot.get("enableDefaultSkuInInventory"), Boolean.TRUE)
                                     )
                             );
 
@@ -555,7 +555,7 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
                             );
                             Predicate and = builder.and(
                                     builder.equal(subqueryWithoutOverride, 0),
-                                    builder.or(builder.isNull(product.get("useDefaultSkuInInventory")), builder.equal(product.get("useDefaultSkuInInventory"), Boolean.FALSE))
+                                    builder.or(builder.isNull(product.get("enableDefaultSkuInInventory")), builder.equal(product.get("enableDefaultSkuInInventory"), Boolean.FALSE))
                             );
                             Predicate equal = builder.and(builder.equal(subquery, 0), and);
                             return equal;
