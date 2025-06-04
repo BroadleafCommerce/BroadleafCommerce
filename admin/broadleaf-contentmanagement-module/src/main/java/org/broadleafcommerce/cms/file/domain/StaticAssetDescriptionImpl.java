@@ -59,7 +59,7 @@ public class StaticAssetDescriptionImpl implements StaticAssetDescription {
     @GeneratedValue(generator = "StaticAssetDescriptionId")
     @GenericGenerator(
             name = "StaticAssetDescriptionId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "StaticAssetDescriptionImpl"),
                     @Parameter(name = "entity_name",

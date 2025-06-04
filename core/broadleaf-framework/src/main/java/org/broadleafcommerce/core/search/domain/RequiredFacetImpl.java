@@ -61,7 +61,7 @@ public class RequiredFacetImpl implements RequiredFacet {
     @GeneratedValue(generator = "RequiredFacetId")
     @GenericGenerator(
             name = "RequiredFacetId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "RequiredFacetImpl"),
                     @Parameter(name = "entity_name",

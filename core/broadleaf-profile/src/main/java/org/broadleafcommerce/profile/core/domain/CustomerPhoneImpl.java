@@ -87,7 +87,7 @@ public class CustomerPhoneImpl implements CustomerPhone, CustomerPhoneAdminPrese
     @GeneratedValue(generator = "CustomerPhoneId")
     @GenericGenerator(
             name = "CustomerPhoneId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerPhoneImpl"),
                     @Parameter(name = "entity_name",

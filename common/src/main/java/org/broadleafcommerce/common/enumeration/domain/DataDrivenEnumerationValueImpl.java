@@ -67,7 +67,7 @@ public class DataDrivenEnumerationValueImpl implements DataDrivenEnumerationValu
     @GeneratedValue(generator = "DataDrivenEnumerationValueId")
     @GenericGenerator(
             name = "DataDrivenEnumerationValueId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "DataDrivenEnumerationValueImpl"),
                     @Parameter(name = "entity_name",

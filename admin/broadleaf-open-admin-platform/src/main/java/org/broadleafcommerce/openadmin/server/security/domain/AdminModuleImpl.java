@@ -58,7 +58,7 @@ public class AdminModuleImpl implements AdminModule {
     @GeneratedValue(generator = "AdminModuleId")
     @GenericGenerator(
             name = "AdminModuleId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "AdminModuleImpl"),
                     @Parameter(name = "entity_name",

@@ -60,7 +60,7 @@ public class TaxDetailImpl implements TaxDetail {
     @GeneratedValue(generator = "TaxDetailId")
     @GenericGenerator(
             name = "TaxDetailId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "TaxDetailImpl"),
                     @Parameter(name = "increment_size", value = "150"),

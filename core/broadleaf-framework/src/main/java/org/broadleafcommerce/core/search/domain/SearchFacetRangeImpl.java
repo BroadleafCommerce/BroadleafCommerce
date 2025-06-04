@@ -102,7 +102,7 @@ public class SearchFacetRangeImpl implements SearchFacetRange, Serializable {
     @GeneratedValue(generator = "SearchFacetRangeId")
     @GenericGenerator(
             name = "SearchFacetRangeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SearchFacetRangeImpl"),
                     @Parameter(name = "entity_name",

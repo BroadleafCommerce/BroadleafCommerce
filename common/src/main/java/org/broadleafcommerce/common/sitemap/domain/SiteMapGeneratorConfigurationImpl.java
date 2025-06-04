@@ -62,7 +62,7 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     @GeneratedValue(generator = "GeneratorConfigurationId")
     @GenericGenerator(
             name = "GeneratorConfigurationId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SiteMapGeneratorConfigurationImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl")

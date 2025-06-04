@@ -75,7 +75,7 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
     @GeneratedValue(generator = "CatalogId")
     @GenericGenerator(
             name = "CatalogId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CatalogImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.site.domain.CatalogImpl")

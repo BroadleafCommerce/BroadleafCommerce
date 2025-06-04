@@ -69,7 +69,7 @@ public class CategoryAttributeImpl implements CategoryAttribute {
     @GeneratedValue(generator = "CategoryAttributeId")
     @GenericGenerator(
             name = "CategoryAttributeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CategoryAttributeImpl"),
                     @Parameter(name = "entity_name",

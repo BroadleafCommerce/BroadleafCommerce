@@ -59,7 +59,7 @@ public class CustomerAttributeImpl implements CustomerAttribute {
     @GeneratedValue(generator = "CustomerAttributeId")
     @GenericGenerator(
             name = "CustomerAttributeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerAttributeImpl"),
                     @Parameter(name = "entity_name",

@@ -68,7 +68,7 @@ public class OfferTargetCriteriaXrefImpl implements OfferTargetCriteriaXref, Qua
     @GeneratedValue(generator = "OfferTarCritId")
     @GenericGenerator(
             name = "OfferTarCritId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OfferTargetCriteriaXrefImpl"),
                     @Parameter(name = "entity_name",

@@ -51,7 +51,7 @@ public class AdminUserAttributeImpl implements AdminUserAttribute {
     @GeneratedValue(generator = "AdminUserAttributeId")
     @GenericGenerator(
             name = "AdminUserAttributeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "AdminUserAttributeImpl"),
                     @Parameter(name = "entity_name",

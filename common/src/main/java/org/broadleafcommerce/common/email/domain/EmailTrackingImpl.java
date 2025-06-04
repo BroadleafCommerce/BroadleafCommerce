@@ -53,7 +53,7 @@ public class EmailTrackingImpl implements EmailTracking {
     @GeneratedValue(generator = "EmailTrackingId")
     @GenericGenerator(
             name = "EmailTrackingId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "EmailTrackingImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.email.domain.EmailTrackingImpl")

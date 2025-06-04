@@ -52,7 +52,7 @@ public class OfferInfoImpl implements OfferInfo {
     @GeneratedValue(generator = "OfferInfoId")
     @GenericGenerator(
             name = "OfferInfoId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OfferInfoImpl"),
                     @Parameter(name = "entity_name",

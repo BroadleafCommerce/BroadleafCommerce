@@ -179,7 +179,7 @@ public class PageImpl
     @GeneratedValue(generator = "PageId")
     @GenericGenerator(
             name = "PageId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "PageImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.page.domain.PageImpl")

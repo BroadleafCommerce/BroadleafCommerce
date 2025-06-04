@@ -55,7 +55,7 @@ public class SiteCatalogXrefImpl implements SiteCatalogXref, AdminMainEntity {
     @GeneratedValue(generator = "SiteCatalogXrefId")
     @GenericGenerator(
             name = "SiteCatalogXrefId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SiteCatalogXrefImpl"),
                     @Parameter(name = "entity_name",

@@ -60,7 +60,7 @@ public class CountrySubdivisionCategoryImpl implements CountrySubdivisionCategor
     @GeneratedValue(generator = "CountrySubdivisionCategoryId")
     @GenericGenerator(
             name = "CountrySubdivisionCategoryId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CountrySubdivisionCategoryImpl"),
                     @Parameter(name = "entity_name",

@@ -144,7 +144,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     @GeneratedValue(generator = "FulfillmentGroupId")
     @GenericGenerator(
             name = "FulfillmentGroupId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "FulfillmentGroupImpl"),
                     @Parameter(name = "entity_name",

@@ -28,6 +28,7 @@ import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,9 +88,10 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
         if (metadata == null) {
             return propertyNames;
         }
-        List<Property> properties = metadata.getPropertyClosure();
-        for (Property property : properties) {
-            propertyNames.add(property.getName());
+        Iterator propertyIterator = metadata.getPropertyClosureIterator();
+        while (propertyIterator.hasNext()) {
+            org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
+            propertyNames.add(prop.getName());
         }
         return propertyNames;
     }
@@ -108,8 +110,9 @@ public class HibernateMappingProvider implements SessionFactoryBuilderFactory {
         if (metadata == null) {
             return propertyTypes;
         }
-        List<Property> properties = metadata.getPropertyClosure();
-        for (Property prop : properties) {
+        Iterator propertyIterator = metadata.getPropertyClosureIterator();
+        while (propertyIterator.hasNext()) {
+            org.hibernate.mapping.Property prop = (org.hibernate.mapping.Property) propertyIterator.next();
             propertyTypes.add(prop.getType());
         }
         return propertyTypes;

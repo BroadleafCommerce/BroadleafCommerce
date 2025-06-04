@@ -79,7 +79,7 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     @GeneratedValue(generator = "PageTemplateId")
     @GenericGenerator(
             name = "PageTemplateId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "PageTemplateImpl"),
                     @Parameter(name = "entity_name",

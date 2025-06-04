@@ -70,7 +70,7 @@ public class ProductOptionXrefImpl implements ProductOptionXref {
     @GeneratedValue(generator = "ProductOptionXrefId")
     @GenericGenerator(
             name = "ProductOptionXrefId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ProductOptionXrefImpl"),
                     @Parameter(name = "entity_name",

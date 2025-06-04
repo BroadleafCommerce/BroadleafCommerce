@@ -72,7 +72,7 @@ public class SandBoxImpl implements SandBox, AdminMainEntity {
     @GeneratedValue(generator = "SandBoxId")
     @GenericGenerator(
             name = "SandBoxId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SandBoxImpl"),
                     @Parameter(name = "entity_name",

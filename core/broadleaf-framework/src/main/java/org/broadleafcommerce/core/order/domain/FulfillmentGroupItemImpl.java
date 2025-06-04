@@ -80,7 +80,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Cloneable
     @GeneratedValue(generator = "FulfillmentGroupItemId")
     @GenericGenerator(
             name = "FulfillmentGroupItemId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "FulfillmentGroupItemImpl"),
                     @Parameter(name = "entity_name",

@@ -57,7 +57,7 @@ public class AdminPermissionQualifiedEntityImpl
     @GeneratedValue(generator = "AdminPermissionEntityId")
     @GenericGenerator(
             name = "AdminPermissionEntityId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "AdminPermissionEntityImpl"),
                     @Parameter(name = "entity_name",

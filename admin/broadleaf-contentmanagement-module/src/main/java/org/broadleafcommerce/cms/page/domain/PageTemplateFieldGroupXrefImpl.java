@@ -64,7 +64,7 @@ public class PageTemplateFieldGroupXrefImpl implements PageTemplateFieldGroupXre
     @GeneratedValue(generator = "PageTemplateFieldGroupXrefId")
     @GenericGenerator(
             name = "PageTemplateFieldGroupXrefId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "PageTemplateFieldGroupXrefImpl"),
                     @Parameter(name = "entity_name",

@@ -62,7 +62,7 @@ public class StoreImpl implements Store {
     @GeneratedValue(generator = "StoreId")
     @GenericGenerator(
             name = "StoreId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "StoreImpl"),
                     @Parameter(name = "entity_name",

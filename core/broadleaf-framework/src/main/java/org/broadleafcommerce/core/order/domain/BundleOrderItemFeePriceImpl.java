@@ -67,7 +67,7 @@ public class BundleOrderItemFeePriceImpl implements BundleOrderItemFeePrice {
     @GeneratedValue(generator = "BundleOrderItemFeePriceId")
     @GenericGenerator(
             name = "BundleOrderItemFeePriceId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "BundleOrderItemFeePriceImpl"),
                     @Parameter(name = "entity_name",

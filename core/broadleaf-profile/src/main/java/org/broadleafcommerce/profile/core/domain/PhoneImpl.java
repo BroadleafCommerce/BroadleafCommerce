@@ -47,7 +47,7 @@ public class PhoneImpl implements Phone {
     @GeneratedValue(generator = "PhoneId")
     @GenericGenerator(
             name = "PhoneId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "PhoneImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.PhoneImpl")

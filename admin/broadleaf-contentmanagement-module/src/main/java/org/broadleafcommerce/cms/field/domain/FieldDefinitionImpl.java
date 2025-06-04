@@ -67,7 +67,7 @@ public class FieldDefinitionImpl implements FieldDefinition, ProfileEntity {
     @GeneratedValue(generator = "FieldDefinitionId")
     @GenericGenerator(
             name = "FieldDefinitionId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "FieldDefinitionImpl"),
                     @Parameter(name = "entity_name",

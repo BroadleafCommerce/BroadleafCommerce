@@ -49,7 +49,7 @@ public class PersonalMessageImpl implements PersonalMessage {
     @GeneratedValue(generator = "PersonalMessageId")
     @GenericGenerator(
             name = "PersonalMessageId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "PersonalMessageImpl"),
                     @Parameter(name = "entity_name",

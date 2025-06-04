@@ -54,7 +54,7 @@ public class OfferAuditImpl implements OfferAudit {
     @GeneratedValue(generator = "OfferAuditId")
     @GenericGenerator(
             name = "OfferAuditId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OfferAuditImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.offer.domain.OfferAuditImpl")

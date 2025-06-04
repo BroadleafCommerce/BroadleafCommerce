@@ -39,7 +39,7 @@ public class SearchInterceptImpl implements SearchIntercept {
     @GeneratedValue(generator = "SearchInterceptId")
     @GenericGenerator(
             name = "SearchInterceptId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SearchInterceptImpl"),
                     @Parameter(name = "entity_name",
