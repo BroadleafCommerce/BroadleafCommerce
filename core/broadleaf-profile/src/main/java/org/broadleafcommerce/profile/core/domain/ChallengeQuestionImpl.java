@@ -50,7 +50,7 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
     @GeneratedValue(generator = "ChallengeQuestionId")
     @GenericGenerator(
             name = "ChallengeQuestionId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ChallengeQuestionImpl"),
                     @Parameter(name = "entity_name",

@@ -72,7 +72,7 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
     @GeneratedValue(generator = "ProratedOrderItemAdjustmentId")
     @GenericGenerator(
             name = "ProratedOrderItemAdjustmentId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ProratedOrderItemAdjustmentImpl"),
                     @Parameter(name = "entity_name",

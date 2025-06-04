@@ -80,7 +80,7 @@ public class AdminPermissionImpl implements AdminPermission {
     @GeneratedValue(generator = "AdminPermissionId")
     @GenericGenerator(
             name = "AdminPermissionId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "AdminPermissionImpl"),
                     @Parameter(name = "entity_name",

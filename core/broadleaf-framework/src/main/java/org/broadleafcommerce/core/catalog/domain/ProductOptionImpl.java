@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -37,14 +36,12 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
-import org.hibernate.Length;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
+import org.hibernate.annotations.Type;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -83,7 +80,7 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
     @GeneratedValue(generator = "ProductOptionId")
     @GenericGenerator(
             name = "ProductOptionId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ProductOptionImpl"),
                     @Parameter(name = "entity_name",
@@ -153,8 +150,8 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
             addType = AddMethodType.PERSIST)
     protected List<ProductOptionValue> allowedValues = new ArrayList<>();
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
+    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "productOption_description",
             group = GroupName.General,
             largeEntry = true,

@@ -54,7 +54,7 @@ public class ReviewFeedbackImpl implements ReviewFeedback, Serializable {
     @GeneratedValue(generator = "ReviewFeedbackId")
     @GenericGenerator(
             name = "ReviewFeedbackId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ReviewFeedbackImpl"),
                     @Parameter(name = "entity_name",

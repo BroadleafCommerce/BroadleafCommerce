@@ -67,7 +67,7 @@ public class StructuredContentTypeImpl
     @GeneratedValue(generator = "StructuredContentTypeId")
     @GenericGenerator(
             name = "StructuredContentTypeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "StructuredContentTypeImpl"),
                     @Parameter(name = "entity_name",

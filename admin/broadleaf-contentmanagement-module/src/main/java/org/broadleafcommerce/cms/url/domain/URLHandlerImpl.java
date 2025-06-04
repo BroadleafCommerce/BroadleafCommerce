@@ -73,7 +73,7 @@ public class URLHandlerImpl implements URLHandler, Locatable, AdminMainEntity, P
     @GeneratedValue(generator = "URLHandlerID")
     @GenericGenerator(
             name = "URLHandlerID",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "URLHandlerImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.url.domain.URLHandlerImpl")

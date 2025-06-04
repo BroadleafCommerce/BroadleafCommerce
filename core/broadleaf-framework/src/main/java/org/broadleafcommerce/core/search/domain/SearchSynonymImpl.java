@@ -42,7 +42,7 @@ public class SearchSynonymImpl implements SearchSynonym {
     @GeneratedValue(generator = "SearchSynonymId")
     @GenericGenerator(
             name = "SearchSynonymId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SearchSynonymImpl"),
                     @Parameter(name = "entity_name",

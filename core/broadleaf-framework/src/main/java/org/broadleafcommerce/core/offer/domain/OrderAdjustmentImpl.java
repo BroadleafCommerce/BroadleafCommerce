@@ -79,7 +79,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment, CurrencyCodeIdentif
     @GeneratedValue(generator = "OrderAdjustmentId")
     @GenericGenerator(
             name = "OrderAdjustmentId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OrderAdjustmentImpl"),
                     @Parameter(name = "entity_name",

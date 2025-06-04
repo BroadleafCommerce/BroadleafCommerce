@@ -75,7 +75,7 @@ public class SearchRedirectImpl implements SearchRedirect, java.io.Serializable,
     @GeneratedValue(generator = "SearchRedirectID")
     @GenericGenerator(
             name = "SearchRedirectID",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SearchRedirectImpl"),
                     @Parameter(name = "entity_name",

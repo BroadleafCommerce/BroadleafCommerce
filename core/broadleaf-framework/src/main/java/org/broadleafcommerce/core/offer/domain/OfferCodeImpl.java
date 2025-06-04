@@ -89,7 +89,7 @@ public class OfferCodeImpl implements OfferCode {
     @GeneratedValue(generator = "OfferCodeId")
     @GenericGenerator(
             name = "OfferCodeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OfferCodeImpl"),
                     @Parameter(name = "entity_name",

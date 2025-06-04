@@ -70,7 +70,7 @@ public class ProductOptionValueImpl implements ProductOptionValue, ProductOption
     @GeneratedValue(generator = "ProductOptionValueId")
     @GenericGenerator(
             name = "ProductOptionValueId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ProductOptionValueImpl"),
                     @Parameter(name = "entity_name",

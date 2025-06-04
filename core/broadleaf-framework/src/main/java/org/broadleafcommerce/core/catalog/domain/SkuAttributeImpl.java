@@ -84,7 +84,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     @GeneratedValue(generator = "SkuAttributeId")
     @GenericGenerator(
             name = "SkuAttributeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SkuAttributeImpl"),
                     @Parameter(name = "entity_name",

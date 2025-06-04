@@ -28,6 +28,7 @@ import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformMemberDt
 import org.broadleafcommerce.common.weave.ConditionalDirectCopyTransformersManager;
 
 import java.io.ByteArrayInputStream;
+import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +47,6 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import jakarta.persistence.spi.TransformerException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtConstructor;
@@ -106,7 +106,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain,
             byte[] classfileBuffer
-    ) throws TransformerException {
+    ) throws IllegalClassFormatException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -329,7 +329,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             error.printStackTrace();
             throw error;
         } catch (Exception e) {
-            throw new TransformerException("Unable to transform class", e);
+            throw new IllegalClassFormatException("Unable to transform class");
         } finally {
             if (clazz != null) {
                 try {

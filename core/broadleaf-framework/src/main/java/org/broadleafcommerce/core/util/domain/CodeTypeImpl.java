@@ -48,7 +48,7 @@ public class CodeTypeImpl implements CodeType {
     @GeneratedValue(generator = "CodeTypeId", strategy = GenerationType.TABLE)
     @GenericGenerator(
             name = "CodeTypeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CodeTypeImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.util.domain.CodeTypeImpl")

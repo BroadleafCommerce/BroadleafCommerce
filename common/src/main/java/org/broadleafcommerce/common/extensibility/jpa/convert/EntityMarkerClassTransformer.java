@@ -25,6 +25,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePatte
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
+import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,7 +37,6 @@ import jakarta.annotation.Resource;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.spi.TransformerException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
 import javassist.bytecode.annotation.Annotation;
@@ -70,7 +70,7 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
             Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain,
             byte[] classfileBuffer
-    ) throws TransformerException {
+    ) throws IllegalClassFormatException {
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
             return null;
@@ -103,7 +103,7 @@ public class EntityMarkerClassTransformer extends AbstractClassTransformer imple
             }
         } catch (Exception e) {
             LOG.error("An error has occurred ", e);
-            throw new TransformerException("Unable to mark " + convertedClassName + " as transformed.");
+            throw new IllegalClassFormatException("Unable to mark " + convertedClassName + " as transformed.");
         }
 
         // We don't need to transform anything, so we'll return null

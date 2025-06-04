@@ -65,7 +65,7 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     @GeneratedValue(generator = "FieldId")
     @GenericGenerator(
             name = "FieldId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "FieldImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.search.domain.FieldImpl")

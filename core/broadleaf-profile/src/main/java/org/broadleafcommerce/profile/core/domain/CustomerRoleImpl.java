@@ -52,7 +52,7 @@ public class CustomerRoleImpl implements CustomerRole {
     @GeneratedValue(generator = "CustomerRoleId")
     @GenericGenerator(
             name = "CustomerRoleId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerRoleImpl"),
                     @Parameter(name = "entity_name",

@@ -24,14 +24,11 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
-import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
+import org.hibernate.annotations.Type;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -69,7 +66,7 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     @GeneratedValue(generator = "PageFieldId")
     @GenericGenerator(
             name = "PageFieldId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "PageFieldImpl"),
                     @Parameter(name = "entity_name",
@@ -87,9 +84,9 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     @AdminPresentation
     protected String stringValue;
 
+    @Column(name = "LOB_VALUE", length = Integer.MAX_VALUE-1)
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "LOB_VALUE", length = Length.LONG32 - 1)
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     @AdminPresentation
     protected String lobValue;
 

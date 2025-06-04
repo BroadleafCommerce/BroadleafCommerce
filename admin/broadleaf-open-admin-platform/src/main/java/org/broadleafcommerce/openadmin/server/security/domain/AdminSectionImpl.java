@@ -71,7 +71,7 @@ public class AdminSectionImpl implements AdminSection {
     @GeneratedValue(generator = "AdminSectionId")
     @GenericGenerator(
             name = "AdminSectionId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "AdminSectionImpl"),
                     @Parameter(name = "entity_name",

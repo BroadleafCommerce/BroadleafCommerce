@@ -49,11 +49,11 @@ import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.Late
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.FieldNamePropertyValidator;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
+import org.hibernate.Criteria;
 import org.hibernate.MappingException;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
-import org.hibernate.query.criteria.JpaCriteriaQuery;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
 import org.springframework.beans.BeansException;
@@ -158,10 +158,8 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
     }
 
     @Override
-    public JpaCriteriaQuery<?> createCriteria(Class<?> entityClass) {
-        return getStandardEntityManager().unwrap(Session.class)
-                .getCriteriaBuilder()
-                .createQuery(entityClass);
+    public Criteria createCriteria(Class<?> entityClass) {
+        return getStandardEntityManager().unwrap(Session.class).createCriteria(entityClass);
     }
 
     @Override

@@ -73,7 +73,7 @@ public class AdminRoleImpl implements AdminRole, AdminRoleAdminPresentation, Adm
     @GeneratedValue(generator = "AdminRoleId")
     @GenericGenerator(
             name = "AdminRoleId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "AdminRoleImpl"),
                     @Parameter(name = "entity_name",

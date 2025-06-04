@@ -121,7 +121,7 @@ public class OrderPaymentImpl implements OrderPayment, CurrencyCodeIdentifiable 
     @GeneratedValue(generator = "OrderPaymentId")
     @GenericGenerator(
             name = "OrderPaymentId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OrderPaymentImpl"),
                     @Parameter(name = "entity_name",

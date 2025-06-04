@@ -123,7 +123,7 @@ public class AddressImpl implements Address {
     @GeneratedValue(generator = "AddressId")
     @GenericGenerator(
             name = "AddressId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "AddressImpl"),
                     @Parameter(name = "entity_name",

@@ -82,7 +82,7 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     @GeneratedValue(generator = "CategoryProductId")
     @GenericGenerator(
             name = "CategoryProductId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CategoryProductXrefImpl"),
                     @Parameter(name = "entity_name",

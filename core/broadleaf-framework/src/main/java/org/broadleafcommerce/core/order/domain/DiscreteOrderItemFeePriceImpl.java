@@ -68,7 +68,7 @@ public class DiscreteOrderItemFeePriceImpl implements DiscreteOrderItemFeePrice 
     @GeneratedValue(generator = "DiscreteOrderItemFeePriceId")
     @GenericGenerator(
             name = "DiscreteOrderItemFeePriceId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "DiscreteOrderItemFeePriceImpl"),
                     @Parameter(name = "entity_name",

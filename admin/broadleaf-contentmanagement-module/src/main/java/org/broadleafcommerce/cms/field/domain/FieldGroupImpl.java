@@ -67,7 +67,7 @@ public class FieldGroupImpl implements FieldGroup, ProfileEntity {
     @GeneratedValue(generator = "FieldGroupId")
     @GenericGenerator(
             name = "FieldGroupId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "FieldGroupImpl"),
                     @Parameter(name = "entity_name",
