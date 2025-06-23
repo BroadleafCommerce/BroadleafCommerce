@@ -28,6 +28,7 @@ import org.broadleafcommerce.openadmin.dto.ClassMetadata;
 import org.broadleafcommerce.openadmin.dto.GroupMetadata;
 import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.dto.TabMetadata;
+import org.broadleafcommerce.openadmin.web.form.component.DefaultListGridActions;
 import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 
 import java.util.ArrayList;
@@ -529,6 +530,9 @@ public class EntityForm {
         if (getAllListGrids() != null) {
             for (ListGrid lg : getAllListGrids()) {
                 lg.setIsReadOnly(readOnly);
+                if (readOnly && !lg.getRowActions().contains(DefaultListGridActions.VIEW)) {
+                    lg.getRowActions().add(DefaultListGridActions.VIEW);
+                }
             }
         }
 
