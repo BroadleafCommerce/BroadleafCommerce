@@ -30,6 +30,11 @@ import java.sql.Types;
  */
 public class BroadleafPostgreSQLDialect extends PostgreSQL95Dialect {
 
+    public BroadleafPostgreSQLDialect() {
+        super();
+        registerColumnType(Types.CLOB, "text");
+    }
+
     @Override
     public SqlTypeDescriptor getSqlTypeDescriptorOverride(int sqlCode) {
         if (sqlCode == Types.CLOB) {
