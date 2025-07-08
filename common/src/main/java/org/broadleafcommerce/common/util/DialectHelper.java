@@ -17,11 +17,11 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.broadleafcommerce.common.dialect.BroadleafPostgreSQLDialect;
 import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.OracleDialect;
-import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -60,12 +60,12 @@ public class DialectHelper {
 
     public boolean isPostgreSql() {
         //This should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
-        return getHibernateDialect(defaultEntityManager) instanceof PostgreSQLDialect;
+        return getHibernateDialect(defaultEntityManager) instanceof BroadleafPostgreSQLDialect;
     }
 
     public boolean isPostgreSql(EntityManager em) {
         //This should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
-        return getHibernateDialect(em) instanceof PostgreSQLDialect;
+        return getHibernateDialect(em) instanceof BroadleafPostgreSQLDialect;
     }
 
     public boolean isSqlServer() {

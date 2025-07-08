@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.dialect;
 
 import org.hibernate.dialect.PostgreSQL95Dialect;
+import org.hibernate.type.descriptor.sql.BlobTypeDescriptor;
 import org.hibernate.type.descriptor.sql.SqlTypeDescriptor;
 
 import java.sql.Types;
@@ -33,10 +34,15 @@ public class BroadleafPostgreSQLDialect extends PostgreSQL95Dialect {
     public BroadleafPostgreSQLDialect() {
         super();
         registerColumnType(Types.CLOB, "text");
+        registerColumnType(Types.BLOB, "bytea");
     }
 
     @Override
     public SqlTypeDescriptor getSqlTypeDescriptorOverride(int sqlCode) {
+        if (sqlCode == Types.BLOB) {
+            return BlobTypeDescriptor.PRIMITIVE_ARRAY_BINDING;
+        }
+
         if (sqlCode == Types.CLOB) {
             return new PostgreSQLClobTypeDescriptor();
         }
