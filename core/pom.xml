@@ -4,7 +4,7 @@
     <parent>
         <artifactId>broadleaf</artifactId>
         <groupId>org.broadleafcommerce</groupId>
-        <version>7.0.5-HIB-56-M3</version>
+        <version>7.0.5-HIB-56-SNAPSHOT</version>
     </parent>
     <artifactId>core</artifactId>
     <packaging>pom</packaging>
