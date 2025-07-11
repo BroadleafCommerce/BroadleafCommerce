@@ -73,7 +73,7 @@
         <connection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</connection>
         <developerConnection>scm:git:git@github.com:BroadleafCommerce/BroadleafCommerce.git</developerConnection>
         <url>https://github.com/BroadleafCommerce/BroadleafCommerce</url>
-        <tag>broadleaf-7.0.5-HIB-56-M4</tag>
+        <tag>HEAD</tag>
     </scm>
     <build>
         <pluginManagement>
