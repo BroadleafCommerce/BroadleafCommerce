@@ -1677,7 +1677,7 @@ public class DynamicEntityDaoImpl implements DynamicEntityDao, ApplicationContex
             property = persistentClass.getProperty(prefix + propertyName);
         }
 
-        Iterator componentPropertyIterator = ((org.hibernate.mapping.Component) property.getValue()).getPropertyIterator();
+        Iterator<Property> componentPropertyIterator = ((org.hibernate.mapping.Component) property.getValue()).getProperties().iterator();
         List<Property> componentPropertyList = new ArrayList<>();
 
         while (componentPropertyIterator.hasNext()) {

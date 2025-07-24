@@ -40,10 +40,10 @@ import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderRespo
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.jdbc.Size;
-import org.hibernate.engine.spi.Mapping;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
+import org.hibernate.type.MappingContext;
 import org.hibernate.type.Type;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -569,7 +569,7 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
         if (columnLength == 0) {
             EntityManager em = HibernateUtils.getCurrentDefaultEntityManager();
             SessionFactory sessionFactory = em.unwrap(Session.class).getSessionFactory();
-            Size colSize = column.getColumnSize(dialectHelper.getHibernateDialect(), (Mapping) sessionFactory);
+            Size colSize = column.getColumnSize(dialectHelper.getHibernateDialect(), (MappingContext) sessionFactory);
             Long length = colSize.getLength();
             if (length != null) {
                 columnLength = length.intValue();
