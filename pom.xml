@@ -60,7 +60,7 @@
         <gpg.plugin.version>3.2.7</gpg.plugin.version>
         <closure.compiler.version>v20240317</closure.compiler.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <hibernate.version>6.6.16.Final</hibernate.version>
+        <hibernate.version>7.0.5.Final</hibernate.version>
         <jakarta.version>6.1.0</jakarta.version>
         <jakarta-xml.version>4.0.2</jakarta-xml.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
@@ -568,6 +568,10 @@
                         <groupId>jakarta.xml.bind</groupId>
                         <artifactId>jakarta.xml.bind-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.hibernate.models</groupId>
+                        <artifactId>hibernate-models</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -586,6 +590,10 @@
                     <exclusion>
                         <groupId>org.eclipse.angus</groupId>
                         <artifactId>angus-activation</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.hibernate.models</groupId>
+                        <artifactId>hibernate-models</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

@@ -35,7 +35,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -106,7 +106,7 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
     @OneToMany(mappedBy = "indexField", targetEntity = IndexFieldTypeImpl.class, cascade = CascadeType.ALL)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
     @BatchSize(size = 50)
-    @Where(clause = "(ARCHIVED != 'Y' OR ARCHIVED IS NULL)")
+    @SQLRestriction("ARCHIVED != 'Y' OR ARCHIVED IS NULL)")
     @AdminPresentationCollection(friendlyName = "IndexFieldImpl_fieldTypes", order = 1000)
     protected List<IndexFieldType> fieldTypes = new ArrayList<>();
 

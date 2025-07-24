@@ -57,7 +57,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -161,7 +161,7 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     @OneToMany(mappedBy = "searchFacet", targetEntity = SearchFacetRangeImpl.class, cascade = {CascadeType.ALL})
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
-    @Where(clause = "(ARCHIVED != 'Y' OR ARCHIVED IS NULL)")
+    @SQLRestriction("(ARCHIVED != 'Y' OR ARCHIVED IS NULL)")
     @AdminPresentationCollection(addType = AddMethodType.PERSIST,
             friendlyName = "newRangeTitle",
             group = GroupName.Ranges)
