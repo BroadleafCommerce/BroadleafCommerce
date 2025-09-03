@@ -782,9 +782,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                                         dirty = true;
                                     }
                                     try {
-                                        mvel = ruleFieldExtractionUtility.convertDTOToMvelString(
-                                                translator, entityKey, dto, fieldService
-                                        );
+                                        mvel = clearMvelString(translator, entityKey, fieldService, dto);
                                         if (!quantityBasedRule.getMatchRule().equals(mvel)) {
                                             dirty = true;
                                         }
@@ -821,9 +819,7 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
                         try {
                             quantityBasedRule = (QuantityBasedRule) memberType.newInstance();
                             quantityBasedRule.setQuantity(dto.getQuantity());
-                            quantityBasedRule.setMatchRule(ruleFieldExtractionUtility.convertDTOToMvelString(
-                                    translator, entityKey, dto, fieldService
-                            ));
+                            quantityBasedRule.setMatchRule(clearMvelString(translator, entityKey, fieldService, dto));
                             if (StringUtils.isEmpty(quantityBasedRule.getMatchRule())
                                     && !StringUtils.isEmpty(dw.getRawMvel())) {
                                 quantityBasedRule.setMatchRule(dw.getRawMvel());
@@ -903,6 +899,20 @@ public class RuleFieldPersistenceProvider extends FieldPersistenceProviderAdapte
             }
         }
         return dirty;
+    }
+
+    protected String clearMvelString(
+            DataDTOToMVELTranslator translator,
+            String entityKey,
+            String fieldService,
+            DataDTO dto) throws MVELTranslationException {
+        String mvelString = ruleFieldExtractionUtility.convertDTOToMvelString(
+                translator, entityKey, dto, fieldService
+        );
+        if (mvelString != null) {
+            mvelString = mvelString.replace("\\\"", "\"");
+        }
+        return mvelString;
     }
 
     protected void updateSimpleRule(
