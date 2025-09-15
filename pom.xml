@@ -45,6 +45,7 @@
         <ehcache3.version>3.10.8</ehcache3.version>
         <spring.version>6.2.10</spring.version>
         <spring.security.version>6.5.3</spring.security.version>
+        <spring-ldap-core.version>3.3.3</spring-ldap-core.version>
         <spring.boot.version>3.5.5</spring.boot.version>
         <jackson.version>2.19.0</jackson.version>
         <lombok.version>1.18.38</lombok.version>
@@ -1314,6 +1315,11 @@
                         <artifactId>spring-aop</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-core</artifactId>
+                <version>${spring-ldap-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
