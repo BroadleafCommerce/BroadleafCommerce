@@ -43,7 +43,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.10.8</ehcache3.version>
-        <spring.version>6.2.10</spring.version>
+        <spring.version>6.2.11</spring.version>
         <spring.security.version>6.5.3</spring.security.version>
         <spring-ldap-core.version>3.3.3</spring-ldap-core.version>
         <spring.boot.version>3.5.5</spring.boot.version>
@@ -87,6 +87,7 @@
                         <source>17</source>
                         <target>17</target>
                         <release>17</release>
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
                 <plugin>
