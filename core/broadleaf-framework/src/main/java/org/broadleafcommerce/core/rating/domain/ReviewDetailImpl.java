@@ -101,7 +101,7 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
     @GeneratedValue(generator = "ReviewDetailId")
     @GenericGenerator(
             name = "ReviewDetailId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ReviewDetailImpl"),
                     @Parameter(name = "entity_name",

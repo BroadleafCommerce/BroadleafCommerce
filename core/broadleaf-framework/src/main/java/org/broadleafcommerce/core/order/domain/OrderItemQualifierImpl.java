@@ -55,7 +55,7 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
     @GeneratedValue(generator = "OrderItemQualifierId")
     @GenericGenerator(
             name = "OrderItemQualifierId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OrderItemQualifierImpl"),
                     @Parameter(name = "entity_name",

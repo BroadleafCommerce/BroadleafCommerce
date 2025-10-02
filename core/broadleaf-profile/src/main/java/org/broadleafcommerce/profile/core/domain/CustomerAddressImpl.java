@@ -81,7 +81,7 @@ public class CustomerAddressImpl implements CustomerAddress {
     @GeneratedValue(generator = "CustomerAddressId")
     @GenericGenerator(
             name = "CustomerAddressId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerAddressImpl"),
                     @Parameter(name = "entity_name",

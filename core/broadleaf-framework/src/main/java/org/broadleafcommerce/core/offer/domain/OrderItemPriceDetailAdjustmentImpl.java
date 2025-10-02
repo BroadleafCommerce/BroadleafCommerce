@@ -76,7 +76,7 @@ public class OrderItemPriceDetailAdjustmentImpl implements OrderItemPriceDetailA
     @GeneratedValue(generator = "OrderItemPriceDetailAdjustmentId")
     @GenericGenerator(
             name = "OrderItemPriceDetailAdjustmentId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value",
                             value = "OrderItemPriceDetailAdjustmentImpl"),

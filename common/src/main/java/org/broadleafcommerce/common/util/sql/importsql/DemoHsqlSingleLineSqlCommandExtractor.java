@@ -20,7 +20,7 @@ package org.broadleafcommerce.common.util.sql.importsql;
 import org.broadleafcommerce.common.logging.SupportLogManager;
 import org.broadleafcommerce.common.logging.SupportLogger;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.tool.schema.internal.script.SingleLineSqlScriptExtractor;
+import org.hibernate.tool.hbm2ddl.SingleLineSqlCommandExtractor;
 
 import java.io.Reader;
 import java.util.ArrayList;
@@ -32,12 +32,13 @@ import java.util.List;
  *
  * @author Phillip Verheyden (phillipuniverse)
  */
-public class DemoHsqlSingleLineSqlCommandExtractor extends SingleLineSqlScriptExtractor {
+public class DemoHsqlSingleLineSqlCommandExtractor extends SingleLineSqlCommandExtractor {
 
     @Override
-    public List<String> extractCommands(Reader reader, Dialect dialect) {
-        List<String> commands = super.extractCommands(reader, dialect);
-        List<String> newCommands = new ArrayList<>(commands.size());
+    public String[] extractCommands(Reader reader) {
+        String[] commands = super.extractCommands(reader);
+        String[] newCommands = new String[commands.length];
+        int i = 0;
         for (String command : commands) {
             String newCommand = command;
 
@@ -53,7 +54,8 @@ public class DemoHsqlSingleLineSqlCommandExtractor extends SingleLineSqlScriptEx
             //replace escaped double quotes (\") with encoded double quote
             newCommand = newCommand.replaceAll("\\\\\"", "' || CHAR(34) || '");
 
-            newCommands.add(newCommand);
+            newCommands[i] = newCommand;
+            i++;
         }
         return newCommands;
     }

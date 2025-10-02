@@ -68,7 +68,7 @@ public class OfferOfferRuleXrefImpl implements OfferOfferRuleXref, SimpleRule {
     @GeneratedValue(generator = "OfferOfferRuleId")
     @GenericGenerator(
             name = "OfferOfferRuleId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OfferOfferRuleXrefImpl"),
                     @Parameter(name = "entity_name",

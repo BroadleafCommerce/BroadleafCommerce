@@ -123,7 +123,7 @@ public class PromotionMessageImpl implements PromotionMessage, AdminMainEntity, 
     @GeneratedValue(generator = "PromotionMessageId")
     @GenericGenerator(
             name = "PromotionMessageId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "PromotionMessageImpl"),
                     @Parameter(name = "entity_name",

@@ -21,11 +21,11 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyIgnorePatte
 import org.hibernate.bytecode.enhance.spi.EnhancementContext;
 import org.hibernate.jpa.internal.enhance.EnhancingClassTransformerImpl;
 
+import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.spi.TransformerException;
 
 /**
  * This is the override of Hibernate transformer that adds filtration based on class/package name to prevernt
@@ -46,7 +46,7 @@ public class BroadleafHibernateEnhancingClassTransformerImpl extends EnhancingCl
             Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain,
             byte[] classfileBuffer
-    ) throws TransformerException {
+    ) throws IllegalClassFormatException {
         String convertedClassName = className.replace('/', '.');
         boolean isValidPattern = true;
         List<DirectCopyIgnorePattern> matchedPatterns = new ArrayList<DirectCopyIgnorePattern>();

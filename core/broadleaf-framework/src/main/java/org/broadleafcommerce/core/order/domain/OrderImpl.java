@@ -129,7 +129,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @GeneratedValue(generator = "OrderId")
     @GenericGenerator(
             name = "OrderId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OrderImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.OrderImpl")

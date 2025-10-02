@@ -52,7 +52,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     @GeneratedValue(generator = "OpenId")
     @GenericGenerator(
             name = "OpenId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "EmailTrackingOpensImpl"),
                     @Parameter(name = "entity_name",

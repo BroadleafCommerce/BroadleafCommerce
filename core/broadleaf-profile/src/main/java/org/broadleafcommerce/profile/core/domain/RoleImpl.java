@@ -50,7 +50,7 @@ public class RoleImpl implements Role {
     @GeneratedValue(generator = "RoleId")
     @GenericGenerator(
             name = "RoleId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "RoleImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.profile.core.domain.RoleImpl")

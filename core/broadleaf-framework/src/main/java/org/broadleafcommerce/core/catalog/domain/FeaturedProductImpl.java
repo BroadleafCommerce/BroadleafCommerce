@@ -65,7 +65,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @GeneratedValue(generator = "FeaturedProductId")
     @GenericGenerator(
             name = "FeaturedProductId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "FeaturedProductImpl"),
                     @Parameter(name = "entity_name",

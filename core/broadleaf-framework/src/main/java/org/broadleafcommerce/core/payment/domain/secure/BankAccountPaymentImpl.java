@@ -53,7 +53,7 @@ public class BankAccountPaymentImpl implements BankAccountPayment {
     @GeneratedValue(generator = "BankPaymentId")
     @GenericGenerator(
             name = "BankPaymentId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "BankAccountPaymentImpl"),
                     @Parameter(name = "entity_name",

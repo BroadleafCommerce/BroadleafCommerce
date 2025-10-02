@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.sandbox.domain;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
@@ -81,7 +79,7 @@ public class SandBoxManagementImpl implements AdminMainEntity, SandBoxManagement
     @GeneratedValue(generator = "SandBoxMgmtId")
     @GenericGenerator(
             name = "SandBoxMgmtId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SandBoxManagementImpl"),
                     @Parameter(name = "entity_name",

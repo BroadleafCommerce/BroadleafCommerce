@@ -181,7 +181,7 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
                 }
             }
             if (column != null) {
-                fieldMetadata.setLength(getColumnLength(column));
+                fieldMetadata.setLength(column.getLength());
                 fieldMetadata.setScale(column.getScale());
                 fieldMetadata.setPrecision(column.getPrecision());
                 fieldMetadata.setRequired(!column.isNullable());
@@ -566,22 +566,4 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
         }
         return MetadataProviderResponse.NOT_HANDLED;
     }
-
-    protected Integer getColumnLength(Column column) {
-        Integer columnLength = column.getColumnSize();
-        if (columnLength == 0) {
-            EntityManager em = HibernateUtils.getCurrentDefaultEntityManager();
-            SessionFactory sessionFactory = em.unwrap(Session.class).getSessionFactory();
-            Size colSize = column.getColumnSize(dialectHelper.getHibernateDialect(), (Mapping) sessionFactory);
-            Long length = colSize.getLength();
-            if (length != null) {
-                columnLength = length.intValue();
-            }
-            if (columnLength == 0) {
-                columnLength = null;
-            }
-        }
-        return columnLength;
-    }
-
 }

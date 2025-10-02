@@ -190,7 +190,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     @GeneratedValue(generator = "AdminUserId")
     @GenericGenerator(
             name = "AdminUserId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "AdminUserImpl"),
                     @Parameter(name = "entity_name",

@@ -53,7 +53,7 @@ public class SiteMapUrlEntryImpl implements SiteMapUrlEntry {
     @GeneratedValue(generator = "URLEntryId")
     @GenericGenerator(
             name = "URLEntryId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SiteMapURLEntryImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.sitemap.domain.SiteMapURLEntryImpl")

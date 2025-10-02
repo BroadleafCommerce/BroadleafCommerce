@@ -122,7 +122,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     @GeneratedValue(generator = "OrderItemId")
     @GenericGenerator(
             name = "OrderItemId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OrderItemImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.OrderItemImpl")

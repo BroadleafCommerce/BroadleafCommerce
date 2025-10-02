@@ -75,7 +75,7 @@ public class IndexFieldImpl implements IndexField, Serializable, IndexFieldAdmin
     @GeneratedValue(generator = "IndexFieldId")
     @GenericGenerator(
             name = "IndexFieldId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "IndexFieldImpl"),
                     @Parameter(name = "entity_name",

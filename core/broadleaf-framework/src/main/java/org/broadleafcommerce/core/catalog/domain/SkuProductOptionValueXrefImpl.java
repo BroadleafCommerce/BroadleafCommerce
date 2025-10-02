@@ -65,7 +65,7 @@ public class SkuProductOptionValueXrefImpl implements SkuProductOptionValueXref 
     @GeneratedValue(generator = "SkuProductOptionValueXrefId")
     @GenericGenerator(
             name = "SkuProductOptionValueXrefId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SkuProductOptionValueXrefImpl"),
                     @Parameter(name = "entity_name",

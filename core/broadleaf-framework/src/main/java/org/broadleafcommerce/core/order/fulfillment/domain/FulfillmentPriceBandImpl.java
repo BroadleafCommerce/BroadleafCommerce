@@ -59,7 +59,7 @@ public class FulfillmentPriceBandImpl extends FulfillmentBandImpl implements Ful
     @GeneratedValue(generator = "FulfillmentPriceBandId")
     @GenericGenerator(
             name = "FulfillmentPriceBandId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "FulfillmentPriceBandImpl"),
                     @Parameter(name = "entity_name",

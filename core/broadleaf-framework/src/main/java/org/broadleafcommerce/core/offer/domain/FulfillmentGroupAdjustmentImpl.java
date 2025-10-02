@@ -78,7 +78,7 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     @GeneratedValue(generator = "FGAdjustmentId")
     @GenericGenerator(
             name = "FGAdjustmentId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "FulfillmentGroupAdjustmentImpl"),
                     @Parameter(name = "entity_name",

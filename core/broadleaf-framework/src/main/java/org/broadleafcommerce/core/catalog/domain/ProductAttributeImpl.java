@@ -75,7 +75,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     @GeneratedValue(generator = "ProductAttributeId")
     @GenericGenerator(
             name = "ProductAttributeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ProductAttributeImpl"),
                     @Parameter(name = "entity_name",

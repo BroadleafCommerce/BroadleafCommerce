@@ -19,10 +19,10 @@ package org.broadleafcommerce.common.extensibility.jpa.copy;
 
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 
+import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.Properties;
 
-import jakarta.persistence.spi.TransformerException;
 
 /**
  * This class transformer will do nothing. The main use case for this transformer is when you would prefer to not
@@ -45,7 +45,7 @@ public class NullClassTransformer implements BroadleafClassTransformer {
             Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain,
             byte[] classfileBuffer
-    ) throws TransformerException {
+    ) throws IllegalClassFormatException {
         return null;
     }
 

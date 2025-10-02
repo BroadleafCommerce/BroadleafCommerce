@@ -74,7 +74,7 @@ public abstract class AbstractModuleConfiguration implements ModuleConfiguration
     @GeneratedValue(generator = "ModuleConfigurationId")
     @GenericGenerator(
             name = "ModuleConfigurationId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ModuleConfigurationImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.config.domain" +

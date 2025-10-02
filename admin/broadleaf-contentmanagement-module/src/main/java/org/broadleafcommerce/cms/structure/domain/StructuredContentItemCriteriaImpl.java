@@ -23,17 +23,14 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
+import org.hibernate.annotations.Type;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -69,7 +66,7 @@ public class StructuredContentItemCriteriaImpl
     @GeneratedValue(generator = "SCItemCriteriaId")
     @GenericGenerator(
             name = "SCItemCriteriaId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "StructuredContentItemCriteriaImpl"),
                     @Parameter(name = "entity_name",
@@ -89,8 +86,8 @@ public class StructuredContentItemCriteriaImpl
     protected Integer quantity;
 
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "ORDER_ITEM_MATCH_RULE", length = Length.LONG32 - 1)
+    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Column(name = "ORDER_ITEM_MATCH_RULE", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Order_Item_Match_Rule",
             group = "StructuredContentItemCriteriaImpl_Description",
             visibility = VisibilityEnum.HIDDEN_ALL)

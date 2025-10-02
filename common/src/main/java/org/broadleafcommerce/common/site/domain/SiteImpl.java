@@ -80,7 +80,7 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     @GeneratedValue(generator = "SiteId")
     @GenericGenerator(
             name = "SiteId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SiteImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.site.domain.SiteImpl")

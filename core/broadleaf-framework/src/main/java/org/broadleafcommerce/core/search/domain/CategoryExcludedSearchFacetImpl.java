@@ -65,7 +65,7 @@ public class CategoryExcludedSearchFacetImpl implements CategoryExcludedSearchFa
     @GeneratedValue(generator = "CategoryExcludedSearchFacetId")
     @GenericGenerator(
             name = "CategoryExcludedSearchFacetId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CategoryExcludedSearchFacetImpl"),
                     @Parameter(name = "entity_name",
