@@ -83,7 +83,7 @@ public class SkuBundleItemImpl implements SkuBundleItem, SkuBundleItemAdminPrese
     @GeneratedValue(generator = "SkuBundleItemId")
     @GenericGenerator(
             name = "SkuBundleItemId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SkuBundleItemImpl"),
                     @Parameter(name = "entity_name",

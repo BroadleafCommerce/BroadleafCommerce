@@ -100,7 +100,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order readOrderByIdIgnoreCache(final Long orderId) {
         Map<String, Object> m = new HashMap<>();
-        m.put(AvailableSettings.JAKARTA_SHARED_CACHE_RETRIEVE_MODE, CacheRetrieveMode.BYPASS);
+        m.put(AvailableSettings.JAKARTA_JPA_SHARED_CACHE_RETRIEVE_MODE, CacheRetrieveMode.BYPASS);
         return em.find(OrderImpl.class, orderId, m);
     }
 

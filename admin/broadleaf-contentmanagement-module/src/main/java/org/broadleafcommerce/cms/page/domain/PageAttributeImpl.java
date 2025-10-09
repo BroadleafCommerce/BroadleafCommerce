@@ -63,7 +63,7 @@ public class PageAttributeImpl implements PageAttribute, ProfileEntity {
     @GeneratedValue(generator = "PageAttributeId")
     @GenericGenerator(
             name = "PageAttributeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "PageAttributeImpl"),
                     @Parameter(name = "entity_name",

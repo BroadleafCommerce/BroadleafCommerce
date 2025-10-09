@@ -80,7 +80,7 @@ public class OfferPriceDataImpl implements OfferPriceData {
     @GeneratedValue(generator = "OfferPriceDataId")
     @GenericGenerator(
             name = "OfferPriceDataId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OfferPriceDataImpl"),
                     @Parameter(name = "entity_name",

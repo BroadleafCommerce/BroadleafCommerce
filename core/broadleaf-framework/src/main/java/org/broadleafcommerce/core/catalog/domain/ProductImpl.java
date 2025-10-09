@@ -63,7 +63,6 @@ import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -178,7 +177,7 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @GeneratedValue(generator = "ProductId")
     @GenericGenerator(
             name = "ProductId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "ProductImpl"),
                     @Parameter(name = "entity_name",
@@ -982,15 +981,11 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
     @Override
     public List<ProductOptionXref> getProductOptionXrefs() {
         List<ProductOptionXref> sorted = new ArrayList<>(productOptions);
-        Collections.sort(sorted, new Comparator<ProductOptionXref>() {
-
-            @Override
-            public int compare(ProductOptionXref o1, ProductOptionXref o2) {
-                return ObjectUtils.compare(o1.getProductOption().getDisplayOrder(),
-                        o2.getProductOption().getDisplayOrder(), true);
-            }
-
-        });
+        sorted.sort((o1, o2) -> ObjectUtils.compare(
+                o1.getProductOption().getDisplayOrder(),
+                o2.getProductOption().getDisplayOrder(),
+                true)
+        );
         return sorted;
     }
 

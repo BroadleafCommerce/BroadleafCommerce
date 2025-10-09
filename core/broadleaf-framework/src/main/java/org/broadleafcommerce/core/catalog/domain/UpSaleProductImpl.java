@@ -69,7 +69,7 @@ public class UpSaleProductImpl implements UpSaleProduct, MultiTenantCloneable<Up
     @GeneratedValue(generator = "UpSaleProductId")
     @GenericGenerator(
             name = "UpSaleProductId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "UpSaleProductImpl"),
                     @Parameter(name = "entity_name",

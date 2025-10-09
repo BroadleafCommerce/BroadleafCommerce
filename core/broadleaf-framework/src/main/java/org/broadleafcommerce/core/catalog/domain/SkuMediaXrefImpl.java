@@ -71,7 +71,7 @@ public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneab
     @GeneratedValue(generator = "SkuMediaId")
     @GenericGenerator(
             name = "SkuMediaId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SkuMediaXrefImpl"),
                     @Parameter(name = "entity_name",

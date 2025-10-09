@@ -67,7 +67,7 @@ public class CategorySearchFacetImpl implements CategorySearchFacet {
     @GeneratedValue(generator = "CategorySearchFacetId")
     @GenericGenerator(
             name = "CategorySearchFacetId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CategorySearchFacetImpl"),
                     @Parameter(name = "entity_name",

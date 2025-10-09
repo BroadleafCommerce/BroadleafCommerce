@@ -30,13 +30,11 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
+import org.hibernate.annotations.Type;
 
 import java.io.Serial;
 
@@ -67,7 +65,7 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     @GeneratedValue(generator = "FulfillmentOptionId")
     @GenericGenerator(
             name = "FulfillmentOptionId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "FulfillmentOptionImpl"),
                     @Parameter(name = "entity_name",
@@ -83,8 +81,8 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     protected String name;
 
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
+    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "FulfillmentOptionImpl_longDescription",
             order = Presentation.FieldOrder.DESCRIPTION, translatable = true)
     protected String longDescription;

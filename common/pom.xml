@@ -142,11 +142,11 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core-jakarta</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate.orm</groupId>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jcache</artifactId>
         </dependency>
         <dependency>
@@ -171,8 +171,8 @@
             <artifactId>easymockclassextension</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-envers</artifactId>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-envers-jakarta</artifactId>
         </dependency>
         <dependency>
             <groupId>jakarta.mail</groupId>
@@ -320,10 +320,6 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>

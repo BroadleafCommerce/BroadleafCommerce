@@ -68,7 +68,7 @@ public class CrossSaleProductImpl implements CrossSaleProduct, MultiTenantClonea
     @GeneratedValue(generator = "CrossSaleProductId")
     @GenericGenerator(
             name = "CrossSaleProductId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CrossSaleProductImpl"),
                     @Parameter(name = "entity_name",

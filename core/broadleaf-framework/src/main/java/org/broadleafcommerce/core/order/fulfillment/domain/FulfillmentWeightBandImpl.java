@@ -62,7 +62,7 @@ public class FulfillmentWeightBandImpl extends FulfillmentBandImpl implements Fu
     @GeneratedValue(generator = "FulfillmentWeightBandId")
     @GenericGenerator(
             name = "FulfillmentWeightBandId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "FulfillmentWeightBandImpl"),
                     @Parameter(name = "entity_name",

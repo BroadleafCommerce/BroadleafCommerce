@@ -15,6 +15,7 @@
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
  */
+
 package org.broadleafcommerce.common.i18n.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -23,38 +24,38 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
+import org.hibernate.annotations.Table;
+import org.hibernate.annotations.Type;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Lob;
-import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_TRANSLATION", indexes = {@Index(name = "TRANSLATION_INDEX", columnList = "ENTITY_TYPE, ENTITY_ID, FIELD_NAME, LOCALE_CODE")})
+@jakarta.persistence.Table(name = "BLC_TRANSLATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blTranslationElements")
 @AdminPresentationClass(populateToOneFields = PopulateToOneFieldsEnum.TRUE, friendlyName = "TranslationImpl_baseTranslation")
+//multi-column indexes don't appear to get exported correctly when declared at the field level, so declaring here as a workaround
+@Table(appliesTo = "BLC_TRANSLATION", indexes = {
+        @Index(name = "TRANSLATION_INDEX", columnNames = { "ENTITY_TYPE", "ENTITY_ID", "FIELD_NAME", "LOCALE_CODE" })
+})
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.SANDBOX, skipOverlaps = true),
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_CATALOG),
@@ -62,14 +63,13 @@ import jakarta.persistence.Table;
 })
 public class TranslationImpl implements Serializable, Translation {
 
-    @Serial
     private static final long serialVersionUID = -122818474469147685L;
 
     @Id
     @GeneratedValue(generator = "TranslationId")
     @GenericGenerator(
             name = "TranslationId",
-            type = IdOverrideTableGenerator.class,
+            strategy = "org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "TranslationImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.i18n.domain.TranslationImpl")
@@ -93,9 +93,9 @@ public class TranslationImpl implements Serializable, Translation {
     @AdminPresentation(friendlyName = "TranslationImpl_LocaleCode", prominent = true)
     protected String localeCode;
 
+    @Column(name = "TRANSLATED_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "TRANSLATED_VALUE", length = Length.LONG32 - 1)
+    @Type(type = "org.hibernate.type.MaterializedClobType")
     @AdminPresentation(friendlyName = "TranslationImpl_TranslatedValue", prominent = true, requiredOverride = RequiredOverride.REQUIRED)
     protected String translatedValue;
 

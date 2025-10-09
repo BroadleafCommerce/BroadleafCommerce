@@ -69,7 +69,7 @@ public class OrderAttributeImpl implements OrderAttribute {
     @GeneratedValue(generator = "OrderAttributeId")
     @GenericGenerator(
             name = "OrderAttributeId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OrderAttributeImpl"),
                     @Parameter(name = "entity_name",

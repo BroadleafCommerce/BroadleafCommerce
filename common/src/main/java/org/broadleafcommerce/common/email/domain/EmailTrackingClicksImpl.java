@@ -52,7 +52,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     @GeneratedValue(generator = "ClickId")
     @GenericGenerator(
             name = "ClickId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "EmailTrackingClicksImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.email.domain.EmailTrackingClicksImpl")

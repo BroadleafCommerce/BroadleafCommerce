@@ -80,7 +80,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     @GeneratedValue(generator = "SkuAvailabilityId")
     @GenericGenerator(
             name = "SkuAvailabilityId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "SkuAvailabilityImpl"),
                     @Parameter(name = "entity_name",

@@ -52,7 +52,7 @@ public class StructuredContentFieldGroupXrefImpl implements StructuredContentFie
     @GeneratedValue(generator = "StructuredContentFieldGroupXrefId")
     @GenericGenerator(
             name = "StructuredContentFieldGroupXrefId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value",
                             value = "StructuredContentFieldGroupXrefImpl"),

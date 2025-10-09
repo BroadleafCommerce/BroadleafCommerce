@@ -50,7 +50,7 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     @GeneratedValue(generator = "OrderMultishipOptionId")
     @GenericGenerator(
             name = "OrderMultishipOptionId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "OrderMultishipOptionImpl"),
                     @Parameter(name = "entity_name",

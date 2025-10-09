@@ -56,16 +56,16 @@
         <project.uri>${project.baseUri}</project.uri>
         <groovy.version>4.0.20</groovy.version>
         <gpg.plugin.version>3.1.0</gpg.plugin.version>
-        <broadleaf-presentation.version>2.0.1-GA</broadleaf-presentation.version>
-        <hsqldb.database.starter.version>3.0.2-GA</hsqldb.database.starter.version>
+        <broadleaf-presentation.version>2.0.2-SNAPSHOT</broadleaf-presentation.version>
+        <hsqldb.database.starter.version>3.0.3-SNAPSHOT</hsqldb.database.starter.version>
         <hsqldb.version>2.7.2</hsqldb.version>
         <closure.compiler.version>v20180506</closure.compiler.version>
-        <hibernate.version>6.2.34.Final</hibernate.version>
+        <hibernate.version>5.6.15.Final</hibernate.version>
         <jakarta.version>6.0.0</jakarta.version>
         <jakarta-xml.version>4.0.0</jakarta-xml.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <logback.version>1.5.18</logback.version>
+        <logback.version>1.5.17</logback.version>
         <!-- because of spring when does instrumentation it uses reflection to jdk classes, for tests we need this -->
         <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</surefire.argLine>
         <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</failsafe.argLine>
@@ -393,7 +393,7 @@
                     <plugin>
                         <groupId>org.owasp</groupId>
                         <artifactId>dependency-check-maven</artifactId>
-                        <version>12.1.3</version>
+                        <version>12.1.6</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -579,15 +579,30 @@
 
             <!-- Hibernate Libraries -->
             <dependency>
-                <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-envers</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-core</artifactId>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-envers-jakarta</artifactId>
                 <version>${hibernate.version}</version>
                 <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>3.4.3.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core-jakarta</artifactId>
+                <version>${hibernate.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>javax.persistence</groupId>
                         <artifactId>javax.persistence-api</artifactId>
@@ -611,13 +626,17 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.hibernate.orm</groupId>
+                <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-jcache</artifactId>
                 <version>${hibernate.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.cache</groupId>
                         <artifactId>cache-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-core</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -635,21 +654,6 @@
                     <exclusion>
                         <artifactId>xml-apis</artifactId>
                         <groupId>xml-apis</groupId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-beanutils</groupId>
-                        <artifactId>commons-beanutils</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>1.11.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -669,6 +673,17 @@
                 <version>1.2</version>
             </dependency>
             <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>1.11.0</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>commons-cli</groupId>
                 <artifactId>commons-cli</artifactId>
                 <version>1.5.0</version>
@@ -677,7 +692,7 @@
             <dependency>
                 <groupId>commons-fileupload</groupId>
                 <artifactId>commons-fileupload</artifactId>
-                <version>1.6.0</version>
+                <version>1.5</version>
                 <type>jar</type>
                 <scope>compile</scope>
                 <exclusions>
@@ -727,7 +742,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.18.0</version>
+                <version>3.16.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -769,12 +784,12 @@
             <dependency>
                 <groupId>jakarta.mail</groupId>
                 <artifactId>jakarta.mail-api</artifactId>
-                <version>2.1.4</version>
+                <version>2.1.2</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>jakarta.mail</artifactId>
-                <version>2.0.4</version>
+                <version>2.0.2</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.annotation</groupId>
@@ -995,7 +1010,7 @@
             <dependency>
                 <groupId>org.apache.solr</groupId>
                 <artifactId>solr-solrj</artifactId>
-                <version>9.9.0</version>
+                <version>9.5.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -1015,25 +1030,15 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.eclipse.jetty.http2</groupId>
-                        <artifactId>http2-client</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.eclipse.jetty.http2</groupId>
-                        <artifactId>http2-http-client-transport</artifactId>
+                        <artifactId>http2-common</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
             <!-- Override http2-client version coming from solr-->
             <dependency>
                 <groupId>org.eclipse.jetty.http2</groupId>
-                <artifactId>http2-parent</artifactId>
+                <artifactId>http2-common</artifactId>
                 <version>11.0.25</version>
-            </dependency>
-            <!-- Override io.netty version coming from zookeeper -->
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-parent</artifactId>
-                <version>4.1.122.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.xerial.snappy</groupId>
@@ -1080,7 +1085,7 @@
             <dependency>
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
-                <version>2.5.2.Final</version>
+                <version>2.4.15.Final</version>
             </dependency>
 
             <!--Regular Expression Libraries -->
@@ -1397,7 +1402,7 @@
             <dependency>
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-core</artifactId>
-                <version>3.2.2</version>
+                <version>2.9.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -1418,7 +1423,7 @@
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.7.8</version>
+                <version>1.7.7</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
@@ -1446,7 +1451,7 @@
             <dependency>
                 <groupId>org.owasp.esapi</groupId>
                 <artifactId>esapi</artifactId>
-                <version>2.7.0.0</version>
+                <version>2.6.0.0</version>
                 <classifier>jakarta</classifier>
                 <exclusions>
                     <exclusion>
@@ -1551,7 +1556,7 @@
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.13.1</version>
+                <version>2.10.1</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.htmlcompressor</groupId>

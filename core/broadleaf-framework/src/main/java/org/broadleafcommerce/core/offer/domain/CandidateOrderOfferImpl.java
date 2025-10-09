@@ -61,7 +61,7 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     @GeneratedValue(generator = "CandidateOrderOfferId")
     @GenericGenerator(
             name = "CandidateOrderOfferId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CandidateOrderOfferImpl"),
                     @Parameter(name = "entity_name",

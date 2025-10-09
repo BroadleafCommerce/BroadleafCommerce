@@ -65,7 +65,7 @@ public class StructuredContentFieldTemplateImpl implements StructuredContentFiel
     @GeneratedValue(generator = "StructuredContentFieldTemplateId")
     @GenericGenerator(
             name = "StructuredContentFieldTemplateId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value",
                             value = "StructuredContentFieldTemplateImpl"),

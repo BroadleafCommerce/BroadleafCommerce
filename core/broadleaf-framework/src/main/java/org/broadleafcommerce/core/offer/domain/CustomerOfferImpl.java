@@ -53,7 +53,7 @@ public class CustomerOfferImpl implements CustomerOffer {
     @GeneratedValue(generator = "CustomerOfferId")
     @GenericGenerator(
             name = "CustomerOfferId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerOfferImpl"),
                     @Parameter(name = "entity_name",

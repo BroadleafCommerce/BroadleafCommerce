@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.cms.file.domain;
 
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
-import org.hibernate.Length;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -50,7 +48,7 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @GeneratedValue(generator = "StaticAssetStorageId")
     @GenericGenerator(
             name = "StaticAssetStorageId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "StaticAssetStorageImpl"),
                     @Parameter(name = "entity_name", value = "org.broadleafcommerce.cms.file.domain.StaticAssetStorageImpl")
@@ -62,8 +60,8 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Column(name = "STATIC_ASSET_ID", nullable = false)
     protected Long staticAssetId;
 
+    @Column (name = "FILE_DATA", length = Integer.MAX_VALUE - 1)
     @Lob
-    @Column(name = "FILE_DATA", length = Length.LONG32 - 1)
     protected Blob fileData;
 
     @Override

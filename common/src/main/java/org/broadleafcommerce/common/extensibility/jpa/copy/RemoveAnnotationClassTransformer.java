@@ -26,13 +26,13 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 import java.io.ByteArrayInputStream;
+import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import jakarta.persistence.spi.TransformerException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.bytecode.AnnotationsAttribute;
@@ -77,7 +77,7 @@ public class RemoveAnnotationClassTransformer extends AbstractClassTransformer i
             Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain,
             byte[] classfileBuffer
-    ) throws TransformerException {
+    ) throws IllegalClassFormatException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -120,7 +120,7 @@ public class RemoveAnnotationClassTransformer extends AbstractClassTransformer i
             error.printStackTrace();
             throw error;
         } catch (Exception e) {
-            throw new TransformerException("Unable to transform class", e);
+            throw new IllegalClassFormatException("Unable to transform class");
         } finally {
             if (clazz != null) {
                 try {

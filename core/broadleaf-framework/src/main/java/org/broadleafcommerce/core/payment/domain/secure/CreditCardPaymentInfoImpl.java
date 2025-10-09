@@ -51,7 +51,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPayment {
     @GeneratedValue(generator = "CreditCardPaymentId")
     @GenericGenerator(
             name = "CreditCardPaymentId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CreditCardPaymentInfoImpl"),
                     @Parameter(name = "entity_name",

@@ -158,7 +158,7 @@ public class StaticAssetImpl implements StaticAsset, AdminMainEntity, StaticAsse
     @GeneratedValue(generator = "StaticAssetId")
     @GenericGenerator(
             name = "StaticAssetId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "StaticAssetImpl"),
                     @Parameter(name = "entity_name",

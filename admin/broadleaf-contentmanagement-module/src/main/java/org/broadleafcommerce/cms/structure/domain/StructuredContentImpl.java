@@ -184,7 +184,7 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     @GeneratedValue(generator = "StructuredContentId")
     @GenericGenerator(
             name = "StructuredContentId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "StructuredContentImpl"),
                     @Parameter(name = "entity_name",

@@ -61,7 +61,7 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
     @GeneratedValue(generator = "CandidateFGOfferId")
     @GenericGenerator(
             name = "CandidateFGOfferId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CandidateFulfillmentGroupOfferImpl"),
                     @Parameter(name = "entity_name",

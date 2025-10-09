@@ -32,11 +32,12 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
-import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.MapKeyType;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import java.io.Serial;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.Table;
@@ -98,7 +100,7 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     @GeneratedValue(generator = "CustomerPaymentId")
     @GenericGenerator(
             name = "CustomerPaymentId",
-            type = IdOverrideTableGenerator.class,
+            strategy="org.broadleafcommerce.common.persistence.IdOverrideTableGenerator",
             parameters = {
                     @Parameter(name = "segment_value", value = "CustomerPaymentImpl"),
                     @Parameter(name = "entity_name",
@@ -145,11 +147,13 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
             group = GroupName.Payment, order = FieldOrder.IS_DEFAULT)
     protected boolean isDefault = false;
 
-    @ElementCollection
-    @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS",
-            joinColumns = @JoinColumn(name = "CUSTOMER_PAYMENT_ID"))
+    @ElementCollection()
+    @MapKeyType(@Type(type = "java.lang.String"))
+    @Lob
+    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @CollectionTable(name = "BLC_CUSTOMER_PAYMENT_FIELDS", joinColumns = @JoinColumn(name = "CUSTOMER_PAYMENT_ID"))
     @MapKeyColumn(name = "FIELD_NAME", nullable = false)
-    @Column(name = "FIELD_VALUE", length = Length.LONG32 - 1)
+    @Column(name = "FIELD_VALUE", length = Integer.MAX_VALUE - 1)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
     @AdminPresentationMap(friendlyName = "CustomerPaymentImpl_additionalFields",
             tab = TabName.Payment,
