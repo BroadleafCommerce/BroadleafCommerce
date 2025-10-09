@@ -49,7 +49,7 @@
         <spring.boot.version>3.5.6</spring.boot.version>
         <jackson.version>2.19.0</jackson.version>
         <lombok.version>1.18.38</lombok.version>
-        <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
+        <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
         <geb.version>7.0</geb.version>
         <spock.core.version>2.4-M4-groovy-4.0</spock.core.version>
         <spock.spring.version>2.4-M4-groovy-4.0</spock.spring.version>
@@ -103,7 +103,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.2.5</version>
+                    <version>3.5.4</version>
                     <configuration>
                         <includes>
                             <include>**/Test*.java,**/*Test.java,**/*TestCase.java</include>
@@ -123,12 +123,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.4.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.1.4</version>
                     <configuration>
                         <deployAtEnd>true</deployAtEnd>
                     </configuration>
@@ -136,7 +136,7 @@
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>4.2.0</version>
                     <configuration>
                         <targetBytecode>17</targetBytecode>
                     </configuration>
@@ -239,7 +239,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.1.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -295,7 +295,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>0.8.13</version>
                 <executions>
                     <!-- Unit test coverage prep; generates jacoco.exec -->
                     <execution>
@@ -343,7 +343,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <id>default-cli</id>
@@ -452,7 +452,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.6.0</version>
+                        <version>3.12.0</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
