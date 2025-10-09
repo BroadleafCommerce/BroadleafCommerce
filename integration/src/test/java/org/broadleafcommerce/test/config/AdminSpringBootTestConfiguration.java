@@ -115,7 +115,6 @@ public class AdminSpringBootTestConfiguration {
     }
 
     @Bean
-    @Autowired
     public MessageCreator blMessageCreator(@Qualifier("blMailSender") JavaMailSender mailSender) {
         return new NullMessageCreator(mailSender);
     }

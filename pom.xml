@@ -43,11 +43,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.10.8</ehcache3.version>
-        <spring.version>6.0.23</spring.version>
-        <spring.security.version>6.1.9</spring.security.version>
-        <spring.boot.version>3.1.12</spring.boot.version>
-        <jackson.version>2.18.2</jackson.version>
-        <lombok.version>1.18.34</lombok.version>
+        <spring.version>6.2.11</spring.version>
+        <spring.security.version>6.5.3</spring.security.version>
+        <spring-ldap-core.version>3.3.3</spring-ldap-core.version>
+        <spring.boot.version>3.5.6</spring.boot.version>
+        <jackson.version>2.19.0</jackson.version>
+        <lombok.version>1.18.38</lombok.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <geb.version>7.0</geb.version>
         <spock.core.version>2.4-M4-groovy-4.0</spock.core.version>
@@ -85,6 +86,8 @@
                     <configuration>
                         <source>17</source>
                         <target>17</target>
+                        <release>17</release>
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1318,6 +1321,11 @@
                         <artifactId>spring-aop</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-core</artifactId>
+                <version>${spring-ldap-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>

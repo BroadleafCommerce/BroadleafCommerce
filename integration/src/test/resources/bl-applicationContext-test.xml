@@ -114,7 +114,9 @@
         <property name="activities" ref="blCheckoutWorkflowActivities"/>
         <property name="defaultErrorHandler" ref="blDefaultErrorHandler"/>
     </bean>
-    
+
+    <bean id="blSilentErrorHandler" class="org.broadleafcommerce.core.workflow.SilentErrorHandler" />
+
     <bean id="testRollbackWorkflow" class="org.broadleafcommerce.core.workflow.SequenceProcessor">
         <property name="processContextFactory">
             <bean class="org.broadleafcommerce.common.workflow.DummyProcessContextFactory"/>
