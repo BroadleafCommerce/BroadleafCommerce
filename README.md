@@ -1,5 +1,7 @@
 ## Broadleaf Commerce Community Edition (CE)
 
+Important: Our Community Edition is source-available under a Fair Use license. Available to companies with under $5M in revenue — it is not an Apache 2 open source product.
+
 Broadleaf Commerce CE is an e-commerce framework written entirely in Java and leveraging the Spring framework. It is targeted at facilitating the development of enterprise-class, commerce-driven sites by providing a robust data model, services and specialized tooling that take care of most of the "heavy lifting" work. To accomplish this goal, we have developed the core platform based on the key feature sets required by world-class online retailers. We've also taken extra steps to guarantee interoperability with today's enterprise by utilizing standards wherever possible and incorporating best-of-breed, open-source software libraries. Broadleaf CE and EE are architected as a traditional unified codebase that share a core dependency across a `site` and `admin` deployment. If you are looking for a microservices based architecture, check out our [Microservices Edition](https://developer.broadleafcommerce.com/)
 
 ## Editions
