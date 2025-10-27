@@ -21,7 +21,7 @@ import org.broadleafcommerce.common.dialect.BroadleafPostgreSQLDialect;
 import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQLDialect;
-import org.hibernate.dialect.OracleDialect;
+import org.hibernate.dialect.Oracle10gDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -50,12 +50,13 @@ public class DialectHelper {
 
     public boolean isOracle() {
         //This should handle other Oracle dialects as well, since they derive from Oracle8iDialect
-        return getHibernateDialect(defaultEntityManager) instanceof OracleDialect;
+        return isOracle(defaultEntityManager);
     }
 
     public boolean isOracle(EntityManager em) {
         //This should handle other Oracle dialects as well, since they derive from Oracle8iDialect
-        return getHibernateDialect(em) instanceof OracleDialect;
+        Dialect dialect = getHibernateDialect(em);
+        return Oracle10gDialect.class.isAssignableFrom(dialect.getClass());
     }
 
     public boolean isPostgreSql() {
