@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.RequestDTO;
 import org.broadleafcommerce.common.TimeDTO;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.time.SystemTime;
+import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.common.util.EfficientLRUMap;
 import org.broadleafcommerce.common.util.FormatUtil;
 import org.broadleafcommerce.common.util.StringUtil;
@@ -38,6 +39,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -253,11 +256,15 @@ public class MvelHelper {
      */
     protected static String unescapeUnicode(String input) {
         if (input == null) return null;
-
-        // Replace common unicode sequences
-        return input.replace("\\u0022", "\"")
-                .replace("\\u0027", "'")     // single quote
-                .replace("\\u005C", "\\");   // backslash
+        input = Matcher.quoteReplacement(input);
+        input = Pattern.compile("(?<=.intersection).*?(?=.size)").matcher(input).replaceAll(mr -> mr.group()
+                .replace("\\u0022", "&quot;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\\u0027", "'")
+                .replace("\\u005C", "\\")
+        );
+        return input;
     }
 
     /**
