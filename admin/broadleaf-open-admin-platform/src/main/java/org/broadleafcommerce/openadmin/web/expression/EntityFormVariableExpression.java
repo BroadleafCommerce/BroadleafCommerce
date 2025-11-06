@@ -17,8 +17,11 @@
  */
 package org.broadleafcommerce.openadmin.web.expression;
 
+import jakarta.annotation.Resource;
+import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
+import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
@@ -31,6 +34,9 @@ import org.springframework.stereotype.Component;
 @Component("blEntityFormVariableExpression")
 @ConditionalOnTemplating
 public class EntityFormVariableExpression implements BroadleafVariableExpression {
+
+    @Resource(name = "blExploitProtectionService")
+    protected ExploitProtectionService exploitProtectionService;
 
     @Override
     public String getName() {
@@ -49,6 +55,14 @@ public class EntityFormVariableExpression implements BroadleafVariableExpression
         }
 
         return false;
+    }
+
+    public String getFieldTooltip(Field field) {
+        String tooltip = field.getTooltip() == null ? field.getDisplayValue() : field.getTooltip();
+        if (tooltip != null) {
+            return exploitProtectionService.htmlDecode(tooltip);
+        }
+        return "";
     }
 
 }
