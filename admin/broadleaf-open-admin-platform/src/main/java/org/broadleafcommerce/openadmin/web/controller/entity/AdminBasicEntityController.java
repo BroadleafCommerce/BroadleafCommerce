@@ -1448,6 +1448,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     savedEntity
             );
         }
+        postAddSubCollectionEntityHook(
+                request, response, model, pathVars, id, collectionField, entityForm, result, persistenceResponse);
 
         // Next, we must get the new list grid that represents this collection
         ListGrid listGrid = getCollectionListGrid(
@@ -1459,6 +1461,20 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("actualEntityId", id);
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
+    }
+
+    protected void postAddSubCollectionEntityHook(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            Map<String, String> pathVars,
+            String id,
+            String collectionField,
+            EntityForm entityForm,
+            BindingResult result,
+            PersistenceResponse persistenceResponse)
+            throws ServiceException {
+        // hook for extensions
     }
 
     @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/addEmpty", method = RequestMethod.POST)
@@ -2240,6 +2256,8 @@ public class AdminBasicEntityController extends AdminAbstractController {
                     savedEntity
             );
         }
+        postUpdateSubCollectionEntityHook(
+                request, response, model, pathVars, id, collectionField, collectionItemId, entityForm, alternateId, result, persistenceResponse);
 
         // Next, we must get the new list grid that represents this collection
         // We return the new list grid so that it can replace the currently visible one
@@ -2251,6 +2269,22 @@ public class AdminBasicEntityController extends AdminAbstractController {
         model.addAttribute("currentUrl", request.getRequestURL().toString());
         setModelAttributes(model, sectionKey);
         return "views/standaloneListGrid";
+    }
+
+    protected void postUpdateSubCollectionEntityHook(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            Map<String, String> pathVars,
+            String id,
+            String collectionField,
+            String collectionItemId,
+            EntityForm entityForm,
+            String alternateId,
+            BindingResult result,
+            PersistenceResponse persistenceResponse)
+            throws ServiceException {
+        // hook for extensions
     }
 
     @RequestMapping(value = "/{id}/{collectionField:[^0-9].*}/{collectionItemId}/sequence", method = RequestMethod.POST)
