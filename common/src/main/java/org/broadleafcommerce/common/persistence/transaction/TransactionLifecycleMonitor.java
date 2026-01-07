@@ -29,7 +29,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.orm.jpa.EntityManagerHolder;
-import org.springframework.security.crypto.codec.Base64;
+import java.util.Base64;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.DefaultTransactionStatus;
@@ -306,8 +306,7 @@ public class TransactionLifecycleMonitor implements BroadleafApplicationListener
             fixed = fixed.substring(fixed.indexOf(":") + 1, fixed.length());
         }
         fixed = fixed.trim();
-
-        return CompressedItem.decompress(Base64.decode(fixed.getBytes()));
+        return CompressedItem.decompress(Base64.getDecoder().decode(fixed.getBytes()));
     }
 
     public long getLoggingThreshold() {

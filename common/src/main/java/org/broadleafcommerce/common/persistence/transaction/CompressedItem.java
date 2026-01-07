@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.persistence.transaction;
 
-import org.springframework.security.crypto.codec.Base64;
+import java.util.Base64;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -98,7 +98,7 @@ public class CompressedItem {
                 //do nothing
             }
         } else {
-            response = compressed != null ? new String(Base64.encode(compressed)) : "" + "\n";
+            response = compressed != null ? new String(Base64.getEncoder().encode(compressed)) : "" + "\n";
         }
         return response;
     }
