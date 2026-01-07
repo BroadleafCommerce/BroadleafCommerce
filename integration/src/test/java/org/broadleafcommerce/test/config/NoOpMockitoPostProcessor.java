@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Integration
  * %%
- * Copyright (C) 2009 - 2025 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -19,7 +19,7 @@ package org.broadleafcommerce.test.config;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.boot.test.mock.mockito.MockitoPostProcessor;
+//import org.springframework.boot.test.mock.mockito.MockitoPostProcessor;
 
 /**
  * So, this is a long story and exists as a workaround for a known Broadleaf problem with
@@ -35,15 +35,17 @@ import org.springframework.boot.test.mock.mockito.MockitoPostProcessor;
  *
  * @author Jeff Fischer
  */
-public class NoOpMockitoPostProcessor extends MockitoPostProcessor {
+public class NoOpMockitoPostProcessor {
+    //FIXME MockitoPostProcessor deprecated
+//        extends MockitoPostProcessor {
 
-    public NoOpMockitoPostProcessor() {
-        super(null);
-    }
+//    public NoOpMockitoPostProcessor() {
+//        super(null);
+//    }
 
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        //TODO Find a earlier integration point for registering class transformers with the ClassLoader during the Spring startup lifecycle
-        //do nothing and avoid the scanning impact
-    }
+//    @Override
+//    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+//        //TODO Find a earlier integration point for registering class transformers with the ClassLoader during the Spring startup lifecycle
+//        //do nothing and avoid the scanning impact
+//    }
 }

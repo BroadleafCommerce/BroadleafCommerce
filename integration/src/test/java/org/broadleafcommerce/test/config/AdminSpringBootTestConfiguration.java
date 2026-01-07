@@ -53,7 +53,9 @@ public class AdminSpringBootTestConfiguration {
 
     @Bean(name = "org.springframework.boot.test.mock.mockito.MockitoPostProcessor")
     public static BeanFactoryPostProcessor mockitoNoOp() {
-        return new NoOpMockitoPostProcessor();
+        //FIXME MockitoPostProcessor deprecated
+        return null;
+//        return new NoOpMockitoPostProcessor();
     }
 
     @Autowired
