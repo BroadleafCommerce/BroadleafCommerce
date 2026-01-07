@@ -26,7 +26,7 @@ import org.broadleafcommerce.common.security.service.StaleStateProtectionService
 import org.broadleafcommerce.common.security.service.StaleStateServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -72,7 +72,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         boolean excludedRequestFound = false;
         if (excludedRequestPatterns != null && excludedRequestPatterns.size() > 0) {
             for (String pattern : excludedRequestPatterns) {
-                RequestMatcher matcher = new AntPathRequestMatcher(pattern);
+                RequestMatcher matcher = PathPatternRequestMatcher.withDefaults().matcher(pattern);
                 if (matcher.matches(request)) {
                     excludedRequestFound = true;
                     break;
