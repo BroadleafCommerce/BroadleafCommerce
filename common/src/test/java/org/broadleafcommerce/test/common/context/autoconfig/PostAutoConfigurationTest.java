@@ -27,10 +27,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -43,16 +39,13 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Phillip Verheyden (phillipuniverse)
  */
 @SpringBootTest
-@EnableAutoConfiguration(exclude = LdapAutoConfiguration.class)
+@EnableAutoConfiguration()
 @RunWith(SpringRunner.class)
 @TestPropertySource(properties = "spring.main.allow-bean-definition-overriding=true")
 public class PostAutoConfigurationTest {
-    
     @Configuration
     @Import({ComponentScanningConfiguration.class, ContainsNestedConfiguration.class})
-    @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class})
+    @EnableAutoConfiguration()
     public static class Config { } 
 
     @Autowired
