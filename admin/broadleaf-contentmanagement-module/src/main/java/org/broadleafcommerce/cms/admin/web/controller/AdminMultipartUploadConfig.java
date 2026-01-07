@@ -20,8 +20,8 @@ package org.broadleafcommerce.cms.admin.web.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.PostAutoConfigurationImport;
-import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.MultipartProperties;
+import org.springframework.boot.servlet.autoconfigure.MultipartAutoConfiguration;
+import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,7 +37,7 @@ import jakarta.servlet.MultipartConfigElement;
  */
 @Configuration
 @PostAutoConfigurationImport(NonAutoconfigMultiPartConfiguration.class)
-@EnableConfigurationProperties(MultipartProperties.class)
+//@EnableConfigurationProperties(MultipartProperties.class)
 public class AdminMultipartUploadConfig {
 
     private static final Log LOG = LogFactory.getLog(AdminMultipartUploadConfig.class);
