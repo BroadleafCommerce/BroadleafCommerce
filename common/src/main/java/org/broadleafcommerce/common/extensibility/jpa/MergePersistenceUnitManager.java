@@ -37,6 +37,7 @@ import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
+import org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo;
 import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Field;
@@ -83,7 +84,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
      * re-initialized but all the classes have already been transformed
      */
     protected static boolean transformed = false;
-    protected HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<>();
+    protected HashMap<String, SpringPersistenceUnitInfo> mergedPus = new HashMap<>();
     protected List<BroadleafClassTransformer> classTransformers = new ArrayList<>();
     @Resource(name = "blMergedPersistenceXmlLocations")
     protected Set<String> mergedPersistenceXmlLocations;
@@ -148,11 +149,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         classTransformers.addAll(mergedClassTransformers);
     }
 
-    protected MutablePersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
+    protected SpringPersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
         if (!mergedPus.containsKey(persistenceUnitName)) {
-            mergedPus.put(persistenceUnitName, newPU);
+            mergedPus.put(persistenceUnitName, (SpringPersistenceUnitInfo) newPU);
         }
-        return (MutablePersistenceUnitInfo) mergedPus.get(persistenceUnitName);
+        return (SpringPersistenceUnitInfo) mergedPus.get(persistenceUnitName);
     }
 
     @Override
@@ -191,7 +192,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
      */
     protected boolean addTransformersToPersistenceUnits() throws Exception {
         boolean weaverRegistered = true;
-        for (PersistenceUnitInfo pui : mergedPus.values()) {
+        for (SpringPersistenceUnitInfo pui : mergedPus.values()) {
             for (BroadleafClassTransformer transformer : classTransformers) {
                 try {
                     boolean isTransformerQualified = !(transformer instanceof NullClassTransformer)
@@ -224,7 +225,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     protected boolean addNamedQueriesToPersistenceUnits(boolean weaverRegistered) throws Exception {
         //Do this last in case any of the query config classes happens to cause an entity class to be loaded - they will
         // still be transformed by the previous registered transformers
-        for (PersistenceUnitInfo pui : mergedPus.values()) {
+        for (SpringPersistenceUnitInfo pui : mergedPus.values()) {
             //Add annotated named query support from QueryConfiguration beans
             List<NamedQuery> namedQueries = new ArrayList<>();
             List<NamedNativeQuery> nativeQueries = new ArrayList<>();
@@ -341,7 +342,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
      */
     protected List<String> detectNonTransformedClasses() {
         List<String> nonTransformedClasses = new ArrayList<>();
-        for (PersistenceUnitInfo pui : mergedPus.values()) {
+        for (SpringPersistenceUnitInfo pui : mergedPus.values()) {
             for (String managedClassName : pui.getManagedClassNames()) {
                 // We came across a class that is not a real persistence class (doesn't have the right annotations)
                 // but is still being transformed/loaded by
@@ -373,7 +374,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
      */
     protected List<String> triggerClassLoadForManagedClasses() throws ClassNotFoundException {
         List<String> managedClassNames = new ArrayList<>();
-        for (PersistenceUnitInfo pui : mergedPus.values()) {
+        for (SpringPersistenceUnitInfo pui : mergedPus.values()) {
             currentProcessingPersistenceUnit = pui.getPersistenceUnitName();
             for (String managedClassName : pui.getManagedClassNames()) {
                 if (!managedClassNames.contains(managedClassName)) {
@@ -484,7 +485,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
      */
     @Override
     public PersistenceUnitInfo obtainPersistenceUnitInfo(String persistenceUnitName) {
-        return mergedPus.get(persistenceUnitName);
+        return mergedPus.get(persistenceUnitName).asStandardPersistenceUnitInfo();
     }
 
     /* (non-Javadoc)
