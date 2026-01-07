@@ -48,8 +48,7 @@ public class OpenAdminSecurityConfig {
 
     @Bean
     public AuthenticationProvider blAdminAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(adminPasswordEncoder);
         return provider;
     }
