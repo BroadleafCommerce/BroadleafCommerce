@@ -37,18 +37,19 @@ public class BroadleafCookieLocaleResolver extends CookieLocaleResolver {
     @Resource(name = "blLocaleService")
     private LocaleService localeService;
 
-    @Override
-    protected java.util.Locale determineDefaultLocale(HttpServletRequest request) {
-        java.util.Locale defaultLocale = getDefaultLocale();
-        if (defaultLocale == null) {
-            Locale defaultBroadleafLocale = localeService.findDefaultLocale();
-            if (defaultBroadleafLocale == null) {
-                return super.determineDefaultLocale(request);
-            } else {
-                return BroadleafRequestContext.convertLocaleToJavaLocale(defaultBroadleafLocale);
-            }
-        }
-        return defaultLocale;
-    }
+    //FIXME determineDefaultLocale method deprecated
+//    @Override
+//    protected java.util.Locale determineDefaultLocale(HttpServletRequest request) {
+//        java.util.Locale defaultLocale = getDefaultLocale();
+//        if (defaultLocale == null) {
+//            Locale defaultBroadleafLocale = localeService.findDefaultLocale();
+//            if (defaultBroadleafLocale == null) {
+//                return super.determineDefaultLocale(request);
+//            } else {
+//                return BroadleafRequestContext.convertLocaleToJavaLocale(defaultBroadleafLocale);
+//            }
+//        }
+//        return defaultLocale;
+//    }
 
 }
