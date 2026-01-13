@@ -45,6 +45,7 @@ import org.broadleafcommerce.common.web.BroadleafSiteResolver;
 import org.broadleafcommerce.common.web.BroadleafTimeZoneResolver;
 import org.broadleafcommerce.common.web.DeployBehavior;
 import org.broadleafcommerce.common.web.ValidateProductionChangesState;
+import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
@@ -124,6 +125,9 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
     @Resource(name = "blStaleStateProtectionService")
     protected StaleStateProtectionService staleStateProtectionService;
 
+    @Resource(name = "blBroadleafContextUtil")
+    protected BroadleafContextUtil blcContextUtil;
+
     @Override
     public void process(WebRequest request) throws SiteNotFoundException {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
@@ -131,6 +135,7 @@ public class BroadleafAdminRequestProcessor extends AbstractBroadleafWebRequestP
             brc = new BroadleafRequestContext();
             BroadleafRequestContext.setBroadleafRequestContext(brc);
         }
+        blcContextUtil.establishThinRequestContext();
 
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
 
