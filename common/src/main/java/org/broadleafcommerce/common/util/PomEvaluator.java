@@ -90,7 +90,7 @@ public class PomEvaluator {
 
         // Apache
         knownLibraries.put("commons-validator", APACHE_FOUNDATION);
-        knownLibraries.put("commons-collections", APACHE_FOUNDATION);
+        knownLibraries.put("commons-collections4", APACHE_FOUNDATION);
         knownLibraries.put("commons-beanutils", APACHE_FOUNDATION);
         knownLibraries.put("commons-cli", APACHE_FOUNDATION);
         knownLibraries.put("commons-fileupload", APACHE_FOUNDATION);
