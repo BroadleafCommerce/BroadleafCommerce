@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.presentation.client.OperationType;

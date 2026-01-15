@@ -18,7 +18,7 @@
 package org.broadleafcommerce.common.i18n.dao;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ResultType;
 import org.broadleafcommerce.common.extension.StandardCacheItem;

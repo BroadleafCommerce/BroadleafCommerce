@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.Predicate;
 
 import java.lang.reflect.ParameterizedType;
 

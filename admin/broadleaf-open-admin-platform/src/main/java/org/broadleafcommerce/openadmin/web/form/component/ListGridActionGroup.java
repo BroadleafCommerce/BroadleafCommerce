@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.web.form.component;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.util.TypedPredicate;
 
 import java.util.ArrayList;

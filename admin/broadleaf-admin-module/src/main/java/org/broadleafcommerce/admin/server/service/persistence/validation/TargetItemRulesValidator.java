@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.admin.server.service.persistence.validation;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;

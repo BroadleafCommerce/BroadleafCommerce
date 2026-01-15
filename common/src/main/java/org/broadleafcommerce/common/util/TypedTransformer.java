@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections4.Transformer;
 
 /**
  * A class that provides for a typed transformer.

@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.map.MultiValueMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
