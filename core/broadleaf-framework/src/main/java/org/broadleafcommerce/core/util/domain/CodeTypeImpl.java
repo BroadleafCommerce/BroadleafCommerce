@@ -45,7 +45,7 @@ public class CodeTypeImpl implements CodeType {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CodeTypeId", strategy = GenerationType.TABLE)
+    @GeneratedValue(generator = "CodeTypeId")
     @GenericGenerator(
             name = "CodeTypeId",
             type = IdOverrideTableGenerator.class,
