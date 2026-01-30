@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.rating.service;
 
-import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.beanutils2.BeanComparator;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.core.rating.dao.RatingSummaryDao;
 import org.broadleafcommerce.core.rating.dao.ReviewDetailDao;

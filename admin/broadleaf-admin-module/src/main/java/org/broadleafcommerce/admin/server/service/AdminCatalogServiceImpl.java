@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.admin.server.service;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.admin.server.service.extension.AdminCatalogServiceExtensionManager;

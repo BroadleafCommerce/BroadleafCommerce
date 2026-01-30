@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.util.BLCCollectionUtils;
 import org.broadleafcommerce.common.util.TypedPredicate;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.RestrictionType;

@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.page.dto;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils2.BeanUtils;
 import org.broadleafcommerce.common.structure.dto.ItemCriteriaDTO;
 
 import java.io.Serial;

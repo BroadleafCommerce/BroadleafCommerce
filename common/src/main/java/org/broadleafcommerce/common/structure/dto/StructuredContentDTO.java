@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.structure.dto;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils2.BeanUtils;
 
 import java.io.Serial;
 import java.io.Serializable;

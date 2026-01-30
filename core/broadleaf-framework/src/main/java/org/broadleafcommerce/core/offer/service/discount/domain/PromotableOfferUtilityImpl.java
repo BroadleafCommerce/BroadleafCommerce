@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.service.discount.domain;
 
-import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.beanutils2.BeanComparator;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;

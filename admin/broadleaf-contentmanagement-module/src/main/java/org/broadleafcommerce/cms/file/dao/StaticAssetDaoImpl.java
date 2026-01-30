@@ -148,7 +148,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
                 );
             }
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-            if (!org.apache.commons.collections.CollectionUtils.isEmpty(sorts)) {
+            if (!org.apache.commons.collections4.CollectionUtils.isEmpty(sorts)) {
                 criteria.orderBy(sorts);
             }
 
