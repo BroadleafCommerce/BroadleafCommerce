@@ -59,7 +59,7 @@
         <broadleaf-presentation.version>2.0.2-GA</broadleaf-presentation.version>
         <hsqldb.database.starter.version>3.0.3-GA</hsqldb.database.starter.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <closure.compiler.version>v20180506</closure.compiler.version>
+        <closure.compiler.version>v20240317</closure.compiler.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <jakarta.version>6.0.0</jakarta.version>
         <jakarta-xml.version>4.0.0</jakarta-xml.version>
@@ -1533,6 +1533,14 @@
                     <exclusion>
                         <groupId>com.google.code.gson</groupId>
                         <artifactId>gson</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jspecify</groupId>
+                        <artifactId>jspecify</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.google.guava</groupId>
+                        <artifactId>failureaccess</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
