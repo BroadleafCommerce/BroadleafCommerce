@@ -396,15 +396,15 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
         String digest;
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] messageDigest = md.digest(sb2.toString().getBytes());
             BigInteger number = new BigInteger(1, messageDigest);
             digest = number.toString(16);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         }
 
-        sb.append(pad(digest, 32, '0'));
+        sb.append(pad(digest, 64, '0'));
         sb.append(fileName.substring(fileName.lastIndexOf('.')));
 
         return sb.toString();
