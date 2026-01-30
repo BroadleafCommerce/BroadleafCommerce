@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.offer.service.processor;
 
-import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.beanutils2.BeanComparator;
 import org.apache.commons.collections4.comparators.NullComparator;
 import org.apache.commons.collections4.comparators.ReverseComparator;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
