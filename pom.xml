@@ -588,7 +588,16 @@
                         <groupId>org.eclipse.angus</groupId>
                         <artifactId>angus-activation</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.persistence</groupId>
+                        <artifactId>jakarta.persistence-api</artifactId>
+                    </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>3.2.0</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
