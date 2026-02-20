@@ -76,7 +76,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
 
     private static final Log logger = LogFactory.getLog(DirectCopyClassTransformer.class);
     protected static List<String> transformedMethods = new ArrayList<>();
-    protected static List<String> annotationTransformedClasses = new ArrayList<>();
+    protected static List<String> transformedClasses = new ArrayList<>();
     protected String moduleName;
     protected Map<String, String> xformTemplates = new HashMap<>();
     protected Boolean renameMethodOverlaps = false;
@@ -126,6 +126,12 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
             Boolean[] xformSkipOverlaps = null;
             Boolean[] xformRenameMethodOverlaps = null;
             List<IndexAnnotationDto> indexes = new ArrayList<>();
+
+            if (transformedClasses.contains(moduleName + ":" + convertedClassName)) {
+                logger.warn(String.format("The class [%s] for module [%s] has already been transformed", className, moduleName));
+                return null;
+            }
+
             if (!xformTemplates.isEmpty()) {
                 if (xformTemplates.containsKey(xformKey)) {
                     buildXFormVals.addAll(Arrays.asList(xformTemplates.get(xformKey).split(",")));
@@ -133,7 +139,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     clazz = classPool.makeClass(new ByteArrayInputStream(classfileBuffer), false);
                 }
             } else {
-                if (annotationTransformedClasses.contains(convertedClassName)) {
+                if (transformedClasses.contains(convertedClassName)) {
                     logger.warn(convertedClassName + " has already been transformed by a previous instance of DirectCopyTransfomer. " +
                             "Skipping this annotation based transformation. Generally, annotation-based transformation is handled " +
                             "by bean id blAnnotationDirectCopyClassTransformer with template tokens being added to " +
@@ -318,9 +324,7 @@ public class DirectCopyClassTransformer extends AbstractClassTransformer impleme
                     index++;
                 }
 
-                if (xformTemplates.isEmpty()) {
-                    annotationTransformedClasses.add(convertedClassName);
-                }
+                transformedClasses.add(moduleName + ":" + convertedClassName);
                 logger.debug(String.format("[%s] - Transform - Copying into [%s] from [%s]", LifeCycleEvent.END, xformKey,
                         StringUtils.join(xformVals, ",")));
                 return clazz.toBytecode();
