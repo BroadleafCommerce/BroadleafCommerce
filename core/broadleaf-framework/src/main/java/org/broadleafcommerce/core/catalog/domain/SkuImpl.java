@@ -213,7 +213,8 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
     @AdminPresentation(friendlyName = "SkuImpl_Sku_Name",
             group = GroupName.General, order = FieldOrder.NAME,
             prominent = true, gridOrder = 1, columnWidth = "260px",
-            translatable = true)
+            translatable = true,
+            validationConfigurations = {@ValidationConfiguration(validationImplementation = "blSkuNamePropertyValidator")})
     protected String name;
 
     @Column(name = "DESCRIPTION")
