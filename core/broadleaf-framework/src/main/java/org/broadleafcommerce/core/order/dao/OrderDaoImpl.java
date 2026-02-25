@@ -371,6 +371,21 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public List<Order> readOrdersByDateRangePaginated(Date startDate, Date endDate, int page, int pageSize) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        criteria.select(order);
+        criteria.where(builder.between(order.get("submitDate"), startDate, endDate));
+        criteria.orderBy(builder.desc(order.get("submitDate")));
+
+        TypedQuery<Order> query = em.createQuery(criteria);
+        query.setFirstResult(page * pageSize);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
+
+    @Override
     public List<Order> readOrdersOlderThanDaysCount(final Integer daysCount, final Integer batchSize) {
         final LocalDate dateInPast = LocalDate.now().minusDays(daysCount);
         final Date convertedDate = Date.from(dateInPast.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
