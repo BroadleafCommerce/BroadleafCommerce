@@ -51,7 +51,7 @@ class BuildOrderItemFromDTOSpec extends BaseBuildOrderItemFromDTOSpec {
             catalogService = mockCatalogService
             it
         }
-        orderItemService.applyAdditionalOrderItemProperties(_) >> null
+        orderItemService.applyAdditionalOrderItemProperties(_) >> {}
         
     }
 
