@@ -80,7 +80,7 @@
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
-            <version>3.9.4</version>
+            <version>3.9.5</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper-jute</artifactId>
-            <version>3.9.4</version>
+            <version>3.9.5</version>
             <scope>compile</scope>
         </dependency>
         <!-- Solr still needs this dependency, we'll just use the later version -->
