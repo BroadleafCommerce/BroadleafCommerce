@@ -153,7 +153,7 @@
                                 <a class="external-link" th:href="@{${headerField.foreignKeySectionPath + '/' + field.value}}" th:utext="${field.displayValue}"></a>
                             </th:block>
 
-                            <span th:if="${field.fieldType == 'IMAGE'}">
+                            <span th:if="${field.fieldType == 'IMAGE' and field.value != null and !#strings.isEmpty(field.value)}">
                                 <th:block th:if="${field.gridFieldComponentRenderer == null or #strings.equals(field.gridFieldComponentRenderer, 'UNKNOWN')}">
                                     <img class="thumbnail" th:style="${'width: 100%;'}"
                                          blc:src="@{${field.value + record.getField('thumbnailKey').value}}"
