@@ -46,7 +46,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Where;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -70,6 +69,7 @@ import jakarta.persistence.MapKey;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @EntityListeners(value = {AuditableListener.class, CustomerPersistedEntityListener.class})
@@ -216,7 +216,7 @@ public class CustomerImpl implements Customer, AdminMainEntity, Previewable, Cus
     @Cascade(value = {org.hibernate.annotations.CascadeType.ALL,
             org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
-    @Where(clause = "archived != 'Y'")
+    @SQLRestriction("archived != 'Y'")
     @AdminPresentationCollection(friendlyName = "CustomerImpl_Customer_Addresses",
             group = GroupName.ContactInfo, order = FieldOrder.ADDRESSES,
             addType = AddMethodType.PERSIST)

@@ -153,6 +153,11 @@ public class FrameworkControllerHandlerMapping extends RequestMappingHandlerMapp
             }
 
             @Override
+            public String version() {
+                return null;
+            }
+
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return RequestMapping.class;
             }

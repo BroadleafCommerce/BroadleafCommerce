@@ -47,26 +47,27 @@
         <broadleaf-presentation.version>2.1.0-SNAPSHOT</broadleaf-presentation.version>
         <hsqldb.database.starter.version>3.1.0-SNAPSHOT</hsqldb.database.starter.version>
         <ehcache3.version>3.10.8</ehcache3.version>
-        <spring.version>6.2.7</spring.version>
-        <spring.security.version>6.5.0</spring.security.version>
-        <spring.boot.version>3.5.0</spring.boot.version>
-        <jackson.version>2.19.0</jackson.version>
+        <spring.version>7.0.2</spring.version>
+        <spring.security.version>7.0.2</spring.security.version>
+        <spring.boot.version>4.0.1</spring.boot.version>
+        <spring-ldap-core.version>4.0.1</spring-ldap-core.version>
+        <jackson.version>2.20.1</jackson.version>
         <lombok.version>1.18.36</lombok.version>
         <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
         <geb.version>7.0</geb.version>
-        <spock.core.version>2.4-M5-groovy-4.0</spock.core.version>
-        <spock.spring.version>2.4-M5-groovy-4.0</spock.spring.version>
-        <groovy.version>4.0.24</groovy.version>
+        <spock.core.version>2.4-groovy-5.0</spock.core.version>
+        <spock.spring.version>2.4-groovy-5.0</spock.spring.version>
+        <groovy.version>5.0.4</groovy.version>
         <gpg.plugin.version>3.2.7</gpg.plugin.version>
         <closure.compiler.version>v20240317</closure.compiler.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <hibernate.version>6.6.16.Final</hibernate.version>
+        <hibernate.version>7.2.0.Final</hibernate.version>
         <jakarta.version>6.1.0</jakarta.version>
-        <jakarta-xml.version>4.0.2</jakarta-xml.version>
+        <jakarta-xml.version>4.0.4</jakarta-xml.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
-        <slf4j.version>2.0.16</slf4j.version>
-        <logback.version>1.5.16</logback.version>
-        <junit.version>5.11.3</junit.version>
+        <slf4j.version>2.0.17</slf4j.version>
+        <logback.version>1.5.22</logback.version>
+        <junit.version>6.0.1</junit.version>
         <!-- because of spring when does instrumentation it uses reflection to jdk classes, for tests we need this -->
         <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</surefire.argLine>
         <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</failsafe.argLine>
@@ -568,6 +569,10 @@
                         <groupId>jakarta.xml.bind</groupId>
                         <artifactId>jakarta.xml.bind-api</artifactId>
                     </exclusion>
+<!--                    <exclusion>-->
+<!--                        <groupId>org.hibernate.models</groupId>-->
+<!--                        <artifactId>hibernate-models</artifactId>-->
+<!--                    </exclusion>-->
                 </exclusions>
             </dependency>
             <dependency>
@@ -586,6 +591,22 @@
                     <exclusion>
                         <groupId>org.eclipse.angus</groupId>
                         <artifactId>angus-activation</artifactId>
+                    </exclusion>
+<!--                    <exclusion>-->
+<!--                        <groupId>org.hibernate.models</groupId>-->
+<!--                        <artifactId>hibernate-models</artifactId>-->
+<!--                    </exclusion>-->
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.models</groupId>
+                <artifactId>hibernate-models</artifactId>
+                <version>1.0.1</version>
+                <scope>compile</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -645,7 +666,7 @@
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>1.3.4</version>
+                <version>1.3.5</version>
             </dependency>
             <dependency>
                 <groupId>commons-cli</groupId>
@@ -707,7 +728,7 @@
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.17.2</version>
+                <version>1.19.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -724,7 +745,7 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
-                <version>2.24.3</version>
+                <version>2.25.3</version>
                 <scope>import</scope>
                 <type>pom</type>
                 <optional>true</optional>
@@ -754,12 +775,12 @@
             <dependency>
                 <groupId>jakarta.mail</groupId>
                 <artifactId>jakarta.mail-api</artifactId>
-                <version>2.1.3</version>
+                <version>2.1.5</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>jakarta.mail</artifactId>
-                <version>2.0.3</version>
+                <version>2.0.5</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.annotation</groupId>
@@ -965,6 +986,12 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-launcher</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <!-- Search Related Libraries -->
             <dependency>
@@ -999,6 +1026,10 @@
                     <exclusion>
                         <groupId>org.eclipse.jetty.http2</groupId>
                         <artifactId>http2-http-client-transport</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.swagger.core.v3</groupId>
+                        <artifactId>swagger-annotations-jakarta</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1177,6 +1208,18 @@
                 </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-jdbc</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+
             <!-- Spring Security -->
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -1346,6 +1389,11 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-core</artifactId>
+                <version>${spring-ldap-core.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-ldap</artifactId>
                 <version>${spring.security.version}</version>
@@ -1406,7 +1454,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
-                <version>2.12.0</version>
+                <version>2.12.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -1421,14 +1469,20 @@
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
-                <version>4.0.5</version>
+                <version>4.0.6</version>
             </dependency>
 
             <!--Other -->
             <dependency>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna</artifactId>
+                <version>5.18.1</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
-                <version>1.9.22.1</version>
+                <version>1.9.25.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tika</groupId>
@@ -1472,6 +1526,14 @@
                     <exclusion>
                         <groupId>commons-io</groupId>
                         <artifactId>commons-io</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents.core5</groupId>
+                        <artifactId>httpcore5</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents.client5</groupId>
+                        <artifactId>httpclient5</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1518,12 +1580,12 @@
             <dependency>
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
-                <version>5.4.1</version>
+                <version>5.5.1</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.validation</groupId>
                 <artifactId>jakarta.validation-api</artifactId>
-                <version>3.1.0</version>
+                <version>3.1.1</version>
             </dependency>
             <dependency>
                 <groupId>de.jkeylockmanager</groupId>
@@ -1580,6 +1642,10 @@
                     <exclusion>
                         <groupId>com.google.errorprone</groupId>
                         <artifactId>error_prone_annotations</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jspecify</groupId>
+                        <artifactId>jspecify</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>

@@ -102,7 +102,7 @@ public class IdOverrideTableGenerator extends TableGenerator implements Annotati
     }
 
     @Override
-    public void configure(Type type, Properties params, ServiceRegistry registry) throws MappingException {
+    public void configure(GeneratorCreationContext creationContext, Properties params) throws MappingException {
         if (config != null) {
             params.putIfAbsent(SEGMENT_VALUE_PARAM, config.segment_value());
             params.putIfAbsent(ENTITY_NAME_PARAM, config.entity_name());
@@ -111,7 +111,7 @@ public class IdOverrideTableGenerator extends TableGenerator implements Annotati
         params.putIfAbsent("segment_column_name", DEFAULT_SEGMENT_COLUMN_NAME);
         params.putIfAbsent("value_column_name", DEFAULT_VALUE_COLUMN_NAME);
         params.putIfAbsent("increment_size", DEFAULT_INCREMENT_SIZE);
-        super.configure(type, params, registry);
+        super.configure(creationContext, params);
         entityName = (String) params.get(ENTITY_NAME_PARAM);
     }
 

@@ -51,11 +51,6 @@ import javax.sql.DataSource;
 @TestConfiguration
 public class AdminSpringBootTestConfiguration {
 
-    @Bean(name = "org.springframework.boot.test.mock.mockito.MockitoPostProcessor")
-    public static BeanFactoryPostProcessor mockitoNoOp() {
-        return new NoOpMockitoPostProcessor();
-    }
-
     @Autowired
     @Qualifier("webDS")
     DataSource webDS;

@@ -24,9 +24,9 @@ import org.broadleafcommerce.openadmin.web.compatibility.JSFieldNameCompatibilit
 import org.broadleafcommerce.openadmin.web.controller.AdminBasicErrorController;
 import org.broadleafcommerce.openadmin.web.controller.AdminRequestMappingHandlerMapping;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
-import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcRegistrations;
+import org.springframework.boot.webmvc.error.DefaultErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
