@@ -123,8 +123,7 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
     @Override
     public Boolean canHandleFetch(PersistencePackage persistencePackage) {
-        return isRuleBuilderSelectizeRequest(persistencePackage)
-                || isRecursiveProductSelection(persistencePackage) || canHandleAdd(persistencePackage);
+        return isRecursiveProductSelection(persistencePackage) || canHandleAdd(persistencePackage);
     }
 
     @Override
@@ -157,10 +156,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
 
         if (isRecursiveProductSelection(persistencePackage)) {
             return getFilteredDynamicResultSet(persistencePackage, cto, helper);
-        }
-
-        if (isRuleBuilderSelectizeRequest(persistencePackage)) {
-            return ruleBuilderSelectizeRequest(persistencePackage, cto, helper);
         }
 
         boolean legacy = parentCategoryLegacyModeService.isLegacyMode();
@@ -503,11 +498,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                 .anyMatch(customCriteria::contains);
     }
 
-    protected boolean isRuleBuilderSelectizeRequest(PersistencePackage persistencePackage) {
-        final List<String> customCriteria = Arrays.asList(persistencePackage.getCustomCriteria());
-        return Stream.of("RULE").anyMatch(customCriteria::contains);
-    }
-
     protected FilterMapping createFilterMappingForProperty(String targetPropertyName, PredicateProvider predicateProvider) {
 
         FieldPath fieldPath = new FieldPath().withTargetProperty(targetPropertyName);
@@ -534,20 +524,6 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             );
             cto.getAdditionalFilterMappings().add(defaultCategoryMapping);
         }
-        OperationType fetchType = persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType();
-        PersistenceModule persistenceModule = helper.getCompatibleModule(fetchType);
-        return persistenceModule.fetch(persistencePackage, cto);
-    }
-
-    protected DynamicResultSet ruleBuilderSelectizeRequest(
-            PersistencePackage persistencePackage,
-            CriteriaTransferObject cto,
-            RecordHelper helper
-    ) throws ServiceException {
-        FilterAndSortCriteria fasc = new FilterAndSortCriteria("embeddableAdvancedProduct.type");
-        fasc.addFilterValue("PRODUCT");
-        fasc.addFilterValue("BUNDLE");
-        cto.add(fasc);
         OperationType fetchType = persistencePackage.getPersistencePerspective().getOperationTypes().getFetchType();
         PersistenceModule persistenceModule = helper.getCompatibleModule(fetchType);
         return persistenceModule.fetch(persistencePackage, cto);
