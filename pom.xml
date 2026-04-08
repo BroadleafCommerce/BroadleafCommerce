@@ -1546,14 +1546,6 @@
                         <groupId>com.google.code.gson</groupId>
                         <artifactId>gson</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>org.jspecify</groupId>
-                        <artifactId>jspecify</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.guava</groupId>
-                        <artifactId>failureaccess</artifactId>
-                    </exclusion>
                 </exclusions>
             </dependency>
             <!-- Added for security to override versions from closure-compiler -->
@@ -1565,7 +1557,7 @@
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
-                <version>4.32.0</version>
+                <version>4.34.0</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>

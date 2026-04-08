@@ -380,6 +380,14 @@
                     <groupId>com.google.jsinterop</groupId>
                     <artifactId>base</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.jspecify</groupId>
+                    <artifactId>jspecify</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>failureaccess</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <!-- Added for security to override versions from closure-compiler -->
