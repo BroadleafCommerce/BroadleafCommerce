@@ -432,6 +432,12 @@ $(document).ready(function() {
      		    // using tabKey instead of href. Href is not dependable because of hidden tabs
                 var tabKey = $tab.find('span').data('tabkey');
 
+                $(data).find('img').each(function () {
+                    if (!$(this).closest('#' + tabKey + 'Contents').length) {
+                        $(this).removeAttr('src');
+                    }
+                });
+
                 $('#' + tabKey + 'Contents .listgrid-container', $(data)).find('.listgrid-header-wrapper table').each(function() {
      				var tableId = $(this).attr('id').replace('-header', '');
                     var $tableWrapper = data.find('table#' + tableId).parents('.listgrid-header-wrapper');
