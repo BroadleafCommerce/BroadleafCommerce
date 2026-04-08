@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>BroadleafCommerce</name>
-    <description>BroadleafCommerce Top Level Project</description>
+    <description>Broadleaf Commerce Top Level Project</description>
     <groupId>org.broadleafcommerce</groupId>
     <artifactId>broadleaf</artifactId>
     <version>7.0.7-SNAPSHOT</version>
