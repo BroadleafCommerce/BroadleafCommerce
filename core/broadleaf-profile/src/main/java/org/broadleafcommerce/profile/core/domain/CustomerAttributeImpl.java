@@ -20,19 +20,16 @@ package org.broadleafcommerce.profile.core.domain;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -56,15 +53,9 @@ public class CustomerAttributeImpl implements CustomerAttribute {
      * The id.
      */
     @Id
-    @GeneratedValue(generator = "CustomerAttributeId")
-    @GenericGenerator(
-            name = "CustomerAttributeId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CustomerAttributeImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "CustomerAttributeImpl",
+            entityName = "org.broadleafcommerce.profile.core.domain.CustomerAttributeImpl"
     )
     @Column(name = "CUSTOMER_ATTR_ID")
     protected Long id;

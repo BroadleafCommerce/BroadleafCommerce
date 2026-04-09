@@ -22,7 +22,7 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -35,8 +35,6 @@ import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.util.HashMap;
@@ -48,7 +46,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -95,15 +92,10 @@ public class CustomerPaymentImpl implements CustomerPayment, CustomerPaymentAdmi
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CustomerPaymentId")
-    @GenericGenerator(
-            name = "CustomerPaymentId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CustomerPaymentImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl")
-            })
+    @BroadleafIdGenerator(
+            segmentValue = "CustomerPaymentImpl",
+            entityName = "org.broadleafcommerce.profile.core.domain.CustomerPaymentImpl"
+    )
     @Column(name = "CUSTOMER_PAYMENT_ID")
     protected Long id;
 

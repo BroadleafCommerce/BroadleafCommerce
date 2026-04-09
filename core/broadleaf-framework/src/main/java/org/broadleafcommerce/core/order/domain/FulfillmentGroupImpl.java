@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -47,8 +47,6 @@ import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -60,7 +58,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -141,15 +138,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, CurrencyCodeIdent
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FulfillmentGroupId")
-    @GenericGenerator(
-            name = "FulfillmentGroupId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "FulfillmentGroupImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "FulfillmentGroupImpl",
+            entityName = "org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl"
     )
     @Column(name = "FULFILLMENT_GROUP_ID")
     protected Long id;

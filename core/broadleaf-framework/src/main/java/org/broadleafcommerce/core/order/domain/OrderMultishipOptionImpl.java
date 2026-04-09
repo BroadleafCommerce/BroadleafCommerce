@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -30,13 +29,11 @@ import jakarta.persistence.Table;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.AddressImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -47,15 +44,9 @@ public class OrderMultishipOptionImpl implements OrderMultishipOption {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OrderMultishipOptionId")
-    @GenericGenerator(
-            name = "OrderMultishipOptionId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "OrderMultishipOptionImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "OrderMultishipOptionImpl",
+            entityName = "org.broadleafcommerce.core.order.domain.OrderMultishipOptionImpl"
     )
     @Column(name = "ORDER_MULTISHIP_OPTION_ID")
     protected Long id;

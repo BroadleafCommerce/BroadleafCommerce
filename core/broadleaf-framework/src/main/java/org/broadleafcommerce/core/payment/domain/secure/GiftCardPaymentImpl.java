@@ -18,16 +18,13 @@
 package org.broadleafcommerce.core.payment.domain.secure;
 
 import org.broadleafcommerce.common.encryption.EncryptionModule;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -45,15 +42,9 @@ public class GiftCardPaymentImpl implements GiftCardPayment {
     @Transient
     protected EncryptionModule encryptionModule;
     @Id
-    @GeneratedValue(generator = "GiftCardPaymentId")
-    @GenericGenerator(
-            name = "GiftCardPaymentId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "GiftCardPaymentImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "GiftCardPaymentImpl",
+            entityName = "org.broadleafcommerce.core.payment.domain.GiftCardPaymentInfoImpl"
     )
     @Column(name = "PAYMENT_ID")
     protected Long id;

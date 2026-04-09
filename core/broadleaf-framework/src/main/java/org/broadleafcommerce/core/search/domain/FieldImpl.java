@@ -25,22 +25,19 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -62,14 +59,9 @@ public class FieldImpl implements Field, FieldAdminPresentation, AdminMainEntity
     private static final long serialVersionUID = 2915813511754425605L;
 
     @Id
-    @GeneratedValue(generator = "FieldId")
-    @GenericGenerator(
-            name = "FieldId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "FieldImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.search.domain.FieldImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "FieldImpl",
+            entityName = "org.broadleafcommerce.core.search.domain.FieldImpl"
     )
     @Column(name = "FIELD_ID")
     @AdminPresentation(friendlyName = "FieldImpl_ID", group = "FieldImpl_general",

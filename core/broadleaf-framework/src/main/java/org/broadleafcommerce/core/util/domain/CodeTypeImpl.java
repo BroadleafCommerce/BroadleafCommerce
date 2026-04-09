@@ -17,18 +17,14 @@
  */
 package org.broadleafcommerce.core.util.domain;
 
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -45,14 +41,9 @@ public class CodeTypeImpl implements CodeType {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CodeTypeId")
-    @GenericGenerator(
-            name = "CodeTypeId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CodeTypeImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.util.domain.CodeTypeImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "CodeTypeImpl",
+            entityName = "org.broadleafcommerce.core.util.domain.CodeTypeImpl"
     )
     @Column(name = "CODE_ID")
     protected Long id;

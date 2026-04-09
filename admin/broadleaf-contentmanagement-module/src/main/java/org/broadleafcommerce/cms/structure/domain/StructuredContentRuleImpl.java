@@ -23,18 +23,15 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -58,15 +55,9 @@ public class StructuredContentRuleImpl implements StructuredContentRule, Profile
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "SCRuleId")
-    @GenericGenerator(
-            name = "SCRuleId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "StructuredContentRuleImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.offer.domain.StructuredContentRuleImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "StructuredContentRuleImpl",
+            entityName = "org.broadleafcommerce.core.offer.domain.StructuredContentRuleImpl"
     )
     @Column(name = "SC_RULE_ID")
     protected Long id;

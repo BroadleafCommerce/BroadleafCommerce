@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -44,8 +44,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +57,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -181,15 +178,9 @@ public class StructuredContentImpl implements StructuredContent, AdminMainEntity
     public static final String SC_DONT_DUPLICATE_SC_TYPE_HINT = "dont-duplicate-sc-type";
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(generator = "StructuredContentId")
-    @GenericGenerator(
-            name = "StructuredContentId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "StructuredContentImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.cms.structure.domain.StructuredContentImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "StructuredContentImpl",
+            entityName = "org.broadleafcommerce.cms.structure.domain.StructuredContentImpl"
     )
     @Column(name = "SC_ID")
     protected Long id;

@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -30,16 +29,14 @@ import jakarta.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
 @Entity
@@ -52,15 +49,9 @@ public class OrderItemQualifierImpl implements OrderItemQualifier {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OrderItemQualifierId")
-    @GenericGenerator(
-            name = "OrderItemQualifierId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "OrderItemQualifierImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "OrderItemQualifierImpl",
+            entityName = "org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl"
     )
     @Column(name = "ITEM_OFFER_QUALIFIER_ID")
     protected Long id;

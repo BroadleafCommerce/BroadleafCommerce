@@ -31,7 +31,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMapField;
@@ -52,8 +52,6 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -106,15 +104,9 @@ public class OfferImpl implements Offer, AdminMainEntity, OfferAdminPresentation
     @Serial
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(generator = "OfferId")
-    @GenericGenerator(
-            name = "OfferId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "OfferImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.offer.domain.OfferImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "OfferImpl",
+            entityName = "org.broadleafcommerce.core.offer.domain.OfferImpl"
     )
     @Column(name = "OFFER_ID")
     @AdminPresentation(friendlyName = "OfferImpl_Offer_Id", visibility = VisibilityEnum.HIDDEN_ALL)

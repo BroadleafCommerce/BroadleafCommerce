@@ -20,7 +20,7 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -34,15 +34,12 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -69,15 +66,9 @@ public class ProratedOrderItemAdjustmentImpl implements ProratedOrderItemAdjustm
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "ProratedOrderItemAdjustmentId")
-    @GenericGenerator(
-            name = "ProratedOrderItemAdjustmentId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "ProratedOrderItemAdjustmentImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustmentImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "ProratedOrderItemAdjustmentImpl",
+            entityName = "org.broadleafcommerce.core.offer.domain.ProratedOrderItemAdjustmentImpl"
     )
     @Column(name = "PRORATED_ORDER_ITEM_ADJUST_ID")
     protected Long id;

@@ -17,19 +17,16 @@
  */
 package org.broadleafcommerce.core.offer.domain;
 
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -50,15 +47,9 @@ public class CustomerOfferImpl implements CustomerOffer {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CustomerOfferId")
-    @GenericGenerator(
-            name = "CustomerOfferId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CustomerOfferImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.offer.domain.CustomerOfferImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "CustomerOfferImpl",
+            entityName = "org.broadleafcommerce.core.offer.domain.CustomerOfferImpl"
     )
     @Column(name = "CUSTOMER_OFFER_ID")
     protected Long id;

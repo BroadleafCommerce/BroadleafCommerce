@@ -24,7 +24,7 @@ import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
@@ -42,8 +42,6 @@ import org.broadleafcommerce.openadmin.server.service.type.ContextType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,7 +53,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -187,15 +184,9 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
             keyPropertyFriendlyName = "AdminUserAttributeImpl_Key")
     protected Map<String, AdminUserAttribute> additionalFields = new HashMap<>();
     @Id
-    @GeneratedValue(generator = "AdminUserId")
-    @GenericGenerator(
-            name = "AdminUserId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "AdminUserImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "AdminUserImpl",
+            entityName = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserImpl"
     )
     @Column(name = "ADMIN_USER_ID")
     @AdminPresentation(friendlyName = "AdminUserImpl_Admin_User_ID",

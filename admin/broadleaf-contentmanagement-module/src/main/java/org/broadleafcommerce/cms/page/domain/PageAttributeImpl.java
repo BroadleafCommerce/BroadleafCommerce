@@ -23,18 +23,15 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -60,15 +57,9 @@ public class PageAttributeImpl implements PageAttribute, ProfileEntity {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PageAttributeId")
-    @GenericGenerator(
-            name = "PageAttributeId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "PageAttributeImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.cms.page.domain.PageAttributeImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "PageAttributeImpl",
+            entityName = "org.broadleafcommerce.cms.page.domain.PageAttributeImpl"
     )
     @Column(name = "ATTRIBUTE_ID")
     protected Long id;

@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationMap;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
@@ -35,9 +35,7 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.Length;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
@@ -81,15 +79,9 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PaymentTransactionId")
-    @GenericGenerator(
-            name = "PaymentTransactionId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "PaymentTransactionImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "PaymentTransactionImpl",
+            entityName = "org.broadleafcommerce.core.payment.domain.PaymentTransactionImpl"
     )
     @Column(name = "PAYMENT_TRANSACTION_ID")
     protected Long id;

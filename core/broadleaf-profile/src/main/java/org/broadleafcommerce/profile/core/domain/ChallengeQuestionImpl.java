@@ -18,19 +18,16 @@
 package org.broadleafcommerce.profile.core.domain;
 
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -47,15 +44,9 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "ChallengeQuestionId")
-    @GenericGenerator(
-            name = "ChallengeQuestionId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "ChallengeQuestionImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "ChallengeQuestionImpl",
+            entityName = "org.broadleafcommerce.profile.core.domain.ChallengeQuestionImpl"
     )
     @Column(name = "QUESTION_ID")
     protected Long id;

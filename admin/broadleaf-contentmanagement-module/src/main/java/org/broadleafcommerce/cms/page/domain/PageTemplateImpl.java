@@ -29,7 +29,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -37,8 +37,6 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +44,6 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -76,15 +73,9 @@ public class PageTemplateImpl implements PageTemplate, AdminMainEntity, ProfileE
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PageTemplateId")
-    @GenericGenerator(
-            name = "PageTemplateId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "PageTemplateImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.cms.page.domain.PageTemplateImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "PageTemplateImpl",
+            entityName = "org.broadleafcommerce.cms.page.domain.PageTemplateImpl"
     )
     @Column(name = "PAGE_TMPLT_ID")
     @AdminPresentation(friendlyName = "PageTemplateImpl_Template_Id",

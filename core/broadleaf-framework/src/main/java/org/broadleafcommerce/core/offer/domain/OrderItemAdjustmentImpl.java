@@ -20,8 +20,8 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -37,8 +37,6 @@ import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serial;
@@ -74,15 +72,9 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment, CurrencyCod
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OrderItemAdjustmentId")
-    @GenericGenerator(
-            name = "OrderItemAdjustmentId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "OrderItemAdjustmentImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "OrderItemAdjustmentImpl",
+            entityName = "org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl"
     )
     @Column(name = "ORDER_ITEM_ADJUSTMENT_ID")
     protected Long id;
