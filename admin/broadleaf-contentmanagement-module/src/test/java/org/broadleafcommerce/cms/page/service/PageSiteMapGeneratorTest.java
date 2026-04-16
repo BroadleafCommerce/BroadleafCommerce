@@ -18,7 +18,6 @@
 package org.broadleafcommerce.cms.page.service;
 
 import org.broadleafcommerce.cms.page.dao.PageDao;
-import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.SiteMapPageDTO;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl;
