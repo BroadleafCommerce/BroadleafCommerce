@@ -285,7 +285,7 @@ public class PageDaoImpl implements PageDao {
         criteria.select(builder.construct(SiteMapPageDTO.class,
                 page.get("id"),
                 page.get("fullUrl"),
-                page.get("auditable").get("dateUpdated")));
+                builder.nullLiteral(Date.class)));
 
         List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.or(builder.isFalse(page.get("offlineFlag")), builder.isNull(page.get("offlineFlag"))));
