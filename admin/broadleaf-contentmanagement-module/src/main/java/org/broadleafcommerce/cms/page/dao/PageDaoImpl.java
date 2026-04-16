@@ -130,7 +130,8 @@ public class PageDaoImpl implements PageDao {
         List<Predicate> restrictions = new ArrayList<>();
         restrictions.add(builder.equal(pageRoot.get("fullUrl"), uri));
 
-        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate, getCurrentDateResolution());
+        Date currentDate = DateUtil.getCurrentDateAfterFactoringInDateResolution(cachedDate,
+                getCurrentDateResolution());
 
         addActiveDateRestrictions(builder, pageRoot, restrictions, currentDate, currentDate);
         addOfflineRestriction(builder, pageRoot, restrictions);
@@ -145,8 +146,7 @@ public class PageDaoImpl implements PageDao {
             final Root pageRoot,
             final List<Predicate> restrictions,
             Date afterStartDate,
-            Date beforeEndDate
-    ) {
+            Date beforeEndDate) {
         restrictions.add(builder.or(
                 builder.isNull(pageRoot.get("activeStartDate")),
                 builder.lessThanOrEqualTo(pageRoot.get("activeStartDate").as(Date.class), afterStartDate)));
@@ -158,8 +158,7 @@ public class PageDaoImpl implements PageDao {
     protected void addOfflineRestriction(
             final CriteriaBuilder builder,
             final Root pageRoot,
-            final List<Predicate> restrictions
-    ) {
+            final List<Predicate> restrictions) {
         restrictions.add(builder.or(
                 builder.isNull(pageRoot.get("offlineFlag")),
                 builder.isFalse(pageRoot.get("offlineFlag"))));
@@ -267,7 +266,8 @@ public class PageDaoImpl implements PageDao {
         criteria.select(page);
         criteria.where(builder.and(
                 builder.or(builder.isFalse(page.get("offlineFlag")), builder.isNull(page.get("offlineFlag"))),
-                builder.or(builder.isFalse(page.get("excludeFromSiteMap")), builder.isNull(page.get("excludeFromSiteMap")))));
+                builder.or(builder.isFalse(page.get("excludeFromSiteMap")),
+                        builder.isNull(page.get("excludeFromSiteMap")))));
         criteria.orderBy(builder.asc(page.get(sortBy)));
         TypedQuery<Page> query = em.createQuery(criteria);
         query.setFirstResult(offset);
@@ -277,7 +277,7 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(int limit, String lastFullUrl) {
+    public List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(int limit, String lastFullUrl, Long lastId) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<SiteMapPageDTO> criteria = builder.createQuery(SiteMapPageDTO.class);
         Root<PageImpl> page = criteria.from(PageImpl.class);
@@ -292,8 +292,11 @@ public class PageDaoImpl implements PageDao {
         restrictions.add(builder.or(builder.isFalse(page.get("excludeFromSiteMap")), builder.isNull(page.get("excludeFromSiteMap"))));
         restrictions.add(builder.isNotNull(page.get("fullUrl")));
 
-        if (lastFullUrl != null) {
-            restrictions.add(builder.greaterThan(page.get("fullUrl"), lastFullUrl));
+        if (lastFullUrl != null && lastId != null) {
+            Predicate urlGreaterThan = builder.greaterThan(page.get("fullUrl"), lastFullUrl);
+            Predicate urlEqual = builder.equal(page.get("fullUrl"), lastFullUrl);
+            Predicate idGreaterThan = builder.greaterThan(page.get("id"), lastId);
+            restrictions.add(builder.or(urlGreaterThan, builder.and(urlEqual, idGreaterThan)));
         }
 
         criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
