@@ -76,10 +76,11 @@ public interface PageDao {
      *
      * @param limit the maximum number of results
      * @param lastFullUrl the fullUrl of the last page from the previous fetch, or null for the first fetch
+     * @param lastId the id of the last page from the previous fetch, or null for the first fetch
      * @return a list of SiteMapPageDTO representing the online and included pages
      */
     @Nonnull
-    List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(@Nonnull int limit, String lastFullUrl);
+    List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(@Nonnull int limit, String lastFullUrl, Long lastId);
 
     /**
      * Returns all page templates, regardless of any sandbox they are apart of
@@ -95,7 +96,8 @@ public interface PageDao {
     List<Page> findPageByURI(Locale locale, String uri);
 
     /**
-     * Returns pages that match the given URI and are within 1 day of the active date (potentially cached).
+     * Returns pages that match the given URI and are within 1 day of the active
+     * date (potentially cached).
      * This will only cache for 1 day.
      *
      * @param uri
