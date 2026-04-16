@@ -24,6 +24,7 @@ import org.broadleafcommerce.cms.page.domain.PageFieldImpl;
 import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
+import org.broadleafcommerce.cms.page.domain.SiteMapPageDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
@@ -272,6 +273,35 @@ public class PageDaoImpl implements PageDao {
         query.setFirstResult(offset);
         query.setMaxResults(limit);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(int limit, String lastFullUrl) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<SiteMapPageDTO> criteria = builder.createQuery(SiteMapPageDTO.class);
+        Root<PageImpl> page = criteria.from(PageImpl.class);
+
+        criteria.select(builder.construct(SiteMapPageDTO.class,
+                page.get("id"),
+                page.get("fullUrl"),
+                page.get("auditable").get("dateUpdated")));
+
+        List<Predicate> restrictions = new ArrayList<>();
+        restrictions.add(builder.or(builder.isFalse(page.get("offlineFlag")), builder.isNull(page.get("offlineFlag"))));
+        restrictions.add(builder.or(builder.isFalse(page.get("excludeFromSiteMap")), builder.isNull(page.get("excludeFromSiteMap"))));
+        restrictions.add(builder.isNotNull(page.get("fullUrl")));
+
+        if (lastFullUrl != null) {
+            restrictions.add(builder.greaterThan(page.get("fullUrl"), lastFullUrl));
+        }
+
+        criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
+        criteria.orderBy(builder.asc(page.get("fullUrl")), builder.asc(page.get("id")));
+
+        TypedQuery<SiteMapPageDTO> query = em.createQuery(criteria);
+        query.setMaxResults(limit);
+        query.setHint(QueryHints.HINT_CACHEABLE, false);
         return query.getResultList();
     }
 

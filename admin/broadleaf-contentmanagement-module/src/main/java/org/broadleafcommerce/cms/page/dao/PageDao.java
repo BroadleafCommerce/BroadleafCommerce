@@ -20,6 +20,7 @@ package org.broadleafcommerce.cms.page.dao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
+import org.broadleafcommerce.cms.page.domain.SiteMapPageDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
 
 import java.util.Date;
@@ -69,6 +70,16 @@ public interface PageDao {
      */
     @Nonnull
     List<Page> readOnlineAndIncludedPages(@Nonnull int limit, @Nonnull int offset, @Nonnull String sortBy);
+
+    /**
+     * Retrieve a keyset-paginated list of lightweight DTOs for sitemap generation.
+     *
+     * @param limit the maximum number of results
+     * @param lastFullUrl the fullUrl of the last page from the previous fetch, or null for the first fetch
+     * @return a list of SiteMapPageDTO representing the online and included pages
+     */
+    @Nonnull
+    List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(@Nonnull int limit, String lastFullUrl);
 
     /**
      * Returns all page templates, regardless of any sandbox they are apart of

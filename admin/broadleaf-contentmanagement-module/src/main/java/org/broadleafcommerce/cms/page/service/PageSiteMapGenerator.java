@@ -18,14 +18,13 @@
 package org.broadleafcommerce.cms.page.service;
 
 import org.broadleafcommerce.cms.page.dao.PageDao;
-import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.SiteMapPageDTO;
 import org.broadleafcommerce.common.file.service.BroadleafFileUtils;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.service.SiteMapBuilder;
 import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.wrapper.SiteMapURLWrapper;
-import org.broadleafcommerce.openadmin.audit.AdminAudit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -56,16 +55,17 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
     @Override
     public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
 
-        int rowOffset = 0;
-        List<Page> pages;
+        String lastFullUrl = null;
+        List<SiteMapPageDTO> pages;
         String previousUrl = "";
 
         do {
-            pages = pageDao.readOnlineAndIncludedPages(rowLimit, rowOffset, "fullUrl");
-            rowOffset += pages.size();
-            for (Page page : pages) {
+            pages = pageDao.readOnlineAndIncludedPageSiteMapEntries(rowLimit, lastFullUrl);
+            for (SiteMapPageDTO page : pages) {
 
-                if (page.getExcludeFromSiteMap() || page.getFullUrl() == null || page.getFullUrl().trim().length() == 0) {
+                lastFullUrl = page.getFullUrl();
+
+                if (page.getFullUrl() == null || page.getFullUrl().trim().length() == 0) {
                     continue;
                 }
 
@@ -96,13 +96,13 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
         } while (pages.size() == rowLimit);
     }
 
-    protected String generateUri(SiteMapBuilder smb, Page page) {
+    protected String generateUri(SiteMapBuilder smb, SiteMapPageDTO page) {
         return BroadleafFileUtils.appendUnixPaths(smb.getBaseUrl(), page.getFullUrl());
     }
 
-    protected Date generateDate(Page page) {
-        if (page instanceof AdminAudit) {
-            return ((AdminAudit) page).getDateUpdated();
+    protected Date generateDate(SiteMapPageDTO page) {
+        if (page.getDateUpdated() != null) {
+            return page.getDateUpdated();
         } else {
             return new Date();
         }
