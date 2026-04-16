@@ -25,8 +25,8 @@ import org.broadleafcommerce.common.locale.domain.Locale;
 
 import java.util.Date;
 import java.util.List;
-
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 /**
  * Created by bpolster.
@@ -61,17 +61,6 @@ public interface PageDao {
     List<Page> readAllPages();
 
     /**
-     * Retrieve a subset of all online and site map included Pages
-     *
-     * @param limit  the maximum number of results
-     * @param offset the starting point in the record set
-     * @param sortBy the column to sort by
-     * @return
-     */
-    @Nonnull
-    List<Page> readOnlineAndIncludedPages(@Nonnull int limit, @Nonnull int offset, @Nonnull String sortBy);
-
-    /**
      * Retrieve a keyset-paginated list of lightweight DTOs for sitemap generation.
      *
      * @param limit the maximum number of results
@@ -80,7 +69,7 @@ public interface PageDao {
      * @return a list of SiteMapPageDTO representing the online and included pages
      */
     @Nonnull
-    List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(@Nonnull int limit, String lastFullUrl, Long lastId);
+    List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(@Nonnull int limit, @Nullable String lastFullUrl, @Nullable Long lastId);
 
     /**
      * Returns all page templates, regardless of any sandbox they are apart of
