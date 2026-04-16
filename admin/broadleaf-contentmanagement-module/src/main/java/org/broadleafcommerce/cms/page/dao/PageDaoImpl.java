@@ -26,6 +26,7 @@ import org.broadleafcommerce.cms.page.domain.PageTemplate;
 import org.broadleafcommerce.cms.page.domain.PageTemplateImpl;
 import org.broadleafcommerce.cms.page.domain.SiteMapPageDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
+import jakarta.annotation.Nullable;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.sandbox.domain.SandBox;
 import org.broadleafcommerce.common.sandbox.domain.SandBoxImpl;
@@ -259,25 +260,7 @@ public class PageDaoImpl implements PageDao {
     }
 
     @Override
-    public List<Page> readOnlineAndIncludedPages(int limit, int offset, String sortBy) {
-        CriteriaBuilder builder = em.getCriteriaBuilder();
-        CriteriaQuery<Page> criteria = builder.createQuery(Page.class);
-        Root<PageImpl> page = criteria.from(PageImpl.class);
-        criteria.select(page);
-        criteria.where(builder.and(
-                builder.or(builder.isFalse(page.get("offlineFlag")), builder.isNull(page.get("offlineFlag"))),
-                builder.or(builder.isFalse(page.get("excludeFromSiteMap")),
-                        builder.isNull(page.get("excludeFromSiteMap")))));
-        criteria.orderBy(builder.asc(page.get(sortBy)));
-        TypedQuery<Page> query = em.createQuery(criteria);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        query.setHint(QueryHints.HINT_CACHEABLE, true);
-        return query.getResultList();
-    }
-
-    @Override
-    public List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(int limit, String lastFullUrl, Long lastId) {
+    public List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(int limit, @Nullable String lastFullUrl, @Nullable Long lastId) {
         CriteriaBuilder builder = em.getCriteriaBuilder();
         CriteriaQuery<SiteMapPageDTO> criteria = builder.createQuery(SiteMapPageDTO.class);
         Root<PageImpl> page = criteria.from(PageImpl.class);
