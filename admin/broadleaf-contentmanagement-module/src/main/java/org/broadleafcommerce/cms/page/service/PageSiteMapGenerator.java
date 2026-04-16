@@ -56,14 +56,16 @@ public class PageSiteMapGenerator implements SiteMapGenerator {
     public void addSiteMapEntries(SiteMapGeneratorConfiguration smgc, SiteMapBuilder siteMapBuilder) {
 
         String lastFullUrl = null;
+        Long lastId = null;
         List<SiteMapPageDTO> pages;
         String previousUrl = "";
 
         do {
-            pages = pageDao.readOnlineAndIncludedPageSiteMapEntries(rowLimit, lastFullUrl);
+            pages = pageDao.readOnlineAndIncludedPageSiteMapEntries(rowLimit, lastFullUrl, lastId);
             for (SiteMapPageDTO page : pages) {
 
                 lastFullUrl = page.getFullUrl();
+                lastId = page.getId();
 
                 if (page.getFullUrl() == null || page.getFullUrl().trim().length() == 0) {
                     continue;
