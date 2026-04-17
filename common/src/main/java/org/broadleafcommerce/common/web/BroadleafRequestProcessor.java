@@ -34,6 +34,7 @@ import org.broadleafcommerce.common.util.BLCRequestUtils;
 import org.broadleafcommerce.common.util.DeployBehaviorUtil;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.common.web.exception.HaltFilterChainException;
+import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -89,6 +90,9 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     @Resource(name = "blSandBoxService")
     protected SandBoxService sandBoxService;
 
+    @Resource(name = "blBroadleafContextUtil")
+    protected BroadleafContextUtil blcContextUtil;
+
     @Value("${thymeleaf.threadLocalCleanup.enabled}")
     protected boolean thymeleafThreadLocalCleanupEnabled = true;
 
@@ -108,6 +112,8 @@ public class BroadleafRequestProcessor extends AbstractBroadleafWebRequestProces
     public void process(WebRequest request) {
         BroadleafRequestContext brc = new BroadleafRequestContext();
         brc.getAdditionalProperties().putAll(entityExtensionManagers);
+
+        blcContextUtil.establishThinRequestContext();
 
         Site site = siteResolver.resolveSite(request);
 
