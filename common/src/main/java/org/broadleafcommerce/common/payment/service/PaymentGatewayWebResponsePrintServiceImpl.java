@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.common.payment.service;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Enumeration;
@@ -65,7 +66,7 @@ public class PaymentGatewayWebResponsePrintServiceImpl implements PaymentGateway
             builder.append("\"");
             builder.append(":");
             builder.append("\"");
-            builder.append(request.getParameter(paramName));
+            builder.append(StringEscapeUtils.escapeJson(request.getParameter(paramName)));
             builder.append("\"");
             builder.append(",");
         }
