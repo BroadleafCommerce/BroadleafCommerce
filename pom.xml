@@ -46,12 +46,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <broadleaf-presentation.version>2.1.0-SNAPSHOT</broadleaf-presentation.version>
         <hsqldb.database.starter.version>3.1.0-SNAPSHOT</hsqldb.database.starter.version>
-        <ehcache3.version>3.10.8</ehcache3.version>
-        <spring.version>7.0.2</spring.version>
-        <spring.security.version>7.0.2</spring.security.version>
-        <spring.boot.version>4.0.1</spring.boot.version>
-        <spring-ldap-core.version>4.0.1</spring-ldap-core.version>
-        <jackson.version>2.20.1</jackson.version>
+        <ehcache3.version>3.11.1</ehcache3.version>
+        <spring.version>7.0.6</spring.version>
+        <spring.security.version>7.0.5</spring.security.version>
+        <spring.boot.version>4.0.5</spring.boot.version>
+        <spring-ldap-core.version>4.0.2</spring-ldap-core.version>
+        <jackson.version>2.21.2</jackson.version>
         <lombok.version>1.18.36</lombok.version>
         <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
         <geb.version>7.0</geb.version>
@@ -61,7 +61,7 @@
         <gpg.plugin.version>3.2.7</gpg.plugin.version>
         <closure.compiler.version>v20240317</closure.compiler.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <hibernate.version>7.2.0.Final</hibernate.version>
+        <hibernate.version>7.3.2.Final</hibernate.version>
         <jakarta.version>6.1.0</jakarta.version>
         <jakarta-xml.version>4.0.4</jakarta-xml.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
@@ -569,10 +569,6 @@
                         <groupId>jakarta.xml.bind</groupId>
                         <artifactId>jakarta.xml.bind-api</artifactId>
                     </exclusion>
-<!--                    <exclusion>-->
-<!--                        <groupId>org.hibernate.models</groupId>-->
-<!--                        <artifactId>hibernate-models</artifactId>-->
-<!--                    </exclusion>-->
                 </exclusions>
             </dependency>
             <dependency>
@@ -592,16 +588,12 @@
                         <groupId>org.eclipse.angus</groupId>
                         <artifactId>angus-activation</artifactId>
                     </exclusion>
-<!--                    <exclusion>-->
-<!--                        <groupId>org.hibernate.models</groupId>-->
-<!--                        <artifactId>hibernate-models</artifactId>-->
-<!--                    </exclusion>-->
                 </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.models</groupId>
                 <artifactId>hibernate-models</artifactId>
-                <version>1.0.1</version>
+                <version>1.1.1</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
@@ -1392,6 +1384,12 @@
                 <groupId>org.springframework.ldap</groupId>
                 <artifactId>spring-ldap-core</artifactId>
                 <version>${spring-ldap-core.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>io.micrometer</groupId>
+                        <artifactId>micrometer-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
