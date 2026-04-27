@@ -41,32 +41,32 @@
         </repository>
     </repositories>
     <properties>
+        <project.uri>${project.baseUri}</project.uri>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ehcache3.version>3.10.8</ehcache3.version>
-        <spring.version>6.2.17</spring.version>
-        <spring.security.version>6.5.9</spring.security.version>
+        <spring.version>6.2.18</spring.version>
+        <spring.security.version>6.5.10</spring.security.version>
         <spring-ldap-core.version>3.3.6</spring-ldap-core.version>
-        <spring.boot.version>3.5.13</spring.boot.version>
+        <spring.boot.version>3.5.14</spring.boot.version>
+        <hibernate.version>5.6.15.Final</hibernate.version>
+        <zookeeper.version>3.9.5</zookeeper.version>
         <jackson.version>2.21.2</jackson.version>
         <lombok.version>1.18.44</lombok.version>
         <logback.version>1.5.32</logback.version>
-        <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
-        <geb.version>7.0</geb.version>
-        <spock.core.version>2.4-M4-groovy-4.0</spock.core.version>
-        <spock.spring.version>2.4-M4-groovy-4.0</spock.spring.version>
-        <project.uri>${project.baseUri}</project.uri>
-        <groovy.version>4.0.20</groovy.version>
-        <gpg.plugin.version>3.1.0</gpg.plugin.version>
-        <broadleaf-presentation.version>2.0.2-GA</broadleaf-presentation.version>
-        <hsqldb.database.starter.version>3.0.3-GA</hsqldb.database.starter.version>
-        <hsqldb.version>2.7.4</hsqldb.version>
-        <closure.compiler.version>v20240317</closure.compiler.version>
-        <hibernate.version>5.6.15.Final</hibernate.version>
+        <slf4j.version>2.0.17</slf4j.version>
         <jakarta.version>6.0.0</jakarta.version>
         <jakarta-xml.version>4.0.0</jakarta-xml.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
-        <slf4j.version>2.0.17</slf4j.version>
-
+        <broadleaf-presentation.version>2.0.2-GA</broadleaf-presentation.version>
+        <hsqldb.database.starter.version>3.0.3-GA</hsqldb.database.starter.version>
+        <closure.compiler.version>v20240317</closure.compiler.version>
+        <geb.version>7.0</geb.version>
+        <gpg.plugin.version>3.1.0</gpg.plugin.version>
+        <hsqldb.version>2.7.4</hsqldb.version>
+        <groovy.version>4.0.20</groovy.version>
+        <spock.core.version>2.4-M4-groovy-4.0</spock.core.version>
+        <spock.spring.version>2.4-M4-groovy-4.0</spock.spring.version>
+        <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
         <!-- because of spring when does instrumentation it uses reflection to jdk classes, for tests we need this -->
         <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</surefire.argLine>
         <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</failsafe.argLine>
