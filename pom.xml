@@ -394,7 +394,7 @@
                     <plugin>
                         <groupId>org.owasp</groupId>
                         <artifactId>dependency-check-maven</artifactId>
-                        <version>12.2.0</version>
+                        <version>12.2.1</version>
                         <configuration>
                             <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
                         </configuration>
@@ -649,7 +649,7 @@
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
-                <version>1.10.0</version>
+                <version>1.10.1</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
@@ -1561,7 +1561,7 @@
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
-                <version>4.34.0</version>
+                <version>4.34.1</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
