@@ -68,6 +68,7 @@
         <slf4j.version>2.0.17</slf4j.version>
         <logback.version>1.5.22</logback.version>
         <junit.version>6.0.1</junit.version>
+        <solr.version>9.10.1</solr.version>
         <!-- because of spring when does instrumentation it uses reflection to jdk classes, for tests we need this -->
         <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</surefire.argLine>
         <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</failsafe.argLine>
@@ -989,7 +990,7 @@
             <dependency>
                 <groupId>org.apache.solr</groupId>
                 <artifactId>solr-solrj</artifactId>
-                <version>9.8.1</version>
+                <version>${solr.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.eclipse.jetty</groupId>
