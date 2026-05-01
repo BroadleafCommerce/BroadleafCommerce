@@ -468,7 +468,7 @@ public class StaticAssetStorageServiceImpl implements StaticAssetStorageService 
 
                 // close the output file stream prior to moving files around
                 output.close();
-                broadleafFileService.addOrUpdateResource(tempWorkArea, destFile, false);
+                broadleafFileService.addOrUpdateResourceForPath(tempWorkArea, destFile, false);
             } finally {
                 IOUtils.closeQuietly(output);
                 broadleafFileService.closeWorkArea(tempWorkArea);
