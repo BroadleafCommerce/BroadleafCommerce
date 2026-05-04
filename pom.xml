@@ -57,8 +57,8 @@
         <jakarta.version>6.0.0</jakarta.version>
         <jakarta-xml.version>4.0.0</jakarta-xml.version>
         <jakarta-annotation.version>2.1.1</jakarta-annotation.version>
-        <broadleaf-presentation.version>2.0.2-GA</broadleaf-presentation.version>
-        <hsqldb.database.starter.version>3.0.3-GA</hsqldb.database.starter.version>
+        <broadleaf-presentation.version>2.0.3-GA</broadleaf-presentation.version>
+        <hsqldb.database.starter.version>3.0.4-GA</hsqldb.database.starter.version>
         <closure.compiler.version>v20240317</closure.compiler.version>
         <geb.version>7.0</geb.version>
         <gpg.plugin.version>3.1.0</gpg.plugin.version>
