@@ -1,21 +1,51 @@
-# Shipping Estimator Pilot Prompt
+# Shipping Estimator Extraction Prompt
 
-Use the `legacy-java-to-ts-service-e2e` skill to extract the Broadleaf shipping estimation logic into a Node.js/TypeScript service.
+Use the `legacy-java-to-ts-service-e2e` skill to extract Broadleaf's shipping
+estimation behavior into a Node.js/TypeScript service.
+
+## Goal
+
+Build a demo-ready vertical slice that proves shipping estimate extraction with
+focused API tests and a runtime smoke check.
 
 ## Scope
 
-- Focus only on fulfillment/shipping price estimation.
-- Treat the existing Java providers and fulfillment pricing tests as the source of truth.
-- Do not move catalog, cart, checkout, payment, tax, inventory, product, or SKU ownership into the new service.
-- Treat adapter wiring as future work unless I explicitly ask for it.
+### In Scope
+
+- Fulfillment and shipping price estimation.
+- Behavior discovered from the existing Java providers.
+- Test expectations derived from fulfillment pricing tests.
+- A minimal service contract that is enough to prove the critical path.
+
+### Out of Scope
+
+- Catalog, cart, checkout, payment, tax, inventory, product, or SKU ownership.
+- Broadleaf adapter wiring.
+- UI work.
+- Platform-complete service design.
 
 ## Workflow
 
-- Use subagents for legacy behavior, API contract, and test mapping.
-- Optimize for a fast demo-ready vertical slice, not a complete platform.
-- Implement the smallest service that proves the extraction with API tests.
-- After API tests pass, run `service-runtime-smoke` as the final proof step.
-- `service-runtime-smoke` should start or verify the service, hit the health endpoint and main shipping endpoints with representative payloads, and report status codes plus key response fields.
-- Stop when the critical path is proven; do not implement adapter or UI wiring.
+1. Summarize the files and directories you expect to touch.
+2. Summarize the verification path before editing.
+3. Use subagents for:
+   - Legacy behavior investigation.
+   - API contract design.
+   - Test mapping.
+4. Implement the smallest service that proves the extraction.
+5. Verify the behavior with API tests.
+6. Run `service-runtime-smoke` as the final proof step.
 
-Before editing, summarize the files/directories you expect to touch and the verification path.
+## Smoke Test Requirements
+
+`service-runtime-smoke` should:
+
+- Start or verify the service.
+- Hit the health endpoint.
+- Hit the main shipping estimation endpoint with representative payloads.
+- Report status codes and key response fields.
+
+## Stop Condition
+
+Stop when the critical path is proven. Do not implement adapter or UI wiring
+unless explicitly requested.
