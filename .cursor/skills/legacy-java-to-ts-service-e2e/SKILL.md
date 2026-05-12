@@ -14,7 +14,8 @@ Deliver a demo-ready vertical slice for one extracted Java capability: source-of
 1. Restate the named capability and demo-critical proof path.
 2. Apply `service-extraction-boundary`, `legacy-behavior-source`, and `service-contract-testing` rules.
 3. Use the narrower `legacy-java-to-ts-service` skill for implementation guardrails.
-4. Before editing, summarize likely files/directories to touch and verification commands.
+4. Create or switch to a dedicated feature branch before implementation edits.
+5. Before editing, summarize likely files/directories to touch and verification commands.
 
 ## Required Subagent Sequence
 
