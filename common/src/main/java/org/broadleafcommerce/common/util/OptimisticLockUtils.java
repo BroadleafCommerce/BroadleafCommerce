@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.common.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.OptimisticLockInvalidStateException;
 import org.broadleafcommerce.common.exception.OptimisticLockMaxRetryException;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -26,15 +28,15 @@ import org.springframework.transaction.TransactionStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.Version;
-import lombok.extern.apachecommons.CommonsLog;
 
 /**
  * Utility class for operations on entities that support optimistic locking.
  *
  * @author Philip Baggett (pbaggett)
  */
-@CommonsLog
 public class OptimisticLockUtils {
+
+    private static final Log log = LogFactory.getLog(OptimisticLockUtils.class);
 
     /**
      * Perform an update on a entity that supports optimistic locking.
