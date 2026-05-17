@@ -25,6 +25,8 @@ import org.springframework.security.web.RedirectStrategy;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -50,16 +52,25 @@ public class LocalRedirectStrategy implements RedirectStrategy {
      */
     @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
-        if (!url.startsWith("/")) {
-            if (StringUtils.equals(request.getParameter("successUrl"), url)
-                    || StringUtils.equals(request.getParameter("failureUrl"), url)) {
-                validateRedirectUrl(request.getContextPath(), url, request.getServerName(), request.getServerPort());
-            }
+        // Normalize the URL by decoding it to prevent encoded bypasses
+        String normalizedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
+        
+        // Reject protocol-relative URLs which can be used for open redirect attacks
+        if (normalizedUrl.startsWith("//") || normalizedUrl.startsWith("\\\\")) {
+            String errorMessage = "Protocol-relative redirects are not allowed";
+            LOG.warn(errorMessage + ":  " + url);
+            throw new MalformedURLException(errorMessage);
         }
-        String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
+        
+        // Validate all absolute URLs against the allow list
+        if (!normalizedUrl.startsWith("/")) {
+            validateRedirectUrl(request.getContextPath(), normalizedUrl, request.getServerName(), request.getServerPort());
+        }
+        
+        String redirectUrl = calculateRedirectUrl(request.getContextPath(), normalizedUrl);
         redirectUrl = response.encodeRedirectURL(redirectUrl);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Redirecting to '" + url + "'");
+            LOG.debug("Redirecting to '" + normalizedUrl + "'");
         }
 
         response.sendRedirect(redirectUrl);
