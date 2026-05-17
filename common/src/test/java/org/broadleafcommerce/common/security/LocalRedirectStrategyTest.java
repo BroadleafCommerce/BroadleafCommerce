@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.common.security;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -43,9 +43,9 @@ public class LocalRedirectStrategyTest {
     @Mock
     private HttpServletResponse response;
 
-    @BeforeEach
+    @Before
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
+        MockitoAnnotations.initMocks(this);
         strategy = new LocalRedirectStrategy();
     }
 
@@ -58,7 +58,11 @@ public class LocalRedirectStrategyTest {
         setupMockRequest(url, "localhost", 8080, "/app");
 
         // Execute & Verify - Should not throw exception
-        assertDoesNotThrow(() -> strategy.sendRedirect(request, response, url));
+        try {
+            strategy.sendRedirect(request, response, url);
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getMessage());
+        }
     }
 
     @Test
@@ -68,7 +72,11 @@ public class LocalRedirectStrategyTest {
         setupMockRequest(url, "localhost", 8080, "/app");
 
         // Execute & Verify - Should not throw exception
-        assertDoesNotThrow(() -> strategy.sendRedirect(request, response, url));
+        try {
+            strategy.sendRedirect(request, response, url);
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getMessage());
+        }
     }
 
     @Test
@@ -78,7 +86,11 @@ public class LocalRedirectStrategyTest {
         setupMockRequest(url, "localhost", 8080, "");
 
         // Execute & Verify - Should not throw exception
-        assertDoesNotThrow(() -> strategy.sendRedirect(request, response, url));
+        try {
+            strategy.sendRedirect(request, response, url);
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getMessage());
+        }
     }
 
     // ============ BLOCKED: PROTOCOL-RELATIVE URLS ============
@@ -90,11 +102,12 @@ public class LocalRedirectStrategyTest {
         setupMockRequest(url, "localhost", 8080, "/app");
 
         // Execute & Verify - Should throw MalformedURLException
-        MalformedURLException exception = assertThrows(
-                MalformedURLException.class,
-                () -> strategy.sendRedirect(request, response, url)
-        );
-        assertTrue(exception.getMessage().contains("Protocol-relative redirects are not allowed"));
+        try {
+            strategy.sendRedirect(request, response, url);
+            fail("Expected MalformedURLException");
+        } catch (MalformedURLException e) {
+            assertTrue(e.getMessage().contains("Protocol-relative redirects are not allowed"));
+        }
     }
 
     @Test
@@ -104,11 +117,12 @@ public class LocalRedirectStrategyTest {
         setupMockRequest(url, "localhost", 8080, "/app");
 
         // Execute & Verify - Should throw MalformedURLException
-        MalformedURLException exception = assertThrows(
-                MalformedURLException.class,
-                () -> strategy.sendRedirect(request, response, url)
-        );
-        assertTrue(exception.getMessage().contains("Protocol-relative redirects are not allowed"));
+        try {
+            strategy.sendRedirect(request, response, url);
+            fail("Expected MalformedURLException");
+        } catch (MalformedURLException e) {
+            assertTrue(e.getMessage().contains("Protocol-relative redirects are not allowed"));
+        }
     }
 
     @Test
@@ -118,11 +132,12 @@ public class LocalRedirectStrategyTest {
         setupMockRequest(url, "localhost", 8080, "/app");
 
         // Execute & Verify - Should throw MalformedURLException
-        MalformedURLException exception = assertThrows(
-                MalformedURLException.class,
-                () -> strategy.sendRedirect(request, response, url)
-        );
-        assertTrue(exception.getMessage().contains("Protocol-relative redirects are not allowed"));
+        try {
+            strategy.sendRedirect(request, response, url);
+            fail("Expected MalformedURLException");
+        } catch (MalformedURLException e) {
+            assertTrue(e.getMessage().contains("Protocol-relative redirects are not allowed"));
+        }
     }
 
     // ============ BLOCKED: ENCODED BYPASS ATTEMPTS ============
@@ -134,11 +149,12 @@ public class LocalRedirectStrategyTest {
         setupMockRequest(url, "localhost", 8080, "/app");
 
         // Execute & Verify - Should throw MalformedURLException after decoding
-        MalformedURLException exception = assertThrows(
-                MalformedURLException.class,
-                () -> strategy.sendRedirect(request, response, url)
-        );
-        assertTrue(exception.getMessage().contains("Protocol-relative redirects are not allowed"));
+        try {
+            strategy.sendRedirect(request, response, url);
+            fail("Expected MalformedURLException");
+        } catch (MalformedURLException e) {
+            assertTrue(e.getMessage().contains("Protocol-relative redirects are not allowed"));
+        }
     }
 
     @Test
@@ -164,11 +180,12 @@ public class LocalRedirectStrategyTest {
         setupMockRequest(url, "localhost", 8080, "/app");
 
         // Execute & Verify - Should throw MalformedURLException because it's not a local redirect
-        MalformedURLException exception = assertThrows(
-                MalformedURLException.class,
-                () -> strategy.sendRedirect(request, response, url)
-        );
-        assertTrue(exception.getMessage().contains("Invalid redirect url specified"));
+        try {
+            strategy.sendRedirect(request, response, url);
+            fail("Expected MalformedURLException");
+        } catch (MalformedURLException e) {
+            assertTrue(e.getMessage().contains("Invalid redirect url specified"));
+        }
     }
 
     @Test
@@ -178,11 +195,12 @@ public class LocalRedirectStrategyTest {
         setupMockRequest(url, "localhost", 8080, "/app");
 
         // Execute & Verify - Should throw MalformedURLException because it's not a local redirect
-        MalformedURLException exception = assertThrows(
-                MalformedURLException.class,
-                () -> strategy.sendRedirect(request, response, url)
-        );
-        assertTrue(exception.getMessage().contains("Invalid redirect url specified"));
+        try {
+            strategy.sendRedirect(request, response, url);
+            fail("Expected MalformedURLException");
+        } catch (MalformedURLException e) {
+            assertTrue(e.getMessage().contains("Invalid redirect url specified"));
+        }
     }
 
     @Test
@@ -192,7 +210,25 @@ public class LocalRedirectStrategyTest {
         setupMockRequest(url, "localhost", 8080, "/app");
 
         // Execute & Verify - Should not throw exception because it's a valid local redirect
-        assertDoesNotThrow(() -> strategy.sendRedirect(request, response, url));
+        try {
+            strategy.sendRedirect(request, response, url);
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRedirectWithEncodedBackslashProtocolRelativeBlocked() throws IOException {
+        // Setup - Encoded backslashes: /%5C%5Cevil.com -> /\\evil.com -> after slash-normalization starts with //
+        String url = "/%5C%5Cevil.com";
+        setupMockRequest(url, "localhost", 8080, "/app");
+
+        try {
+            strategy.sendRedirect(request, response, url);
+            fail("Expected MalformedURLException");
+        } catch (MalformedURLException e) {
+            assertTrue(e.getMessage().contains("Protocol-relative redirects are not allowed"));
+        }
     }
 
     // ============ HELPER METHODS ============

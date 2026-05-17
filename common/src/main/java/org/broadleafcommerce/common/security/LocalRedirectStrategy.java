@@ -52,25 +52,42 @@ public class LocalRedirectStrategy implements RedirectStrategy {
      */
     @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
-        // Normalize the URL by decoding it to prevent encoded bypasses
-        String normalizedUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
-        
-        // Reject protocol-relative URLs which can be used for open redirect attacks
-        if (normalizedUrl.startsWith("//") || normalizedUrl.startsWith("\\\\")) {
+        // Normalize the URL for validation only (do not mutate the redirect target sent to client)
+        String normalizedForValidation = URLDecoder.decode(url, StandardCharsets.UTF_8);
+
+        // Replace backslashes with forward slashes for robust prefix detection
+        String slashNormalized = normalizedForValidation.replace('\\', '/');
+
+        // Reject protocol-relative or multi-slash prefixes after normalization
+        int leadingSlashes = 0;
+        while (leadingSlashes < slashNormalized.length() && slashNormalized.charAt(leadingSlashes) == '/') {
+            leadingSlashes++;
+        }
+        if (leadingSlashes >= 2) {
             String errorMessage = "Protocol-relative redirects are not allowed";
             LOG.warn(errorMessage + ":  " + url);
             throw new MalformedURLException(errorMessage);
         }
-        
-        // Validate all absolute URLs against the allow list
-        if (!normalizedUrl.startsWith("/")) {
-            validateRedirectUrl(request.getContextPath(), normalizedUrl, request.getServerName(), request.getServerPort());
+
+        // Only treat true absolute URLs (http/https) as candidates for URL validation.
+        String lower = normalizedForValidation.toLowerCase();
+        boolean isAbsolute = lower.startsWith("http://") || lower.startsWith("https://");
+
+        if (isAbsolute) {
+            // Pass contextPath without leading slash into validator to avoid double-slash comparison
+            String contextPath = request.getContextPath();
+            if (StringUtils.isNotEmpty(contextPath) && contextPath.startsWith("/")) {
+                contextPath = contextPath.substring(1);
+            }
+            validateRedirectUrl(contextPath, normalizedForValidation, request.getServerName(), request.getServerPort());
         }
-        
-        String redirectUrl = calculateRedirectUrl(request.getContextPath(), normalizedUrl);
+
+        // Use the original provided url for the actual redirect to avoid corrupting '+' and other
+        // characters that URLDecoder would alter for form-encoding semantics.
+        String redirectUrl = calculateRedirectUrl(request.getContextPath(), url);
         redirectUrl = response.encodeRedirectURL(redirectUrl);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Redirecting to '" + normalizedUrl + "'");
+            LOG.debug("Redirecting to '" + url + "'");
         }
 
         response.sendRedirect(redirectUrl);
