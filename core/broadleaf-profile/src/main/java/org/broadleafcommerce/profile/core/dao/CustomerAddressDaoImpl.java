@@ -56,7 +56,9 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
 
     @Override
     public CustomerAddress save(CustomerAddress customerAddress) {
-        return em.merge(customerAddress);
+        CustomerAddress address = em.merge(customerAddress);
+        em.flush();
+        return address;
     }
 
     @Override

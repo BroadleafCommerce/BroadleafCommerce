@@ -61,7 +61,7 @@
         <gpg.plugin.version>3.2.7</gpg.plugin.version>
         <closure.compiler.version>v20240317</closure.compiler.version>
         <hsqldb.version>2.7.4</hsqldb.version>
-        <hibernate.version>7.3.2.Final</hibernate.version>
+        <hibernate.version>7.4.0.Final</hibernate.version>
         <jakarta.version>6.1.0</jakarta.version>
         <jakarta-xml.version>4.0.4</jakarta-xml.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>

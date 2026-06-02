@@ -65,6 +65,7 @@
             <property name="hibernate.id.new_generator_mappings" value="true"/>
             <property name="hibernate.id.optimizer.pooled.prefer_lo" value="true"/>
             <property name="hibernate.jdbc.log.warnings" value="false"/>
+            <property name="hibernate.max_fetch_depth" value="2"></property>
         </properties>
     </persistence-unit>
 </persistence>
