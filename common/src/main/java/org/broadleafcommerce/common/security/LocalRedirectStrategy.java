@@ -50,6 +50,16 @@ public class LocalRedirectStrategy implements RedirectStrategy {
      */
     @Override
     public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) throws IOException {
+        if (isProtocolRelativeUrl(url)) {
+            // A protocol-relative reference (e.g. "//evil.com" or "/\evil.com") begins with a slash,
+            // so the legacy startsWith("/") check treated it as a safe local path. Browsers, however,
+            // resolve it as an absolute reference to an external host, which allows the application's
+            // redirect protection to be bypassed (open redirect). There is no legitimate local redirect
+            // of this form, so reject it outright.
+            String errorMessage = "Invalid redirect url specified.  Protocol-relative urls are not allowed";
+            LOG.warn(errorMessage + ":  " + url);
+            throw new MalformedURLException(errorMessage + ":  " + url);
+        }
         if (!url.startsWith("/")) {
             if (StringUtils.equals(request.getParameter("successUrl"), url)
                     || StringUtils.equals(request.getParameter("failureUrl"), url)) {
@@ -92,6 +102,27 @@ public class LocalRedirectStrategy implements RedirectStrategy {
         }
 
         return url;
+    }
+
+    /**
+     * Determine whether the supplied url is a protocol-relative (a.k.a. network-path) reference.
+     *
+     * <p>Such urls begin with two slashes ({@code //host}) or use a backslash variant
+     * ({@code /\host}, {@code \/host}, {@code \\host}) that browsers normalize to {@code //host}.
+     * They start with a slash and therefore pass a naive {@code startsWith("/")} "is local" check,
+     * but the browser resolves them as absolute references to an external host. They must never be
+     * treated as safe local redirects.</p>
+     *
+     * @param url the candidate redirect url
+     * @return true if the url is a protocol-relative reference
+     */
+    protected boolean isProtocolRelativeUrl(String url) {
+        if (url == null || url.length() < 2) {
+            return false;
+        }
+        char first = url.charAt(0);
+        char second = url.charAt(1);
+        return (first == '/' || first == '\\') && (second == '/' || second == '\\');
     }
 
     /**
