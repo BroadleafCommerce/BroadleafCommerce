@@ -49,7 +49,10 @@ import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FIELD", indexes = {@Index(name = "ENTITY_TYPE_INDEX", columnList = "ENTITY_TYPE")})
+@Table(name = "BLC_FIELD", indexes = {
+        @Index(name = "ENTITY_TYPE_INDEX", columnList = "ENTITY_TYPE"),
+        @Index(name = "ABBREVIATION_INDEX", columnList = "ABBREVIATION")
+})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blSearchElements")
 @DirectCopyTransform({
         @DirectCopyTransformMember(templateTokens = DirectCopyTransformTypes.MULTITENANT_SITE),
