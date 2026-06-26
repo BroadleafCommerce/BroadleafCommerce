@@ -5555,6 +5555,12 @@ label.checkmark span.checkmark:after {
     transform: rotate(37.5deg);
     position: relative;
 }
+
+.override-generated-fieldValue {
+    text-decoration-line: underline;
+    text-decoration-style: dashed;
+}
+
 /* end styled checkmarks */
 
 
