@@ -119,12 +119,6 @@ public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
                 LOG.trace("Thread[" + Thread.currentThread().getId() + "] grabbed lock for order[" + order.getId() + "]");
             }
 
-            // When we have a hold of the lock for the order, we want to reload the order from the database.
-            // This is because a different thread could have modified the order in between the time we initially
-            // read it for this thread and now, resulting in the order being stale. Additionally, we want to make
-            // sure we detach the order from the EntityManager and forcefully reload the order.
-            CartState.setCart(orderService.reloadOrder(order));
-
             chain.doFilter(request, response);
         } finally {
             if (lockObject != null) {
