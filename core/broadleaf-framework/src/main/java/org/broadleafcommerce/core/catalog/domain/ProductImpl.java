@@ -32,7 +32,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
@@ -56,8 +56,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -80,7 +78,6 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -175,15 +172,10 @@ public class ProductImpl implements Product, ProductAdminPresentation, Status, A
      * The id.
      */
     @Id
-    @GeneratedValue(generator = "ProductId")
-    @GenericGenerator(
-            name = "ProductId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "ProductImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.catalog.domain.ProductImpl")
-            })
+    @BroadleafIdGenerator(
+            segmentValue = "ProductImpl",
+            entityName = "org.broadleafcommerce.core.catalog.domain.ProductImpl"
+    )
     @Column(name = "PRODUCT_ID")
     @AdminPresentation(friendlyName = "ProductImpl_Product_ID", visibility = VisibilityEnum.HIDDEN_ALL)
     protected Long id;

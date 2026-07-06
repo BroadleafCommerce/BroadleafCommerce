@@ -23,19 +23,16 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -81,15 +78,9 @@ public class SkuAttributeImpl implements SkuAttribute {
      * The id.
      */
     @Id
-    @GeneratedValue(generator = "SkuAttributeId")
-    @GenericGenerator(
-            name = "SkuAttributeId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "SkuAttributeImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "SkuAttributeImpl",
+            entityName = "org.broadleafcommerce.core.catalog.domain.SkuAttributeImpl"
     )
     @Column(name = "SKU_ATTR_ID")
     protected Long id;

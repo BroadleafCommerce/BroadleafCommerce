@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -27,8 +27,6 @@ import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.rating.service.type.ReviewStatusType;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -39,7 +37,6 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -98,15 +95,9 @@ public class ReviewDetailImpl implements ReviewDetail, Serializable {
     @AdminPresentationToOneLookup
     protected RatingDetail ratingDetail;
     @Id
-    @GeneratedValue(generator = "ReviewDetailId")
-    @GenericGenerator(
-            name = "ReviewDetailId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "ReviewDetailImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.rating.domain.ReviewDetailImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "ReviewDetailImpl",
+            entityName = "org.broadleafcommerce.core.rating.domain.ReviewDetailImpl"
     )
     @Column(name = "REVIEW_DETAIL_ID")
     private Long id;

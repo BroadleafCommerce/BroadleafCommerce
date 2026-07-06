@@ -22,19 +22,16 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -57,15 +54,9 @@ public class CountrySubdivisionCategoryImpl implements CountrySubdivisionCategor
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CountrySubdivisionCategoryId")
-    @GenericGenerator(
-            name = "CountrySubdivisionCategoryId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CountrySubdivisionCategoryImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategoryImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "CountrySubdivisionCategoryImpl",
+            entityName = "org.broadleafcommerce.profile.core.domain.CountrySubdivisionCategoryImpl"
     )
     @Column(name = "COUNTRY_SUB_CAT_ID")
     protected Long id;

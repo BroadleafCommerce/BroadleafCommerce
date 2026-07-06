@@ -109,6 +109,7 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
             }
             idField.setAccessible(true);
             GenericGenerator genericAnnot = idField.getAnnotation(GenericGenerator.class);
+            BroadleafIdGenerator broadleafIdGenerator = idField.getAnnotation(BroadleafIdGenerator.class);
             TableGenerator tableAnnot = idField.getAnnotation(TableGenerator.class);
             String segmentValue = null;
             String tableName = null;
@@ -148,6 +149,12 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                 if (StringUtils.isBlank(valueColumnName)) {
                     valueColumnName = IdOverrideTableGenerator.DEFAULT_VALUE_COLUMN_NAME;
                 }
+            } else if (broadleafIdGenerator != null) {
+                segmentValue = broadleafIdGenerator.segmentValue();
+                tableName = broadleafIdGenerator.tableName();
+                segmentColumnName = broadleafIdGenerator.segmentColumnName();
+                valueColumnName = broadleafIdGenerator.valueColumnName();
+                incrementSize = (long) broadleafIdGenerator.incrementSize();
             } else if (tableAnnot != null) {
                 //This is a traditional Hibernate generator
                 segmentValue = tableAnnot.pkColumnValue();

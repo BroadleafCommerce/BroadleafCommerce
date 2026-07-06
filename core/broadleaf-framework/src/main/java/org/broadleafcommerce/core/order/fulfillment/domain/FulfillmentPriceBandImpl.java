@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.fulfillment.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -30,11 +29,9 @@ import jakarta.persistence.Table;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -56,15 +53,9 @@ public class FulfillmentPriceBandImpl extends FulfillmentBandImpl implements Ful
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FulfillmentPriceBandId")
-    @GenericGenerator(
-            name = "FulfillmentPriceBandId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "FulfillmentPriceBandImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "FulfillmentPriceBandImpl",
+            entityName = "org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentPriceBandImpl"
     )
     @Column(name = "FULFILLMENT_PRICE_BAND_ID")
     protected Long id;

@@ -17,17 +17,14 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -49,15 +46,9 @@ public class CustomerRoleImpl implements CustomerRole {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CustomerRoleId")
-    @GenericGenerator(
-            name = "CustomerRoleId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CustomerRoleImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.profile.core.domain.CustomerRoleImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "CustomerRoleImpl",
+            entityName = "org.broadleafcommerce.profile.core.domain.CustomerRoleImpl"
     )
     @Column(name = "CUSTOMER_ROLE_ID")
     protected Long id;

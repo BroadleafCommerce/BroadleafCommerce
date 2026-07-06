@@ -36,7 +36,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
@@ -67,9 +67,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
@@ -92,7 +90,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -151,14 +148,9 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
         }
     };
     @Id
-    @GeneratedValue(generator = "CategoryId")
-    @GenericGenerator(
-            name = "CategoryId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CategoryImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.CategoryImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "CategoryImpl",
+            entityName = "org.broadleafcommerce.core.catalog.domain.CategoryImpl"
     )
     @Column(name = "CATEGORY_ID")
     @AdminPresentation(friendlyName = "CategoryImpl_Category_ID", visibility = VisibilityEnum.HIDDEN_ALL)

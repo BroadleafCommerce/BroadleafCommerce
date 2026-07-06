@@ -30,6 +30,10 @@ import static java.lang.annotation.ElementType.METHOD;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ FIELD, METHOD})
 public @interface BroadleafIdGenerator {
-    String segment_value();
-    String entity_name();
+    String segmentValue();
+    String entityName();
+    String tableName() default "SEQUENCE_GENERATOR";
+    String segmentColumnName() default "ID_NAME";
+    String valueColumnName() default "ID_VAL";
+    int  incrementSize() default 50;
 }

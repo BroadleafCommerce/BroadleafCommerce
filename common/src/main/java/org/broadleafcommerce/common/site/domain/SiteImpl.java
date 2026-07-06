@@ -27,7 +27,7 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.locale.domain.Locale;
 import org.broadleafcommerce.common.locale.domain.LocaleImpl;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
@@ -35,8 +35,6 @@ import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.lang.reflect.Method;
@@ -47,7 +45,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -77,14 +74,9 @@ public class SiteImpl implements Site, SiteAdminPresentation, AdminMainEntity {
     private static final Log LOG = LogFactory.getLog(SiteImpl.class);
 
     @Id
-    @GeneratedValue(generator = "SiteId")
-    @GenericGenerator(
-            name = "SiteId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "SiteImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.site.domain.SiteImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "SiteImpl",
+            entityName = "org.broadleafcommerce.common.site.domain.SiteImpl"
     )
     @Column(name = "SITE_ID")
     protected Long id;

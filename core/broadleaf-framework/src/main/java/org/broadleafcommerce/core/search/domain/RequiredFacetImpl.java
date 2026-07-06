@@ -22,18 +22,15 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -58,15 +55,9 @@ public class RequiredFacetImpl implements RequiredFacet {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "RequiredFacetId")
-    @GenericGenerator(
-            name = "RequiredFacetId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "RequiredFacetImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.search.domain.RequiredFacetImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "RequiredFacetImpl",
+            entityName = "org.broadleafcommerce.core.search.domain.RequiredFacetImpl"
     )
     @Column(name = "ID")
     protected Long id;

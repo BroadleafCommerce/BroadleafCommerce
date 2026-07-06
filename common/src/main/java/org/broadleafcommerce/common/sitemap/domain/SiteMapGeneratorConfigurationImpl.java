@@ -20,21 +20,18 @@ package org.broadleafcommerce.common.sitemap.domain;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -59,14 +56,10 @@ public class SiteMapGeneratorConfigurationImpl implements SiteMapGeneratorConfig
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "GeneratorConfigurationId")
-    @GenericGenerator(
-            name = "GeneratorConfigurationId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "SiteMapGeneratorConfigurationImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl")
-            })
+    @BroadleafIdGenerator(
+            segmentValue = "SiteMapGeneratorConfigurationImpl",
+            entityName = "org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl"
+    )
     @Column(name = "GEN_CONFIG_ID")
     protected Long id;
 

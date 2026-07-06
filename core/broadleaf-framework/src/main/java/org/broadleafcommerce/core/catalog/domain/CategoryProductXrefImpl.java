@@ -22,21 +22,18 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -79,15 +76,9 @@ public class CategoryProductXrefImpl implements CategoryProductXref {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CategoryProductId")
-    @GenericGenerator(
-            name = "CategoryProductId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CategoryProductXrefImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "CategoryProductXrefImpl",
+            entityName = "org.broadleafcommerce.core.catalog.domain.CategoryProductXrefImpl"
     )
     @Column(name = "CATEGORY_PRODUCT_ID")
     protected Long id;

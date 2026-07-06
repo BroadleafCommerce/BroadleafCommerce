@@ -20,8 +20,8 @@ package org.broadleafcommerce.core.offer.domain;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.currency.util.CurrencyCodeIdentifiable;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -38,8 +38,6 @@ import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serial;
@@ -47,7 +45,6 @@ import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -75,15 +72,9 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FGAdjustmentId")
-    @GenericGenerator(
-            name = "FGAdjustmentId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "FulfillmentGroupAdjustmentImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "FulfillmentGroupAdjustmentImpl",
+            entityName = "org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustmentImpl"
     )
     @Column(name = "FG_ADJUSTMENT_ID")
     protected Long id;

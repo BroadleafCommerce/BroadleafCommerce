@@ -26,6 +26,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -68,15 +69,9 @@ public class SkuMediaXrefImpl implements SkuMediaXref, Media, MultiTenantCloneab
     @Serial
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(generator = "SkuMediaId")
-    @GenericGenerator(
-            name = "SkuMediaId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "SkuMediaXrefImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "SkuMediaXrefImpl",
+            entityName = "org.broadleafcommerce.core.catalog.domain.SkuMediaXrefImpl"
     )
     @Column(name = "SKU_MEDIA_ID")
     protected Long id;

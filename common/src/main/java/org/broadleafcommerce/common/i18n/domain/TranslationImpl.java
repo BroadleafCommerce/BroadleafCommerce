@@ -23,7 +23,7 @@ import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -32,9 +32,7 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.io.Serial;
@@ -42,7 +40,6 @@ import java.io.Serializable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -66,14 +63,10 @@ public class TranslationImpl implements Serializable, Translation {
     private static final long serialVersionUID = -122818474469147685L;
 
     @Id
-    @GeneratedValue(generator = "TranslationId")
-    @GenericGenerator(
-            name = "TranslationId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "TranslationImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.i18n.domain.TranslationImpl")
-            })
+    @BroadleafIdGenerator(
+            segmentValue = "TranslationImpl",
+            entityName = "org.broadleafcommerce.common.i18n.domain.TranslationImpl"
+    )
     @Column(name = "TRANSLATION_ID")
     protected Long id;
 

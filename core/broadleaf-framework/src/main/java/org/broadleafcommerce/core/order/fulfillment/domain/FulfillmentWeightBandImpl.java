@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.fulfillment.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -30,14 +29,12 @@ import jakarta.persistence.Table;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.WeightUnitOfMeasureType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -59,15 +56,9 @@ public class FulfillmentWeightBandImpl extends FulfillmentBandImpl implements Fu
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "FulfillmentWeightBandId")
-    @GenericGenerator(
-            name = "FulfillmentWeightBandId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "FulfillmentWeightBandImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "FulfillmentWeightBandImpl",
+            entityName = "org.broadleafcommerce.core.order.fulfillment.domain.FulfillmentWeightBandImpl"
     )
     @Column(name = "FULFILLMENT_WEIGHT_BAND_ID")
     protected Long id;

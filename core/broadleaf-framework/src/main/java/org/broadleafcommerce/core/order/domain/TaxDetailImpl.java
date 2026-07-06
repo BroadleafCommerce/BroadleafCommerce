@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -35,13 +34,11 @@ import org.broadleafcommerce.common.currency.domain.BroadleafCurrency;
 import org.broadleafcommerce.common.currency.domain.BroadleafCurrencyImpl;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -57,15 +54,9 @@ public class TaxDetailImpl implements TaxDetail {
     private static final long serialVersionUID = -4036994446393527252L;
 
     @Id
-    @GeneratedValue(generator = "TaxDetailId")
-    @GenericGenerator(
-            name = "TaxDetailId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "TaxDetailImpl"),
-                    @Parameter(name = "increment_size", value = "150"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.catalog.domain.TaxDetailImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "TaxDetailImpl",
+            entityName = "org.broadleafcommerce.core.catalog.domain.TaxDetailImpl"
     )
     @Column(name = "TAX_DETAIL_ID")
     protected Long id;

@@ -17,20 +17,17 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serializable;
 import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -61,15 +58,9 @@ public class RatingDetailImpl implements RatingDetail, Serializable {
     @AdminPresentationToOneLookup
     protected RatingSummary ratingSummary;
     @Id
-    @GeneratedValue(generator = "RatingDetailId")
-    @GenericGenerator(
-            name = "RatingDetailId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "RatingDetailImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.rating.domain.RatingDetailImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "RatingDetailImpl",
+            entityName = "org.broadleafcommerce.core.rating.domain.RatingDetailImpl"
     )
     @Column(name = "RATING_DETAIL_ID")
     private Long id;

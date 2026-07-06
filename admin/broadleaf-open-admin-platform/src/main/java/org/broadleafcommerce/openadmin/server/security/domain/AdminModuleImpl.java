@@ -17,22 +17,19 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -55,15 +52,9 @@ public class AdminModuleImpl implements AdminModule {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "AdminModuleId")
-    @GenericGenerator(
-            name = "AdminModuleId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "AdminModuleImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "AdminModuleImpl",
+            entityName = "org.broadleafcommerce.openadmin.server.security.domain.AdminModuleImpl"
     )
     @Column(name = "ADMIN_MODULE_ID")
     @AdminPresentation(friendlyName = "AdminModuleImpl_Admin_Module_ID",

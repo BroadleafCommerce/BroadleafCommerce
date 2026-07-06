@@ -23,21 +23,18 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -66,15 +63,9 @@ public class StructuredContentItemCriteriaImpl
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "SCItemCriteriaId")
-    @GenericGenerator(
-            name = "SCItemCriteriaId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "StructuredContentItemCriteriaImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.cms.page.domain.StructuredContentItemCriteriaImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "StructuredContentItemCriteriaImpl",
+            entityName = "org.broadleafcommerce.cms.page.domain.StructuredContentItemCriteriaImpl"
     )
     @Column(name = "SC_ITEM_CRITERIA_ID")
     @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Item_Criteria_Id",

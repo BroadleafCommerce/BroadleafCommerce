@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.order.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -27,12 +26,10 @@ import jakarta.persistence.Table;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
@@ -46,15 +43,9 @@ public class PersonalMessageImpl implements PersonalMessage {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PersonalMessageId")
-    @GenericGenerator(
-            name = "PersonalMessageId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "PersonalMessageImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.order.domain.PersonalMessageImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "PersonalMessageImpl",
+            entityName = "org.broadleafcommerce.core.order.domain.PersonalMessageImpl"
     )
     @Column(name = "PERSONAL_MESSAGE_ID")
     protected Long id;

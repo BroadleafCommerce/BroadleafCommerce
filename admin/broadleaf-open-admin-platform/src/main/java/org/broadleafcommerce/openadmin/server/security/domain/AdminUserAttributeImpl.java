@@ -17,17 +17,14 @@
  */
 package org.broadleafcommerce.openadmin.server.security.domain;
 
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -48,15 +45,9 @@ public class AdminUserAttributeImpl implements AdminUserAttribute {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "AdminUserAttributeId")
-    @GenericGenerator(
-            name = "AdminUserAttributeId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "AdminUserAttributeImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserAttributeImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "AdminUserAttributeImpl",
+            entityName = "org.broadleafcommerce.openadmin.server.security.domain.AdminUserAttributeImpl"
     )
     @Column(name = "ATTRIBUTE_ID")
     protected Long id;

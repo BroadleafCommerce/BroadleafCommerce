@@ -20,7 +20,7 @@ package org.broadleafcommerce.openadmin.server.security.domain;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
@@ -29,8 +29,6 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +36,6 @@ import java.util.List;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -68,15 +65,9 @@ public class AdminSectionImpl implements AdminSection {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "AdminSectionId")
-    @GenericGenerator(
-            name = "AdminSectionId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "AdminSectionImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "AdminSectionImpl",
+            entityName = "org.broadleafcommerce.openadmin.server.security.domain.AdminSectionImpl"
     )
     @Column(name = "ADMIN_SECTION_ID")
     @AdminPresentation(friendlyName = "AdminSectionImpl_Admin_Section_ID",

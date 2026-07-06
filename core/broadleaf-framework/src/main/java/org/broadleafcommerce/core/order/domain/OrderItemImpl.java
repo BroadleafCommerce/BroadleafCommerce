@@ -25,7 +25,6 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -51,8 +50,8 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.money.Money;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
 import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
@@ -79,8 +78,6 @@ import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serial;
@@ -119,14 +116,9 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OrderItemId")
-    @GenericGenerator(
-            name = "OrderItemId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "OrderItemImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.order.domain.OrderItemImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "OrderItemImpl",
+            entityName = "org.broadleafcommerce.core.order.domain.OrderItemImpl"
     )
     @Column(name = "ORDER_ITEM_ID")
     @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)

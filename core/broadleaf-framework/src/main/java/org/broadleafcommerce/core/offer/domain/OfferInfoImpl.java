@@ -19,10 +19,8 @@ package org.broadleafcommerce.core.offer.domain;
 
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.util.HashMap;
@@ -32,7 +30,6 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -49,15 +46,9 @@ public class OfferInfoImpl implements OfferInfo {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "OfferInfoId")
-    @GenericGenerator(
-            name = "OfferInfoId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "OfferInfoImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.offer.domain.OfferInfoImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "OfferInfoImpl",
+            entityName = "org.broadleafcommerce.core.offer.domain.OfferInfoImpl"
     )
     @Column(name = "OFFER_INFO_ID")
     protected Long id;

@@ -24,20 +24,17 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.extensibility.jpa.copy.ProfileEntity;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.openadmin.audit.AdminAuditableListener;
 import org.hibernate.Length;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -66,15 +63,9 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PageFieldId")
-    @GenericGenerator(
-            name = "PageFieldId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "PageFieldImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.cms.page.domain.PageFieldImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "PageFieldImpl",
+            entityName = "org.broadleafcommerce.cms.page.domain.PageFieldImpl"
     )
     @Column(name = "PAGE_FLD_ID")
     protected Long id;

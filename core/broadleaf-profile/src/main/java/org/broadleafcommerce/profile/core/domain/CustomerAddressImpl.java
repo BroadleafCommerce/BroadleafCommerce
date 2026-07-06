@@ -20,7 +20,7 @@ package org.broadleafcommerce.profile.core.domain;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
@@ -32,8 +32,6 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.broadleafcommerce.common.time.domain.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
 import java.io.Serial;
@@ -43,7 +41,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -78,15 +75,9 @@ public class CustomerAddressImpl implements CustomerAddress {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "CustomerAddressId")
-    @GenericGenerator(
-            name = "CustomerAddressId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CustomerAddressImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.profile.core.domain.CustomerAddressImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "CustomerAddressImpl",
+            entityName = "org.broadleafcommerce.profile.core.domain.CustomerAddressImpl"
     )
     @Column(name = "CUSTOMER_ADDRESS_ID")
     protected Long id;

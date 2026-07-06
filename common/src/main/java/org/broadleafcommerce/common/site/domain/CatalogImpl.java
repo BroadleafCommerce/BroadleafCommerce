@@ -25,7 +25,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
@@ -33,8 +33,6 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLDelete;
 
 import java.lang.reflect.Method;
@@ -45,7 +43,6 @@ import java.util.List;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -72,14 +69,10 @@ public class CatalogImpl implements Catalog, AdminMainEntity {
     private static final Log LOG = LogFactory.getLog(CatalogImpl.class);
 
     @Id
-    @GeneratedValue(generator = "CatalogId")
-    @GenericGenerator(
-            name = "CatalogId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "CatalogImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.site.domain.CatalogImpl")
-            })
+    @BroadleafIdGenerator(
+            segmentValue = "CatalogImpl",
+            entityName = "org.broadleafcommerce.common.site.domain.CatalogImpl"
+    )
     @Column(name = "CATALOG_ID")
     protected Long id;
 

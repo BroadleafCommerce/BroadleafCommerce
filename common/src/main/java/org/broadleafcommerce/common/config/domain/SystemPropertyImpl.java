@@ -26,21 +26,18 @@ import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.ValidationConfiguration;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -68,15 +65,9 @@ public class SystemPropertyImpl implements SystemProperty, AdminMainEntity, Syst
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "SystemPropertyId")
-    @GenericGenerator(
-            name = "SystemPropertyId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "SystemPropertyImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.common.config.domain.SystemPropertyImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "SystemPropertyImpl",
+            entityName = "org.broadleafcommerce.common.config.domain.SystemPropertyImpl"
     )
     @Column(name = "BLC_SYSTEM_PROPERTY_ID")
     protected Long id;

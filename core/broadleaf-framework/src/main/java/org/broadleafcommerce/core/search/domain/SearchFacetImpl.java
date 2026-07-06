@@ -22,7 +22,6 @@ import com.google.common.base.Strings;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -40,7 +39,7 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMember;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationAdornedTargetCollection;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
@@ -55,8 +54,6 @@ import org.broadleafcommerce.common.presentation.override.PropertyType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serial;
@@ -97,14 +94,9 @@ public class SearchFacetImpl implements SearchFacet, Serializable, AdminMainEnti
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "SearchFacetId")
-    @GenericGenerator(
-            name = "SearchFacetId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "SearchFacetImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.core.search.domain.SearchFacetImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "SearchFacetImpl",
+            entityName = "org.broadleafcommerce.core.search.domain.SearchFacetImpl"
     )
     @Column(name = "SEARCH_FACET_ID")
     @AdminPresentation(friendlyName = "SearchFacetImpl_ID", order = 1, group = GroupName.General,

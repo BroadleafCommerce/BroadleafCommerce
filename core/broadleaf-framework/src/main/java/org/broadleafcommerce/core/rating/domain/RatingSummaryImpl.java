@@ -17,15 +17,13 @@
  */
 package org.broadleafcommerce.core.rating.domain;
 
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -35,7 +33,6 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -56,15 +53,9 @@ public class RatingSummaryImpl implements RatingSummary, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "RatingSummaryId")
-    @GenericGenerator(
-            name = "RatingSummaryId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "RatingSummaryImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.core.rating.domain.RatingSummaryImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "RatingSummaryImpl",
+            entityName = "org.broadleafcommerce.core.rating.domain.RatingSummaryImpl"
     )
     @Column(name = "RATING_SUMMARY_ID")
     protected Long id;

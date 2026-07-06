@@ -25,18 +25,15 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformMe
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTypes;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.util.UnknownUnwrapTypeException;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
@@ -58,14 +55,9 @@ public class MediaImpl implements Media, MultiTenantCloneable<MediaImpl> {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "MediaId")
-    @GenericGenerator(
-            name = "MediaId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "MediaImpl"),
-                    @Parameter(name = "entity_name", value = "org.broadleafcommerce.common.media.domain.MediaImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "MediaImpl",
+            entityName = "org.broadleafcommerce.common.media.domain.MediaImpl"
     )
     @Column(name = "MEDIA_ID")
     protected Long id;
