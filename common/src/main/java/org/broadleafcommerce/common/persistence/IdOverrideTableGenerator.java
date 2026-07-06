@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2025 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -104,13 +104,17 @@ public class IdOverrideTableGenerator extends TableGenerator implements Annotati
     @Override
     public void configure(GeneratorCreationContext creationContext, Properties params) throws MappingException {
         if (config != null) {
-            params.putIfAbsent(SEGMENT_VALUE_PARAM, config.segment_value());
-            params.putIfAbsent(ENTITY_NAME_PARAM, config.entity_name());
+            params.putIfAbsent(SEGMENT_VALUE_PARAM, config.segmentValue());
+            params.putIfAbsent(ENTITY_NAME_PARAM, config.entityName());
+            params.putIfAbsent(TABLE_PARAM, config.tableName());
+            params.putIfAbsent(SEGMENT_COLUMN_PARAM, config.segmentColumnName());
+            params.putIfAbsent(VALUE_COLUMN_PARAM, config.valueColumnName());
+            params.putIfAbsent(INCREMENT_PARAM, config.incrementSize());
         }
-        params.putIfAbsent("table_name", "SEQUENCE_GENERATOR");
-        params.putIfAbsent("segment_column_name", DEFAULT_SEGMENT_COLUMN_NAME);
-        params.putIfAbsent("value_column_name", DEFAULT_VALUE_COLUMN_NAME);
-        params.putIfAbsent("increment_size", DEFAULT_INCREMENT_SIZE);
+        params.putIfAbsent(TABLE_PARAM, DEFAULT_TABLE_NAME);
+        params.putIfAbsent(SEGMENT_COLUMN_PARAM, DEFAULT_SEGMENT_COLUMN_NAME);
+        params.putIfAbsent(VALUE_COLUMN_PARAM, DEFAULT_VALUE_COLUMN_NAME);
+        params.putIfAbsent(INCREMENT_PARAM, DEFAULT_INCREMENT_SIZE);
         super.configure(creationContext, params);
         entityName = (String) params.get(ENTITY_NAME_PARAM);
     }

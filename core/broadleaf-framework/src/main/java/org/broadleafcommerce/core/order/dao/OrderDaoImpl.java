@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2025 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -28,16 +28,14 @@ import org.broadleafcommerce.common.util.StreamCapableTransactionalOperationAdap
 import org.broadleafcommerce.common.util.StreamingTransactionCapableUtil;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
-import org.broadleafcommerce.core.order.domain.NullOrderImpl;
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.core.order.domain.OrderLock;
+import org.broadleafcommerce.core.order.domain.*;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.jpa.QueryHints;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,6 +67,7 @@ public class OrderDaoImpl implements OrderDao {
 
     private static final Log LOG = LogFactory.getLog(OrderDaoImpl.class);
     private static final String ORDER_LOCK_KEY = UUID.randomUUID().toString();
+    private static final String DATE_UPDATED_ATTR_NAME = "dateUpdated";
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -81,6 +80,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Resource(name = "blStreamingTransactionCapableUtil")
     protected StreamingTransactionCapableUtil transUtil;
+
+    @Value("${order.outOfSyncCache.refresh:false}")
+    protected boolean refreshOutOfSyncCachedOrder;
 
     @Override
     public Order readOrderById(final Long orderId) {
@@ -211,6 +213,17 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order save(final Order order) {
+        if (refreshOutOfSyncCachedOrder) {
+            OrderAttribute attr = order.getOrderAttributes().get(DATE_UPDATED_ATTR_NAME);
+            if (attr == null) {
+                attr = new OrderAttributeImpl();
+            }
+            attr.setName(DATE_UPDATED_ATTR_NAME);
+            attr.setValue(String.valueOf(new Date().getTime()));
+            attr.setOrder(order);
+            order.getOrderAttributes().put(DATE_UPDATED_ATTR_NAME, attr);
+        }
+
         Order response = em.merge(order);
         //em.flush();
         return response;

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2025 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -118,12 +118,6 @@ public class CartStateFilter extends AbstractIgnorableOncePerRequestFilter {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Thread[" + Thread.currentThread().getId() + "] grabbed lock for order[" + order.getId() + "]");
             }
-
-            // When we have a hold of the lock for the order, we want to reload the order from the database.
-            // This is because a different thread could have modified the order in between the time we initially
-            // read it for this thread and now, resulting in the order being stale. Additionally, we want to make
-            // sure we detach the order from the EntityManager and forcefully reload the order.
-            CartState.setCart(orderService.reloadOrder(order));
 
             chain.doFilter(request, response);
         } finally {

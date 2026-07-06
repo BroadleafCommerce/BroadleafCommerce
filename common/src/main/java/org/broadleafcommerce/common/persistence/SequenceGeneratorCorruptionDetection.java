@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2025 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -109,6 +109,7 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
             }
             idField.setAccessible(true);
             GenericGenerator genericAnnot = idField.getAnnotation(GenericGenerator.class);
+            BroadleafIdGenerator broadleafIdGenerator = idField.getAnnotation(BroadleafIdGenerator.class);
             TableGenerator tableAnnot = idField.getAnnotation(TableGenerator.class);
             String segmentValue = null;
             String tableName = null;
@@ -148,6 +149,12 @@ public class SequenceGeneratorCorruptionDetection implements ApplicationListener
                 if (StringUtils.isBlank(valueColumnName)) {
                     valueColumnName = IdOverrideTableGenerator.DEFAULT_VALUE_COLUMN_NAME;
                 }
+            } else if (broadleafIdGenerator != null) {
+                segmentValue = broadleafIdGenerator.segmentValue();
+                tableName = broadleafIdGenerator.tableName();
+                segmentColumnName = broadleafIdGenerator.segmentColumnName();
+                valueColumnName = broadleafIdGenerator.valueColumnName();
+                incrementSize = (long) broadleafIdGenerator.incrementSize();
             } else if (tableAnnot != null) {
                 //This is a traditional Hibernate generator
                 segmentValue = tableAnnot.pkColumnValue();

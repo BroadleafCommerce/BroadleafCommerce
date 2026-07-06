@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2025 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -10,7 +10,7 @@
  * the Broadleaf End User License Agreement (EULA), Version 1.1
  * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
  * shall apply.
- * 
+ *
  * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
  * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
  * #L%
@@ -18,18 +18,15 @@
 package org.broadleafcommerce.common.site.domain;
 
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
-import org.broadleafcommerce.common.persistence.IdOverrideTableGenerator;
+import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.io.Serial;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -52,15 +49,9 @@ public class SiteCatalogXrefImpl implements SiteCatalogXref, AdminMainEntity {
      * ConcurrentModificationException from Ehcache
      */
     @Id
-    @GeneratedValue(generator = "SiteCatalogXrefId")
-    @GenericGenerator(
-            name = "SiteCatalogXrefId",
-            type = IdOverrideTableGenerator.class,
-            parameters = {
-                    @Parameter(name = "segment_value", value = "SiteCatalogXrefImpl"),
-                    @Parameter(name = "entity_name",
-                            value = "org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl")
-            }
+    @BroadleafIdGenerator(
+            segmentValue = "SiteCatalogXrefImpl",
+            entityName = "org.broadleafcommerce.common.site.domain.SiteCatalogXrefImpl"
     )
     @Column(name = "SITE_CATALOG_XREF_ID")
     protected Long id;
