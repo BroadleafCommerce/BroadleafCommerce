@@ -18,6 +18,7 @@
 package org.broadleafcommerce.test
 
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest
+
 import spock.lang.Specification
 
 /**

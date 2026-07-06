@@ -21,7 +21,7 @@ import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.cha
 import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.Parameter;
 import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.conversion.ParameterConverter;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.util.StringTokenizer;
 
 public class RectangleParameterConverter implements ParameterConverter {

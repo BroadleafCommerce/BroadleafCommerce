@@ -20,8 +20,8 @@ package org.broadleafcommerce.openadmin.spec
 import org.broadleafcommerce.openadmin.web.rulebuilder.BLCOperator
 import org.broadleafcommerce.openadmin.web.rulebuilder.statement.Expression
 import org.broadleafcommerce.openadmin.web.rulebuilder.statement.PhraseTranslator
-import spock.lang.Specification
 
+import spock.lang.Specification
 
 /**
  * @author Elbert Bautista (elbertbautista)

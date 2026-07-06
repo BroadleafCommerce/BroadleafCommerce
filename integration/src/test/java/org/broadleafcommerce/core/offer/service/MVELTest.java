@@ -32,12 +32,10 @@ import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.test.TestNGSiteIntegrationSetup;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
-import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 import java.io.BufferedReader;

@@ -58,10 +58,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 import de.jkeylockmanager.manager.KeyLockManager;
 import de.jkeylockmanager.manager.KeyLockManagers;
 import de.jkeylockmanager.manager.LockCallback;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author Andre Azzolini (apazzolini)

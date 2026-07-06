@@ -26,7 +26,6 @@ import org.broadleafcommerce.test.helper.AdminTestHelper;
 import org.broadleafcommerce.test.helper.TestAdminRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

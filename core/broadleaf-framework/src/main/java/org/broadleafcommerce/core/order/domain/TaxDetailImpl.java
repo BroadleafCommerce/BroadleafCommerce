@@ -17,15 +17,6 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-
 import org.broadleafcommerce.common.config.domain.AbstractModuleConfiguration;
 import org.broadleafcommerce.common.config.domain.ModuleConfiguration;
 import org.broadleafcommerce.common.copy.CreateResponse;
@@ -42,6 +33,15 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.io.Serial;
 import java.math.BigDecimal;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

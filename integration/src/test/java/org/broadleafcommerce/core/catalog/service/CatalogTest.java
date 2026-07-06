@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.media.domain.MediaImpl;
 import org.broadleafcommerce.common.money.Money;

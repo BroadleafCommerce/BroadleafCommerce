@@ -18,7 +18,8 @@
 package org.broadleafcommerce.common.dialect;
 
 import org.hibernate.dialect.OracleDialect;
-import static org.hibernate.type.SqlTypes.*;
+
+import static org.hibernate.type.SqlTypes.BOOLEAN;
 
 public class BroadleafOracleDialect extends OracleDialect {
 

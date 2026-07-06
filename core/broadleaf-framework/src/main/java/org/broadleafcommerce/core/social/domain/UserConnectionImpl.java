@@ -17,15 +17,15 @@
  */
 package org.broadleafcommerce.core.social.domain;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
-
-import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * This class creates the following BLC domain object for the Spring Social User Connection.

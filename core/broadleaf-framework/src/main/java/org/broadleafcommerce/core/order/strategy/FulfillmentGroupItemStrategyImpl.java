@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.order.strategy;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;

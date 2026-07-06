@@ -46,6 +46,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -69,7 +70,6 @@ import jakarta.persistence.MapKey;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
-import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @EntityListeners(value = {AuditableListener.class, CustomerPersistedEntityListener.class})
