@@ -17,14 +17,11 @@
  */
 package org.broadleafcommerce.common.persistence;
 
-import jakarta.persistence.Id;
 import org.hibernate.MappingException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.generator.AnnotationBasedGenerator;
 import org.hibernate.generator.GeneratorCreationContext;
 import org.hibernate.id.enhanced.TableGenerator;
-import org.hibernate.service.ServiceRegistry;
-import org.hibernate.type.Type;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -33,6 +30,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import jakarta.persistence.Id;
 
 /**
  * @author Jeff Fischer

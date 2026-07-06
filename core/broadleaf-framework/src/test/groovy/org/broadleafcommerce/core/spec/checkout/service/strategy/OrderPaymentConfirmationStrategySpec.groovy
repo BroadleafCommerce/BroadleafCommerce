@@ -25,7 +25,11 @@ import org.broadleafcommerce.common.payment.PaymentTransactionType
 import org.broadleafcommerce.common.payment.PaymentType
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO
-import org.broadleafcommerce.common.payment.service.*
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationService
+import org.broadleafcommerce.common.payment.service.PaymentGatewayConfigurationServiceProvider
+import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionConfirmationService
+import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService
 import org.broadleafcommerce.core.checkout.service.exception.CheckoutException
 import org.broadleafcommerce.core.checkout.service.strategy.OrderPaymentConfirmationStrategy
 import org.broadleafcommerce.core.checkout.service.strategy.OrderPaymentConfirmationStrategyImpl
@@ -42,6 +46,7 @@ import org.broadleafcommerce.core.payment.service.OrderToPaymentRequestDTOServic
 import org.broadleafcommerce.core.payment.service.SecureOrderPaymentService
 import org.broadleafcommerce.core.workflow.DefaultProcessContextImpl
 import org.broadleafcommerce.core.workflow.ProcessContext
+
 import spock.lang.Specification
 
 /**

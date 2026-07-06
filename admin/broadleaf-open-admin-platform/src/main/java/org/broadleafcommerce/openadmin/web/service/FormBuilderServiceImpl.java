@@ -107,10 +107,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
@@ -134,6 +130,11 @@ import jakarta.annotation.Resource;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.servlet.http.HttpServletRequest;
+
+import tools.jackson.core.Version;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * @author Andre Azzolini (apazzolini)
@@ -1603,19 +1604,16 @@ public class FormBuilderServiceImpl implements FormBuilderService {
      * @throws IOException
      */
     protected DataWrapper convertJsonToDataWrapper(String json) {
-        ObjectMapper mapper = new ObjectMapper();
         DataDTODeserializer dtoDeserializer = new DataDTODeserializer();
         SimpleModule module = new SimpleModule(
                 "DataDTODeserializerModule",
                 new Version(1, 0, 0, null, null, null)
         );
         module.addDeserializer(DataDTO.class, dtoDeserializer);
-        mapper.registerModule(module);
-        try {
-            return mapper.readValue(json, DataWrapper.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        ObjectMapper mapper = JsonMapper.builder()
+                .addModule(module)
+                .build();
+        return mapper.readValue(json, DataWrapper.class);
     }
 
     protected void populateDropdownToOneFields(EntityForm ef, ClassMetadata cmd)

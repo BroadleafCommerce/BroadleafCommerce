@@ -17,9 +17,10 @@
  */
 package org.broadleafcommerce.test
 
-import jakarta.annotation.Resource
 import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest
+
+import jakarta.annotation.Resource
 import spock.lang.Specification
 
 /**

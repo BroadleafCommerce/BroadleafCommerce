@@ -30,15 +30,16 @@ import org.broadleafcommerce.openadmin.web.rulebuilder.service.RuleBuilderFieldS
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
+
+import tools.jackson.core.Version;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 /**
  * Commonality shared between {@link RuleFieldPersistenceProvider} and {@link RuleFieldValidator}
@@ -62,21 +63,18 @@ public class RuleFieldExtractionUtility {
      * @return
      */
     public DataWrapper convertJsonToDataWrapper(String json) {
-        ObjectMapper mapper = new ObjectMapper();
         DataDTODeserializer dtoDeserializer = new DataDTODeserializer();
-        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null));
+        SimpleModule module = new SimpleModule("DataDTODeserializerModule", new Version(1, 0, 0, null, null, null));
         module.addDeserializer(DataDTO.class, dtoDeserializer);
-        mapper.registerModule(module);
+        ObjectMapper mapper = JsonMapper.builder()
+                .addModule(module)
+                .build();
         if (json == null || "[]".equals(json)) {
             return null;
         }
 
-        try {
-            json = escapeSpecialCharacters(json);
-            return mapper.readValue(json, DataWrapper.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        json = escapeSpecialCharacters(json);
+        return mapper.readValue(json, DataWrapper.class);
     }
 
     /**

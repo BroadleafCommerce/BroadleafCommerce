@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.sitemap.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.sitemap.service.SiteMapService;
 import org.springframework.core.io.FileSystemResource;
 

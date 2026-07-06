@@ -91,8 +91,6 @@ import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UrlPathHelper;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -108,6 +106,8 @@ import java.util.stream.Stream;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * The default implementation of the {@link AdminAbstractController}. This delegates every call to

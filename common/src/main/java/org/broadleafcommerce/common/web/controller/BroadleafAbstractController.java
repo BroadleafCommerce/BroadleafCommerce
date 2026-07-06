@@ -23,16 +23,14 @@ import org.broadleafcommerce.common.web.deeplink.DeepLink;
 import org.broadleafcommerce.common.web.deeplink.DeepLinkService;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its  children
@@ -105,12 +103,10 @@ public abstract class BroadleafAbstractController {
      *
      * @param response
      * @param responseMap
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
     protected String jsonResponse(HttpServletResponse response, Map<?, ?> responseMap)
-            throws JsonGenerationException, JsonMappingException, IOException {
+            throws IOException {
         response.setHeader("Content-Type", "application/json");
         new ObjectMapper().writeValue(response.getWriter(), responseMap);
         return null;

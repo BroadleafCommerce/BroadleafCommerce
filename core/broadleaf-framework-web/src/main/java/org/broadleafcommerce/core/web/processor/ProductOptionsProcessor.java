@@ -38,7 +38,6 @@ import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.StringWriter;
 import java.io.Writer;
@@ -50,6 +49,8 @@ import java.util.Map;
 import java.util.Set;
 
 import jakarta.annotation.Resource;
+
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * This processor will add the following information to the model, available for consumption by a template:

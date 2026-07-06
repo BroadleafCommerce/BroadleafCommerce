@@ -18,6 +18,7 @@
 package org.broadleafcommerce.common.test.util
 
 import org.broadleafcommerce.common.util.StringUtil
+
 import spock.lang.Specification
 
 /**

@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.spec
 
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.RequiredPropertyValidator
+
 import spock.lang.Specification
 
 /**

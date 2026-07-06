@@ -39,10 +39,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +51,11 @@ import java.util.TimeZone;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Convenient holder class for various objects to be automatically available on thread local without invoking the various
@@ -202,11 +203,7 @@ public class BroadleafRequestContext {
         TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
         };
         HashMap<String, String> json;
-        try {
-            json = mapper.readValue(Json, typeRef);
-        } catch (IOException e) {
-            throw ExceptionHelper.refineException(e);
-        }
+        json = mapper.readValue(Json, typeRef);
         if (!json.get("ignoreSite").equals("null")) {
             context.setIgnoreSite(Boolean.valueOf(json.get("ignoreSite")));
         }

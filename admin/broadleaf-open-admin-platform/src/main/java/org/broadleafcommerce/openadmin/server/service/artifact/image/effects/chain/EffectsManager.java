@@ -32,7 +32,7 @@ import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.cha
 import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.UnsharpMask;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;

@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.ch
 
 import org.broadleafcommerce.openadmin.server.service.artifact.image.Operation;
 
-import java.awt.*;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ColorModel;

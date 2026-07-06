@@ -19,9 +19,9 @@ package org.broadleafcommerce.test.junit;
 
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.test.config.BroadleafSiteIntegrationTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.junit.jupiter.api.Test;
 import org.testng.Assert;
 
 import jakarta.annotation.Resource;

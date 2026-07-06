@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.order.service.workflow;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;

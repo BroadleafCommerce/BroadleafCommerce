@@ -17,14 +17,13 @@
  */
 package org.broadleafcommerce.core.spec.offer.service.workflow
 
-import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed
+
 import org.broadleafcommerce.core.offer.domain.OfferAudit
 import org.broadleafcommerce.core.offer.domain.OfferAuditImpl
 import org.broadleafcommerce.core.offer.service.OfferAuditService
 import org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity
 import org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageRollbackHandler
 import org.broadleafcommerce.core.spec.checkout.service.workflow.BaseCheckoutRollbackSpec
-import org.broadleafcommerce.core.workflow.state.RollbackHandler
 
 class RecordOfferUsageRollbackHandlerSpec extends BaseCheckoutRollbackSpec {
 

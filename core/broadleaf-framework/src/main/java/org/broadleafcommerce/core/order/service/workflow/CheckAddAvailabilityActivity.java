@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.order.service.workflow;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;

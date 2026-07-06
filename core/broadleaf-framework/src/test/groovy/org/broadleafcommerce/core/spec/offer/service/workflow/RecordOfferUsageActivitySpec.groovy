@@ -17,7 +17,12 @@
  */
 package org.broadleafcommerce.core.spec.offer.service.workflow
 
-import org.broadleafcommerce.core.offer.domain.*
+
+import org.broadleafcommerce.core.offer.domain.Offer
+import org.broadleafcommerce.core.offer.domain.OfferAudit
+import org.broadleafcommerce.core.offer.domain.OfferAuditImpl
+import org.broadleafcommerce.core.offer.domain.OfferCode
+import org.broadleafcommerce.core.offer.domain.OfferImpl
 import org.broadleafcommerce.core.offer.service.OfferAuditService
 import org.broadleafcommerce.core.offer.service.OfferService
 import org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity

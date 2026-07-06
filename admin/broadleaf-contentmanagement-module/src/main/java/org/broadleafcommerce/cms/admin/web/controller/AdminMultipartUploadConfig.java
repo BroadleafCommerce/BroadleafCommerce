@@ -22,7 +22,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.config.PostAutoConfigurationImport;
 import org.springframework.boot.servlet.autoconfigure.MultipartAutoConfiguration;
 import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;

@@ -27,13 +27,13 @@ import org.broadleafcommerce.presentation.model.BroadleafAttributeModifier;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.StringWriter;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+
+import tools.jackson.databind.ObjectMapper;
 
 @Component("blProductOptionValueProcessor")
 @ConditionalOnTemplating

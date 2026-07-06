@@ -43,8 +43,6 @@ import org.broadleafcommerce.profile.web.core.CustomerState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +50,8 @@ import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * In charge of performing the various modify cart operations

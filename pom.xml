@@ -51,7 +51,7 @@
         <spring.security.version>7.0.6</spring.security.version>
         <spring.boot.version>4.0.7</spring.boot.version>
         <spring-ldap-core.version>4.0.3</spring-ldap-core.version>
-        <jackson.version>2.21.2</jackson.version>
+        <jackson.version>3.1.4</jackson.version>
         <lombok.version>1.18.46</lombok.version>
         <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
         <geb.version>7.0</geb.version>
@@ -811,7 +811,7 @@
 
             <!-- Allow JAXB Annotations with Jackson -->
             <dependency>
-                <groupId>com.fasterxml.jackson.module</groupId>
+                <groupId>tools.jackson.module</groupId>
                 <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
                 <version>${jackson.version}</version>
                 <exclusions>
@@ -828,12 +828,12 @@
 
             <!-- Add in Jackson's XML converter -->
             <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <groupId>tools.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <groupId>tools.jackson.jaxrs</groupId>
                 <artifactId>jackson-jaxrs-json-provider</artifactId>
                 <version>${jackson.version}</version>
                 <exclusions>

@@ -30,6 +30,7 @@ import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExte
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl
 import org.springframework.transaction.PlatformTransactionManager
+
 import spock.lang.Specification
 
 class SolrIndexServiceSpec extends Specification {
