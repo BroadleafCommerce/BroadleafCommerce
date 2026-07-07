@@ -33,7 +33,6 @@ import org.easymock.EasyMock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -84,19 +83,16 @@ public class SiteMapGeneratorTest {
         fileService.removeResource("/sitemap.xml");
     }
 
-    @TestFactory
     protected void testGenerator(SiteMapGeneratorConfiguration smgc, SiteMapGenerator smg) throws SiteMapException, IOException {
         testGenerator(smgc, smg, 2);
     }
 
-    @TestFactory
     protected void testGenerator(SiteMapGeneratorConfiguration smgc, SiteMapGenerator smg, int maxEntriesPerFile) throws SiteMapException, IOException {
         List<SiteMapGeneratorConfiguration> smgcList = new ArrayList<>();
         smgcList.add(smgc);
         testGenerator(smgcList, smg, maxEntriesPerFile);
     }
 
-    @TestFactory
     protected void testGenerator(
             List<SiteMapGeneratorConfiguration> smgcList,
             SiteMapGenerator smg,

@@ -21,6 +21,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="blObjectMapper" class="com.fasterxml.jackson.dataformat.xml.XmlMapper"/>
+    <bean id="blObjectMapper" class="tools.jackson.dataformat.xml.XmlMapper"/>
 
 </beans>

@@ -44,8 +44,6 @@ import org.broadleafcommerce.openadmin.web.service.MediaBuilderService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -57,6 +55,8 @@ import java.util.Map;
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.OneToMany;
+
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * @author Brian Polster

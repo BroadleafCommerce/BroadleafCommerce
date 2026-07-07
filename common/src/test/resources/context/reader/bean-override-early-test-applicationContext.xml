@@ -23,6 +23,6 @@
 
     <bean id="blPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 
-    <bean id="blObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+    <bean id="blObjectMapper" class="tools.jackson.databind.ObjectMapper"/>
 
 </beans>

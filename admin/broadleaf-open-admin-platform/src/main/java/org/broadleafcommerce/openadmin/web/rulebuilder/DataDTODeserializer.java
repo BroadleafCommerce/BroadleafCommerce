@@ -21,18 +21,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.ExpressionDTO;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.type.CollectionType;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.type.CollectionType;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -44,11 +44,10 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
     }
 
     @Override
-    public DataDTO deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        ObjectMapper mapper = (ObjectMapper) jp.getCodec();
-        ObjectNode root = mapper.readTree(jp);
+    public DataDTO deserialize(JsonParser jp, DeserializationContext ctxt) throws JacksonException {
+        ObjectNode root = (ObjectNode) ctxt.readTree(jp);
         Iterator<Map.Entry<String, JsonNode>> elementsIterator =
-                root.fields();
+                root.properties().iterator();
         DataDTO dataDTO = new DataDTO();
         ExpressionDTO expressionDTO = new ExpressionDTO();
         boolean isExpression = false;
@@ -72,7 +71,7 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
 
             if ("pk".equals(name)) {
                 if (getNullAwareText(element.getValue()) == null ||
-                        StringUtils.isBlank(element.getValue().asText())) {
+                        StringUtils.isBlank(element.getValue().asString())) {
                     dataDTO.setPk(null);
                 } else {
                     dataDTO.setPk(element.getValue().asLong());
@@ -80,7 +79,7 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
             }
             if ("previousPk".equals(name)) {
                 if (getNullAwareText(element.getValue()) == null ||
-                        StringUtils.isBlank(element.getValue().asText())) {
+                        StringUtils.isBlank(element.getValue().asString())) {
                     dataDTO.setPreviousPk(null);
                 } else {
                     dataDTO.setPreviousPk(element.getValue().asLong());
@@ -88,7 +87,7 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
             }
             if ("containedPk".equals(name)) {
                 if (getNullAwareText(element.getValue()) == null ||
-                        StringUtils.isBlank(element.getValue().asText())) {
+                        StringUtils.isBlank(element.getValue().asString())) {
                     dataDTO.setContainedPk(null);
                 } else {
                     dataDTO.setContainedPk(element.getValue().asLong());
@@ -96,7 +95,7 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
             }
             if ("previousContainedPk".equals(name)) {
                 if (getNullAwareText(element.getValue()) == null ||
-                        StringUtils.isBlank(element.getValue().asText())) {
+                        StringUtils.isBlank(element.getValue().asString())) {
                     dataDTO.setPreviousContainedPk(null);
                 } else {
                     dataDTO.setPreviousContainedPk(element.getValue().asLong());
@@ -115,10 +114,10 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
             }
 
             if ("rules".equals(name)) {
-                CollectionType dtoCollectionType = mapper.getTypeFactory().constructCollectionType(
+                CollectionType dtoCollectionType = ctxt.getTypeFactory().constructCollectionType(
                         ArrayList.class, DataDTO.class
                 );
-                dataDTO.setRules(mapper.readValue(element.getValue().traverse(jp.getCodec()), dtoCollectionType));
+                dataDTO.setRules(ctxt.readValue(element.getValue().traverse(ctxt), dtoCollectionType));
             }
         }
 
@@ -130,10 +129,10 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
     }
 
     /**
-     * Handles the string "null" when using asText() in a JsonNode and returns the literal null instead
+     * Handles the string "null" when using asString() in a JsonNode and returns the literal null instead
      */
     protected String getNullAwareText(JsonNode node) {
-        return "null".equals(node.asText()) ? null : node.asText();
+        return "null".equals(node.asString()) ? null : node.asString();
     }
 
 }

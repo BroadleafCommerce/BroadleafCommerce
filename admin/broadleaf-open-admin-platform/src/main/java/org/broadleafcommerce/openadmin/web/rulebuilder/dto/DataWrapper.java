@@ -20,14 +20,12 @@ package org.broadleafcommerce.openadmin.web.rulebuilder.dto;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -96,7 +94,7 @@ public class DataWrapper implements Serializable {
         this.rawMvel = rawMvel;
     }
 
-    public String serialize() throws JsonGenerationException, JsonMappingException, IOException {
+    public String serialize() throws IOException {
         return new ObjectMapper().writeValueAsString(this);
     }
 

@@ -24,12 +24,13 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.lang.reflect.Field;
 
 import jakarta.annotation.Resource;
+
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * @author Chad Harchar (charchar)
@@ -46,8 +47,9 @@ public class MediaBuilderServiceImpl implements MediaBuilderService {
     public Media convertJsonToMedia(String json, Class<?> type) {
         if (json != null && !"".equals(json)) {
             try {
-                ObjectMapper om = new ObjectMapper();
-                om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                ObjectMapper om = JsonMapper.builder()
+                        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                        .build();
                 return (Media) om.readValue(json, type);
             } catch (Exception e) {
                 LOG.warn("Error parsing json to media " + StringUtil.sanitize(json), e);

@@ -17,12 +17,12 @@
  */
 package org.broadleafcommerce.common.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletResponse;
+
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Used when a controller typically returns a String that represents a view path but would like to return a

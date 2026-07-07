@@ -56,8 +56,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -73,6 +71,8 @@ import jakarta.annotation.Resource;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.OneToMany;
+
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * Provides persistence (read/write) behavior for rule builder fields. This includes two types: Rule with quantity, and
