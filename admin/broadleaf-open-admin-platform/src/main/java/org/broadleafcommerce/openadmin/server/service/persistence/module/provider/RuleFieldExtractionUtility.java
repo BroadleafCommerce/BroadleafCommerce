@@ -36,6 +36,7 @@ import java.util.Map;
 
 import jakarta.annotation.Resource;
 
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.Version;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -74,7 +75,13 @@ public class RuleFieldExtractionUtility {
         }
 
         json = escapeSpecialCharacters(json);
-        return mapper.readValue(json, DataWrapper.class);
+        try {
+            return mapper.readValue(json, DataWrapper.class);
+        } catch (JacksonException e) {
+            DataWrapper errorWrapper = new DataWrapper();
+            errorWrapper.setError("Could not deserialize JSON: " + e.getMessage());
+            return errorWrapper;
+        }
     }
 
     /**

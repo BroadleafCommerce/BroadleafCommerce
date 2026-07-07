@@ -131,6 +131,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.servlet.http.HttpServletRequest;
 
+import tools.jackson.core.JacksonException;
 import tools.jackson.core.Version;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
@@ -1613,7 +1614,13 @@ public class FormBuilderServiceImpl implements FormBuilderService {
         ObjectMapper mapper = JsonMapper.builder()
                 .addModule(module)
                 .build();
-        return mapper.readValue(json, DataWrapper.class);
+        try {
+            return mapper.readValue(json, DataWrapper.class);
+        } catch (JacksonException e) {
+            DataWrapper errorWrapper = new DataWrapper();
+            errorWrapper.setError("Could not deserialize JSON: " + e.getMessage());
+            return errorWrapper;
+        }
     }
 
     protected void populateDropdownToOneFields(EntityForm ef, ClassMetadata cmd)
