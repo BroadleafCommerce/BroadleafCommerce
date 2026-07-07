@@ -29,7 +29,7 @@ public class CategoryImplTest extends TestCase {
         CategoryImpl c1 = new CategoryImpl();
         c1.setId(1l);
         c1.setName("cat one");
-        c1.setActiveStartDate(new Date());
+        c1.setActiveStartDate(new Date(0));
         List<CategoryXref> c1Parents = new ArrayList<CategoryXref>();
 
         
@@ -37,7 +37,7 @@ public class CategoryImplTest extends TestCase {
         CategoryImpl c2 = new CategoryImpl();
         c2.setId(2l);
         c2.setName("cat two");
-        c2.setActiveStartDate(new Date());
+        c2.setActiveStartDate(new Date(0));
         List<CategoryXref> c2Parents = new ArrayList<CategoryXref>();
 
         
