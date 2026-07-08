@@ -85,6 +85,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -576,12 +577,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             Sku sku = (Sku) records.get(i);
             Entity entity = payload[i];
 
-            List<ProductOptionValue> optionValues = BLCCollectionUtils.collectList(sku.getProductOptionValueXrefs(), new TypedTransformer<ProductOptionValue>() {
+            Set<ProductOptionValue> optionValues = new LinkedHashSet<>(BLCCollectionUtils.collectList(sku.getProductOptionValueXrefs(), new TypedTransformer<ProductOptionValue>() {
                 @Override
                 public ProductOptionValue transform(Object input) {
                     return ((SkuProductOptionValueXref) input).getProductOptionValue();
                 }
-            });
+            }));
 
             for (ProductOptionValue value : optionValues) {
                 Property optionProperty = new Property();
@@ -867,10 +868,11 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
         // Only process associations if product option value changes came in via the form
         if (CollectionUtils.isNotEmpty(productOptionValueIds)) {
             //remove the current list of product option values from the Sku
-            if (adminInstance.getProductOptionValueXrefs().size() > 0) {
+            if (!adminInstance.getProductOptionValueXrefs().isEmpty()) {
                 Iterator<SkuProductOptionValueXref> iterator = adminInstance.getProductOptionValueXrefs().iterator();
                 while (iterator.hasNext()) {
                     dynamicEntityDao.remove(iterator.next());
+                    iterator.remove();
                 }
                 dynamicEntityDao.merge(adminInstance);
             }
