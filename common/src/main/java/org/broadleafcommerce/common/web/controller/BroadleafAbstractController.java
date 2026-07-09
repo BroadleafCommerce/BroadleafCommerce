@@ -31,6 +31,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
 
 /**
  * An abstract controller that provides convenience methods and resource declarations for its  children
@@ -103,10 +104,11 @@ public abstract class BroadleafAbstractController {
      *
      * @param response
      * @param responseMap
+     * @throws JacksonException;
      * @throws IOException
      */
     protected String jsonResponse(HttpServletResponse response, Map<?, ?> responseMap)
-            throws IOException {
+            throws JacksonException, IOException {
         response.setHeader("Content-Type", "application/json");
         new ObjectMapper().writeValue(response.getWriter(), responseMap);
         return null;

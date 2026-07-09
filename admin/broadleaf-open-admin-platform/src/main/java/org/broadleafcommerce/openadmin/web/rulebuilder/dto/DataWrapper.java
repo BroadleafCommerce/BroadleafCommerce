@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
 
 /**
  * @author Elbert Bautista (elbertbautista)
@@ -94,7 +95,7 @@ public class DataWrapper implements Serializable {
         this.rawMvel = rawMvel;
     }
 
-    public String serialize() throws IOException {
+    public String serialize() throws JacksonException, IOException {
         return new ObjectMapper().writeValueAsString(this);
     }
 
