@@ -82,13 +82,13 @@ public class AdminSpringBootTestConfiguration {
     /**
      * A dummy mail sender has been set to send emails for testing purposes only
      * To view the emails sent use "DevNull SMTP" (download separately) with the following setting:
-     *   Port: 30000
+     *   Port: 30025
      */
     @Bean
     public MailSender blMailSender() {
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost("localhost");
-        sender.setPort(30000);
+        sender.setPort(30025);
         sender.setProtocol("smtp");
         Properties javaMailProps = new Properties();
         javaMailProps.setProperty("mail.smtp.starttls.enable", "true");
