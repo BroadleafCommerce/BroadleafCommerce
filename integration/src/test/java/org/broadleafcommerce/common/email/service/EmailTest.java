@@ -39,7 +39,7 @@ public class EmailTest extends TestNGSiteIntegrationSetup {
     protected void setupEmailTest() {
         greenMail = new GreenMail(
                 new ServerSetup[] {
-                        new ServerSetup(30000, "127.0.0.1", ServerSetup.PROTOCOL_SMTP)
+                        new ServerSetup(30025, "127.0.0.1", ServerSetup.PROTOCOL_SMTP)
                 }
         );
         greenMail.start();

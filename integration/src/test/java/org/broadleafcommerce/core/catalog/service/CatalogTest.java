@@ -124,7 +124,9 @@ public class CatalogTest extends TestNGSiteIntegrationSetup {
         Product testProduct = catalogService.findProductById(newProductId);
         assertEquals(newProductId, testProduct.getId(), "Product ids of persisted and fetched by id should be equal");
 
-        Category testCategory = catalogService.findCategoryByName("Soaps");
+        List<Category> categoriesFound = catalogService.findCategoriesByName("Soaps");
+        Category testCategory = categoriesFound.isEmpty() ? null : categoriesFound.get(0);
+        assertNotNull(testCategory);
         assertEquals(testCategory.getId(), category.getId(), "Fetched by name category id is the same as persisted");
 
         testCategory = catalogService.findCategoryById(category.getId());
