@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.catalog.domain;
 
+import jakarta.persistence.*;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang3.StringUtils;
@@ -65,6 +66,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.JdbcType;
+import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.math.BigDecimal;
@@ -81,30 +83,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapKey;
-import jakarta.persistence.MapKeyClass;
-import jakarta.persistence.MapKeyJoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 
@@ -1087,34 +1065,83 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         this.isMachineSortable = isMachineSortable;
     }
 
+    @Access(AccessType.PROPERTY)
     @Override
     public List<SkuFee> getFees() {
+        if (this.fees instanceof PersistentCollection pc) {
+            if (pc.getOwner() != null && pc.getOwner() != this) {
+                this.fees = new ArrayList<>(this.fees);
+            }
+        }
         return fees;
     }
 
+    @Access(AccessType.PROPERTY)
     @Override
     public void setFees(List<SkuFee> fees) {
-        this.fees = fees;
+        if (fees == null) {
+            this.fees = null;
+        } else if (fees instanceof PersistentCollection pc) {
+            if (pc.getOwner() != null && pc.getOwner() != this) {
+                this.fees = new ArrayList<>(fees);
+            } else {
+                this.fees = fees;
+            }
+        } else {
+            this.fees = fees;
+        }
     }
 
     @Override
     public Map<FulfillmentOption, BigDecimal> getFulfillmentFlatRates() {
+        if (this.fulfillmentFlatRates instanceof PersistentCollection pc) {
+            if (pc.getOwner() != null && pc.getOwner() != this) {
+                this.fulfillmentFlatRates = new HashMap<>(this.fulfillmentFlatRates);
+            }
+        }
         return fulfillmentFlatRates;
     }
 
     @Override
     public void setFulfillmentFlatRates(Map<FulfillmentOption, BigDecimal> fulfillmentFlatRates) {
-        this.fulfillmentFlatRates = fulfillmentFlatRates;
+        if (fulfillmentFlatRates == null) {
+            this.fulfillmentFlatRates = null;
+        } else if (fulfillmentFlatRates instanceof PersistentCollection pc) {
+            if (pc.getOwner() != null && pc.getOwner() != this) {
+                this.fulfillmentFlatRates = new HashMap<>(fulfillmentFlatRates);
+            } else {
+                this.fulfillmentFlatRates = fulfillmentFlatRates;
+            }
+        } else {
+            this.fulfillmentFlatRates = fulfillmentFlatRates;
+        }
     }
 
+    @Access(AccessType.PROPERTY)
     @Override
     public List<FulfillmentOption> getExcludedFulfillmentOptions() {
+        if (this.excludedFulfillmentOptions instanceof PersistentCollection pc) {
+            if (pc.getOwner() != null && pc.getOwner() != this) {
+                this.excludedFulfillmentOptions = new ArrayList<>(this.excludedFulfillmentOptions);
+            }
+        }
         return excludedFulfillmentOptions;
     }
 
+    @Access(AccessType.PROPERTY)
     @Override
     public void setExcludedFulfillmentOptions(List<FulfillmentOption> excludedFulfillmentOptions) {
-        this.excludedFulfillmentOptions = excludedFulfillmentOptions;
+        if (excludedFulfillmentOptions == null) {
+            this.excludedFulfillmentOptions = null;
+        } else if (excludedFulfillmentOptions instanceof PersistentCollection pc) {
+            if (pc.getOwner() != null && pc.getOwner() != this) {
+                this.excludedFulfillmentOptions = new ArrayList<>(excludedFulfillmentOptions);
+            } else {
+                this.excludedFulfillmentOptions = excludedFulfillmentOptions;
+            }
+        } else {
+            this.excludedFulfillmentOptions = excludedFulfillmentOptions;
+        }
     }
 
     @Override
