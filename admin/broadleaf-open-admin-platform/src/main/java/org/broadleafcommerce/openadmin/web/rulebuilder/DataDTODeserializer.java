@@ -102,7 +102,7 @@ public class DataDTODeserializer extends StdDeserializer<DataDTO> {
                 }
             }
             if ("quantity".equals(name)) {
-                if (getNullAwareText(element.getValue()) == null) {
+                if (getNullAwareText(element.getValue()) == null || StringUtils.isBlank(getNullAwareText(element.getValue()))) {
                     dataDTO.setQuantity(null);
                 } else {
                     dataDTO.setQuantity(element.getValue().asInt());
