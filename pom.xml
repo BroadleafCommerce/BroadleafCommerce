@@ -67,6 +67,10 @@
         <spock.core.version>2.4-M4-groovy-4.0</spock.core.version>
         <spock.spring.version>2.4-M4-groovy-4.0</spock.spring.version>
         <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
+        <!-- Security Review Lab: static analysis / SCA tooling versions (report-only, see security-check profile) -->
+        <dependency-check.plugin.version>12.2.1</dependency-check.plugin.version>
+        <spotbugs.plugin.version>4.8.6.6</spotbugs.plugin.version>
+        <findsecbugs.plugin.version>1.13.0</findsecbugs.plugin.version>
         <!-- because of spring when does instrumentation it uses reflection to jdk classes, for tests we need this -->
         <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</surefire.argLine>
         <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</failsafe.argLine>
@@ -388,20 +392,83 @@
     </distributionManagement>
     <profiles>
         <profile>
+            <!--
+                Security Review Lab profile - REPORT ONLY.
+                Runs OWASP Dependency-Check (single aggregate scan for the whole reactor) and
+                SpotBugs + Find Security Bugs (per-module static analysis). Neither tool is
+                configured to fail the build; they only produce reports for manual/CI review.
+                Invoke with: mvn verify -Psecurity-check -DskipTests
+            -->
             <id>security-check</id>
             <build>
                 <plugins>
+                    <!--
+                        OWASP Dependency-Check: scans all reactor modules' dependencies for known
+                        published vulnerabilities (CVEs). Bound to the "aggregate" goal with
+                        inherited=false so it executes exactly once, from the reactor root, instead
+                        of once per module.
+                    -->
                     <plugin>
                         <groupId>org.owasp</groupId>
                         <artifactId>dependency-check-maven</artifactId>
-                        <version>12.2.1</version>
+                        <version>${dependency-check.plugin.version}</version>
+                        <inherited>false</inherited>
                         <configuration>
-                            <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
+                            <ossIndexAnalyzerEnabled>false</ossIndexAnalyzerEnabled>
+                            <failBuildOnCVSS>11</failBuildOnCVSS>
+                            <formats>
+                                <format>HTML</format>
+                                <format>XML</format>
+                                <format>JSON</format>
+                                <format>SARIF</format>
+                            </formats>
+                            <outputDirectory>${maven.multiModuleProjectDirectory}/reports/dependency-check</outputDirectory>
                         </configuration>
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>check</goal>
+                                    <goal>aggregate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!--
+                        SpotBugs (with the Find Security Bugs detector plugin) runs static analysis
+                        against each module's compiled bytecode. Uses the "spotbugs" report-generation
+                        goal (not "check"), so findings are reported without ever failing the build.
+                    -->
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <version>${spotbugs.plugin.version}</version>
+                        <configuration>
+                            <effort>Max</effort>
+                            <threshold>Low</threshold>
+                            <failOnError>false</failOnError>
+                            <includeTests>false</includeTests>
+                            <htmlOutput>true</htmlOutput>
+                            <xmlOutput>true</xmlOutput>
+                            <sarifOutput>true</sarifOutput>
+                            <sarifFullPath>true</sarifFullPath>
+                            <outputDirectory>${project.build.directory}/spotbugs</outputDirectory>
+                            <xmlOutputDirectory>${project.build.directory}/spotbugs</xmlOutputDirectory>
+                            <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs</spotbugsXmlOutputDirectory>
+                            <sarifOutputDirectory>${project.build.directory}/spotbugs</sarifOutputDirectory>
+                            <plugins>
+                                <plugin>
+                                    <groupId>com.h3xstream.findsecbugs</groupId>
+                                    <artifactId>findsecbugs-plugin</artifactId>
+                                    <version>${findsecbugs.plugin.version}</version>
+                                </plugin>
+                            </plugins>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>spotbugs-security-scan</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>spotbugs</goal>
                                 </goals>
                             </execution>
                         </executions>

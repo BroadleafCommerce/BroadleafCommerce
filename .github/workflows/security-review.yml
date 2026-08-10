@@ -1,0 +1,295 @@
+name: Security Review
+
+# Security Review Lab - REPORT ONLY.
+#
+# Runs four complementary static analysis / SCA tools against pull requests so
+# findings show up directly on the GitHub PR (via Code Scanning alerts) and as
+# downloadable report artifacts - without requiring anyone to run scans
+# locally. No job blocks or fails a PR solely because a scanner found
+# something; see SECURITY_REVIEW.md for full tool details and local usage.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [ "develop-7.0.x", "security-review-lab" ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # ---------------------------------------------------------------------
+  # 1. Baseline Maven build. Confirms the reactor compiles before the
+  #    heavier security jobs run against the same commit. This job is
+  #    allowed to fail normally (it is a genuine build sanity check, not a
+  #    security scanner).
+  # ---------------------------------------------------------------------
+  maven-build:
+    name: Maven Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Build (no tests)
+        run: mvn -B -ntp verify -DskipTests
+
+  # ---------------------------------------------------------------------
+  # 2. SpotBugs + Find Security Bugs static analysis (Java bytecode), via
+  #    the existing "security-check" Maven profile.
+  # ---------------------------------------------------------------------
+  spotbugs:
+    name: SpotBugs + FindSecBugs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Report-only by construction: the "security-check" profile binds the
+      # spotbugs:spotbugs report-generation goal (not spotbugs:check), so
+      # findings alone never fail this command. A non-zero exit here means a
+      # genuine build/tool failure.
+      - name: Run SpotBugs / FindSecBugs
+        id: run_spotbugs
+        run: mvn -B -ntp verify -Psecurity-check -DskipTests -Ddependency-check.skip=true
+
+      - name: Collect per-module SpotBugs/FindSecBugs reports
+        if: always()
+        run: |
+          mkdir -p reports/spotbugs
+          while IFS= read -r -d '' dir; do
+            module=$(dirname "$(dirname "$dir")")
+            dest="reports/spotbugs/$(echo "$module" | sed 's#^\./##' | tr '/' '_')"
+            mkdir -p "$dest"
+            cp -r "$dir"/. "$dest"/ 2>/dev/null || true
+          done < <(find . -type d -path "*/target/spotbugs" -print0)
+
+      # GitHub Code Scanning expects one SARIF submission per category, so
+      # the per-module spotbugsSarif.json files are merged into a single
+      # valid SARIF document (concatenating their "runs") before upload.
+      - name: Merge per-module SpotBugs SARIF files
+        if: always()
+        run: |
+          cat > /tmp/merge_spotbugs_sarif.py <<'PY'
+          import glob
+          import json
+          import os
+
+          sarif_files = sorted(glob.glob("reports/spotbugs/**/spotbugsSarif.json", recursive=True))
+
+          merged = {
+              "version": "2.1.0",
+              "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+              "runs": [],
+          }
+          for path in sarif_files:
+              with open(path) as fh:
+                  data = json.load(fh)
+              merged["runs"].extend(data.get("runs", []))
+
+          os.makedirs("reports/spotbugs", exist_ok=True)
+          out_path = "reports/spotbugs/spotbugs-findsecbugs-merged.sarif"
+          with open(out_path, "w") as fh:
+              json.dump(merged, fh)
+
+          findings = sum(len(run.get("results", [])) for run in merged["runs"])
+          print(f"Merged {len(sarif_files)} module SARIF file(s) into {out_path} "
+                f"({len(merged['runs'])} run(s), {findings} finding(s)).")
+
+          with open(os.environ["GITHUB_ENV"], "a") as env_file:
+              env_file.write(f"SPOTBUGS_FINDINGS={findings}\n")
+              env_file.write(f"SPOTBUGS_MODULE_COUNT={len(sarif_files)}\n")
+          PY
+          python3 /tmp/merge_spotbugs_sarif.py
+
+      - name: Upload SpotBugs/FindSecBugs HTML/XML reports
+        if: always()
+        id: upload_spotbugs_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spotbugs-findsecbugs-reports
+          path: |
+            reports/spotbugs/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload merged SARIF to Code Scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/spotbugs/spotbugs-findsecbugs-merged.sarif
+          category: spotbugs-findsecbugs
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## 🐛 SpotBugs + FindSecBugs"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Scan status** | \`${{ steps.run_spotbugs.outcome }}\` |"
+            echo "| **Modules analyzed** | ${SPOTBUGS_MODULE_COUNT:-0} |"
+            echo "| **Findings (bugs + security)** | ${SPOTBUGS_FINDINGS:-n/a} |"
+            echo "| **Code Scanning** | [View alerts for category \`spotbugs-findsecbugs\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=is%3Aopen+category%3Aspotbugs-findsecbugs) |"
+            echo "| **Full report (HTML/XML)** | [Download \`spotbugs-findsecbugs-reports\`](${{ steps.upload_spotbugs_artifact.outputs.artifact-url }}) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------
+  # 3. OWASP Dependency-Check - single aggregate SCA scan of the reactor,
+  #    via the existing "security-check" Maven profile.
+  # ---------------------------------------------------------------------
+  dependency-check:
+    name: OWASP Dependency-Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Report-only by construction: failBuildOnCVSS is set to 11 (above the
+      # maximum possible CVSS score) in the pom, so findings alone never fail
+      # this command. A non-zero exit here means a genuine build/tool/network
+      # failure (e.g. the NVD feed being unreachable).
+      - name: Run OWASP Dependency-Check (aggregate)
+        id: run_dependency_check
+        run: mvn -B -ntp verify -Psecurity-check -DskipTests -Dspotbugs.skip=true
+        env:
+          # Optional but strongly recommended - without it the NVD API
+          # rate-limits update requests heavily. Configure as a repo/org secret.
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
+      - name: Compute findings summary
+        if: always()
+        run: |
+          COUNT="n/a"
+          if [ -f reports/dependency-check/dependency-check-report.json ]; then
+            COUNT=$(jq '[.dependencies[]?.vulnerabilities? // [] | length] | add // 0' reports/dependency-check/dependency-check-report.json)
+          fi
+          echo "DEPCHECK_FINDINGS=$COUNT" >> "$GITHUB_ENV"
+
+      - name: Upload Dependency-Check HTML/XML/JSON reports
+        if: always()
+        id: upload_dependency_check_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-reports
+          path: |
+            reports/dependency-check/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload SARIF to Code Scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/dependency-check/dependency-check-report.sarif
+          category: dependency-check
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## 📦 OWASP Dependency-Check"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Scan status** | \`${{ steps.run_dependency_check.outcome }}\` |"
+            echo "| **Vulnerable dependency findings** | ${DEPCHECK_FINDINGS:-n/a} |"
+            echo "| **Code Scanning** | [View alerts for category \`dependency-check\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=is%3Aopen+category%3Adependency-check) |"
+            echo "| **Full report (HTML/XML/JSON)** | [Download \`dependency-check-reports\`](${{ steps.upload_dependency_check_artifact.outputs.artifact-url }}) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------
+  # 4. Semgrep - java + security-audit rulesets. Installed directly on the
+  #    runner (no container) so the SARIF upload action runs normally.
+  # ---------------------------------------------------------------------
+  semgrep:
+    name: Semgrep
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Semgrep
+        run: python3 -m pip install --quiet semgrep
+
+      # Report-only by construction: --no-error makes Semgrep exit 0 even
+      # when rules match, so findings alone never fail this command.
+      - name: Run Semgrep
+        id: run_semgrep
+        run: |
+          mkdir -p reports/semgrep
+          semgrep scan \
+            --config p/java \
+            --config p/security-audit \
+            --sarif --output reports/semgrep/semgrep.sarif \
+            --no-error
+          semgrep scan \
+            --config p/java \
+            --config p/security-audit \
+            --json --output reports/semgrep/semgrep.json \
+            --no-error
+
+      - name: Compute findings summary
+        if: always()
+        run: |
+          COUNT="n/a"
+          if [ -f reports/semgrep/semgrep.json ]; then
+            COUNT=$(jq '.results | length' reports/semgrep/semgrep.json)
+          fi
+          echo "SEMGREP_FINDINGS=$COUNT" >> "$GITHUB_ENV"
+
+      - name: Upload Semgrep JSON/SARIF reports
+        if: always()
+        id: upload_semgrep_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-reports
+          path: |
+            reports/semgrep/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload SARIF to Code Scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/semgrep/semgrep.sarif
+          category: semgrep
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## 🔎 Semgrep (p/java + p/security-audit)"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Scan status** | \`${{ steps.run_semgrep.outcome }}\` |"
+            echo "| **Findings** | ${SEMGREP_FINDINGS:-n/a} |"
+            echo "| **Code Scanning** | [View alerts for category \`semgrep\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=is%3Aopen+category%3Asemgrep) |"
+            echo "| **Full report (JSON/SARIF)** | [Download \`semgrep-reports\`](${{ steps.upload_semgrep_artifact.outputs.artifact-url }}) |"
+          } >> "$GITHUB_STEP_SUMMARY"
