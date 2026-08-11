@@ -19,6 +19,12 @@ permissions:
   contents: read
   security-events: write
 
+env:
+  # Branch used in Job Summary "View alerts" Code Scanning links.
+  # pull_request: PR HEAD branch (never the PR base).
+  # push / workflow_dispatch: the ref that triggered the run.
+  CODE_SCANNING_ALERTS_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+
 jobs:
   # ---------------------------------------------------------------------
   # 1. Baseline Maven build. Confirms the reactor compiles before the
@@ -138,6 +144,16 @@ jobs:
       - name: Job summary
         if: always()
         run: |
+          CODE_SCANNING_QUERY=$(python3 - <<'PY'
+          import os
+          import urllib.parse
+          branch = os.environ["CODE_SCANNING_ALERTS_BRANCH"]
+          print(urllib.parse.quote(
+              f"is:open category:spotbugs-findsecbugs branch:{branch}",
+              safe="",
+          ))
+          PY
+          )
           {
             echo "## 🐛 SpotBugs + FindSecBugs"
             echo ""
@@ -146,7 +162,7 @@ jobs:
             echo "| **Scan status** | \`${{ steps.run_spotbugs.outcome }}\` |"
             echo "| **Modules analyzed** | ${SPOTBUGS_MODULE_COUNT:-0} |"
             echo "| **Findings (bugs + security)** | ${SPOTBUGS_FINDINGS:-n/a} |"
-            echo "| **Code Scanning** | [View alerts for category \`spotbugs-findsecbugs\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=is%3Aopen+category%3Aspotbugs-findsecbugs) |"
+            echo "| **Code Scanning** | [View alerts for category \`spotbugs-findsecbugs\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=${CODE_SCANNING_QUERY}) |"
             echo "| **Full report (HTML/XML)** | [Download \`spotbugs-findsecbugs-reports\`](${{ steps.upload_spotbugs_artifact.outputs.artifact-url }}) |"
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -167,13 +183,37 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # Report-only by construction: failBuildOnCVSS is set to 11 (above the
-      # maximum possible CVSS score) in the pom, so findings alone never fail
-      # this command. A non-zero exit here means a genuine build/tool/network
-      # failure (e.g. the NVD feed being unreachable).
-      - name: Run OWASP Dependency-Check (aggregate)
+      # Cache ONLY the OWASP Dependency-Check local NVD/CVE database.
+      # This is not a findings/results cache: every run still performs a fresh
+      # aggregate scan of the current reactor. autoUpdate stays enabled
+      # (plugin default), so a restored DB is incrementally refreshed from NVD
+      # instead of re-downloading ~374k records from scratch.
+      - name: Compute NVD cache week key
+        id: odc-week
+        run: echo "week=$(date -u +%Y-W%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache OWASP Dependency-Check NVD database
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: odc-nvd-${{ runner.os }}-${{ steps.odc-week.outputs.week }}
+          restore-keys: |
+            odc-nvd-${{ runner.os }}-
+
+      # Report-only by construction: failBuildOnCVSS is set to 11 in the pom.
+      # Invoke ONLY dependency-check:aggregate (not `mvn verify`) so SpotBugs /
+      # FindSecBugs bound to the verify phase never run in this job. Profile
+      # config still supplies formats, outputDirectory, and report-only CVSS.
+      - name: Run OWASP Dependency-Check (aggregate only)
         id: run_dependency_check
-        run: mvn -B -ntp verify -Psecurity-check -DskipTests -Dspotbugs.skip=true
+        run: |
+          EXTRA_ARGS=()
+          if [ -n "${NVD_API_KEY:-}" ]; then
+            EXTRA_ARGS+=("-DnvdApiKey=${NVD_API_KEY}")
+          fi
+          mvn -B -ntp -Psecurity-check \
+            org.owasp:dependency-check-maven:aggregate \
+            "${EXTRA_ARGS[@]}"
         env:
           # Optional but strongly recommended - without it the NVD API
           # rate-limits update requests heavily. Configure as a repo/org secret.
@@ -210,6 +250,16 @@ jobs:
       - name: Job summary
         if: always()
         run: |
+          CODE_SCANNING_QUERY=$(python3 - <<'PY'
+          import os
+          import urllib.parse
+          branch = os.environ["CODE_SCANNING_ALERTS_BRANCH"]
+          print(urllib.parse.quote(
+              f"is:open category:dependency-check branch:{branch}",
+              safe="",
+          ))
+          PY
+          )
           {
             echo "## 📦 OWASP Dependency-Check"
             echo ""
@@ -217,7 +267,7 @@ jobs:
             echo "|---|---|"
             echo "| **Scan status** | \`${{ steps.run_dependency_check.outcome }}\` |"
             echo "| **Vulnerable dependency findings** | ${DEPCHECK_FINDINGS:-n/a} |"
-            echo "| **Code Scanning** | [View alerts for category \`dependency-check\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=is%3Aopen+category%3Adependency-check) |"
+            echo "| **Code Scanning** | [View alerts for category \`dependency-check\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=${CODE_SCANNING_QUERY}) |"
             echo "| **Full report (HTML/XML/JSON)** | [Download \`dependency-check-reports\`](${{ steps.upload_dependency_check_artifact.outputs.artifact-url }}) |"
           } >> "$GITHUB_STEP_SUMMARY"
 
@@ -283,6 +333,16 @@ jobs:
       - name: Job summary
         if: always()
         run: |
+          CODE_SCANNING_QUERY=$(python3 - <<'PY'
+          import os
+          import urllib.parse
+          branch = os.environ["CODE_SCANNING_ALERTS_BRANCH"]
+          print(urllib.parse.quote(
+              f"is:open category:semgrep branch:{branch}",
+              safe="",
+          ))
+          PY
+          )
           {
             echo "## 🔎 Semgrep (p/java + p/security-audit)"
             echo ""
@@ -290,6 +350,6 @@ jobs:
             echo "|---|---|"
             echo "| **Scan status** | \`${{ steps.run_semgrep.outcome }}\` |"
             echo "| **Findings** | ${SEMGREP_FINDINGS:-n/a} |"
-            echo "| **Code Scanning** | [View alerts for category \`semgrep\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=is%3Aopen+category%3Asemgrep) |"
+            echo "| **Code Scanning** | [View alerts for category \`semgrep\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=${CODE_SCANNING_QUERY}) |"
             echo "| **Full report (JSON/SARIF)** | [Download \`semgrep-reports\`](${{ steps.upload_semgrep_artifact.outputs.artifact-url }}) |"
           } >> "$GITHUB_STEP_SUMMARY"
