@@ -18,6 +18,9 @@ on:
 permissions:
   contents: read
   security-events: write
+  # Needed so pull_request runs can download a prior NVD DB artifact when
+  # Actions cache isolation prevents restoring the push-scoped cache.
+  actions: read
 
 env:
   # Branch used in Job Summary "View alerts" Code Scanning links.
@@ -263,22 +266,59 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # Cache ONLY the OWASP Dependency-Check local NVD/CVE database.
+      # Persist ONLY the OWASP Dependency-Check local NVD/CVE database.
       # This is not a findings/results cache: every run still performs a fresh
       # aggregate scan of the current reactor. autoUpdate stays enabled
       # (plugin default), so a restored DB is incrementally refreshed from NVD
       # instead of re-downloading ~374k records from scratch.
+      #
+      # GitHub Actions cache is branch/event-scoped: pull_request runs cannot
+      # restore caches created by push on the PR head branch. Restore the
+      # weekly cache first; on a miss, seed from a prior NVD DB artifact
+      # (also not scan results) so PR runs can reuse a warmed database.
       - name: Compute NVD cache week key
         id: odc-week
         run: echo "week=$(date -u +%Y-W%V)" >> "$GITHUB_OUTPUT"
 
-      - name: Cache OWASP Dependency-Check NVD database
-        uses: actions/cache@v4
+      - name: Restore OWASP Dependency-Check NVD database cache
+        id: odc-cache-restore
+        uses: actions/cache/restore@v4
         with:
           path: ~/.m2/repository/org/owasp/dependency-check-data
           key: odc-nvd-${{ runner.os }}-${{ steps.odc-week.outputs.week }}
           restore-keys: |
             odc-nvd-${{ runner.os }}-
+
+      - name: Seed NVD database from prior workflow artifact
+        if: steps.odc-cache-restore.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          DATA_DIR="${HOME}/.m2/repository/org/owasp/dependency-check-data"
+          mkdir -p "$DATA_DIR"
+          ARTIFACT_ID=$(gh api \
+            "repos/${GITHUB_REPOSITORY}/actions/artifacts?name=odc-nvd-database&per_page=20" \
+            --jq '.artifacts[] | select(.expired == false) | .id' \
+            | head -n 1)
+          if [ -z "${ARTIFACT_ID}" ]; then
+            echo "No prior odc-nvd-database artifact found; Dependency-Check will populate NVD data."
+            exit 0
+          fi
+          echo "Seeding NVD database from artifact id=${ARTIFACT_ID}"
+          TMP_ZIP="${RUNNER_TEMP}/odc-nvd-database.zip"
+          TMP_DIR="${RUNNER_TEMP}/odc-nvd-database"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" > "${TMP_ZIP}"
+          rm -rf "${TMP_DIR}"
+          mkdir -p "${TMP_DIR}"
+          unzip -q "${TMP_ZIP}" -d "${TMP_DIR}"
+          # Artifact layout may be the data dir contents or a nested folder.
+          if [ -d "${TMP_DIR}/dependency-check-data" ]; then
+            cp -a "${TMP_DIR}/dependency-check-data"/. "${DATA_DIR}/"
+          else
+            cp -a "${TMP_DIR}"/. "${DATA_DIR}/"
+          fi
+          echo "Seeded NVD database entries: $(find "${DATA_DIR}" -type f | wc -l | tr -d ' ')"
 
       # Report-only by construction: failBuildOnCVSS is set to 11 in the pom.
       # Invoke ONLY dependency-check:aggregate (not `mvn verify`) so SpotBugs /
@@ -298,6 +338,29 @@ jobs:
           # Optional but strongly recommended - without it the NVD API
           # rate-limits update requests heavily. Configure as a repo/org secret.
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
+      # Save even when the scan step fails, as long as NVD data was populated;
+      # cancelled mid-download jobs still cannot save, but failed/completed
+      # jobs persist the DB for the next run in this cache scope.
+      - name: Save OWASP Dependency-Check NVD database cache
+        if: always() && steps.odc-cache-restore.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: odc-nvd-${{ runner.os }}-${{ steps.odc-week.outputs.week }}
+
+      # Share the warmed NVD DB across push/PR cache scopes. Not scan output.
+      - name: Upload NVD database artifact
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: odc-nvd-database
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          if-no-files-found: ignore
+          retention-days: 14
+          overwrite: true
 
       - name: Compute findings summary
         if: always()
