@@ -57,7 +57,6 @@ public class TransactionalCatalogEvictionAspect {
 
     protected static final Log LOG = LogFactory.getLog(TransactionalCatalogEvictionAspect.class);
 
-
     @PersistenceContext(unitName = "blPU")
     private EntityManager em;
 
