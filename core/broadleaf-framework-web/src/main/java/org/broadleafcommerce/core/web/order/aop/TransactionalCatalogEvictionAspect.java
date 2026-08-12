@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.core.web.order.aop;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -52,6 +54,9 @@ import jakarta.persistence.PersistenceContext;
 @Aspect
 @Component
 public class TransactionalCatalogEvictionAspect {
+
+    protected static final Log LOG = LogFactory.getLog(TransactionalCatalogEvictionAspect.class);
+
 
     @PersistenceContext(unitName = "blPU")
     private EntityManager em;
@@ -102,7 +107,8 @@ public class TransactionalCatalogEvictionAspect {
                             }
                         }
                     } catch (Exception e) {
-                        // Fail silently so the cart commit proceeds
+                        // Emit warning and fail silently so the cart commit proceeds
+                        LOG.warn("Failed to evict and reset SKUs.", e);
                     }
                 }
             });
