@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.core.order.service;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Predicate;
 import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -57,6 +55,9 @@ public class OrderTest extends OrderBaseTest {
     
     @Resource
     private SkuDao skuDao;
+
+    @jakarta.persistence.PersistenceContext(unitName = "blPU")
+    protected jakarta.persistence.EntityManager em;
     
     @Test(groups = { "createCartForCustomer" }, dependsOnGroups = { "readCustomer", "createPhone" })
     @Transactional
@@ -121,7 +122,7 @@ public class OrderTest extends OrderBaseTest {
         assert fgItem.getOrderItem().equals(item);
         assert fgItem.getQuantity() == item.getQuantity();
     }
-    
+
     @Test(groups = { "addAnotherItemToOrder" }, dependsOnGroups = { "addItemToOrder" })
     @Rollback(false)
     @Transactional
@@ -180,22 +181,96 @@ public class OrderTest extends OrderBaseTest {
         assert(order.getOrderItems().size()==1);
         assert(order.getOrderItems().get(0).getQuantity()==2);
     }
-    
+
+
+    @Test(groups = { "reproduceHibernate6SharedCollectionBug" }, dependsOnGroups = { "addItemToOrder" })
+    @Rollback(false)
+    @Transactional
+    public void reproduceHibernate6SharedCollectionBug() throws AddToCartException, UpdateCartException, RemoveFromCartException {
+        // 1. Fetch an active SKU
+        Sku sku = getFirstActiveSku();
+        assert sku != null : "Could not find an active SKU in the database";
+
+        // Prevent standard merging
+        boolean originalMergeVal = orderService.getAutomaticallyMergeLikeItems();
+        orderService.setAutomaticallyMergeLikeItems(false);
+
+        Customer anonymousCustomer = customerService.createCustomerFromId(null);
+        Order testOrder = orderService.createNewCartForCustomer(anonymousCustomer);
+        Long testOrderId = testOrder.getId();
+
+        // 2. Add the SAME SKU twice, WITHOUT pricing, and WITH unique attributes.
+        // This is a triple-threat guarantee that Broadleaf will not merge them.
+        OrderItemRequestDTO itemRequest1 = new OrderItemRequestDTO();
+        itemRequest1.setQuantity(1);
+        itemRequest1.setSkuId(sku.getId());
+        java.util.Map<String, String> attrs1 = new java.util.HashMap<>();
+        attrs1.put("Test-Line-Item", "1");
+        itemRequest1.setItemAttributes(attrs1);
+
+        testOrder = orderService.addItem(testOrderId, itemRequest1, false);
+
+        OrderItemRequestDTO itemRequest2 = new OrderItemRequestDTO();
+        itemRequest2.setQuantity(1);
+        itemRequest2.setSkuId(sku.getId());
+        java.util.Map<String, String> attrs2 = new java.util.HashMap<>();
+        attrs2.put("Test-Line-Item", "2");
+        itemRequest2.setItemAttributes(attrs2);
+
+        testOrder = orderService.addItem(testOrderId, itemRequest2, false);
+
+        // Fetch to ensure they are registered correctly
+        testOrder = orderService.findOrderById(testOrderId);
+        assert testOrder.getOrderItems().size() == 2 : "Cart items merged! Expected 2 items, found: " + testOrder.getOrderItems().size();
+
+        // =================================================================
+        // THE TRAP: Clear the L1 cache. This forces Hibernate to rebuild the
+        // SKUs from the L2 cache, injecting the shared PersistentBag.
+        // =================================================================
+        em.flush();
+        em.clear();
+
+        // 3. Update the quantity of the first item
+        testOrder = orderService.findOrderById(testOrderId);
+        OrderItem firstItem = testOrder.getOrderItems().get(0);
+
+        System.out.println("++++++++++++++++++++++++++++++");
+        System.out.println(":::::::::excludedFulfillmentOptions: " + ((DiscreteOrderItem)firstItem).getSku().getExcludedFulfillmentOptions());
+
+        OrderItemRequestDTO updateRequest = new OrderItemRequestDTO();
+        updateRequest.setOrderItemId(firstItem.getId());
+        updateRequest.setQuantity(3);
+
+        testOrder = orderService.updateItemQuantity(testOrderId, updateRequest, true);
+
+        // Restore merge flag
+        orderService.setAutomaticallyMergeLikeItems(originalMergeVal);
+        System.out.println("++++++++++++++++++++++++++++++Before Flush");
+
+        // =================================================================
+        // THE DETONATOR: Explicitly force a flush right here.
+        // This guarantees the Hibernate FlushVisitor runs INSIDE the test method,
+        // triggering the JpaSystemException directly into the console.
+        // =================================================================
+        em.flush();
+        System.out.println("--------------------------------After Flush");
+
+
+        assert testOrder.getOrderItems().get(0).getQuantity() == 3 : "Quantity was not updated to 3";
+    }
+
     /**
      * From the list of all Skus in the database, gets a Sku that is active
-     * @return
+     * @return Sku
      */
     public Sku getFirstActiveSku() {
         List<Sku> skus = skuDao.readAllSkus();
-        return CollectionUtils.find(skus, new Predicate<Sku>() {
-
-            @Override
-            public boolean evaluate(Sku sku) {
-                return sku.isActive();
-            }
-        });
+        return skus.stream()
+                .filter(Sku::isActive)
+                .findFirst()
+                .orElse(null);
     }
-    
+
     @Test(groups = { "testIllegalAddScenarios" }, dependsOnGroups = { "addItemToOrder" })
     @Transactional
     public void testIllegalAddScenarios() throws AddToCartException {
