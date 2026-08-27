@@ -145,20 +145,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
 
     @Override
     public ProductBundle getProductBundle() {
-        if (deproxiedProductBundle == null) {
-            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
-
-            if (postLoaderDao != null && productBundle.getId() != null) {
-                Long id = productBundle.getId();
-                deproxiedProductBundle = postLoaderDao.find(ProductBundleImpl.class, id);
-            } else if (productBundle instanceof HibernateProxy) {
-                deproxiedProductBundle = HibernateUtils.deproxy(productBundle);
-            } else {
-                deproxiedProductBundle = productBundle;
-            }
-        }
-
-        return deproxiedProductBundle;
+        return this.productBundle;
     }
 
     @Override
