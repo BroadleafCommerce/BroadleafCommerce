@@ -21,13 +21,10 @@ import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.currency.util.BroadleafCurrencyUtils;
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.persistence.DefaultPostLoaderDao;
-import org.broadleafcommerce.common.persistence.PostLoaderDao;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminPresentationToOneLookup;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
-import org.broadleafcommerce.common.util.HibernateUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -35,11 +32,9 @@ import org.broadleafcommerce.core.catalog.domain.SkuBundleItem;
 import org.broadleafcommerce.core.catalog.domain.SkuBundleItemImpl;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
-import org.hibernate.Hibernate;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -62,7 +57,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -123,37 +117,9 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
     protected List<DiscreteOrderItemFeePrice> discreteOrderItemFeePrices = new ArrayList<DiscreteOrderItemFeePrice>();
 
-    @Transient
-    protected Sku deproxiedSku;
-
-    @Transient
-    protected Product deproxiedProduct;
-
     @Override
     public Sku getSku() {
-        if (deproxiedSku == null) {
-            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
-
-            if (postLoaderDao != null && sku.getId() != null) {
-                //TODO this if exists because of https://discourse.hibernate.org/t/hibernate-6-onetoone-stackoverflow/8178/2
-                // https://hibernate.atlassian.net/browse/HHH-17140 once it is fixed it can be removed
-                //long story short if you fetch orderItem before fetching product/sku and neither is in 2nd level cache
-                //hibernate will fail with stackoverflow as it is not able to understand which proxy(sku or product
-                // they're both lazy) should be initialized first and so it finds a reference
-                // sku->defaultProduct->defaultSku and fails
-                if (sku instanceof HibernateProxy && !Hibernate.isInitialized(sku)) {
-                    postLoaderDao.evict(sku);
-                }
-                Long id = sku.getId();
-                deproxiedSku = postLoaderDao.find(SkuImpl.class, id);
-            } else if (sku instanceof HibernateProxy) {
-                deproxiedSku = HibernateUtils.deproxy(sku);
-            } else {
-                deproxiedSku = sku;
-            }
-        }
-
-        return deproxiedSku;
+        return this.sku;
     }
 
     @Override
@@ -178,29 +144,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @Override
     public Product getProduct() {
-        if (deproxiedProduct == null) {
-            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
-
-            if (product != null && postLoaderDao != null && product.getId() != null) {
-                Long id = product.getId();
-                //TODO this if exists because of https://discourse.hibernate.org/t/hibernate-6-onetoone-stackoverflow/8178/2
-                // https://hibernate.atlassian.net/browse/HHH-17140 once it is fixed it can be removed
-                //long story short if you fetch orderItem before fetching product/sku and neither is in 2nd level cache
-                //hibernate will fail with stackoverflow as it is not able to understand which proxy(sku or product
-                // they're both lazy) should be initialized first and so it finds a reference
-                // sku->defaultProduct->defaultSku and fails
-                if (product instanceof HibernateProxy && !Hibernate.isInitialized(product)) {
-                    postLoaderDao.evict(product);
-                }
-                deproxiedProduct = postLoaderDao.find(ProductImpl.class, id);
-            } else if (product instanceof HibernateProxy) {
-                deproxiedProduct = HibernateUtils.deproxy(product);
-            } else {
-                deproxiedProduct = product;
-            }
-        }
-
-        return deproxiedProduct;
+        return this.product;
     }
 
     @Override
