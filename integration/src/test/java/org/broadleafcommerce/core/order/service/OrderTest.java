@@ -207,7 +207,6 @@ public class OrderTest extends OrderBaseTest {
         java.util.Map<String, String> attrs1 = new java.util.HashMap<>();
         attrs1.put("Test-Line-Item", "1");
         itemRequest1.setItemAttributes(attrs1);
-
         testOrder = orderService.addItem(testOrderId, itemRequest1, false);
 
         OrderItemRequestDTO itemRequest2 = new OrderItemRequestDTO();
@@ -216,7 +215,6 @@ public class OrderTest extends OrderBaseTest {
         java.util.Map<String, String> attrs2 = new java.util.HashMap<>();
         attrs2.put("Test-Line-Item", "2");
         itemRequest2.setItemAttributes(attrs2);
-
         testOrder = orderService.addItem(testOrderId, itemRequest2, false);
 
         // Fetch to ensure they are registered correctly
@@ -234,9 +232,6 @@ public class OrderTest extends OrderBaseTest {
         testOrder = orderService.findOrderById(testOrderId);
         OrderItem firstItem = testOrder.getOrderItems().get(0);
 
-        System.out.println("++++++++++++++++++++++++++++++");
-        System.out.println(":::::::::excludedFulfillmentOptions: " + ((DiscreteOrderItem)firstItem).getSku().getExcludedFulfillmentOptions());
-
         OrderItemRequestDTO updateRequest = new OrderItemRequestDTO();
         updateRequest.setOrderItemId(firstItem.getId());
         updateRequest.setQuantity(3);
@@ -245,7 +240,6 @@ public class OrderTest extends OrderBaseTest {
 
         // Restore merge flag
         orderService.setAutomaticallyMergeLikeItems(originalMergeVal);
-        System.out.println("++++++++++++++++++++++++++++++Before Flush");
 
         // =================================================================
         // THE DETONATOR: Explicitly force a flush right here.
@@ -253,9 +247,6 @@ public class OrderTest extends OrderBaseTest {
         // triggering the JpaSystemException directly into the console.
         // =================================================================
         em.flush();
-        System.out.println("--------------------------------After Flush");
-
-
         assert testOrder.getOrderItems().get(0).getQuantity() == 3 : "Quantity was not updated to 3";
     }
 
