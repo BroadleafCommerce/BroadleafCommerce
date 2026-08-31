@@ -352,20 +352,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public Category getCategory() {
-        if (deproxiedCategory == null) {
-            PostLoaderDao postLoaderDao = DefaultPostLoaderDao.getPostLoaderDao();
-
-            if (category != null && postLoaderDao != null && category.getId() != null) {
-                Long id = category.getId();
-                deproxiedCategory = postLoaderDao.find(CategoryImpl.class, id);
-            } else if (category != null && category instanceof HibernateProxy) {
-                deproxiedCategory = HibernateUtils.deproxy(category);
-            } else {
-                deproxiedCategory = category;
-            }
-        }
-
-        return deproxiedCategory;
+        return this.category;
     }
 
     @Override
@@ -480,7 +467,7 @@ public class OrderItemImpl implements OrderItem, Cloneable, AdminMainEntity, Cur
 
     @Override
     public GiftWrapOrderItem getGiftWrapOrderItem() {
-        return HibernateUtils.deproxy(giftWrapOrderItem);
+        return this.giftWrapOrderItem;
     }
 
     @Override
