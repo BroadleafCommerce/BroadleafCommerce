@@ -46,19 +46,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <broadleaf-presentation.version>2.1.0-SNAPSHOT</broadleaf-presentation.version>
         <hsqldb.database.starter.version>3.1.0-SNAPSHOT</hsqldb.database.starter.version>
-        <ehcache3.version>3.11.1</ehcache3.version>
-        <spring.version>7.0.8</spring.version>
-        <spring.security.version>7.0.6</spring.security.version>
-        <spring.boot.version>4.1.0</spring.boot.version>
-        <spring-ldap-core.version>4.0.3</spring-ldap-core.version>
-        <jackson.version>3.1.4</jackson.version>
+        <ehcache3.version>3.12.0</ehcache3.version>
+        <spring.version>7.0.9</spring.version>
+        <spring.security.version>7.0.7</spring.security.version>
+        <spring.boot.version>4.1.1</spring.boot.version>
+        <spring-ldap-core.version>4.0.5</spring-ldap-core.version>
+        <jackson.version>3.1.5</jackson.version>
         <lombok.version>1.18.46</lombok.version>
-        <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
         <geb.version>7.0</geb.version>
         <spock.core.version>2.4-groovy-5.0</spock.core.version>
         <spock.spring.version>2.4-groovy-5.0</spock.spring.version>
         <groovy.version>5.0.4</groovy.version>
-        <gpg.plugin.version>3.2.7</gpg.plugin.version>
         <closure.compiler.version>v20240317</closure.compiler.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <hibernate.version>7.4.6.Final</hibernate.version>
@@ -85,7 +83,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.13.0</version>
+                    <version>3.15.0</version>
                     <configuration>
                         <source>17</source>
                         <target>17</target>
@@ -100,12 +98,12 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.2</version>
+                    <version>3.5.6</version>
                     <configuration>
                         <includes>
                             <include>**/Test*.java,**/*Test.java,**/*TestCase.java</include>
@@ -120,17 +118,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.5.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.4.2</version>
+                    <version>3.5.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.3</version>
+                    <version>3.1.4</version>
                     <configuration>
                         <deployAtEnd>true</deployAtEnd>
                     </configuration>
@@ -138,7 +136,7 @@
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>4.1.1</version>
+                    <version>5.1.0</version>
                     <configuration>
                         <targetBytecode>17</targetBytecode>
                     </configuration>
@@ -221,7 +219,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.3.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -230,7 +228,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>2.5.0</version>
+                <version>2.7.1</version>
                 <configuration>
                     <verbose>false</verbose>
                     <addSvnKeyWords>false</addSvnKeyWords>
@@ -278,7 +276,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
+                <version>0.8.15</version>
                 <executions>
                     <!-- Unit test coverage prep; generates jacoco.exec -->
                     <execution>
@@ -326,7 +324,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.3</version>
                 <executions>
                     <execution>
                         <id>default-cli</id>
@@ -376,7 +374,7 @@
                     <plugin>
                         <groupId>org.owasp</groupId>
                         <artifactId>dependency-check-maven</artifactId>
-                        <version>12.1.3</version>
+                        <version>13.0.0</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -401,7 +399,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${gpg.plugin.version}</version>
+                        <version>3.2.8</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -435,7 +433,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.11.2</version>
+                        <version>3.12.0</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -484,7 +482,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven.source.plugin.version}</version>
+                        <version>3.4.0</version>
                         <configuration>
                             <attach>true</attach>
                         </configuration>
@@ -1019,6 +1017,10 @@
                         <groupId>io.swagger.core.v3</groupId>
                         <artifactId>swagger-annotations-jakarta</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.jspecify</groupId>
+                        <artifactId>jspecify</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <!-- Override http2-client version coming from solr-->
@@ -1122,6 +1124,10 @@
                     <exclusion>
                         <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jspecify</groupId>
+                        <artifactId>jspecify</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1643,7 +1649,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.6.0-jre</version>
+                <version>33.7.1-jre</version>
             </dependency>
             <dependency>
                 <groupId>com.google.protobuf</groupId>
