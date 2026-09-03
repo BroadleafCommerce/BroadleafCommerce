@@ -221,6 +221,11 @@ public class BroadleafAdminTypedEntityRequestFilter extends AbstractBroadleafAdm
 
     protected boolean adminUserHasAccess(AdminSection typedEntitySection) {
         AdminUser adminUser = adminRemoteSecurityService.getPersistentAdminUser();
+        // Ensure we don't NPE if the user could not be resolved by the Service/DAO
+        if (adminUser == null) {
+            return false;
+        }
+
         // Check permissions assigned directly to the user.
         for (AdminPermission permission : adminUser.getAllPermissions()) {
             if (typedEntitySection.getPermissions().contains(permission)) {
