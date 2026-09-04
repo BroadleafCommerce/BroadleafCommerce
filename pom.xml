@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>BroadleafCommerce</name>
-    <description>BroadleafCommerce Top Level Project</description>
+    <description>Broadleaf Commerce Top Level Project</description>
     <groupId>org.broadleafcommerce</groupId>
     <artifactId>broadleaf</artifactId>
     <version>7.1.0-SNAPSHOT</version>
@@ -50,7 +50,6 @@
         <spring.version>7.0.9</spring.version>
         <spring.security.version>7.0.7</spring.security.version>
         <spring.boot.version>4.1.1</spring.boot.version>
-        <spring-ldap-core.version>4.0.5</spring-ldap-core.version>
         <jackson.version>3.1.5</jackson.version>
         <lombok.version>1.18.46</lombok.version>
         <geb.version>7.0</geb.version>
@@ -67,6 +66,7 @@
         <logback.version>1.5.22</logback.version>
         <junit.version>6.0.1</junit.version>
         <solr.version>9.10.1</solr.version>
+        <zookeeper.version>3.9.5</zookeeper.version>
         <!-- because of spring when does instrumentation it uses reflection to jdk classes, for tests we need this -->
         <surefire.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</surefire.argLine>
         <failsafe.argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</failsafe.argLine>
@@ -610,6 +610,10 @@
                         <groupId>javax.cache</groupId>
                         <artifactId>cache-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-core</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -624,6 +628,10 @@
                         <groupId>commons-logging</groupId>
                     </exclusion>
                     <exclusion>
+                        <artifactId>commons-collections</artifactId>
+                        <groupId>commons-collections</groupId>
+                    </exclusion>
+                    <exclusion>
                         <artifactId>xml-apis</artifactId>
                         <groupId>xml-apis</groupId>
                     </exclusion>
@@ -634,15 +642,9 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>1.11.0</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-beanutils2</artifactId>
+                <version>2.0.0-M2</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -852,6 +854,12 @@
 
             <!-- Testing Libraries -->
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-exec</artifactId>
+                <version>1.6.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.icegreen</groupId>
                 <artifactId>greenmail</artifactId>
                 <version>2.1.13</version>
@@ -995,23 +1003,15 @@
                     </exclusion>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-databind</artifactId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-annotations</artifactId>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.eclipse.jetty.http2</groupId>
-                        <artifactId>http2-client</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.eclipse.jetty.http2</groupId>
-                        <artifactId>http2-http-client-transport</artifactId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>io.swagger.core.v3</groupId>
@@ -1023,13 +1023,12 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- Override http2-client version coming from solr-->
+            <!-- Override jetty and netty versions coming from solr-->
             <dependency>
                 <groupId>org.eclipse.jetty.http2</groupId>
                 <artifactId>http2-parent</artifactId>
                 <version>11.0.26</version>
             </dependency>
-            <!-- Override io.netty version coming from zookeeper -->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-parent</artifactId>
@@ -1383,17 +1382,6 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.springframework.ldap</groupId>
-                <artifactId>spring-ldap-core</artifactId>
-                <version>${spring-ldap-core.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.micrometer</groupId>
-                        <artifactId>micrometer-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-ldap</artifactId>
                 <version>${spring.security.version}</version>
@@ -1417,6 +1405,10 @@
                     <exclusion>
                         <groupId>org.springframework.security</groupId>
                         <artifactId>spring-security-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.micrometer</groupId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -1562,6 +1554,10 @@
                     <exclusion>
                         <groupId>commons-io</groupId>
                         <artifactId>commons-io</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>commons-lang</groupId>
+                        <artifactId>commons-lang</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>log4j</groupId>

@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.web.search;
 
-import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.apache.commons.beanutils2.BeanToPropertyValueTransformer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -55,7 +55,7 @@ public class SearchFilterUtil {
             if (parameters.containsKey(parameter)) { // we're doing a multi-select
                 for (Iterator<Product> itr = products.iterator(); itr.hasNext(); ) {
                     Product product = itr.next();
-                    if (!ArrayUtils.contains(parameters.get(parameter), reader.transform(product).toString())) {
+                    if (!ArrayUtils.contains(parameters.get(parameter), reader.apply(product).toString())) {
                         itr.remove();
                     }
                 }
@@ -66,7 +66,7 @@ public class SearchFilterUtil {
                 Money maximumMoney = new Money(maxMoney.replaceAll("[^0-9.]", ""));
                 for (Iterator<Product> itr = products.iterator(); itr.hasNext(); ) {
                     Product product = itr.next();
-                    Money objectValue = (Money) reader.transform(product);
+                    Money objectValue = (Money) reader.apply(product);
                     if (objectValue.lessThan(minimumMoney) || objectValue.greaterThan(maximumMoney)) {
                         itr.remove();
                     }

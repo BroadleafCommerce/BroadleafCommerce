@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.core.order.service.call;
 
-import org.apache.commons.collections.FactoryUtils;
-import org.apache.commons.collections.list.LazyList;
+import org.apache.commons.collections4.FactoryUtils;
+import org.apache.commons.collections4.list.LazyList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class AddToCartItems {
 
     @SuppressWarnings("unchecked")
     //TOOD: this should probably be refactored to be called "rows" like in other model objects
-    private List<OrderItemRequestDTO> addToCartItems = LazyList.decorate(
+    private List<OrderItemRequestDTO> addToCartItems = LazyList.lazyList(
             new ArrayList<OrderItemRequestDTO>(),
             FactoryUtils.instantiateFactory(OrderItemRequestDTO.class)
     );

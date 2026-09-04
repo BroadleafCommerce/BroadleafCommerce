@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.admin.server.service.persistence.module.provider;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.admin.server.service.persistence.module.provider.extension.ProductParentCategoryFieldPersistenceProviderExtensionManager;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;

@@ -83,7 +83,7 @@
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
-            <version>3.9.5</version>
+            <version>${zookeeper.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -108,7 +108,7 @@
                 </exclusion>
                 <exclusion>
                     <groupId>io.netty</groupId>
-                    <artifactId>netty-transport-native-epoll</artifactId>
+                    <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -119,7 +119,7 @@
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper-jute</artifactId>
-            <version>3.9.5</version>
+            <version>${zookeeper.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

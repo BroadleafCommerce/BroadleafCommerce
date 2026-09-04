@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.web.processor;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.common.admin.domain.TypedEntity;

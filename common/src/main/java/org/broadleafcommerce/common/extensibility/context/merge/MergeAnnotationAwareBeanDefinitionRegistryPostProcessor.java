@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;

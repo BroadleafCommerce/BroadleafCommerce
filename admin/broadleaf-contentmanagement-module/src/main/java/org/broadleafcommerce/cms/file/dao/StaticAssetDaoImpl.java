@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.cms.file.dao;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.cms.file.domain.StaticAsset;
 import org.broadleafcommerce.cms.file.domain.StaticAssetImpl;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
@@ -148,7 +149,7 @@ public class StaticAssetDaoImpl implements StaticAssetDao {
                 );
             }
             criteria.where(restrictions.toArray(new Predicate[restrictions.size()]));
-            if (!org.apache.commons.collections.CollectionUtils.isEmpty(sorts)) {
+            if (!CollectionUtils.isEmpty(sorts)) {
                 criteria.orderBy(sorts);
             }
 

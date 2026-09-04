@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.test.common.rule;
 
-import org.apache.commons.collections.map.MultiValueMap;
+import org.apache.commons.collections4.map.MultiValueMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.rule.SelectizeCollectionUtils;

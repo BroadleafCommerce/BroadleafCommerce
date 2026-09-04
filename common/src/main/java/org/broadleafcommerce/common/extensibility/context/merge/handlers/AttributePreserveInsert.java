@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;

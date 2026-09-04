@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.openadmin.dto.SortDirection;
 
 import java.util.ArrayList;

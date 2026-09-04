@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.cms.page.service;
 
-import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.beanutils2.BeanComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;

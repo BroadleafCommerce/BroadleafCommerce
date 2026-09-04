@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.common.web.payment.processor;
 
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;

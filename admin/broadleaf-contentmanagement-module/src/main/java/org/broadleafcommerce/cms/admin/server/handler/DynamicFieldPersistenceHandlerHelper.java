@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.cms.admin.server.handler;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentType;

@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.criteria;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.NoPossibleResultsException;
 import org.broadleafcommerce.openadmin.dto.ClassTree;

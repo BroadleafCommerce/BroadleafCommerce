@@ -17,7 +17,7 @@
  */
 package org.broadleafcommerce.core.spec.offer.service.processor
 
-import org.apache.commons.collections.map.MultiValueMap
+import org.apache.commons.collections4.map.MultiValueMap
 import org.broadleafcommerce.core.catalog.domain.CategoryImpl
 import org.broadleafcommerce.core.catalog.domain.ProductAttribute
 import org.broadleafcommerce.core.catalog.domain.ProductAttributeImpl

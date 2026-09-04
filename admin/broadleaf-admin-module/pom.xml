@@ -59,6 +59,7 @@
                 <configuration>
                     <source>17</source>
                     <target>17</target>
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
         </plugins>
