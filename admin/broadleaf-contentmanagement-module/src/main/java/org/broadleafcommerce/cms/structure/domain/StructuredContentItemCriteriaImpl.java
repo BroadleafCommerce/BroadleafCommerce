@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcType;
@@ -80,8 +79,8 @@ public class StructuredContentItemCriteriaImpl
     protected Integer quantity;
 
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "ORDER_ITEM_MATCH_RULE", length = Length.LONG32 - 1)
+    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Column(name = "ORDER_ITEM_MATCH_RULE", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "StructuredContentItemCriteriaImpl_Order_Item_Match_Rule",
             group = "StructuredContentItemCriteriaImpl_Description",
             visibility = VisibilityEnum.HIDDEN_ALL)

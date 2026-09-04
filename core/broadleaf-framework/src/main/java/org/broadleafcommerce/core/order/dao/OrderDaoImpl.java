@@ -107,7 +107,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Order readOrderByIdIgnoreCache(final Long orderId) {
         Map<String, Object> m = new HashMap<>();
-        m.put(AvailableSettings.JAKARTA_SHARED_CACHE_RETRIEVE_MODE, CacheRetrieveMode.BYPASS);
+        m.put(AvailableSettings.JAKARTA_JPA_SHARED_CACHE_RETRIEVE_MODE, CacheRetrieveMode.BYPASS);
         return em.find(OrderImpl.class, orderId, m);
     }
 
@@ -150,7 +150,7 @@ public class OrderDaoImpl implements OrderDao {
         criteria.select(order);
 
         // We only want results that match the order IDs
-        criteria.where(order.get("id").as(Long.class).in(orderIds));
+        criteria.where(order.get("id").in(orderIds));
 
         TypedQuery<Order> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);
@@ -385,6 +385,21 @@ public class OrderDaoImpl implements OrderDao {
         query.setHint(QueryHints.HINT_CACHEABLE, true);
         query.setHint(QueryHints.HINT_CACHE_REGION, "query.Order");
 
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Order> readOrdersByDateRangePaginated(Date startDate, Date endDate, int page, int pageSize) {
+        CriteriaBuilder builder = em.getCriteriaBuilder();
+        CriteriaQuery<Order> criteria = builder.createQuery(Order.class);
+        Root<OrderImpl> order = criteria.from(OrderImpl.class);
+        criteria.select(order);
+        criteria.where(builder.between(order.get("submitDate"), startDate, endDate));
+        criteria.orderBy(builder.desc(order.get("submitDate")));
+
+        TypedQuery<Order> query = em.createQuery(criteria);
+        query.setFirstResult(page * pageSize);
+        query.setMaxResults(pageSize);
         return query.getResultList();
     }
 

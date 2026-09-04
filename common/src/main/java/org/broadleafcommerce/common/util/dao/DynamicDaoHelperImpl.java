@@ -266,7 +266,7 @@ public class DynamicDaoHelperImpl implements DynamicDaoHelper {
             // or maybe insteaf of try-catch it is better to check if
             // ((SessionImpl) session).getTypeConfiguration().getBasicTypeForJavaType(itemClass);
             // is not null? if so this is a "primitive" not entity...
-            sessionFactory.getMetamodel().entity(entityClass);
+            isEntity = sessionFactory.getMetamodel().entity(entityClass) != null;
         } catch (IllegalArgumentException ex) {
             isEntity = false;
         }

@@ -25,7 +25,6 @@ import java.util.List;
 
 public class AddToCartItems {
 
-    @SuppressWarnings("unchecked")
     //TOOD: this should probably be refactored to be called "rows" like in other model objects
     private List<OrderItemRequestDTO> addToCartItems = LazyList.lazyList(
             new ArrayList<OrderItemRequestDTO>(),

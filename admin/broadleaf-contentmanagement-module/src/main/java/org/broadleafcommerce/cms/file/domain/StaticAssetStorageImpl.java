@@ -54,8 +54,8 @@ public class StaticAssetStorageImpl implements StaticAssetStorage {
     @Column(name = "STATIC_ASSET_ID", nullable = false)
     protected Long staticAssetId;
 
+    @Column (name = "FILE_DATA", length = Integer.MAX_VALUE - 1)
     @Lob
-    @Column(name = "FILE_DATA", length = Length.LONG32 - 1)
     protected Blob fileData;
 
     @Override

@@ -88,7 +88,7 @@ public class CustomerDaoImpl implements CustomerDao {
         criteria.select(customer);
 
         // We only want results that match the customer IDs
-        criteria.where(customer.get("id").as(Long.class).in(ids));
+        criteria.where(customer.get("id").in(ids));
 
         TypedQuery<Customer> query = em.createQuery(criteria);
         query.setHint(QueryHints.HINT_CACHEABLE, true);

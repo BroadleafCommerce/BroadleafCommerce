@@ -434,7 +434,7 @@ public interface Sku extends Serializable, MultiTenantCloneable<Sku>, Indexable 
     void setSkuAttributes(Map<String, SkuAttribute> skuAttributes);
 
     /**
-     * Returns multivalued SkuAttributes associated with this sku using {@link org.apache.commons.collections.map.MultiValueMap}.
+     * Returns multivalued SkuAttributes associated with this sku using {@link org.apache.commons.collections4.map.MultiValueMap}.
      * For example, the key of Color could have SkuAttributes of Red and Blue values.
      *
      * @return the multivalued attributes for this Sku

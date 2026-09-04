@@ -105,6 +105,9 @@
             BLCAdmin.listGrid.paginate.initializeHeaderWidths($listGridContainer.find('table.list-grid-table'));
             $listGridContainer.find('.listgrid-body-wrapper').mCustomScrollbar('update')
 
+            if ($tbody.length) {
+                BLCAdmin.listGrid.paginate.updateGridSize($tbody);
+            }
             $listGridContainer.trigger('blc-listgrid-replaced', $listGridContainer);
         },
 

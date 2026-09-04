@@ -64,8 +64,8 @@ public class OfferRuleImpl implements OfferRule {
     protected Long id;
 
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "MATCH_RULE", length = Length.LONG32 - 1)
+    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Column(name = "MATCH_RULE", length = Integer.MAX_VALUE - 1)
     protected String matchRule;
 
     /* (non-Javadoc)

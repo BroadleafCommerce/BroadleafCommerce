@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.catalog.service.type.SkuFeeType;
-import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcType;
@@ -89,8 +88,8 @@ public class SkuFeeImpl implements SkuFee {
     protected Boolean taxable = Boolean.FALSE;
 
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "EXPRESSION", length = Length.LONG32 - 1)
+    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Column(name = "EXPRESSION", length = Integer.MAX_VALUE - 1)
     protected String expression;
 
     @Column(name = "FEE_TYPE")

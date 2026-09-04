@@ -20,12 +20,16 @@ package org.broadleafcommerce.profile.web.core.service.login;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafWebRequestProcessor;
 import org.broadleafcommerce.profile.core.domain.Customer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.WebRequest;
 
@@ -42,6 +46,8 @@ public class LoginServiceImpl implements LoginService {
     private UserDetailsService userDetailsService;
     @Resource(name = "blCustomerStateRequestProcessor")
     private BroadleafWebRequestProcessor customerStateRequestProcessor;
+    @Autowired
+    private SecurityContextRepository securityContextRepository;
 
     @Override
     public Authentication loginCustomer(Customer customer) {
@@ -56,6 +62,11 @@ public class LoginServiceImpl implements LoginService {
         );
         Authentication authentication = authenticationManager.authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
+        securityContextHolderStrategy.setContext(securityContext);
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        securityContextRepository.saveContext(securityContext, brc.getRequest(), brc.getResponse());
         customerStateRequestProcessor.process(getWebRequest());
         cartStateRequestProcessor.process(getWebRequest());
         return authentication;

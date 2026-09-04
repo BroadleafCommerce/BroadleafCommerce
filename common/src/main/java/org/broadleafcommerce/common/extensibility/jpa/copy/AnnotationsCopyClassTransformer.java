@@ -24,6 +24,7 @@ import org.broadleafcommerce.common.logging.SupportLogManager;
 import org.broadleafcommerce.common.logging.SupportLogger;
 
 import java.io.ByteArrayInputStream;
+import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import jakarta.persistence.spi.TransformerException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
@@ -73,7 +73,7 @@ public class AnnotationsCopyClassTransformer implements BroadleafClassTransforme
             Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain,
             byte[] classfileBuffer
-    ) throws TransformerException {
+    ) throws IllegalClassFormatException {
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
             return null;
@@ -137,7 +137,7 @@ public class AnnotationsCopyClassTransformer implements BroadleafClassTransforme
                         xformKey, StringUtils.join(xformVals, ",")));
                 return clazz.toBytecode();
             } catch (Exception e) {
-                throw new TransformerException("Unable to transform class", e);
+                throw new IllegalClassFormatException("Unable to transform class");
             } finally {
                 if (clazz != null) {
                     clazz.detach();

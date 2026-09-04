@@ -37,7 +37,9 @@ public class AdminAuditableListener extends AbstractAuditableListener {
     public void setAuditCreationAndUpdateData(Object entity) throws Exception {
         BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
         if (brc.getAdmin() || (entity instanceof CrossAppAuditable)) {
-            setAuditCreationData(entity, new AdminAuditable());
+            if ((entity instanceof AdminAudit audit) && (audit.getDateCreated() == null && audit.getCreatedBy() == null)) {
+                setAuditCreationData(entity, new AdminAuditable());
+            }
             setAuditUpdateData(entity, new AdminAuditable());
         }
     }

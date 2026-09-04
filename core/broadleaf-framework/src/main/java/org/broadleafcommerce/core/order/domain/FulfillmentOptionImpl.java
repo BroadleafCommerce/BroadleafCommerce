@@ -30,7 +30,6 @@ import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.core.order.service.type.FulfillmentType;
-import org.hibernate.Length;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.JdbcType;
@@ -74,8 +73,8 @@ public class FulfillmentOptionImpl implements FulfillmentOption {
     protected String name;
 
     @Lob
-    @JdbcType(LongVarcharJdbcType.class)
-    @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
+    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
     @AdminPresentation(friendlyName = "FulfillmentOptionImpl_longDescription",
             order = Presentation.FieldOrder.DESCRIPTION, translatable = true)
     protected String longDescription;

@@ -86,7 +86,7 @@ public class BLCCollectionUtils {
     }
 
     /**
-     * Delegates to {@link CollectionUtils#select(Collection, org.apache.commons.collections.Predicate)}, but will
+     * Delegates to {@link CollectionUtils#select(Collection, org.apache.commons.collections4.Predicate)}, but will
      * force the return type to be a List<T>.
      *
      * @param inputCollection
