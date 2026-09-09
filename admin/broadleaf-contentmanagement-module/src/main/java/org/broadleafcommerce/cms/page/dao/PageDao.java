@@ -20,13 +20,12 @@ package org.broadleafcommerce.cms.page.dao;
 import org.broadleafcommerce.cms.page.domain.Page;
 import org.broadleafcommerce.cms.page.domain.PageField;
 import org.broadleafcommerce.cms.page.domain.PageTemplate;
-import org.broadleafcommerce.cms.page.domain.SiteMapPageDTO;
 import org.broadleafcommerce.common.locale.domain.Locale;
 
 import java.util.Date;
 import java.util.List;
+
 import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 
 /**
  * Created by bpolster.
@@ -61,15 +60,15 @@ public interface PageDao {
     List<Page> readAllPages();
 
     /**
-     * Retrieve a keyset-paginated list of lightweight DTOs for sitemap generation.
+     * Retrieve a subset of all online and site map included Pages
      *
-     * @param limit the maximum number of results
-     * @param lastFullUrl the fullUrl of the last page from the previous fetch, or null for the first fetch
-     * @param lastId the id of the last page from the previous fetch, or null for the first fetch
-     * @return a list of SiteMapPageDTO representing the online and included pages
+     * @param limit  the maximum number of results
+     * @param offset the starting point in the record set
+     * @param sortBy the column to sort by
+     * @return
      */
     @Nonnull
-    List<SiteMapPageDTO> readOnlineAndIncludedPageSiteMapEntries(@Nonnull int limit, @Nullable String lastFullUrl, @Nullable Long lastId);
+    List<Page> readOnlineAndIncludedPages(@Nonnull int limit, @Nonnull int offset, @Nonnull String sortBy);
 
     /**
      * Returns all page templates, regardless of any sandbox they are apart of
@@ -85,8 +84,7 @@ public interface PageDao {
     List<Page> findPageByURI(Locale locale, String uri);
 
     /**
-     * Returns pages that match the given URI and are within 1 day of the active
-     * date (potentially cached).
+     * Returns pages that match the given URI and are within 1 day of the active date (potentially cached).
      * This will only cache for 1 day.
      *
      * @param uri

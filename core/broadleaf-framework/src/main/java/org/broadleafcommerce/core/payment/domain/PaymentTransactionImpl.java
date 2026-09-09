@@ -33,10 +33,11 @@ import org.broadleafcommerce.common.presentation.override.AdminPresentationMerge
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverride;
 import org.broadleafcommerce.common.presentation.override.AdminPresentationMergeOverrides;
 import org.broadleafcommerce.common.presentation.override.PropertyType;
+import org.hibernate.Length;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.MapKeyType;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Type;
+import org.hibernate.type.descriptor.jdbc.LongVarcharJdbcType;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -105,9 +106,9 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Payment_IP_Address", order = 4000)
     protected String customerIpAddress;
 
-    @Column(name = "RAW_RESPONSE", length = Integer.MAX_VALUE - 1)
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @JdbcType(LongVarcharJdbcType.class)
+    @Column(name = "RAW_RESPONSE", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "PaymentTransactionImpl_Raw_Response")
     protected String rawResponse;
 
@@ -135,12 +136,10 @@ public class PaymentTransactionImpl implements PaymentTransaction {
     protected PaymentTransaction parentTransaction;
 
     @ElementCollection
-    @MapKeyColumn(name="FIELD_NAME")
-    @MapKeyType(@Type(type = "java.lang.String"))
-    @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
-    @Column(name="FIELD_VALUE", length = Integer.MAX_VALUE - 1)
-    @CollectionTable(name="BLC_TRANS_ADDITNL_FIELDS", joinColumns=@JoinColumn(name="PAYMENT_TRANSACTION_ID"))
+    @CollectionTable(name = "BLC_TRANS_ADDITNL_FIELDS",
+            joinColumns = @JoinColumn(name = "PAYMENT_TRANSACTION_ID"))
+    @MapKeyColumn(name = "FIELD_NAME")
+    @Column(name = "FIELD_VALUE", length = Length.LONG32 - 1)
     @BatchSize(size = 50)
     @AdminPresentationMap(friendlyName = "PaymentTransactionImpl_Additional_Fields",
             isSimpleValue = UnspecifiedBooleanType.TRUE,

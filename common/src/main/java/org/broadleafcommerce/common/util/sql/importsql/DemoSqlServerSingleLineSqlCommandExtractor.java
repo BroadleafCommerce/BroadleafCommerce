@@ -20,7 +20,7 @@ package org.broadleafcommerce.common.util.sql.importsql;
 import org.broadleafcommerce.common.logging.SupportLogManager;
 import org.broadleafcommerce.common.logging.SupportLogger;
 import org.hibernate.dialect.Dialect;
-import org.hibernate.tool.hbm2ddl.SingleLineSqlCommandExtractor;
+import org.hibernate.tool.schema.internal.script.SingleLineSqlScriptExtractor;
 
 import java.io.Reader;
 import java.io.Serial;
@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @author Jeff Fischer
  */
-public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCommandExtractor {
+public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlScriptExtractor {
 
     public static final String DOUBLEBACKSLASHMATCH = "(\\\\\\\\)";
     public static final String TRUE = "'TRUE'";
@@ -51,25 +51,27 @@ public class DemoSqlServerSingleLineSqlCommandExtractor extends SingleLineSqlCom
     protected boolean alreadyRun = false;
 
     @Override
-    public String[] extractCommands(Reader reader) {
+    public List<String> extractCommands(Reader reader, Dialect dialect) {
         if (!alreadyRun) {
             alreadyRun = true;
             LOGGER.support("Converting hibernate.hbm2ddl.import_files sql statements for compatibility with SQL Server");
         }
 
-        String[] statements = super.extractCommands(reader);
-        handleReplacements(statements);
-
-        return statements;
+        List<String> statements = super.extractCommands(reader, dialect);
+        return handleReplacements(statements);
     }
 
-    protected void handleReplacements(String[] statements) {
-        for (int j=0; j<statements.length; j++) {
-            statements[j] = replaceBoolean(statements[j]);
+    protected List<String> handleReplacements(List<String> statements) {
+        List<String> result = new ArrayList<>(statements.size());
+        for (String statement : statements) {
+            String fixed = replaceBoolean(statement);
             // Replace newline characters
-            statements[j] = statements[j].replaceAll(DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX, "' + CHAR(13) + CHAR(10) + '");
-
+            result.add(fixed.replaceAll(
+                    DemoPostgresSingleLineSqlCommandExtractor.NEWLINE_REPLACEMENT_REGEX,
+                    "' + CHAR(13) + CHAR(10) + '"
+            ));
         }
+        return result;
     }
 
     protected String replaceBoolean(String statement) {

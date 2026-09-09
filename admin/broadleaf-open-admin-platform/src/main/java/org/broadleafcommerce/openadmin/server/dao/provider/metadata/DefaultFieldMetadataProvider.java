@@ -178,7 +178,7 @@ public class DefaultFieldMetadataProvider extends BasicFieldMetadataProvider {
                 }
             }
             if (column != null) {
-                fieldMetadata.setLength(column.getLength());
+                fieldMetadata.setLength(getColumnLength(column));
                 fieldMetadata.setScale(column.getScale());
                 fieldMetadata.setPrecision(column.getPrecision());
                 fieldMetadata.setRequired(!column.isNullable());

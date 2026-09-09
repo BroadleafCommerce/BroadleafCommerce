@@ -37,6 +37,7 @@ import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
+import org.hibernate.Length;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -143,8 +144,8 @@ public class ProductOptionImpl implements ProductOption, AdminMainEntity, Produc
             addType = AddMethodType.PERSIST)
     protected List<ProductOptionValue> allowedValues = new ArrayList<>();
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
-    @Column(name = "LONG_DESCRIPTION", length = Integer.MAX_VALUE - 1)
+    @JdbcType(LongVarcharJdbcType.class)
+    @Column(name = "LONG_DESCRIPTION", length = Length.LONG32 - 1)
     @AdminPresentation(friendlyName = "productOption_description",
             group = GroupName.General,
             largeEntry = true,

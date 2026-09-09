@@ -43,7 +43,7 @@ import java.util.List;
 
 /**
  * Category site map generator tests
- * 
+ *
  * @author Joshua Skorton (jskorton)
  */
 public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
@@ -92,27 +92,27 @@ public class CategorySiteMapGeneratorTest extends SiteMapGeneratorTest {
         EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c1, 5, 0)).andReturn(new ArrayList<Category>())
                 .atLeastOnce();
         EasyMock.expect(categoryDao.readCategoryById(c1.getId())).andReturn(c1).atLeastOnce();
-        
+
         EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c2, 5, 0)).andReturn(new ArrayList<Category>())
                 .atLeastOnce();
         EasyMock.expect(categoryDao.readCategoryById(c2.getId())).andReturn(c2).atLeastOnce();
-        
+
         EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c3, 5, 0)).andReturn(merchandiseSubcategories)
                 .atLeastOnce();
         EasyMock.expect(categoryDao.readCategoryById(c3.getId())).andReturn(c3).atLeastOnce();
-        
+
         EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c4, 5, 0)).andReturn(new ArrayList<Category>())
                 .atLeastOnce();
         EasyMock.expect(categoryDao.readCategoryById(c4.getId())).andReturn(c4).atLeastOnce();
-        
+
         EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c5, 5, 0)).andReturn(new ArrayList<Category>())
-            .atLeastOnce();
+                .atLeastOnce();
         EasyMock.expect(categoryDao.readCategoryById(c5.getId())).andReturn(c5).atLeastOnce();
 
         EasyMock.expect(categoryDao.readActiveSubCategoriesByCategory(c6, 5, 0)).andReturn(new ArrayList<Category>())
-            .atLeastOnce();
+                .atLeastOnce();
         EasyMock.expect(categoryDao.readCategoryById(c6.getId())).andReturn(c6).atLeastOnce();
-        
+
         // Initialize the mocks
         EasyMock.replay(categoryDao);
 

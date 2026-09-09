@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import jakarta.annotation.Resource;
+import jakarta.persistence.spi.TransformerException;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
@@ -81,7 +82,7 @@ public class ConditionalFieldAnnotationsClassTransformer extends AbstractClassTr
             Class<?> classBeingRedefined,
             ProtectionDomain protectionDomain,
             byte[] classfileBuffer
-    ) throws IllegalClassFormatException {
+    ) throws TransformerException {
 
         // Lambdas and anonymous methods in Java 8 do not have a class name defined and so no transformation should be done
         if (className == null) {
@@ -114,7 +115,7 @@ public class ConditionalFieldAnnotationsClassTransformer extends AbstractClassTr
 
                 CtField[] fieldsToCopy = template.getDeclaredFields();
                 //Iterate over all of the fields in the template.
-                //If the template field contains annotations, replace the target's annotations with the 
+                //If the template field contains annotations, replace the target's annotations with the
                 //template annotations.  Otherwise, remove all annotations from the target.
                 for (CtField field : fieldsToCopy) {
                     ConstPool constPool = clazz.getClassFile().getConstPool();
@@ -168,7 +169,7 @@ public class ConditionalFieldAnnotationsClassTransformer extends AbstractClassTr
             error.printStackTrace();
             throw error;
         } catch (Exception e) {
-            throw new IllegalClassFormatException("Unable to transform class");
+            throw new TransformerException("Unable to transform class", e);
         } finally {
             if (clazz != null) {
                 try {

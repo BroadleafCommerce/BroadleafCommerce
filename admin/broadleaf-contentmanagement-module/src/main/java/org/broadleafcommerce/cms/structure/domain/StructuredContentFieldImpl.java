@@ -71,10 +71,10 @@ public class StructuredContentFieldImpl implements StructuredContentField, Profi
     @Column(name = "VALUE")
     protected String stringValue;
 
-    @AdminPresentation
-    @Column (name = "LOB_VALUE", length = Integer.MAX_VALUE - 1)
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @JdbcType(LongVarcharJdbcType.class)
+    @AdminPresentation
+    @Column(name = "LOB_VALUE", length = Length.LONG32 - 1)
     protected String lobValue;
 
     @Override

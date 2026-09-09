@@ -17,11 +17,11 @@
  */
 package org.broadleafcommerce.common.util;
 
-import org.broadleafcommerce.common.dialect.BroadleafPostgreSQLDialect;
 import org.hibernate.Session;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.MySQLDialect;
-import org.hibernate.dialect.Oracle10gDialect;
+import org.hibernate.dialect.OracleDialect;
+import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
@@ -50,23 +50,22 @@ public class DialectHelper {
 
     public boolean isOracle() {
         //This should handle other Oracle dialects as well, since they derive from Oracle8iDialect
-        return isOracle(defaultEntityManager);
+        return getHibernateDialect(defaultEntityManager) instanceof OracleDialect;
     }
 
     public boolean isOracle(EntityManager em) {
         //This should handle other Oracle dialects as well, since they derive from Oracle8iDialect
-        Dialect dialect = getHibernateDialect(em);
-        return Oracle10gDialect.class.isAssignableFrom(dialect.getClass());
+        return getHibernateDialect(em) instanceof OracleDialect;
     }
 
     public boolean isPostgreSql() {
         //This should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
-        return getHibernateDialect(defaultEntityManager) instanceof BroadleafPostgreSQLDialect;
+        return getHibernateDialect(defaultEntityManager) instanceof PostgreSQLDialect;
     }
 
     public boolean isPostgreSql(EntityManager em) {
         //This should handle other Postgres dialects as well, since they derive from PostgreSQL81Dialect
-        return getHibernateDialect(em) instanceof BroadleafPostgreSQLDialect;
+        return getHibernateDialect(em) instanceof PostgreSQLDialect;
     }
 
     public boolean isSqlServer() {

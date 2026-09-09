@@ -18,7 +18,8 @@
 package org.broadleafcommerce.cms.page.service;
 
 import org.broadleafcommerce.cms.page.dao.PageDao;
-import org.broadleafcommerce.cms.page.domain.SiteMapPageDTO;
+import org.broadleafcommerce.cms.page.domain.Page;
+import org.broadleafcommerce.cms.page.domain.PageImpl;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfigurationImpl;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
@@ -44,9 +45,12 @@ public class PageSiteMapGeneratorTest extends SiteMapGeneratorTest {
     @Test
     public void testPageSiteMapGenerator() throws SiteMapException, IOException {
 
-        SiteMapPageDTO p1 = new SiteMapPageDTO(1L, "/about_us", null);
-        SiteMapPageDTO p2 = new SiteMapPageDTO(2L, "faq", null);
-        SiteMapPageDTO p3 = new SiteMapPageDTO(3L, "/new-to-hot-sauce", null);
+        Page p1 = new PageImpl();
+        p1.setFullUrl("/about_us");
+        Page p2 = new PageImpl();
+        p2.setFullUrl("faq");
+        Page p3 = new PageImpl();
+        p3.setFullUrl("/new-to-hot-sauce");
 
         List<Page> pages = new ArrayList<>();
         pages.add(p1);
@@ -54,8 +58,7 @@ public class PageSiteMapGeneratorTest extends SiteMapGeneratorTest {
         pages.add(p3);
 
         PageDao pageDao = EasyMock.createMock(PageDao.class);
-        EasyMock.expect(pageDao.readOnlineAndIncludedPageSiteMapEntries(5, null, null)).andReturn(pages);
-        EasyMock.expect(pageDao.readOnlineAndIncludedPageSiteMapEntries(5, "/new-to-hot-sauce", 3L)).andReturn(new ArrayList<SiteMapPageDTO>());
+        EasyMock.expect(pageDao.readOnlineAndIncludedPages(5, 0, "fullUrl")).andReturn(pages);
         EasyMock.replay(pageDao);
 
         PageSiteMapGenerator psmg = new PageSiteMapGenerator();

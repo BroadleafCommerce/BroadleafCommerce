@@ -20,9 +20,8 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelper;
 import org.broadleafcommerce.common.util.dao.DynamicDaoHelperImpl;
-import org.hibernate.internal.SessionFactoryImpl;
-import org.hibernate.query.criteria.internal.CriteriaBuilderImpl;
-import org.hibernate.query.criteria.internal.path.PluralAttributePath;
+import org.hibernate.metamodel.model.domain.JpaMetamodel;
+import org.hibernate.query.sqm.internal.SqmCriteriaNodeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.metamodel.Attribute;
 import jakarta.persistence.metamodel.ManagedType;
-import jakarta.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.PluralAttribute;
 
 /**
  * @author Jeff Fischer
@@ -50,14 +49,15 @@ public class FieldPathBuilder {
 
     public FieldPath getFieldPath(From root, String fullPropertyName) {
         String[] pieces = fullPropertyName.split("\\.");
-        List<String> associationPath = new ArrayList<String>();
-        List<String> basicProperties = new ArrayList<String>();
+        List<String> associationPath = new ArrayList<>();
+        List<String> basicProperties = new ArrayList<>();
         int j = 0;
         for (String piece : pieces) {
-            checkPiece: {
+            checkPiece:
+            {
                 if (j == 0) {
                     Path path = root.get(piece);
-                    if (path instanceof PluralAttributePath) {
+                    if (path.getModel() instanceof PluralAttribute) {
                         associationPath.add(piece);
                         break checkPiece;
                     }
@@ -98,12 +98,12 @@ public class FieldPathBuilder {
                 // We weren't able to resolve the requested piece, likely because it's in a polymoprhic version
                 // of the path we're currently on. Let's see if there's any polymoprhic version of our class to
                 // use instead.
-                SessionFactoryImpl em = ((CriteriaBuilderImpl) builder).getEntityManagerFactory();
-                Metamodel mm = em.getMetamodel();
+                JpaMetamodel mm = ((SqmCriteriaNodeBuilder) builder).getDomainModel();
                 boolean found = false;
 
                 Class<?>[] polyClasses = dynamicDaoHelper.getAllPolymorphicEntitiesFromCeiling(
-                        path.getJavaType(), true, true);
+                        path.getJavaType(), true, true
+                );
 
                 for (Class<?> clazz : polyClasses) {
                     ManagedType mt = mm.managedType(clazz);
@@ -127,21 +127,25 @@ public class FieldPathBuilder {
                 }
             }
 
-            if (path.getParentPath() != null && path.getParentPath().getJavaType().isAnnotationPresent(Embeddable.class) && path instanceof PluralAttributePath) {
+            if (path.getParentPath() != null && path.getParentPath().getJavaType().isAnnotationPresent(Embeddable.class)
+                    && path.getModel() instanceof PluralAttribute) {
                 //We need a workaround for this problem until it is resolved in Hibernate (loosely related to and likely resolved by https://hibernate.atlassian.net/browse/HHH-8802)
                 //We'll throw a specialized exception (and handle in an alternate flow for calls from BasicPersistenceModule)
-                throw new CriteriaConversionException(String.format("Unable to create a JPA criteria Path through an @Embeddable object to a collection that resides therein (%s)", fieldPath.getTargetProperty()), fieldPath);
-//                //TODO this code should work, but there still appear to be bugs in Hibernate's JPA criteria handling for lists
-//                //inside Embeddables
-//                Class<?> myClass = ((PluralAttributePath) path).getAttribute().getClass().getInterfaces()[0];
-//                //we don't know which version of "join" to call, so we'll let reflection figure it out
-//                try {
-//                    From embeddedJoin = myRoot.join(((SingularAttributePath) path.getParentPath()).getAttribute());
-//                    Method join = embeddedJoin.getClass().getMethod("join", myClass);
-//                    path = (Path) join.invoke(embeddedJoin, ((PluralAttributePath) path).getAttribute());
-//                } catch (Exception e) {
-//                    throw new RuntimeException(e);
-//                }
+                throw new CriteriaConversionException(
+                        String.format("Unable to create a JPA criteria Path through an @Embeddable object to a collection that resides therein (%s)",
+                                fieldPath.getTargetProperty()), fieldPath
+                );
+                //                //TODO this code should work, but there still appear to be bugs in Hibernate's JPA criteria handling for lists
+                //                //inside Embeddables
+                //                Class<?> myClass = ((PluralAttributePath) path).getAttribute().getClass().getInterfaces()[0];
+                //                //we don't know which version of "join" to call, so we'll let reflection figure it out
+                //                try {
+                //                    From embeddedJoin = myRoot.join(((SingularAttributePath) path.getParentPath()).getAttribute());
+                //                    Method join = embeddedJoin.getClass().getMethod("join", myClass);
+                //                    path = (Path) join.invoke(embeddedJoin, ((PluralAttributePath) path).getAttribute());
+                //                } catch (Exception e) {
+                //                    throw new RuntimeException(e);
+                //                }
             }
         }
 

@@ -78,9 +78,9 @@ public class PageFieldImpl implements PageField, ProfileEntity {
     @AdminPresentation
     protected String stringValue;
 
-    @Column(name = "LOB_VALUE", length = Integer.MAX_VALUE-1)
     @Lob
-    @Type(type = "org.hibernate.type.MaterializedClobType")
+    @JdbcType(LongVarcharJdbcType.class)
+    @Column(name = "LOB_VALUE", length = Length.LONG32 - 1)
     @AdminPresentation
     protected String lobValue;
 

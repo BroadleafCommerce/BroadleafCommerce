@@ -52,12 +52,12 @@ import java.util.List;
 import junit.framework.TestCase;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
 public class CandidateItemOfferTest extends TestCase {
-    
+
     private PromotableCandidateItemOffer promotableCandidate;
     private Offer offer;
     private PromotableCandidateItemOffer candidateOffer;
@@ -70,15 +70,15 @@ public class CandidateItemOfferTest extends TestCase {
     protected void setUp() throws Exception {
         promotableOfferUtility = new PromotableOfferUtilityImpl();
         OfferDataItemProvider dataProvider = new OfferDataItemProvider();
-        
+
         CandidateItemOfferImpl candidate = new CandidateItemOfferImpl();
-        
+
         Category category1 = new CategoryImpl();
         category1.setName("test1");
         category1.setId(1L);
-        
+
         Product product1 = new ProductImpl();
-        
+
         Sku sku1 = new SkuImpl();
         sku1.setName("test1");
         sku1.setDiscountable(true);
@@ -88,15 +88,15 @@ public class CandidateItemOfferTest extends TestCase {
         CategoryProductXref xref1 = new CategoryProductXrefImpl();
         xref1.setProduct(product1);
         xref1.setCategory(category1);
-        
+
         category1.getAllProductXrefs().add(xref1);
 
         Category category2 = new CategoryImpl();
         category2.setName("test2");
         category2.setId(2L);
-        
+
         Product product2 = new ProductImpl();
-        
+
         Sku sku2 = new SkuImpl();
         sku2.setName("test2");
         sku2.setDiscountable(true);
@@ -108,7 +108,7 @@ public class CandidateItemOfferTest extends TestCase {
         xref2.setCategory(category2);
 
         category2.getAllProductXrefs().add(xref2);
-        
+
         DiscreteOrderItemImpl orderItem1 = new DiscreteOrderItemImpl();
         orderItem1.setCategory(category1);
         orderItem1.setName("test1");
@@ -116,56 +116,56 @@ public class CandidateItemOfferTest extends TestCase {
         orderItem1.setProduct(product1);
         orderItem1.setQuantity(2);
         orderItem1.setSku(sku1);
-        
+
         Order order = new OrderImpl();
         orderItem1.setOrder(order);
-        
+
         promotableOrder = new PromotableOrderImpl(order, new PromotableItemFactoryImpl(promotableOfferUtility), false);
         offer = dataProvider.createItemBasedOfferWithItemCriteria(
                 "order.subTotal.getAmount()>20",
                 OfferDiscountType.PERCENT_OFF,
                 "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))",
                 "([MVEL.eval(\"toUpperCase()\",\"test1\"), MVEL.eval(\"toUpperCase()\",\"test2\")] contains MVEL.eval(\"toUpperCase()\", discreteOrderItem.category.name))"
-                ).get(0);
+        ).get(0);
         candidateOffer = new PromotableCandidateItemOfferImpl(promotableOrder, offer);
-        
+
         promotableOrderItem = new PromotableOrderItemImpl(orderItem1, null, new PromotableItemFactoryImpl(promotableOfferUtility), false);
         OrderItemPriceDetail pdetail = new OrderItemPriceDetailImpl();
         pdetail.setOrderItem(orderItem1);
         pdetail.setQuantity(2);
         priceDetail = new PromotableOrderItemPriceDetailImpl(promotableOrderItem, 2);
-        
+
         List<PromotableOrderItem> items = new ArrayList<PromotableOrderItem>();
         items.add(promotableOrderItem);
-        
+
         promotableCandidate = new PromotableCandidateItemOfferImpl(promotableOrder, offer);
-        
+
         OfferTargetCriteriaXref xref = offer.getTargetItemCriteriaXref().iterator().next();
         promotableCandidate.getCandidateTargetsMap().put(xref.getOfferItemCriteria(), items);
     }
-    
+
     public void testCalculateSavingsForOrderItem() throws Exception {
         Money savings = promotableOfferUtility.calculateSavingsForOrderItem(promotableCandidate, promotableOrderItem, 1);
         assertTrue(savings.equals(new Money(2D)));
-        
+
         offer.setDiscountType(OfferDiscountType.AMOUNT_OFF);
         savings = promotableOfferUtility.calculateSavingsForOrderItem(promotableCandidate, promotableOrderItem, 1);
         assertTrue(savings.equals(new Money(10D)));
-        
+
         offer.setDiscountType(OfferDiscountType.FIX_PRICE);
         savings = promotableOfferUtility.calculateSavingsForOrderItem(promotableCandidate, promotableOrderItem, 1);
         assertTrue(savings.equals(new Money(19.99D - 10D)));
     }
-    
+
     public void testCalculateMaximumNumberOfUses() throws Exception {
         int maxOfferUses = promotableCandidate.calculateMaximumNumberOfUses();
         assertTrue(maxOfferUses == 2);
-        
+
         offer.setMaxUsesPerOrder(1);
         maxOfferUses = promotableCandidate.calculateMaximumNumberOfUses();
         assertTrue(maxOfferUses == 1);
     }
-    
+
     public void testCalculateMaxUsesForItemCriteria() throws Exception {
         int maxItemCriteriaUses = 9999;
         for (OfferTargetCriteriaXref targetXref : offer.getTargetItemCriteriaXref()) {
