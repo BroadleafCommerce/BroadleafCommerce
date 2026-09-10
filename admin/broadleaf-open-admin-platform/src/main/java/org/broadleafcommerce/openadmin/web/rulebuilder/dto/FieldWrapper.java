@@ -22,8 +22,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import tools.jackson.databind.ObjectMapper;
 import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * @author Elbert Bautista (elbertbautista)

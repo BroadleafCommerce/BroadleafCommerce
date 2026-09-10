@@ -18,11 +18,11 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.owasp.esapi.ESAPI;
 
 import java.io.IOException;
 
 import jakarta.servlet.http.HttpServletRequest;
-import org.owasp.esapi.ESAPI;
 
 public class UrlUtil {
 

@@ -18,7 +18,6 @@
 package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.common.persistence.BroadleafIdGenerator;
-import org.hibernate.Length;
 
 import java.sql.Blob;
 

@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.openadmin.web.expression;
 
-import jakarta.annotation.Resource;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.web.expression.BroadleafVariableExpression;
 import org.broadleafcommerce.openadmin.web.form.entity.EntityForm;
@@ -25,6 +24,8 @@ import org.broadleafcommerce.openadmin.web.form.entity.Field;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.stereotype.Component;
+
+import jakarta.annotation.Resource;
 
 /**
  * A {@link BroadleafVariableExpression} that assists with operations for Thymeleaf-layer operations on entity forms.

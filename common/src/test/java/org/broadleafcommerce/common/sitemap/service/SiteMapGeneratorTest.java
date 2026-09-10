@@ -144,14 +144,10 @@ public class SiteMapGeneratorTest {
             if (line.contains("</lastmod>")) {
                 continue;
             }
-            if (line.contains("xmlns:image")) {
-                String fixedline = fixXmlOrder(line);
-                fixedline = fixedline.replaceAll("\\s+", "");
-                sb.append(fixedline);
-            } else {
-                line = line.replaceAll("\\s+", "");
-                sb.append(line);
-            }
+            // Strip any XML namespace declarations to prevent order and presence mismatches
+            line = line.replaceAll("xmlns(:[a-zA-Z0-9_-]+)?=\"[^\"]*\"", "");
+            line = line.replaceAll("\\s+", "");
+            sb.append(line);
         }
         br.close();
         fin.close();

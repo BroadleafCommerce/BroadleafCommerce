@@ -19,6 +19,7 @@ package org.broadleafcommerce.openadmin.spec
 
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.RuleFieldExtractionUtility
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataWrapper
+
 import spock.lang.Specification
 
 /**
