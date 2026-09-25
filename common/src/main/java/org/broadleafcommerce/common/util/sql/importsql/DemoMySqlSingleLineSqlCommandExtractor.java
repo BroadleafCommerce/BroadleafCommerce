@@ -32,9 +32,10 @@ import java.util.regex.Pattern;
  * Command extractor that does MySQL specific logic in order for the DemoSite load scripts to import correctly.<br/><br/>
  * <p>
  * MySQL table names are case-sensitive when {@code lower_case_table_names=0} (the default on Linux), while the tables
- * created by Hibernate are uppercase. This extractor uppercases the table names referenced by the load scripts
- * (after {@code INTO}, {@code UPDATE}, {@code FROM} and {@code JOIN}) so that scripts using lowercase table names
- * also import correctly. String literals are left untouched.
+ * created by Hibernate are uppercase. This extractor uppercases the lowercase table names referenced by the load
+ * scripts (after {@code INTO}, {@code UPDATE}, {@code FROM} and {@code JOIN}) so that scripts using lowercase table
+ * names also import correctly. Table names that already contain uppercase characters and string literals are left
+ * untouched.
  * <p>
  * Add:<br/>
  * {@code blPU.hibernate.hbm2ddl.import_files_sql_extractor=org.broadleafcommerce.common.util.sql.importsql.DemoMySqlSingleLineSqlCommandExtractor
@@ -100,7 +101,13 @@ public class DemoMySqlSingleLineSqlCommandExtractor extends SingleLineSqlScriptE
         Matcher matcher = TABLE_NAME_PATTERN.matcher(segment);
         StringBuilder result = new StringBuilder(segment.length());
         while (matcher.find()) {
-            String replacement = matcher.group(1) + matcher.group(2) + matcher.group(3).toUpperCase(Locale.ROOT);
+            String tableName = matcher.group(3);
+            // only normalize names written entirely in lowercase, so mixed case table names (e.g. BLC_UserConnection)
+            // are left as they are
+            if (tableName.equals(tableName.toLowerCase(Locale.ROOT))) {
+                tableName = tableName.toUpperCase(Locale.ROOT);
+            }
+            String replacement = matcher.group(1) + matcher.group(2) + tableName;
             matcher.appendReplacement(result, Matcher.quoteReplacement(replacement));
         }
         matcher.appendTail(result);

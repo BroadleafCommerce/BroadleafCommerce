@@ -52,6 +52,12 @@ public class DemoMySqlSingleLineSqlCommandExtractorTest {
     }
 
     @Test
+    public void testLeavesMixedCaseTableNamesUnchanged() {
+        String command = "INSERT INTO BLC_UserConnection (userId, providerId) VALUES ('1', 'facebook');";
+        assertEquals(command, convert(command));
+    }
+
+    @Test
     public void testLeavesStringLiteralsUnchanged() {
         assertEquals("INSERT INTO BLC_PAGE (TITLE, BODY) VALUES ('update from us', 'Join into \\'the\\' club from here');",
                 convert("INSERT INTO blc_page (TITLE, BODY) VALUES ('update from us', 'Join into \\'the\\' club from here');"));
