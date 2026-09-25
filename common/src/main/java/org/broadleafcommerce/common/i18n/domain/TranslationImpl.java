@@ -70,7 +70,7 @@ public class TranslationImpl implements Serializable, Translation {
     @Column(name = "TRANSLATION_ID")
     protected Long id;
 
-    @Column(name = "ENTITY_TYPE")
+    @Column(name = "ENTITY_TYPE", length = 100)
     @AdminPresentation(friendlyName = "TranslationImpl_EntityType", prominent = true)
     protected String entityType;
 
@@ -82,7 +82,7 @@ public class TranslationImpl implements Serializable, Translation {
     @AdminPresentation(friendlyName = "TranslationImpl_FieldName", prominent = true)
     protected String fieldName;
 
-    @Column(name = "LOCALE_CODE")
+    @Column(name = "LOCALE_CODE", length = 50)
     @AdminPresentation(friendlyName = "TranslationImpl_LocaleCode", prominent = true)
     protected String localeCode;
 
