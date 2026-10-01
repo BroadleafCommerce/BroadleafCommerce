@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.config;
 
+import org.broadleafcommerce.openadmin.security.BroadleafDaoAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -48,7 +49,7 @@ public class OpenAdminSecurityConfig {
 
     @Bean
     public AuthenticationProvider blAdminAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        DaoAuthenticationProvider provider = new BroadleafDaoAuthenticationProvider();
         provider.setUserDetailsService(userDetailsService);
         provider.setPasswordEncoder(adminPasswordEncoder);
         return provider;
