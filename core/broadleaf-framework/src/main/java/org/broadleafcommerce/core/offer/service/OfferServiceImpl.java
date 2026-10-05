@@ -201,7 +201,7 @@ public class OfferServiceImpl implements OfferService {
                 offers.add(customerOffer.getOffer());
             }
         }
-        List<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
+        Set<OfferCode> orderOfferCodes = refreshOfferCodesIfApplicable(order);
         orderOfferCodes = removeOutOfDateOfferCodes(orderOfferCodes);
         for (OfferCode orderOfferCode : orderOfferCodes) {
             if (!offers.contains(orderOfferCode.getOffer())) {
@@ -296,9 +296,9 @@ public class OfferServiceImpl implements OfferService {
      * still need to be evaluated.
      *
      * @param offerCodes
-     * @return a List of non-expired offers
+     * @return a Set of non-expired offers
      */
-    protected List<OfferCode> removeOutOfDateOfferCodes(List<OfferCode> offerCodes) {
+    protected Set<OfferCode> removeOutOfDateOfferCodes(Set<OfferCode> offerCodes) {
         List<OfferCode> offerCodesToRemove = new ArrayList<>();
         for (OfferCode offerCode : offerCodes) {
             if (!offerCode.isActive()) {
@@ -317,10 +317,10 @@ public class OfferServiceImpl implements OfferService {
      * current sandbox status.
      *
      * @param order the order to check
-     * @return the refreshed list of OfferCodes
+     * @return the refreshed set of OfferCodes
      */
-    protected List<OfferCode> refreshOfferCodesIfApplicable(final Order order) {
-        final List<OfferCode> orderOfferCodes = order.getAddedOfferCodes();
+    protected Set<OfferCode> refreshOfferCodesIfApplicable(final Order order) {
+        final Set<OfferCode> orderOfferCodes = order.getAddedOfferCodes();
 
         transUtil.runTransactionalOperation(new StreamCapableTransactionalOperationAdapter() {
             @Override
@@ -636,7 +636,7 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
-    public Map<Offer, OfferCode> getOffersRetrievedFromCodes(List<OfferCode> codes, Set<Offer> appliedOffers) {
+    public Map<Offer, OfferCode> getOffersRetrievedFromCodes(Collection<OfferCode> codes, Set<Offer> appliedOffers) {
         HashMap<Offer, OfferCode> offerToCodeMapping = new HashMap<>();
         for (OfferCode code : codes) {
             if (appliedOffers.contains(code.getOffer())) {

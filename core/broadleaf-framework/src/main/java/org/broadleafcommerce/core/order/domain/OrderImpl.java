@@ -73,8 +73,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -211,7 +213,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     @AdminPresentationCollection(friendlyName = "OrderImpl_Offer_Codes",
             group = GroupName.Advanced,
             manyToField = "orders", order = FieldOrder.OFFERCODES)
-    protected List<OfferCode> addedOfferCodes = new ArrayList<>();
+    protected Set<OfferCode> addedOfferCodes = new LinkedHashSet<>();
     @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = {CascadeType.ALL},
             orphanRemoval = true)
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blOrderElements")
@@ -558,7 +560,7 @@ public class OrderImpl implements Order, AdminMainEntity, CurrencyCodeIdentifiab
     }
 
     @Override
-    public List<OfferCode> getAddedOfferCodes() {
+    public Set<OfferCode> getAddedOfferCodes() {
         return addedOfferCodes;
     }
 

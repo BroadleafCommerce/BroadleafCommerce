@@ -69,6 +69,7 @@ import org.easymock.IAnswer;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 
 import junit.framework.TestCase;
@@ -99,7 +100,7 @@ public class OfferServiceTest extends TestCase {
     protected void setUp() throws Exception {
         offerService = new OfferServiceImpl() { 
             @Override
-            protected List<OfferCode> refreshOfferCodesIfApplicable(Order order) {
+            protected Set<OfferCode> refreshOfferCodesIfApplicable(Order order) {
                 return order.getAddedOfferCodes();
             }
         };

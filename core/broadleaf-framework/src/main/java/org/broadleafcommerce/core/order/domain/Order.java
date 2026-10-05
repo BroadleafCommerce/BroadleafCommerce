@@ -41,6 +41,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Defines an order in Broadleaf.    There are several key items to be aware of with the BLC Order.
@@ -368,7 +369,7 @@ public interface Order extends Serializable, MultiTenantCloneable<Order> {
      */
     boolean containsSku(Sku sku);
 
-    List<OfferCode> getAddedOfferCodes();
+    Set<OfferCode> getAddedOfferCodes();
 
     String getFulfillmentStatus();
 
