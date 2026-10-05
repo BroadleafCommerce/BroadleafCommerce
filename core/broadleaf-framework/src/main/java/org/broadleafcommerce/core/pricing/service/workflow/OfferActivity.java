@@ -29,6 +29,7 @@ import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 import jakarta.annotation.Resource;
 
@@ -77,7 +78,7 @@ public class OfferActivity extends BaseActivity<ProcessContext<Order>> {
 
     protected List<OfferCode> getNewOfferCodesFromCustomer(Order order) {
         List<OfferCode> offerCodesFromCustomer = offerService.buildOfferCodeListForCustomer(order);
-        List<OfferCode> offerCodesFromOrder = order.getAddedOfferCodes();
+        Set<OfferCode> offerCodesFromOrder = order.getAddedOfferCodes();
 
         offerCodesFromCustomer.removeAll(offerCodesFromOrder);
 

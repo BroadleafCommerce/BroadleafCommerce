@@ -281,7 +281,7 @@ public interface OfferService {
      * @param appliedOffers
      * @return
      */
-    Map<Offer, OfferCode> getOffersRetrievedFromCodes(List<OfferCode> codes, Set<Offer> appliedOffers);
+    Map<Offer, OfferCode> getOffersRetrievedFromCodes(Collection<OfferCode> codes, Set<Offer> appliedOffers);
 
     /**
      * For a given order, give back a map of all {@link Offer}s that were retrieved from {@link OfferCode}s. More explicitly,

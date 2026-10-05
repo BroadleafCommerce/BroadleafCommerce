@@ -40,6 +40,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * NullOrderImpl is a class that represents an unmodifiable, empty order. This class is used as the default order
@@ -245,7 +246,7 @@ public class NullOrderImpl implements Order {
     }
 
     @Override
-    public List<OfferCode> getAddedOfferCodes() {
+    public Set<OfferCode> getAddedOfferCodes() {
         return null;
     }
 
