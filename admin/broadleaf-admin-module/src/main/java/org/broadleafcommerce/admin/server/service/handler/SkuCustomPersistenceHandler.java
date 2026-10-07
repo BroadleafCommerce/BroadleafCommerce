@@ -576,12 +576,12 @@ public class SkuCustomPersistenceHandler extends CustomPersistenceHandlerAdapter
             Sku sku = (Sku) records.get(i);
             Entity entity = payload[i];
 
-            List<ProductOptionValue> optionValues = BLCCollectionUtils.collectList(sku.getProductOptionValueXrefs(), new TypedTransformer<ProductOptionValue>() {
+            Set<ProductOptionValue> optionValues = Set.copyOf(BLCCollectionUtils.collectList(sku.getProductOptionValueXrefs(), new TypedTransformer<ProductOptionValue>() {
                 @Override
                 public ProductOptionValue transform(Object input) {
                     return ((SkuProductOptionValueXref) input).getProductOptionValue();
                 }
-            });
+            }));
 
             for (ProductOptionValue value : optionValues) {
                 Property optionProperty = new Property();
