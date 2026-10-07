@@ -169,7 +169,7 @@ public class AdminUserImpl implements AdminUser, AdminMainEntity, AdminUserAdmin
     protected Set<AdminPermission> allPermissions = new HashSet<>();
     @Transient
     protected String unencodedPassword;
-    @ManyToOne(targetEntity = SandBoxImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(targetEntity = SandBoxImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinTable(name = "BLC_ADMIN_USER_SANDBOX", joinColumns = @JoinColumn(name = "ADMIN_USER_ID",
             referencedColumnName = "ADMIN_USER_ID"),
             inverseJoinColumns = @JoinColumn(name = "SANDBOX_ID",
