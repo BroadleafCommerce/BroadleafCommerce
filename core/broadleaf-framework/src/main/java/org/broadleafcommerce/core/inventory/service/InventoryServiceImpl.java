@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.core.inventory.service;
 
+import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,8 +35,12 @@ import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.util.dao.LockDao;
+import org.broadleafcommerce.core.util.lock.DistributedLock;
+import org.broadleafcommerce.core.util.lock.ReentrantDistributedDatabaseLock;
 import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +69,22 @@ public class InventoryServiceImpl implements ContextualInventoryService {
 
     @Autowired
     protected ApplicationContext applicationContext;
+
+    protected DistributedLock guaranteedInventoryLock;
+
+    @Value("${inventory.guaranteed.check.enabled:false}")
+    public boolean guaranteedInventoryCheckEnabled;
+
+    @Resource(name = "blLockDao")
+    private LockDao lockDao;
+
+    @Value("${inventory.guaranteed.check.enabled:false}")
+    @PostConstruct
+    public void initLock(){
+        if (guaranteedInventoryCheckEnabled) {
+            guaranteedInventoryLock = new ReentrantDistributedDatabaseLock("GuaranteedInventoryCheck", applicationContext.getEnvironment(), lockDao);
+        }
+    }
 
     @Override
     public boolean checkBasicAvailablility(Sku sku) {
@@ -201,36 +222,44 @@ public class InventoryServiceImpl implements ContextualInventoryService {
     }
 
     protected void decrementSku(Map<Sku, Integer> skuQuantities, Map<String, Object> context) throws InventoryUnavailableException {
-        for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
-            Sku sku = entry.getKey();
-            Sku skuForInventory = sku;
-            if (sku.getProduct().getEnableDefaultSkuInInventory()) {
-                skuForInventory = sku.getProduct().getDefaultSku();
-            }
-            Integer quantity = entry.getValue();
-            if (quantity == null || quantity < 1) {
-                throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
-            }
-
-            if (checkBasicAvailablility(skuForInventory)) {
-                if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
-                    Integer inventoryAvailable = retrieveQuantityAvailable(skuForInventory, context);
-                    if (inventoryAvailable == null) {
-                        return;
-                    }
-                    if (inventoryAvailable < quantity) {
-                        throw new InventoryUnavailableException("There was not enough inventory to fulfill this request.",
-                                skuForInventory.getId(), quantity, inventoryAvailable);
-                    }
-                    int newInventory = inventoryAvailable - quantity;
-                    skuForInventory.setQuantityAvailable(newInventory);
-                    catalogService.saveSku(skuForInventory);
-                    invalidateSkuInventory(skuForInventory);
-                } else {
-                    LOG.info("Not decrementing inventory as the Sku has been marked as always available");
+        try {
+            for (Entry<Sku, Integer> entry : skuQuantities.entrySet()) {
+                Sku sku = entry.getKey();
+                Sku skuForInventory = sku;
+                if (sku.getProduct().getEnableDefaultSkuInInventory()) {
+                    skuForInventory = sku.getProduct().getDefaultSku();
                 }
-            } else {
-                throw new InventoryUnavailableException("The Sku has been marked as unavailable", sku.getId(), quantity, 0);
+                Integer quantity = entry.getValue();
+                if (quantity == null || quantity < 1) {
+                    throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
+                }
+                if (guaranteedInventoryCheckEnabled && guaranteedInventoryLock != null) {
+                    guaranteedInventoryLock.lock();
+                }
+                if (checkBasicAvailablility(skuForInventory)) {
+                    if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
+                        Integer inventoryAvailable = retrieveQuantityAvailable(skuForInventory, context);
+                        if (inventoryAvailable == null) {
+                            return;
+                        }
+                        if (inventoryAvailable < quantity) {
+                            throw new InventoryUnavailableException("There was not enough inventory to fulfill this request.",
+                                    skuForInventory.getId(), quantity, inventoryAvailable);
+                        }
+                        int newInventory = inventoryAvailable - quantity;
+                        skuForInventory.setQuantityAvailable(newInventory);
+                        catalogService.saveSku(skuForInventory);
+                        invalidateSkuInventory(skuForInventory);
+                    } else {
+                        LOG.info("Not decrementing inventory as the Sku has been marked as always available");
+                    }
+                } else {
+                    throw new InventoryUnavailableException("The Sku has been marked as unavailable", sku.getId(), quantity, 0);
+                }
+            }
+        } finally {
+            if (guaranteedInventoryCheckEnabled && guaranteedInventoryLock != null) {
+                guaranteedInventoryLock.unlock();
             }
         }
     }
