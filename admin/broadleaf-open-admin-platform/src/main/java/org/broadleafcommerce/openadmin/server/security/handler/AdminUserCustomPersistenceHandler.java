@@ -22,11 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.client.OperationType;
-import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.dto.FieldMetadata;
-import org.broadleafcommerce.openadmin.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.dto.PersistencePerspective;
-import org.broadleafcommerce.openadmin.dto.Property;
+import org.broadleafcommerce.openadmin.dto.*;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.remote.EntityOperationType;
@@ -34,11 +30,14 @@ import org.broadleafcommerce.openadmin.server.security.remote.SecurityVerifier;
 import org.broadleafcommerce.openadmin.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
@@ -49,6 +48,10 @@ import jakarta.annotation.Resource;
 @Component("blAdminUserCustomPersistenceHandler")
 public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
+    public static final String PASSWORD_PROPERTY = "password";
+    public static final String PASSWORD_CONFIRM_PROPERTY = "passwordConfirm";
+    public static final String REQUIRED_VALIDATION_FAILURE = "requiredValidationFailure";
+
     @Resource(name = "blAdminSecurityService")
     protected AdminSecurityService adminSecurityService;
 
@@ -57,6 +60,9 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
 
     @Autowired
     protected Environment environment;
+
+    @Value("${validate.admin.user.password:false}")
+    protected boolean validateAdminUserPassword;
 
     protected boolean getRequireUniqueEmailAddress() {
         Boolean property = environment.getProperty("admin.user.requireUniqueEmailAddress", Boolean.class);
@@ -87,6 +93,34 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
     @Override
     public Boolean canHandleRemove(PersistencePackage persistencePackage) {
         return canHandleAdd(persistencePackage);
+    }
+
+    @Override
+    public Boolean canHandleInspect(PersistencePackage persistencePackage) {
+        return canHandleAdd(persistencePackage);
+    }
+
+    @Override
+    public DynamicResultSet inspect(
+            PersistencePackage persistencePackage,
+            DynamicEntityDao dynamicEntityDao,
+            InspectHelper helper
+    ) throws ServiceException {
+        Map<MergedPropertyType, Map<String, FieldMetadata>> allMergedProperties = new HashMap<>();
+
+        PersistencePerspective persistencePerspective = persistencePackage.getPersistencePerspective();
+        Map<String, FieldMetadata> properties = helper.getSimpleMergedProperties(
+                AdminUser.class.getName(), persistencePerspective
+        );
+
+        modifyMetadataProperties(persistencePackage, properties);
+
+        allMergedProperties.put(MergedPropertyType.PRIMARY, properties);
+
+        Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(AdminUser.class);
+        ClassMetadata mergedMetadata = helper.buildClassMetadata(entityClasses, persistencePackage, allMergedProperties);
+
+        return new DynamicResultSet(mergedMetadata, null, null);
     }
 
     @Override
@@ -165,6 +199,7 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
             }
 
             validateUserUpdateSecurity(persistencePackage, adminInstance);
+            validatePassword(entity);
 
             adminInstance = adminSecurityService.saveAdminUser(adminInstance);
             Entity adminEntity = helper.getRecord(
@@ -245,6 +280,38 @@ public class AdminUserCustomPersistenceHandler extends CustomPersistenceHandlerA
         }
 
         return null;
+    }
+
+    protected void modifyMetadataProperties(PersistencePackage persistencePackage, Map<String, FieldMetadata> properties) {
+        if (validateAdminUserPassword) {
+            FieldMetadata password = properties.get(PASSWORD_PROPERTY);
+            if (password != null) {
+                ((BasicFieldMetadata) password).setRequiredOverride(true);
+            }
+
+            FieldMetadata passwordConfirm = properties.get(PASSWORD_CONFIRM_PROPERTY);
+            if (passwordConfirm != null) {
+                ((BasicFieldMetadata) passwordConfirm).setRequiredOverride(true);
+            }
+        }
+    }
+
+    protected void validatePassword(Entity entity) throws ValidationException {
+        if (validateAdminUserPassword) {
+            Property password = entity.findProperty(PASSWORD_PROPERTY);
+            if (password != null && StringUtils.isBlank(password.getValue()) ) {
+                entity.addValidationError(PASSWORD_PROPERTY, REQUIRED_VALIDATION_FAILURE);
+            }
+
+            Property passwordConfirm = entity.findProperty(PASSWORD_CONFIRM_PROPERTY);
+            if (passwordConfirm != null && StringUtils.isBlank(passwordConfirm.getValue()) ) {
+                entity.addValidationError(PASSWORD_CONFIRM_PROPERTY, REQUIRED_VALIDATION_FAILURE);
+            }
+
+            if (entity.isValidationFailure()) {
+                throw new ValidationException(entity);
+            }
+        }
     }
 
 }
