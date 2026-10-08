@@ -1232,8 +1232,11 @@ public class SkuImpl implements Sku, SkuAdminPresentation {
         }
         SkuImpl other = (SkuImpl) obj;
 
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
+        // Use getId() rather than the field: "other" may be an uninitialized Hibernate proxy (e.g. a lazy
+        // OrderItem sku), whose fields are null while getId() still returns the identifier.
+        Long otherId = other.getId();
+        if (getId() != null && otherId != null) {
+            return getId().equals(otherId);
         }
 
         if (getName() == null) {
