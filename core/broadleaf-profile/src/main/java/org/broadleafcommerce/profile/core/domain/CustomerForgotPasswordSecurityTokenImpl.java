@@ -23,6 +23,7 @@ import java.util.Date;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
@@ -34,7 +35,8 @@ import jakarta.persistence.TemporalType;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_PASSWORD_TOKEN")
+@Table(name = "BLC_CUSTOMER_PASSWORD_TOKEN", indexes = {
+        @Index(name = "CUST_PWD_TOKEN_CUST_USED_IDX", columnList = "CUSTOMER_ID, TOKEN_USED_FLAG")})
 public class CustomerForgotPasswordSecurityTokenImpl implements CustomerForgotPasswordSecurityToken {
 
     @Serial
