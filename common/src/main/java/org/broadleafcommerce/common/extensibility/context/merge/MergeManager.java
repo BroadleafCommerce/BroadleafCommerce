@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -250,6 +251,8 @@ public class MergeManager {
             }
 
             TransformerFactory tFactory = TransformerFactory.newInstance();
+            tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Transformer xmlTransformer = tFactory.newTransformer();
             xmlTransformer.setOutputProperty(OutputKeys.VERSION, "1.0");
             xmlTransformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");

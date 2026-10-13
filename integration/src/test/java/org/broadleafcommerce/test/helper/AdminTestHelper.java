@@ -245,8 +245,9 @@ public class AdminTestHelper {
     }
 
     private SandBox findSandBox(String sandBoxName, EntityManager em) {
-        String queryString = "select root from " + SandBoxManagementImpl.class.getName() + " root where root.sandBox.name = '"+sandBoxName+"' and root.sandBox.sandboxType = 'USER'";
+        String queryString = "select root from " + SandBoxManagementImpl.class.getName() + " root where root.sandBox.name = :sandBoxName and root.sandBox.sandboxType = 'USER'";
         TypedQuery<SandBoxManagement> query = em.createQuery(queryString, SandBoxManagement.class);
+        query.setParameter("sandBoxName", sandBoxName);
         return query.getSingleResult().getSandBox();
     }
 

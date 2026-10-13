@@ -32,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -66,6 +67,8 @@ public class ImportProcessor {
         this.loader = loader;
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
+            // Disable DTDs to prevent XXE attack
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             builder = dbf.newDocumentBuilder();
             XPathFactory factory = XPathFactory.newInstance();
             xPath = factory.newXPath();
@@ -98,6 +101,8 @@ public class ImportProcessor {
                 }
                 if (length > 0) {
                     TransformerFactory tFactory = TransformerFactory.newInstance();
+                    tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                    tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
                     Transformer xmlTransformer = tFactory.newTransformer();
                     xmlTransformer.setOutputProperty(OutputKeys.VERSION, "1.0");
                     xmlTransformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
