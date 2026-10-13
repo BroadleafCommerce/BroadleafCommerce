@@ -76,7 +76,8 @@ import jakarta.persistence.Transient;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", indexes = {
         @Index(name = "CUSTOMER_EMAIL_INDEX", columnList = "EMAIL_ADDRESS"),
-        @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnList = "CHALLENGE_QUESTION_ID")})
+        @Index(name = "CUSTOMER_CHALLENGE_INDEX", columnList = "CHALLENGE_QUESTION_ID"),
+        @Index(name = "CUSTOMER_USERNAME_INDEX", columnList = "USER_NAME")})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blCustomerElements")
 @AdminPresentationMergeOverrides({
         @AdminPresentationMergeOverride(name = "auditable.dateCreated", mergeEntries =
