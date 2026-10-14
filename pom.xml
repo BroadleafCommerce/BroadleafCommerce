@@ -44,8 +44,8 @@
     <properties>
         <project.uri>${project.baseUri}</project.uri>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <broadleaf-presentation.version>2.1.0-SNAPSHOT</broadleaf-presentation.version>
-        <hsqldb.database.starter.version>3.1.0-SNAPSHOT</hsqldb.database.starter.version>
+        <broadleaf-presentation.version>2.1.0-GA</broadleaf-presentation.version>
+        <hsqldb.database.starter.version>3.1.0-GA</hsqldb.database.starter.version>
         <ehcache3.version>3.12.0</ehcache3.version>
         <spring.version>7.0.9</spring.version>
         <spring.security.version>7.0.7</spring.security.version>
