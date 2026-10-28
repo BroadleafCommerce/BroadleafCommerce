@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.web.controller.checkout;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
-import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;

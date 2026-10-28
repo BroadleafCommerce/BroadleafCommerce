@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -30,9 +30,10 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /*
  * TODO setup other BLC items to be JMX managed resources like this one. This would include other services, and singleton beans

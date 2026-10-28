@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Profile
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -45,7 +44,6 @@ import org.broadleafcommerce.profile.core.domain.Role;
 import org.broadleafcommerce.profile.core.dto.CustomerRuleHolder;
 import org.broadleafcommerce.profile.core.service.handler.PasswordUpdatedHandler;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

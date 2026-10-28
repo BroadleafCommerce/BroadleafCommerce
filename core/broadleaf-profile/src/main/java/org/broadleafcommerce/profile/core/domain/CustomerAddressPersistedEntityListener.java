@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Profile
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,13 +17,13 @@
  */
 package org.broadleafcommerce.profile.core.domain;
 
-import javax.persistence.PostPersist;
-import javax.persistence.PostRemove;
-import javax.persistence.PostUpdate;
-
 import org.broadleafcommerce.common.util.ApplicationContextHolder;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
 
 public class CustomerAddressPersistedEntityListener {
     /**

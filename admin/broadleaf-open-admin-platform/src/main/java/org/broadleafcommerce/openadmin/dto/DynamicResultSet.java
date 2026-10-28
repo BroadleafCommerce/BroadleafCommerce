@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,13 +17,12 @@
  */
 package org.broadleafcommerce.openadmin.dto;
 
+import org.broadleafcommerce.openadmin.server.service.type.FetchType;
 import org.broadleafcommerce.openadmin.web.form.entity.Tab;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import org.broadleafcommerce.openadmin.server.service.type.FetchType;
 
 import java.io.Serializable;
 import java.util.HashMap;

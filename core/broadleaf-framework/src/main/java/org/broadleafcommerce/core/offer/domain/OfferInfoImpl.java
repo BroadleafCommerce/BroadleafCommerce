@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -23,9 +23,20 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

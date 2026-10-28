@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -24,7 +24,11 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.core.search.domain.Field;
 import org.broadleafcommerce.core.search.domain.FieldImpl;
-import org.broadleafcommerce.openadmin.dto.*;
+import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.DynamicResultSet;
+import org.broadleafcommerce.openadmin.dto.FieldMetadata;
+import org.broadleafcommerce.openadmin.dto.MergedPropertyType;
+import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.InspectHelper;

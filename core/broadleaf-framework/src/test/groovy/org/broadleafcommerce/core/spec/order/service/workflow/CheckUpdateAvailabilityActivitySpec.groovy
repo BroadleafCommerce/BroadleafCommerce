@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -20,15 +20,11 @@ package org.broadleafcommerce.core.spec.order.service.workflow
 import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.CatalogService
 import org.broadleafcommerce.core.inventory.service.InventoryServiceImpl
-import org.broadleafcommerce.core.inventory.service.InventoryUnavailableException
-import org.broadleafcommerce.core.inventory.service.type.InventoryType
 import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
 import org.broadleafcommerce.core.order.domain.OrderItemImpl
 import org.broadleafcommerce.core.order.service.OrderItemService
 import org.broadleafcommerce.core.order.service.workflow.CheckUpdateAvailabilityActivity
-
-
 
 /*
  * 1a) orderItem instanceOf DiscreteOrderItem

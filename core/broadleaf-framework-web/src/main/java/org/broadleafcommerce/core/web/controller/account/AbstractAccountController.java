@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,11 +17,11 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.order.service.OrderService;
+
+import javax.annotation.Resource;
 
 
 /**

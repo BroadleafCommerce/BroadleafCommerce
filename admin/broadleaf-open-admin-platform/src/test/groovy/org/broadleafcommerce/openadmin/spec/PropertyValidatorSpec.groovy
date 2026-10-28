@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,14 +17,10 @@
  */
 package org.broadleafcommerce.openadmin.spec
 
-import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertTrue
-
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.RequiredPropertyValidator
 
 import spock.lang.Specification
-
 
 /**
  * 

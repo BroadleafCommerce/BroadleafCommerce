@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce CMS Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cms.field.domain.FieldDefinition;
-import org.broadleafcommerce.cms.field.domain.FieldDefinitionImpl;
 import org.broadleafcommerce.cms.field.domain.FieldGroup;
 import org.broadleafcommerce.cms.structure.domain.StructuredContent;
 import org.broadleafcommerce.cms.structure.domain.StructuredContentField;

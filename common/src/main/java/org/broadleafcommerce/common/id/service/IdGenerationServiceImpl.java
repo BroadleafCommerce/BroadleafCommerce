@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,17 +17,17 @@
  */
 package org.broadleafcommerce.common.id.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.persistence.OptimisticLockException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.id.dao.IdGenerationDao;
 import org.broadleafcommerce.common.id.domain.IdGeneration;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.OptimisticLockException;
 
 @Service("blIdGenerationService")
 public class IdGenerationServiceImpl implements IdGenerationService {

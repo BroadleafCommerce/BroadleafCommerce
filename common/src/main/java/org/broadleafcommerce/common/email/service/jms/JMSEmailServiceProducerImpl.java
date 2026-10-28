@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -22,13 +22,14 @@ import org.broadleafcommerce.common.email.service.message.EmailPropertyType;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * @author jfischer

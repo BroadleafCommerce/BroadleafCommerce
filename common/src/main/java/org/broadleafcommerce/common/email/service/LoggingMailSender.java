@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,17 +17,17 @@
  */
 package org.broadleafcommerce.common.email.service;
 
-import java.io.ByteArrayOutputStream;
-
-import javax.activation.DataHandler;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+
+import java.io.ByteArrayOutputStream;
+
+import javax.activation.DataHandler;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 /**
  * @author Andre Azzolini (apazzolini)

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Profile
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -25,7 +25,6 @@ import org.broadleafcommerce.common.util.TransactionUtils;
 import org.broadleafcommerce.profile.core.dao.AddressDao;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.CountrySubdivision;
-import org.broadleafcommerce.profile.core.domain.Phone;
 import org.broadleafcommerce.profile.core.service.exception.AddressVerificationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

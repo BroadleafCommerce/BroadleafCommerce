@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -21,10 +21,11 @@ package org.broadleafcommerce.common.payment.service;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * <p>This default implementation encodes the seal using a URL-Safe Base64 encoder

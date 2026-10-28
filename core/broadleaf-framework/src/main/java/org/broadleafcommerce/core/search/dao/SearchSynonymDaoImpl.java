@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -20,11 +20,12 @@ package org.broadleafcommerce.core.search.dao;
 import org.broadleafcommerce.core.search.domain.SearchSynonym;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blSearchSynonymDao")
 public class SearchSynonymDaoImpl implements SearchSynonymDao {

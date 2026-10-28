@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Profile
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,13 +17,15 @@
  */
 package org.broadleafcommerce.profile.util.dao;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.util.dao.BatchRetrieveDao;
 import org.easymock.classextension.EasyMock;
 
-import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Query;
+
+import junit.framework.TestCase;
 
 /**
  * 

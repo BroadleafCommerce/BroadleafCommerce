@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,15 +19,14 @@ package org.broadleafcommerce.openadmin.web.compatibility;
 
 import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.broadleafcommerce.common.web.filter.FilterOrdered;
-import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * @author Jeff Fischer

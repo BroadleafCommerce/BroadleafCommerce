@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,9 +19,10 @@ package org.broadleafcommerce.core.web.money;
 
 import org.broadleafcommerce.common.money.CurrencyConversionService;
 
+import java.util.HashMap;
+
 import javax.servlet.Filter;
 import javax.servlet.ServletRequest;
-import java.util.HashMap;
 
 public interface CurrencyConversionPricingFilter extends Filter {
     

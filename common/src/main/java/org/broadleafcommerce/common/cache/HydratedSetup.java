@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -30,15 +30,16 @@ import org.hibernate.annotations.Cache;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 /**
  * 

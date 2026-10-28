@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,7 +19,7 @@ package org.broadleafcommerce.openadmin.server.service.artifact.image.effects.ch
 
 import org.broadleafcommerce.openadmin.server.service.artifact.OperationBuilder;
 
-import java.awt.*;
+import java.awt.RenderingHints;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;

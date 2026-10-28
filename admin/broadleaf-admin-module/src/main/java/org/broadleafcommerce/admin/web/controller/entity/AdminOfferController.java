@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,7 +18,6 @@
 package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;

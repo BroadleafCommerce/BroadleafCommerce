@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -28,7 +28,6 @@ import org.broadleafcommerce.common.extension.StandardCacheItem;
 import org.broadleafcommerce.common.i18n.dao.TranslationDao;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
-import org.broadleafcommerce.common.i18n.domain.TranslationImpl;
 import org.broadleafcommerce.common.locale.service.LocaleService;
 import org.broadleafcommerce.common.locale.util.LocaleUtil;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;

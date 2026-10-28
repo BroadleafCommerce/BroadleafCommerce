@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,12 +19,12 @@ package org.broadleafcommerce.core.web.catalog;
 
 import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPricingService;
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.WebRequestInterceptor;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
+
+import javax.annotation.Resource;
 
 /**
  * <p>Interceptor version of the {@link DynamicSkuPricingFilter}. If you are using Broadleaf in a Servlet web application

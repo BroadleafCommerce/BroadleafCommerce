@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,7 +17,12 @@
  */
 package org.broadleafcommerce.core.spec.offer.service.workflow
 
-import org.broadleafcommerce.core.offer.domain.*
+
+import org.broadleafcommerce.core.offer.domain.Offer
+import org.broadleafcommerce.core.offer.domain.OfferAudit
+import org.broadleafcommerce.core.offer.domain.OfferAuditImpl
+import org.broadleafcommerce.core.offer.domain.OfferCode
+import org.broadleafcommerce.core.offer.domain.OfferImpl
 import org.broadleafcommerce.core.offer.service.OfferAuditService
 import org.broadleafcommerce.core.offer.service.OfferService
 import org.broadleafcommerce.core.offer.service.workflow.RecordOfferUsageActivity

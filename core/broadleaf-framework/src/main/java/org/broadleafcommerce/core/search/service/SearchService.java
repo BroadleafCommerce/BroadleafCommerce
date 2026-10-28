@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -22,9 +22,7 @@ import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.search.domain.SearchCriteria;
 import org.broadleafcommerce.core.search.domain.SearchFacetDTO;
 import org.broadleafcommerce.core.search.domain.SearchResult;
-import org.broadleafcommerce.core.search.service.solr.index.SolrIndexService;
 
-import java.io.IOException;
 import java.util.List;
 
 /**

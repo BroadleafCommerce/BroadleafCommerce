@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -16,16 +16,6 @@
  * #L%
  */
 package org.broadleafcommerce.admin.server.service.handler;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -54,6 +44,16 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.From;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 
 /**
  * @author Chad Harchar (charchar)

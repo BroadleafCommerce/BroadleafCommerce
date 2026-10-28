@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -25,9 +25,7 @@ import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.core.order.domain.OrderItemPriceDetail;
-import org.broadleafcommerce.core.order.domain.OrderItemPriceDetailImpl;
 import org.broadleafcommerce.core.order.domain.OrderItemQualifier;
-import org.broadleafcommerce.core.order.domain.OrderItemQualifierImpl;
 import org.broadleafcommerce.core.order.domain.PersonalMessage;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -23,7 +23,14 @@ import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransformTy
 import org.broadleafcommerce.common.presentation.AdminPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Parameter;
 
 import java.util.ArrayList;
 import java.util.List;

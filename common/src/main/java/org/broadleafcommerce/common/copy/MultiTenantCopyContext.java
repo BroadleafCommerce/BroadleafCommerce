@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.copy;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.common.exception.ExceptionHelper;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -31,13 +29,17 @@ import org.broadleafcommerce.common.util.tenant.IdentityExecutionUtils;
 import org.broadleafcommerce.common.util.tenant.IdentityOperation;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
-import javax.persistence.Embeddable;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.persistence.Embeddable;
 
 public class MultiTenantCopyContext {
 

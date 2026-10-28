@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,9 +18,6 @@
 
 package org.broadleafcommerce.common.sitemap.service;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
-
 import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.site.domain.SiteImpl;
 import org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConfiguration;
@@ -28,7 +25,6 @@ import org.broadleafcommerce.common.sitemap.domain.CustomUrlSiteMapGeneratorConf
 import org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntry;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapUrlEntryImpl;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
-import org.broadleafcommerce.common.sitemap.service.CustomUrlSiteMapGenerator;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapChangeFreqType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapGeneratorType;
 import org.broadleafcommerce.common.sitemap.service.type.SiteMapPriorityType;
@@ -40,6 +36,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
 
 /**
  * Custom URL site map generator tests

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -29,9 +29,10 @@ import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 @Component("blValidateUpdateRequestActivity")
 public class ValidateUpdateRequestActivity extends BaseActivity<ProcessContext<CartOperationRequest>> {

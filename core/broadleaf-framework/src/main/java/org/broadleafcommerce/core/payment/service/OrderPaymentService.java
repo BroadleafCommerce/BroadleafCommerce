@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.payment.service;
 
 import org.broadleafcommerce.common.money.Money;
-import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.payment.domain.OrderPayment;
 import org.broadleafcommerce.core.payment.domain.PaymentLog;

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -29,10 +29,10 @@ import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddMetadataFromFieldTypeRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldManager;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.hibernate.internal.TypeLocatorImpl;
@@ -40,6 +40,7 @@ import org.hibernate.type.Type;
 import org.hibernate.type.TypeResolver;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 

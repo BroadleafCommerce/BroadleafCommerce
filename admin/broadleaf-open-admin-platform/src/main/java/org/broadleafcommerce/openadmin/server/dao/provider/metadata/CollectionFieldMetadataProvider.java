@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -42,9 +42,9 @@ import org.broadleafcommerce.openadmin.dto.override.FieldMetadataOverride;
 import org.broadleafcommerce.openadmin.dto.override.MetadataOverride;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.openadmin.server.dao.FieldInfo;
+import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaAnnotationRequest;
 import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.OverrideViaXmlRequest;
-import org.broadleafcommerce.openadmin.server.dao.provider.metadata.request.AddFieldMetadataRequest;
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.Scope;

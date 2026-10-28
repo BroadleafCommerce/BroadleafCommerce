@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -28,10 +28,11 @@ import org.broadleafcommerce.core.pricing.service.fulfillment.provider.Fulfillme
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentPricingProvider;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import javax.annotation.Resource;
 
 @Service("blFulfillmentPricingService")
 public class FulfillmentPricingServiceImpl implements FulfillmentPricingService {

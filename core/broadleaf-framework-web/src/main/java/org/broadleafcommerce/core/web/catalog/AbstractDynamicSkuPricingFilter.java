@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,12 +19,13 @@ package org.broadleafcommerce.core.web.catalog;
 
 import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 
+import java.io.IOException;
+
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import java.io.IOException;
 
 /**
  * 

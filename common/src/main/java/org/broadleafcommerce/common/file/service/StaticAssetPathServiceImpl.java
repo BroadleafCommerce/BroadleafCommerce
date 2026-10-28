@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.BroadleafThemeResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.WebRequest;
 
 import java.io.File;
 import java.net.URISyntaxException;

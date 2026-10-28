@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce CMS Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,7 +19,6 @@ package org.broadleafcommerce.cms.file.domain;
 
 import org.broadleafcommerce.cms.field.type.StorageType;
 import org.broadleafcommerce.cms.file.service.StaticAssetService;
-import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
 import java.io.Serializable;

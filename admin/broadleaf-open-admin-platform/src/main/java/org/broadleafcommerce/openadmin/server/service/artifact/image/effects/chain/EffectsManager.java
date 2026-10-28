@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -32,8 +32,7 @@ import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.cha
 import org.broadleafcommerce.openadmin.server.service.artifact.image.effects.chain.filter.UnsharpMask;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.awt.*;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -42,6 +41,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 @Service("blImageEffectsManager")
 public class EffectsManager {

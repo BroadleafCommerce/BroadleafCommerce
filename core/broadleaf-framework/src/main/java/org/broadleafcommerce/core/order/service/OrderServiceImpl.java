@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -34,7 +34,6 @@ import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.OfferService;
-import org.broadleafcommerce.core.offer.service.OfferServiceExtensionHandler;
 import org.broadleafcommerce.core.offer.service.OfferServiceExtensionManager;
 import org.broadleafcommerce.core.offer.service.exception.OfferAlreadyAddedException;
 import org.broadleafcommerce.core.offer.service.exception.OfferException;

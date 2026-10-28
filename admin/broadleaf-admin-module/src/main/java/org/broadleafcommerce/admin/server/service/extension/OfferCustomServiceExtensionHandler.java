@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.admin.server.service.extension;
 
-import org.broadleafcommerce.common.admin.condition.ConditionalOnAdmin;
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.dto.Entity;

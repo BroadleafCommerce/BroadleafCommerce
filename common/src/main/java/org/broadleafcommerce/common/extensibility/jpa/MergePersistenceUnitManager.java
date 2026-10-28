@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTran
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafPersistenceUnitDeclaringClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.NullClassTransformer;
-import org.hibernate.ejb.AvailableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -21,11 +21,12 @@ import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminRole;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 /**
  * 

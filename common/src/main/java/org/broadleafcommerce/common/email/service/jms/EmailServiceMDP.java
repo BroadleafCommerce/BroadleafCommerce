@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -24,12 +24,13 @@ import org.springframework.mail.MailParseException;
 import org.springframework.mail.MailPreparationException;
 import org.springframework.mail.MailSendException;
 
+import java.util.HashMap;
+
 import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
-import java.util.HashMap;
 
 /**
  * @author jfischer

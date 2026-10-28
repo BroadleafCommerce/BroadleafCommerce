@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,12 +17,12 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
+import org.springframework.beans.factory.InitializingBean;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * This provides a useful mechanism to pre-load/initialize classes that are required by a child class during class transformation, 

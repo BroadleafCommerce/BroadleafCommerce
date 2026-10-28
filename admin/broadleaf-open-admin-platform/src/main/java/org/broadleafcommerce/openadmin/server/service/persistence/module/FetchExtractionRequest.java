@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -20,7 +20,6 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module;
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
 import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
-import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 
 import java.io.Serializable;
 import java.util.List;

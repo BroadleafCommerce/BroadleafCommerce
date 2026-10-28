@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.catalog.service;
 
-import lombok.SneakyThrows;
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
@@ -37,12 +36,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+
+import lombok.SneakyThrows;
 
 import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.PROPAGATION;
 

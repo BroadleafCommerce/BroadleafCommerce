@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -20,7 +20,6 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.provid
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
-import org.broadleafcommerce.common.rule.QuantityBasedRule;
 import org.broadleafcommerce.openadmin.web.rulebuilder.dto.DataDTO;
 
 /**

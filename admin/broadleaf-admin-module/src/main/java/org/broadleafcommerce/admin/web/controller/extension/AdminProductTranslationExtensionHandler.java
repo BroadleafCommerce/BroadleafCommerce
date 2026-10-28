@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.admin.web.controller.extension;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.BLCSystemProperty;
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -30,6 +27,9 @@ import org.broadleafcommerce.openadmin.web.controller.AbstractAdminTranslationCo
 import org.broadleafcommerce.openadmin.web.controller.AdminTranslationControllerExtensionManager;
 import org.broadleafcommerce.openadmin.web.form.TranslationForm;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * @author Andre Azzolini (apazzolini)

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,16 +17,16 @@
  */
 package org.broadleafcommerce.common.web.processor;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.broadleafcommerce.common.web.processor.attributes.ResourceTagAttributes;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateContext;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateElement;
 import org.broadleafcommerce.presentation.model.BroadleafTemplateModel;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Adds &lt;link&gt; tags to the model that preload resources.

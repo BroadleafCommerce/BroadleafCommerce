@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,28 +17,25 @@
  */
 package org.broadleafcommerce.core.web.controller.account;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.web.controller.BroadleafAbstractController;
 import org.broadleafcommerce.core.web.controller.account.validator.UpdateAccountValidator;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.CustomerService;
 import org.broadleafcommerce.profile.web.core.CustomerState;
-import org.broadleafcommerce.profile.web.core.service.login.LoginService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 public class BroadleafUpdateAccountController extends BroadleafAbstractController {
 

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce CMS Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -16,10 +16,6 @@
  * #L%
  */
 package org.broadleafcommerce.cms.structure.service;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -68,6 +64,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * @author bpolster

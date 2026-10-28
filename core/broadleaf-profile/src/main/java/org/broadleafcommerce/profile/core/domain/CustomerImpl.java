@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Profile
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -21,9 +21,9 @@ package org.broadleafcommerce.profile.core.domain;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.broadleafcommerce.common.admin.domain.AdminMainEntity;
+import org.broadleafcommerce.common.audit.AuditExcludeFieldValue;
 import org.broadleafcommerce.common.audit.Auditable;
 import org.broadleafcommerce.common.audit.AuditableListener;
-import org.broadleafcommerce.common.audit.AuditExcludeFieldValue;
 import org.broadleafcommerce.common.copy.CreateResponse;
 import org.broadleafcommerce.common.copy.MultiTenantCopyContext;
 import org.broadleafcommerce.common.extensibility.jpa.copy.DirectCopyTransform;

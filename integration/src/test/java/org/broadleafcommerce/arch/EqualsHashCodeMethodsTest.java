@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Integration
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -16,8 +16,6 @@
  * #L%
  */
 package org.broadleafcommerce.arch;
-
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 import org.testng.annotations.Test;
 
@@ -33,6 +31,8 @@ import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 import java.io.Serializable;
+
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 /**
  * @author Chad Harchar (charchar)

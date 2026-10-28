@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.common.presentation.AdminGroupPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminTabPresentation;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 
 /**
  * @author Jon Fleschler (jfleschler)

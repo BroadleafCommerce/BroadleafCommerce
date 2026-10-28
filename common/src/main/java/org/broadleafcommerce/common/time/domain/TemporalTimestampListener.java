@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,6 +19,10 @@ package org.broadleafcommerce.common.time.domain;
 
 import org.broadleafcommerce.common.time.SystemTime;
 
+import java.lang.reflect.Field;
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -26,9 +30,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.lang.reflect.Field;
-import java.util.Calendar;
-import java.util.Date;
 
 public class TemporalTimestampListener {
 

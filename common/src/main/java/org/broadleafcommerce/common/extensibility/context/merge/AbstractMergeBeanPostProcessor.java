@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -29,7 +29,6 @@ import org.springframework.beans.factory.config.MapFactoryBean;
 import org.springframework.beans.factory.config.SetFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.DependsOn;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

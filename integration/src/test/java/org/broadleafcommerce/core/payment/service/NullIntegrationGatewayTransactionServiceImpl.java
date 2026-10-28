@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Integration
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,8 +18,6 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.CreditCardValidator;
 import org.broadleafcommerce.common.money.Money;
@@ -32,11 +30,12 @@ import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayTransactionService;
 import org.broadleafcommerce.common.payment.service.FailureCountExposable;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.common.vendor.service.type.ServiceStatusType;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service("blNullIntegrationGatewayTransactionService")
 public class NullIntegrationGatewayTransactionServiceImpl extends AbstractPaymentGatewayTransactionService implements FailureCountExposable {

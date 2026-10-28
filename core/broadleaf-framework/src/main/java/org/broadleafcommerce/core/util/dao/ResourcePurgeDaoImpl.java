@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -16,6 +16,15 @@
  * #L%
  */
 package org.broadleafcommerce.core.util.dao;
+
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.service.type.OrderStatus;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.springframework.stereotype.Repository;
+
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,15 +40,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Selection;
 import javax.persistence.criteria.Subquery;
-
-import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderImpl;
-import org.broadleafcommerce.core.order.service.type.OrderStatus;
-import org.broadleafcommerce.profile.core.domain.Customer;
-import org.broadleafcommerce.profile.core.domain.CustomerImpl;
-import org.springframework.stereotype.Repository;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author Jeff Fischer

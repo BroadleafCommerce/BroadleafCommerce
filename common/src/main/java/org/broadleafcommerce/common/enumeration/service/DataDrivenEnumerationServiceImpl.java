@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,12 +17,12 @@
  */
 package org.broadleafcommerce.common.enumeration.service;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.common.enumeration.dao.DataDrivenEnumerationDao;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 
 @Service("blDataDrivenEnumerationService")

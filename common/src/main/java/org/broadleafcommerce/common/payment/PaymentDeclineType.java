@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,11 +18,11 @@
 
 package org.broadleafcommerce.common.payment;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 
 /**
  * when a payment returns in error, this value indicates whether it is a "soft" decline (apt to be retried) or a "hard" one.

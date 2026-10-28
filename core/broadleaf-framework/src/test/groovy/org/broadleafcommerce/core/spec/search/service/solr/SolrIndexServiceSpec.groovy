@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -22,20 +22,15 @@ import org.broadleafcommerce.common.locale.service.LocaleService
 import org.broadleafcommerce.common.sandbox.SandBoxHelper
 import org.broadleafcommerce.core.catalog.dao.ProductDao
 import org.broadleafcommerce.core.catalog.dao.SkuDao
-import org.broadleafcommerce.core.catalog.domain.ProductImpl
-import org.broadleafcommerce.core.catalog.domain.Sku
-import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.search.dao.IndexFieldDao
 import org.broadleafcommerce.core.search.dao.SolrIndexDao
-import org.broadleafcommerce.core.search.domain.Field
-import org.broadleafcommerce.core.search.domain.FieldEntity
 import org.broadleafcommerce.core.search.service.solr.SolrHelperService
 import org.broadleafcommerce.core.search.service.solr.SolrHelperServiceImpl
-import org.broadleafcommerce.core.search.service.solr.SolrSearchServiceExtensionHandler
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionHandler
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceExtensionManager
 import org.broadleafcommerce.core.search.service.solr.index.SolrIndexServiceImpl
 import org.springframework.transaction.PlatformTransactionManager
+
 import spock.lang.Specification
 
 class SolrIndexServiceSpec extends Specification {

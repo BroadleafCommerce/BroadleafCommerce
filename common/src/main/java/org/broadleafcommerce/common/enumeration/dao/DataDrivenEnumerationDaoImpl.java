@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,16 +17,16 @@
  */
 package org.broadleafcommerce.common.enumeration.dao;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumeration;
 import org.broadleafcommerce.common.enumeration.domain.DataDrivenEnumerationValue;
 import org.broadleafcommerce.common.persistence.EntityConfiguration;
 import org.broadleafcommerce.common.util.dao.TypedQueryBuilder;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 
 @Repository("blDataDrivenEnumerationDao")

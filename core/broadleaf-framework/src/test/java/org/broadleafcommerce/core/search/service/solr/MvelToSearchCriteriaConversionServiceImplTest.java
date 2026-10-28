@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.domain.FieldImpl;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
@@ -27,6 +26,8 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.easymock.EasyMock;
 
 import java.util.Collections;
+
+import junit.framework.TestCase;
 
 public class MvelToSearchCriteriaConversionServiceImplTest extends TestCase {
 

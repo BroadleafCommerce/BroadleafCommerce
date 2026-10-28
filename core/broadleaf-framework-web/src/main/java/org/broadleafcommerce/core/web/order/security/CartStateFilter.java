@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework Web
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -30,12 +30,10 @@ import org.broadleafcommerce.core.web.order.CartState;
 import org.broadleafcommerce.core.web.order.security.exception.OrderLockAcquisitionFailureException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.Ordered;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;

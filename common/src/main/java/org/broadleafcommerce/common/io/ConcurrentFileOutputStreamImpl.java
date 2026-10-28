@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -30,7 +30,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
-import static java.nio.file.StandardCopyOption.*;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Component("blConcurrentFileOutputStream")
 public class ConcurrentFileOutputStreamImpl implements ConcurrentFileOutputStream {

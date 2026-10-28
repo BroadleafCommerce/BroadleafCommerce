@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce CMS Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -24,7 +24,6 @@ import org.broadleafcommerce.common.file.service.BroadleafFileUtils;
 import org.broadleafcommerce.common.page.dto.PageDTO;
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
-import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.resource.BroadleafContextUtil;
 
 import java.util.HashMap;

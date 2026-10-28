@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -29,9 +29,6 @@ import org.broadleafcommerce.common.sitemap.domain.SiteMapConfiguration;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapConfigurationImpl;
 import org.broadleafcommerce.common.sitemap.domain.SiteMapGeneratorConfiguration;
 import org.broadleafcommerce.common.sitemap.exception.SiteMapException;
-import org.broadleafcommerce.common.sitemap.service.SiteMapGenerationResponse;
-import org.broadleafcommerce.common.sitemap.service.SiteMapGenerator;
-import org.broadleafcommerce.common.sitemap.service.SiteMapServiceImpl;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.easymock.EasyMock;
 import org.junit.After;

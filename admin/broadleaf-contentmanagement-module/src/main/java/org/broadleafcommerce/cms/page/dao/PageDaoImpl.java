@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce CMS Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -33,6 +33,12 @@ import org.broadleafcommerce.common.util.DateUtil;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.ListIterator;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
@@ -45,11 +51,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Created by bpolster.

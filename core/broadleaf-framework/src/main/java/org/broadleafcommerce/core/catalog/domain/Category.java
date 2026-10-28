@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -24,14 +24,15 @@ import org.broadleafcommerce.core.order.service.type.FulfillmentType;
 import org.broadleafcommerce.core.search.domain.CategoryExcludedSearchFacet;
 import org.broadleafcommerce.core.search.domain.CategorySearchFacet;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Implementations of this interface are used to hold data about a Category.  A category is a group of products.

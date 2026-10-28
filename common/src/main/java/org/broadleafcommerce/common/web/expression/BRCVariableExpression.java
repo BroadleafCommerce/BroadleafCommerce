@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -29,15 +29,14 @@ import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-import sun.util.calendar.ZoneInfo;
 
-import javax.servlet.http.HttpSession;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import javax.servlet.http.HttpSession;
 
 import static org.broadleafcommerce.common.web.BroadleafSandBoxResolverImpl.CLIENT_TIMEZONE;
 

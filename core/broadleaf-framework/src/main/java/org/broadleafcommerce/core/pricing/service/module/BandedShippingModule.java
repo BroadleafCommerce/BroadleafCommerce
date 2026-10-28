@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -31,9 +31,10 @@ import org.broadleafcommerce.core.pricing.service.fulfillment.provider.BandedFul
 import org.broadleafcommerce.core.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.core.domain.Address;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * @deprecated Superceded by functionality given by {@link BandedPriceFulfillmentOption} and {@link BandedFulfillmentPricingProvider}

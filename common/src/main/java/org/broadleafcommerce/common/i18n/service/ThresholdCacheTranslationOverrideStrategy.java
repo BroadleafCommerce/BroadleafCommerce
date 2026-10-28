@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -16,8 +16,6 @@
  * #L%
  */
 package org.broadleafcommerce.common.i18n.service;
-
-import net.sf.ehcache.Element;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.broadleafcommerce.common.cache.CacheStatType;
@@ -37,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+
+import net.sf.ehcache.Element;
 
 /**
  * Default {@link TranslationOverrideStrategy}. Should run last and will always return a result. Primarily supports multitenant

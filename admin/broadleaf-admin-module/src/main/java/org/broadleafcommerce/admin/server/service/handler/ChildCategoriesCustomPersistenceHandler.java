@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Admin Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.admin.server.service.handler;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.presentation.client.OperationType;
@@ -32,7 +31,6 @@ import org.broadleafcommerce.openadmin.dto.AdornedTargetList;
 import org.broadleafcommerce.openadmin.dto.Entity;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandlerAdapter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.RecordHelper;
 import org.springframework.stereotype.Component;

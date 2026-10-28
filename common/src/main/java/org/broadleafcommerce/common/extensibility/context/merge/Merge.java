@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.AliasFor;
@@ -26,6 +24,8 @@ import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Provides a convenience annotation for declaring a bean merge into an existing collection of beans (presumably a

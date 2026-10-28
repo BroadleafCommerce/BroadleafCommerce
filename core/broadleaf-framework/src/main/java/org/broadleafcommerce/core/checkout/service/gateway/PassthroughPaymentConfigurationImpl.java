@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,7 +19,6 @@ package org.broadleafcommerce.core.checkout.service.gateway;
 
 import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayConfiguration;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayConfiguration;
 import org.springframework.stereotype.Service;
 
 /**

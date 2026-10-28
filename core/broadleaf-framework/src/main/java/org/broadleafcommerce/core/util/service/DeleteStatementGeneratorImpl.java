@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -26,9 +26,29 @@ import org.broadleafcommerce.core.order.domain.OrderImpl;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.EntityManager;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Table;
 
 /**
  * The idea of this class if to iterate over props of the passed class and if found prop with annotation @OneToMany

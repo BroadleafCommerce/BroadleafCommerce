@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -61,12 +61,13 @@ import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 
-import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
 
 /**
  * This legacy implementation should no longer be used as of 2.0

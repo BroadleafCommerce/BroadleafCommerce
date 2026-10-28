@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce CMS Module
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,13 +17,13 @@
  */
 package org.broadleafcommerce.cms.page.message.jms;
 
+import org.broadleafcommerce.cms.page.service.PageService;
+
 import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-
-import org.broadleafcommerce.cms.page.service.PageService;
 
 /**
  * Receives JMS message with a String that indicates the cache key

@@ -2,7 +2,7 @@
   #%L
   BroadleafCommerce Common Libraries
   %%
-  Copyright (C) 2009 - 2024 Broadleaf Commerce
+  Copyright (C) 2009 - 2026 Broadleaf Commerce
   %%
   Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
   (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -16,16 +16,10 @@
   #L%
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-                        http://www.springframework.org/schema/beans/spring-beans.xsd
-                        http://www.springframework.org/schema/tx
-                        http://www.springframework.org/schema/tx/spring-tx.xsd
-                        http://www.springframework.org/schema/util
-                        http://www.springframework.org/schema/util/spring-util.xsd"
-    profile="!mbeansdisabled">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd"
+       profile="!mbeansdisabled">
 
 
     <!-- NOTE -->

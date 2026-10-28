@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -23,13 +23,13 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.EntityDuplicatorExtensionHandler;
 import org.broadleafcommerce.common.persistence.EntityDuplicatorExtensionManager;
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
 
 @ConditionalOnAdmin
 @Service("blDuplicationValidatorExtensionHandlerImpl")

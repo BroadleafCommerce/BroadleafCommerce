@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -36,8 +36,8 @@ import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.web.controller.AdminAbstractController;
 import org.broadleafcommerce.openadmin.web.controller.AdminBasicOperationsControllerExtensionManager;
-import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.controller.modal.ModalHeaderType;
+import org.broadleafcommerce.openadmin.web.form.component.ListGrid;
 import org.broadleafcommerce.openadmin.web.service.SearchFieldResolver;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -20,8 +20,9 @@ package org.broadleafcommerce.common.payment.service;
 
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>This default implementation produces the Request Attributes and Request Paremeters

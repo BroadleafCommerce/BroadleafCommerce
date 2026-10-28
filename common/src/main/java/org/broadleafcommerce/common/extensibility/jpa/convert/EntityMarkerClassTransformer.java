@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -33,14 +33,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.annotation.Annotation;
-
 import javax.annotation.Resource;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
+
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.annotation.Annotation;
 
 /**
  * <p>

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,17 +18,17 @@
 
 package org.broadleafcommerce.core.payment.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
-
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
+import org.broadleafcommerce.common.domain.AdditionalFields;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.common.payment.PaymentAdditionalFieldType;
 import org.broadleafcommerce.common.payment.PaymentTransactionType;
 import org.broadleafcommerce.common.persistence.Status;
-import org.broadleafcommerce.common.domain.AdditionalFields;
 import org.broadleafcommerce.profile.core.domain.Customer;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * <p>Used to store individual transactions about a particular payment. While an {@link OrderPayment} holds data like what the

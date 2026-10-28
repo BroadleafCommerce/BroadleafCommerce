@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -21,12 +21,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.web.filter.AbstractIgnorableOncePerRequestFilter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Jeff Fischer

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,17 +17,16 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
 import org.apache.xerces.impl.xs.opti.DefaultNode;
-import org.broadleafcommerce.common.extensibility.context.merge.handlers.SchemaLocationNodeValueMerge;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
 import java.util.Set;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for {@link SchemaLocationNodeValueMerge}

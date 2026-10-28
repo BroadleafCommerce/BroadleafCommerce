@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,13 +17,6 @@
  */
 package org.broadleafcommerce.core.pricing.service.fulfillment;
 
-import junit.framework.TestCase;
-
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
@@ -32,6 +25,13 @@ import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillment
 import org.broadleafcommerce.core.order.fulfillment.domain.FixedPriceFulfillmentOptionImpl;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FixedPriceFulfillmentPricingProvider;
 import org.broadleafcommerce.core.pricing.service.fulfillment.provider.FulfillmentEstimationResponse;
+
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import junit.framework.TestCase;
 
 
 /**

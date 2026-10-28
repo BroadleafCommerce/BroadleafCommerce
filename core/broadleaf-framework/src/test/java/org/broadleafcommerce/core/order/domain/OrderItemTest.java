@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
@@ -36,6 +35,8 @@ import org.broadleafcommerce.core.offer.service.discount.domain.PromotableOrderI
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
+
+import junit.framework.TestCase;
 
 /**
  * 

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.i18n.service.DynamicTranslationProvider;
 import org.broadleafcommerce.common.persistence.ArchiveStatus;
 import org.broadleafcommerce.common.persistence.Status;
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.RequiredOverride;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
 import org.broadleafcommerce.common.site.service.type.SiteResolutionType;
@@ -37,7 +36,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.SQLDelete;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

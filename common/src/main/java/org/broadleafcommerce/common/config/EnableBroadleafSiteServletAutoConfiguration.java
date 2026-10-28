@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -20,9 +20,6 @@
  */
 package org.broadleafcommerce.common.config;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import org.broadleafcommerce.common.config.EnableBroadleafSiteServletAutoConfiguration.BroadleafSiteServletAutoConfiguration;
 import org.broadleafcommerce.common.config.EnableBroadleafSiteServletAutoConfiguration.BroadleafSiteServletAutoConfigurationOverrides;
 import org.broadleafcommerce.common.extensibility.FrameworkXmlBeanDefinitionReader;
@@ -35,6 +32,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import javax.servlet.ServletContainerInitializer;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 
 /**

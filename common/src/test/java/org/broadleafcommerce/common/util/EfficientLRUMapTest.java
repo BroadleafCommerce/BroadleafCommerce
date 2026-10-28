@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -19,7 +19,6 @@
 package org.broadleafcommerce.common.util;
 
 import org.apache.commons.collections4.map.LRUMap;
-import org.broadleafcommerce.common.util.EfficientLRUMap;
 
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Integration
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -26,7 +26,6 @@ import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.common.payment.dto.PaymentRequestDTO;
 import org.broadleafcommerce.common.payment.dto.PaymentResponseDTO;
 import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayRollbackService;
-import org.broadleafcommerce.common.payment.service.PaymentGatewayRollbackService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.springframework.stereotype.Service;
 

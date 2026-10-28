@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -16,10 +16,6 @@
  * #L%
  */
 package org.broadleafcommerce.common.web.resource;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -35,6 +31,10 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 
 /**

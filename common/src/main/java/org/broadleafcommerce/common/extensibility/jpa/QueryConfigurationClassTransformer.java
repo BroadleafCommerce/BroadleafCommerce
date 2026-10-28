@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -16,19 +16,6 @@
  * #L%
  */
 package org.broadleafcommerce.common.extensibility.jpa;
-
-import javassist.ClassPool;
-import javassist.NotFoundException;
-import javassist.bytecode.AnnotationsAttribute;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.annotation.Annotation;
-import javassist.bytecode.annotation.AnnotationMemberValue;
-import javassist.bytecode.annotation.ArrayMemberValue;
-import javassist.bytecode.annotation.ClassMemberValue;
-import javassist.bytecode.annotation.EnumMemberValue;
-import javassist.bytecode.annotation.MemberValue;
-import javassist.bytecode.annotation.StringMemberValue;
 
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTransformer;
 
@@ -50,6 +37,19 @@ import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
+
+import javassist.ClassPool;
+import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.ClassMemberValue;
+import javassist.bytecode.annotation.EnumMemberValue;
+import javassist.bytecode.annotation.MemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 
 /**
  * Detects any externally registered {@link NamedQueries} or {@link NamedNativeQueries} and adds them to the first detected

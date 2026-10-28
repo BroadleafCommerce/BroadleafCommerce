@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Open Admin Platform
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.broadleafcommerce.common.security.service.CleanStringException;
 import org.broadleafcommerce.common.security.service.ExploitProtectionService;
 import org.broadleafcommerce.common.service.PersistenceService;
@@ -38,9 +39,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceMan
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceResponse;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceThreadManager;
-import org.broadleafcommerce.common.persistence.TargetModeType;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 

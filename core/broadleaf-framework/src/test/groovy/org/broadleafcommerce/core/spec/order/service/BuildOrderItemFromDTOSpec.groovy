@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,12 +18,22 @@
 package org.broadleafcommerce.core.spec.order.service
 
 import org.broadleafcommerce.common.money.Money
-import org.broadleafcommerce.core.catalog.domain.*
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl
+import org.broadleafcommerce.core.catalog.domain.Product
+import org.broadleafcommerce.core.catalog.domain.ProductBundle
+import org.broadleafcommerce.core.catalog.domain.ProductBundleImpl
+import org.broadleafcommerce.core.catalog.domain.Sku
+import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.CatalogService
-import org.broadleafcommerce.core.order.domain.*
+import org.broadleafcommerce.core.order.domain.BundleOrderItem
+import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem
+import org.broadleafcommerce.core.order.domain.OrderItem
+import org.broadleafcommerce.core.order.domain.OrderItemImpl
 import org.broadleafcommerce.core.order.service.OrderItemServiceImpl
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO
+
 /**
  * 
  * @author Chris Kittrell (ckittrell)

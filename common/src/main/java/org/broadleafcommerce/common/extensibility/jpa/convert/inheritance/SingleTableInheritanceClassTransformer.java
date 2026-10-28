@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -35,6 +35,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+
 import javassist.ClassPool;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
@@ -43,11 +48,6 @@ import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.IntegerMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
-
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 
 /**
  * 

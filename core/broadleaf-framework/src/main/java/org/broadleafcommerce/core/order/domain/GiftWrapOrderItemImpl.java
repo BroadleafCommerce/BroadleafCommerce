@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Framework
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -24,9 +24,16 @@ import org.broadleafcommerce.common.presentation.AdminPresentationCollection;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)

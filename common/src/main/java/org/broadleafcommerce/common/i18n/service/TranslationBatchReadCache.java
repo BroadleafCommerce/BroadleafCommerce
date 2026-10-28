@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Common Libraries
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -20,10 +20,6 @@
  */
 package org.broadleafcommerce.common.i18n.service;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.i18n.domain.TranslatedEntity;
 import org.broadleafcommerce.common.i18n.domain.Translation;
@@ -33,6 +29,10 @@ import org.broadleafcommerce.common.util.TypedClosure;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * Thread-local cache structure that contains all of the {@link Translation}s for a batch of processing. This is mainly

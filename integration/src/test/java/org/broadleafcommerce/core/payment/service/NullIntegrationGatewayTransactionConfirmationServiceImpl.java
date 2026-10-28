@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Integration
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -18,8 +18,6 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.money.Money;
@@ -29,6 +27,8 @@ import org.broadleafcommerce.common.payment.service.AbstractPaymentGatewayTransa
 import org.broadleafcommerce.common.payment.service.PaymentGatewayTransactionService;
 import org.broadleafcommerce.common.vendor.service.exception.PaymentException;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * @author Elbert Bautista (elbertbautista)

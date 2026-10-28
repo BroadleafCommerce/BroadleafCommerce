@@ -2,7 +2,7 @@
  * #%L
  * BroadleafCommerce Admin Functional Tests
  * %%
- * Copyright (C) 2009 - 2024 Broadleaf Commerce
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
  * %%
  * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
  * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
@@ -17,9 +17,8 @@
  */
 package org.broadleafcommerce.browsertest.page
 
-import geb.Page
-import geb.navigator.NonEmptyNavigator
 
+import geb.navigator.NonEmptyNavigator
 
 /**
  * Represents a top-level entity page like viewing a list of Categories at '/admin/category' or viewing a list of Prodcuts
