@@ -458,7 +458,7 @@
                             <additionalDependencies>
                                 <additionalDependency>
                                     <groupId>jakarta.interceptor</groupId>
-                                    <artifactId>javax.interceptor-api</artifactId>
+                                    <artifactId>jakarta.interceptor-api</artifactId>
                                     <version>2.1.0</version>
                                 </additionalDependency>
                             </additionalDependencies>
