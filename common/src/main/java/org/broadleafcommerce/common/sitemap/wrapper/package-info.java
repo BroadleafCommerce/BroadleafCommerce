@@ -30,6 +30,6 @@
         })
 package org.broadleafcommerce.common.sitemap.wrapper;
 
-import jakarta.xml.bind.annotation.XmlNs;
-import jakarta.xml.bind.annotation.XmlNsForm;
-import jakarta.xml.bind.annotation.XmlSchema;
+import javax.xml.bind.annotation.XmlNs;
+import javax.xml.bind.annotation.XmlNsForm;
+import javax.xml.bind.annotation.XmlSchema;
