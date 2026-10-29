@@ -50,6 +50,19 @@ import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 
+import javassist.ClassPool;
+import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.ClassMemberValue;
+import javassist.bytecode.annotation.EnumMemberValue;
+import javassist.bytecode.annotation.MemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
+
 /**
  * Detects any externally registered {@link NamedQueries} or {@link NamedNativeQueries} and adds them to the first detected
  * entity implementation class for the target persistence unit. This is a JPA/Hibernate requirement and this approach
