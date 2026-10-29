@@ -17,9 +17,6 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
-import java.io.Serializable;
-
-import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
@@ -27,6 +24,8 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.provide
 import org.broadleafcommerce.openadmin.server.service.type.MetadataProviderResponse;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.io.Serializable;
 
 /**
  * @author Jeff Fischer
@@ -60,18 +59,9 @@ public class DefaultFieldPersistenceProvider extends FieldPersistenceProviderAda
     @Override
     public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (extractValueRequest.getRequestedValue() != null) {
-            String displayVal = extractValueRequest.getDisplayVal();
-            String val;
-            if(extractValueRequest.getRequestedValue() instanceof BroadleafEnumerationType){
-                val = ((BroadleafEnumerationType)extractValueRequest.getRequestedValue()).getType();
-                if(displayVal == null){
-                    displayVal = ((BroadleafEnumerationType)extractValueRequest.getRequestedValue()).getFriendlyType();
-                }
-            }else {
-                val = extractValueRequest.getRequestedValue().toString();
-            }
+            String val = extractValueRequest.getRequestedValue().toString();
             property.setValue(val);
-            property.setDisplayValue(displayVal);
+            property.setDisplayValue(extractValueRequest.getDisplayVal());
         }
         return MetadataProviderResponse.HANDLED;
     }

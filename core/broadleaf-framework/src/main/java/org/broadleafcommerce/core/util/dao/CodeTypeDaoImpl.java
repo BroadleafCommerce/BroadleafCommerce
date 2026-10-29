@@ -22,11 +22,12 @@ import org.broadleafcommerce.core.util.domain.CodeType;
 import org.broadleafcommerce.core.util.domain.CodeTypeImpl;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 
 @Repository("blCodeTypeDao")

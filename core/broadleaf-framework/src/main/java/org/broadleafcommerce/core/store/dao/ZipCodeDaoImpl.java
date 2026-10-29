@@ -20,10 +20,11 @@ package org.broadleafcommerce.core.store.dao;
 import org.broadleafcommerce.core.store.domain.ZipCode;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blZipCodeDao")
 public class ZipCodeDaoImpl implements ZipCodeDao {

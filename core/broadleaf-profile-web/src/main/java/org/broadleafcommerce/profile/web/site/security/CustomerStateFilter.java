@@ -28,7 +28,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

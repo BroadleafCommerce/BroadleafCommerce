@@ -18,12 +18,10 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.broadleafcommerce.openadmin.dto.CriteriaTransferObject;
-import org.broadleafcommerce.openadmin.dto.FieldMetadata;
 import org.broadleafcommerce.openadmin.dto.PersistencePackage;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * POJO for useful params dictating {@link FetchWrapper} behavior

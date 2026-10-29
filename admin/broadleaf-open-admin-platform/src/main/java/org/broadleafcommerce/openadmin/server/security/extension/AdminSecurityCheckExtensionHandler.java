@@ -17,12 +17,12 @@
  */
 package org.broadleafcommerce.openadmin.server.security.extension;
 
-import java.util.List;
-
 import org.broadleafcommerce.common.extension.ExtensionHandler;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+
+import java.util.List;
 
 /**
  * @author Jacob Mitash

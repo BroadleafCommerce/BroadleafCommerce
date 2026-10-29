@@ -722,7 +722,7 @@
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.16.0</version>
+                <version>1.16.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -734,7 +734,7 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
-                <version>2.17.1</version>
+                <version>2.17.2</version>
                 <scope>import</scope>
                 <type>pom</type>
                 <optional>true</optional>
@@ -837,19 +837,19 @@
             <dependency>
                 <groupId>com.icegreen</groupId>
                 <artifactId>greenmail</artifactId>
-                <version>1.5.2</version>
+                <version>1.5.14</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13.1</version>
+                <version>4.13.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>2.5.1</version>
+                <version>2.5.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -963,28 +963,28 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-all</artifactId>
-                <version>4.1.130.Final</version>
+                <version>4.1.139.Final</version>
             </dependency>
             <dependency>
                 <groupId>org.xerial.snappy</groupId>
                 <artifactId>snappy-java</artifactId>
-                <version>1.1.10.7</version>
+                <version>1.1.10.12</version>
             </dependency>
             <!-- Byte Code Manipulation Libraries -->
             <dependency>
                 <groupId>cglib</groupId>
                 <artifactId>cglib-nodep</artifactId>
-                <version>2.1_3</version>
+                <version>3.1</version>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm</artifactId>
-                <version>3.3</version>
+                <version>3.3.1</version>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm-commons</artifactId>
-                <version>3.3</version>
+                <version>3.3.1</version>
             </dependency>
             <dependency>
                 <groupId>org.javassist</groupId>
@@ -994,14 +994,14 @@
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
-                <version>1.14.3</version>
+                <version>1.14.19</version>
             </dependency>
 
             <!--Scheduling Libraries -->
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz</artifactId>
-                <version>2.4.0</version>
+                <version>2.4.1</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
@@ -1010,7 +1010,7 @@
             <dependency>
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
-                <version>2.5.2.Final</version>
+                <version>2.5.4.Final</version>
             </dependency>
 
             <!--Regular Expression Libraries -->
@@ -1345,7 +1345,7 @@
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
-                <version>1.9.19</version>
+                <version>1.9.26</version>
             </dependency>
             <!--This is the latest version that can be compiled with java8 so cannot upgrade this for 6.2 -->
             <dependency>
@@ -1464,7 +1464,7 @@
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
-                <version>1.5.4</version>
+                <version>1.5.7</version>
             </dependency>
 
             <dependency>
@@ -1512,12 +1512,12 @@
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
-                <version>4.32.0</version>
+                <version>4.32.1</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
-                <version>2.13.1</version>
+                <version>2.13.2</version>
             </dependency>
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>

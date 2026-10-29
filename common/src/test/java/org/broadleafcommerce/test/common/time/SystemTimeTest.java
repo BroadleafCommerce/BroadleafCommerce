@@ -17,11 +17,6 @@
  */
 package org.broadleafcommerce.test.common.time;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-
 import org.broadleafcommerce.common.time.SystemTime;
 import org.broadleafcommerce.common.time.TimeSource;
 
@@ -29,6 +24,11 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
+
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 public class SystemTimeTest extends TestCase {
     private TimeSource mockTimeSource;

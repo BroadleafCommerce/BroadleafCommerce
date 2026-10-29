@@ -17,8 +17,8 @@
  */
 package org.broadleafcommerce.common.i18n.domain;
 
-import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 import org.broadleafcommerce.common.i18n.service.type.ISOCodeStatusType;
+
 import java.io.Serializable;
 
 /**

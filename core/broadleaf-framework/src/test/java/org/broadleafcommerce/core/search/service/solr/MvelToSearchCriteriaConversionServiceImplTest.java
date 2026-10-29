@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.search.service.solr;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.core.search.dao.IndexFieldDao;
 import org.broadleafcommerce.core.search.domain.FieldImpl;
 import org.broadleafcommerce.core.search.domain.IndexFieldImpl;
@@ -27,6 +26,8 @@ import org.broadleafcommerce.core.search.domain.solr.FieldType;
 import org.easymock.EasyMock;
 
 import java.util.Collections;
+
+import junit.framework.TestCase;
 
 public class MvelToSearchCriteriaConversionServiceImplTest extends TestCase {
 

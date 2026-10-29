@@ -21,11 +21,12 @@ import org.broadleafcommerce.core.search.domain.SearchIntercept;
 import org.broadleafcommerce.core.search.redirect.dao.SearchRedirectDaoImpl;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 /**
  * @deprecated Replaced in functionality by {@link SearchRedirectDaoImpl}

@@ -190,7 +190,7 @@
                  caution as tests will likely fail with deadlocks, etc -->
             <!-- If you want to use TestNG elsewhere, you should be using the latest version
                 and not use this version -->
-            <version>6.1</version>
+            <version>6.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -237,7 +237,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.6</version>
         </dependency>
 
         <!-- Spock/Groovy Test Dependencies -->

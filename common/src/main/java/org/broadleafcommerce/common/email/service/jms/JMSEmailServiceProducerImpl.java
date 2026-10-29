@@ -22,13 +22,14 @@ import org.broadleafcommerce.common.email.service.message.EmailPropertyType;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
-import java.io.Serializable;
-import java.util.Map;
 
 /**
  * @author jfischer

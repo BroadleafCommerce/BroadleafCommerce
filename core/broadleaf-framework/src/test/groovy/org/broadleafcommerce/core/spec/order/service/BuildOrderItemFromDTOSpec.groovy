@@ -18,12 +18,22 @@
 package org.broadleafcommerce.core.spec.order.service
 
 import org.broadleafcommerce.common.money.Money
-import org.broadleafcommerce.core.catalog.domain.*
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl
+import org.broadleafcommerce.core.catalog.domain.Product
+import org.broadleafcommerce.core.catalog.domain.ProductBundle
+import org.broadleafcommerce.core.catalog.domain.ProductBundleImpl
+import org.broadleafcommerce.core.catalog.domain.Sku
+import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.catalog.service.CatalogService
-import org.broadleafcommerce.core.order.domain.*
+import org.broadleafcommerce.core.order.domain.BundleOrderItem
+import org.broadleafcommerce.core.order.domain.BundleOrderItemImpl
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem
+import org.broadleafcommerce.core.order.domain.OrderItem
+import org.broadleafcommerce.core.order.domain.OrderItemImpl
 import org.broadleafcommerce.core.order.service.OrderItemServiceImpl
 import org.broadleafcommerce.core.order.service.call.NonDiscreteOrderItemRequestDTO
 import org.broadleafcommerce.core.order.service.call.OrderItemRequestDTO
+
 /**
  * 
  * @author Chris Kittrell (ckittrell)

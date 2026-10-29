@@ -19,8 +19,6 @@ package org.broadleafcommerce.core.order.domain;
 
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.core.catalog.domain.Sku;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;

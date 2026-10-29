@@ -46,7 +46,6 @@ import java.util.Map;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 
-import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 
 

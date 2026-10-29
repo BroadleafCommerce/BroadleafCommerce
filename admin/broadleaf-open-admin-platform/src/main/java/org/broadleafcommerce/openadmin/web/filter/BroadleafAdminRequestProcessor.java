@@ -64,7 +64,6 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import static org.broadleafcommerce.openadmin.server.security.remote.AdminSecurityServiceRemote.ANONYMOUS_USER_NAME;
 

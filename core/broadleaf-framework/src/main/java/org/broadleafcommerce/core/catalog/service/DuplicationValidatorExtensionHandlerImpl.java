@@ -23,13 +23,13 @@ import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.persistence.EntityDuplicatorExtensionHandler;
 import org.broadleafcommerce.common.persistence.EntityDuplicatorExtensionManager;
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
 
 @ConditionalOnAdmin
 @Service("blDuplicationValidatorExtensionHandlerImpl")

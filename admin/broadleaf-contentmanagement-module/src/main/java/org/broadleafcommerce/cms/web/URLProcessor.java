@@ -17,8 +17,9 @@
  */
 package org.broadleafcommerce.cms.web;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
+
+import javax.servlet.ServletException;
 
 /**
  * @deprecated

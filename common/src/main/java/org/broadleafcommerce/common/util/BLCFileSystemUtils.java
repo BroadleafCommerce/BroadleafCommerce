@@ -19,7 +19,6 @@ package org.broadleafcommerce.common.util;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.PathResource;
 
 import java.io.IOException;
 import java.io.InputStream;

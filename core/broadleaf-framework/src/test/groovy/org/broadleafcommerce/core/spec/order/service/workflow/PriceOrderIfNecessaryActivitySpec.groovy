@@ -33,10 +33,8 @@ import org.broadleafcommerce.core.order.domain.OrderItemImpl
 import org.broadleafcommerce.core.order.service.OrderItemService
 import org.broadleafcommerce.core.order.service.OrderMultishipOptionService
 import org.broadleafcommerce.core.order.service.OrderService
-import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest
 import org.broadleafcommerce.core.order.service.workflow.AddWorkflowPriceOrderIfNecessaryActivity
-
-
+import org.broadleafcommerce.core.order.service.workflow.CartOperationRequest
 
 /*
  * 1) request.getMultishipOptionsToBeDelete() not empty

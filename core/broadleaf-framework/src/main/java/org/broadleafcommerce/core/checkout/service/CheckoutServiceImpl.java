@@ -34,9 +34,9 @@ import org.broadleafcommerce.core.workflow.WorkflowException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+
 import javax.annotation.Resource;
 
 @Service("blCheckoutService")

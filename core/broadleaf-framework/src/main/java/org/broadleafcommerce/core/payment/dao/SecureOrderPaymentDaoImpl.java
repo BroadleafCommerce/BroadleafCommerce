@@ -25,11 +25,12 @@ import org.broadleafcommerce.core.payment.domain.secure.GiftCardPayment;
 import org.broadleafcommerce.core.payment.domain.secure.Referenced;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blSecureOrderPaymentDao")
 public class SecureOrderPaymentDaoImpl implements SecureOrderPaymentDao {

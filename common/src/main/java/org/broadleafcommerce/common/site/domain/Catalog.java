@@ -21,7 +21,6 @@ import org.broadleafcommerce.common.persistence.Status;
 
 import java.io.Serializable;
 import java.util.List;
-import java.lang.Comparable;
 
 /**
  * @author Jeff Fischer

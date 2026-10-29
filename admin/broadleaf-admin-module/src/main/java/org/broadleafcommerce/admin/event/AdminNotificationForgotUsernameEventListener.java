@@ -24,13 +24,13 @@ import org.broadleafcommerce.common.event.AbstractBroadleafApplicationEventListe
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.common.notification.service.NotificationDispatcher;
 import org.broadleafcommerce.common.notification.service.type.EmailNotification;
-import org.broadleafcommerce.common.notification.service.type.Notification;
 import org.broadleafcommerce.common.notification.service.type.NotificationEventType;
 import org.broadleafcommerce.common.notification.service.type.SMSNotification;
 import org.broadleafcommerce.openadmin.server.security.event.AdminForgotUsernameEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 

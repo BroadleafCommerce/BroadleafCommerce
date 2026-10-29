@@ -17,14 +17,10 @@
  */
 package org.broadleafcommerce.openadmin.spec
 
-import static org.junit.Assert.assertFalse
-import static org.junit.Assert.assertTrue
-
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.RequiredPropertyValidator
 
 import spock.lang.Specification
-
 
 /**
  * 

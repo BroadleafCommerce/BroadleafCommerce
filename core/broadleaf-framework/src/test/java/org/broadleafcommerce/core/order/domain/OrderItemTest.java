@@ -17,7 +17,6 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import junit.framework.TestCase;
 import org.broadleafcommerce.common.money.Money;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferImpl;
@@ -43,6 +42,8 @@ import org.broadleafcommerce.core.order.service.type.OrderItemType;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.TestCase;
 
 /**
  * 
