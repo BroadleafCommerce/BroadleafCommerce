@@ -26,6 +26,7 @@ import org.broadleafcommerce.core.catalog.domain.SkuImpl
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessorImpl
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl
+
 import spock.lang.Specification
 
 /**

@@ -18,7 +18,6 @@
 package org.broadleafcommerce.admin.web.controller.entity;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferImpl;
 import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.openadmin.web.controller.entity.AdminBasicEntityController;

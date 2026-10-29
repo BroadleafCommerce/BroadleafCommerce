@@ -19,8 +19,8 @@
 package org.broadleafcommerce.common.payment.dto;
 
 import org.broadleafcommerce.common.payment.PaymentGatewayRequestType;
-import org.broadleafcommerce.common.payment.PaymentGatewayType;
 import org.broadleafcommerce.common.payment.PaymentType;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

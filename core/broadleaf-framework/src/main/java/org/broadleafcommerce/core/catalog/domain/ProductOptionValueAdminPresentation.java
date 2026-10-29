@@ -20,7 +20,6 @@ package org.broadleafcommerce.core.catalog.domain;
 import org.broadleafcommerce.common.presentation.AdminGroupPresentation;
 import org.broadleafcommerce.common.presentation.AdminPresentationClass;
 import org.broadleafcommerce.common.presentation.AdminTabPresentation;
-import org.broadleafcommerce.common.presentation.PopulateToOneFieldsEnum;
 
 /**
  * @author Jon Fleschler (jfleschler)

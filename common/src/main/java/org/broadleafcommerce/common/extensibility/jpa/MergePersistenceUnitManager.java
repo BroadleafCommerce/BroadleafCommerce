@@ -27,7 +27,6 @@ import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafClassTran
 import org.broadleafcommerce.common.extensibility.jpa.convert.BroadleafPersistenceUnitDeclaringClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.convert.EntityMarkerClassTransformer;
 import org.broadleafcommerce.common.extensibility.jpa.copy.NullClassTransformer;
-import org.hibernate.ejb.AvailableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;

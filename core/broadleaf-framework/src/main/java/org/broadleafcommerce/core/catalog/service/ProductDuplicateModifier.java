@@ -44,6 +44,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import lombok.SneakyThrows;
+
 import static org.broadleafcommerce.common.copy.MultiTenantCopyContext.PROPAGATION;
 
 @Component("blProductDuplicateModifier")

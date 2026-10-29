@@ -19,6 +19,10 @@ package org.broadleafcommerce.common.time.domain;
 
 import org.broadleafcommerce.common.time.SystemTime;
 
+import java.lang.reflect.Field;
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -26,9 +30,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.lang.reflect.Field;
-import java.util.Calendar;
-import java.util.Date;
 
 public class TemporalTimestampListener {
 

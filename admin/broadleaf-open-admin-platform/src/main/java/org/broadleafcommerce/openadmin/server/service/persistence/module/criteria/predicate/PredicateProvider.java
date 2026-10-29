@@ -19,11 +19,12 @@ package org.broadleafcommerce.openadmin.server.service.persistence.module.criter
 
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 
+import java.util.List;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
-import java.util.List;
 
 /**
  * @author Jeff Fischer

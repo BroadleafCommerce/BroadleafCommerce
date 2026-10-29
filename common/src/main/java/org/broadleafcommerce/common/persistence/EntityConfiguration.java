@@ -27,10 +27,11 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import javax.annotation.PostConstruct;
 
 @Component("blEntityConfiguration")
 public class EntityConfiguration implements ApplicationContextAware {

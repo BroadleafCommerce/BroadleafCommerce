@@ -17,8 +17,6 @@
  */
 package org.broadleafcommerce.arch;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
-
 import org.testng.annotations.Test;
 
 import com.tngtech.archunit.base.Optional;
@@ -33,6 +31,8 @@ import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 import java.io.Serializable;
+
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
 /**
  * @author Chad Harchar (charchar)

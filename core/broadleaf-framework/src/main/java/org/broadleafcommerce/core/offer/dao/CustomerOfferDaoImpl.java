@@ -24,11 +24,12 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blCustomerOfferDao")
 public class CustomerOfferDaoImpl implements CustomerOfferDao {

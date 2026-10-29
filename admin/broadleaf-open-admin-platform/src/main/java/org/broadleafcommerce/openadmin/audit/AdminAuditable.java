@@ -18,7 +18,6 @@
 package org.broadleafcommerce.openadmin.audit;
 
 import org.broadleafcommerce.common.presentation.AdminPresentation;
-import org.broadleafcommerce.common.presentation.client.VisibilityEnum;
 import org.broadleafcommerce.common.sandbox.SandBoxNonProductionSkip;
 
 import java.io.Serializable;

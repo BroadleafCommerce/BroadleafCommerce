@@ -18,7 +18,6 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.broadleafcommerce.openadmin.dto.Entity;
-import org.broadleafcommerce.openadmin.server.service.handler.CustomPersistenceHandler;
 
 import java.io.Serializable;
 import java.util.List;

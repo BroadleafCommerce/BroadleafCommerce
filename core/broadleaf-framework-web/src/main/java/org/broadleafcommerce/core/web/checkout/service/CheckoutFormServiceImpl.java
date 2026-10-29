@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.web.checkout.service;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.broadleafcommerce.common.payment.PaymentType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.FulfillmentOption;
 import org.broadleafcommerce.core.order.domain.Order;

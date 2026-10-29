@@ -18,7 +18,6 @@
 package org.broadleafcommerce.core.checkout.service.workflow.extension;
 
 import org.broadleafcommerce.common.extension.ExtensionManager;
-import org.broadleafcommerce.core.checkout.service.workflow.ValidateCheckoutActivity;
 import org.springframework.stereotype.Service;
 
 /**

@@ -19,9 +19,10 @@ package org.broadleafcommerce.cms.structure.domain;
 
 import org.broadleafcommerce.common.copy.MultiTenantCloneable;
 
+import java.io.Serializable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.Serializable;
 
 /**
  * A content type corresponds to an area where content should be targeted.   For example,

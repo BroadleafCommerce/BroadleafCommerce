@@ -23,11 +23,12 @@ import org.broadleafcommerce.profile.core.domain.CountryImpl;
 import org.hibernate.jpa.QueryHints;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.util.List;
 
 @Repository("blCountryDao")
 public class CountryDaoImpl implements CountryDao {

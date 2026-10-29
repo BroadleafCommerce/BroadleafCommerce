@@ -746,7 +746,7 @@
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
-                <version>2.17.1</version>
+                <version>2.17.2</version>
                 <scope>import</scope>
                 <type>pom</type>
                 <optional>true</optional>
@@ -760,7 +760,7 @@
             <dependency>
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
-                <version>1.4.1</version>
+                <version>1.4.7</version>
             </dependency>
 
             <!-- Java EE APIs removed from JDK in Java 9 -->
@@ -855,19 +855,19 @@
             <dependency>
                 <groupId>com.icegreen</groupId>
                 <artifactId>greenmail</artifactId>
-                <version>1.5.2</version>
+                <version>1.5.14</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.13.1</version>
+                <version>4.13.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.easymock</groupId>
                 <artifactId>easymock</artifactId>
-                <version>2.5.1</version>
+                <version>2.5.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -955,12 +955,12 @@
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm</artifactId>
-                <version>3.3</version>
+                <version>3.3.1</version>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm-commons</artifactId>
-                <version>3.3</version>
+                <version>3.3.1</version>
             </dependency>
             <dependency>
                 <groupId>org.javassist</groupId>
@@ -986,7 +986,7 @@
             <dependency>
                 <groupId>org.mvel</groupId>
                 <artifactId>mvel2</artifactId>
-                <version>2.4.3.Final</version>
+                <version>2.4.15.Final</version>
             </dependency>
 
             <!--Regular Expression Libraries -->
@@ -1252,14 +1252,14 @@
             <dependency>
                 <groupId>commons-pool</groupId>
                 <artifactId>commons-pool</artifactId>
-                <version>1.5.6</version>
+                <version>1.5.7</version>
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
-                <version>2.4.0</version>
+                <version>2.4.1</version>
                 <scope>test</scope>
             </dependency>
 
@@ -1274,12 +1274,12 @@
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
-                <version>1.8.13</version>
+                <version>1.8.14</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-core</artifactId>
-                <version>2.9.1</version>
+                <version>2.9.4</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-io</groupId>
@@ -1290,13 +1290,13 @@
             <dependency>
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
-                <version>3.0.1</version>
+                <version>3.0.2</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.owasp.antisamy</groupId>
                 <artifactId>antisamy</artifactId>
-                <version>1.7.7</version>
+                <version>1.7.8</version>
                 <scope>compile</scope>
                 <exclusions>
                     <exclusion>
@@ -1312,7 +1312,7 @@
             <dependency>
                 <groupId>org.owasp.esapi</groupId>
                 <artifactId>esapi</artifactId>
-                <version>2.5.3.1</version>
+                <version>2.5.5.0</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-beanutils</groupId>
@@ -1347,7 +1347,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.13</version>
+                <version>4.5.14</version>
             </dependency>
             <dependency>
                 <groupId>javax.validation</groupId>
@@ -1362,7 +1362,13 @@
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
-                <version>1.5.4</version>
+                <version>1.5.7</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>stax</groupId>
+                        <artifactId>stax-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>

@@ -30,7 +30,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.WeakHashMap;
 
-import static java.nio.file.StandardCopyOption.*;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Component("blConcurrentFileOutputStream")
 public class ConcurrentFileOutputStreamImpl implements ConcurrentFileOutputStream {

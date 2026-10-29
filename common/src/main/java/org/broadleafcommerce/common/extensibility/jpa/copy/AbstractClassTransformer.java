@@ -17,12 +17,12 @@
  */
 package org.broadleafcommerce.common.extensibility.jpa.copy;
 
+import org.springframework.beans.factory.InitializingBean;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.springframework.beans.factory.InitializingBean;
 
 /**
  * This provides a useful mechanism to pre-load/initialize classes that are required by a child class during class transformation, 

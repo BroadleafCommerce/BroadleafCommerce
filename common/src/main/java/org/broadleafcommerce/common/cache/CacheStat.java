@@ -17,10 +17,10 @@
  */
 package org.broadleafcommerce.common.cache;
 
+import org.broadleafcommerce.common.time.SystemTime;
+
 import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicLong;
-
-import org.broadleafcommerce.common.time.SystemTime;
 
 /**
  * @author Jeff Fischer

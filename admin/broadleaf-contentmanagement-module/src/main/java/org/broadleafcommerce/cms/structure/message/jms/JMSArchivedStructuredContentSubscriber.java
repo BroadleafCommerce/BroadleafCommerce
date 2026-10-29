@@ -17,6 +17,8 @@
  */
 package org.broadleafcommerce.cms.structure.message.jms;
 
+import org.broadleafcommerce.cms.structure.service.StructuredContentService;
+
 import java.util.HashMap;
 
 import javax.annotation.Resource;
@@ -24,8 +26,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
-
-import org.broadleafcommerce.cms.structure.service.StructuredContentService;
 
 /**
  * Receives JMS message with a String that indicates the cache key

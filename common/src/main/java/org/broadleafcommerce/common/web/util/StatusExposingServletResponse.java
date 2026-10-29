@@ -17,9 +17,10 @@
  */
 package org.broadleafcommerce.common.web.util;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.IOException;
 
 /**
  * Code is largely copied from StackOverflow post made by David Rabinowitz with contributions

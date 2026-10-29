@@ -17,17 +17,16 @@
  */
 package org.broadleafcommerce.common.extensibility.context.merge.handlers;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-
 import org.apache.xerces.impl.xs.opti.DefaultNode;
-import org.broadleafcommerce.common.extensibility.context.merge.handlers.SchemaLocationNodeValueMerge;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 
 import java.util.Set;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for {@link SchemaLocationNodeValueMerge}

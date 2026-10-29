@@ -18,11 +18,6 @@
 
 package org.broadleafcommerce.core.payment.service;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,6 +36,11 @@ import org.broadleafcommerce.core.payment.domain.PaymentTransaction;
 import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 
 import lombok.Data;
 

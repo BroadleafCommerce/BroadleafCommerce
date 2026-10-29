@@ -17,9 +17,8 @@
  */
 package org.broadleafcommerce.browsertest.page
 
-import geb.Page
-import geb.navigator.NonEmptyNavigator
 
+import geb.navigator.NonEmptyNavigator
 
 /**
  * Represents a top-level entity page like viewing a list of Categories at '/admin/category' or viewing a list of Prodcuts

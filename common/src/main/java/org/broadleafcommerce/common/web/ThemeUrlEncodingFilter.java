@@ -25,7 +25,6 @@ import org.broadleafcommerce.common.site.domain.Theme;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;

@@ -22,8 +22,9 @@ import org.broadleafcommerce.profile.core.domain.State;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 import java.util.List;
+
+import javax.annotation.Resource;
 
 /**
  * @deprecated - use {@link org.broadleafcommerce.profile.core.service.CountrySubdivisionServiceImpl} instead.
