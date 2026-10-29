@@ -661,8 +661,10 @@ public class OrderServiceImpl implements OrderService {
         }
         orderItemRequestDTO.setOverrideRetailPrice(null);
         orderItemRequestDTO.setOverrideSalePrice(null);
-        for (OrderItemRequestDTO childRequest : CollectionUtils.emptyIfNull(orderItemRequestDTO.getChildOrderItems())) {
-            clearPriceOverrides(childRequest);
+        if (CollectionUtils.isNotEmpty(orderItemRequestDTO.getChildOrderItems())) {
+            for (OrderItemRequestDTO childRequest : orderItemRequestDTO.getChildOrderItems()) {
+                clearPriceOverrides(childRequest);
+            }
         }
     }
 
