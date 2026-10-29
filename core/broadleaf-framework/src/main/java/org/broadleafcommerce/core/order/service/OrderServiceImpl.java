@@ -645,9 +645,25 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(value = "blTransactionManager", rollbackFor = {AddToCartException.class})
     public Order addItem(Long orderId, OrderItemRequestDTO orderItemRequestDTO, boolean priceOrder) throws AddToCartException {
         // Don't allow overrides from this method.
+        clearPriceOverrides(orderItemRequestDTO);
+        return addItemWithPriceOverrides(orderId, orderItemRequestDTO, priceOrder);
+    }
+
+    /**
+     * Removes the price overrides from the given request and, recursively, from all of its child requests, since
+     * the children are added through the same workflow and would otherwise honor client-supplied prices.
+     *
+     * @param orderItemRequestDTO
+     */
+    protected void clearPriceOverrides(OrderItemRequestDTO orderItemRequestDTO) {
+        if (orderItemRequestDTO == null) {
+            return;
+        }
         orderItemRequestDTO.setOverrideRetailPrice(null);
         orderItemRequestDTO.setOverrideSalePrice(null);
-        return addItemWithPriceOverrides(orderId, orderItemRequestDTO, priceOrder);
+        for (OrderItemRequestDTO childRequest : CollectionUtils.emptyIfNull(orderItemRequestDTO.getChildOrderItems())) {
+            clearPriceOverrides(childRequest);
+        }
     }
 
     @Override
