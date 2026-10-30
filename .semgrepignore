@@ -1,0 +1,46 @@
+# Semgrep ignore rules for the BroadleafCommerce Security Review Lab.
+# Semgrep already respects .gitignore; this file adds/overrides patterns
+# specifically for scan noise reduction (build output, generated reports,
+# IDE metadata, and vendored/minified frontend assets).
+
+# Maven build output
+**/target/
+**/bin/
+
+# Generated security scan reports
+reports/
+
+# IDE / editor metadata
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.metadata/
+.sts4-cache/
+*.swp
+
+# Version control / CI
+.git/
+.github/
+
+# Vendored, bundled, or minified frontend assets
+**/*.min.js
+**/*.min.css
+**/jquery*.js
+**/font-awesome*
+**/modernizr*
+**/responsive-tables*
+**/spectrum.css
+**/spectrum.js
+**/redactor.js
+**/fontcolor.js
+**/fontsize.js
+**/typeahead.bundle.js
+**/*webjars*/**
+**/node_modules/**
+
+# Documentation / license text
+licenses/
+doc/
+*.md

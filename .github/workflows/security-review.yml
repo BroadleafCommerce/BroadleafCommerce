@@ -1,0 +1,539 @@
+name: Security Review
+
+# Security Review Lab - REPORT ONLY.
+#
+# Runs four complementary static analysis / SCA tools against pull requests so
+# findings show up directly on the GitHub PR (via Code Scanning alerts) and as
+# downloadable report artifacts - without requiring anyone to run scans
+# locally. No job blocks or fails a PR solely because a scanner found
+# something; see SECURITY_REVIEW.md for full tool details and local usage.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [ "develop-7.0.x", "security-review-lab" ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  security-events: write
+  # Needed so pull_request runs can download a prior NVD DB artifact when
+  # Actions cache isolation prevents restoring the push-scoped cache.
+  actions: read
+
+env:
+  # Branch used in Job Summary "View alerts" Code Scanning links.
+  # pull_request: PR HEAD branch (never the PR base).
+  # push / workflow_dispatch: the ref that triggered the run.
+  CODE_SCANNING_ALERTS_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+  # ref/sha explicitly passed to every upload-sarif step below.
+  #
+  # Without this, github/codeql-action/upload-sarif derives ref/sha from the
+  # triggering event. For pull_request events that defaults to the ephemeral
+  # refs/pull/<N>/merge ref and its merge-commit sha - NOT the PR head branch
+  # or head commit - so alerts end up attributed to a ref that never matches
+  # a `branch:<head-branch>` Code Scanning search/filter. Forcing both
+  # push and pull_request runs to upload against the same refs/heads/<branch>
+  # + head sha keeps a single, consistent set of alerts per category
+  # regardless of which event triggered the run.
+  CODE_SCANNING_REF: refs/heads/${{ github.event.pull_request.head.ref || github.ref_name }}
+  CODE_SCANNING_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
+jobs:
+  # ---------------------------------------------------------------------
+  # 1. Baseline Maven build. Confirms the reactor compiles before the
+  #    heavier security jobs run against the same commit. This job is
+  #    allowed to fail normally (it is a genuine build sanity check, not a
+  #    security scanner).
+  # ---------------------------------------------------------------------
+  maven-build:
+    name: Maven Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Build (no tests)
+        run: mvn -B -ntp verify -DskipTests
+
+  # ---------------------------------------------------------------------
+  # 2. SpotBugs + Find Security Bugs static analysis (Java bytecode), via
+  #    the existing "security-check" Maven profile.
+  # ---------------------------------------------------------------------
+  spotbugs:
+    name: SpotBugs + FindSecBugs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Report-only by construction: the "security-check" profile binds the
+      # spotbugs:spotbugs report-generation goal (not spotbugs:check), so
+      # findings alone never fail this command. A non-zero exit here means a
+      # genuine build/tool failure.
+      - name: Run SpotBugs / FindSecBugs
+        id: run_spotbugs
+        run: mvn -B -ntp verify -Psecurity-check -DskipTests -Ddependency-check.skip=true
+
+      - name: Collect per-module SpotBugs/FindSecBugs reports
+        if: always()
+        run: |
+          mkdir -p reports/spotbugs
+          while IFS= read -r -d '' dir; do
+            module=$(dirname "$(dirname "$dir")")
+            dest="reports/spotbugs/$(echo "$module" | sed 's#^\./##' | tr '/' '_')"
+            mkdir -p "$dest"
+            cp -r "$dir"/. "$dest"/ 2>/dev/null || true
+          done < <(find . -type d -path "*/target/spotbugs" -print0)
+
+      # GitHub Code Scanning requires exactly one SARIF "run" per uploaded
+      # category - a single sarif_file containing multiple runs (one per
+      # Maven module, as SpotBugs produces) is rejected with "The CodeQL
+      # Action does not support uploading multiple SARIF runs with the same
+      # category." So every per-module spotbugsSarif.json is merged into a
+      # SINGLE run: rules are de-duplicated by rule id, each result's
+      # ruleIndex is remapped to the de-duplicated rules array (results
+      # reference files directly via artifactLocation.uri, not via an
+      # artifacts index, so no remapping is needed there), and every
+      # result/taxonomy/invocation from every module is preserved - nothing
+      # is dropped, only the run-per-module structure is collapsed.
+      - name: Merge per-module SpotBugs SARIF files
+        if: always()
+        run: |
+          cat > /tmp/merge_spotbugs_sarif.py <<'PY'
+          import glob
+          import json
+          import os
+
+          sarif_files = sorted(glob.glob("reports/spotbugs/**/spotbugsSarif.json", recursive=True))
+
+          driver_meta = {}
+          merged_rules = []
+          rule_id_to_index = {}
+          merged_results = []
+          merged_taxonomies = []
+          taxonomy_keys_seen = set()
+          merged_invocations = []
+          merged_uri_base_ids = {}
+
+          for path in sarif_files:
+              with open(path) as fh:
+                  data = json.load(fh)
+              for run in data.get("runs", []):
+                  driver = run.get("tool", {}).get("driver", {})
+                  if not driver_meta:
+                      driver_meta = {k: v for k, v in driver.items() if k != "rules"}
+
+                  # Map this run's local rule indices to the de-duplicated
+                  # merged rules array (de-duplicated by rule "id").
+                  local_index_to_new_index = {}
+                  for local_index, rule in enumerate(driver.get("rules", [])):
+                      rule_id = rule.get("id")
+                      if rule_id not in rule_id_to_index:
+                          rule_id_to_index[rule_id] = len(merged_rules)
+                          merged_rules.append(rule)
+                      local_index_to_new_index[local_index] = rule_id_to_index[rule_id]
+
+                  for result in run.get("results", []):
+                      result = dict(result)
+                      local_index = result.get("ruleIndex")
+                      rule_id = result.get("ruleId")
+                      if local_index is not None and local_index in local_index_to_new_index:
+                          result["ruleIndex"] = local_index_to_new_index[local_index]
+                      elif rule_id in rule_id_to_index:
+                          result["ruleIndex"] = rule_id_to_index[rule_id]
+                      merged_results.append(result)
+
+                  for taxonomy in run.get("taxonomies", []):
+                      key = taxonomy.get("guid") or taxonomy.get("name")
+                      if key not in taxonomy_keys_seen:
+                          taxonomy_keys_seen.add(key)
+                          merged_taxonomies.append(taxonomy)
+
+                  merged_invocations.extend(run.get("invocations", []))
+                  merged_uri_base_ids.update(run.get("originalUriBaseIds", {}) or {})
+
+          merged_run = {
+              "tool": {
+                  "driver": {
+                      **driver_meta,
+                      "name": driver_meta.get("name", "SpotBugs"),
+                      "rules": merged_rules,
+                  },
+              },
+              "results": merged_results,
+          }
+          if merged_taxonomies:
+              merged_run["taxonomies"] = merged_taxonomies
+          if merged_invocations:
+              merged_run["invocations"] = merged_invocations
+          if merged_uri_base_ids:
+              merged_run["originalUriBaseIds"] = merged_uri_base_ids
+
+          merged = {
+              "version": "2.1.0",
+              "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+              "runs": [merged_run],
+          }
+
+          os.makedirs("reports/spotbugs", exist_ok=True)
+          out_path = "reports/spotbugs/spotbugs-findsecbugs-merged.sarif"
+          with open(out_path, "w") as fh:
+              json.dump(merged, fh)
+
+          print(f"Merged {len(sarif_files)} module SARIF file(s) into {out_path} "
+                f"(1 run, {len(merged_rules)} unique rule(s), {len(merged_results)} finding(s)).")
+
+          with open(os.environ["GITHUB_ENV"], "a") as env_file:
+              env_file.write(f"SPOTBUGS_FINDINGS={len(merged_results)}\n")
+              env_file.write(f"SPOTBUGS_MODULE_COUNT={len(sarif_files)}\n")
+          PY
+          python3 /tmp/merge_spotbugs_sarif.py
+
+      - name: Upload SpotBugs/FindSecBugs HTML/XML reports
+        if: always()
+        id: upload_spotbugs_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: spotbugs-findsecbugs-reports
+          path: |
+            reports/spotbugs/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload merged SARIF to Code Scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/spotbugs/spotbugs-findsecbugs-merged.sarif
+          category: spotbugs-findsecbugs
+          ref: ${{ env.CODE_SCANNING_REF }}
+          sha: ${{ env.CODE_SCANNING_SHA }}
+
+      - name: Job summary
+        if: always()
+        run: |
+          CODE_SCANNING_QUERY=$(python3 - <<'PY'
+          import os
+          import urllib.parse
+          branch = os.environ["CODE_SCANNING_ALERTS_BRANCH"]
+          print(urllib.parse.quote(
+              f"is:open category:spotbugs-findsecbugs branch:{branch}",
+              safe="",
+          ))
+          PY
+          )
+          {
+            echo "## 🐛 SpotBugs + FindSecBugs"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Scan status** | \`${{ steps.run_spotbugs.outcome }}\` |"
+            echo "| **Modules analyzed** | ${SPOTBUGS_MODULE_COUNT:-0} |"
+            echo "| **Findings (bugs + security)** | ${SPOTBUGS_FINDINGS:-n/a} |"
+            echo "| **Code Scanning** | [View alerts for category \`spotbugs-findsecbugs\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=${CODE_SCANNING_QUERY}) |"
+            echo "| **Full report (HTML/XML)** | [Download \`spotbugs-findsecbugs-reports\`](${{ steps.upload_spotbugs_artifact.outputs.artifact-url }}) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------
+  # 3. OWASP Dependency-Check - single aggregate SCA scan of the reactor,
+  #    via the existing "security-check" Maven profile.
+  # ---------------------------------------------------------------------
+  dependency-check:
+    name: OWASP Dependency-Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Persist ONLY the OWASP Dependency-Check local NVD/CVE database.
+      # This is not a findings/results cache: every run still performs a fresh
+      # aggregate scan of the current reactor. autoUpdate stays enabled
+      # (plugin default), so a restored DB is incrementally refreshed from NVD
+      # instead of re-downloading ~374k records from scratch.
+      #
+      # GitHub Actions cache is branch/event-scoped: pull_request runs cannot
+      # restore caches created by push on the PR head branch. Restore the
+      # weekly cache first; on a miss, seed from a prior NVD DB artifact
+      # (also not scan results) so PR runs can reuse a warmed database.
+      - name: Compute NVD cache week key
+        id: odc-week
+        run: echo "week=$(date -u +%Y-W%V)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore OWASP Dependency-Check NVD database cache
+        id: odc-cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: odc-nvd-${{ runner.os }}-${{ steps.odc-week.outputs.week }}
+          restore-keys: |
+            odc-nvd-${{ runner.os }}-
+
+      - name: Seed NVD database from prior workflow artifact
+        if: steps.odc-cache-restore.outputs.cache-hit != 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          DATA_DIR="${HOME}/.m2/repository/org/owasp/dependency-check-data"
+          mkdir -p "$DATA_DIR"
+          ARTIFACT_ID=$(gh api \
+            "repos/${GITHUB_REPOSITORY}/actions/artifacts?name=odc-nvd-database&per_page=20" \
+            --jq '.artifacts[] | select(.expired == false) | .id' \
+            | head -n 1)
+          if [ -z "${ARTIFACT_ID}" ]; then
+            echo "No prior odc-nvd-database artifact found; Dependency-Check will populate NVD data."
+            exit 0
+          fi
+          echo "Seeding NVD database from artifact id=${ARTIFACT_ID}"
+          TMP_ZIP="${RUNNER_TEMP}/odc-nvd-database.zip"
+          TMP_DIR="${RUNNER_TEMP}/odc-nvd-database"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" > "${TMP_ZIP}"
+          rm -rf "${TMP_DIR}"
+          mkdir -p "${TMP_DIR}"
+          unzip -q "${TMP_ZIP}" -d "${TMP_DIR}"
+          # Artifact layout may be the data dir contents or a nested folder.
+          if [ -d "${TMP_DIR}/dependency-check-data" ]; then
+            cp -a "${TMP_DIR}/dependency-check-data"/. "${DATA_DIR}/"
+          else
+            cp -a "${TMP_DIR}"/. "${DATA_DIR}/"
+          fi
+          echo "Seeded NVD database entries: $(find "${DATA_DIR}" -type f | wc -l | tr -d ' ')"
+
+      # Report-only by construction: failBuildOnCVSS is set to 11 in the pom.
+      # Invoke ONLY dependency-check:aggregate (not `mvn verify`) so SpotBugs /
+      # FindSecBugs bound to the verify phase never run in this job. Profile
+      # config still supplies formats, outputDirectory, and report-only CVSS.
+      - name: Run OWASP Dependency-Check (aggregate only)
+        id: run_dependency_check
+        run: |
+          EXTRA_ARGS=()
+          if [ -n "${NVD_API_KEY:-}" ]; then
+            EXTRA_ARGS+=("-DnvdApiKey=${NVD_API_KEY}")
+          fi
+          mvn -B -ntp -Psecurity-check \
+            org.owasp:dependency-check-maven:aggregate \
+            "${EXTRA_ARGS[@]}"
+        env:
+          # Optional but strongly recommended - without it the NVD API
+          # rate-limits update requests heavily. Configure as a repo/org secret.
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
+      # Save even when the scan step fails, as long as NVD data was populated;
+      # cancelled mid-download jobs still cannot save, but failed/completed
+      # jobs persist the DB for the next run in this cache scope.
+      - name: Save OWASP Dependency-Check NVD database cache
+        if: always() && steps.odc-cache-restore.outputs.cache-hit != 'true'
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          key: odc-nvd-${{ runner.os }}-${{ steps.odc-week.outputs.week }}
+
+      # Share the warmed NVD DB across push/PR cache scopes. Not scan output.
+      - name: Upload NVD database artifact
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: odc-nvd-database
+          path: ~/.m2/repository/org/owasp/dependency-check-data
+          if-no-files-found: ignore
+          retention-days: 14
+          overwrite: true
+
+      - name: Compute findings summary
+        if: always()
+        run: |
+          COUNT="n/a"
+          if [ -f reports/dependency-check/dependency-check-report.json ]; then
+            COUNT=$(jq '[.dependencies[]?.vulnerabilities? // [] | length] | add // 0' reports/dependency-check/dependency-check-report.json)
+          fi
+          echo "DEPCHECK_FINDINGS=$COUNT" >> "$GITHUB_ENV"
+
+      - name: Upload Dependency-Check HTML/XML/JSON reports
+        if: always()
+        id: upload_dependency_check_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-reports
+          path: |
+            reports/dependency-check/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload SARIF to Code Scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/dependency-check/dependency-check-report.sarif
+          category: dependency-check
+          ref: ${{ env.CODE_SCANNING_REF }}
+          sha: ${{ env.CODE_SCANNING_SHA }}
+
+      - name: Job summary
+        if: always()
+        run: |
+          CODE_SCANNING_QUERY=$(python3 - <<'PY'
+          import os
+          import urllib.parse
+          branch = os.environ["CODE_SCANNING_ALERTS_BRANCH"]
+          print(urllib.parse.quote(
+              f"is:open category:dependency-check branch:{branch}",
+              safe="",
+          ))
+          PY
+          )
+          {
+            echo "## 📦 OWASP Dependency-Check"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Scan status** | \`${{ steps.run_dependency_check.outcome }}\` |"
+            echo "| **Vulnerable dependency findings** | ${DEPCHECK_FINDINGS:-n/a} |"
+            echo "| **Code Scanning** | [View alerts for category \`dependency-check\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=${CODE_SCANNING_QUERY}) |"
+            echo "| **Full report (HTML/XML/JSON)** | [Download \`dependency-check-reports\`](${{ steps.upload_dependency_check_artifact.outputs.artifact-url }}) |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------
+  # 4. Semgrep - java + security-audit rulesets. Installed directly on the
+  #    runner (no container) so the SARIF upload action runs normally.
+  # ---------------------------------------------------------------------
+  semgrep:
+    name: Semgrep
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Semgrep
+        run: python3 -m pip install --quiet semgrep
+
+      # Report-only by construction: --no-error makes Semgrep exit 0 even
+      # when rules match, so findings alone never fail this command.
+      - name: Run Semgrep
+        id: run_semgrep
+        run: |
+          mkdir -p reports/semgrep
+          semgrep scan \
+            --config p/java \
+            --config p/security-audit \
+            --sarif --output reports/semgrep/semgrep.sarif \
+            --no-error
+          semgrep scan \
+            --config p/java \
+            --config p/security-audit \
+            --json --output reports/semgrep/semgrep.json \
+            --no-error
+
+      # Normalize SARIF tool identity only (name/version/informationUri).
+      # Semgrep's own SARIF formatter emits tool.driver.name "Semgrep OSS"
+      # with no version, which GitHub's Code Scanning "tool" facet then
+      # surfaces verbatim - so filtering/searching for the tool "Semgrep"
+      # (rather than the literal "Semgrep OSS") finds nothing, even though
+      # the alerts exist under category:semgrep. This does not touch rules,
+      # findings, severity, or the "semgrep" category used everywhere else
+      # in this workflow.
+      - name: Normalize Semgrep SARIF tool identity
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          import subprocess
+
+          path = "reports/semgrep/semgrep.sarif"
+          try:
+              with open(path) as fh:
+                  data = json.load(fh)
+          except FileNotFoundError:
+              raise SystemExit(0)
+
+          version = subprocess.run(
+              ["semgrep", "--version"], capture_output=True, text=True, check=False
+          ).stdout.strip()
+
+          for run in data.get("runs", []):
+              driver = run.setdefault("tool", {}).setdefault("driver", {})
+              driver["name"] = "Semgrep"
+              if version:
+                  driver["version"] = version
+              driver.setdefault("informationUri", "https://semgrep.dev")
+
+          with open(path, "w") as fh:
+              json.dump(data, fh)
+          PY
+
+      - name: Compute findings summary
+        if: always()
+        run: |
+          COUNT="n/a"
+          if [ -f reports/semgrep/semgrep.json ]; then
+            COUNT=$(jq '.results | length' reports/semgrep/semgrep.json)
+          fi
+          echo "SEMGREP_FINDINGS=$COUNT" >> "$GITHUB_ENV"
+
+      - name: Upload Semgrep JSON/SARIF reports
+        if: always()
+        id: upload_semgrep_artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-reports
+          path: |
+            reports/semgrep/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload SARIF to Code Scanning
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/semgrep/semgrep.sarif
+          category: semgrep
+          ref: ${{ env.CODE_SCANNING_REF }}
+          sha: ${{ env.CODE_SCANNING_SHA }}
+
+      - name: Job summary
+        if: always()
+        run: |
+          CODE_SCANNING_QUERY=$(python3 - <<'PY'
+          import os
+          import urllib.parse
+          branch = os.environ["CODE_SCANNING_ALERTS_BRANCH"]
+          print(urllib.parse.quote(
+              f"is:open category:semgrep branch:{branch}",
+              safe="",
+          ))
+          PY
+          )
+          {
+            echo "## 🔎 Semgrep (p/java + p/security-audit)"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| **Scan status** | \`${{ steps.run_semgrep.outcome }}\` |"
+            echo "| **Findings** | ${SEMGREP_FINDINGS:-n/a} |"
+            echo "| **Code Scanning** | [View alerts for category \`semgrep\`](${{ github.server_url }}/${{ github.repository }}/security/code-scanning?query=${CODE_SCANNING_QUERY}) |"
+            echo "| **Full report (JSON/SARIF)** | [Download \`semgrep-reports\`](${{ steps.upload_semgrep_artifact.outputs.artifact-url }}) |"
+          } >> "$GITHUB_STEP_SUMMARY"
