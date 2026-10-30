@@ -17,13 +17,13 @@
  */
 package org.broadleafcommerce.core.web.linkeddata.generator;
 
-import org.broadleafcommerce.common.util.BLCArrayUtils;
-import org.broadleafcommerce.common.util.TypedTransformer;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchResult;
+import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
+import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -48,6 +48,12 @@ public class CategoryLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
+
+    @Resource(name = "blSearchFacetDTOService")
+    protected SearchFacetDTOService facetService;
+
+    @Resource(name = "blSearchService")
+    protected SearchService searchService;
 
     @Override
     public boolean canHandle(final HttpServletRequest request) {
@@ -92,14 +98,13 @@ public class CategoryLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
     }
 
     protected List<Product> getProducts(final HttpServletRequest request) {
-        Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
-        category = catalogService.findCategoryById(category.getId());
-        return BLCArrayUtils.collect(category.getActiveProductXrefs().toArray(), new TypedTransformer<Product>() {
-            @Override
-            public Product transform(Object input) {
-                return ((CategoryProductXref) input).getProduct();
-            }
-        });
+        try {
+            SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
+            SearchResult result = searchService.findSearchResults(searchCriteria);
+            return result.getProducts() == null ? List.of() : result.getProducts();
+        } catch (Exception e) {
+            return List.of();
+        }
     }
 
 }
