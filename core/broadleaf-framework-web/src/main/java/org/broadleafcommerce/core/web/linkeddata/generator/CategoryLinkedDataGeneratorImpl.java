@@ -17,18 +17,21 @@
  */
 package org.broadleafcommerce.core.web.linkeddata.generator;
 
-import org.broadleafcommerce.common.util.BLCArrayUtils;
-import org.broadleafcommerce.common.util.TypedTransformer;
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.CategoryProductXref;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
+import org.broadleafcommerce.core.search.domain.SearchCriteria;
+import org.broadleafcommerce.core.search.domain.SearchResult;
+import org.broadleafcommerce.core.search.service.SearchService;
 import org.broadleafcommerce.core.web.catalog.CategoryHandlerMapping;
+import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 import jakarta.annotation.Resource;
@@ -46,8 +49,19 @@ import jakarta.servlet.http.HttpServletRequest;
 @Service(value = "blCategoryLinkedDataGenerator")
 public class CategoryLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator {
 
+    protected static final Log LOG = LogFactory.getLog(CategoryLinkedDataGeneratorImpl.class);
+
+    protected static final String PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME = "result";
+    protected static final String PRODUCTS_ATTRIBUTE_NAME = "products";
+
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
+
+    @Resource(name = "blSearchFacetDTOService")
+    protected SearchFacetDTOService facetService;
+
+    @Resource(name = "blSearchService")
+    protected SearchService searchService;
 
     @Override
     public boolean canHandle(final HttpServletRequest request) {
@@ -92,14 +106,24 @@ public class CategoryLinkedDataGeneratorImpl extends AbstractLinkedDataGenerator
     }
 
     protected List<Product> getProducts(final HttpServletRequest request) {
-        Category category = (Category) request.getAttribute(CategoryHandlerMapping.CURRENT_CATEGORY_ATTRIBUTE_NAME);
-        category = catalogService.findCategoryById(category.getId());
-        return BLCArrayUtils.collect(category.getActiveProductXrefs().toArray(), new TypedTransformer<Product>() {
-            @Override
-            public Product transform(Object input) {
-                return ((CategoryProductXref) input).getProduct();
-            }
-        });
+        Object resultAttr = request.getAttribute(PRODUCT_SEARCH_RESULT_ATTRIBUTE_NAME);
+        if (resultAttr instanceof SearchResult searchResult && searchResult.getProducts() != null) {
+            return searchResult.getProducts();
+        }
+
+        Object productsAttr = request.getAttribute(PRODUCTS_ATTRIBUTE_NAME);
+        if (productsAttr instanceof List<?> productsList) {
+            return (List<Product>) productsList;
+        }
+
+        try {
+            SearchCriteria searchCriteria = facetService.buildSearchCriteria(request);
+            SearchResult result = searchService.findSearchResults(searchCriteria);
+            return (result != null && result.getProducts() != null) ? result.getProducts() : Collections.emptyList();
+        } catch (Exception e) {
+            LOG.warn("Error retrieving search products for category linked data", e);
+            return Collections.emptyList();
+        }
     }
 
 }
