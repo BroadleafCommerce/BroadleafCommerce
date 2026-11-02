@@ -40,6 +40,7 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductBundle;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.catalog.service.type.ProductBundlePricingModelType;
 import org.broadleafcommerce.openadmin.dto.BasicFieldMetadata;
@@ -61,6 +62,7 @@ import org.broadleafcommerce.openadmin.server.service.persistence.module.criteri
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FieldPathBuilder;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.FilterMapping;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.Restriction;
+import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.converter.FilterValueConverter;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.criteria.predicate.PredicateProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -68,11 +70,14 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import jakarta.annotation.Resource;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -89,6 +94,7 @@ import jakarta.persistence.criteria.Root;
 public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAdapter {
 
     protected static final String ID_PROPERTY = "id";
+    protected static final String DEFAULT_SKU_NAME_PROPERTY = "defaultSku.name";
     private static final Log LOG = LogFactory.getLog(ProductCustomPersistenceHandler.class);
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
@@ -98,6 +104,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
     protected ParentCategoryLegacyModeService parentCategoryLegacyModeService;
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+    @Resource(name = "blStringLikeFilterValueConverter")
+    protected FilterValueConverter<String> stringLikeFilterValueConverter;
     @Value("${product.query.limit:500}")
     protected long queryLimit;
     @Value("${product.eager.fetch.associations.admin:true}")
@@ -240,6 +248,8 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
             }
         }
 
+        addSandBoxDefaultSkuNameFilter(cto, dynamicEntityDao);
+
         if (eagerFetchAssociations) {
             cto.getNonCountAdditionalFilterMappings().add(new FilterMapping()
                     .withDirectFilterValues(new EmptyFilterValues())
@@ -259,6 +269,94 @@ public class ProductCustomPersistenceHandler extends CustomPersistenceHandlerAda
                     ));
         }
         return helper.getCompatibleModule(OperationType.BASIC).fetch(persistencePackage, cto);
+    }
+
+    /**
+     * The product name is stored on its default sku. When the name is changed in a sandbox, the new name is only on
+     * the sandbox clone of the default sku, so filtering on defaultSku.name through the product may not find the
+     * product until the change is promoted.
+     * <p>
+     * When skus with a matching name include sandbox clones, the name filter is replaced by a filter on the products
+     * whose default sku is one of the matching skus or the original sku of a matching clone. Sorting on the name is
+     * kept. Otherwise, the standard name filter, which also searches translations, is left unchanged.
+     */
+    protected void addSandBoxDefaultSkuNameFilter(CriteriaTransferObject cto, DynamicEntityDao dynamicEntityDao) {
+        FilterAndSortCriteria fsc = cto.getCriteriaMap().get(DEFAULT_SKU_NAME_PROPERTY);
+        if (fsc == null || fsc.hasSpecialFilterValue() || CollectionUtils.isEmpty(fsc.getFilterValues())) {
+            return;
+        }
+        EntityManager entityManager = dynamicEntityDao.getStandardEntityManager();
+        List<Long> skuIds = findSkuIdsByName(entityManager, fsc.getFilterValues().get(0));
+        if (!isFilterable(skuIds, "skus")) {
+            return;
+        }
+        Set<Long> defaultSkuIds = includeOriginalSkuIds(skuIds);
+        if (defaultSkuIds.size() == skuIds.size()) {
+            //none of the matching skus is a sandbox clone, so the standard name filter already finds the products
+            return;
+        }
+        List<Long> productIds = findProductIdsByDefaultSkuIds(entityManager, defaultSkuIds);
+        if (!isFilterable(productIds, "products")) {
+            return;
+        }
+        fsc.clearFilterValues();
+        cto.getAdditionalFilterMappings().add(buildProductIdFilterMapping(productIds));
+    }
+
+    protected List<Long> findSkuIdsByName(EntityManager entityManager, String name) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root<SkuImpl> sku = criteria.from(SkuImpl.class);
+        criteria.select(sku.get(ID_PROPERTY).as(Long.class));
+        criteria.where(builder.like(builder.lower(sku.<String>get("name")),
+                stringLikeFilterValueConverter.convert(name)));
+        return entityManager.createQuery(criteria).getResultList();
+    }
+
+    /**
+     * Returns the given sku ids along with the original sku of each one that is a sandbox clone.
+     */
+    protected Set<Long> includeOriginalSkuIds(List<Long> skuIds) {
+        Set<Long> defaultSkuIds = new HashSet<>(skuIds);
+        for (Long skuId : skuIds) {
+            defaultSkuIds.add(sandBoxHelper.getTopmostProductionOriginalId(SkuImpl.class, skuId));
+        }
+        return defaultSkuIds;
+    }
+
+    protected List<Long> findProductIdsByDefaultSkuIds(EntityManager entityManager, Set<Long> defaultSkuIds) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteria = builder.createQuery(Long.class);
+        Root<ProductImpl> product = criteria.from(ProductImpl.class);
+        criteria.select(product.get(ID_PROPERTY).as(Long.class));
+        criteria.where(product.get("defaultSku").get(ID_PROPERTY).in(defaultSkuIds));
+        List<Long> productIds = entityManager.createQuery(criteria).getResultList();
+        return sandBoxHelper.mergeCloneIds(ProductImpl.class, productIds.toArray(new Long[0]));
+    }
+
+    /**
+     * Whether the ids can be used to filter on, which is not the case when nothing matched the name or when there
+     * are more matches than a filter query can hold.
+     */
+    protected boolean isFilterable(List<Long> ids, String type) {
+        if (ids.isEmpty()) {
+            return false;
+        }
+        if (ids.size() > queryLimit) {
+            LOG.warn(String.format("Skipping the sandbox product name filter, since more than %d %s were found for "
+                    + "the name. This is a filter query limitation.", queryLimit, type));
+            return false;
+        }
+        return true;
+    }
+
+    protected FilterMapping buildProductIdFilterMapping(List<Long> productIds) {
+        return new FilterMapping()
+                .withFieldPath(new FieldPath().withTargetProperty(ID_PROPERTY))
+                .withDirectFilterValues(productIds)
+                .withRestriction(new Restriction().withPredicateProvider(
+                        (builder, fieldPathBuilder, root, ceilingEntity, fullPropertyName, explicitPath,
+                         directValues) -> explicitPath.in(directValues)));
     }
 
     @Override
