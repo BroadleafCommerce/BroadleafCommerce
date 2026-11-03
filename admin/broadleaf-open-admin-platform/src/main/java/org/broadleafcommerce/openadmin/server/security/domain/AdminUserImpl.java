@@ -76,7 +76,8 @@ import jakarta.persistence.Transient;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_USER", indexes = {
         @Index(name = "ADMINUSER_NAME_INDEX", columnList = "NAME"),
-        @Index(name = "ADMINPERM_EMAIL_INDEX", columnList = "EMAIL")
+        @Index(name = "ADMINPERM_EMAIL_INDEX", columnList = "EMAIL"),
+        @Index(name = "ADMINUSER_LOGIN_INDEX", columnList = "LOGIN")
 })
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "blAdminSecurityVolatile")
 @DirectCopyTransform({
