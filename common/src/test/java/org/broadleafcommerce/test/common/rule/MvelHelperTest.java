@@ -98,6 +98,36 @@ public class MvelHelperTest extends TestCase {
     }
 
     /**
+     * Test that rules injecting code are neither compiled nor executed and evaluate to false
+     */
+    public void testRuleNotAllowedByExpressionPolicyIsNotExecuted() {
+        Locale testLocale = new LocaleImpl();
+        testLocale.setLocaleCode("US");
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("locale", testLocale);
+
+        String[] rules = new String[]{
+                "locale.localeCode == \"x\"+System.setProperty(\"blMvelPolicyTest\",\"1\")+\"y\" || true",
+                "java.lang.System.setProperty(\"blMvelPolicyTest\",\"1\") == null || true",
+                "locale.getClass().forName(\"java.lang.System\").getMethod(\"setProperty\", String, String)"
+                        + ".invoke(null, \"blMvelPolicyTest\", \"1\") == null || true",
+                "MVEL.eval(\"System.setProperty('blMvelPolicyTest','1')\") == null || true"
+        };
+        MvelHelper.setTestMode(true);
+        try {
+            for (String rule : rules) {
+                System.clearProperty("blMvelPolicyTest");
+                assertFalse(rule, MvelHelper.evaluateRule(rule, parameters));
+                assertNull(rule, System.getProperty("blMvelPolicyTest"));
+            }
+        } finally {
+            MvelHelper.setTestMode(false);
+            System.clearProperty("blMvelPolicyTest");
+        }
+    }
+
+    /**
      * Tests MVEL syntax for accessing request property map values.   
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })

@@ -190,6 +190,10 @@ public class MvelHelper {
 
                 String modifiedRule = modifyExpression(rule, ruleParameters, context);
 
+                if (!MvelExpressionValidator.isAllowed(modifiedRule)) {
+                    return false;
+                }
+
                 synchronized (expressionCache) {
                     exp = MVEL.compileExpression(modifiedRule, context);
                     expressionCache.put(rule, exp);

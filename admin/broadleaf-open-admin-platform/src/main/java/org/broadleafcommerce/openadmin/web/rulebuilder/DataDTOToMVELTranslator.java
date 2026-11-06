@@ -137,6 +137,9 @@ public class DataDTOToMVELTranslator {
         }
 
         value = extractBasicValues(expressionDTO.getValue());
+        if (value != null && !isProjection(expressionDTO.getValue()) && isStringLiteralType(type, secondaryType)) {
+            value = new Object[]{escapeStringLiteralValue(value[0].toString())};
+        }
 
         switch (operator) {
             case CONTAINS: {
@@ -388,6 +391,36 @@ public class DataDTOToMVELTranslator {
             response = new Object[]{value};
         }
         return response;
+    }
+
+    /**
+     * Escapes a single value so that it can be placed between the double quotes of an MVEL string literal. Backslashes
+     * are escaped first, so that an escaped quote cannot be turned back into a closing quote. Since every double quote
+     * is escaped, the result never starts with a double quote, so {@link #formatValue} always adds the quotes itself.
+     *
+     * @param value the value as entered in the rule builder
+     * @return the escaped value, without surrounding quotes
+     */
+    protected String escapeStringLiteralValue(String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    /**
+     * @return true if {@link #formatValue} writes values of the given type as quoted string literals
+     */
+    protected boolean isStringLiteralType(SupportedFieldType type, SupportedFieldType secondaryType) {
+        switch (type) {
+            case BOOLEAN:
+            case DECIMAL:
+            case INTEGER:
+            case MONEY:
+            case DATE:
+                return false;
+            case ID:
+                return SupportedFieldType.STRING.equals(secondaryType);
+            default:
+                return true;
+        }
     }
 
     protected String escapeInternalQuotes(String processedValue) {
