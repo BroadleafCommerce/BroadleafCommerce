@@ -62,6 +62,8 @@ public class MvelHelper {
     // The following attribute is set in BroadleafProcessURLFilter
     public static final String REQUEST_DTO = "blRequestDTO";
     private static final Map<String, Serializable> DEFAULT_EXPRESSION_CACHE = new EfficientLRUMap<String, Serializable>(5000);
+    // cached for a rule rejected by MvelExpressionValidator, so it is not validated and logged again on every evaluation
+    private static final Serializable REJECTED_EXPRESSION = "__blc_rejected_mvel_rule__";
     private static final Log LOG = LogFactory.getLog(MvelHelper.class);
     private static boolean TEST_MODE = false;
 
@@ -177,6 +179,10 @@ public class MvelHelper {
             if (expressionCache != null) {
                 exp = expressionCache.get(rule);
             }
+            if (exp == REJECTED_EXPRESSION) {
+                // already rejected and logged on a previous evaluation, so return false without validating again
+                return false;
+            }
             if (exp == null) {
                 ParserContext context = new ParserContext();
                 context.addImport("MVEL", MVEL.class);
@@ -189,6 +195,15 @@ public class MvelHelper {
                 }
 
                 String modifiedRule = modifyExpression(rule, ruleParameters, context);
+
+                if (!MvelExpressionValidator.isAllowed(modifiedRule)) {
+                    if (expressionCache != null) {
+                        synchronized (expressionCache) {
+                            expressionCache.put(rule, REJECTED_EXPRESSION);
+                        }
+                    }
+                    return false;
+                }
 
                 synchronized (expressionCache) {
                     exp = MVEL.compileExpression(modifiedRule, context);
