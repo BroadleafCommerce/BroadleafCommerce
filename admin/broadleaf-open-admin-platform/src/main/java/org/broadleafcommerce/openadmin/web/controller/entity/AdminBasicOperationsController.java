@@ -102,6 +102,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         PersistencePackageRequest ppr = getSectionPersistencePackageRequest(
                 validatedClass, requestParams, sectionCrumbs, pathVars
         );
+        List<SectionCrumb> lookupCrumbs = getLookupSectionCrumbs(sectionCrumbs, validatedClass, requestingEntityId);
 
         // We might need these fields in the initial inspect.
         ppr.addCustomCriteria("requestingEntityId=" + requestingEntityId);
@@ -115,7 +116,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         if (!collectionField.contains("|") && !dynamicField) {
             collectionProperty = mainMetadata.getPMap().get(collectionField);
             md = collectionProperty.getMetadata();
-            ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
+            ppr = PersistencePackageRequest.fromMetadata(md, lookupCrumbs);
         } else {
             md = new BasicFieldMetadata();
             md.setFriendlyName(mainMetadata.getPolymorphicEntities().getFriendlyName());
@@ -194,7 +195,8 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
-        ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
+        List<SectionCrumb> lookupCrumbs = getLookupSectionCrumbs(sectionCrumbs, validatedClass, requestingEntityId);
+        ppr = PersistencePackageRequest.fromMetadata(md, lookupCrumbs);
         ppr.addFilterAndSortCriteria(getCriteria(requestParams));
         ppr.setStartIndex(getStartIndex(requestParams));
         ppr.setMaxIndex(getMaxIndex(requestParams));
@@ -205,7 +207,11 @@ public class AdminBasicOperationsController extends AdminAbstractController {
         // This list of datums will populate the typeahead suggestions.
         List<Map<String, String>> responses = new ArrayList<>();
         if (md instanceof BasicFieldMetadata) {
-            String searchField = searchFieldResolver.resolveField(((BasicFieldMetadata) md).getForeignKeyClass());
+            // Inspect the lookup target with the lookup crumbs too; without them this inspect would need direct
+            // permission on the looked-up entity even though the fetch below is authorized through the owner.
+            String searchField = searchFieldResolver.resolveField(
+                    ((BasicFieldMetadata) md).getForeignKeyClass(), lookupCrumbs
+            );
             ppr.addFilterAndSortCriteria(new FilterAndSortCriteria(searchField, query));
 
             DynamicResultSet drs = service.getRecords(ppr).getDynamicResultSet();
@@ -271,6 +277,29 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             @PathVariable Map<String, String> pathVars
     ) throws Exception {
         return "layout/partials/secondLeftNav";
+    }
+
+    /**
+     * Returns the crumbs for a lookup request on a field of {@code owningClassName}: the request's crumbs plus one for
+     * the owning entity itself. The owning class has been validated and was just inspected (and so security checked)
+     * by this request, and the looked-up field was read from its metadata, so the server knows the lookup target is
+     * reachable from it. Section crumbs only authorize an entity that is related to the request's target (see
+     * AdminSecurityServiceRemote#getRelatedSectionCrumbCeilings), so this is what lets a user who may edit the owning
+     * entity browse the entities its lookup field can point at. The crumbs used to render the view are unchanged.
+     */
+    protected List<SectionCrumb> getLookupSectionCrumbs(
+            List<SectionCrumb> sectionCrumbs,
+            String owningClassName,
+            String requestingEntityId
+    ) {
+        List<SectionCrumb> lookupCrumbs = new ArrayList<>(sectionCrumbs);
+        SectionCrumb ownerCrumb = new SectionCrumb();
+        ownerCrumb.setSectionIdentifier(owningClassName);
+        ownerCrumb.setSectionId(requestingEntityId);
+        if (!lookupCrumbs.contains(ownerCrumb)) {
+            lookupCrumbs.add(ownerCrumb);
+        }
+        return lookupCrumbs;
     }
 
     /**

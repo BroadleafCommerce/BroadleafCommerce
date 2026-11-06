@@ -18,6 +18,9 @@
 package org.broadleafcommerce.openadmin.web.service;
 
 import org.broadleafcommerce.common.exception.ServiceException;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
+
+import java.util.List;
 
 /**
  * Resolves which field of an entity should be used for searching when targeting
@@ -35,5 +38,20 @@ public interface SearchFieldResolver {
      * @throws ServiceException
      */
     String resolveField(String className) throws ServiceException;
+
+    /**
+     * Returns the name of the field to use for searching for the given entity classname, inspecting it with the
+     * given section crumbs. Use this when the entity is being inspected as the target of a lookup field, so the
+     * inspect is authorized the same way as the lookup fetch itself (through the owning entity's crumb) rather than
+     * requiring direct permission on the looked-up entity.
+     *
+     * @param className
+     * @param sectionCrumbs
+     * @return the field name
+     * @throws ServiceException
+     */
+    default String resolveField(String className, List<SectionCrumb> sectionCrumbs) throws ServiceException {
+        return resolveField(className);
+    }
 
 }
