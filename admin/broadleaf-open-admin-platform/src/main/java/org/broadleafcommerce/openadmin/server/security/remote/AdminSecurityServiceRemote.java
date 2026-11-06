@@ -135,7 +135,15 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     public void securityCheck(PersistencePackage persistencePackage, EntityOperationType operationType) throws ServiceException {
         Set<String> ceilingNames = new HashSet<>();
         ceilingNames.add(persistencePackage.getSecurityCeilingEntityFullyQualifiedClassname());
-        if (!ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs())) {
+        // Section crumbs are only trustworthy as an additional authorization path when this request genuinely
+        // targets a sub-collection of another entity (e.g. editing a Product's Skus from the Product section).
+        // That is signaled by sectionEntityField, which the server only ever populates by resolving a path
+        // variable against the ceiling entity's own class metadata - it can't be forged to point at an
+        // unrelated entity the way the client-supplied sectionCrumbs themselves can. Without this guard, a
+        // crumb for any entity the user happens to have permission on would authorize operations on a
+        // completely unrelated target entity (BroadleafCommerce/BroadleafCommerce/QA#5506).
+        if (StringUtils.isNotEmpty(persistencePackage.getSectionEntityField())
+                && !ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs())) {
             ceilingNames.addAll(CollectionUtils.transform(Arrays.asList(persistencePackage.getSectionCrumbs()),
                     new Transformer() {
                         @Override
