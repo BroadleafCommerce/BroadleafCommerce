@@ -893,7 +893,14 @@ public class AdminBasicEntityController extends AdminAbstractController {
         Property collectionProperty = mainMetadata.getPMap().get(collectionField);
         FieldMetadata md = collectionProperty.getMetadata();
 
-        ppr = PersistencePackageRequest.fromMetadata(md, sectionCrumbs);
+        // the section entity was just inspected and owns this lookup field; see getLookupSectionCrumbs
+        List<SectionCrumb> lookupCrumbs = sectionCrumbs == null ? new ArrayList<>() : new ArrayList<>(sectionCrumbs);
+        SectionCrumb ownerCrumb = new SectionCrumb();
+        ownerCrumb.setSectionIdentifier(sectionClassName);
+        if (!lookupCrumbs.contains(ownerCrumb)) {
+            lookupCrumbs.add(ownerCrumb);
+        }
+        ppr = PersistencePackageRequest.fromMetadata(md, lookupCrumbs);
         ppr.setStartIndex(getStartIndex(requestParams));
         ppr.setMaxIndex(getMaxIndex(requestParams));
 
