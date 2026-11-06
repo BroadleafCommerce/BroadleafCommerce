@@ -101,8 +101,15 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     protected AdminSecurityCheckExtensionManager securityCheckExtensionManager;
 
     /**
+     * Defensive ceiling on {@link #crumbRelationshipCache}. Crumb identifiers are validated against the admin
+     * section / persistable-entity whitelist before they reach this service, so the key space is already bounded in
+     * practice; this cap guarantees the cache cannot grow without bound regardless of how it is populated.
+     */
+    protected static final int MAX_CRUMB_RELATIONSHIP_CACHE_SIZE = 1000;
+
+    /**
      * Resolved {@link CrumbRelationship}s keyed by "parentClass->childClass". Entity mappings don't change at runtime,
-     * so this is a plain unbounded cache (its size is bounded by the number of entity pairs actually requested).
+     * so entries never need eviction for correctness; {@link #MAX_CRUMB_RELATIONSHIP_CACHE_SIZE} only bounds growth.
      */
     protected final Map<String, Set<CrumbRelationship>> crumbRelationshipCache = new ConcurrentHashMap<>();
 
@@ -359,8 +366,10 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
             return true;
         }
         try {
-            Class<?> parentClass = Class.forName(parent);
-            Class<?> childClass = Class.forName(child);
+            // Load without initializing: these names are (validated) client input, so don't run static initializers.
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            Class<?> parentClass = Class.forName(parent, false, cl);
+            Class<?> childClass = Class.forName(child, false, cl);
             return parentClass.isAssignableFrom(childClass) || childClass.isAssignableFrom(parentClass);
         } catch (ClassNotFoundException e) {
             return false;
@@ -368,8 +377,17 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     }
 
     protected Set<CrumbRelationship> getCrumbRelationships(String parent, String child) {
-        return crumbRelationshipCache.computeIfAbsent(parent + "->" + child,
-                key -> resolveCrumbRelationships(parent, child));
+        String key = parent + "->" + child;
+        Set<CrumbRelationship> relationships = crumbRelationshipCache.get(key);
+        if (relationships == null) {
+            relationships = resolveCrumbRelationships(parent, child);
+            // An entry is an immutable fact about the mapping, so a racing recompute is harmless; the size guard is
+            // all that is needed to keep the cache bounded.
+            if (crumbRelationshipCache.size() < MAX_CRUMB_RELATIONSHIP_CACHE_SIZE) {
+                crumbRelationshipCache.putIfAbsent(key, relationships);
+            }
+        }
+        return relationships;
     }
 
     /**
@@ -381,11 +399,14 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     protected Set<CrumbRelationship> resolveCrumbRelationships(String parent, String child) {
         Set<CrumbRelationship> found = EnumSet.noneOf(CrumbRelationship.class);
         try {
-            Class<?> childClass = Class.forName(child);
+            // Load without initializing: these names are (validated) client input, so don't run static initializers.
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            Class<?> childClass = Class.forName(child, false, cl);
             DynamicEntityDao dynamicEntityDao = PersistenceManagerFactory.getPersistenceManager(parent)
                     .getDynamicEntityDao();
             Metamodel metamodel = dynamicEntityDao.getStandardEntityManager().getMetamodel();
-            for (Class<?> parentEntity : dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Class.forName(parent))) {
+            for (Class<?> parentEntity : dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(
+                    Class.forName(parent, false, cl))) {
                 ManagedType<?> parentType;
                 try {
                     parentType = metamodel.managedType(parentEntity);
@@ -425,7 +446,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
                     break;
                 case EMBEDDED:
                     Class<?> embeddable = attribute.getJavaType();
-                    if (visitedEmbeddables.add(embeddable)) {
+                    if (embeddable != null && visitedEmbeddables.add(embeddable)) {
                         findRelationships(metamodel, metamodel.managedType(embeddable), child, found,
                                 visitedEmbeddables);
                     }
@@ -437,6 +458,9 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     }
 
     protected boolean hasToOne(Metamodel metamodel, Class<?> entity, Class<?> child) {
+        if (entity == null) {
+            return false;
+        }
         ManagedType<?> type;
         try {
             type = metamodel.managedType(entity);

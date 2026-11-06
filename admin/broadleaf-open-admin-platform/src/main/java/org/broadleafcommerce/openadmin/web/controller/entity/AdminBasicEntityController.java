@@ -894,7 +894,7 @@ public class AdminBasicEntityController extends AdminAbstractController {
         FieldMetadata md = collectionProperty.getMetadata();
 
         // the section entity was just inspected and owns this lookup field; see getLookupSectionCrumbs
-        List<SectionCrumb> lookupCrumbs = new ArrayList<>(sectionCrumbs);
+        List<SectionCrumb> lookupCrumbs = sectionCrumbs == null ? new ArrayList<>() : new ArrayList<>(sectionCrumbs);
         SectionCrumb ownerCrumb = new SectionCrumb();
         ownerCrumb.setSectionIdentifier(sectionClassName);
         if (!lookupCrumbs.contains(ownerCrumb)) {

@@ -292,7 +292,7 @@ public class AdminBasicOperationsController extends AdminAbstractController {
             String owningClassName,
             String requestingEntityId
     ) {
-        List<SectionCrumb> lookupCrumbs = new ArrayList<>(sectionCrumbs);
+        List<SectionCrumb> lookupCrumbs = sectionCrumbs == null ? new ArrayList<>() : new ArrayList<>(sectionCrumbs);
         SectionCrumb ownerCrumb = new SectionCrumb();
         ownerCrumb.setSectionIdentifier(owningClassName);
         ownerCrumb.setSectionId(requestingEntityId);
