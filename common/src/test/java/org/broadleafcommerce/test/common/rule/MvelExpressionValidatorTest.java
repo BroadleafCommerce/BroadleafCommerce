@@ -273,11 +273,20 @@ public class MvelExpressionValidatorTest extends TestCase {
             context.refresh();
             return MvelExpressionValidator.isAllowed(expression);
         } finally {
-            MvelExpressionValidator validator = context.getBean(MvelExpressionValidator.class);
-            validator.setEnabled(true);
-            validator.setBlockedMethods("");
-            validator.setAllowedMethods("");
-            context.close();
+            try {
+                // Only reset through the bean when the context actually refreshed. If refresh() above threw, the
+                // context is no longer active and getBean() would throw an IllegalStateException that would mask the
+                // original failure. The static state is only mutated once the bean is populated, so there is nothing
+                // to reset when the context never became active.
+                if (context.isActive()) {
+                    MvelExpressionValidator validator = context.getBean(MvelExpressionValidator.class);
+                    validator.setEnabled(true);
+                    validator.setBlockedMethods("");
+                    validator.setAllowedMethods("");
+                }
+            } finally {
+                context.close();
+            }
         }
     }
 
