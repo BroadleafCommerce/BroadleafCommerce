@@ -339,13 +339,29 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
         return operationType == EntityOperationType.FETCH || operationType == EntityOperationType.INSPECT;
     }
 
+    /**
+     * The thread context class loader can be null (e.g. when the call originates from a bootstrap or container-managed
+     * thread). Loading a class with a null loader resolves against the bootstrap loader, which cannot see application
+     * entity classes, so a legitimate crumb would be silently dropped. Fall back to a loader that can see them.
+     */
+    protected ClassLoader getEntityClassLoader() {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        if (cl == null) {
+            cl = getClass().getClassLoader();
+        }
+        if (cl == null) {
+            cl = ClassLoader.getSystemClassLoader();
+        }
+        return cl;
+    }
+
     protected boolean isSameEntity(String parent, String child) {
         if (parent.equals(child)) {
             return true;
         }
         try {
             // Load without initializing: these names are (validated) client input, so don't run static initializers.
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            ClassLoader cl = getEntityClassLoader();
             Class<?> parentClass = Class.forName(parent, false, cl);
             Class<?> childClass = Class.forName(child, false, cl);
             return parentClass.isAssignableFrom(childClass) || childClass.isAssignableFrom(parentClass);
@@ -378,7 +394,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
         Set<CrumbRelationship> found = EnumSet.noneOf(CrumbRelationship.class);
         try {
             // Load without initializing: these names are (validated) client input, so don't run static initializers.
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            ClassLoader cl = getEntityClassLoader();
             Class<?> childClass = Class.forName(child, false, cl);
             DynamicEntityDao dynamicEntityDao = PersistenceManagerFactory.getPersistenceManager(parent)
                     .getDynamicEntityDao();
@@ -436,6 +452,10 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     }
 
     protected boolean hasToOne(Metamodel metamodel, Class<?> entity, Class<?> child) {
+        return hasToOne(metamodel, entity, child, new HashSet<Class<?>>());
+    }
+
+    protected boolean hasToOne(Metamodel metamodel, Class<?> entity, Class<?> child, Set<Class<?>> visitedEmbeddables) {
         if (entity == null) {
             return false;
         }
@@ -451,6 +471,14 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
                     || attributeType == Attribute.PersistentAttributeType.ONE_TO_ONE)
                     && isRelated(((SingularAttribute<?, ?>) attribute).getType().getJavaType(), child)) {
                 return true;
+            }
+            // A join entity may hold its to-one target inside an @Embedded, so recurse into embeddables too.
+            if (attributeType == Attribute.PersistentAttributeType.EMBEDDED) {
+                Class<?> embeddable = attribute.getJavaType();
+                if (embeddable != null && visitedEmbeddables.add(embeddable)
+                        && hasToOne(metamodel, embeddable, child, visitedEmbeddables)) {
+                    return true;
+                }
             }
         }
         return false;

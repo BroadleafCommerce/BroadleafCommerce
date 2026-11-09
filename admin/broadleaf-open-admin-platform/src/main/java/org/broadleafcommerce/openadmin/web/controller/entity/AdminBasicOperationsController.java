@@ -268,10 +268,15 @@ public class AdminBasicOperationsController extends AdminAbstractController {
                                                         String requestingEntityId) {
         List<SectionCrumb> lookupCrumbs = sectionCrumbs == null ? new ArrayList<SectionCrumb>()
                 : new ArrayList<SectionCrumb>(sectionCrumbs);
-        SectionCrumb ownerCrumb = new SectionCrumb();
-        ownerCrumb.setSectionIdentifier(owningClassName);
-        ownerCrumb.setSectionId(requestingEntityId);
-        if (!lookupCrumbs.contains(ownerCrumb)) {
+        // Match on the section identifier only: SectionCrumb#equals also compares sectionId, so an existing crumb for
+        // the same section with a different (or non-null) id would not match and a duplicate crumb would be added. The
+        // relationship walk keys on the identifier alone, so one crumb per identifier is enough.
+        boolean alreadyPresent = lookupCrumbs.stream()
+                .anyMatch(crumb -> owningClassName.equals(crumb.getSectionIdentifier()));
+        if (!alreadyPresent) {
+            SectionCrumb ownerCrumb = new SectionCrumb();
+            ownerCrumb.setSectionIdentifier(owningClassName);
+            ownerCrumb.setSectionId(requestingEntityId);
             lookupCrumbs.add(ownerCrumb);
         }
         return lookupCrumbs;
