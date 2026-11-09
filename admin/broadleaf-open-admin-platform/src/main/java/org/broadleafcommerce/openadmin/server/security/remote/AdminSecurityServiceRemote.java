@@ -38,21 +38,32 @@ import org.broadleafcommerce.openadmin.server.security.domain.AdminUser;
 import org.broadleafcommerce.openadmin.server.security.extension.AdminSecurityCheckExtensionManager;
 import org.broadleafcommerce.openadmin.server.security.service.RowLevelSecurityService;
 import org.broadleafcommerce.openadmin.server.security.service.type.PermissionType;
+import org.broadleafcommerce.openadmin.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceManagerFactory;
 import org.broadleafcommerce.openadmin.server.service.ValidationException;
 import org.broadleafcommerce.openadmin.server.service.persistence.validation.GlobalValidationResult;
-import org.springframework.cglib.core.CollectionUtils;
-import org.springframework.cglib.core.Transformer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import jakarta.annotation.Resource;
+import jakarta.persistence.metamodel.Attribute;
+import jakarta.persistence.metamodel.ManagedType;
+import jakarta.persistence.metamodel.Metamodel;
+import jakarta.persistence.metamodel.PluralAttribute;
+import jakarta.persistence.metamodel.SingularAttribute;
 
 /**
  * Service for handeling security with Ajax components.  Serves two functions.
@@ -88,6 +99,19 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
 
     @Resource
     protected AdminSecurityCheckExtensionManager securityCheckExtensionManager;
+
+    /**
+     * Defensive ceiling on {@link #crumbRelationshipCache}. Crumb identifiers are validated against the admin
+     * section / persistable-entity whitelist before they reach this service, so the key space is already bounded in
+     * practice; this cap guarantees the cache cannot grow without bound regardless of how it is populated.
+     */
+    protected static final int MAX_CRUMB_RELATIONSHIP_CACHE_SIZE = 1000;
+
+    /**
+     * Resolved {@link CrumbRelationship}s keyed by "parentClass->childClass". Entity mappings don't change at runtime,
+     * so entries never need eviction for correctness; {@link #MAX_CRUMB_RELATIONSHIP_CACHE_SIZE} only bounds growth.
+     */
+    protected final Map<String, Set<CrumbRelationship>> crumbRelationshipCache = new ConcurrentHashMap<>();
 
     @Override
     public org.broadleafcommerce.openadmin.server.security.remote.AdminUser getAdminUser() throws ServiceException {
@@ -133,17 +157,10 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
 
     @Override
     public void securityCheck(PersistencePackage persistencePackage, EntityOperationType operationType) throws ServiceException {
-        Set<String> ceilingNames = new HashSet<>();
+        // LinkedHashSet keeps the request's own target first, which the "unregistered ceiling entity" warning reads
+        Set<String> ceilingNames = new LinkedHashSet<>();
         ceilingNames.add(persistencePackage.getSecurityCeilingEntityFullyQualifiedClassname());
-        if (!ArrayUtils.isEmpty(persistencePackage.getSectionCrumbs())) {
-            ceilingNames.addAll(CollectionUtils.transform(Arrays.asList(persistencePackage.getSectionCrumbs()),
-                    new Transformer() {
-                        @Override
-                        public Object transform(Object o) {
-                            return ((SectionCrumb) o).getSectionIdentifier();
-                        }
-                    }));
-        }
+        ceilingNames.addAll(getRelatedSectionCrumbCeilings(persistencePackage, operationType));
 
         Entity entity = persistencePackage.getEntity();
 
@@ -255,6 +272,227 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
             }
             throw primaryException;
         }
+    }
+
+
+    /**
+     * Returns the section crumb entities that may additionally authorize this request.
+     * <p>
+     * {@code sectionCrumbs} come straight from the client, so a crumb must never authorize a target it has nothing to
+     * do with (otherwise a permission on any one entity becomes a permission on every entity). A crumb only counts when
+     * the request target is genuinely reachable from it through mapped JPA relationships. Starting from the innermost
+     * crumb, each crumb must reach the next one inwards (and the innermost one the target) as allowed by
+     * {@link #isCrumbHopAllowed}; the walk stops at the first crumb that doesn't, so neither an unrelated crumb nor
+     * anything in front of it is used.
+     * <p>
+     * This keeps the legitimate uses of crumbs working: editing an entity's own collections (Product -> Skus), nested
+     * collection modals (Product -> Sku -> Sku media), adorned target collections (Product -> categories via
+     * CategoryProductXref) and read-only to-one lookups (Product.defaultCategory -> Category).
+     */
+    protected List<String> getRelatedSectionCrumbCeilings(PersistencePackage persistencePackage,
+                                                          EntityOperationType operationType) {
+        List<String> related = new ArrayList<>();
+        SectionCrumb[] crumbs = persistencePackage.getSectionCrumbs();
+        if (ArrayUtils.isEmpty(crumbs)) {
+            return related;
+        }
+        boolean readOnly = isReadOperation(operationType);
+        // Both are server-side signals (built from the owning entity's field metadata, never from request params)
+        // that this package is an adorned target collection request, where the ceiling is the target behind the xref.
+        boolean adornedRequest = persistencePackage.getPersistencePerspectiveItems()
+                .containsKey(PersistencePerspectiveItemType.ADORNEDTARGETLIST)
+                || StringUtils.isNotEmpty(persistencePackage.getSectionEntityField());
+        String child = persistencePackage.getSecurityCeilingEntityFullyQualifiedClassname();
+        boolean finalHop = true;
+        for (int i = crumbs.length - 1; i >= 0; i--) {
+            String parent = crumbs[i].getSectionIdentifier();
+            if (StringUtils.isBlank(parent) || StringUtils.isBlank(child)) {
+                break;
+            }
+            if (!isSameEntity(parent, child)) {
+                Set<CrumbRelationship> relationships = getCrumbRelationships(parent, child);
+                boolean allowed = false;
+                for (CrumbRelationship relationship : relationships) {
+                    allowed |= isCrumbHopAllowed(relationship, readOnly, finalHop, adornedRequest);
+                }
+                if (!allowed) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Ignoring section crumb " + StringUtil.sanitize(parent) + " (and any crumbs before it)"
+                                + " for " + operationType + " on " + StringUtil.sanitize(child)
+                                + ": relationships " + relationships + " do not permit it");
+                    }
+                    break;
+                }
+                child = parent;
+            }
+            // Only the hop from the innermost crumb straight to the target gets the lookup/adorned allowances. A crumb
+            // for the target itself (e.g. the owning section appended server-side) uses it up as well, so a crumb in
+            // front of it can't use them to reach the target's own lookups or adorned collections.
+            finalHop = false;
+            related.add(parent);
+        }
+        return related;
+    }
+
+    /**
+     * Whether one hop of the crumb chain may authorize the operation.
+     *
+     * @param finalHop       whether this hop reaches the request's own target (as opposed to a crumb nested inside it)
+     * @param adornedRequest whether the server built this package for an adorned target collection
+     */
+    protected boolean isCrumbHopAllowed(CrumbRelationship relationship, boolean readOnly, boolean finalHop,
+                                        boolean adornedRequest) {
+        switch (relationship) {
+            case COLLECTION:
+                // the child is part of the parent's own collection/map: editing it is editing the parent
+                return true;
+            case JOIN_ENTITY:
+                // parent -> collection of xref -> to-one target, i.e. an adorned target collection
+                return finalHop && adornedRequest;
+            case TO_ONE:
+                // a foreign-key lookup: the parent may read the entities it can point at, never change them
+                return finalHop && readOnly;
+            default:
+                return false;
+        }
+    }
+
+    protected boolean isReadOperation(EntityOperationType operationType) {
+        return operationType == EntityOperationType.FETCH || operationType == EntityOperationType.INSPECT;
+    }
+
+    protected boolean isSameEntity(String parent, String child) {
+        if (parent.equals(child)) {
+            return true;
+        }
+        try {
+            // Load without initializing: these names are (validated) client input, so don't run static initializers.
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            Class<?> parentClass = Class.forName(parent, false, cl);
+            Class<?> childClass = Class.forName(child, false, cl);
+            return parentClass.isAssignableFrom(childClass) || childClass.isAssignableFrom(parentClass);
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    protected Set<CrumbRelationship> getCrumbRelationships(String parent, String child) {
+        String key = parent + "->" + child;
+        Set<CrumbRelationship> relationships = crumbRelationshipCache.get(key);
+        if (relationships == null) {
+            relationships = resolveCrumbRelationships(parent, child);
+            // An entry is an immutable fact about the mapping, so a racing recompute is harmless; the size guard is
+            // all that is needed to keep the cache bounded.
+            if (crumbRelationshipCache.size() < MAX_CRUMB_RELATIONSHIP_CACHE_SIZE) {
+                crumbRelationshipCache.putIfAbsent(key, relationships);
+            }
+        }
+        return relationships;
+    }
+
+    /**
+     * Determines from the JPA metamodel every kind of relationship any polymorphic implementation of {@code parent}
+     * has to {@code child} (an entity can have several, e.g. Product has both the to-one {@code defaultCategory} and
+     * the {@code allParentCategoryXrefs} join collection to Category). Anything that can't be resolved (non-entity
+     * ceilings, unknown classes) yields an empty set, i.e. the crumb is not trusted.
+     */
+    protected Set<CrumbRelationship> resolveCrumbRelationships(String parent, String child) {
+        Set<CrumbRelationship> found = EnumSet.noneOf(CrumbRelationship.class);
+        try {
+            // Load without initializing: these names are (validated) client input, so don't run static initializers.
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            Class<?> childClass = Class.forName(child, false, cl);
+            DynamicEntityDao dynamicEntityDao = PersistenceManagerFactory.getPersistenceManager(parent)
+                    .getDynamicEntityDao();
+            Metamodel metamodel = dynamicEntityDao.getStandardEntityManager().getMetamodel();
+            for (Class<?> parentEntity : dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(
+                    Class.forName(parent, false, cl))) {
+                ManagedType<?> parentType;
+                try {
+                    parentType = metamodel.managedType(parentEntity);
+                } catch (IllegalArgumentException e) {
+                    continue;
+                }
+                findRelationships(metamodel, parentType, childClass, found, new HashSet<>());
+            }
+        } catch (Exception e) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Could not resolve the relationship from " + StringUtil.sanitize(parent) + " to "
+                        + StringUtil.sanitize(child) + "; the section crumb will not be trusted", e);
+            }
+        }
+        return found;
+    }
+
+    protected void findRelationships(Metamodel metamodel, ManagedType<?> type, Class<?> child,
+                                     Set<CrumbRelationship> found, Set<Class<?>> visitedEmbeddables) {
+        for (Attribute<?, ?> attribute : type.getAttributes()) {
+            switch (attribute.getPersistentAttributeType()) {
+                case ONE_TO_MANY:
+                case MANY_TO_MANY:
+                case ELEMENT_COLLECTION:
+                    Class<?> element = ((PluralAttribute<?, ?, ?>) attribute).getElementType().getJavaType();
+                    if (isRelated(element, child)) {
+                        found.add(CrumbRelationship.COLLECTION);
+                    } else if (hasToOne(metamodel, element, child)) {
+                        found.add(CrumbRelationship.JOIN_ENTITY);
+                    }
+                    break;
+                case MANY_TO_ONE:
+                case ONE_TO_ONE:
+                    if (isRelated(((SingularAttribute<?, ?>) attribute).getType().getJavaType(), child)) {
+                        found.add(CrumbRelationship.TO_ONE);
+                    }
+                    break;
+                case EMBEDDED:
+                    Class<?> embeddable = attribute.getJavaType();
+                    if (embeddable != null && visitedEmbeddables.add(embeddable)) {
+                        findRelationships(metamodel, metamodel.managedType(embeddable), child, found,
+                                visitedEmbeddables);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    protected boolean hasToOne(Metamodel metamodel, Class<?> entity, Class<?> child) {
+        if (entity == null) {
+            return false;
+        }
+        ManagedType<?> type;
+        try {
+            type = metamodel.managedType(entity);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        for (Attribute<?, ?> attribute : type.getAttributes()) {
+            Attribute.PersistentAttributeType attributeType = attribute.getPersistentAttributeType();
+            if ((attributeType == Attribute.PersistentAttributeType.MANY_TO_ONE
+                    || attributeType == Attribute.PersistentAttributeType.ONE_TO_ONE)
+                    && isRelated(((SingularAttribute<?, ?>) attribute).getType().getJavaType(), child)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected boolean isRelated(Class<?> mapped, Class<?> child) {
+        return mapped != null && mapped != Object.class
+                && (child.isAssignableFrom(mapped) || mapped.isAssignableFrom(child));
+    }
+
+    /**
+     * How a section crumb's entity relates to the next entity inwards.
+     */
+    protected enum CrumbRelationship {
+        /** a ManyToOne/OneToOne to the child: a foreign-key lookup */
+        TO_ONE,
+        /** a collection of an entity that has a to-one to the child: an adorned target collection's xref */
+        JOIN_ENTITY,
+        /** the child is the element (or map value) of one of the parent's own collections */
+        COLLECTION
     }
 
 }
