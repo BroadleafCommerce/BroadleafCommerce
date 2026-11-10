@@ -803,15 +803,11 @@ public class AdminBasicEntityController extends AdminAbstractController {
         FieldMetadata md = collectionProperty.getMetadata();
 
         // the section entity was just inspected and owns this lookup field; see getLookupSectionCrumbs
-        // Match on the section identifier only: SectionCrumb#equals also compares sectionId, and this owner crumb has
-        // a null id, so contains() would never match an existing crumb for the same section and would add a duplicate.
         List<SectionCrumb> lookupCrumbs = sectionCrumbs == null ? new ArrayList<SectionCrumb>()
                 : new ArrayList<SectionCrumb>(sectionCrumbs);
-        boolean alreadyPresent = lookupCrumbs.stream()
-                .anyMatch(crumb -> sectionClassName.equals(crumb.getSectionIdentifier()));
-        if (!alreadyPresent) {
-            SectionCrumb ownerCrumb = new SectionCrumb();
-            ownerCrumb.setSectionIdentifier(sectionClassName);
+        SectionCrumb ownerCrumb = new SectionCrumb();
+        ownerCrumb.setSectionIdentifier(sectionClassName);
+        if (!lookupCrumbs.contains(ownerCrumb)) {
             lookupCrumbs.add(ownerCrumb);
         }
         ppr = PersistencePackageRequest.fromMetadata(md, lookupCrumbs);
