@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.server.service.persistence.validation;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.common.presentation.RuleIdentifier;
 import org.broadleafcommerce.common.presentation.client.SupportedFieldType;
+import org.broadleafcommerce.common.rule.MvelExpressionValidator;
 import org.broadleafcommerce.common.rule.QuantityBasedRule;
 import org.broadleafcommerce.common.sandbox.SandBoxHelper;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.FieldNotAvailableException;
@@ -47,6 +48,8 @@ import javax.persistence.EntityManager;
 @Component("blRuleFieldValidator")
 public class RuleFieldValidator implements PopulateValueRequestValidator {
 
+    protected static final String ERROR_KEY_EXPRESSION_NOT_ALLOWED = "ruleFieldValidatorExpressionNotAllowedError";
+
     @Resource(name = "blRuleFieldExtractionUtility")
     protected RuleFieldExtractionUtility ruleFieldExtractionUtility;
     
@@ -70,6 +73,9 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                     try {
                         String mvel = ruleFieldExtractionUtility.convertSimpleMatchRuleJsonToMvel(translator, RuleIdentifier.ENTITY_KEY_MAP.get(populateValueRequest.getMetadata().getRuleIdentifier()),
                                 populateValueRequest.getMetadata().getRuleIdentifier(), dw);
+                        if (!isAllowed(mvel)) {
+                            return new PropertyValidationResult(false, ERROR_KEY_EXPRESSION_NOT_ALLOWED);
+                        }
                     } catch (MVELTranslationException e) {
                         return new PropertyValidationResult(false, getMvelParsingErrorMesage(dw, e));
                     }
@@ -96,6 +102,10 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                         return new PropertyValidationResult(false, "Could not serialize JSON from rule builder: " + dw.getError());
                     }
                     if (dw != null && StringUtils.isEmpty(dw.getError())) {
+                        // RuleFieldPersistenceProvider stores the raw mvel for new rules that do not translate
+                        if (!isAllowed(dw.getRawMvel())) {
+                            return new PropertyValidationResult(false, ERROR_KEY_EXPRESSION_NOT_ALLOWED);
+                        }
                         for (DataDTO dto : dw.getData()) {
                             if (dto.getPk() != null) {
                                 boolean foundIdToUpdate = false;
@@ -108,6 +118,9 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                                         foundIdToUpdate = true;
                                         try {
                                             String mvel = ruleFieldExtractionUtility.convertDTOToMvelString(translator, entityKey, dto, fieldService);
+                                            if (!isAllowedQuantityRule(mvel)) {
+                                                return new PropertyValidationResult(false, ERROR_KEY_EXPRESSION_NOT_ALLOWED);
+                                            }
                                         } catch (MVELTranslationException e) {
                                             return new PropertyValidationResult(false, getMvelParsingErrorMesage(dw, e));
                                         }
@@ -119,7 +132,10 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
                             } else {
                                 // This is a new rule, just validate that it parses successfully
                                 try {
-                                    ruleFieldExtractionUtility.convertDTOToMvelString(translator, entityKey, dto, fieldService);
+                                    String mvel = ruleFieldExtractionUtility.convertDTOToMvelString(translator, entityKey, dto, fieldService);
+                                    if (!isAllowedQuantityRule(mvel)) {
+                                        return new PropertyValidationResult(false, ERROR_KEY_EXPRESSION_NOT_ALLOWED);
+                                    }
                                 } catch (MVELTranslationException e) {
                                     return new PropertyValidationResult(false, getMvelParsingErrorMesage(dw, e));
                                 }
@@ -132,6 +148,21 @@ public class RuleFieldValidator implements PopulateValueRequestValidator {
         return new PropertyValidationResult(true);
     }
     
+    /**
+     * @return true if the mvel is empty or does not use new, reflection, a blocked method or a statement separator
+     */
+    protected boolean isAllowed(String mvel) {
+        return StringUtils.isEmpty(mvel) || MvelExpressionValidator.isAllowed(mvel);
+    }
+
+    /**
+     * Quantity based rules are stored after {@link RuleFieldPersistenceProvider} unescapes their quotes, so they are
+     * checked the way they are stored
+     */
+    protected boolean isAllowedQuantityRule(String mvel) {
+        return isAllowed(mvel == null ? null : mvel.replace("\\\"", "\""));
+    }
+
     protected String getMvelParsingErrorMesage(DataWrapper dw, MVELTranslationException e) {
         StringBuilder errorMessage = new StringBuilder();
         errorMessage.append("Problem translating rule builder, error code ");
