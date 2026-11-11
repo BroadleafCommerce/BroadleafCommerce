@@ -45,6 +45,7 @@ import org.broadleafcommerce.core.order.service.workflow.service.OrderItemReques
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 import org.broadleafcommerce.core.workflow.BaseActivity;
 import org.broadleafcommerce.core.workflow.ProcessContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -80,6 +81,9 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
 
     @Resource(name = "blSandBoxHelper")
     protected SandBoxHelper sandBoxHelper;
+
+    @Value("${validate.add.request.product.options.enabled:true}")
+    protected boolean validateProductOptionsEnabled = true;
 
     public ValidateAddRequestActivity() {
         setOrder(ORDER);
@@ -122,6 +126,7 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
             // TODO: In the next minor release, refactor this to leverage OrderItemRequestValidationService. Leaving as-is to maintain the API for now.
             Product product = determineProduct(orderItemRequestDTO);
             validateIfProductIsProdRecord(product);
+            validateProductOptions(product, orderItemRequestDTO.getItemAttributes());
             Sku sku;
             try {
                 // TODO: In the next minor release, refactor this to leverage OrderItemRequestValidationService. Leaving as-is to maintain the API for now.
@@ -155,6 +160,17 @@ public class ValidateAddRequestActivity extends BaseActivity<ProcessContext<Cart
                     && !originalId.equals(sandBoxHelper.getProductionOriginalId(product.getClass(), product.getId()).getOriginalId())) {
                 throw new IllegalArgumentException("Only production record could be added to the cart");
             }
+        }
+    }
+
+    /**
+     * Validates, when enabled with the {@code validate.add.request.product.options.enabled} property, that each
+     * submitted attribute matching a product option carries a value the option allows. Delegates to
+     * {@link ProductOptionValidationService#validateProductOptionAttributes(Product, Map)}.
+     */
+    protected void validateProductOptions(Product product, Map<String, String> attributeValues) {
+        if (validateProductOptionsEnabled) {
+            productOptionValidationService.validateProductOptionAttributes(product, attributeValues);
         }
     }
 

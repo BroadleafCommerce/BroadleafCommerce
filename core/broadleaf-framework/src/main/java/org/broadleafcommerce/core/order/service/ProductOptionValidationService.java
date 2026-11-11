@@ -17,14 +17,29 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
 import org.broadleafcommerce.core.workflow.ActivityMessages;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductOptionValidationService {
 
     Boolean validate(ProductOption productOption, String value);
+
+    /**
+     * For each submitted attribute that corresponds to a product option on the product, validates that the submitted
+     * value is one the option allows. A value that is not one of an enumerated option's
+     * {@link ProductOption#getAllowedValues() allowed values} is rejected. Non-enumerated option types (free entry,
+     * e.g. text or date) are excluded, since their value is not chosen from a list. An attribute that does not match a
+     * product option is left alone, since order item attributes are a generic key-value store also used for custom,
+     * non-option attributes.
+     *
+     * @param product         the product the attributes are being validated against
+     * @param attributeValues the submitted item attribute name/value pairs
+     */
+    void validateProductOptionAttributes(Product product, Map<String, String> attributeValues);
 
     boolean isSubmitType(ProductOption productOption);
 
