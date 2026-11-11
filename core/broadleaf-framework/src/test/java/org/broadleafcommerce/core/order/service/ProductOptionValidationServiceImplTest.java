@@ -30,7 +30,7 @@ import org.springframework.core.env.StandardEnvironment;
 
 /**
  * Tests the regex validation guard in {@link ProductOptionValidationServiceImpl}: a REGEX option whose validation
- * string is blank must not be treated as a real pattern (an empty regex matches only empty input, so it would
+ * string is empty must not be treated as a real pattern (an empty regex matches only empty input, so it would
  * otherwise reject every value), while a real regex still rejects a non-matching value.
  */
 public class ProductOptionValidationServiceImplTest {
