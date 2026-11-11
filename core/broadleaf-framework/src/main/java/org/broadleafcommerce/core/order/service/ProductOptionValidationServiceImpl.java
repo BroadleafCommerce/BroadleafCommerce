@@ -17,12 +17,19 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.util.StringUtil;
 import org.broadleafcommerce.core.catalog.dao.ProductOptionDao;
+import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductOption;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionValue;
+import org.broadleafcommerce.core.catalog.domain.ProductOptionXref;
+import org.broadleafcommerce.core.catalog.service.type.ProductOptionType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationStrategyType;
 import org.broadleafcommerce.core.catalog.service.type.ProductOptionValidationType;
 import org.broadleafcommerce.core.order.service.call.ActivityMessageDTO;
@@ -36,7 +43,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import jakarta.annotation.Resource;
@@ -46,6 +58,16 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
 
     protected static final Integer ADD_TYPE_RANK = ProductOptionValidationStrategyType.ADD_ITEM.getRank();
     protected static final Integer SUBMIT_TYPE_RANK = ProductOptionValidationStrategyType.SUBMIT_ORDER.getRank();
+
+    /**
+     * Option types whose value is entered freely rather than chosen from an enumerated list, so there is no allowed
+     * value list to check the submitted value against.
+     */
+    protected static final Set<String> NON_ENUMERATED_OPTION_TYPES = new HashSet<>(Arrays.asList(
+            ProductOptionType.TEXT.getType(), ProductOptionType.TEXTAREA.getType(),
+            ProductOptionType.INPUT.getType(), ProductOptionType.DATE.getType(),
+            ProductOptionType.INTEGER.getType()));
+
     private static final Log LOG = LogFactory.getLog(ProductOptionValidationServiceImpl.class);
     @Resource
     protected ProductOptionDao productOptionDao;
@@ -97,6 +119,56 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
         }
 
         return true;
+    }
+
+    @Override
+    public void validateProductOptionAttributes(Product product, Map<String, String> attributeValues) {
+        if (product == null) {
+            return;
+        }
+        Map<String, ProductOption> optionsByName = new HashMap<>();
+        for (ProductOptionXref xref : ListUtils.emptyIfNull(product.getProductOptionXrefs())) {
+            ProductOption option = xref.getProductOption();
+            optionsByName.put(option.getAttributeName(), option);
+        }
+        for (Map.Entry<String, String> entry : MapUtils.emptyIfNull(attributeValues).entrySet()) {
+            ProductOption option = optionsByName.get(entry.getKey());
+            if (option == null) {
+                //not a product option on this product; order item attributes are a generic key-value store and are
+                //also used for custom, non-option attributes (e.g. a gift message), so it is left alone
+                continue;
+            }
+            validateOptionValueIsAllowed(option, entry.getValue());
+        }
+    }
+
+    /**
+     * Rejects a value that is not one of the option's allowed values. Only applies to enumerated options, i.e. those
+     * with a non-empty {@link ProductOption#getAllowedValues()}. Non-enumerated option types
+     * ({@link #NON_ENUMERATED_OPTION_TYPES}, e.g. a text or date input) are excluded, since their value is entered
+     * freely rather than chosen from a list. A missing value is allowed here, since the required check is handled by
+     * {@link #validate(ProductOption, String)}.
+     */
+    protected void validateOptionValueIsAllowed(ProductOption productOption, String attributeValue) {
+        if (StringUtils.isEmpty(attributeValue) || isNonEnumeratedOptionType(productOption)) {
+            return;
+        }
+        List<ProductOptionValue> allowedValues = productOption.getAllowedValues();
+        if (CollectionUtils.isEmpty(allowedValues)) {
+            return;
+        }
+        for (ProductOptionValue allowedValue : allowedValues) {
+            if (attributeValue.equals(allowedValue.getAttributeValue())) {
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Value [" + StringUtil.sanitize(attributeValue)
+                + "] is not an allowed value for product option [" + productOption.getAttributeName() + "]");
+    }
+
+    protected boolean isNonEnumeratedOptionType(ProductOption productOption) {
+        return productOption.getType() != null
+                && NON_ENUMERATED_OPTION_TYPES.contains(productOption.getType().getType());
     }
 
     protected boolean isRequiredAttributeNotProvided(ProductOption productOption, String attributeValue) {

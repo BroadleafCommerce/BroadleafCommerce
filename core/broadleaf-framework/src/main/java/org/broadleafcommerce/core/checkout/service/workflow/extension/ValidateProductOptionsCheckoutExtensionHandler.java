@@ -1,0 +1,92 @@
+/*-
+ * #%L
+ * BroadleafCommerce Framework
+ * %%
+ * Copyright (C) 2009 - 2026 Broadleaf Commerce
+ * %%
+ * Licensed under the Broadleaf Fair Use License Agreement, Version 1.0
+ * (the "Fair Use License" located  at http://license.broadleafcommerce.org/fair_use_license-1.0.txt)
+ * unless the restrictions on use therein are violated and require payment to Broadleaf in which case
+ * the Broadleaf End User License Agreement (EULA), Version 1.1
+ * (the "Commercial License" located at http://license.broadleafcommerce.org/commercial_license-1.1.txt)
+ * shall apply.
+ *
+ * Alternatively, the Commercial License may be replaced with a mutually agreed upon license (the "Custom License")
+ * between you and Broadleaf Commerce. You may not use this file except in compliance with the applicable license.
+ * #L%
+ */
+package org.broadleafcommerce.core.checkout.service.workflow.extension;
+
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.broadleafcommerce.common.extension.ExtensionResultHolder;
+import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
+import org.broadleafcommerce.core.checkout.service.workflow.CheckoutSeed;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderItem;
+import org.broadleafcommerce.core.order.domain.OrderItemAttribute;
+import org.broadleafcommerce.core.order.service.ProductOptionValidationService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
+
+/**
+ * Re-validates the product options of each order item at checkout, as a defense-in-depth check for items that may have
+ * entered the cart without going through the add workflow (e.g. a cart merge, a CSR tool or an import). Disabled by
+ * default, since an option value that was valid when the item was added can become invalid if the catalog changes
+ * afterwards, and rejecting it would block checkout. Enable with {@code validate.checkout.product.options.enabled}.
+ */
+@Service("blValidateProductOptionsCheckoutExtensionHandler")
+public class ValidateProductOptionsCheckoutExtensionHandler extends AbstractValidateCheckoutActivityExtensionHandler {
+
+    @Resource(name = "blProductOptionValidationService")
+    protected ProductOptionValidationService productOptionValidationService;
+
+    @Resource(name = "blValidateCheckoutActivityExtensionManager")
+    protected ValidateCheckoutActivityExtensionManager extensionManager;
+
+    @Value("${validate.checkout.product.options.enabled:false}")
+    protected boolean validateCheckoutProductOptionsEnabled = false;
+
+    @PostConstruct
+    public void init() {
+        if (validateCheckoutProductOptionsEnabled) {
+            extensionManager.registerHandler(this);
+        }
+    }
+
+    @Override
+    public ExtensionResultStatusType validateCheckout(CheckoutSeed request, ExtensionResultHolder<Exception> resultHolder) {
+        Order order = request.getOrder();
+        if (order == null) {
+            return ExtensionResultStatusType.NOT_HANDLED;
+        }
+        try {
+            // getDiscreteOrderItems() flattens bundles, so items inside a BundleOrderItem are validated too
+            for (DiscreteOrderItem discreteOrderItem : ListUtils.emptyIfNull(order.getDiscreteOrderItems())) {
+                productOptionValidationService.validateProductOptionAttributes(discreteOrderItem.getProduct(),
+                        getAttributeValues(discreteOrderItem));
+            }
+        } catch (IllegalArgumentException e) {
+            resultHolder.setResult(e);
+            return ExtensionResultStatusType.HANDLED;
+        }
+        return ExtensionResultStatusType.NOT_HANDLED;
+    }
+
+    protected Map<String, String> getAttributeValues(OrderItem orderItem) {
+        Map<String, String> attributeValues = new HashMap<>();
+        for (Map.Entry<String, OrderItemAttribute> entry
+                : MapUtils.emptyIfNull(orderItem.getOrderItemAttributes()).entrySet()) {
+            attributeValues.put(entry.getKey(), entry.getValue() == null ? null : entry.getValue().getValue());
+        }
+        return attributeValues;
+    }
+
+}
