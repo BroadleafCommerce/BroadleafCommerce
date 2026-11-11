@@ -89,8 +89,8 @@ public class ProductOptionValidationServiceImpl implements ProductOptionValidati
 
     protected boolean requiresValidation(ProductOption productOption, String value) {
         ProductOptionValidationType validationType = productOption.getProductOptionValidationType();
-        boolean typeRequiresValidation = ProductOptionValidationType.REGEX.equals(validationType);
-        boolean validationStringExists = StringUtils.isNotBlank(productOption.getValidationString());
+        boolean typeRequiresValidation = validationType == ProductOptionValidationType.REGEX;
+        boolean validationStringExists = StringUtils.isNotEmpty(productOption.getValidationString());
         boolean isRequired = productOption.getRequired();
         boolean hasValue = StringUtils.isNotEmpty(value);
 
