@@ -46,6 +46,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -56,6 +58,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToOne;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.ManagedType;
 import javax.persistence.metamodel.Metamodel;
@@ -371,8 +375,10 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     /**
      * Determines from the JPA metamodel every kind of relationship any polymorphic implementation of {@code parent}
      * has to {@code child} (an entity can have several, e.g. Product has both the to-one {@code defaultCategory} and
-     * the {@code allParentCategoryXrefs} join collection to Category). Anything that can't be resolved (non-entity
-     * ceilings, unknown classes) yields an empty set, i.e. the crumb is not trusted.
+     * the {@code allParentCategoryXrefs} join collection to Category). Embeddables and owned one-to-ones (see
+     * {@link #isOwnedOneToOne(Attribute)}) are part of the parent, so their relationships count as the parent's, e.g.
+     * Product's {@code defaultSku.skuAttributes}. Anything that can't be resolved (non-entity ceilings, unknown
+     * classes) yields an empty set, i.e. the crumb is not trusted.
      */
     protected Set<CrumbRelationship> resolveCrumbRelationships(String parent, String child) {
         Set<CrumbRelationship> found = EnumSet.noneOf(CrumbRelationship.class);
@@ -391,7 +397,9 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
                 } catch (IllegalArgumentException e) {
                     continue;
                 }
-                findRelationships(metamodel, parentType, childClass, found, new HashSet<>());
+                Set<Class<?>> visited = new HashSet<>();
+                visited.add(parentEntity);
+                findRelationships(metamodel, parentType, childClass, found, visited);
             }
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
@@ -403,7 +411,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
     }
 
     protected void findRelationships(Metamodel metamodel, ManagedType<?> type, Class<?> child,
-                                     Set<CrumbRelationship> found, Set<Class<?>> visitedEmbeddables) {
+                                     Set<CrumbRelationship> found, Set<Class<?>> visited) {
         for (Attribute<?, ?> attribute : type.getAttributes()) {
             switch (attribute.getPersistentAttributeType()) {
                 case ONE_TO_MANY:
@@ -418,21 +426,73 @@ public class AdminSecurityServiceRemote implements AdminSecurityService, Securit
                     break;
                 case MANY_TO_ONE:
                 case ONE_TO_ONE:
-                    if (isRelated(((SingularAttribute<?, ?>) attribute).getType().getJavaType(), child)) {
+                    Class<?> target = ((SingularAttribute<?, ?>) attribute).getType().getJavaType();
+                    if (isRelated(target, child)) {
                         found.add(CrumbRelationship.TO_ONE);
+                    }
+                    if (target != null && isOwnedOneToOne(attribute) && visited.add(target)) {
+                        // the parent's form edits an owned one-to-one in place (e.g. Product.defaultSku), so its
+                        // relationships are the parent's own
+                        ManagedType<?> targetType;
+                        try {
+                            targetType = metamodel.managedType(target);
+                        } catch (IllegalArgumentException e) {
+                            break;
+                        }
+                        findRelationships(metamodel, targetType, child, found, visited);
                     }
                     break;
                 case EMBEDDED:
                     Class<?> embeddable = attribute.getJavaType();
-                    if (embeddable != null && visitedEmbeddables.add(embeddable)) {
-                        findRelationships(metamodel, metamodel.managedType(embeddable), child, found,
-                                visitedEmbeddables);
+                    if (embeddable != null && visited.add(embeddable)) {
+                        findRelationships(metamodel, metamodel.managedType(embeddable), child, found, visited);
                     }
                     break;
                 default:
                     break;
             }
         }
+    }
+
+    /**
+     * Whether {@code attribute} is a one-to-one whose target is owned by the declaring entity, i.e. it cascades removal
+     * (JPA {@code cascade} ALL/REMOVE, {@code orphanRemoval}, or Hibernate {@code @Cascade} ALL/DELETE/REMOVE): the
+     * target's lifecycle is the parent's, so editing it is editing the parent. A one-to-one that only points at an
+     * independently managed entity (e.g. Sku.defaultProduct) is not owned.
+     */
+    protected boolean isOwnedOneToOne(Attribute<?, ?> attribute) {
+        if (attribute.getPersistentAttributeType() != Attribute.PersistentAttributeType.ONE_TO_ONE) {
+            return false;
+        }
+        Member member = attribute.getJavaMember();
+        return member instanceof AnnotatedElement && isOwnedOneToOne((AnnotatedElement) member);
+    }
+
+    protected boolean isOwnedOneToOne(AnnotatedElement member) {
+        OneToOne oneToOne = member.getAnnotation(OneToOne.class);
+        if (oneToOne == null) {
+            return false;
+        }
+        if (oneToOne.orphanRemoval()) {
+            return true;
+        }
+        for (CascadeType cascade : oneToOne.cascade()) {
+            if (cascade == CascadeType.ALL || cascade == CascadeType.REMOVE) {
+                return true;
+            }
+        }
+        org.hibernate.annotations.Cascade hibernateCascade = member.getAnnotation(
+                org.hibernate.annotations.Cascade.class);
+        if (hibernateCascade != null) {
+            for (org.hibernate.annotations.CascadeType cascade : hibernateCascade.value()) {
+                if (cascade == org.hibernate.annotations.CascadeType.ALL
+                        || cascade == org.hibernate.annotations.CascadeType.DELETE
+                        || cascade == org.hibernate.annotations.CascadeType.REMOVE) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     protected boolean hasToOne(Metamodel metamodel, Class<?> entity, Class<?> child) {
