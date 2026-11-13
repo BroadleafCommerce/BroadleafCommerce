@@ -32,6 +32,7 @@ import org.broadleafcommerce.common.web.BroadleafRequestContext;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,7 +99,56 @@ public class MvelHelperTest extends TestCase {
     }
 
     /**
-     * Tests MVEL syntax for accessing request property map values.   
+     * Test that rules injecting code are neither compiled nor executed and evaluate to false
+     */
+    public void testRuleNotAllowedByExpressionPolicyIsNotExecuted() {
+        Locale testLocale = new LocaleImpl();
+        testLocale.setLocaleCode("US");
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("locale", testLocale);
+
+        String[] rules = new String[]{
+                "locale.localeCode == \"x\"+System.setProperty(\"blMvelPolicyTest\",\"1\")+\"y\" || true",
+                "java.lang.System.setProperty(\"blMvelPolicyTest\",\"1\") == null || true",
+                "locale.getClass().forName(\"java.lang.System\").getMethod(\"setProperty\", String, String)"
+                        + ".invoke(null, \"blMvelPolicyTest\", \"1\") == null || true",
+                "MVEL.eval(\"System.setProperty('blMvelPolicyTest','1')\") == null || true"
+        };
+        MvelHelper.setTestMode(true);
+        try {
+            for (String rule : rules) {
+                System.clearProperty("blMvelPolicyTest");
+                assertFalse(rule, MvelHelper.evaluateRule(rule, parameters));
+                assertNull(rule, System.getProperty("blMvelPolicyTest"));
+            }
+        } finally {
+            MvelHelper.setTestMode(false);
+            System.clearProperty("blMvelPolicyTest");
+        }
+    }
+
+    /**
+     * A rule rejected by the expression policy is remembered in the cache, so that it is not re-validated and logged
+     * again on every subsequent evaluation, which would otherwise flood the logs and waste CPU under load.
+     */
+    public void testRejectedRuleIsCached() {
+        Map<String, Serializable> cache = new HashMap<>();
+        String rule = "Runtime.getRuntime().exec(\"id\") != null";
+        MvelHelper.setTestMode(true);
+        try {
+            assertFalse(MvelHelper.evaluateRule(rule, new HashMap<>(), cache));
+            assertTrue("a rejected rule should be cached so it is not re-validated",
+                    cache.containsKey(rule));
+            // a second evaluation is served from the cache and still evaluates to false
+            assertFalse(MvelHelper.evaluateRule(rule, new HashMap<>(), cache));
+        } finally {
+            MvelHelper.setTestMode(false);
+        }
+    }
+
+    /**
+     * Tests MVEL syntax for accessing request property map values.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testRequestMapProperty() {

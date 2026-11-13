@@ -866,12 +866,9 @@ public class AdminEntityServiceImpl implements AdminEntityService {
         PersistencePackage pkg = persistencePackageFactory.create(request);
         try {
             if (request.isUpdateLookupType()) {
-                if (pkg.getSectionCrumbs() != null && pkg.getSectionCrumbs().length > 0) {
-                    SectionCrumb sc = pkg.getSectionCrumbs()[0];
-                    if (StringUtils.isNotBlank(sc.getSectionIdentifier())) {
-                        pkg.setSecurityCeilingEntityFullyQualifiedClassname(sc.getSectionIdentifier());
-                    }
-                }
+                // The ceiling stays the looked-up entity; the owning entity's crumb authorizes the update through its
+                // collection relationship (AdminSecurityServiceRemote#getRelatedSectionCrumbCeilings). Promoting the
+                // client-supplied top crumb to the security ceiling would let any crumb authorize the update.
                 if (transactional) {
                     return service.update(pkg);
                 } else {

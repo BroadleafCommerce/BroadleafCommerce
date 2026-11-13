@@ -18,7 +18,9 @@
 package org.broadleafcommerce.openadmin.server.service.persistence.module;
 
 import org.springframework.core.Ordered;
+
 import java.lang.reflect.Field;
+
 import javax.persistence.EntityManager;
 
 /**
