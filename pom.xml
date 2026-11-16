@@ -58,7 +58,7 @@
         <spring.boot.version>2.3.12.RELEASE</spring.boot.version>
         <spring.mobile.version>2.0.0.M3</spring.mobile.version>
         <logback.version>1.2.13</logback.version>
-        <jackson-bom.version>2.18.5</jackson-bom.version>
+        <jackson-bom.version>2.18.11</jackson-bom.version>
         <lombok.version>1.18.40</lombok.version>
         <maven.source.plugin.version>2.4</maven.source.plugin.version>
         <geb.version>1.0</geb.version>
@@ -71,7 +71,7 @@
         <broadleaf-presentation.version>1.1.6-GA</broadleaf-presentation.version>
         <hsqldb.database.starter.version>2.0.5-GA</hsqldb.database.starter.version>
         <closure.compiler.version>v20200830</closure.compiler.version>
-        <hibernate.version>5.3.37.Final</hibernate.version>
+        <hibernate.version>5.3.38.Final</hibernate.version>
         <hibernate-validator.version>6.0.23.Final</hibernate-validator.version>
         <javax.version>2.3.1</javax.version>
         <sunxml.version>3.0.2</sunxml.version>
@@ -1411,7 +1411,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>33.4.8-jre</version>
+                <version>33.7.2-jre</version>
             </dependency>
             <dependency>
                 <groupId>com.google.protobuf</groupId>
@@ -1422,6 +1422,37 @@
                 <groupId>com.google.code.gson</groupId>
                 <artifactId>gson</artifactId>
                 <version>2.13.2</version>
+            </dependency>
+            <!-- Overrides for security vulnerabilities in transitive dependencies -->
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>20231013</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.mail</groupId>
+                <artifactId>jakarta.mail</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.6.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>5.4.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>5.4.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-core</artifactId>
+                <version>2.4.4</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.htmlcompressor</groupId>
