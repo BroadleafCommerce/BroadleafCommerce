@@ -36,6 +36,7 @@ import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
@@ -89,13 +90,13 @@ public class TaxDetailImpl implements TaxDetail {
     @AdminPresentation(friendlyName = "TaxDetailImpl_Tax_Name", order = 7, group = "TaxDetailImpl_Tax_Detail")
     protected String taxName;
 
-    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class)
+    @ManyToOne(targetEntity = BroadleafCurrencyImpl.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "CURRENCY_CODE")
     @AdminPresentation(friendlyName = "TaxDetailImpl_Currency_Code", order = 1,
             group = "FixedPriceFulfillmentOptionImpl_Details", prominent = true)
     protected BroadleafCurrency currency;
 
-    @ManyToOne(targetEntity = AbstractModuleConfiguration.class)
+    @ManyToOne(targetEntity = AbstractModuleConfiguration.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "MODULE_CONFIG_ID")
     protected ModuleConfiguration moduleConfiguation;
 
