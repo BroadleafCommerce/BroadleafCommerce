@@ -20,6 +20,7 @@ package org.broadleafcommerce.openadmin.server.security.service;
 import org.broadleafcommerce.openadmin.server.security.domain.AdminPermission;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+
 import java.util.Collection;
 import java.util.List;
 

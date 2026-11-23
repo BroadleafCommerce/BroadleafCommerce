@@ -22,9 +22,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.exception.ServiceException;
 import org.broadleafcommerce.openadmin.dto.ClassMetadata;
+import org.broadleafcommerce.openadmin.dto.SectionCrumb;
 import org.broadleafcommerce.openadmin.server.domain.PersistencePackageRequest;
 import org.broadleafcommerce.openadmin.server.service.AdminEntityService;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -41,8 +45,14 @@ public class SearchFieldResolverImpl implements SearchFieldResolver {
     
     @Override
     public String resolveField(String className) throws ServiceException {
+        return resolveField(className, Collections.<SectionCrumb>emptyList());
+    }
+
+    @Override
+    public String resolveField(String className, List<SectionCrumb> sectionCrumbs) throws ServiceException {
         PersistencePackageRequest ppr = PersistencePackageRequest.standard()
-                .withCeilingEntityClassname(className);
+                .withCeilingEntityClassname(className)
+                .withSectionCrumbs(sectionCrumbs);
         ClassMetadata md = service.getClassMetadata(ppr).getDynamicResultSet().getClassMetaData();
         
         if (md.getPMap().containsKey("name")) {
