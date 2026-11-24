@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.common.media.domain.Media;
 import org.broadleafcommerce.common.page.dto.PageDTO;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.common.web.BaseUrlResolver;
 import org.broadleafcommerce.common.web.BroadleafRequestContext;
 import org.broadleafcommerce.common.web.util.BroadleafUrlParamUtils;
@@ -31,13 +32,17 @@ import org.broadleafcommerce.core.catalog.domain.CategoryMediaXref;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuMediaXref;
+import org.broadleafcommerce.common.site.domain.Site;
 import org.broadleafcommerce.core.search.service.SearchService;
+import org.broadleafcommerce.core.web.expression.SeoElementVariableExpression;
 import org.broadleafcommerce.core.web.service.SearchFacetDTOService;
 import org.broadleafcommerce.presentation.condition.ConditionalOnTemplating;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.Resource;
@@ -67,7 +72,72 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
     @Resource(name = "blCategoryDao")
     protected CategoryDao categoryDao;
 
+    @Resource(name = "blSeoElementVariableExpression")
+    protected SeoElementVariableExpression seoElement;
+
     @Override
+    public String getProductTitle(Product product) {
+        try {
+            List<String> titleElements = new ArrayList<>();
+            titleElements.add(seoElement.getTitle(product));
+            Category defaultCategory = product.getDefaultCategory();
+            if (defaultCategory != null) {
+                titleElements.add(seoElement.getTitle(defaultCategory));
+            }
+            titleElements.add(getSiteName());
+            return seoElement.buildTitleString(titleElements, " - ");
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+            return "";
+        }
+    }
+
+    @Override
+    public String getProductDescription(Product product) {
+        try {
+            return "Shop for " + product.getName() + " at " + seoElement.getSiteSimpleURL()
+                    + ". " + seoElement.getDescription(product);
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+            return "";
+        }
+    }
+
+    @Override
+    public String getCategoryTitle(Category category) {
+        try {
+            List<String> titleElements = new ArrayList<>();
+            titleElements.add(seoElement.getTitle(category));
+            titleElements.add(getSiteName());
+            return seoElement.buildTitleString(titleElements, " - ");
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+            return "";
+        }
+    }
+
+    @Override
+    public String getCategoryDescription(Category category) {
+        try {
+            return "Shop " + category.getName() + " at " + seoElement.getSiteSimpleURL()
+                    + ". " + seoElement.getDescription(category);
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+            return "";
+        }
+    }
+
+    /**
+     * Mirrors the {@code #brc.site?.name} fragment that the legacy SEO patterns used.
+     */
+    protected String getSiteName() {
+        BroadleafRequestContext brc = BroadleafRequestContext.getBroadleafRequestContext();
+        Site site = (brc == null) ? null : brc.getNonPersistentSite();
+        return (site == null) ? null : site.getName();
+    }
+
+    @Override
+    @Deprecated
     public String getProductTitlePattern(Product product) {
         try {
             Category category = product.getCategory();
@@ -83,6 +153,7 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
     }
 
     @Override
+    @Deprecated
     public String getCategoryTitlePattern() {
         return env.getProperty("seo.category.title.pattern");
     }
@@ -110,6 +181,7 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
     }
 
     @Override
+    @Deprecated
     public String getProductDescriptionPattern(Product product) {
         try {
             Category category = product.getCategory();
@@ -125,6 +197,7 @@ public class SeoDefaultPropertyServiceImpl implements SeoDefaultPropertyService 
     }
 
     @Override
+    @Deprecated
     public String getCategoryDescriptionPattern() {
         return env.getProperty("seo.category.description.pattern");
     }

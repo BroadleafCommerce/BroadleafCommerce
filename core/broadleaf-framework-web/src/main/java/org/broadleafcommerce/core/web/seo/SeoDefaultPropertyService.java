@@ -28,8 +28,45 @@ import org.broadleafcommerce.core.catalog.domain.Product;
  */
 public interface SeoDefaultPropertyService {
 
+    /**
+     * Returns the default SEO title for the given product, fully resolved to plain text.
+     * <p>
+     * This replaces {@link #getProductTitlePattern(Product)}: the value is built in Java rather than
+     * returned as an expression for the template to evaluate, so no admin-entered content is ever
+     * evaluated as a Thymeleaf/SpEL expression.
+     */
+    String getProductTitle(Product product);
+
+    /**
+     * Returns the default SEO meta description for the given product, fully resolved to plain text.
+     * @see #getProductTitle(Product)
+     */
+    String getProductDescription(Product product);
+
+    /**
+     * Returns the default SEO title for the given category, fully resolved to plain text.
+     * @see #getProductTitle(Product)
+     */
+    String getCategoryTitle(Category category);
+
+    /**
+     * Returns the default SEO meta description for the given category, fully resolved to plain text.
+     * @see #getProductTitle(Product)
+     */
+    String getCategoryDescription(Category category);
+
+    /**
+     * @deprecated returns an expression pattern that was historically evaluated in the storefront
+     * template, which allowed admin-entered SEO values to be evaluated as expressions. Use
+     * {@link #getProductTitle(Product)} instead, which resolves the value in Java.
+     */
+    @Deprecated
     String getProductTitlePattern(Product product);
 
+    /**
+     * @deprecated see {@link #getProductTitlePattern(Product)}; use {@link #getCategoryTitle(Category)}.
+     */
+    @Deprecated
     String getCategoryTitlePattern();
 
     String getTitle(PageDTO page);
@@ -40,8 +77,16 @@ public interface SeoDefaultPropertyService {
 
     String getType(PageDTO page);
 
+    /**
+     * @deprecated see {@link #getProductTitlePattern(Product)}; use {@link #getProductDescription(Product)}.
+     */
+    @Deprecated
     String getProductDescriptionPattern(Product product);
 
+    /**
+     * @deprecated see {@link #getProductTitlePattern(Product)}; use {@link #getCategoryDescription(Category)}.
+     */
+    @Deprecated
     String getCategoryDescriptionPattern();
 
     String getDescription(PageDTO page);

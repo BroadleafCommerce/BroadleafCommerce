@@ -260,16 +260,15 @@ public class CategoryImpl implements Category, Status, AdminMainEntity, Locatabl
             tooltip = "CategoryImpl_Category_MetaDescription_Tooltip")
     protected String metaDescription;
 
+    // Hidden from the admin: these fields held SpEL/Thymeleaf expression patterns that were evaluated
+    // in the storefront SEO template. Default SEO titles/descriptions are now resolved in Java
+    // (see SeoDefaultPropertyService), so these overrides are no longer evaluated or editable.
     @Column(name = "PRODUCT_TITLE_PATTERN_OVERRIDE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_ProductTitlePatternOverride",
-            group = GroupName.Miscellaneous, order = 5000,
-            tooltip = "CategoryImpl_Category_ProductTitlePatternOverride_Tooltip")
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String productTitlePatternOverride;
 
     @Column(name = "PRODUCT_DESC_PATTERN_OVERRIDE")
-    @AdminPresentation(friendlyName = "CategoryImpl_Category_ProductDescriptionPatternOverride",
-            group = GroupName.Miscellaneous, order = 6000,
-            tooltip = "CategoryImpl_Category_ProductDescriptionPatternOverride_Tooltip")
+    @AdminPresentation(visibility = VisibilityEnum.HIDDEN_ALL)
     protected String productDescriptionPatternOverride;
 
     @ManyToOne(targetEntity = CategoryImpl.class)

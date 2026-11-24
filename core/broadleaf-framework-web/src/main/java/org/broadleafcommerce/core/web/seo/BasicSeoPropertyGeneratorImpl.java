@@ -59,10 +59,10 @@ public class BasicSeoPropertyGeneratorImpl extends AbstractSeoPropertyGenerator 
     public Map<String, String> gatherSeoProperties(Category category) {
         Map<String, String> properties = getSimpleProperties(category);
 
-        String defaultTitle = defaultPropertyService.getCategoryTitlePattern();
+        String defaultTitle = defaultPropertyService.getCategoryTitle(category);
         addDefaultTitle(properties, defaultTitle);
 
-        String defaultDescription = defaultPropertyService.getCategoryDescriptionPattern();
+        String defaultDescription = defaultPropertyService.getCategoryDescription(category);
         addDefaultDescription(properties, defaultDescription);
 
         String canonicalUrl = defaultPropertyService.getCanonicalUrl(category);
@@ -81,10 +81,10 @@ public class BasicSeoPropertyGeneratorImpl extends AbstractSeoPropertyGenerator 
     public Map<String, String> gatherSeoProperties(Product product) {
         Map<String, String> properties = getSimpleProperties(product);
 
-        String defaultTitle = defaultPropertyService.getProductTitlePattern(product);
+        String defaultTitle = defaultPropertyService.getProductTitle(product);
         addDefaultTitle(properties, defaultTitle);
 
-        String defaultDescription = defaultPropertyService.getProductDescriptionPattern(product);
+        String defaultDescription = defaultPropertyService.getProductDescription(product);
         addDefaultDescription(properties, defaultDescription);
 
         String canonicalUrl = defaultPropertyService.getCanonicalUrl(product);
