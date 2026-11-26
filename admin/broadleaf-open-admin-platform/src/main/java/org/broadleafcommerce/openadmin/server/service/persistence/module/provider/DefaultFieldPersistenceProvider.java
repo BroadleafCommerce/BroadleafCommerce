@@ -17,6 +17,7 @@
  */
 package org.broadleafcommerce.openadmin.server.service.persistence.module.provider;
 
+import org.broadleafcommerce.common.BroadleafEnumerationType;
 import org.broadleafcommerce.openadmin.dto.Property;
 import org.broadleafcommerce.openadmin.server.service.persistence.PersistenceException;
 import org.broadleafcommerce.openadmin.server.service.persistence.module.provider.request.ExtractValueRequest;
@@ -59,9 +60,18 @@ public class DefaultFieldPersistenceProvider extends FieldPersistenceProviderAda
     @Override
     public MetadataProviderResponse extractValue(ExtractValueRequest extractValueRequest, Property property) throws PersistenceException {
         if (extractValueRequest.getRequestedValue() != null) {
-            String val = extractValueRequest.getRequestedValue().toString();
+            String displayVal = extractValueRequest.getDisplayVal();
+            String val;
+            if (extractValueRequest.getRequestedValue() instanceof BroadleafEnumerationType) {
+                val = ((BroadleafEnumerationType) extractValueRequest.getRequestedValue()).getType();
+                if (displayVal == null) {
+                    displayVal = ((BroadleafEnumerationType) extractValueRequest.getRequestedValue()).getFriendlyType();
+                }
+            } else {
+                val = extractValueRequest.getRequestedValue().toString();
+            }
             property.setValue(val);
-            property.setDisplayValue(extractValueRequest.getDisplayVal());
+            property.setDisplayValue(displayVal);
         }
         return MetadataProviderResponse.HANDLED;
     }
