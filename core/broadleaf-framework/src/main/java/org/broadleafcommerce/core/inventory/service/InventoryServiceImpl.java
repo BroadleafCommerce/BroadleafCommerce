@@ -27,6 +27,7 @@ import org.broadleafcommerce.common.event.BroadleafSystemEventDetail;
 import org.broadleafcommerce.common.extension.ExtensionResultHolder;
 import org.broadleafcommerce.common.extension.ExtensionResultStatusType;
 import org.broadleafcommerce.common.util.TransactionUtils;
+import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.broadleafcommerce.core.inventory.service.type.InventoryType;
@@ -61,6 +62,9 @@ public class InventoryServiceImpl implements ContextualInventoryService {
 
     @Resource(name = "blInventoryServiceExtensionManager")
     protected InventoryServiceExtensionManager extensionManager;
+
+    @Resource(name = "blSkuDao")
+    protected SkuDao skuDao;
 
     @Autowired
     protected ApplicationContext applicationContext;
@@ -214,6 +218,9 @@ public class InventoryServiceImpl implements ContextualInventoryService {
 
             if (checkBasicAvailablility(skuForInventory)) {
                 if (InventoryType.CHECK_QUANTITY.equals(skuForInventory.getInventoryType())) {
+                    if (TransactionSynchronizationManager.isActualTransactionActive() && skuForInventory.getId() != null) {
+                        skuForInventory.setQuantityAvailable(skuDao.readQuantityAvailableForUpdate(skuForInventory.getId()));
+                    }
                     Integer inventoryAvailable = retrieveQuantityAvailable(skuForInventory, context);
                     if (inventoryAvailable == null) {
                         return;
@@ -265,6 +272,9 @@ public class InventoryServiceImpl implements ContextualInventoryService {
                 throw new IllegalArgumentException("Quantity " + quantity + " is not valid. Must be greater than zero and not null.");
             }
             if (InventoryType.CHECK_QUANTITY.equals(sku.getInventoryType())) {
+                if (TransactionSynchronizationManager.isActualTransactionActive() && skuForInventory.getId() != null) {
+                    skuForInventory.setQuantityAvailable(skuDao.readQuantityAvailableForUpdate(skuForInventory.getId()));
+                }
                 Integer currentInventoryAvailable = retrieveQuantityAvailable(skuForInventory, context);
                 if (currentInventoryAvailable == null) {
                     throw new IllegalArgumentException("The current inventory for this Sku is null");
