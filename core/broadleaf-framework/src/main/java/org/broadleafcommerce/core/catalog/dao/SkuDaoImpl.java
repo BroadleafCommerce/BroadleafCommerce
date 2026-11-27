@@ -39,6 +39,7 @@ import java.util.List;
 
 import jakarta.annotation.Resource;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -78,6 +79,14 @@ public class SkuDaoImpl implements SkuDao {
     @Override
     public Sku save(Sku sku) {
         return em.merge(sku);
+    }
+
+    @Override
+    public Integer readQuantityAvailableForUpdate(Long skuId) {
+        return em.createQuery("SELECT sku.quantityAvailable FROM SkuImpl sku WHERE sku.id = :skuId", Integer.class)
+                .setParameter("skuId", skuId)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .getSingleResult();
     }
 
     @Override

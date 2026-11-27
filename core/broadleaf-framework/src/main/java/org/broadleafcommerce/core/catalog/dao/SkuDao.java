@@ -61,6 +61,11 @@ public interface SkuDao {
      */
     Sku save(Sku sku);
 
+    /**
+     * Locks the {@code Sku} row until the transaction ends and returns its quantity available from the database.
+     */
+    Integer readQuantityAvailableForUpdate(Long skuId);
+
     SkuFee saveSkuFee(SkuFee fee);
 
     /**
